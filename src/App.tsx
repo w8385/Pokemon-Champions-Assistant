@@ -120,7 +120,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
     '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item',
     '종 선택': 'Species', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
-    '가용기술 출처: PokeAPI 기반 로컬 기술풀 + 포챔스 수동 검증/보정': 'Move source: src/championsMovePools.json seeded from embedded PokeAPI baseline and under Champions verification',
+    '시드': 'Seeded', '검증중': 'Verifying',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
@@ -147,7 +147,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
     '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択',
     '종 선택': 'ポケモン', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
-    '가용기술 출처: PokeAPI 기반 로컬 기술풀 + 포챔스 수동 검증/보정': '使用可能技の出典: src/championsMovePools.json（PokeAPIベースのシード + Champions検証進行中）',
+    '시드': 'シード', '검증중': '検証中',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
     '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
@@ -1214,10 +1214,13 @@ function itemAutocompletePrimaryLabel(item: string, language: SiteLanguage) {
   return localized && localized.trim() ? localized : item
 }
 
-function movePoolSourceNotice(language: SiteLanguage) {
-  const base = `${dataSourcePolicy.movePools.sourceOfTruth} · 현재는 PokeAPI baseline 시드 + 포챔스 검증 진행중`
-  if (language === 'ko') return `가용기술 출처: ${base}`
-  return translateText(language, '가용기술 출처: PokeAPI 기반 로컬 기술풀 + 포챔스 수동 검증/보정')
+function MovePoolStateBadges({ language }: { language: SiteLanguage }) {
+  return (
+    <div className="move-pool-badges" title={`${dataSourcePolicy.movePools.sourceOfTruth} · PokeAPI baseline seed · Champions verification in progress`}>
+      <span className="move-pool-badge seeded">{translateText(language, '시드')}</span>
+      <span className="move-pool-badge verifying">{translateText(language, '검증중')}</span>
+    </div>
+  )
 }
 
 function LanguageIcon() {
@@ -2237,9 +2240,8 @@ export default function App() {
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>{lt('기술 배치')}</strong>
-                        <span className="muted-inline">{memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : lt('사용 가능 기술 검색')}</span>
+                        {memberMovePool?.status === 'loading' ? <span className="muted-inline">{lt('기술풀 불러오는 중…')}</span> : <MovePoolStateBadges language={siteLanguage} />}
                       </div>
-                      <p className="move-source-note">{movePoolSourceNotice(siteLanguage)}</p>
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
                           <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))}`}>
@@ -2738,9 +2740,11 @@ export default function App() {
             <div className="move-card">
               <div className="row-between">
                 <strong>{lt('샘플 기술')}</strong>
-                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
+                <div className="row-inline-actions">
+                  <MovePoolStateBadges language={siteLanguage} />
+                  <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
+                </div>
               </div>
-              <p className="move-source-note">{movePoolSourceNotice(siteLanguage)}</p>
               <div className="sample-save-box">
                 <label>
                   {lt('샘플 이름')}

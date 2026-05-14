@@ -612,10 +612,36 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   gap: 8px;
   margin-top: 10px;
 }
-.move-source-note {
-  margin: 8px 0 10px;
-  font-size: 12px;
-  color: #8da2b8;
+.row-inline-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.move-pool-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.move-pool-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid #334155;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.move-pool-badge.seeded {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(96, 165, 250, 0.45);
+  color: #bfdbfe;
+}
+.move-pool-badge.verifying {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(251, 191, 36, 0.45);
+  color: #fde68a;
 }
 .move-chip {
   appearance: none;
