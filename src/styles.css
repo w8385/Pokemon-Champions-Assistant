@@ -770,6 +770,7 @@ textarea { min-height: 72px; resize: vertical; }
   margin-top: 12px;
 }
 .stat-preview-row {
+  appearance: none;
   display: grid;
   grid-template-columns: minmax(90px, 120px) 1fr auto auto;
   gap: 10px;
@@ -778,6 +779,14 @@ textarea { min-height: 72px; resize: vertical; }
   border-radius: 10px;
   border: 1px solid #334155;
   background: #0b1220;
+  width: 100%;
+  text-align: left;
+}
+.stat-preview-button {
+  cursor: pointer;
+}
+.stat-preview-button:hover {
+  filter: brightness(1.05);
 }
 .stat-preview-bar {
   position: relative;

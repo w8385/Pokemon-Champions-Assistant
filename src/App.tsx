@@ -105,6 +105,7 @@ const CHAMPIONS_EFFORT_CAP = 66
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 const STAT_GAUGE_MAX = 255
+const ITEM_OPTIONS = ['기합의띠', '구애스카프', '구애안경', '구애머리띠', '생명의구슬', '먹다남은음식', '돌격조끼', '약점보험', '자뭉열매', '오카열매', '유루열매', '리샘열매', '반짝가루', '고스트메모리', '금속코트', '검은진흙', '부스트에너지', '클리어참', '풍선', '빛의점토'] as const
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -696,7 +697,6 @@ export default function App() {
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
-  const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -1307,7 +1307,6 @@ export default function App() {
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
-                const isAdvancedOpen = partyAdvancedOpen[idx] ?? false
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMoveOptions = moveOptionsForEntry(memberMoveSet)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
@@ -1332,22 +1331,8 @@ export default function App() {
                       </div>
                     </div>
                     <div className="pick-row" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        className="pick-chip"
-                        onClick={() => setPartyAdvancedOpen((prev) => prev.map((open, openIdx) => openIdx === idx ? !open : open))}
-                      >
-                        {isAdvancedOpen ? '트레이닝 접기' : '트레이닝'}
-                      </button>
-                      <button
-                        type="button"
-                        className="pick-chip"
-                        onClick={() => setTuningModalIndex(idx)}
-                      >
-                        노력치 보정
-                      </button>
+                      <span className="muted-inline">트레이닝은 항상 펼쳐집니다 · 스탯을 누르면 노력치 보정</span>
                     </div>
-                    {isAdvancedOpen ? <>
                     <label className="species-picker">
                       종 선택
                       <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
@@ -1412,12 +1397,15 @@ export default function App() {
                         ['spDefense', '특수방어'],
                         ['speed', '스피드'],
                       ] as const).map(([field, label]) => (
-                        <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
+                        <button key={field} type="button" className={`stat-preview-row stat-preview-button ${statThemeClass(field)}`} onClick={(e) => {
+                          e.stopPropagation()
+                          setTuningModalIndex(idx)
+                        }}>
                           <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, field)) }} /></div>
                           <span>{label}</span>
                           <strong>{partyStatValue(row, member, field)}</strong>
                           <span>+{member.evs[field]}</span>
-                        </div>
+                        </button>
                       ))}
                     </div>
                     <div className="tuning-summary muted">
@@ -1439,11 +1427,16 @@ export default function App() {
                       </label>
                       <label>
                         도구
-                        <input value={member.item} placeholder="예: 기합의띠, 구애스카프" onChange={(e) => {
+                        <>
+                        <input list={`item-options-party-${idx}`} value={member.item} placeholder="사용 가능 도구 선택" onChange={(e) => {
                           const next = [...party]
                           next[idx] = { ...member, item: e.target.value }
                           setParty(next)
                         }} />
+                        <datalist id={`item-options-party-${idx}`}>
+                          {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
+                        </datalist>
+                        </>
                       </label>
                     </div>
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
@@ -1481,7 +1474,6 @@ export default function App() {
                         </div>
                       </> : <p className="muted">기술 데이터가 없는 포켓몬만 직접 입력합니다.</p>}
                     </div>
-                    </> : null}
                   </div>
                 )
               })}
@@ -1776,7 +1768,12 @@ export default function App() {
                 </label>
                 <label>
                   도구
-                  <input value={sampleForge.item} placeholder="예: 생명의구슬" onChange={(e) => setSampleForge((prev) => ({ ...prev, item: e.target.value }))} />
+                  <>
+                  <input list="item-options-sample" value={sampleForge.item} placeholder="사용 가능 도구 선택" onChange={(e) => setSampleForge((prev) => ({ ...prev, item: e.target.value }))} />
+                  <datalist id="item-options-sample">
+                    {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
+                  </datalist>
+                  </>
                 </label>
                 <label>
                   매직넘버
