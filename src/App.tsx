@@ -95,7 +95,7 @@ type ImportExportPayload = PersistedState & {
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
-type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample'; idx: 0 } | null
+type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
@@ -598,7 +598,7 @@ function searchDisplayLabel(key: string, language: SiteLanguage) {
   return displayName(row, language)
 }
 
-function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sample', idx: number) {
+function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sample' | 'opponentQuick', idx: number) {
   return a?.side === side && a?.idx === idx
 }
 
@@ -660,7 +660,9 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
+  const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+  const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -804,11 +806,37 @@ export default function App() {
     setActiveTab('party')
   }
 
+  const nextOpponentSlotIndex = (fromIdx: number) => {
+    const emptyAfter = opponents.findIndex((member, idx) => idx > fromIdx && !member.key)
+    if (emptyAfter >= 0) return emptyAfter
+    if (fromIdx + 1 < MAX_OPPONENTS) return fromIdx + 1
+    return fromIdx
+  }
+
+  const commitOpponentQuickSearch = (forcedKey?: string) => {
+    const resolvedKey = forcedKey ?? resolveSpeciesKey(opponentQuickSearch) ?? filterSpeciesOptions(opponentQuickSearch)[0]?.key
+    if (!resolvedKey) return
+    const slotIdx = selectedOpp
+    const next = [...opponents]
+    next[slotIdx] = { ...next[slotIdx], key: resolvedKey }
+    setOpponents(next)
+    const nextSearch = [...opponentSearch]
+    nextSearch[slotIdx] = searchDisplayLabel(resolvedKey, siteLanguage)
+    setOpponentSearch(nextSearch)
+    const nextIdx = nextOpponentSlotIndex(slotIdx)
+    setSelectedOpp(nextIdx)
+    setOpponentQuickSearch('')
+    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+    setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
+  }
+
   const resetOpponentsForFreshEntry = () => {
     const next = emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] }))
     setOpponents(next)
     setOpponentSearch(next.map(() => ''))
     setSelectedOpp(0)
+    setOpponentQuickSearch('')
+    setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
   }
 
   const resetAll = () => {
@@ -1316,7 +1344,45 @@ export default function App() {
 
           <div className="inline-controls">
             <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>상대 엔트리 초기화</button>
-            <span className="muted-inline">각 슬롯 검색창에 이름 일부만 입력해도 바로 채울 수 있습니다.</span>
+            <span className="muted-inline">검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.</span>
+          </div>
+
+          <div className="quick-opponent-search-bar">
+            <label className="species-picker">
+              상대 엔트리 빠른 입력
+              <div className="autocomplete">
+                <input
+                  ref={opponentQuickInputRef}
+                  value={opponentQuickSearch}
+                  placeholder={`${selectedOpp + 1}번 슬롯 검색 후 엔터`}
+                  onFocus={() => setActiveSearchField({ side: 'opponentQuick', idx: 0 })}
+                  onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)}
+                  onChange={(e) => {
+                    setOpponentQuickSearch(e.target.value)
+                    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      commitOpponentQuickSearch()
+                    }
+                  }}
+                />
+                {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
+                  <div className="autocomplete-menu">
+                    {filterSpeciesOptions(opponentQuickSearch).slice(0, 8).map((option) => (
+                      <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => commitOpponentQuickSearch(option.key)}>
+                        {searchDisplayLabel(option.key, siteLanguage)}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </label>
+            <div className="quick-opponent-hint">
+              <strong>현재 입력 슬롯</strong>
+              <span>{selectedOpp + 1} / {MAX_OPPONENTS}</span>
+            </div>
           </div>
 
           <div className="pick-slot-row opponent-overview-row">
@@ -1343,29 +1409,7 @@ export default function App() {
                   <div key={`opp-board-${idx}`} className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
                     {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                     <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
-                    <div className="autocomplete slot-autocomplete" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        value={opponentSearch[idx] ?? ''}
-                        placeholder={`슬롯 ${idx + 1} 검색`}
-                        onFocus={() => setActiveSearchField({ side: 'opponent', idx })}
-                        onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', idx) ? null : prev), 120)}
-                        onChange={(e) => {
-                          const next = [...opponentSearch]
-                          next[idx] = e.target.value
-                          setOpponentSearch(next)
-                          setActiveSearchField({ side: 'opponent', idx })
-                        }}
-                      />
-                      {sameSearchTarget(activeSearchField, 'opponent', idx) ? (
-                        <div className="autocomplete-menu">
-                          {filterSpeciesOptions(opponentSearch[idx] ?? '').slice(0, 8).map((option) => (
-                            <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('opponent', idx, option.key)}>
-                              {searchDisplayLabel(option.key, siteLanguage)}
-                            </button>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
+                    <span>{opponentSearch[idx] || '포켓몬 미입력'}</span>
                     <span>{member.ability || '특성 미기입'}</span>
                     <span>{member.item || '도구 미기입'}</span>
                   </div>

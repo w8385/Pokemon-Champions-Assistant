@@ -736,6 +736,23 @@ textarea { min-height: 72px; resize: vertical; }
 .opponent-overview-row {
   margin-top: 14px;
 }
+.quick-opponent-search-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 12px;
+  align-items: end;
+  margin-top: 12px;
+}
+.quick-opponent-hint {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0b1220;
+}
 .opponent-detail-layout {
   display: grid;
   grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.3fr);
@@ -758,12 +775,6 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 6px;
   cursor: pointer;
   text-align: center;
-}
-.slot-autocomplete {
-  width: 100%;
-}
-.slot-autocomplete input {
-  text-align: left;
 }
 .opponent-board-card span {
   color: #93a4b8;
@@ -875,6 +886,7 @@ textarea { min-height: 72px; resize: vertical; }
   .modal-grid { grid-template-columns: 1fr; }
   .drag-stat-list { grid-template-columns: 1fr; }
   .sample-builder-grid { grid-template-columns: 1fr; }
+  .quick-opponent-search-bar { grid-template-columns: 1fr; }
   .opponent-detail-layout { grid-template-columns: 1fr; }
   .opponent-board-grid { grid-template-columns: 1fr; }
   .timeline-list { grid-template-columns: 1fr; }
