@@ -113,6 +113,17 @@ const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'cor
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
 const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' }))
 const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' })
+const blankOpponent = (): OpponentState => ({
+  key: '',
+  item: '',
+  ability: '',
+  notes: '',
+  revealedMoves: [],
+  natureBoost: true,
+  scarf: false,
+  speedStage: 0,
+  picked: false,
+})
 const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
 const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
   key,
@@ -125,6 +136,7 @@ const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
   speedStage: 0,
   picked: false,
 }))
+const emptyOpponents = Array.from({ length: MAX_OPPONENTS }, () => blankOpponent())
 
 const movePowerPresets = [
   { label: '40 선공기', value: 40 },
@@ -311,7 +323,8 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
     .map((opponent) => {
       if (!opponent || typeof opponent !== 'object') return null
       const raw = opponent as Partial<OpponentState>
-      if (typeof raw.key !== 'string' || !indexByKey.has(raw.key)) return null
+      if (typeof raw.key !== 'string') return null
+      if (raw.key && !indexByKey.has(raw.key)) return null
       return {
         key: raw.key,
         item: typeof raw.item === 'string' ? raw.item : '',
@@ -461,6 +474,23 @@ function filterSpeciesOptions(query: string) {
   return speciesOptions.filter((option) => option.label.toLowerCase().includes(normalized) || option.key.toLowerCase().includes(normalized))
 }
 
+function resolveSpeciesKey(raw: string) {
+  const normalized = raw.trim().toLowerCase()
+  if (!normalized) return null
+  const exact = rows.find((row) =>
+    row.key.toLowerCase() === normalized
+    || row.name_ko.toLowerCase() === normalized
+    || row.name_en.toLowerCase() === normalized
+  )
+  if (exact) return exact.key
+  const partial = rows.find((row) =>
+    row.key.toLowerCase().includes(normalized)
+    || row.name_ko.toLowerCase().includes(normalized)
+    || row.name_en.toLowerCase().includes(normalized)
+  )
+  return partial?.key ?? null
+}
+
 function displayName(row: Row, language: SiteLanguage) {
   if (language === 'en') return row.name_en
   if (language === 'ja') return getJaName(row.key, row.name_ko, row.name_en)
@@ -540,6 +570,7 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
+  const [opponentQuickInput, setOpponentQuickInput] = React.useState('')
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
 
   React.useEffect(() => {
@@ -665,6 +696,37 @@ export default function App() {
     setActiveTab('party')
   }
 
+  const resetOpponentsForFreshEntry = () => {
+    const next = emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] }))
+    setOpponents(next)
+    setOpponentSearch(next.map(() => ''))
+    setSelectedOpp(0)
+    setOpponentQuickInput('')
+  }
+
+  const applyQuickOpponents = () => {
+    const tokens = opponentQuickInput
+      .split(/[\n,\/|]+/)
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+      .slice(0, MAX_OPPONENTS)
+
+    if (!tokens.length) return
+
+    const next = emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] }))
+    tokens.forEach((token, idx) => {
+      const resolved = resolveSpeciesKey(token)
+      if (!resolved) return
+      next[idx] = { ...next[idx], key: resolved }
+    })
+    setOpponents(next)
+    setOpponentSearch(tokens.map((token, idx) => {
+      const resolved = next[idx]?.key
+      return resolved ? searchDisplayLabel(resolved, siteLanguage) : token
+    }).concat(Array.from({ length: Math.max(0, MAX_OPPONENTS - tokens.length) }, () => '')))
+    setSelectedOpp(0)
+  }
+
   const resetAll = () => {
     setParty(defaultParty)
     setOpponents(defaultOpponents)
@@ -684,6 +746,7 @@ export default function App() {
     setSavedSamples([])
     setSampleLabelDraft('')
     setPartyAdvancedOpen(Array.from({ length: defaultParty.length }, () => false))
+    setOpponentQuickInput('')
     if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -733,6 +796,7 @@ export default function App() {
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
       setPartyAdvancedOpen(Array.from({ length: nextParty.length }, () => false))
+      setOpponentQuickInput('')
     } catch {
       if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
     } finally {
@@ -1080,7 +1144,7 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>상대 엔트리</h2>
-              <p className="muted">상대 6마리 엔트리를 한 번에 훑고, 공개 정보와 선출 추정만 빠르게 쌓는 용도입니다.</p>
+              <p className="muted">초기화하고 6마리를 빠르게 다시 채울 수 있게, 일괄 입력 중심으로 정리했습니다.</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">엔트리 {opponents.length}/6</span>
@@ -1088,13 +1152,33 @@ export default function App() {
             </div>
           </div>
 
+          <div className="quick-entry-panel">
+            <label>
+              빠른 입력
+              <textarea
+                value={opponentQuickInput}
+                placeholder="예: 한 줄에 하나씩 또는 쉼표로 구분\n드래펄트\n로토무\n한카리아스"
+                onChange={(e) => setOpponentQuickInput(e.target.value)}
+              />
+            </label>
+            <div className="inline-controls">
+              <button type="button" className="action-button" onClick={applyQuickOpponents}>6마리 일괄 입력</button>
+              <button type="button" className="action-button" onClick={() => setOpponentQuickInput(opponents.map((member) => {
+                const row = member.key ? indexByKey.get(member.key) : null
+                return row ? displayName(row, 'ko') : ''
+              }).filter(Boolean).join('\n'))}>현재 엔트리 불러오기</button>
+              <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>상대 엔트리 초기화</button>
+            </div>
+            <p className="muted">이름 일부만 써도 최대한 맞춰 넣습니다. 못 찾은 칸은 비워둔 채로 상세패널에서 바로 수정하면 됩니다.</p>
+          </div>
+
           <div className="pick-slot-row opponent-overview-row">
             {opponents.map((member, idx) => {
-              const row = indexByKey.get(member.key) ?? rows[0]
+              const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
               return (
                 <button key={`opp-overview-${member.key}-${idx}`} type="button" className={`pick-slot-card enemy compact ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
-                  {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                  <span>{displayName(row, siteLanguage)}</span>
+                  {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                  <span>{opponentSearch[idx] || (row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`)}</span>
                   <small>{member.picked ? '추정 체크됨' : '미체크'}</small>
                   <small>{member.item || '도구 없음'}</small>
                 </button>
@@ -1107,11 +1191,11 @@ export default function App() {
           <div className="opponent-detail-layout">
             <div className="opponent-board-grid">
               {opponents.map((member, idx) => {
-                const row = indexByKey.get(member.key) ?? rows[0]
+                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
                 return (
                   <button key={`opp-board-${idx}`} type="button" className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
-                    {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                    <strong>{displayName(row, siteLanguage)}</strong>
+                    {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                    <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
                     <span>{member.ability || '특성 미기입'}</span>
                     <span>{member.item || '도구 미기입'}</span>
                   </button>
@@ -1120,13 +1204,13 @@ export default function App() {
             </div>
             <div className="opponent-detail-panel">
               <div className="entry-card-top">
-                {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
+                {oppMember.key && oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
                 <div className="entry-card-head">
                   <div className="row-between compact-gap">
-                    <strong>{displayName(oppRow, siteLanguage)}</strong>
+                    <strong>{oppMember.key ? displayName(oppRow, siteLanguage) : `빈 슬롯 ${selectedOpp + 1}`}</strong>
                     <span className={`pick-chip ${oppMember.picked ? 'active' : ''}`}>{oppMember.picked ? '선출 추정' : '미체크'}</span>
                   </div>
-                  <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div>
+                  {oppMember.key ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
                   <p className="muted">상세 패널에서 공개 정보를 바로 갱신합니다.</p>
                 </div>
               </div>

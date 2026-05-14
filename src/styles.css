@@ -627,6 +627,13 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 8px;
   flex-wrap: wrap;
 }
+.quick-entry-panel {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #0b1220;
+}
 .pick-badge {
   display: inline-flex;
   align-items: center;
