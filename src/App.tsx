@@ -104,6 +104,7 @@ const MAX_OPPONENTS = 6
 const CHAMPIONS_EFFORT_CAP = 66
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
+const STAT_GAUGE_MAX = 300
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -255,6 +256,10 @@ function statThemeClass(stat: EffortStatKey) {
     case 'spDefense': return 'stat-theme-sp-defense'
     case 'speed': return 'stat-theme-speed'
   }
+}
+
+function statGaugePercent(value: number) {
+  return `${Math.max(0, Math.min(100, (value / STAT_GAUGE_MAX) * 100))}%`
 }
 
 function natureLabel(natureId: NatureId) {
@@ -1302,7 +1307,7 @@ export default function App() {
                         className="pick-chip"
                         onClick={() => setPartyAdvancedOpen((prev) => prev.map((open, openIdx) => openIdx === idx ? !open : open))}
                       >
-                        {isAdvancedOpen ? '고급 접기' : '고급 펼치기'}
+                        {isAdvancedOpen ? '트레이닝 접기' : '트레이닝'}
                       </button>
                       <button
                         type="button"
@@ -1378,6 +1383,7 @@ export default function App() {
                         ['speed', '스피드'],
                       ] as const).map(([field, label]) => (
                         <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
+                          <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, field)) }} /></div>
                           <span>{label}</span>
                           <strong>{partyStatValue(row, member, field)}</strong>
                           <span>+{member.evs[field]}</span>
@@ -1720,6 +1726,7 @@ export default function App() {
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
                   <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
+                    <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, field)) }} /></div>
                     <span>{label}</span>
                     <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
                     <span>+{sampleForge.evs[field]}</span>

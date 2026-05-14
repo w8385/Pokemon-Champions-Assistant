@@ -769,13 +769,25 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .stat-preview-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: minmax(90px, 120px) 1fr auto auto;
   gap: 10px;
   align-items: center;
   padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid #334155;
   background: #0b1220;
+}
+.stat-preview-bar {
+  position: relative;
+  height: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(15, 23, 42, 0.75);
+  overflow: hidden;
+}
+.stat-preview-bar span {
+  display: block;
+  height: 100%;
+  background: var(--stat-fill, #60a5fa);
 }
 .stat-preview-row[class*="stat-theme-"] {
   border-color: var(--stat-border);
