@@ -1698,10 +1698,6 @@ export default function App() {
                       </div>
                     </label>
                     <div className="ev-grid" onClick={(e) => e.stopPropagation()}>
-                      <div className="ev-total-row">
-                        <strong>능력 포인트</strong>
-                        <span>{totalEffortPoints(member.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
-                      </div>
                       {([
                         ['hp', 'HP'],
                         ['attack', 'Atk'],
@@ -2101,10 +2097,6 @@ export default function App() {
                 </div>
               </div>
               <div className="ev-grid">
-                <div className="ev-total-row">
-                  <strong>능력 포인트</strong>
-                  <span>{totalEffortPoints(sampleForge.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
-                </div>
                 {([
                   ['hp', 'HP'], ['attack', 'Atk'], ['defense', 'Def'], ['spAttack', 'SpA'], ['spDefense', 'SpD'], ['speed', 'Spe'],
                 ] as const).map(([field, label]) => (
