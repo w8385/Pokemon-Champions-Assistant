@@ -27,14 +27,21 @@ type Row = {
   abilities_ko: string[]
 }
 
+type StatKey = 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
+type NatureId =
+  | 'hardy' | 'lonely' | 'brave' | 'adamant' | 'naughty'
+  | 'bold' | 'docile' | 'relaxed' | 'impish' | 'lax'
+  | 'timid' | 'hasty' | 'serious' | 'jolly' | 'naive'
+  | 'modest' | 'mild' | 'quiet' | 'bashful' | 'rash'
+  | 'calm' | 'gentle' | 'sassy' | 'careful' | 'quirky'
+
 type MemberConfig = {
-  natureBoostStat: 'none' | 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
+  nature: NatureId
   scarf: boolean
   speedStage: number
 }
 
 type PartyTuning = {
-  natureBoostStat: MemberConfig['natureBoostStat']
   magicNumber: number
   maxValue: number
 }
@@ -45,6 +52,7 @@ type PartyMember = {
   picked: boolean
   evs: EffortValues
   tuning: PartyTuning
+  item: string
 }
 
 type OpponentState = {
@@ -95,9 +103,9 @@ const speciesOptions = rows.map((row) => ({
 }))
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
 
-const defaultPartyTuning = (): PartyTuning => ({ natureBoostStat: 'speed', magicNumber: 0, maxValue: 0 })
-const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { natureBoostStat: 'speed', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning() }))
-const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { natureBoostStat: 'speed', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning() })
+const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
+const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' }))
+const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' })
 const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
 const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
   key,
@@ -148,13 +156,77 @@ function clampSpeedStage(value: unknown) {
   return Math.max(-2, Math.min(2, Math.trunc(num)))
 }
 
+const NATURES: { id: NatureId; label: string; up?: StatKey; down?: StatKey }[] = [
+  { id: 'hardy', label: '노력', },
+  { id: 'lonely', label: '외로움', up: 'attack', down: 'defense' },
+  { id: 'brave', label: '용감', up: 'attack', down: 'speed' },
+  { id: 'adamant', label: '고집', up: 'attack', down: 'spAttack' },
+  { id: 'naughty', label: '개구쟁이', up: 'attack', down: 'spDefense' },
+  { id: 'bold', label: '대담', up: 'defense', down: 'attack' },
+  { id: 'docile', label: '온순', },
+  { id: 'relaxed', label: '무사태평', up: 'defense', down: 'speed' },
+  { id: 'impish', label: '장난꾸러기', up: 'defense', down: 'spAttack' },
+  { id: 'lax', label: '촐랑', up: 'defense', down: 'spDefense' },
+  { id: 'timid', label: '겁쟁이', up: 'speed', down: 'attack' },
+  { id: 'hasty', label: '성급', up: 'speed', down: 'defense' },
+  { id: 'serious', label: '성실', },
+  { id: 'jolly', label: '명랑', up: 'speed', down: 'spAttack' },
+  { id: 'naive', label: '천진난만', up: 'speed', down: 'spDefense' },
+  { id: 'modest', label: '조심', up: 'spAttack', down: 'attack' },
+  { id: 'mild', label: '의젓', up: 'spAttack', down: 'defense' },
+  { id: 'quiet', label: '냉정', up: 'spAttack', down: 'speed' },
+  { id: 'bashful', label: '수줍음', },
+  { id: 'rash', label: '덜렁', up: 'spAttack', down: 'spDefense' },
+  { id: 'calm', label: '차분', up: 'spDefense', down: 'attack' },
+  { id: 'gentle', label: '얌전', up: 'spDefense', down: 'defense' },
+  { id: 'sassy', label: '건방', up: 'spDefense', down: 'speed' },
+  { id: 'careful', label: '신중', up: 'spDefense', down: 'spAttack' },
+  { id: 'quirky', label: '변덕', },
+]
+
+const natureById = new Map(NATURES.map((nature) => [nature.id, nature]))
+
+function legacyNatureFromBoostStat(stat?: unknown): NatureId {
+  switch (stat) {
+    case 'attack': return 'adamant'
+    case 'defense': return 'impish'
+    case 'spAttack': return 'modest'
+    case 'spDefense': return 'careful'
+    case 'speed': return 'jolly'
+    default: return 'hardy'
+  }
+}
+
+function natureMultiplier(natureId: NatureId, stat: StatKey) {
+  const nature = natureById.get(natureId)
+  if (!nature) return 1
+  if (nature.up === stat) return 1.1
+  if (nature.down === stat) return 0.9
+  return 1
+}
+
+function statLabel(stat: StatKey) {
+  switch (stat) {
+    case 'attack': return '공격'
+    case 'defense': return '방어'
+    case 'spAttack': return '특공'
+    case 'spDefense': return '특방'
+    case 'speed': return '스피드'
+  }
+}
+
+function natureLabel(natureId: NatureId) {
+  const nature = natureById.get(natureId)
+  if (!nature) return natureId
+  if (!nature.up || !nature.down) return `${nature.label} (무보정)`
+  return `${nature.label} (${statLabel(nature.up)}↑ ${statLabel(nature.down)}↓)`
+}
+
 function sanitizeMemberConfig(input: unknown): MemberConfig {
   const config = input && typeof input === 'object' ? (input as Partial<MemberConfig>) : {}
-  const natureBoostStat = typeof (config as { natureBoostStat?: unknown }).natureBoostStat === 'string'
-    ? (config as { natureBoostStat: MemberConfig['natureBoostStat'] }).natureBoostStat
-    : Boolean((config as { natureBoost?: unknown }).natureBoost) ? 'speed' : 'none'
+  const rawNature = typeof (config as { nature?: unknown }).nature === 'string' ? (config as { nature: NatureId }).nature : null
   return {
-    natureBoostStat,
+    nature: rawNature && natureById.has(rawNature) ? rawNature : legacyNatureFromBoostStat((config as { natureBoostStat?: unknown }).natureBoostStat),
     scarf: Boolean(config.scarf),
     speedStage: clampSpeedStage(config.speedStage),
   }
@@ -163,7 +235,6 @@ function sanitizeMemberConfig(input: unknown): MemberConfig {
 function sanitizePartyTuning(input: unknown): PartyTuning {
   const tuning = input && typeof input === 'object' ? (input as Partial<PartyTuning>) : {}
   return {
-    natureBoostStat: typeof tuning.natureBoostStat === 'string' ? tuning.natureBoostStat : 'speed',
     magicNumber: clampNonNegativeInt(tuning.magicNumber, 255),
     maxValue: clampNonNegativeInt(tuning.maxValue, 255),
   }
@@ -219,6 +290,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
+        item: typeof raw.item === 'string' ? raw.item : '',
       }
     })
     .filter((member): member is PartyMember => Boolean(member))
@@ -270,14 +342,14 @@ function loadPersistedState(): PersistedState | null {
   }
 }
 
-function actualStat(base: number, ev: number, natureBoost = false, hp = false) {
+function actualStat(base: number, ev: number, natureMultiplierValue = 1, hp = false) {
   if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + ev
   const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + ev
-  return natureBoost ? Math.floor(raw * 1.1) : raw
+  return Math.floor(raw * natureMultiplierValue)
 }
 
 function speedValue(row: Row, config: MemberConfig) {
-  let value = config.natureBoostStat === 'speed' ? row.fast : row.neutral
+  let value = natureMultiplier(config.nature, 'speed') > 1 ? row.fast : row.neutral
   if (config.speedStage > 0) {
     value = Math.floor(value * ((2 + config.speedStage) / 2))
   } else if (config.speedStage < 0) {
@@ -288,7 +360,7 @@ function speedValue(row: Row, config: MemberConfig) {
 }
 
 function partySpeedValue(row: Row, member: PartyMember) {
-  let value = actualStat(row.speed, member.evs.speed, member.config.natureBoostStat === 'speed')
+  let value = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
   else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
   if (member.config.scarf) value = Math.floor(value * 1.5)
@@ -300,15 +372,15 @@ function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues
     case 'hp':
       return actualStat(row.hp, member.evs.hp, false, true)
     case 'attack':
-      return actualStat(row.attack, member.evs.attack, member.config.natureBoostStat === 'attack')
+      return actualStat(row.attack, member.evs.attack, natureMultiplier(member.config.nature, 'attack'))
     case 'defense':
-      return actualStat(row.defense, member.evs.defense, member.config.natureBoostStat === 'defense')
+      return actualStat(row.defense, member.evs.defense, natureMultiplier(member.config.nature, 'defense'))
     case 'spAttack':
-      return actualStat(row.spAttack, member.evs.spAttack, member.config.natureBoostStat === 'spAttack')
+      return actualStat(row.spAttack, member.evs.spAttack, natureMultiplier(member.config.nature, 'spAttack'))
     case 'spDefense':
-      return actualStat(row.spDefense, member.evs.spDefense, member.config.natureBoostStat === 'spDefense')
+      return actualStat(row.spDefense, member.evs.spDefense, natureMultiplier(member.config.nature, 'spDefense'))
     case 'speed':
-      return actualStat(row.speed, member.evs.speed, member.config.natureBoostStat === 'speed')
+      return actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   }
 }
 
@@ -416,15 +488,6 @@ function LanguageIcon() {
   )
 }
 
-const NATURE_STAT_OPTIONS = [
-  ['none', '없음'],
-  ['attack', '공격'],
-  ['defense', '방어'],
-  ['spAttack', '특공'],
-  ['spDefense', '특방'],
-  ['speed', '스피드'],
-] as const
-
 export default function App() {
   const persisted = React.useMemo(() => loadPersistedState(), [])
   const [party, setParty] = React.useState<PartyMember[]>(() => sanitizeParty(persisted?.party))
@@ -484,7 +547,7 @@ export default function App() {
 
   const mySpeed = partySpeedValue(myRow, myMember)
   const oppSpeed = speedValue(oppRow, {
-    natureBoostStat: oppMember.natureBoost ? 'speed' : 'none',
+    nature: oppMember.natureBoost ? 'jolly' : 'hardy',
     scarf: oppMember.scarf || oppMember.item.includes('스카프'),
     speedStage: oppMember.speedStage,
   })
@@ -661,20 +724,19 @@ export default function App() {
             </div>
             <div className="modal-grid">
               <label>
-                성격 보정
+                성격
                 <select
-                  value={party[tuningModalIndex].tuning.natureBoostStat}
+                  value={party[tuningModalIndex].config.nature}
                   onChange={(e) => {
                     const next = [...party]
                     next[tuningModalIndex] = {
                       ...next[tuningModalIndex],
-                      tuning: { ...next[tuningModalIndex].tuning, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] },
-                      config: { ...next[tuningModalIndex].config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] },
+                      config: { ...next[tuningModalIndex].config, nature: e.target.value as NatureId },
                     }
                     setParty(next)
                   }}
                 >
-                  {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                 </select>
               </label>
               <label>
@@ -708,7 +770,7 @@ export default function App() {
             </div>
             <div className="modal-preview-box">
               <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(indexByKey.get(party[tuningModalIndex].key) ?? rows[0], siteLanguage)}</span></div>
-              <p className="muted">성격 보정: {NATURE_STAT_OPTIONS.find(([value]) => value === party[tuningModalIndex].tuning.natureBoostStat)?.[1] ?? '없음'}</p>
+              <p className="muted">성격: {natureLabel(party[tuningModalIndex].config.nature)}</p>
               <p className="muted">매직넘버: {party[tuningModalIndex].tuning.magicNumber || '미지정'} · 최대치: {party[tuningModalIndex].tuning.maxValue || '미지정'}</p>
               <p className="muted">참고 이미지 기준으로 실전에서 자주 보는 목표 실수치 메모용 UI로 맞췄습니다.</p>
             </div>
@@ -879,20 +941,29 @@ export default function App() {
                       ))}
                     </div>
                     <div className="tuning-summary muted">
-                      성격 보정 {NATURE_STAT_OPTIONS.find(([value]) => value === member.tuning.natureBoostStat)?.[1] ?? '없음'}
+                      성격 {natureLabel(member.config.nature)}
+                      {member.item ? ` · 도구 ${member.item}` : ''}
                       {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
                       {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
                     </div>
                     <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
                       <label>
-                        성격 보정
-                        <select value={member.config.natureBoostStat} onChange={(e) => {
+                        성격
+                        <select value={member.config.nature} onChange={(e) => {
                           const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] } }
+                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
                           setParty(next)
                         }}>
-                          {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                         </select>
+                      </label>
+                      <label>
+                        도구
+                        <input value={member.item} placeholder="예: 기합의띠, 구애스카프" onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, item: e.target.value }
+                          setParty(next)
+                        }} />
                       </label>
                       <label>
                         스카프
@@ -1071,10 +1142,14 @@ export default function App() {
               </div>
               <div className="inline-controls">
                 <label>
-                  성격 보정
-                  <select value={sampleForge.config.natureBoostStat} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] }, tuning: { ...prev.tuning, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] } }))}>
-                    {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  성격
+                  <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
+                    {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                   </select>
+                </label>
+                <label>
+                  도구
+                  <input value={sampleForge.item} placeholder="예: 생명의구슬" onChange={(e) => setSampleForge((prev) => ({ ...prev, item: e.target.value }))} />
                 </label>
                 <label>
                   매직넘버
@@ -1105,6 +1180,7 @@ export default function App() {
                     ))}
                   </div>
                   <p className="muted">확정: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || '아직 없음'}</p>
+                  <p className="muted">성격 {natureLabel(sampleForge.config.nature)}{sampleForge.item ? ` · 도구 ${sampleForge.item}` : ''}</p>
                   <p className="muted">매직넘버 {sampleForge.tuning.magicNumber || '미지정'} · 최대치 {sampleForge.tuning.maxValue || '미지정'}</p>
                   {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
                 </>
