@@ -1513,6 +1513,10 @@ export default function App() {
                           </div>
                         </div>
                         <div className="party-meta-grid">
+                          <div className="party-meta-chip">
+                            <span>특성</span>
+                            <strong>{activeAbility || '미선택'}</strong>
+                          </div>
                           <div className={`party-meta-chip item-meta-chip ${itemAllowed ? 'valid' : 'invalid'}`}>
                             <span>도구</span>
                             <div className="item-meta-row">
@@ -1520,10 +1524,6 @@ export default function App() {
                               <strong>{currentItem || '미선택'}</strong>
                             </div>
                             <small>{itemAllowed ? '포챔스 사용 가능' : '포챔스 사용 불가/미확인'}</small>
-                          </div>
-                          <div className="party-meta-chip">
-                            <span>특성</span>
-                            <strong>{activeAbility || '미선택'}</strong>
                           </div>
                           <div className="party-meta-chip wide">
                             <span>성격</span>
@@ -1608,21 +1608,21 @@ export default function App() {
                       ))}
                     </div>
                     <div className="tuning-summary muted">
-                      성격 {natureLabel(member.config.nature)}
+                      특성 {activeAbility || '미선택'}
                       {currentItem ? ` · 도구 ${currentItem}` : ''}
-                      {activeAbility ? ` · 특성 ${activeAbility}` : ''}
+                      {` · 성격 ${natureLabel(member.config.nature)}`}
                       {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
                       {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
                     </div>
                     <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
                       <label>
-                        성격
-                        <select value={member.config.nature} onChange={(e) => {
+                        특성
+                        <select value={activeAbility} onChange={(e) => {
                           const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
+                          next[idx] = { ...member, ability: e.target.value }
                           setParty(next)
                         }}>
-                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                          {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
                         </select>
                       </label>
                       <label>
@@ -1639,13 +1639,13 @@ export default function App() {
                         </>
                       </label>
                       <label>
-                        특성
-                        <select value={activeAbility} onChange={(e) => {
+                        성격
+                        <select value={member.config.nature} onChange={(e) => {
                           const next = [...party]
-                          next[idx] = { ...member, ability: e.target.value }
+                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
                           setParty(next)
                         }}>
-                          {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
+                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                         </select>
                       </label>
                     </div>
@@ -1976,9 +1976,9 @@ export default function App() {
               </div>
               <div className="inline-controls">
                 <label>
-                  성격
-                  <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
-                    {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                  특성
+                  <select value={sampleAbility} onChange={(e) => setSampleForge((prev) => ({ ...prev, ability: e.target.value }))}>
+                    {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
                   </select>
                 </label>
                 <label>
@@ -1991,9 +1991,9 @@ export default function App() {
                   </>
                 </label>
                 <label>
-                  특성
-                  <select value={sampleAbility} onChange={(e) => setSampleForge((prev) => ({ ...prev, ability: e.target.value }))}>
-                    {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
+                  성격
+                  <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
+                    {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                   </select>
                 </label>
                 <label>
