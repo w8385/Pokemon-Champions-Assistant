@@ -1527,7 +1527,7 @@ export default function App() {
                           </div>
                           <div className="party-meta-chip wide">
                             <span>성격</span>
-                            <strong>{natureLabel(member.config.nature)}</strong>
+                            <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
                           </div>
                         </div>
                       </div>
