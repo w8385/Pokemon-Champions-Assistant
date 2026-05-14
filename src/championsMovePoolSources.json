@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-14T17:15:02.066Z",
+    "generatedAt": "2026-05-14T17:25:44.335Z",
     "sourceOfTruth": "src/championsMovePools.json",
     "seededFrom": "src/pokemonMovePools.json",
     "purpose": "포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터"
@@ -18,6 +18,7 @@
         "mega-alakazam",
         "alakazam"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 111,
       "verificationPolicy": {
         "requiredSources": [
@@ -43,6 +44,7 @@
         "mega-aerodactyl",
         "aerodactyl"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 98,
       "verificationPolicy": {
         "requiredSources": [
@@ -68,6 +70,7 @@
         "mega-beedrill",
         "beedrill"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 83,
       "verificationPolicy": {
         "requiredSources": [
@@ -93,6 +96,7 @@
         "mega-greninja",
         "greninja"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -117,6 +121,7 @@
       "generatedFromKeys": [
         "dragapult"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 69,
       "verificationPolicy": {
         "requiredSources": [
@@ -140,6 +145,7 @@
         "mega-manectric",
         "manectric"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -165,6 +171,7 @@
         "mega-lopunny",
         "lopunny"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 104,
       "verificationPolicy": {
         "requiredSources": [
@@ -190,6 +197,7 @@
         "mega-delphox",
         "delphox"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 106,
       "verificationPolicy": {
         "requiredSources": [
@@ -214,6 +222,7 @@
       "generatedFromKeys": [
         "jolteon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 97,
       "verificationPolicy": {
         "requiredSources": [
@@ -236,6 +245,7 @@
       "generatedFromKeys": [
         "aerodactyl"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 98,
       "verificationPolicy": {
         "requiredSources": [
@@ -259,6 +269,7 @@
         "mega-gengar",
         "gengar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 124,
       "verificationPolicy": {
         "requiredSources": [
@@ -283,6 +294,7 @@
       "generatedFromKeys": [
         "talonflame"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 69,
       "verificationPolicy": {
         "requiredSources": [
@@ -305,6 +317,7 @@
       "generatedFromKeys": [
         "weavile"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
@@ -317,7 +330,7 @@
       "notes": []
     },
     "mega-meowstic": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "메가냐오닉스",
         "en": "Mega Meowstic",
@@ -328,17 +341,19 @@
         "mega-meowstic",
         "meowstic"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "meowstic-male",
+      "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
       "notes": [
-        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다.",
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
       ]
     },
     "noivern": {
@@ -352,6 +367,7 @@
       "generatedFromKeys": [
         "noivern"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 86,
       "verificationPolicy": {
         "requiredSources": [
@@ -374,6 +390,7 @@
       "generatedFromKeys": [
         "meowscarada"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 72,
       "verificationPolicy": {
         "requiredSources": [
@@ -396,6 +413,7 @@
       "generatedFromKeys": [
         "greninja"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -419,6 +437,7 @@
         "mega-pidgeot",
         "pidgeot"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 63,
       "verificationPolicy": {
         "requiredSources": [
@@ -443,6 +462,7 @@
       "generatedFromKeys": [
         "alakazam"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 111,
       "verificationPolicy": {
         "requiredSources": [
@@ -466,6 +486,7 @@
         "mega-starmie",
         "starmie"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -491,6 +512,7 @@
         "mega-froslass",
         "froslass"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -515,6 +537,7 @@
       "generatedFromKeys": [
         "sneasler"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 65,
       "verificationPolicy": {
         "requiredSources": [
@@ -537,6 +560,7 @@
       "generatedFromKeys": [
         "hawlucha"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
@@ -560,6 +584,7 @@
         "mega-hawlucha",
         "hawlucha"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
@@ -584,6 +609,7 @@
       "generatedFromKeys": [
         "salazzle"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 92,
       "verificationPolicy": {
         "requiredSources": [
@@ -606,6 +632,7 @@
       "generatedFromKeys": [
         "whimsicott"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 71,
       "verificationPolicy": {
         "requiredSources": [
@@ -628,6 +655,7 @@
       "generatedFromKeys": [
         "starmie"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -651,6 +679,7 @@
         "mega-houndoom",
         "houndoom"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -676,6 +705,7 @@
         "mega-absol",
         "absol"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 112,
       "verificationPolicy": {
         "requiredSources": [
@@ -700,6 +730,7 @@
       "generatedFromKeys": [
         "serperior"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 87,
       "verificationPolicy": {
         "requiredSources": [
@@ -712,7 +743,7 @@
       "notes": []
     },
     "lycanroc": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "루가루암",
         "en": "Lycanroc",
@@ -722,16 +753,19 @@
       "generatedFromKeys": [
         "lycanroc"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "lycanroc-midday",
+      "moveCount": 76,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-lucario": {
       "status": "seeded_from_pokeapi_baseline",
@@ -745,6 +779,7 @@
         "mega-lucario",
         "lucario"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 115,
       "verificationPolicy": {
         "requiredSources": [
@@ -759,7 +794,7 @@
       ]
     },
     "maushold": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "파밀리쥐",
         "en": "Maushold",
@@ -769,16 +804,19 @@
       "generatedFromKeys": [
         "maushold"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "maushold-family-of-four",
+      "moveCount": 49,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "raichu": {
       "status": "seeded_from_pokeapi_baseline",
@@ -791,6 +829,7 @@
       "generatedFromKeys": [
         "raichu"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 109,
       "verificationPolicy": {
         "requiredSources": [
@@ -803,7 +842,7 @@
       "notes": []
     },
     "raichu-alolan": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "알로라 라이츄",
         "en": "Raichu Alolan",
@@ -813,16 +852,19 @@
       "generatedFromKeys": [
         "raichu-alolan"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "raichu-alola",
+      "moveCount": 101,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "gengar": {
       "status": "seeded_from_pokeapi_baseline",
@@ -835,6 +877,7 @@
       "generatedFromKeys": [
         "gengar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 124,
       "verificationPolicy": {
         "requiredSources": [
@@ -857,6 +900,7 @@
       "generatedFromKeys": [
         "tauros"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 96,
       "verificationPolicy": {
         "requiredSources": [
@@ -879,6 +923,7 @@
       "generatedFromKeys": [
         "espeon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 101,
       "verificationPolicy": {
         "requiredSources": [
@@ -902,6 +947,7 @@
         "mega-skarmory",
         "skarmory"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 90,
       "verificationPolicy": {
         "requiredSources": [
@@ -926,6 +972,7 @@
       "generatedFromKeys": [
         "froslass"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -948,6 +995,7 @@
       "generatedFromKeys": [
         "zoroark-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 72,
       "verificationPolicy": {
         "requiredSources": [
@@ -971,6 +1019,7 @@
         "mega-gallade",
         "gallade"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 145,
       "verificationPolicy": {
         "requiredSources": [
@@ -985,7 +1034,7 @@
       ]
     },
     "ninetales-alolan": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "알로라 나인테일",
         "en": "Ninetales Alolan",
@@ -995,16 +1044,19 @@
       "generatedFromKeys": [
         "ninetales-alolan"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "ninetales-alola",
+      "moveCount": 94,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "heliolisk": {
       "status": "seeded_from_pokeapi_baseline",
@@ -1017,6 +1069,7 @@
       "generatedFromKeys": [
         "heliolisk"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
@@ -1039,6 +1092,7 @@
       "generatedFromKeys": [
         "infernape"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 125,
       "verificationPolicy": {
         "requiredSources": [
@@ -1061,6 +1115,7 @@
       "generatedFromKeys": [
         "liepard"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
@@ -1083,6 +1138,7 @@
       "generatedFromKeys": [
         "manectric"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -1105,6 +1161,7 @@
       "generatedFromKeys": [
         "lopunny"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 103,
       "verificationPolicy": {
         "requiredSources": [
@@ -1127,6 +1184,7 @@
       "generatedFromKeys": [
         "zoroark"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -1149,6 +1207,7 @@
       "generatedFromKeys": [
         "espathra"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 62,
       "verificationPolicy": {
         "requiredSources": [
@@ -1172,6 +1231,7 @@
         "mega-pinsir",
         "pinsir"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 85,
       "verificationPolicy": {
         "requiredSources": [
@@ -1197,6 +1257,7 @@
         "mega-sharpedo",
         "sharpedo"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 82,
       "verificationPolicy": {
         "requiredSources": [
@@ -1221,6 +1282,7 @@
       "generatedFromKeys": [
         "delphox"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 106,
       "verificationPolicy": {
         "requiredSources": [
@@ -1233,7 +1295,7 @@
       "notes": []
     },
     "meowstic": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "냐오닉스",
         "en": "Meowstic",
@@ -1243,16 +1305,19 @@
       "generatedFromKeys": [
         "meowstic"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "meowstic-male",
+      "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-excadrill": {
       "status": "seeded_from_pokeapi_baseline",
@@ -1266,6 +1331,7 @@
         "mega-excadrill",
         "excadrill"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -1290,6 +1356,7 @@
       "generatedFromKeys": [
         "emolga"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 67,
       "verificationPolicy": {
         "requiredSources": [
@@ -1312,6 +1379,7 @@
       "generatedFromKeys": [
         "garchomp"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -1334,6 +1402,7 @@
       "generatedFromKeys": [
         "furfrou"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 57,
       "verificationPolicy": {
         "requiredSources": [
@@ -1356,6 +1425,7 @@
       "generatedFromKeys": [
         "pidgeot"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 63,
       "verificationPolicy": {
         "requiredSources": [
@@ -1378,6 +1448,7 @@
       "generatedFromKeys": [
         "simisage"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 64,
       "verificationPolicy": {
         "requiredSources": [
@@ -1400,6 +1471,7 @@
       "generatedFromKeys": [
         "simisear"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 66,
       "verificationPolicy": {
         "requiredSources": [
@@ -1422,6 +1494,7 @@
       "generatedFromKeys": [
         "simipour"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 67,
       "verificationPolicy": {
         "requiredSources": [
@@ -1444,6 +1517,7 @@
       "generatedFromKeys": [
         "dedenne"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 75,
       "verificationPolicy": {
         "requiredSources": [
@@ -1467,6 +1541,7 @@
         "mega-glimmora",
         "glimmora"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 47,
       "verificationPolicy": {
         "requiredSources": [
@@ -1491,6 +1566,7 @@
       "generatedFromKeys": [
         "charizard"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 131,
       "verificationPolicy": {
         "requiredSources": [
@@ -1513,6 +1589,7 @@
       "generatedFromKeys": [
         "ninetales"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 98,
       "verificationPolicy": {
         "requiredSources": [
@@ -1525,7 +1602,7 @@
       "notes": []
     },
     "tauros-paldean": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "팔데아 켄타로스",
         "en": "Tauros Paldean",
@@ -1535,16 +1612,19 @@
       "generatedFromKeys": [
         "tauros-paldean"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "tauros-paldea-combat-breed",
+      "moveCount": 50,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-dragonite": {
       "status": "seeded_from_pokeapi_baseline",
@@ -1558,6 +1638,7 @@
         "mega-dragonite",
         "dragonite"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 138,
       "verificationPolicy": {
         "requiredSources": [
@@ -1582,6 +1663,7 @@
       "generatedFromKeys": [
         "typhlosion"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 111,
       "verificationPolicy": {
         "requiredSources": [
@@ -1604,6 +1686,7 @@
       "generatedFromKeys": [
         "volcarona"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 78,
       "verificationPolicy": {
         "requiredSources": [
@@ -1616,7 +1699,7 @@
       "notes": []
     },
     "palafin": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "돌핀맨",
         "en": "Palafin",
@@ -1626,19 +1709,22 @@
       "generatedFromKeys": [
         "palafin"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "palafin-zero",
+      "moveCount": 62,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-charizard-x": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "메가리자몽 X",
         "en": "Mega Charizard X",
@@ -1649,21 +1735,23 @@
         "mega-charizard-x",
         "charizard-x"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "charizard-mega-x",
+      "moveCount": 83,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
       "notes": [
-        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다.",
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
       ]
     },
     "mega-charizard-y": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "메가리자몽 Y",
         "en": "Mega Charizard Y",
@@ -1674,17 +1762,19 @@
         "mega-charizard-y",
         "charizard-y"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "charizard-mega-y",
+      "moveCount": 83,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
       "notes": [
-        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다.",
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
       ]
     },
     "mega-kangaskhan": {
@@ -1699,6 +1789,7 @@
         "mega-kangaskhan",
         "kangaskhan"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 122,
       "verificationPolicy": {
         "requiredSources": [
@@ -1724,6 +1815,7 @@
         "mega-gardevoir",
         "gardevoir"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 115,
       "verificationPolicy": {
         "requiredSources": [
@@ -1749,6 +1841,7 @@
         "mega-medicham",
         "medicham"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 109,
       "verificationPolicy": {
         "requiredSources": [
@@ -1774,6 +1867,7 @@
         "mega-glalie",
         "glalie"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 80,
       "verificationPolicy": {
         "requiredSources": [
@@ -1798,6 +1892,7 @@
       "generatedFromKeys": [
         "hydreigon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 104,
       "verificationPolicy": {
         "requiredSources": [
@@ -1810,7 +1905,7 @@
       "notes": []
     },
     "morpeko": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "모르페코",
         "en": "Morpeko",
@@ -1820,19 +1915,22 @@
       "generatedFromKeys": [
         "morpeko"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "morpeko-full-belly",
+      "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mimikyu": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "따라큐",
         "en": "Mimikyu",
@@ -1842,16 +1940,19 @@
       "generatedFromKeys": [
         "mimikyu"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "mimikyu-disguised",
+      "moveCount": 87,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "arcanine": {
       "status": "seeded_from_pokeapi_baseline",
@@ -1864,6 +1965,7 @@
       "generatedFromKeys": [
         "arcanine"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 90,
       "verificationPolicy": {
         "requiredSources": [
@@ -1886,6 +1988,7 @@
       "generatedFromKeys": [
         "typhlosion-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -1908,6 +2011,7 @@
       "generatedFromKeys": [
         "houndoom"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -1930,6 +2034,7 @@
       "generatedFromKeys": [
         "sharpedo"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 82,
       "verificationPolicy": {
         "requiredSources": [
@@ -1952,6 +2057,7 @@
       "generatedFromKeys": [
         "leafeon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 90,
       "verificationPolicy": {
         "requiredSources": [
@@ -1974,6 +2080,7 @@
       "generatedFromKeys": [
         "gliscor"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 110,
       "verificationPolicy": {
         "requiredSources": [
@@ -1996,6 +2103,7 @@
       "generatedFromKeys": [
         "tinkaton"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 49,
       "verificationPolicy": {
         "requiredSources": [
@@ -2018,6 +2126,7 @@
       "generatedFromKeys": [
         "krookodile"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 106,
       "verificationPolicy": {
         "requiredSources": [
@@ -2030,7 +2139,7 @@
       "notes": []
     },
     "mega-floette": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "메가플라엣테",
         "en": "Mega Floette",
@@ -2041,21 +2150,23 @@
         "mega-floette",
         "floette"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "floette-eternal",
+      "moveCount": 53,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
       "notes": [
-        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다.",
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
       ]
     },
     "floette-eternal-flower": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "플라엣테",
         "en": "Floette Eternal Flower",
@@ -2065,16 +2176,19 @@
       "generatedFromKeys": [
         "floette-eternal-flower"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "floette-eternal",
+      "moveCount": 53,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-garchomp": {
       "status": "seeded_from_pokeapi_baseline",
@@ -2088,6 +2202,7 @@
         "mega-garchomp",
         "garchomp"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -2112,6 +2227,7 @@
       "generatedFromKeys": [
         "rotom"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 66,
       "verificationPolicy": {
         "requiredSources": [
@@ -2134,6 +2250,7 @@
       "generatedFromKeys": [
         "pikachu"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 105,
       "verificationPolicy": {
         "requiredSources": [
@@ -2156,6 +2273,7 @@
       "generatedFromKeys": [
         "arcanine-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 68,
       "verificationPolicy": {
         "requiredSources": [
@@ -2178,6 +2296,7 @@
       "generatedFromKeys": [
         "kangaskhan"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 122,
       "verificationPolicy": {
         "requiredSources": [
@@ -2200,6 +2319,7 @@
       "generatedFromKeys": [
         "roserade"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -2222,6 +2342,7 @@
       "generatedFromKeys": [
         "lucario"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 115,
       "verificationPolicy": {
         "requiredSources": [
@@ -2245,6 +2366,7 @@
         "mega-chandelure",
         "chandelure"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 75,
       "verificationPolicy": {
         "requiredSources": [
@@ -2269,6 +2391,7 @@
       "generatedFromKeys": [
         "vivillon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 67,
       "verificationPolicy": {
         "requiredSources": [
@@ -2291,6 +2414,7 @@
       "generatedFromKeys": [
         "excadrill"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -2313,6 +2437,7 @@
       "generatedFromKeys": [
         "glimmora"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 47,
       "verificationPolicy": {
         "requiredSources": [
@@ -2335,6 +2460,7 @@
       "generatedFromKeys": [
         "pinsir"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 85,
       "verificationPolicy": {
         "requiredSources": [
@@ -2357,6 +2483,7 @@
       "generatedFromKeys": [
         "heracross"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 99,
       "verificationPolicy": {
         "requiredSources": [
@@ -2379,6 +2506,7 @@
       "generatedFromKeys": [
         "toxicroak"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
@@ -2401,6 +2529,7 @@
       "generatedFromKeys": [
         "samurott-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 66,
       "verificationPolicy": {
         "requiredSources": [
@@ -2423,6 +2552,7 @@
       "generatedFromKeys": [
         "kommo-o"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 107,
       "verificationPolicy": {
         "requiredSources": [
@@ -2445,6 +2575,7 @@
       "generatedFromKeys": [
         "kleavor"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 56,
       "verificationPolicy": {
         "requiredSources": [
@@ -2467,6 +2598,7 @@
       "generatedFromKeys": [
         "quaquaval"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 65,
       "verificationPolicy": {
         "requiredSources": [
@@ -2489,6 +2621,7 @@
       "generatedFromKeys": [
         "ceruledge"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 58,
       "verificationPolicy": {
         "requiredSources": [
@@ -2511,6 +2644,7 @@
       "generatedFromKeys": [
         "archaludon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 59,
       "verificationPolicy": {
         "requiredSources": [
@@ -2523,7 +2657,7 @@
       "notes": []
     },
     "gourgeist": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "펌킨인",
         "en": "Gourgeist",
@@ -2533,16 +2667,19 @@
       "generatedFromKeys": [
         "gourgeist"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "gourgeist-average",
+      "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "gyarados": {
       "status": "seeded_from_pokeapi_baseline",
@@ -2555,6 +2692,7 @@
       "generatedFromKeys": [
         "gyarados"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 102,
       "verificationPolicy": {
         "requiredSources": [
@@ -2577,6 +2715,7 @@
       "generatedFromKeys": [
         "milotic"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 90,
       "verificationPolicy": {
         "requiredSources": [
@@ -2600,6 +2739,7 @@
         "mega-gyarados",
         "gyarados"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 102,
       "verificationPolicy": {
         "requiredSources": [
@@ -2624,6 +2764,7 @@
       "generatedFromKeys": [
         "venusaur"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 96,
       "verificationPolicy": {
         "requiredSources": [
@@ -2646,6 +2787,7 @@
       "generatedFromKeys": [
         "arbok"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 102,
       "verificationPolicy": {
         "requiredSources": [
@@ -2668,6 +2810,7 @@
       "generatedFromKeys": [
         "dragonite"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 138,
       "verificationPolicy": {
         "requiredSources": [
@@ -2690,6 +2833,7 @@
       "generatedFromKeys": [
         "meganium"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 92,
       "verificationPolicy": {
         "requiredSources": [
@@ -2713,6 +2857,7 @@
         "mega-meganium",
         "meganium"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 92,
       "verificationPolicy": {
         "requiredSources": [
@@ -2737,6 +2882,7 @@
       "generatedFromKeys": [
         "gardevoir"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 115,
       "verificationPolicy": {
         "requiredSources": [
@@ -2759,6 +2905,7 @@
       "generatedFromKeys": [
         "medicham"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 109,
       "verificationPolicy": {
         "requiredSources": [
@@ -2781,6 +2928,7 @@
       "generatedFromKeys": [
         "altaria"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -2803,6 +2951,7 @@
       "generatedFromKeys": [
         "glalie"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 80,
       "verificationPolicy": {
         "requiredSources": [
@@ -2825,6 +2974,7 @@
       "generatedFromKeys": [
         "mamoswine"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
@@ -2847,6 +2997,7 @@
       "generatedFromKeys": [
         "gallade"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 145,
       "verificationPolicy": {
         "requiredSources": [
@@ -2869,6 +3020,7 @@
       "generatedFromKeys": [
         "chandelure"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 75,
       "verificationPolicy": {
         "requiredSources": [
@@ -2891,6 +3043,7 @@
       "generatedFromKeys": [
         "goodra"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 86,
       "verificationPolicy": {
         "requiredSources": [
@@ -2913,6 +3066,7 @@
       "generatedFromKeys": [
         "passimian"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
@@ -2936,6 +3090,7 @@
         "mega-venusaur",
         "venusaur"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 96,
       "verificationPolicy": {
         "requiredSources": [
@@ -2961,6 +3116,7 @@
         "mega-altaria",
         "altaria"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -2985,6 +3141,7 @@
       "generatedFromKeys": [
         "vanilluxe"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 52,
       "verificationPolicy": {
         "requiredSources": [
@@ -3007,6 +3164,7 @@
       "generatedFromKeys": [
         "blastoise"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 120,
       "verificationPolicy": {
         "requiredSources": [
@@ -3030,6 +3188,7 @@
         "mega-feraligatr",
         "feraligatr"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 117,
       "verificationPolicy": {
         "requiredSources": [
@@ -3054,6 +3213,7 @@
       "generatedFromKeys": [
         "feraligatr"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 117,
       "verificationPolicy": {
         "requiredSources": [
@@ -3076,6 +3236,7 @@
       "generatedFromKeys": [
         "diggersby"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -3088,7 +3249,7 @@
       "notes": []
     },
     "basculegion": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "대쓰여너",
         "en": "Basculegion",
@@ -3098,16 +3259,19 @@
       "generatedFromKeys": [
         "basculegion"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "basculegion-male",
+      "moveCount": 54,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "mega-blastoise": {
       "status": "seeded_from_pokeapi_baseline",
@@ -3121,6 +3285,7 @@
         "mega-blastoise",
         "blastoise"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 120,
       "verificationPolicy": {
         "requiredSources": [
@@ -3145,6 +3310,7 @@
       "generatedFromKeys": [
         "watchog"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
@@ -3167,6 +3333,7 @@
       "generatedFromKeys": [
         "beedrill"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 83,
       "verificationPolicy": {
         "requiredSources": [
@@ -3189,6 +3356,7 @@
       "generatedFromKeys": [
         "absol"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 112,
       "verificationPolicy": {
         "requiredSources": [
@@ -3212,6 +3380,7 @@
         "mega-emboar",
         "emboar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 102,
       "verificationPolicy": {
         "requiredSources": [
@@ -3236,6 +3405,7 @@
       "generatedFromKeys": [
         "garbodor"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 66,
       "verificationPolicy": {
         "requiredSources": [
@@ -3258,6 +3428,7 @@
       "generatedFromKeys": [
         "florges"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -3280,6 +3451,7 @@
       "generatedFromKeys": [
         "klefki"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 65,
       "verificationPolicy": {
         "requiredSources": [
@@ -3302,6 +3474,7 @@
       "generatedFromKeys": [
         "armarouge"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 58,
       "verificationPolicy": {
         "requiredSources": [
@@ -3325,6 +3498,7 @@
         "mega-scovillain",
         "scovillain"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 47,
       "verificationPolicy": {
         "requiredSources": [
@@ -3349,6 +3523,7 @@
       "generatedFromKeys": [
         "scovillain"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 47,
       "verificationPolicy": {
         "requiredSources": [
@@ -3372,6 +3547,7 @@
         "mega-scizor",
         "scizor"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 97,
       "verificationPolicy": {
         "requiredSources": [
@@ -3397,6 +3573,7 @@
         "mega-heracross",
         "heracross"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 99,
       "verificationPolicy": {
         "requiredSources": [
@@ -3422,6 +3599,7 @@
         "mega-banette",
         "banette"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -3446,6 +3624,7 @@
       "generatedFromKeys": [
         "slurpuff"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 60,
       "verificationPolicy": {
         "requiredSources": [
@@ -3468,6 +3647,7 @@
       "generatedFromKeys": [
         "tsareena"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
@@ -3490,6 +3670,7 @@
       "generatedFromKeys": [
         "tyrantrum"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 78,
       "verificationPolicy": {
         "requiredSources": [
@@ -3512,6 +3693,7 @@
       "generatedFromKeys": [
         "sandaconda"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 53,
       "verificationPolicy": {
         "requiredSources": [
@@ -3535,6 +3717,7 @@
         "mega-tyranitar",
         "tyranitar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 134,
       "verificationPolicy": {
         "requiredSources": [
@@ -3560,6 +3743,7 @@
         "mega-clefable",
         "clefable"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 163,
       "verificationPolicy": {
         "requiredSources": [
@@ -3585,6 +3769,7 @@
         "mega-victreebel",
         "victreebel"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 89,
       "verificationPolicy": {
         "requiredSources": [
@@ -3609,6 +3794,7 @@
       "generatedFromKeys": [
         "victreebel"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 89,
       "verificationPolicy": {
         "requiredSources": [
@@ -3631,6 +3817,7 @@
       "generatedFromKeys": [
         "politoed"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 92,
       "verificationPolicy": {
         "requiredSources": [
@@ -3653,6 +3840,7 @@
       "generatedFromKeys": [
         "skarmory"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 90,
       "verificationPolicy": {
         "requiredSources": [
@@ -3675,6 +3863,7 @@
       "generatedFromKeys": [
         "castform"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -3697,6 +3886,7 @@
       "generatedFromKeys": [
         "luxray"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 76,
       "verificationPolicy": {
         "requiredSources": [
@@ -3719,6 +3909,7 @@
       "generatedFromKeys": [
         "samurott"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -3741,6 +3932,7 @@
       "generatedFromKeys": [
         "decidueye"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
@@ -3763,6 +3955,7 @@
       "generatedFromKeys": [
         "flapple"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 52,
       "verificationPolicy": {
         "requiredSources": [
@@ -3785,6 +3978,7 @@
       "generatedFromKeys": [
         "polteageist"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 54,
       "verificationPolicy": {
         "requiredSources": [
@@ -3797,7 +3991,7 @@
       "notes": []
     },
     "mr.-rime": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "마임꽁꽁",
         "en": "Mr. Rime",
@@ -3807,16 +4001,19 @@
       "generatedFromKeys": [
         "mr.-rime"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "mr-rime",
+      "moveCount": 89,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "sinistcha": {
       "status": "seeded_from_pokeapi_baseline",
@@ -3829,6 +4026,7 @@
       "generatedFromKeys": [
         "sinistcha"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 41,
       "verificationPolicy": {
         "requiredSources": [
@@ -3851,6 +4049,7 @@
       "generatedFromKeys": [
         "corviknight"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 68,
       "verificationPolicy": {
         "requiredSources": [
@@ -3873,6 +4072,7 @@
       "generatedFromKeys": [
         "skeledirge"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 61,
       "verificationPolicy": {
         "requiredSources": [
@@ -3895,6 +4095,7 @@
       "generatedFromKeys": [
         "vaporeon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 98,
       "verificationPolicy": {
         "requiredSources": [
@@ -3917,6 +4118,7 @@
       "generatedFromKeys": [
         "flareon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 94,
       "verificationPolicy": {
         "requiredSources": [
@@ -3939,6 +4141,7 @@
       "generatedFromKeys": [
         "umbreon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 99,
       "verificationPolicy": {
         "requiredSources": [
@@ -3961,6 +4164,7 @@
       "generatedFromKeys": [
         "scizor"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 97,
       "verificationPolicy": {
         "requiredSources": [
@@ -3983,6 +4187,7 @@
       "generatedFromKeys": [
         "pelipper"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 87,
       "verificationPolicy": {
         "requiredSources": [
@@ -4005,6 +4210,7 @@
       "generatedFromKeys": [
         "banette"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 93,
       "verificationPolicy": {
         "requiredSources": [
@@ -4028,6 +4234,7 @@
         "mega-chimecho",
         "chimecho"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 103,
       "verificationPolicy": {
         "requiredSources": [
@@ -4052,6 +4259,7 @@
       "generatedFromKeys": [
         "chimecho"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 103,
       "verificationPolicy": {
         "requiredSources": [
@@ -4074,6 +4282,7 @@
       "generatedFromKeys": [
         "glaceon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 87,
       "verificationPolicy": {
         "requiredSources": [
@@ -4096,6 +4305,7 @@
       "generatedFromKeys": [
         "emboar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 102,
       "verificationPolicy": {
         "requiredSources": [
@@ -4118,6 +4328,7 @@
       "generatedFromKeys": [
         "wyrdeer"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 68,
       "verificationPolicy": {
         "requiredSources": [
@@ -4140,6 +4351,7 @@
       "generatedFromKeys": [
         "orthworm"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 44,
       "verificationPolicy": {
         "requiredSources": [
@@ -4162,6 +4374,7 @@
       "generatedFromKeys": [
         "chesnaught"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 117,
       "verificationPolicy": {
         "requiredSources": [
@@ -4184,6 +4397,7 @@
       "generatedFromKeys": [
         "alcremie"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 55,
       "verificationPolicy": {
         "requiredSources": [
@@ -4206,6 +4420,7 @@
       "generatedFromKeys": [
         "tyranitar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 134,
       "verificationPolicy": {
         "requiredSources": [
@@ -4228,6 +4443,7 @@
       "generatedFromKeys": [
         "clefable"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 163,
       "verificationPolicy": {
         "requiredSources": [
@@ -4250,6 +4466,7 @@
       "generatedFromKeys": [
         "empoleon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 118,
       "verificationPolicy": {
         "requiredSources": [
@@ -4272,6 +4489,7 @@
       "generatedFromKeys": [
         "abomasnow"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -4284,7 +4502,7 @@
       "notes": []
     },
     "aegislash": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "킬가르도",
         "en": "Aegislash",
@@ -4294,16 +4512,19 @@
       "generatedFromKeys": [
         "aegislash"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "aegislash-shield",
+      "moveCount": 62,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "sylveon": {
       "status": "seeded_from_pokeapi_baseline",
@@ -4316,6 +4537,7 @@
       "generatedFromKeys": [
         "sylveon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 80,
       "verificationPolicy": {
         "requiredSources": [
@@ -4338,6 +4560,7 @@
       "generatedFromKeys": [
         "goodra-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 69,
       "verificationPolicy": {
         "requiredSources": [
@@ -4360,6 +4583,7 @@
       "generatedFromKeys": [
         "decidueye-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 79,
       "verificationPolicy": {
         "requiredSources": [
@@ -4382,6 +4606,7 @@
       "generatedFromKeys": [
         "incineroar"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 106,
       "verificationPolicy": {
         "requiredSources": [
@@ -4404,6 +4629,7 @@
       "generatedFromKeys": [
         "primarina"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -4426,6 +4652,7 @@
       "generatedFromKeys": [
         "toucannon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 71,
       "verificationPolicy": {
         "requiredSources": [
@@ -4448,6 +4675,7 @@
       "generatedFromKeys": [
         "oranguru"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
@@ -4470,6 +4698,7 @@
       "generatedFromKeys": [
         "farigiraf"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -4492,6 +4721,7 @@
       "generatedFromKeys": [
         "clawitzer"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 73,
       "verificationPolicy": {
         "requiredSources": [
@@ -4514,6 +4744,7 @@
       "generatedFromKeys": [
         "rampardos"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 105,
       "verificationPolicy": {
         "requiredSources": [
@@ -4536,6 +4767,7 @@
       "generatedFromKeys": [
         "pangoro"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 112,
       "verificationPolicy": {
         "requiredSources": [
@@ -4558,6 +4790,7 @@
       "generatedFromKeys": [
         "aurorus"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 78,
       "verificationPolicy": {
         "requiredSources": [
@@ -4580,6 +4813,7 @@
       "generatedFromKeys": [
         "torterra"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 106,
       "verificationPolicy": {
         "requiredSources": [
@@ -4602,6 +4836,7 @@
       "generatedFromKeys": [
         "trevenant"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 99,
       "verificationPolicy": {
         "requiredSources": [
@@ -4624,6 +4859,7 @@
       "generatedFromKeys": [
         "machamp"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 105,
       "verificationPolicy": {
         "requiredSources": [
@@ -4646,6 +4882,7 @@
       "generatedFromKeys": [
         "ampharos"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -4668,6 +4905,7 @@
       "generatedFromKeys": [
         "golurk"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 105,
       "verificationPolicy": {
         "requiredSources": [
@@ -4691,6 +4929,7 @@
         "mega-golurk",
         "golurk"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 105,
       "verificationPolicy": {
         "requiredSources": [
@@ -4715,6 +4954,7 @@
       "generatedFromKeys": [
         "azumarill"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -4737,6 +4977,7 @@
       "generatedFromKeys": [
         "sableye"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 135,
       "verificationPolicy": {
         "requiredSources": [
@@ -4759,6 +5000,7 @@
       "generatedFromKeys": [
         "aggron"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 121,
       "verificationPolicy": {
         "requiredSources": [
@@ -4781,6 +5023,7 @@
       "generatedFromKeys": [
         "audino"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 107,
       "verificationPolicy": {
         "requiredSources": [
@@ -4803,6 +5046,7 @@
       "generatedFromKeys": [
         "beartic"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -4825,6 +5069,7 @@
       "generatedFromKeys": [
         "kingambit"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 61,
       "verificationPolicy": {
         "requiredSources": [
@@ -4848,6 +5093,7 @@
         "mega-aggron",
         "aggron"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 121,
       "verificationPolicy": {
         "requiredSources": [
@@ -4873,6 +5119,7 @@
         "mega-audino",
         "audino"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 107,
       "verificationPolicy": {
         "requiredSources": [
@@ -4897,6 +5144,7 @@
       "generatedFromKeys": [
         "ditto"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 1,
       "verificationPolicy": {
         "requiredSources": [
@@ -4919,6 +5167,7 @@
       "generatedFromKeys": [
         "hippowdon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -4941,6 +5190,7 @@
       "generatedFromKeys": [
         "conkeldurr"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 86,
       "verificationPolicy": {
         "requiredSources": [
@@ -4963,6 +5213,7 @@
       "generatedFromKeys": [
         "bellibolt"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 43,
       "verificationPolicy": {
         "requiredSources": [
@@ -4986,6 +5237,7 @@
         "mega-ampharos",
         "ampharos"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -5011,6 +5263,7 @@
         "mega-chesnaught",
         "chesnaught"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 117,
       "verificationPolicy": {
         "requiredSources": [
@@ -5035,6 +5288,7 @@
       "generatedFromKeys": [
         "hydrapple"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 59,
       "verificationPolicy": {
         "requiredSources": [
@@ -5057,6 +5311,7 @@
       "generatedFromKeys": [
         "crabominable"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 84,
       "verificationPolicy": {
         "requiredSources": [
@@ -5079,6 +5334,7 @@
       "generatedFromKeys": [
         "araquanid"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 70,
       "verificationPolicy": {
         "requiredSources": [
@@ -5101,6 +5357,7 @@
       "generatedFromKeys": [
         "ariados"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 85,
       "verificationPolicy": {
         "requiredSources": [
@@ -5123,6 +5380,7 @@
       "generatedFromKeys": [
         "forretress"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 97,
       "verificationPolicy": {
         "requiredSources": [
@@ -5145,6 +5403,7 @@
       "generatedFromKeys": [
         "camerupt"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
@@ -5167,6 +5426,7 @@
       "generatedFromKeys": [
         "rhyperior"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 128,
       "verificationPolicy": {
         "requiredSources": [
@@ -5189,6 +5449,7 @@
       "generatedFromKeys": [
         "avalugg-hisui"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 58,
       "verificationPolicy": {
         "requiredSources": [
@@ -5212,6 +5473,7 @@
         "mega-drampa",
         "drampa"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -5236,6 +5498,7 @@
       "generatedFromKeys": [
         "drampa"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -5258,6 +5521,7 @@
       "generatedFromKeys": [
         "spiritomb"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 86,
       "verificationPolicy": {
         "requiredSources": [
@@ -5280,6 +5544,7 @@
       "generatedFromKeys": [
         "toxapex"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 73,
       "verificationPolicy": {
         "requiredSources": [
@@ -5302,6 +5567,7 @@
       "generatedFromKeys": [
         "mudsdale"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 62,
       "verificationPolicy": {
         "requiredSources": [
@@ -5324,6 +5590,7 @@
       "generatedFromKeys": [
         "garganacl"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 57,
       "verificationPolicy": {
         "requiredSources": [
@@ -5347,6 +5614,7 @@
         "mega-crabominable",
         "crabominable"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 84,
       "verificationPolicy": {
         "requiredSources": [
@@ -5361,7 +5629,7 @@
       ]
     },
     "stunfisk-galarian": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "가라르 메더",
         "en": "Stunfisk Galarian",
@@ -5371,16 +5639,19 @@
       "generatedFromKeys": [
         "stunfisk-galarian"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "stunfisk-galar",
+      "moveCount": 57,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "stunfisk": {
       "status": "seeded_from_pokeapi_baseline",
@@ -5393,6 +5664,7 @@
       "generatedFromKeys": [
         "stunfisk"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -5405,7 +5677,7 @@
       "notes": []
     },
     "slowbro-galarian": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "가라르 야도란",
         "en": "Slowbro Galarian",
@@ -5415,16 +5687,19 @@
       "generatedFromKeys": [
         "slowbro-galarian"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "slowbro-galar",
+      "moveCount": 107,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "slowbro": {
       "status": "seeded_from_pokeapi_baseline",
@@ -5437,6 +5712,7 @@
       "generatedFromKeys": [
         "slowbro"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 135,
       "verificationPolicy": {
         "requiredSources": [
@@ -5459,6 +5735,7 @@
       "generatedFromKeys": [
         "snorlax"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 137,
       "verificationPolicy": {
         "requiredSources": [
@@ -5471,7 +5748,7 @@
       "notes": []
     },
     "slowking-galarian": {
-      "status": "missing",
+      "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
         "ko": "가라르 야도킹",
         "en": "Slowking Galarian",
@@ -5481,16 +5758,19 @@
       "generatedFromKeys": [
         "slowking-galarian"
       ],
-      "moveCount": 0,
+      "fetchedPokemonApiCandidate": "slowking-galar",
+      "moveCount": 108,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
           "PokemonDB",
           "Serebii"
         ],
-        "currentState": "No seeded move pool present; manual verification required first."
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
       },
-      "notes": []
+      "notes": [
+        "baseline 비어 있는 종은 PokeAPI 별칭 후보에서 추가 시드 생성했습니다."
+      ]
     },
     "slowking": {
       "status": "seeded_from_pokeapi_baseline",
@@ -5503,6 +5783,7 @@
       "generatedFromKeys": [
         "slowking"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 134,
       "verificationPolicy": {
         "requiredSources": [
@@ -5525,6 +5806,7 @@
       "generatedFromKeys": [
         "steelix"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 96,
       "verificationPolicy": {
         "requiredSources": [
@@ -5547,6 +5829,7 @@
       "generatedFromKeys": [
         "bastiodon"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -5569,6 +5852,7 @@
       "generatedFromKeys": [
         "cofagrigus"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 77,
       "verificationPolicy": {
         "requiredSources": [
@@ -5591,6 +5875,7 @@
       "generatedFromKeys": [
         "reuniclus"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 100,
       "verificationPolicy": {
         "requiredSources": [
@@ -5613,6 +5898,7 @@
       "generatedFromKeys": [
         "appletun"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 60,
       "verificationPolicy": {
         "requiredSources": [
@@ -5635,6 +5921,7 @@
       "generatedFromKeys": [
         "runerigus"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 67,
       "verificationPolicy": {
         "requiredSources": [
@@ -5658,6 +5945,7 @@
         "mega-abomasnow",
         "abomasnow"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
@@ -5683,6 +5971,7 @@
         "mega-slowbro",
         "slowbro"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 135,
       "verificationPolicy": {
         "requiredSources": [
@@ -5708,6 +5997,7 @@
         "mega-steelix",
         "steelix"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 96,
       "verificationPolicy": {
         "requiredSources": [
@@ -5732,6 +6022,7 @@
       "generatedFromKeys": [
         "aromatisse"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 67,
       "verificationPolicy": {
         "requiredSources": [
@@ -5754,6 +6045,7 @@
       "generatedFromKeys": [
         "hatterene"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 66,
       "verificationPolicy": {
         "requiredSources": [
@@ -5776,6 +6068,7 @@
       "generatedFromKeys": [
         "avalugg"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 74,
       "verificationPolicy": {
         "requiredSources": [
@@ -5799,6 +6092,7 @@
         "mega-sableye",
         "sableye"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 135,
       "verificationPolicy": {
         "requiredSources": [
@@ -5823,6 +6117,7 @@
       "generatedFromKeys": [
         "torkoal"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
@@ -5846,6 +6141,7 @@
         "mega-camerupt",
         "camerupt"
       ],
+      "fetchedPokemonApiCandidate": null,
       "moveCount": 91,
       "verificationPolicy": {
         "requiredSources": [
