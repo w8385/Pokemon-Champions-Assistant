@@ -1746,13 +1746,6 @@ export default function App() {
                         </button>
                       ))}
                     </div>
-                    <div className="tuning-summary muted">
-                      특성 {activeAbility || '미선택'}
-                      {currentItem ? ` · 도구 ${currentItem}` : ''}
-                      {` · 성격 ${natureLabel(member.config.nature)}`}
-                      {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
-                      {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
-                    </div>
                     <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
                       <label>
                         특성
