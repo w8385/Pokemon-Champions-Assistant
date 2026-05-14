@@ -711,7 +711,6 @@ export default function App() {
     if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
-    setPartyAdvancedOpen((prev) => party.map((_, idx) => prev[idx] ?? false))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
@@ -925,7 +924,6 @@ export default function App() {
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
     setSampleLabelDraft('')
-    setPartyAdvancedOpen(Array.from({ length: defaultParty.length }, () => false))
     if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -974,7 +972,6 @@ export default function App() {
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
-      setPartyAdvancedOpen(Array.from({ length: nextParty.length }, () => false))
     } catch {
       if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
     } finally {
