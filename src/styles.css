@@ -634,6 +634,26 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .sample-tuning-inline {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+.sample-action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.sample-action-row .action-button {
+  min-height: 42px;
+}
+.sample-apply-strip {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+.sample-slot-strip .team-pill {
+  min-height: 38px;
+}
+.sample-summary-badges {
+  margin-top: 12px;
+}
 .sample-hero {
   display: flex;
   gap: 12px;
@@ -1709,6 +1729,8 @@ textarea { min-height: 72px; resize: vertical; }
   .drag-stat-list { grid-template-columns: 1fr; }
   .sample-builder-grid { grid-template-columns: 1fr; }
   .sample-tuning-inline { grid-template-columns: 1fr; }
+  .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .sample-action-row .action-button { width: 100%; }
   .quick-opponent-search-bar { grid-template-columns: 1fr; }
   .opponent-detail-layout { grid-template-columns: 1fr; }
   .opponent-board-grid { grid-template-columns: 1fr; }

@@ -2789,14 +2789,30 @@ export default function App() {
                   {lt('샘플 이름')}
                   <input value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
                 </label>
-                <div className="inline-controls">
+                <div className="sample-action-row">
+                  <button type="button" className="action-button" onClick={() => {
+                    applySampleToPartySlot(selectedMy)
+                    setTuningModalIndex(selectedMy)
+                  }}>{lt('노력치 보정')}</button>
                   <button type="button" className="action-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
-                  <label>
-                    {lt('파티 슬롯에 적용')}
-                    <select value={selectedMy} onChange={(e) => applySampleToPartySlot(Number(e.target.value))}>
-                      {party.map((member, idx) => <option key={`apply-slot-${idx}`} value={idx}>{siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番スロット` : `${idx + 1}번 슬롯`} · {displayName(indexByKey.get(member.key) ?? rows[0], siteLanguage)}</option>)}
-                    </select>
-                  </label>
+                </div>
+                <div className="sample-apply-strip">
+                  <span className="muted-inline">{lt('파티 슬롯에 적용')}</span>
+                  <div className="team-strip sample-slot-strip">
+                    {party.map((member, idx) => {
+                      const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                      return (
+                        <button
+                          key={`apply-slot-pill-${idx}`}
+                          type="button"
+                          className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
+                          onClick={() => applySampleToPartySlot(idx)}
+                        >
+                          {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
               {sampleMoveSet ? (
@@ -2849,9 +2865,11 @@ export default function App() {
                       <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
                     ))}
                   </div>
-                  <p className="muted">{lt('확정')}: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || lt('아직 없음')}</p>
-                  <p className="muted">{lt('성격')} {natureLabel(sampleForge.config.nature, siteLanguage)}{sampleForge.item ? ` · ${lt('도구')} ${displayItemLabel(sampleForge.item, siteLanguage)}` : ''}</p>
-                  <p className="muted">{lt('매직넘버')} {sampleForge.tuning.magicNumber || lt('미지정')} · {lt('최대치')} {sampleForge.tuning.maxValue || lt('미지정')}</p>
+                  <div className="pick-summary-badges sample-summary-badges">
+                    <span className="pick-badge">{lt('확정')} {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || lt('아직 없음')}</span>
+                    <span className="pick-badge">{lt('성격')} {natureLabel(sampleForge.config.nature, siteLanguage)}</span>
+                    {sampleForge.item ? <span className="pick-badge">{lt('도구')} {displayItemLabel(sampleForge.item, siteLanguage)}</span> : null}
+                  </div>
                   {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
                 </>
               ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
