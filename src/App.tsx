@@ -54,6 +54,7 @@ type PartyMember = {
   evs: EffortValues
   tuning: PartyTuning
   item: string
+  ability: string
 }
 
 type OpponentState = {
@@ -118,8 +119,8 @@ const speciesOptions = rows.map((row) => ({
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
 
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
-const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' }))
-const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '' })
+const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: defaultAbilityForKey(key) }))
+const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: defaultAbilityForKey(starterKeys[0]) })
 const blankOpponent = (): OpponentState => ({
   key: '',
   item: '',
@@ -446,6 +447,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
         item: typeof raw.item === 'string' ? raw.item : '',
+        ability: typeof raw.ability === 'string' ? raw.ability : defaultAbilityForKey(raw.key),
       }
     })
     .filter((member): member is PartyMember => Boolean(member))
@@ -723,6 +725,18 @@ function displayTypes(row: Row, language: SiteLanguage) {
   return row.types_ko
 }
 
+function displayAbilities(row: Row, language: SiteLanguage) {
+  if (language === 'en') return row.abilities
+  if (language === 'ja') return row.abilities
+  return row.abilities_ko
+}
+
+function defaultAbilityForKey(key: string) {
+  const row = indexByKey.get(key)
+  if (!row) return ''
+  return row.abilities_ko[0] || row.abilities[0] || ''
+}
+
 function searchDisplayLabel(key: string, language: SiteLanguage) {
   const row = indexByKey.get(key)
   if (!row) return key
@@ -900,7 +914,7 @@ export default function App() {
       const member = party[idx]
       if (!member) return
       const next = [...party]
-      next[idx] = { ...member, key }
+      next[idx] = { ...member, key, ability: defaultAbilityForKey(key) }
       setParty(next)
       const nextSearch = [...partySearch]
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
@@ -915,7 +929,7 @@ export default function App() {
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
     } else {
-      setSampleForge((prev) => ({ ...prev, key }))
+      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key) }))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
     }
     setActiveSearchField(null)
@@ -940,6 +954,8 @@ export default function App() {
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
   const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
+  const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
+  const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1416,6 +1432,8 @@ export default function App() {
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
+                const abilityOptions = displayAbilities(row, siteLanguage)
+                const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
@@ -1427,17 +1445,31 @@ export default function App() {
                     <div className="entry-card-top">
                       {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
                       <div className="entry-card-head">
-                        <div className="row-between">
-                        <strong>{displayName(row, siteLanguage)}</strong>
-                        <span>S {partySpeedValue(row, member)}</span>
-                      </div>
-                        <div className="summary-line">
-                          <span className="muted">{displayTypes(row, siteLanguage).join(' / ')}</span>
-                          <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                        <div className="party-card-header">
+                          <div className="party-card-title-block">
+                            <div className="row-between compact-gap">
+                              <strong>{displayName(row, siteLanguage)}</strong>
+                              <span className="speed-badge">S {partySpeedValue(row, member)}</span>
+                            </div>
+                            <div className="type-line">
+                              <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                              <span className="muted">{displayTypes(row, siteLanguage).join(' / ')}</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="row-between compact-gap">
-                          <span className="muted-inline">{natureLabel(member.config.nature)}</span>
-                          <span className="muted-inline">{member.item || '도구 미입력'}</span>
+                        <div className="party-meta-grid">
+                          <div className="party-meta-chip">
+                            <span>도구</span>
+                            <strong>{member.item || '미선택'}</strong>
+                          </div>
+                          <div className="party-meta-chip">
+                            <span>특성</span>
+                            <strong>{activeAbility || '미선택'}</strong>
+                          </div>
+                          <div className="party-meta-chip wide">
+                            <span>성격</span>
+                            <strong>{natureLabel(member.config.nature)}</strong>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1519,6 +1551,7 @@ export default function App() {
                     <div className="tuning-summary muted">
                       성격 {natureLabel(member.config.nature)}
                       {member.item ? ` · 도구 ${member.item}` : ''}
+                      {activeAbility ? ` · 특성 ${activeAbility}` : ''}
                       {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
                       {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
                     </div>
@@ -1546,6 +1579,16 @@ export default function App() {
                         </datalist>
                         </>
                       </label>
+                      <label>
+                        특성
+                        <select value={activeAbility} onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, ability: e.target.value }
+                          setParty(next)
+                        }}>
+                          {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
+                        </select>
+                      </label>
                     </div>
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
@@ -1553,7 +1596,7 @@ export default function App() {
                         <span className="muted-inline">{memberMovePool?.status === 'loading' ? '기술풀 불러오는 중…' : '사용 가능 기술 검색'}</span>
                       </div>
                       {memberMoveOptions.length ? <datalist id={`move-options-${member.key}`}>
-                        {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move}`} value={move} />)}
+                        {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move.name}`} value={move.name} />)}
                       </datalist> : null}
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
@@ -1882,6 +1925,12 @@ export default function App() {
                     {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
                   </datalist>
                   </>
+                </label>
+                <label>
+                  특성
+                  <select value={sampleAbility} onChange={(e) => setSampleForge((prev) => ({ ...prev, ability: e.target.value }))}>
+                    {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
+                  </select>
                 </label>
                 <label>
                   매직넘버

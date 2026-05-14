@@ -620,13 +620,61 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .entry-card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .entry-card-head {
   min-width: 0;
   flex: 1;
+}
+.party-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.party-card-title-block strong {
+  font-size: 21px;
+  line-height: 1.15;
+}
+.type-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.speed-badge {
+  flex: 0 0 auto;
+  min-width: 68px;
+  text-align: right;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.party-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.party-meta-chip {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 10px;
+  border: 1px solid #273449;
+  background: #0b1220;
+}
+.party-meta-chip span {
+  font-size: 11px;
+  color: #8da2b8;
+}
+.party-meta-chip strong {
+  font-size: 13px;
+  color: #eef2f7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .entry-sprite {
   width: 52px;
@@ -689,9 +737,9 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-radius: 8px;
 }
 .inline-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  flex-wrap: wrap;
   margin-top: 10px;
 }
 label {
