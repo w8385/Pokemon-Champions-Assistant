@@ -2192,47 +2192,6 @@ export default function App() {
           </div>
         </section>
         </> : <>
-        <section className="panel wide">
-          <h2>대면 비교</h2>
-          {!oppRow ? <p className="muted">상대 엔트리 탭에서 슬롯을 채우고 선택하면 계산기에 바로 동기화됩니다.</p> : <div className="matchup">
-            <div>
-              <h3>{displayName(myRow, siteLanguage)}</h3>
-              <p>{displayTypes(myRow, siteLanguage).join(' / ')}</p>
-              <p>실수치 스피드: <strong>{mySpeed}</strong></p>
-              <p className="muted">도구 {myMember.item || '미입력'} · 성격 {natureLabel(myMember.config.nature)}</p>
-            </div>
-            <div className="versus">VS</div>
-            <div>
-              <h3>{displayName(oppRow, siteLanguage)}</h3>
-              <p>{displayTypes(oppRow, siteLanguage).join(' / ')}</p>
-              <p>가정 스피드: <strong>{oppSpeed}</strong></p>
-              <p className="muted">도구 {oppMember.item || '미입력'} · 특성 {oppMember.ability || '미입력'}</p>
-              <p className="muted">최속 {oppMember.natureBoost ? 'on' : 'off'} · 스카프 {oppMember.scarf || oppMember.item.includes('스카프') ? 'on' : 'off'} · 랭크 {oppMember.speedStage >= 0 ? `+${oppMember.speedStage}` : oppMember.speedStage}</p>
-              {oppMember.revealedMoves.length ? <p className="muted">공개 기술: {oppMember.revealedMoves.join(', ')}</p> : null}
-            </div>
-          </div>}
-          {oppRow ? <div className="result-banner">
-            {mySpeed > (oppSpeed ?? 0) ? '내가 선공' : mySpeed < (oppSpeed ?? 0) ? '상대가 선공' : '동속'}
-          </div> : null}
-          {oppRow ? <div className="speed-scenario-grid">
-            {opponentSpeedScenarios.map((scenario) => (
-              <div key={scenario.id} className="speed-scenario-card">
-                <div className="row-between">
-                  <strong>{scenario.label}</strong>
-                  <span className="muted-inline">S {scenario.speedAtMax}</span>
-                </div>
-                <p className="muted">66포인트 기준: {scenario.result}</p>
-                <p className="muted">
-                  동속 필요 스핏: {scenario.tieEffort !== null ? `${scenario.tieEffort}` : '불가'}
-                </p>
-                <p className="muted">
-                  동속 이상 필요 스핏: {scenario.passEffort !== null ? `${scenario.passEffort}` : '불가'}
-                </p>
-              </div>
-            ))}
-          </div> : null}
-        </section>
-
         {activeTab === 'speed' ? <section className="panel wide">
           <h2>선출 메모</h2>
           <div className="pick-summary-grid">
