@@ -1,0 +1,16 @@
+{
+  "aliases": {
+    "회복": "HP회복",
+    "섀도클로": "섀도크루"
+  },
+  "speciesMoveNotes": {
+    "rotom::하이드로펌프": {
+      "status": "form_specific_proxy",
+      "note": "워시로토무 프록시 추천기라 기본 로토무 화이트리스트와 바로 일치시키지 않음"
+    },
+    "meowscarada::로우킥": {
+      "status": "needs_verification",
+      "note": "추천기에는 남아 있지만 현재 화이트리스트 미포함. 포챔스 실제 가용 여부 재검증 필요"
+    }
+  }
+}

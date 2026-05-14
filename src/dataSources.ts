@@ -8,6 +8,7 @@ export const dataSourcePolicy = {
     seedBaseline: 'src/pokemonMovePools.json',
     sourceMeta: 'src/championsMovePoolSources.json',
     coverageReport: 'reports/championsMoveWhitelistCoverage.json',
+    recommendationAuditReport: 'reports/championsRecommendationAudit.json',
     primary: '포챔스 전용 화이트리스트 파일 (현재는 PokeAPI baseline에서 시드 생성)',
     supplements: ['포켓몬 챔피언스 기준 수동 보정', '폼/메가 예외 병합', '종별 검증 메타데이터'],
     validation: ['champs.pokedb.tokyo', 'PokemonDB', 'Serebii'],

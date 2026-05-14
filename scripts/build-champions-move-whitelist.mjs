@@ -12,6 +12,9 @@ const moveNameOverridesPath = path.join(root, 'src', 'championsMoveNameOverrides
 const whitelistPath = path.join(root, 'src', 'championsMovePools.json')
 const sourceMetaPath = path.join(root, 'src', 'championsMovePoolSources.json')
 const reportPath = path.join(root, 'reports', 'championsMoveWhitelistCoverage.json')
+const recommendationAuditPath = path.join(root, 'reports', 'championsRecommendationAudit.json')
+const sampleMovesPath = path.join(root, 'src', 'sampleMoves.ts')
+const recommendationAuditOverridesPath = path.join(root, 'src', 'championsRecommendationAuditOverrides.json')
 
 const POKEMON_ALIAS_CANDIDATES = {
   'mega-meowstic': ['meowstic-male', 'meowstic-female'],
@@ -77,12 +80,28 @@ function pokemonApiCandidates(key) {
 const baseline = JSON.parse(await fs.readFile(baselinePath, 'utf8'))
 const verifiedRaw = JSON.parse(await fs.readFile(verifiedDataPath, 'utf8'))
 const moveNameOverrides = JSON.parse(await fs.readFile(moveNameOverridesPath, 'utf8'))
+const recommendationAuditOverrides = JSON.parse(await fs.readFile(recommendationAuditOverridesPath, 'utf8'))
 const verifiedRows = Array.isArray(verifiedRaw)
   ? verifiedRaw
   : verifiedRaw.rows ?? verifiedRaw.pokemon ?? []
 
 const moveMetaCache = new Map()
 const pokemonMoveCache = new Map()
+
+function confidenceLabel(tier, validationCount, sampleCount, isPresent) {
+  if (!isPresent) return 'conflict'
+  const score = (validationCount * 2) + sampleCount + (tier === 'core' ? 2 : tier === 'options' ? 1 : 0)
+  if (score >= 6) return 'high'
+  if (score >= 4) return 'medium'
+  return 'low'
+}
+
+async function loadSampleMoves() {
+  const source = await fs.readFile(sampleMovesPath, 'utf8')
+  const withoutType = source.replace(/export type[\s\S]*?\n}\n\n/, '')
+  const expression = withoutType.replace(/export const sampleMoves\s*:[^=]+?=\s*/, '')
+  return Function(`"use strict"; return (${expression.trim().replace(/;\s*$/, '')});`)()
+}
 
 function normalizeMoveName(name) {
   return moveNameOverrides[name]?.ko ?? name
@@ -141,6 +160,7 @@ const seededFromBaseline = []
 const seededFromApiAlias = []
 const missing = []
 const untranslatedMoves = new Set()
+const sampleMoves = await loadSampleMoves()
 
 for (const row of verifiedRows) {
   if (!row?.key) continue
@@ -218,6 +238,65 @@ const report = {
   },
 }
 
+const recommendationAudit = {
+  generatedAt: new Date().toISOString(),
+  totals: {
+    speciesTracked: sampleMoves.length,
+    recommendedMoves: 0,
+    presentInWhitelist: 0,
+    missingFromWhitelist: 0,
+    untranslatedRecommendedMoves: 0,
+  },
+  species: {},
+  missingBySpecies: {},
+}
+
+for (const entry of sampleMoves) {
+  const whitelistMoves = new Set((whitelist[entry.key] ?? []).map((move) => move.name))
+  const validationCount = entry.source?.validation?.length ?? 0
+  const sampleCount = entry.source?.samples?.length ?? 0
+  const auditEntry = {
+    source: entry.source,
+    notes: entry.notes ?? [],
+    tiers: {},
+    missingMoves: [],
+  }
+
+  for (const [tier, moves] of Object.entries({ core: entry.core ?? [], options: entry.options ?? [], utility: entry.utility ?? [] })) {
+    auditEntry.tiers[tier] = moves.map((move) => {
+      const alias = recommendationAuditOverrides.aliases?.[move] ?? null
+      const canonicalMove = alias ?? move
+      const speciesMoveKey = `${entry.key}::${move}`
+      const override = recommendationAuditOverrides.speciesMoveNotes?.[speciesMoveKey] ?? null
+      const present = whitelistMoves.has(canonicalMove)
+      const status = present
+        ? (alias ? 'alias_match' : 'verified_in_whitelist')
+        : (override?.status ?? 'missing_from_whitelist')
+      const confidence = confidenceLabel(tier, validationCount, sampleCount, present)
+      recommendationAudit.totals.recommendedMoves += 1
+      if (present) recommendationAudit.totals.presentInWhitelist += 1
+      else {
+        recommendationAudit.totals.missingFromWhitelist += 1
+        auditEntry.missingMoves.push(move)
+      }
+      if (/[A-Za-z]/.test(move)) recommendationAudit.totals.untranslatedRecommendedMoves += 1
+      return {
+        move,
+        canonicalMove,
+        presentInWhitelist: present,
+        status,
+        confidence,
+        validationCount,
+        sampleCount,
+        note: override?.note ?? null,
+      }
+    })
+  }
+
+  recommendationAudit.species[entry.key] = auditEntry
+  if (auditEntry.missingMoves.length) recommendationAudit.missingBySpecies[entry.key] = auditEntry.missingMoves
+}
+
 await fs.mkdir(path.dirname(reportPath), { recursive: true })
 await fs.writeFile(whitelistPath, `${JSON.stringify(whitelist, null, 2)}\n`)
 await fs.writeFile(sourceMetaPath, `${JSON.stringify({
@@ -230,10 +309,13 @@ await fs.writeFile(sourceMetaPath, `${JSON.stringify({
   pokemon: sources,
 }, null, 2)}\n`)
 await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`)
+await fs.writeFile(recommendationAuditPath, `${JSON.stringify(recommendationAudit, null, 2)}\n`)
 
 console.log(`Generated ${path.relative(root, whitelistPath)}`)
 console.log(`Generated ${path.relative(root, sourceMetaPath)}`)
 console.log(`Generated ${path.relative(root, reportPath)}`)
+console.log(`Generated ${path.relative(root, recommendationAuditPath)}`)
 console.log(`Seeded from baseline: ${seededFromBaseline.length}/${verifiedRows.length}`)
 console.log(`Seeded from alias fetch: ${seededFromApiAlias.length}/${verifiedRows.length}`)
 if (missing.length) console.log(`Missing species: ${missing.length}`)
+if (recommendationAudit.totals.missingFromWhitelist) console.log(`Recommended moves missing from whitelist: ${recommendationAudit.totals.missingFromWhitelist}`)

@@ -1,0 +1,1082 @@
+{
+  "generatedAt": "2026-05-14T18:34:57.720Z",
+  "totals": {
+    "speciesTracked": 11,
+    "recommendedMoves": 78,
+    "presentInWhitelist": 76,
+    "missingFromWhitelist": 2,
+    "untranslatedRecommendedMoves": 0
+  },
+  "species": {
+    "mega-lopunny": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend proxy (Lopunny base form)"
+        ],
+        "samples": [
+          "Smogon Dex ORAS/ND offensive sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 프록시에서는 인파이트/유턴/트리플악셀 비중이 높음",
+        "고스트 견제 여부 확인"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "속이다",
+            "canonicalMove": "속이다",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "무릎차기",
+            "canonicalMove": "무릎차기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "유턴",
+            "canonicalMove": "유턴",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "트리플악셀",
+            "canonicalMove": "트리플악셀",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "냉동펀치",
+            "canonicalMove": "냉동펀치",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "앵콜",
+            "canonicalMove": "앵콜",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "번개펀치",
+            "canonicalMove": "번개펀치",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "mega-delphox": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend proxy (Delphox base form)"
+        ],
+        "samples": [
+          "Smogon Dex custom attacker references"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 프록시에서는 화염방사/사이코키네시스/매지컬샤인이 상위",
+        "앵콜 여부가 샘플 분기점"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "사이코키네시스",
+            "canonicalMove": "사이코키네시스",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "매지컬샤인",
+            "canonicalMove": "매지컬샤인",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "오버히트",
+            "canonicalMove": "오버히트",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "사이코쇼크",
+            "canonicalMove": "사이코쇼크",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "대타출동",
+            "canonicalMove": "대타출동",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "앵콜",
+            "canonicalMove": "앵콜",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "명상",
+            "canonicalMove": "명상",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "garchomp": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex tank/SD sets",
+          "Pikalytics common move trends"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 지진/역린 뒤로 스텔스록, 암석봉인 비중이 높음"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "지진",
+            "canonicalMove": "지진",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "역린",
+            "canonicalMove": "역린",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "암석봉인",
+            "canonicalMove": "암석봉인",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "독찌르기",
+            "canonicalMove": "독찌르기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "스케일샷",
+            "canonicalMove": "스케일샷",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "스텔스록",
+            "canonicalMove": "스텔스록",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "칼춤",
+            "canonicalMove": "칼춤",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "toxapex": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex defensive sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 맹독/토치카/흑안개 채용이 높음"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "열탕",
+            "canonicalMove": "열탕",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "회복",
+            "canonicalMove": "HP회복",
+            "presentInWhitelist": true,
+            "status": "alias_match",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "맹독",
+            "canonicalMove": "맹독",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "토치카",
+            "canonicalMove": "토치카",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "흑안개",
+            "canonicalMove": "흑안개",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "독압정",
+            "canonicalMove": "독압정",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "냉동빔",
+            "canonicalMove": "냉동빔",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "corviknight": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex bulky pivot sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 날개쉬기/바디프레스/철벽 축 비중이 높음"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "날개쉬기",
+            "canonicalMove": "날개쉬기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "바디프레스",
+            "canonicalMove": "바디프레스",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "철벽",
+            "canonicalMove": "철벽",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "유턴",
+            "canonicalMove": "유턴",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "아이언헤드",
+            "canonicalMove": "아이언헤드",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "도발",
+            "canonicalMove": "도발",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "브레이브버드",
+            "canonicalMove": "브레이브버드",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "벌크업",
+            "canonicalMove": "벌크업",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "kingambit": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex sweeper sets",
+          "Pikalytics move frequency"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 도각참 누락은 오류로 보고 바로 보강",
+        "기습/칼춤 확인이 우선"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "도각참",
+            "canonicalMove": "도각참",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "기습",
+            "canonicalMove": "기습",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "아이언헤드",
+            "canonicalMove": "아이언헤드",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "로우킥",
+            "canonicalMove": "로우킥",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "칼춤",
+            "canonicalMove": "칼춤",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "도발",
+            "canonicalMove": "도발",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "메탈버스트",
+            "canonicalMove": "메탈버스트",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 3,
+            "sampleCount": 2,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "rotom": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii Champions move list"
+        ],
+        "samples": [
+          "Smogon Dex pivot sets",
+          "Pikalytics utility trends"
+        ]
+      },
+      "notes": [
+        "트릭/상태이상기 보유 확인"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "볼트체인지",
+            "canonicalMove": "볼트체인지",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "하이드로펌프",
+            "canonicalMove": "하이드로펌프",
+            "presentInWhitelist": false,
+            "status": "form_specific_proxy",
+            "confidence": "conflict",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": "워시로토무 프록시 추천기라 기본 로토무 화이트리스트와 바로 일치시키지 않음"
+          }
+        ],
+        "options": [
+          {
+            "move": "10만볼트",
+            "canonicalMove": "10만볼트",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "악의파동",
+            "canonicalMove": "악의파동",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "트릭",
+            "canonicalMove": "트릭",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "도깨비불",
+            "canonicalMove": "도깨비불",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "전기자석파",
+            "canonicalMove": "전기자석파",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": [
+        "하이드로펌프"
+      ]
+    },
+    "primarina": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex calm mind/offense sets"
+        ]
+      },
+      "notes": [
+        "앵콜/명상 여부로 운영 달라짐"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "문포스",
+            "canonicalMove": "문포스",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "하이드로펌프",
+            "canonicalMove": "하이드로펌프",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "하이퍼보이스",
+            "canonicalMove": "하이퍼보이스",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "냉동빔",
+            "canonicalMove": "냉동빔",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "에너지볼",
+            "canonicalMove": "에너지볼",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "명상",
+            "canonicalMove": "명상",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "medium",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "앵콜",
+            "canonicalMove": "앵콜",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "medium",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "dragapult": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii Champions move list"
+        ],
+        "samples": [
+          "Smogon Dex offensive sets",
+          "Pikalytics common move usage"
+        ]
+      },
+      "notes": [
+        "물리/특수/서포트 분기 추적"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "드래곤애로",
+            "canonicalMove": "드래곤애로",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "고스트다이브",
+            "canonicalMove": "고스트다이브",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "용성군",
+            "canonicalMove": "용성군",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "불대문자",
+            "canonicalMove": "불대문자",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "유턴",
+            "canonicalMove": "유턴",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "전기자석파",
+            "canonicalMove": "전기자석파",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "도깨비불",
+            "canonicalMove": "도깨비불",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "mimikyu": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex setup sets"
+        ]
+      },
+      "notes": [
+        "칼춤형인지 유틸형인지 확인"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "치근거리기",
+            "canonicalMove": "치근거리기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "섀도클로",
+            "canonicalMove": "섀도크루",
+            "presentInWhitelist": true,
+            "status": "alias_match",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "야습",
+            "canonicalMove": "야습",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "우드해머",
+            "canonicalMove": "우드해머",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "칼춤",
+            "canonicalMove": "칼춤",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "medium",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "도깨비불",
+            "canonicalMove": "도깨비불",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "medium",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          },
+          {
+            "move": "대타출동",
+            "canonicalMove": "대타출동",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "medium",
+            "validationCount": 2,
+            "sampleCount": 1,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": []
+    },
+    "meowscarada": {
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex pivot sets",
+          "Pikalytics support usage"
+        ]
+      },
+      "notes": [
+        "유턴/압정 여부 중요"
+      ],
+      "tiers": {
+        "core": [
+          {
+            "move": "트릭플라워",
+            "canonicalMove": "트릭플라워",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "탁쳐서떨구기",
+            "canonicalMove": "탁쳐서떨구기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "options": [
+          {
+            "move": "유턴",
+            "canonicalMove": "유턴",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "로우킥",
+            "canonicalMove": "로우킥",
+            "presentInWhitelist": false,
+            "status": "needs_verification",
+            "confidence": "conflict",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": "추천기에는 남아 있지만 현재 화이트리스트 미포함. 포챔스 실제 가용 여부 재검증 필요"
+          },
+          {
+            "move": "치근거리기",
+            "canonicalMove": "치근거리기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ],
+        "utility": [
+          {
+            "move": "도발",
+            "canonicalMove": "도발",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          },
+          {
+            "move": "압정뿌리기",
+            "canonicalMove": "압정뿌리기",
+            "presentInWhitelist": true,
+            "status": "verified_in_whitelist",
+            "confidence": "high",
+            "validationCount": 2,
+            "sampleCount": 2,
+            "note": null
+          }
+        ]
+      },
+      "missingMoves": [
+        "로우킥"
+      ]
+    }
+  },
+  "missingBySpecies": {
+    "rotom": [
+      "하이드로펌프"
+    ],
+    "meowscarada": [
+      "로우킥"
+    ]
+  }
+}
