@@ -246,6 +246,17 @@ function statLabel(stat: StatKey) {
   }
 }
 
+function statThemeClass(stat: EffortStatKey) {
+  switch (stat) {
+    case 'hp': return 'stat-theme-hp'
+    case 'attack': return 'stat-theme-attack'
+    case 'defense': return 'stat-theme-defense'
+    case 'spAttack': return 'stat-theme-sp-attack'
+    case 'spDefense': return 'stat-theme-sp-defense'
+    case 'speed': return 'stat-theme-speed'
+  }
+}
+
 function natureLabel(natureId: NatureId) {
   const nature = natureById.get(natureId)
   if (!nature) return natureId
@@ -1061,14 +1072,14 @@ export default function App() {
                 const targetEffort = magicCandidate?.stat === stat.key ? magicCandidate.nextEffort : null
                 const magicPoints = magicEffortPoints(tuningRow, tuningMember, stat.key)
                 return (
-                  <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${isMagicStat ? 'magic' : ''}`}>
+                  <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between">
                       <strong>{stat.label}</strong>
                       <span>{actualValue}</span>
                     </div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
-                      <div className="effort-gauge-track">
-                        <div className="effort-gauge-cells" aria-hidden="true">
+                      <div className={`effort-gauge-track ${statThemeClass(stat.key)}`}>
+                        <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">
                           {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
                             const point = cellIdx + 1
                             const reachable = point <= availableCap
@@ -1144,7 +1155,7 @@ export default function App() {
                           })}
                         </div>
                       </div>
-                      <div className="effort-gauge-scale">
+                        <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>
                         {EFFORT_CHECKPOINTS.map((checkpoint) => {
                           const checkpointValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: checkpoint } }, stat.key)
                           return (
@@ -1366,7 +1377,7 @@ export default function App() {
                         ['spDefense', '특수방어'],
                         ['speed', '스피드'],
                       ] as const).map(([field, label]) => (
-                        <div key={field} className="stat-preview-row">
+                        <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
                           <span>{label}</span>
                           <strong>{partyStatValue(row, member, field)}</strong>
                           <span>+{member.evs[field]}</span>
@@ -1438,14 +1449,14 @@ export default function App() {
                   </div>
                   <div className="stat-preview-list compact-stat-list">
                     {EFFORT_STAT_OPTIONS.map((stat) => (
-                      <div key={`party-training-${stat.key}`} className="stat-preview-row">
+                      <div key={`party-training-${stat.key}`} className={`stat-preview-row ${statThemeClass(stat.key)}`}>
                         <span>{stat.label}</span>
                         <strong>{partyStatValue(myRow, myMember, stat.key)}</strong>
                         <span>+{myMember.evs[stat.key]}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="muted">상세 드래그 조정과 매직넘버 helper는 각 카드의 `튜닝 설정`에서 여는 방식으로 두었습니다.</p>
+                  <p className="muted">상세 드래그 조정은 각 카드의 `튜닝 설정`에서 바로 할 수 있습니다.</p>
                 </div>
               </div>
             </div>
@@ -1721,7 +1732,7 @@ export default function App() {
                 {([
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
-                  <div key={field} className="stat-preview-row">
+                  <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
                     <span>{label}</span>
                     <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
                     <span>+{sampleForge.evs[field]}</span>
