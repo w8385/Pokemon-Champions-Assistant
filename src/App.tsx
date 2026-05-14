@@ -262,6 +262,11 @@ function statGaugePercent(value: number) {
   return `${Math.max(0, Math.min(100, (value / STAT_GAUGE_MAX) * 100))}%`
 }
 
+function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
+  if (!entry) return [] as string[]
+  return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])]))
+}
+
 function natureLabel(natureId: NatureId) {
   const nature = natureById.get(natureId)
   if (!nature) return natureId
@@ -1304,6 +1309,7 @@ export default function App() {
                 const row = indexByKey.get(member.key) ?? rows[0]
                 const isAdvancedOpen = partyAdvancedOpen[idx] ?? false
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
+                const memberMoveOptions = moveOptionsForEntry(memberMoveSet)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
@@ -1443,15 +1449,19 @@ export default function App() {
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>기술 배치</strong>
-                        <span className="muted-inline">최대 4개</span>
+                        <span className="muted-inline">실사용 가능 기술 검색</span>
                       </div>
+                      {memberMoveOptions.length ? <datalist id={`move-options-${member.key}`}>
+                        {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move}`} value={move} />)}
+                      </datalist> : null}
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
                           <label key={`registered-move-${member.key}-${moveIdx}`} className="registered-move-slot">
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
-                              placeholder="기술 입력"
+                              list={memberMoveOptions.length ? `move-options-${member.key}` : undefined}
+                              placeholder={memberMoveOptions.length ? '사용 가능 기술 검색' : '기술 입력'}
                               onChange={(e) => setConfirmedMoveSlot(member.key, moveIdx, e.target.value)}
                             />
                           </label>
@@ -1469,7 +1479,7 @@ export default function App() {
                             <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                         </div>
-                      </> : <p className="muted">샘플 기술 데이터가 없으면 위 4칸에 직접 입력하면 됩니다.</p>}
+                      </> : <p className="muted">기술 데이터가 없는 포켓몬만 직접 입력합니다.</p>}
                     </div>
                     </> : null}
                   </div>
