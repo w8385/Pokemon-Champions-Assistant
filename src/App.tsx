@@ -1196,6 +1196,11 @@ function SmallTypeBadgeImage({ type }: { type: string }) {
   return <img src={getTypeBadgeSrc(type)} alt={label} className="move-autocomplete-type-icon" title={label} />
 }
 
+function itemAutocompleteSecondaryLabel(item: string, language: SiteLanguage) {
+  if (language === 'ko') return ''
+  return item
+}
+
 function LanguageIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
@@ -2091,8 +2096,14 @@ export default function App() {
                           }} />
                           {!fixedMegaStone && sameItemField(activeItemField, 'party', idx) ? <div className="move-autocomplete-menu">
                             {filterItemOptions(partyItemDrafts[idx] || '', siteLanguage).slice(0, 8).map((item) => (
-                              <button key={`party-item-suggest-${idx}-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectPartyItemOption(idx, member, item)}>
-                                <span>{displayItemLabel(item, siteLanguage)}</span>
+                              <button key={`party-item-suggest-${idx}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectPartyItemOption(idx, member, item)}>
+                                <span className="move-autocomplete-main">
+                                  <img src={itemSpriteSrc(member.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                                  <span className="item-autocomplete-copy">
+                                    <span>{displayItemLabel(item, siteLanguage)}</span>
+                                    {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
+                                  </span>
+                                </span>
                               </button>
                             ))}
                           </div> : null}
@@ -2385,8 +2396,14 @@ export default function App() {
                   />
                   {sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu">
                     {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
-                      <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
-                        <span>{displayItemLabel(item, siteLanguage)}</span>
+                      <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
+                        <span className="move-autocomplete-main">
+                          <img src={itemSpriteSrc(oppMember.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                          <span className="item-autocomplete-copy">
+                            <span>{displayItemLabel(item, siteLanguage)}</span>
+                            {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
+                          </span>
+                        </span>
                       </button>
                     ))}
                   </div> : null}
@@ -2581,8 +2598,14 @@ export default function App() {
                     }} />
                     {!sampleFixedMegaStone && sameItemField(activeItemField, 'sample', 0) ? <div className="move-autocomplete-menu">
                       {filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8).map((item) => (
-                        <button key={`sample-item-suggest-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectSampleItemOption(item)}>
-                          <span>{displayItemLabel(item, siteLanguage)}</span>
+                        <button key={`sample-item-suggest-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectSampleItemOption(item)}>
+                          <span className="move-autocomplete-main">
+                            <img src={itemSpriteSrc(sampleForge.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                            <span className="item-autocomplete-copy">
+                              <span>{displayItemLabel(item, siteLanguage)}</span>
+                              {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
+                            </span>
+                          </span>
                         </button>
                       ))}
                     </div> : null}
