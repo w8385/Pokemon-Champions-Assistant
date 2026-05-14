@@ -668,6 +668,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin-top: 10px;
+  width: 100%;
 }
 .party-meta-chip {
   min-width: 0;

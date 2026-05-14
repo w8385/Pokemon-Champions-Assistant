@@ -132,6 +132,44 @@ const ITEM_SPRITE_MAP: Record<string, string> = {
   '풍선': 'air-balloon',
   '빛의점토': 'light-clay',
 }
+const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
+  'mega-abomasnow': 'abomasite',
+  'mega-absol': 'absolite',
+  'mega-aerodactyl': 'aerodactylite',
+  'mega-aggron': 'aggronite',
+  'mega-alakazam': 'alakazite',
+  'mega-altaria': 'altarianite',
+  'mega-ampharos': 'ampharosite',
+  'mega-audino': 'audinite',
+  'mega-banette': 'banettite',
+  'mega-beedrill': 'beedrillite',
+  'mega-blastoise': 'blastoisinite',
+  'mega-camerupt': 'cameruptite',
+  'mega-charizard-x': 'charizardite-x',
+  'mega-charizard-y': 'charizardite-y',
+  'mega-gallade': 'galladite',
+  'mega-garchomp': 'garchompite',
+  'mega-gardevoir': 'gardevoirite',
+  'mega-gengar': 'gengarite',
+  'mega-glalie': 'glalitite',
+  'mega-gyarados': 'gyaradosite',
+  'mega-heracross': 'heracronite',
+  'mega-houndoom': 'houndoominite',
+  'mega-kangaskhan': 'kangaskhanite',
+  'mega-lopunny': 'lopunnite',
+  'mega-lucario': 'lucarionite',
+  'mega-manectric': 'manectite',
+  'mega-medicham': 'medichamite',
+  'mega-pidgeot': 'pidgeotite',
+  'mega-pinsir': 'pinsirite',
+  'mega-sableye': 'sablenite',
+  'mega-scizor': 'scizorite',
+  'mega-sharpedo': 'sharpedonite',
+  'mega-slowbro': 'slowbronite',
+  'mega-steelix': 'steelixite',
+  'mega-tyranitar': 'tyranitarite',
+  'mega-venusaur': 'venusaurite',
+}
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -172,6 +210,8 @@ function visibleChampionsItem(key: string, item: string) {
 
 function itemSpriteSrc(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
+  const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
+  if (megaSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
   const spriteSlug = ITEM_SPRITE_MAP[normalized]
   if (spriteSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
   if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
@@ -1549,23 +1589,23 @@ export default function App() {
                             </div>
                           </div>
                         </div>
-                        <div className="party-meta-grid">
-                          <div className="party-meta-chip">
-                            <span>특성</span>
-                            <strong>{activeAbility || '미선택'}</strong>
-                          </div>
-                          <div className="party-meta-chip item-meta-chip">
-                            <span>도구</span>
-                            <div className="item-meta-row">
-                              <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                              <strong>{currentItem || '미선택'}</strong>
-                            </div>
-                          </div>
-                          <div className="party-meta-chip wide">
-                            <span>성격</span>
-                            <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
-                          </div>
+                      </div>
+                    </div>
+                    <div className="party-meta-grid">
+                      <div className="party-meta-chip">
+                        <span>특성</span>
+                        <strong>{activeAbility || '미선택'}</strong>
+                      </div>
+                      <div className="party-meta-chip item-meta-chip">
+                        <span>도구</span>
+                        <div className="item-meta-row">
+                          <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                          <strong>{currentItem || '미선택'}</strong>
                         </div>
+                      </div>
+                      <div className="party-meta-chip wide">
+                        <span>성격</span>
+                        <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
                       </div>
                     </div>
                     <label className="species-picker">
