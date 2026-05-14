@@ -505,18 +505,6 @@ function natureChipLabel(natureId: NatureId) {
   return natureById.get(natureId)?.label ?? natureId
 }
 
-function openPicker(el: HTMLInputElement | HTMLSelectElement | null) {
-  if (!el) return
-  el.focus()
-  if ('showPicker' in el && typeof el.showPicker === 'function') {
-    try {
-      el.showPicker()
-    } catch {
-      // ignore unsupported picker invocation
-    }
-  }
-}
-
 function boostedStatForNature(natureId: NatureId): StatKey | null {
   return natureById.get(natureId)?.up ?? null
 }
@@ -1029,9 +1017,7 @@ export default function App() {
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
-  const partyAbilityRefs = React.useRef<(HTMLSelectElement | null)[]>([])
-  const partyNatureRefs = React.useRef<(HTMLSelectElement | null)[]>([])
-  const partyItemRefs = React.useRef<(HTMLInputElement | null)[]>([])
+  const [activePartyMetaEditor, setActivePartyMetaEditor] = React.useState<{ idx: number; field: 'ability' | 'nature' | 'item' } | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -1695,31 +1681,82 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="party-meta-grid">
-                      <button type="button" className="party-meta-chip party-meta-chip-button" onClick={(e) => {
-                        e.stopPropagation()
-                        openPicker(partyAbilityRefs.current[idx] ?? null)
-                      }}>
-                        <span>특성</span>
-                        <strong>{activeAbility || '미선택'}</strong>
-                      </button>
-                      <button type="button" className="party-meta-chip party-meta-chip-button wide" onClick={(e) => {
-                        e.stopPropagation()
-                        openPicker(partyNatureRefs.current[idx] ?? null)
-                      }}>
-                        <span>성격</span>
-                        <strong>{natureChipLabel(member.config.nature)}</strong>
-                      </button>
-                      <button type="button" className="party-meta-chip party-meta-chip-button item-meta-chip" onClick={(e) => {
-                        e.stopPropagation()
-                        openPicker(partyItemRefs.current[idx] ?? null)
-                      }}>
-                        <span>도구</span>
-                        <div className="item-meta-row">
-                          <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                          <strong>{currentItem || '미선택'}</strong>
-                        </div>
-                      </button>
+                    <div className="party-meta-grid" onClick={(e) => e.stopPropagation()}>
+                      <div className="party-meta-chip party-meta-chip-editor">
+                        <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
+                          <span>특성</span>
+                          <strong>{activeAbility || '미선택'}</strong>
+                        </button>
+                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover">
+                          <select autoFocus value={activeAbility} onChange={(e) => {
+                            const next = [...party]
+                            next[idx] = { ...member, ability: e.target.value }
+                            setParty(next)
+                            setActivePartyMetaEditor(null)
+                          }} onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : prev), 120)}>
+                            {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
+                          </select>
+                        </div> : null}
+                      </div>
+                      <div className="party-meta-chip party-meta-chip-editor wide">
+                        <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : { idx, field: 'nature' })}>
+                          <span>성격</span>
+                          <strong>{natureChipLabel(member.config.nature)}</strong>
+                        </button>
+                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover">
+                          <select autoFocus value={member.config.nature} onChange={(e) => {
+                            const next = [...party]
+                            next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
+                            setParty(next)
+                            setActivePartyMetaEditor(null)
+                          }} onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : prev), 120)}>
+                            {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                          </select>
+                        </div> : null}
+                      </div>
+                      <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
+                        <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : { idx, field: 'item' })}>
+                          <span>도구</span>
+                          <div className="item-meta-row">
+                            <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                            <strong>{currentItem || '미선택'}</strong>
+                          </div>
+                        </button>
+                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'item' ? <div className="party-meta-popover">
+                          <input autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                            const nextDrafts = [...partyItemDrafts]
+                            nextDrafts[idx] = e.target.value
+                            setPartyItemDrafts(nextDrafts)
+                          }} onBlur={() => {
+                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
+                            const next = [...party]
+                            next[idx] = { ...member, item: resolved }
+                            setParty(next)
+                            setPartyItemDrafts((prev) => {
+                              const nextDrafts = [...prev]
+                              nextDrafts[idx] = resolved
+                              return nextDrafts
+                            })
+                            setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : prev), 120)
+                          }} onKeyDown={(e) => {
+                            if (e.key !== 'Enter') return
+                            e.preventDefault()
+                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
+                            const next = [...party]
+                            next[idx] = { ...member, item: resolved }
+                            setParty(next)
+                            setPartyItemDrafts((prev) => {
+                              const nextDrafts = [...prev]
+                              nextDrafts[idx] = resolved
+                              return nextDrafts
+                            })
+                            setActivePartyMetaEditor(null)
+                          }} />
+                          {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
+                            {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
+                          </datalist> : null}
+                        </div> : null}
+                      </div>
                     </div>
                     <label className="species-picker">
                       종 선택
@@ -1771,63 +1808,6 @@ export default function App() {
                           <span>+{member.evs[field]}</span>
                         </button>
                       ))}
-                    </div>
-                    <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
-                      <label>
-                        특성
-                        <select ref={(el) => { partyAbilityRefs.current[idx] = el }} value={activeAbility} onChange={(e) => {
-                          const next = [...party]
-                          next[idx] = { ...member, ability: e.target.value }
-                          setParty(next)
-                        }}>
-                          {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
-                        </select>
-                      </label>
-                      <label>
-                        성격
-                        <select ref={(el) => { partyNatureRefs.current[idx] = el }} value={member.config.nature} onChange={(e) => {
-                          const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
-                          setParty(next)
-                        }}>
-                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
-                        </select>
-                      </label>
-                      <label>
-                        도구
-                        <>
-                        <input ref={(el) => { partyItemRefs.current[idx] = el }} list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
-                          const nextDrafts = [...partyItemDrafts]
-                          nextDrafts[idx] = e.target.value
-                          setPartyItemDrafts(nextDrafts)
-                        }} onBlur={() => {
-                          const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
-                          const next = [...party]
-                          next[idx] = { ...member, item: resolved }
-                          setParty(next)
-                          setPartyItemDrafts((prev) => {
-                            const nextDrafts = [...prev]
-                            nextDrafts[idx] = resolved
-                            return nextDrafts
-                          })
-                        }} onKeyDown={(e) => {
-                          if (e.key !== 'Enter') return
-                          e.preventDefault()
-                          const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
-                          const next = [...party]
-                          next[idx] = { ...member, item: resolved }
-                          setParty(next)
-                          setPartyItemDrafts((prev) => {
-                            const nextDrafts = [...prev]
-                            nextDrafts[idx] = resolved
-                            return nextDrafts
-                          })
-                        }} />
-                        {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
-                          {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
-                        </datalist> : null}
-                        </>
-                      </label>
                     </div>
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
