@@ -119,9 +119,27 @@ const speciesOptions = rows.map((row) => ({
 }))
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
 
+function megaStoneForKey(key: string) {
+  if (!key.startsWith('mega-')) return null
+  const row = indexByKey.get(key)
+  if (!row) return null
+  const koName = row.name_ko.replace(/^메가/, '').trim()
+  const suffixMatch = koName.match(/\s*([XY])$/i)
+  if (suffixMatch) {
+    const suffix = suffixMatch[1].toUpperCase()
+    const baseName = koName.replace(/\s*[XY]$/i, '').trim()
+    return `${baseName}나이트${suffix}`
+  }
+  return `${koName}나이트`
+}
+
+function normalizeItemForKey(key: string, item: string) {
+  return megaStoneForKey(key) ?? item
+}
+
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
-const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: defaultAbilityForKey(key) }))
-const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: defaultAbilityForKey(starterKeys[0]) })
+const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
+const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(starterKeys[0], ''), ability: defaultAbilityForKey(starterKeys[0]) })
 const blankOpponent = (): OpponentState => ({
   key: '',
   item: '',
@@ -466,7 +484,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
-        item: typeof raw.item === 'string' ? raw.item : '',
+        item: normalizeItemForKey(raw.key, typeof raw.item === 'string' ? raw.item : ''),
         ability: typeof raw.ability === 'string' ? raw.ability : defaultAbilityForKey(raw.key),
       }
     })
@@ -938,7 +956,7 @@ export default function App() {
       const member = party[idx]
       if (!member) return
       const next = [...party]
-      next[idx] = { ...member, key, ability: defaultAbilityForKey(key) }
+      next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item) }
       setParty(next)
       const nextSearch = [...partySearch]
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
@@ -953,7 +971,7 @@ export default function App() {
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
     } else {
-      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key) }))
+      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item) }))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
     }
     setActiveSearchField(null)
@@ -980,6 +998,7 @@ export default function App() {
   const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
+  const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1427,6 +1446,7 @@ export default function App() {
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
+                const fixedMegaStone = megaStoneForKey(member.key)
                 const abilityOptions = displayAbilities(row, siteLanguage)
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
@@ -1455,7 +1475,7 @@ export default function App() {
                         <div className="party-meta-grid">
                           <div className="party-meta-chip">
                             <span>도구</span>
-                            <strong>{member.item || '미선택'}</strong>
+                            <strong>{fixedMegaStone || member.item || '미선택'}</strong>
                           </div>
                           <div className="party-meta-chip">
                             <span>특성</span>
@@ -1564,14 +1584,14 @@ export default function App() {
                       <label>
                         도구
                         <>
-                        <input list={`item-options-party-${idx}`} value={member.item} placeholder="사용 가능 도구 선택" onChange={(e) => {
+                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                           const next = [...party]
-                          next[idx] = { ...member, item: e.target.value }
+                          next[idx] = { ...member, item: normalizeItemForKey(member.key, e.target.value) }
                           setParty(next)
                         }} />
-                        <datalist id={`item-options-party-${idx}`}>
+                        {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
                           {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
-                        </datalist>
+                        </datalist> : null}
                         </>
                       </label>
                       <label>
@@ -1915,10 +1935,10 @@ export default function App() {
                 <label>
                   도구
                   <>
-                  <input list="item-options-sample" value={sampleForge.item} placeholder="사용 가능 도구 선택" onChange={(e) => setSampleForge((prev) => ({ ...prev, item: e.target.value }))} />
-                  <datalist id="item-options-sample">
+                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: normalizeItemForKey(prev.key, e.target.value) }))} />
+                  {!sampleFixedMegaStone ? <datalist id="item-options-sample">
                     {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
-                  </datalist>
+                  </datalist> : null}
                   </>
                 </label>
                 <label>
