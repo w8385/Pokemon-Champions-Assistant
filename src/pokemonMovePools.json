@@ -1560,6 +1560,10 @@
       "type": "normal"
     },
     {
+      "name": "속이다",
+      "type": "normal"
+    },
+    {
       "name": "솔라빔",
       "type": "grass"
     },
@@ -1576,6 +1580,10 @@
       "type": "fairy"
     },
     {
+      "name": "앵콜",
+      "type": "normal"
+    },
+    {
       "name": "예민해지기",
       "type": "normal"
     },
@@ -1586,6 +1594,10 @@
     {
       "name": "원수갚기",
       "type": "normal"
+    },
+    {
+      "name": "유턴",
+      "type": "bug"
     },
     {
       "name": "은혜갚기",
@@ -1662,6 +1674,10 @@
     {
       "name": "튀어오르기",
       "type": "normal"
+    },
+    {
+      "name": "트리플악셀",
+      "type": "ice"
     },
     {
       "name": "파괴광선",
@@ -60873,6 +60889,14 @@
   ],
   "kingambit": [
     {
+      "name": "Kowtow Cleave",
+      "type": "dark"
+    },
+    {
+      "name": "Tera Blast",
+      "type": "normal"
+    },
+    {
       "name": "가위자르기",
       "type": "normal"
     },
@@ -60901,6 +60925,10 @@
       "type": "fighting"
     },
     {
+      "name": "기습",
+      "type": "dark"
+    },
+    {
       "name": "기합구슬",
       "type": "fighting"
     },
@@ -60921,6 +60949,10 @@
       "type": "normal"
     },
     {
+      "name": "도각참",
+      "type": "dark"
+    },
+    {
       "name": "도둑질",
       "type": "dark"
     },
@@ -60939,6 +60971,10 @@
     {
       "name": "러스터캐논",
       "type": "steel"
+    },
+    {
+      "name": "로우킥",
+      "type": "fighting"
     },
     {
       "name": "로킥",
@@ -61094,14 +61130,6 @@
     },
     {
       "name": "할퀴기",
-      "type": "normal"
-    },
-    {
-      "name": "Kowtow Cleave",
-      "type": "dark"
-    },
-    {
-      "name": "Tera Blast",
       "type": "normal"
     }
   ],
