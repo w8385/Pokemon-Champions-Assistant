@@ -5,6 +5,7 @@ import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
+import pokemonMovePools from './pokemonMovePools.json'
 
 type Row = {
   id: number
@@ -296,6 +297,7 @@ function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
 }
 
 const moveMetaCache = new Map<string, Promise<MoveOption>>()
+const embeddedMovePools = pokemonMovePools as Record<string, MoveOption[]>
 
 function pokemonApiCandidates(key: string) {
   const candidates = [key]
@@ -315,6 +317,24 @@ function pokemonApiCandidates(key: string) {
     candidates.push(`${base}-${regionalPrefixes[first]}`, base)
   }
   return Array.from(new Set(candidates))
+}
+
+function relatedMovePoolKeys(key: string) {
+  const keys = [key]
+  if (key.startsWith('mega-')) keys.push(key.slice(5))
+  const [first, ...rest] = key.split('-')
+  if (['alolan', 'galarian', 'hisuian', 'paldean'].includes(first) && rest.length) keys.push(rest.join('-'))
+  return Array.from(new Set(keys))
+}
+
+function embeddedMovePoolForKey(key: string) {
+  const merged = new Map<string, MoveOption>()
+  for (const poolKey of relatedMovePoolKeys(key)) {
+    for (const move of embeddedMovePools[poolKey] ?? []) {
+      if (!merged.has(move.name)) merged.set(move.name, move)
+    }
+  }
+  return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
 async function fetchMoveMeta(url: string) {
@@ -824,6 +844,11 @@ export default function App() {
   React.useEffect(() => {
     const targetKeys = Array.from(new Set([...party.map((member) => member.key), sampleForge.key].filter(Boolean)))
     targetKeys.forEach((key) => {
+      const embedded = embeddedMovePoolForKey(key)
+      if (embedded.length && movePoolByKey[key]?.status !== 'ready') {
+        setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves: embedded } }))
+        return
+      }
       if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready') return
       setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
       fetchPokemonMovePool(key)
@@ -952,7 +977,7 @@ export default function App() {
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
-  const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
+  const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : (embeddedMovePoolForKey(sampleForge.key).length ? embeddedMovePoolForKey(sampleForge.key) : moveOptionsForEntry(sampleMoveSet))
   const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
@@ -1436,7 +1461,7 @@ export default function App() {
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
-                const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
+                const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : (embeddedMovePoolForKey(member.key).length ? embeddedMovePoolForKey(member.key) : moveOptionsForEntry(memberMoveSet))
                 const findMoveType = (moveName: string) => memberMoveOptions.find((option) => option.name === moveName)?.type ?? null
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
