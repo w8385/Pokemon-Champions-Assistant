@@ -1726,13 +1726,9 @@ export default function App() {
                       <div className="entry-card-head">
                         <div className="party-card-header">
                           <div className="party-card-title-block">
-                            <div className="row-between compact-gap">
-                              <strong>{displayName(row, siteLanguage)}</strong>
-                              <span className="speed-badge">S {partySpeedValue(row, member)}</span>
-                            </div>
+                            <strong>{displayName(row, siteLanguage)}</strong>
                             <div className="type-line">
                               <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                              <span className="muted">{displayTypes(row, siteLanguage).join(' / ')}</span>
                             </div>
                           </div>
                         </div>
