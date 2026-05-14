@@ -2084,7 +2084,7 @@ export default function App() {
                               setActiveMetaListField(null)
                               setActivePartyMetaEditor(null)
                             }}
-                          >{natureLabel(nature.id, siteLanguage)}</button>)}
+                          >{natureChipLabel(nature.id, siteLanguage)}</button>)}
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
@@ -2615,7 +2615,7 @@ export default function App() {
                         setActiveMetaListField(null)
                         setActiveSampleMetaEditor(null)
                       }}
-                    >{natureLabel(nature.id, siteLanguage)}</button>)}
+                    >{natureChipLabel(nature.id, siteLanguage)}</button>)}
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
