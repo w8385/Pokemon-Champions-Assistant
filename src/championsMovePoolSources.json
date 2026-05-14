@@ -1,0 +1,5863 @@
+{
+  "_meta": {
+    "generatedAt": "2026-05-14T17:15:02.066Z",
+    "sourceOfTruth": "src/championsMovePools.json",
+    "seededFrom": "src/pokemonMovePools.json",
+    "purpose": "포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터"
+  },
+  "pokemon": {
+    "mega-alakazam": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가후딘",
+        "en": "Mega Alakazam",
+        "ja": "Mega Alakazam"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-alakazam",
+        "alakazam"
+      ],
+      "moveCount": 111,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-aerodactyl": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가프테라",
+        "en": "Mega Aerodactyl",
+        "ja": "Mega Aerodactyl"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-aerodactyl",
+        "aerodactyl"
+      ],
+      "moveCount": 98,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-beedrill": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가독침붕",
+        "en": "Mega Beedrill",
+        "ja": "Mega Beedrill"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-beedrill",
+        "beedrill"
+      ],
+      "moveCount": 83,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-greninja": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가개굴닌자",
+        "en": "Mega Greninja",
+        "ja": "Mega Greninja"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-greninja",
+        "greninja"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "dragapult": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "드래펄트",
+        "en": "Dragapult",
+        "ja": "Dragapult"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "dragapult"
+      ],
+      "moveCount": 69,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-manectric": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가썬더볼트",
+        "en": "Mega Manectric",
+        "ja": "Mega Manectric"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-manectric",
+        "manectric"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-lopunny": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가이어롭",
+        "en": "Mega Lopunny",
+        "ja": "Mega Lopunny"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-lopunny",
+        "lopunny"
+      ],
+      "moveCount": 104,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-delphox": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가마폭시",
+        "en": "Mega Delphox",
+        "ja": "Mega Delphox"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-delphox",
+        "delphox"
+      ],
+      "moveCount": 106,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "jolteon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "쥬피썬더",
+        "en": "Jolteon",
+        "ja": "Jolteon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "jolteon"
+      ],
+      "moveCount": 97,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "aerodactyl": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "프테라",
+        "en": "Aerodactyl",
+        "ja": "Aerodactyl"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "aerodactyl"
+      ],
+      "moveCount": 98,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-gengar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가팬텀",
+        "en": "Mega Gengar",
+        "ja": "Mega Gengar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-gengar",
+        "gengar"
+      ],
+      "moveCount": 124,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "talonflame": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "파이어로",
+        "en": "Talonflame",
+        "ja": "Talonflame"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "talonflame"
+      ],
+      "moveCount": 69,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "weavile": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "포푸니라",
+        "en": "Weavile",
+        "ja": "Weavile"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "weavile"
+      ],
+      "moveCount": 108,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-meowstic": {
+      "status": "missing",
+      "display_name": {
+        "ko": "메가냐오닉스",
+        "en": "Mega Meowstic",
+        "ja": "Mega Meowstic"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-meowstic",
+        "meowstic"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "noivern": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "음번",
+        "en": "Noivern",
+        "ja": "Noivern"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "noivern"
+      ],
+      "moveCount": 86,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "meowscarada": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "마스카나",
+        "en": "Meowscarada",
+        "ja": "Meowscarada"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "meowscarada"
+      ],
+      "moveCount": 72,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "greninja": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "개굴닌자",
+        "en": "Greninja",
+        "ja": "Greninja"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "greninja"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-pidgeot": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가피죤투",
+        "en": "Mega Pidgeot",
+        "ja": "Mega Pidgeot"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-pidgeot",
+        "pidgeot"
+      ],
+      "moveCount": 63,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "alakazam": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "후딘",
+        "en": "Alakazam",
+        "ja": "Alakazam"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "alakazam"
+      ],
+      "moveCount": 111,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-starmie": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가아쿠스타",
+        "en": "Mega Starmie",
+        "ja": "Mega Starmie"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-starmie",
+        "starmie"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-froslass": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가눈여아",
+        "en": "Mega Froslass",
+        "ja": "Mega Froslass"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-froslass",
+        "froslass"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "sneasler": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "포푸니크",
+        "en": "Sneasler",
+        "ja": "Sneasler"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sneasler"
+      ],
+      "moveCount": 65,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "hawlucha": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "루차불",
+        "en": "Hawlucha",
+        "ja": "Hawlucha"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "hawlucha"
+      ],
+      "moveCount": 108,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-hawlucha": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가루차불",
+        "en": "Mega Hawlucha",
+        "ja": "Mega Hawlucha"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-hawlucha",
+        "hawlucha"
+      ],
+      "moveCount": 108,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "salazzle": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "염뉴트",
+        "en": "Salazzle",
+        "ja": "Salazzle"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "salazzle"
+      ],
+      "moveCount": 92,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "whimsicott": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "엘풍",
+        "en": "Whimsicott",
+        "ja": "Whimsicott"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "whimsicott"
+      ],
+      "moveCount": 71,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "starmie": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "아쿠스타",
+        "en": "Starmie",
+        "ja": "Starmie"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "starmie"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-houndoom": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가헬가",
+        "en": "Mega Houndoom",
+        "ja": "Mega Houndoom"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-houndoom",
+        "houndoom"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-absol": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가앱솔",
+        "en": "Mega Absol",
+        "ja": "Mega Absol"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-absol",
+        "absol"
+      ],
+      "moveCount": 112,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "serperior": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "샤로다",
+        "en": "Serperior",
+        "ja": "Serperior"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "serperior"
+      ],
+      "moveCount": 87,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "lycanroc": {
+      "status": "missing",
+      "display_name": {
+        "ko": "루가루암",
+        "en": "Lycanroc",
+        "ja": "Lycanroc"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "lycanroc"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-lucario": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가루카리오",
+        "en": "Mega Lucario",
+        "ja": "Mega Lucario"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-lucario",
+        "lucario"
+      ],
+      "moveCount": 115,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "maushold": {
+      "status": "missing",
+      "display_name": {
+        "ko": "파밀리쥐",
+        "en": "Maushold",
+        "ja": "Maushold"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "maushold"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "raichu": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "라이츄",
+        "en": "Raichu",
+        "ja": "Raichu"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "raichu"
+      ],
+      "moveCount": 109,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "raichu-alolan": {
+      "status": "missing",
+      "display_name": {
+        "ko": "알로라 라이츄",
+        "en": "Raichu Alolan",
+        "ja": "Raichu Alolan"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "raichu-alolan"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "gengar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "팬텀",
+        "en": "Gengar",
+        "ja": "Gengar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gengar"
+      ],
+      "moveCount": 124,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tauros": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "켄타로스",
+        "en": "Tauros",
+        "ja": "Tauros"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tauros"
+      ],
+      "moveCount": 96,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "espeon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "에브이",
+        "en": "Espeon",
+        "ja": "Espeon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "espeon"
+      ],
+      "moveCount": 101,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-skarmory": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가무장조",
+        "en": "Mega Skarmory",
+        "ja": "Mega Skarmory"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-skarmory",
+        "skarmory"
+      ],
+      "moveCount": 90,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "froslass": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "눈여아",
+        "en": "Froslass",
+        "ja": "Froslass"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "froslass"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "zoroark-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "히스이 조로아크",
+        "en": "Zoroark Hisui",
+        "ja": "Zoroark Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "zoroark-hisui"
+      ],
+      "moveCount": 72,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-gallade": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가엘레이드",
+        "en": "Mega Gallade",
+        "ja": "Mega Gallade"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-gallade",
+        "gallade"
+      ],
+      "moveCount": 145,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "ninetales-alolan": {
+      "status": "missing",
+      "display_name": {
+        "ko": "알로라 나인테일",
+        "en": "Ninetales Alolan",
+        "ja": "Ninetales Alolan"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ninetales-alolan"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "heliolisk": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "일레도리자드",
+        "en": "Heliolisk",
+        "ja": "Heliolisk"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "heliolisk"
+      ],
+      "moveCount": 77,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "infernape": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "초염몽",
+        "en": "Infernape",
+        "ja": "Infernape"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "infernape"
+      ],
+      "moveCount": 125,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "liepard": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "레파르다스",
+        "en": "Liepard",
+        "ja": "Liepard"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "liepard"
+      ],
+      "moveCount": 77,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "manectric": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "썬더볼트",
+        "en": "Manectric",
+        "ja": "Manectric"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "manectric"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "lopunny": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "이어롭",
+        "en": "Lopunny",
+        "ja": "Lopunny"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "lopunny"
+      ],
+      "moveCount": 103,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "zoroark": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "조로아크",
+        "en": "Zoroark",
+        "ja": "Zoroark"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "zoroark"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "espathra": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "클레스퍼트라",
+        "en": "Espathra",
+        "ja": "Espathra"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "espathra"
+      ],
+      "moveCount": 62,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-pinsir": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가쁘사이저",
+        "en": "Mega Pinsir",
+        "ja": "Mega Pinsir"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-pinsir",
+        "pinsir"
+      ],
+      "moveCount": 85,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-sharpedo": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가샤크니아",
+        "en": "Mega Sharpedo",
+        "ja": "Mega Sharpedo"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-sharpedo",
+        "sharpedo"
+      ],
+      "moveCount": 82,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "delphox": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "마폭시",
+        "en": "Delphox",
+        "ja": "Delphox"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "delphox"
+      ],
+      "moveCount": 106,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "meowstic": {
+      "status": "missing",
+      "display_name": {
+        "ko": "냐오닉스",
+        "en": "Meowstic",
+        "ja": "Meowstic"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "meowstic"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-excadrill": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가몰드류",
+        "en": "Mega Excadrill",
+        "ja": "Mega Excadrill"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-excadrill",
+        "excadrill"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "emolga": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "에몽가",
+        "en": "Emolga",
+        "ja": "Emolga"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "emolga"
+      ],
+      "moveCount": 67,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "garchomp": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "한카리아스",
+        "en": "Garchomp",
+        "ja": "Garchomp"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "garchomp"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "furfrou": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "트리미앙",
+        "en": "Furfrou",
+        "ja": "Furfrou"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "furfrou"
+      ],
+      "moveCount": 57,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "pidgeot": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "피죤투",
+        "en": "Pidgeot",
+        "ja": "Pidgeot"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "pidgeot"
+      ],
+      "moveCount": 63,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "simisage": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "야나키",
+        "en": "Simisage",
+        "ja": "Simisage"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "simisage"
+      ],
+      "moveCount": 64,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "simisear": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "바오키",
+        "en": "Simisear",
+        "ja": "Simisear"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "simisear"
+      ],
+      "moveCount": 66,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "simipour": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "앗차키",
+        "en": "Simipour",
+        "ja": "Simipour"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "simipour"
+      ],
+      "moveCount": 67,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "dedenne": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "데덴네",
+        "en": "Dedenne",
+        "ja": "Dedenne"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "dedenne"
+      ],
+      "moveCount": 75,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-glimmora": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가킬라플로르",
+        "en": "Mega Glimmora",
+        "ja": "Mega Glimmora"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-glimmora",
+        "glimmora"
+      ],
+      "moveCount": 47,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "charizard": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "리자몽",
+        "en": "Charizard",
+        "ja": "Charizard"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "charizard"
+      ],
+      "moveCount": 131,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "ninetales": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "나인테일",
+        "en": "Ninetales",
+        "ja": "Ninetales"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ninetales"
+      ],
+      "moveCount": 98,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tauros-paldean": {
+      "status": "missing",
+      "display_name": {
+        "ko": "팔데아 켄타로스",
+        "en": "Tauros Paldean",
+        "ja": "Tauros Paldean"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tauros-paldean"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-dragonite": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가망나뇽",
+        "en": "Mega Dragonite",
+        "ja": "Mega Dragonite"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-dragonite",
+        "dragonite"
+      ],
+      "moveCount": 138,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "typhlosion": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "블레이범",
+        "en": "Typhlosion",
+        "ja": "Typhlosion"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "typhlosion"
+      ],
+      "moveCount": 111,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "volcarona": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "불카모스",
+        "en": "Volcarona",
+        "ja": "Volcarona"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "volcarona"
+      ],
+      "moveCount": 78,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "palafin": {
+      "status": "missing",
+      "display_name": {
+        "ko": "돌핀맨",
+        "en": "Palafin",
+        "ja": "Palafin"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "palafin"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-charizard-x": {
+      "status": "missing",
+      "display_name": {
+        "ko": "메가리자몽 X",
+        "en": "Mega Charizard X",
+        "ja": "Mega Charizard X"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-charizard-x",
+        "charizard-x"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-charizard-y": {
+      "status": "missing",
+      "display_name": {
+        "ko": "메가리자몽 Y",
+        "en": "Mega Charizard Y",
+        "ja": "Mega Charizard Y"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-charizard-y",
+        "charizard-y"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-kangaskhan": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가캥카",
+        "en": "Mega Kangaskhan",
+        "ja": "Mega Kangaskhan"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-kangaskhan",
+        "kangaskhan"
+      ],
+      "moveCount": 122,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-gardevoir": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가가디안",
+        "en": "Mega Gardevoir",
+        "ja": "Mega Gardevoir"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-gardevoir",
+        "gardevoir"
+      ],
+      "moveCount": 115,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-medicham": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가요가램",
+        "en": "Mega Medicham",
+        "ja": "Mega Medicham"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-medicham",
+        "medicham"
+      ],
+      "moveCount": 109,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-glalie": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가얼음귀신",
+        "en": "Mega Glalie",
+        "ja": "Mega Glalie"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-glalie",
+        "glalie"
+      ],
+      "moveCount": 80,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "hydreigon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "삼삼드래",
+        "en": "Hydreigon",
+        "ja": "Hydreigon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "hydreigon"
+      ],
+      "moveCount": 104,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "morpeko": {
+      "status": "missing",
+      "display_name": {
+        "ko": "모르페코",
+        "en": "Morpeko",
+        "ja": "Morpeko"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "morpeko"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mimikyu": {
+      "status": "missing",
+      "display_name": {
+        "ko": "따라큐",
+        "en": "Mimikyu",
+        "ja": "Mimikyu"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mimikyu"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "arcanine": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "윈디",
+        "en": "Arcanine",
+        "ja": "Arcanine"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "arcanine"
+      ],
+      "moveCount": 90,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "typhlosion-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "블레이범",
+        "en": "Typhlosion Hisui",
+        "ja": "Typhlosion Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "typhlosion-hisui"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "houndoom": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "헬가",
+        "en": "Houndoom",
+        "ja": "Houndoom"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "houndoom"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "sharpedo": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "샤크니아",
+        "en": "Sharpedo",
+        "ja": "Sharpedo"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sharpedo"
+      ],
+      "moveCount": 82,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "leafeon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "리피아",
+        "en": "Leafeon",
+        "ja": "Leafeon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "leafeon"
+      ],
+      "moveCount": 90,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "gliscor": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "글라이온",
+        "en": "Gliscor",
+        "ja": "Gliscor"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gliscor"
+      ],
+      "moveCount": 110,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tinkaton": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "두드리짱",
+        "en": "Tinkaton",
+        "ja": "Tinkaton"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tinkaton"
+      ],
+      "moveCount": 49,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "krookodile": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "악비아르",
+        "en": "Krookodile",
+        "ja": "Krookodile"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "krookodile"
+      ],
+      "moveCount": 106,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-floette": {
+      "status": "missing",
+      "display_name": {
+        "ko": "메가플라엣테",
+        "en": "Mega Floette",
+        "ja": "Mega Floette"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-floette",
+        "floette"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "floette-eternal-flower": {
+      "status": "missing",
+      "display_name": {
+        "ko": "플라엣테",
+        "en": "Floette Eternal Flower",
+        "ja": "Floette Eternal Flower"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "floette-eternal-flower"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-garchomp": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가한카리아스",
+        "en": "Mega Garchomp",
+        "ja": "Mega Garchomp"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-garchomp",
+        "garchomp"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "rotom": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "로토무",
+        "en": "Rotom",
+        "ja": "Rotom"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "rotom"
+      ],
+      "moveCount": 66,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "pikachu": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "피카츄",
+        "en": "Pikachu",
+        "ja": "Pikachu"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "pikachu"
+      ],
+      "moveCount": 105,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "arcanine-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "윈디",
+        "en": "Arcanine Hisui",
+        "ja": "Arcanine Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "arcanine-hisui"
+      ],
+      "moveCount": 68,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "kangaskhan": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "캥카",
+        "en": "Kangaskhan",
+        "ja": "Kangaskhan"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "kangaskhan"
+      ],
+      "moveCount": 122,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "roserade": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "로즈레이드",
+        "en": "Roserade",
+        "ja": "Roserade"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "roserade"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "lucario": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "루카리오",
+        "en": "Lucario",
+        "ja": "Lucario"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "lucario"
+      ],
+      "moveCount": 115,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-chandelure": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가샹델라",
+        "en": "Mega Chandelure",
+        "ja": "Mega Chandelure"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-chandelure",
+        "chandelure"
+      ],
+      "moveCount": 75,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "vivillon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "비비용",
+        "en": "Vivillon",
+        "ja": "Vivillon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "vivillon"
+      ],
+      "moveCount": 67,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "excadrill": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "몰드류",
+        "en": "Excadrill",
+        "ja": "Excadrill"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "excadrill"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "glimmora": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "킬라플로르",
+        "en": "Glimmora",
+        "ja": "Glimmora"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "glimmora"
+      ],
+      "moveCount": 47,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "pinsir": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "쁘사이저",
+        "en": "Pinsir",
+        "ja": "Pinsir"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "pinsir"
+      ],
+      "moveCount": 85,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "heracross": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "헤라크로스",
+        "en": "Heracross",
+        "ja": "Heracross"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "heracross"
+      ],
+      "moveCount": 99,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "toxicroak": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "독개굴",
+        "en": "Toxicroak",
+        "ja": "Toxicroak"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "toxicroak"
+      ],
+      "moveCount": 108,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "samurott-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "대검귀",
+        "en": "Samurott Hisui",
+        "ja": "Samurott Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "samurott-hisui"
+      ],
+      "moveCount": 66,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "kommo-o": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "짜랑고우거",
+        "en": "Kommo-o",
+        "ja": "Kommo-o"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "kommo-o"
+      ],
+      "moveCount": 107,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "kleavor": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "사마자르",
+        "en": "Kleavor",
+        "ja": "Kleavor"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "kleavor"
+      ],
+      "moveCount": 56,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "quaquaval": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "웨이니발",
+        "en": "Quaquaval",
+        "ja": "Quaquaval"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "quaquaval"
+      ],
+      "moveCount": 65,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "ceruledge": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "파라블레이즈",
+        "en": "Ceruledge",
+        "ja": "Ceruledge"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ceruledge"
+      ],
+      "moveCount": 58,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "archaludon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "브리두라스",
+        "en": "Archaludon",
+        "ja": "Archaludon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "archaludon"
+      ],
+      "moveCount": 59,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "gourgeist": {
+      "status": "missing",
+      "display_name": {
+        "ko": "펌킨인",
+        "en": "Gourgeist",
+        "ja": "Gourgeist"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gourgeist"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "gyarados": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "갸라도스",
+        "en": "Gyarados",
+        "ja": "Gyarados"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gyarados"
+      ],
+      "moveCount": 102,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "milotic": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "밀로틱",
+        "en": "Milotic",
+        "ja": "Milotic"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "milotic"
+      ],
+      "moveCount": 90,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-gyarados": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가갸라도스",
+        "en": "Mega Gyarados",
+        "ja": "Mega Gyarados"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-gyarados",
+        "gyarados"
+      ],
+      "moveCount": 102,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "venusaur": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "이상해꽃",
+        "en": "Venusaur",
+        "ja": "Venusaur"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "venusaur"
+      ],
+      "moveCount": 96,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "arbok": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "아보크",
+        "en": "Arbok",
+        "ja": "Arbok"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "arbok"
+      ],
+      "moveCount": 102,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "dragonite": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "망나뇽",
+        "en": "Dragonite",
+        "ja": "Dragonite"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "dragonite"
+      ],
+      "moveCount": 138,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "meganium": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가니움",
+        "en": "Meganium",
+        "ja": "Meganium"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "meganium"
+      ],
+      "moveCount": 92,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-meganium": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가메가니움",
+        "en": "Mega Meganium",
+        "ja": "Mega Meganium"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-meganium",
+        "meganium"
+      ],
+      "moveCount": 92,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "gardevoir": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "가디안",
+        "en": "Gardevoir",
+        "ja": "Gardevoir"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gardevoir"
+      ],
+      "moveCount": 115,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "medicham": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "요가램",
+        "en": "Medicham",
+        "ja": "Medicham"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "medicham"
+      ],
+      "moveCount": 109,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "altaria": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "파비코리",
+        "en": "Altaria",
+        "ja": "Altaria"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "altaria"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "glalie": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "얼음귀신",
+        "en": "Glalie",
+        "ja": "Glalie"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "glalie"
+      ],
+      "moveCount": 80,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mamoswine": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "맘모꾸리",
+        "en": "Mamoswine",
+        "ja": "Mamoswine"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mamoswine"
+      ],
+      "moveCount": 91,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "gallade": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "엘레이드",
+        "en": "Gallade",
+        "ja": "Gallade"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "gallade"
+      ],
+      "moveCount": 145,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "chandelure": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "샹델라",
+        "en": "Chandelure",
+        "ja": "Chandelure"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "chandelure"
+      ],
+      "moveCount": 75,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "goodra": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "미끄래곤",
+        "en": "Goodra",
+        "ja": "Goodra"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "goodra"
+      ],
+      "moveCount": 86,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "passimian": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "내던숭이",
+        "en": "Passimian",
+        "ja": "Passimian"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "passimian"
+      ],
+      "moveCount": 91,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-venusaur": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가이상해꽃",
+        "en": "Mega Venusaur",
+        "ja": "Mega Venusaur"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-venusaur",
+        "venusaur"
+      ],
+      "moveCount": 96,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-altaria": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가파비코리",
+        "en": "Mega Altaria",
+        "ja": "Mega Altaria"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-altaria",
+        "altaria"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "vanilluxe": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "배바닐라",
+        "en": "Vanilluxe",
+        "ja": "Vanilluxe"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "vanilluxe"
+      ],
+      "moveCount": 52,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "blastoise": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "거북왕",
+        "en": "Blastoise",
+        "ja": "Blastoise"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "blastoise"
+      ],
+      "moveCount": 120,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-feraligatr": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가장크로다일",
+        "en": "Mega Feraligatr",
+        "ja": "Mega Feraligatr"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-feraligatr",
+        "feraligatr"
+      ],
+      "moveCount": 117,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "feraligatr": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "장크로다일",
+        "en": "Feraligatr",
+        "ja": "Feraligatr"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "feraligatr"
+      ],
+      "moveCount": 117,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "diggersby": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "파르토",
+        "en": "Diggersby",
+        "ja": "Diggersby"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "diggersby"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "basculegion": {
+      "status": "missing",
+      "display_name": {
+        "ko": "대쓰여너",
+        "en": "Basculegion",
+        "ja": "Basculegion"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "basculegion"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "mega-blastoise": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가거북왕",
+        "en": "Mega Blastoise",
+        "ja": "Mega Blastoise"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-blastoise",
+        "blastoise"
+      ],
+      "moveCount": 120,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "watchog": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "보르그",
+        "en": "Watchog",
+        "ja": "Watchog"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "watchog"
+      ],
+      "moveCount": 77,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "beedrill": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "독침붕",
+        "en": "Beedrill",
+        "ja": "Beedrill"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "beedrill"
+      ],
+      "moveCount": 83,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "absol": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "앱솔",
+        "en": "Absol",
+        "ja": "Absol"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "absol"
+      ],
+      "moveCount": 112,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-emboar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가염무왕",
+        "en": "Mega Emboar",
+        "ja": "Mega Emboar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-emboar",
+        "emboar"
+      ],
+      "moveCount": 102,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "garbodor": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "더스트나",
+        "en": "Garbodor",
+        "ja": "Garbodor"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "garbodor"
+      ],
+      "moveCount": 66,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "florges": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "플라제스",
+        "en": "Florges",
+        "ja": "Florges"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "florges"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "klefki": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "클레피",
+        "en": "Klefki",
+        "ja": "Klefki"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "klefki"
+      ],
+      "moveCount": 65,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "armarouge": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "카디나르마",
+        "en": "Armarouge",
+        "ja": "Armarouge"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "armarouge"
+      ],
+      "moveCount": 58,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-scovillain": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가스코빌런",
+        "en": "Mega Scovillain",
+        "ja": "Mega Scovillain"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-scovillain",
+        "scovillain"
+      ],
+      "moveCount": 47,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "scovillain": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "스코빌런",
+        "en": "Scovillain",
+        "ja": "Scovillain"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "scovillain"
+      ],
+      "moveCount": 47,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-scizor": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가핫삼",
+        "en": "Mega Scizor",
+        "ja": "Mega Scizor"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-scizor",
+        "scizor"
+      ],
+      "moveCount": 97,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-heracross": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가헤라크로스",
+        "en": "Mega Heracross",
+        "ja": "Mega Heracross"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-heracross",
+        "heracross"
+      ],
+      "moveCount": 99,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-banette": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가다크펫",
+        "en": "Mega Banette",
+        "ja": "Mega Banette"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-banette",
+        "banette"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "slurpuff": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "나루림",
+        "en": "Slurpuff",
+        "ja": "Slurpuff"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "slurpuff"
+      ],
+      "moveCount": 60,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tsareena": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "달코퀸",
+        "en": "Tsareena",
+        "ja": "Tsareena"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tsareena"
+      ],
+      "moveCount": 77,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tyrantrum": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "견고라스",
+        "en": "Tyrantrum",
+        "ja": "Tyrantrum"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tyrantrum"
+      ],
+      "moveCount": 78,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "sandaconda": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "사다이사",
+        "en": "Sandaconda",
+        "ja": "Sandaconda"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sandaconda"
+      ],
+      "moveCount": 53,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-tyranitar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가마기라스",
+        "en": "Mega Tyranitar",
+        "ja": "Mega Tyranitar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-tyranitar",
+        "tyranitar"
+      ],
+      "moveCount": 134,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-clefable": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가픽시",
+        "en": "Mega Clefable",
+        "ja": "Mega Clefable"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-clefable",
+        "clefable"
+      ],
+      "moveCount": 163,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-victreebel": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가우츠보트",
+        "en": "Mega Victreebel",
+        "ja": "Mega Victreebel"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-victreebel",
+        "victreebel"
+      ],
+      "moveCount": 89,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "victreebel": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "우츠보트",
+        "en": "Victreebel",
+        "ja": "Victreebel"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "victreebel"
+      ],
+      "moveCount": 89,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "politoed": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "왕구리",
+        "en": "Politoed",
+        "ja": "Politoed"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "politoed"
+      ],
+      "moveCount": 92,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "skarmory": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "무장조",
+        "en": "Skarmory",
+        "ja": "Skarmory"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "skarmory"
+      ],
+      "moveCount": 90,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "castform": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "캐스퐁",
+        "en": "Castform",
+        "ja": "Castform"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "castform"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "luxray": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "렌트라",
+        "en": "Luxray",
+        "ja": "Luxray"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "luxray"
+      ],
+      "moveCount": 76,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "samurott": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "대검귀",
+        "en": "Samurott",
+        "ja": "Samurott"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "samurott"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "decidueye": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "모크나이퍼",
+        "en": "Decidueye",
+        "ja": "Decidueye"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "decidueye"
+      ],
+      "moveCount": 108,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "flapple": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "애프룡",
+        "en": "Flapple",
+        "ja": "Flapple"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "flapple"
+      ],
+      "moveCount": 52,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "polteageist": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "포트데스",
+        "en": "Polteageist",
+        "ja": "Polteageist"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "polteageist"
+      ],
+      "moveCount": 54,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mr.-rime": {
+      "status": "missing",
+      "display_name": {
+        "ko": "마임꽁꽁",
+        "en": "Mr. Rime",
+        "ja": "Mr. Rime"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mr.-rime"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "sinistcha": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "그우린차",
+        "en": "Sinistcha",
+        "ja": "Sinistcha"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sinistcha"
+      ],
+      "moveCount": 41,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "corviknight": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "아머까오",
+        "en": "Corviknight",
+        "ja": "Corviknight"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "corviknight"
+      ],
+      "moveCount": 68,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "skeledirge": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "라우드본",
+        "en": "Skeledirge",
+        "ja": "Skeledirge"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "skeledirge"
+      ],
+      "moveCount": 61,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "vaporeon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "샤미드",
+        "en": "Vaporeon",
+        "ja": "Vaporeon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "vaporeon"
+      ],
+      "moveCount": 98,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "flareon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "부스터",
+        "en": "Flareon",
+        "ja": "Flareon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "flareon"
+      ],
+      "moveCount": 94,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "umbreon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "블래키",
+        "en": "Umbreon",
+        "ja": "Umbreon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "umbreon"
+      ],
+      "moveCount": 99,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "scizor": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "핫삼",
+        "en": "Scizor",
+        "ja": "Scizor"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "scizor"
+      ],
+      "moveCount": 97,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "pelipper": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "패리퍼",
+        "en": "Pelipper",
+        "ja": "Pelipper"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "pelipper"
+      ],
+      "moveCount": 87,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "banette": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "다크펫",
+        "en": "Banette",
+        "ja": "Banette"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "banette"
+      ],
+      "moveCount": 93,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-chimecho": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가치렁",
+        "en": "Mega Chimecho",
+        "ja": "Mega Chimecho"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-chimecho",
+        "chimecho"
+      ],
+      "moveCount": 103,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "chimecho": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "치렁",
+        "en": "Chimecho",
+        "ja": "Chimecho"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "chimecho"
+      ],
+      "moveCount": 103,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "glaceon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "글레이시아",
+        "en": "Glaceon",
+        "ja": "Glaceon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "glaceon"
+      ],
+      "moveCount": 87,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "emboar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "염무왕",
+        "en": "Emboar",
+        "ja": "Emboar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "emboar"
+      ],
+      "moveCount": 102,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "wyrdeer": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "신비록",
+        "en": "Wyrdeer",
+        "ja": "Wyrdeer"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "wyrdeer"
+      ],
+      "moveCount": 68,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "orthworm": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "꿈트렁",
+        "en": "Orthworm",
+        "ja": "Orthworm"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "orthworm"
+      ],
+      "moveCount": 44,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "chesnaught": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "브리가론",
+        "en": "Chesnaught",
+        "ja": "Chesnaught"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "chesnaught"
+      ],
+      "moveCount": 117,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "alcremie": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "마휘핑",
+        "en": "Alcremie",
+        "ja": "Alcremie"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "alcremie"
+      ],
+      "moveCount": 55,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "tyranitar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "마기라스",
+        "en": "Tyranitar",
+        "ja": "Tyranitar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "tyranitar"
+      ],
+      "moveCount": 134,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "clefable": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "픽시",
+        "en": "Clefable",
+        "ja": "Clefable"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "clefable"
+      ],
+      "moveCount": 163,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "empoleon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "엠페르트",
+        "en": "Empoleon",
+        "ja": "Empoleon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "empoleon"
+      ],
+      "moveCount": 118,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "abomasnow": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "눈설왕",
+        "en": "Abomasnow",
+        "ja": "Abomasnow"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "abomasnow"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "aegislash": {
+      "status": "missing",
+      "display_name": {
+        "ko": "킬가르도",
+        "en": "Aegislash",
+        "ja": "Aegislash"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "aegislash"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "sylveon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "님피아",
+        "en": "Sylveon",
+        "ja": "Sylveon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sylveon"
+      ],
+      "moveCount": 80,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "goodra-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "히스이 미끄래곤",
+        "en": "Goodra Hisui",
+        "ja": "Goodra Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "goodra-hisui"
+      ],
+      "moveCount": 69,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "decidueye-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "히스이 모크나이퍼",
+        "en": "Decidueye Hisui",
+        "ja": "Decidueye Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "decidueye-hisui"
+      ],
+      "moveCount": 79,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "incineroar": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "어흥염",
+        "en": "Incineroar",
+        "ja": "Incineroar"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "incineroar"
+      ],
+      "moveCount": 106,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "primarina": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "누리레느",
+        "en": "Primarina",
+        "ja": "Primarina"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "primarina"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "toucannon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "왕큰부리",
+        "en": "Toucannon",
+        "ja": "Toucannon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "toucannon"
+      ],
+      "moveCount": 71,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "oranguru": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "하랑우탄",
+        "en": "Oranguru",
+        "ja": "Oranguru"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "oranguru"
+      ],
+      "moveCount": 91,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "farigiraf": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "키키링",
+        "en": "Farigiraf",
+        "ja": "Farigiraf"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "farigiraf"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "clawitzer": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "블로스터",
+        "en": "Clawitzer",
+        "ja": "Clawitzer"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "clawitzer"
+      ],
+      "moveCount": 73,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "rampardos": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "램펄드",
+        "en": "Rampardos",
+        "ja": "Rampardos"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "rampardos"
+      ],
+      "moveCount": 105,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "pangoro": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "부란다",
+        "en": "Pangoro",
+        "ja": "Pangoro"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "pangoro"
+      ],
+      "moveCount": 112,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "aurorus": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "아마루르가",
+        "en": "Aurorus",
+        "ja": "Aurorus"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "aurorus"
+      ],
+      "moveCount": 78,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "torterra": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "토대부기",
+        "en": "Torterra",
+        "ja": "Torterra"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "torterra"
+      ],
+      "moveCount": 106,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "trevenant": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "대로트",
+        "en": "Trevenant",
+        "ja": "Trevenant"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "trevenant"
+      ],
+      "moveCount": 99,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "machamp": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "괴력몬",
+        "en": "Machamp",
+        "ja": "Machamp"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "machamp"
+      ],
+      "moveCount": 105,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "ampharos": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "전룡",
+        "en": "Ampharos",
+        "ja": "Ampharos"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ampharos"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "golurk": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "골루그",
+        "en": "Golurk",
+        "ja": "Golurk"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "golurk"
+      ],
+      "moveCount": 105,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-golurk": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가골루그",
+        "en": "Mega Golurk",
+        "ja": "Mega Golurk"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-golurk",
+        "golurk"
+      ],
+      "moveCount": 105,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "azumarill": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "마릴리",
+        "en": "Azumarill",
+        "ja": "Azumarill"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "azumarill"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "sableye": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "깜까미",
+        "en": "Sableye",
+        "ja": "Sableye"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "sableye"
+      ],
+      "moveCount": 135,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "aggron": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "보스로라",
+        "en": "Aggron",
+        "ja": "Aggron"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "aggron"
+      ],
+      "moveCount": 121,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "audino": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "다부니",
+        "en": "Audino",
+        "ja": "Audino"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "audino"
+      ],
+      "moveCount": 107,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "beartic": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "툰베어",
+        "en": "Beartic",
+        "ja": "Beartic"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "beartic"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "kingambit": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "대도각참",
+        "en": "Kingambit",
+        "ja": "Kingambit"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "kingambit"
+      ],
+      "moveCount": 61,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-aggron": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가보스로라",
+        "en": "Mega Aggron",
+        "ja": "Mega Aggron"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-aggron",
+        "aggron"
+      ],
+      "moveCount": 121,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-audino": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가다부니",
+        "en": "Mega Audino",
+        "ja": "Mega Audino"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-audino",
+        "audino"
+      ],
+      "moveCount": 107,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "ditto": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메타몽",
+        "en": "Ditto",
+        "ja": "Ditto"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ditto"
+      ],
+      "moveCount": 1,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "hippowdon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "하마돈",
+        "en": "Hippowdon",
+        "ja": "Hippowdon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "hippowdon"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "conkeldurr": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "노보청",
+        "en": "Conkeldurr",
+        "ja": "Conkeldurr"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "conkeldurr"
+      ],
+      "moveCount": 86,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "bellibolt": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "찌리배리",
+        "en": "Bellibolt",
+        "ja": "Bellibolt"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "bellibolt"
+      ],
+      "moveCount": 43,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-ampharos": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가전룡",
+        "en": "Mega Ampharos",
+        "ja": "Mega Ampharos"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-ampharos",
+        "ampharos"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-chesnaught": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가브리가론",
+        "en": "Mega Chesnaught",
+        "ja": "Mega Chesnaught"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-chesnaught",
+        "chesnaught"
+      ],
+      "moveCount": 117,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "hydrapple": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "과미드라",
+        "en": "Hydrapple",
+        "ja": "Hydrapple"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "hydrapple"
+      ],
+      "moveCount": 59,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "crabominable": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "모단단게",
+        "en": "Crabominable",
+        "ja": "Crabominable"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "crabominable"
+      ],
+      "moveCount": 84,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "araquanid": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "깨비물거미",
+        "en": "Araquanid",
+        "ja": "Araquanid"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "araquanid"
+      ],
+      "moveCount": 70,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "ariados": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "아리아도스",
+        "en": "Ariados",
+        "ja": "Ariados"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "ariados"
+      ],
+      "moveCount": 85,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "forretress": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "쏘콘",
+        "en": "Forretress",
+        "ja": "Forretress"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "forretress"
+      ],
+      "moveCount": 97,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "camerupt": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "폭타",
+        "en": "Camerupt",
+        "ja": "Camerupt"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "camerupt"
+      ],
+      "moveCount": 91,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "rhyperior": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "거대코뿌리",
+        "en": "Rhyperior",
+        "ja": "Rhyperior"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "rhyperior"
+      ],
+      "moveCount": 128,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "avalugg-hisui": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "히스이 크레베이스",
+        "en": "Avalugg Hisui",
+        "ja": "Avalugg Hisui"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "avalugg-hisui"
+      ],
+      "moveCount": 58,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-drampa": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가할비롱",
+        "en": "Mega Drampa",
+        "ja": "Mega Drampa"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-drampa",
+        "drampa"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "drampa": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "할비롱",
+        "en": "Drampa",
+        "ja": "Drampa"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "drampa"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "spiritomb": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "화강돌",
+        "en": "Spiritomb",
+        "ja": "Spiritomb"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "spiritomb"
+      ],
+      "moveCount": 86,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "toxapex": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "더시마사리",
+        "en": "Toxapex",
+        "ja": "Toxapex"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "toxapex"
+      ],
+      "moveCount": 73,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mudsdale": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "만마드",
+        "en": "Mudsdale",
+        "ja": "Mudsdale"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mudsdale"
+      ],
+      "moveCount": 62,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "garganacl": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "콜로솔트",
+        "en": "Garganacl",
+        "ja": "Garganacl"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "garganacl"
+      ],
+      "moveCount": 57,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-crabominable": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가모단단게",
+        "en": "Mega Crabominable",
+        "ja": "Mega Crabominable"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-crabominable",
+        "crabominable"
+      ],
+      "moveCount": 84,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "stunfisk-galarian": {
+      "status": "missing",
+      "display_name": {
+        "ko": "가라르 메더",
+        "en": "Stunfisk Galarian",
+        "ja": "Stunfisk Galarian"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "stunfisk-galarian"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "stunfisk": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메더",
+        "en": "Stunfisk",
+        "ja": "Stunfisk"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "stunfisk"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "slowbro-galarian": {
+      "status": "missing",
+      "display_name": {
+        "ko": "가라르 야도란",
+        "en": "Slowbro Galarian",
+        "ja": "Slowbro Galarian"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "slowbro-galarian"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "slowbro": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "야도란",
+        "en": "Slowbro",
+        "ja": "Slowbro"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "slowbro"
+      ],
+      "moveCount": 135,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "snorlax": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "잠만보",
+        "en": "Snorlax",
+        "ja": "Snorlax"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "snorlax"
+      ],
+      "moveCount": 137,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "slowking-galarian": {
+      "status": "missing",
+      "display_name": {
+        "ko": "가라르 야도킹",
+        "en": "Slowking Galarian",
+        "ja": "Slowking Galarian"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "slowking-galarian"
+      ],
+      "moveCount": 0,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "No seeded move pool present; manual verification required first."
+      },
+      "notes": []
+    },
+    "slowking": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "야도킹",
+        "en": "Slowking",
+        "ja": "Slowking"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "slowking"
+      ],
+      "moveCount": 134,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "steelix": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "강철톤",
+        "en": "Steelix",
+        "ja": "Steelix"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "steelix"
+      ],
+      "moveCount": 96,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "bastiodon": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "바리톱스",
+        "en": "Bastiodon",
+        "ja": "Bastiodon"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "bastiodon"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "cofagrigus": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "데스니칸",
+        "en": "Cofagrigus",
+        "ja": "Cofagrigus"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "cofagrigus"
+      ],
+      "moveCount": 77,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "reuniclus": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "란쿨루스",
+        "en": "Reuniclus",
+        "ja": "Reuniclus"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "reuniclus"
+      ],
+      "moveCount": 100,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "appletun": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "단지래플",
+        "en": "Appletun",
+        "ja": "Appletun"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "appletun"
+      ],
+      "moveCount": 60,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "runerigus": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "데스판",
+        "en": "Runerigus",
+        "ja": "Runerigus"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "runerigus"
+      ],
+      "moveCount": 67,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-abomasnow": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가눈설왕",
+        "en": "Mega Abomasnow",
+        "ja": "Mega Abomasnow"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-abomasnow",
+        "abomasnow"
+      ],
+      "moveCount": 95,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-slowbro": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가야도란",
+        "en": "Mega Slowbro",
+        "ja": "Mega Slowbro"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-slowbro",
+        "slowbro"
+      ],
+      "moveCount": 135,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "mega-steelix": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가강철톤",
+        "en": "Mega Steelix",
+        "ja": "Mega Steelix"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-steelix",
+        "steelix"
+      ],
+      "moveCount": 96,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "aromatisse": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "프레프티르",
+        "en": "Aromatisse",
+        "ja": "Aromatisse"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "aromatisse"
+      ],
+      "moveCount": 67,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "hatterene": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "브리무음",
+        "en": "Hatterene",
+        "ja": "Hatterene"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "hatterene"
+      ],
+      "moveCount": 66,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "avalugg": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "크레베이스",
+        "en": "Avalugg",
+        "ja": "Avalugg"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "avalugg"
+      ],
+      "moveCount": 74,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-sableye": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가깜까미",
+        "en": "Mega Sableye",
+        "ja": "Mega Sableye"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-sableye",
+        "sableye"
+      ],
+      "moveCount": 135,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "torkoal": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "코터스",
+        "en": "Torkoal",
+        "ja": "Torkoal"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "torkoal"
+      ],
+      "moveCount": 88,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": []
+    },
+    "mega-camerupt": {
+      "status": "seeded_from_pokeapi_baseline",
+      "display_name": {
+        "ko": "메가폭타",
+        "en": "Mega Camerupt",
+        "ja": "Mega Camerupt"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "mega-camerupt",
+        "camerupt"
+      ],
+      "moveCount": 91,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    }
+  }
+}

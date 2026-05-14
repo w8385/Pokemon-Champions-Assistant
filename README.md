@@ -20,21 +20,25 @@
 
 ### 현재 전체 가용기술 검색의 실제 출처
 
-- 앱이 기술 검색에 직접 쓰는 소스 오브 트루스는 **`src/pokemonMovePools.json`** 입니다.
-- 이 파일은 현재 **PokeAPI 기반 본가 기술풀을 로컬에 임베드한 데이터**입니다.
-- 여기에 포켓몬 챔피언스 기준으로 확인된 누락/예외를 **수동 보정**하고 있습니다.
-  - 예: 메가/폼 병합, 명백한 누락 기술 추가
+- 앱이 기술 검색에 직접 쓰는 소스 오브 트루스는 **`src/championsMovePools.json`** 입니다.
+- 이 파일은 `npm run build:champions-whitelist`로 생성되며, 현재는 **`src/pokemonMovePools.json`의 PokeAPI 기반 baseline에서 시드 생성된 포챔스 전용 레이어**입니다.
+- 종별 검증 메타데이터는 **`src/championsMovePoolSources.json`** 에 저장됩니다.
+- 커버리지/누락 현황은 **`reports/championsMoveWhitelistCoverage.json`** 으로 확인합니다.
 - 검증에 참고하는 소스:
   - **champs.pokedb.tokyo**
   - **PokemonDB**
   - **Serebii**
 
-즉, 현재의 `가용 기술` 검색은 **포켓몬 챔피언스 전용 확정 화이트리스트 100% 완료본이 아니라**,
-**PokeAPI 기반 기술풀 + 챔피언스 수동 검증/보정 레이어**라고 보는 것이 정확합니다.
+즉, 현재의 `가용 기술` 검색은 **포챔스 전용 파일 경로로 분리되었지만 내용상으로는 아직 시드 단계**입니다.
+이 파일을 종별로 Champions-specific 검증해서 확정본으로 승격시키는 것이 다음 단계입니다.
 
-향후 목표는 `championsMovePools.json` 같은 별도 전용 화이트리스트 레이어로 분리하는 것입니다.
+화이트리스트 생성/갱신:
 
-현재 MVP는 위 정책을 반영한 수동 큐레이션 샘플 데이터를 사용합니다.
+```bash
+npm run build:champions-whitelist
+```
+
+현재 MVP는 위 정책을 반영한 수동 큐레이션 샘플 데이터와 시드 화이트리스트를 함께 사용합니다.
 전체 기술도감 노출 대신 샘플 추적에 필요한 후보군만 좁혀서 보여줍니다.
 
 ## 로컬 실행
