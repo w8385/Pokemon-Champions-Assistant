@@ -97,6 +97,7 @@ type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
+type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: string[] }
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
@@ -266,6 +267,63 @@ function statGaugePercent(value: number) {
 function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
   if (!entry) return [] as string[]
   return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])]))
+}
+
+const moveNameCache = new Map<string, Promise<string>>()
+
+function pokemonApiCandidates(key: string) {
+  const candidates = [key]
+  if (key.startsWith('mega-')) {
+    const base = key.slice(5)
+    candidates.push(`${base}-mega`, base)
+  }
+  const regionalPrefixes: Record<string, string> = {
+    alolan: 'alola',
+    galarian: 'galar',
+    hisuian: 'hisui',
+    paldean: 'paldea',
+  }
+  const [first, ...rest] = key.split('-')
+  if (regionalPrefixes[first] && rest.length) {
+    const base = rest.join('-')
+    candidates.push(`${base}-${regionalPrefixes[first]}`, base)
+  }
+  return Array.from(new Set(candidates))
+}
+
+async function fetchMoveName(url: string) {
+  if (!moveNameCache.has(url)) {
+    moveNameCache.set(url, fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`move ${res.status}`)
+        return res.json()
+      })
+      .then((json) => {
+        const ko = json.names?.find((entry: any) => entry.language?.name === 'ko')?.name
+        return ko || json.names?.find((entry: any) => entry.language?.name === 'en')?.name || json.name
+      })
+      .catch(() => {
+        const slug = url.split('/').filter(Boolean).pop() || ''
+        return slug.split('-').map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1)).join(' ')
+      }))
+  }
+  return moveNameCache.get(url)!
+}
+
+async function fetchPokemonMovePool(key: string) {
+  let pokemonJson: any = null
+  for (const candidate of pokemonApiCandidates(key)) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${candidate}`)
+    if (res.ok) {
+      pokemonJson = await res.json()
+      break
+    }
+  }
+  if (!pokemonJson) throw new Error(`move pool not found for ${key}`)
+
+  const moveUrls = Array.from(new Set((pokemonJson.moves ?? []).map((entry: any) => entry.move?.url).filter(Boolean))) as string[]
+  const names = await Promise.all(moveUrls.map((url) => fetchMoveName(url)))
+  return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b, 'ko'))
 }
 
 function natureLabel(natureId: NatureId) {
@@ -698,6 +756,7 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
+  const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
@@ -712,6 +771,20 @@ export default function App() {
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
+
+  React.useEffect(() => {
+    const targetKeys = Array.from(new Set(party.map((member) => member.key).filter(Boolean)))
+    targetKeys.forEach((key) => {
+      if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready') return
+      setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
+      fetchPokemonMovePool(key)
+        .then((moves) => setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves } })))
+        .catch(() => {
+          const fallback = moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))
+          setMovePoolByKey((prev) => ({ ...prev, [key]: { status: fallback.length ? 'ready' : 'error', moves: fallback } }))
+        })
+    })
+  }, [party, movePoolByKey])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -1306,7 +1379,8 @@ export default function App() {
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
-                const memberMoveOptions = moveOptionsForEntry(memberMoveSet)
+                const memberMovePool = movePoolByKey[member.key]
+                const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
@@ -1437,7 +1511,7 @@ export default function App() {
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>기술 배치</strong>
-                        <span className="muted-inline">실사용 가능 기술 검색</span>
+                        <span className="muted-inline">{memberMovePool?.status === 'loading' ? '기술풀 불러오는 중…' : '사용 가능 기술 검색'}</span>
                       </div>
                       {memberMoveOptions.length ? <datalist id={`move-options-${member.key}`}>
                         {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move}`} value={move} />)}
