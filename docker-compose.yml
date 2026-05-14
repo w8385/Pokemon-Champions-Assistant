@@ -1,0 +1,8 @@
+services:
+  poke-champs-demo:
+    build:
+      context: .
+    container_name: poke-champs-demo
+    ports:
+      - "3002:80"
+    restart: unless-stopped

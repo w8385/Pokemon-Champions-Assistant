@@ -1,0 +1,1227 @@
+import React from 'react'
+import championsData from './pokemon_champions_verified_data.json'
+import { sampleMoves } from './sampleMoves'
+import { dataSourcePolicy } from './dataSources'
+import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
+import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
+import { getJaName, getJaTypes } from './jaLabels'
+
+type Row = {
+  id: number
+  key: string
+  name_ko: string
+  name_en: string
+  hp: number
+  attack: number
+  defense: number
+  spAttack: number
+  spDefense: number
+  speed: number
+  fast: number
+  neutral: number
+  scarf_fast: number
+  scarf_neutral: number
+  types: string[]
+  types_ko: string[]
+  abilities: string[]
+  abilities_ko: string[]
+}
+
+type MemberConfig = {
+  natureBoostStat: 'none' | 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
+  scarf: boolean
+  speedStage: number
+}
+
+type PartyTuning = {
+  natureBoostStat: MemberConfig['natureBoostStat']
+  magicNumber: number
+  maxValue: number
+}
+
+type PartyMember = {
+  key: string
+  config: MemberConfig
+  picked: boolean
+  evs: EffortValues
+  tuning: PartyTuning
+}
+
+type OpponentState = {
+  key: string
+  item: string
+  ability: string
+  notes: string
+  revealedMoves: string[]
+  natureBoost: boolean
+  scarf: boolean
+  speedStage: number
+  picked: boolean
+}
+
+type CalcMode = 'physical' | 'special'
+
+type PersistedState = {
+  party?: PartyMember[]
+  opponents?: OpponentState[]
+  selectedMy?: number
+  selectedOpp?: number
+  battleNote?: string
+  confirmedMovesByKey?: Record<string, string[]>
+  mainSection?: MainSection
+  sampleForge?: PartyMember
+}
+
+type ImportExportPayload = PersistedState & {
+  version: 1
+}
+
+type MoveFilter = 'all' | 'core' | 'options' | 'utility'
+type MainSection = 'single' | 'sample'
+type MainTab = 'party' | 'pick' | 'calc'
+type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample'; idx: 0 } | null
+type SiteLanguage = 'ko' | 'en' | 'ja'
+
+const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
+const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
+const MAX_OPPONENTS = 6
+const CHAMPIONS_EFFORT_CAP = 66
+
+const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
+const indexByKey = new Map(rows.map((row) => [row.key, row]))
+const speciesOptions = rows.map((row) => ({
+  key: row.key,
+  label: `${row.name_ko} (${row.name_en})`,
+}))
+const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
+
+const defaultPartyTuning = (): PartyTuning => ({ natureBoostStat: 'speed', magicNumber: 0, maxValue: 0 })
+const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { natureBoostStat: 'speed', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning() }))
+const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { natureBoostStat: 'speed', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning() })
+const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
+const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
+  key,
+  item: '',
+  ability: '',
+  notes: '',
+  revealedMoves: [],
+  natureBoost: true,
+  scarf: false,
+  speedStage: 0,
+  picked: false,
+}))
+
+const movePowerPresets = [
+  { label: '40 선공기', value: 40 },
+  { label: '55 약한 견제기', value: 55 },
+  { label: '75 기본기', value: 75 },
+  { label: '90 주력기', value: 90 },
+  { label: '100 고위력', value: 100 },
+  { label: '120 대기술', value: 120 },
+  { label: '130 초고위력', value: 130 },
+]
+
+const typeChart: Record<string, Partial<Record<string, number>>> = {
+  Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+  Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+  Water: { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+  Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+  Grass: { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+  Ice: { Fire: 0.5, Water: 0.5, Grass: 2, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5, Ice: 0.5 },
+  Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+  Poison: { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+  Ground: { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+  Flying: { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+  Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
+  Bug: { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+  Rock: { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+  Ghost: { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+  Dragon: { Dragon: 2, Steel: 0.5, Fairy: 0 },
+  Dark: { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+  Steel: { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+  Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 },
+}
+
+function clampSpeedStage(value: unknown) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return 0
+  return Math.max(-2, Math.min(2, Math.trunc(num)))
+}
+
+function sanitizeMemberConfig(input: unknown): MemberConfig {
+  const config = input && typeof input === 'object' ? (input as Partial<MemberConfig>) : {}
+  const natureBoostStat = typeof (config as { natureBoostStat?: unknown }).natureBoostStat === 'string'
+    ? (config as { natureBoostStat: MemberConfig['natureBoostStat'] }).natureBoostStat
+    : Boolean((config as { natureBoost?: unknown }).natureBoost) ? 'speed' : 'none'
+  return {
+    natureBoostStat,
+    scarf: Boolean(config.scarf),
+    speedStage: clampSpeedStage(config.speedStage),
+  }
+}
+
+function sanitizePartyTuning(input: unknown): PartyTuning {
+  const tuning = input && typeof input === 'object' ? (input as Partial<PartyTuning>) : {}
+  return {
+    natureBoostStat: typeof tuning.natureBoostStat === 'string' ? tuning.natureBoostStat : 'speed',
+    magicNumber: clampNonNegativeInt(tuning.magicNumber, 255),
+    maxValue: clampNonNegativeInt(tuning.maxValue, 255),
+  }
+}
+
+function clampEv(value: unknown) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return 0
+  return Math.max(0, Math.min(CHAMPIONS_EFFORT_CAP, Math.trunc(num)))
+}
+
+function clampNonNegativeInt(value: unknown, max = 999) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return 0
+  return Math.max(0, Math.min(max, Math.trunc(num)))
+}
+
+function totalEffortPoints(evs: EffortValues) {
+  return evs.hp + evs.attack + evs.defense + evs.spAttack + evs.spDefense + evs.speed
+}
+
+function applyChampionsEffort(evs: EffortValues, field: keyof EffortValues, nextValue: unknown) {
+  const clamped = clampEv(nextValue)
+  const remainder = CHAMPIONS_EFFORT_CAP - (totalEffortPoints(evs) - evs[field])
+  return {
+    ...evs,
+    [field]: Math.max(0, Math.min(clamped, remainder)),
+  }
+}
+
+function sanitizeEvs(input: unknown): EffortValues {
+  const evs = input && typeof input === 'object' ? (input as Partial<EffortValues>) : {}
+  return {
+    hp: clampEv(evs.hp),
+    attack: clampEv(evs.attack),
+    defense: clampEv(evs.defense),
+    spAttack: clampEv(evs.spAttack),
+    spDefense: clampEv(evs.spDefense),
+    speed: clampEv(evs.speed),
+  }
+}
+
+function sanitizeParty(input: unknown): PartyMember[] {
+  if (!Array.isArray(input)) return defaultParty
+  const cleaned = input
+    .map((member) => {
+      if (!member || typeof member !== 'object') return null
+      const raw = member as Partial<PartyMember>
+      if (typeof raw.key !== 'string' || !indexByKey.has(raw.key)) return null
+      return {
+        key: raw.key,
+        config: sanitizeMemberConfig(raw.config),
+        picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        evs: sanitizeEvs(raw.evs),
+        tuning: sanitizePartyTuning(raw.tuning),
+      }
+    })
+    .filter((member): member is PartyMember => Boolean(member))
+
+  return cleaned.length ? cleaned : defaultParty
+}
+
+function sanitizeOpponents(input: unknown): OpponentState[] {
+  if (!Array.isArray(input)) return defaultOpponents
+  const cleaned = input
+    .map((opponent) => {
+      if (!opponent || typeof opponent !== 'object') return null
+      const raw = opponent as Partial<OpponentState>
+      if (typeof raw.key !== 'string' || !indexByKey.has(raw.key)) return null
+      return {
+        key: raw.key,
+        item: typeof raw.item === 'string' ? raw.item : '',
+        ability: typeof raw.ability === 'string' ? raw.ability : '',
+        notes: typeof raw.notes === 'string' ? raw.notes : '',
+        revealedMoves: Array.isArray(raw.revealedMoves)
+          ? raw.revealedMoves.filter((move): move is string => typeof move === 'string')
+          : [],
+        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : true,
+        scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
+        speedStage: clampSpeedStage(raw.speedStage),
+        picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+      }
+    })
+    .filter((opponent): opponent is OpponentState => Boolean(opponent))
+    .slice(0, MAX_OPPONENTS)
+
+  return cleaned.length ? cleaned : defaultOpponents
+}
+
+function sanitizeSelectedIndex(value: unknown, listLength: number) {
+  const num = Number(value)
+  if (!Number.isInteger(num) || num < 0 || num >= listLength) return 0
+  return num
+}
+
+function loadPersistedState(): PersistedState | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as PersistedState
+  } catch {
+    return null
+  }
+}
+
+function actualStat(base: number, ev: number, natureBoost = false, hp = false) {
+  if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + ev
+  const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + ev
+  return natureBoost ? Math.floor(raw * 1.1) : raw
+}
+
+function speedValue(row: Row, config: MemberConfig) {
+  let value = config.natureBoostStat === 'speed' ? row.fast : row.neutral
+  if (config.speedStage > 0) {
+    value = Math.floor(value * ((2 + config.speedStage) / 2))
+  } else if (config.speedStage < 0) {
+    value = Math.floor(value * (2 / (2 + Math.abs(config.speedStage))))
+  }
+  if (config.scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function partySpeedValue(row: Row, member: PartyMember) {
+  let value = actualStat(row.speed, member.evs.speed, member.config.natureBoostStat === 'speed')
+  if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
+  else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
+  if (member.config.scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues) {
+  switch (field) {
+    case 'hp':
+      return actualStat(row.hp, member.evs.hp, false, true)
+    case 'attack':
+      return actualStat(row.attack, member.evs.attack, member.config.natureBoostStat === 'attack')
+    case 'defense':
+      return actualStat(row.defense, member.evs.defense, member.config.natureBoostStat === 'defense')
+    case 'spAttack':
+      return actualStat(row.spAttack, member.evs.spAttack, member.config.natureBoostStat === 'spAttack')
+    case 'spDefense':
+      return actualStat(row.spDefense, member.evs.spDefense, member.config.natureBoostStat === 'spDefense')
+    case 'speed':
+      return actualStat(row.speed, member.evs.speed, member.config.natureBoostStat === 'speed')
+  }
+}
+
+function typeEffectiveness(attackType: string, defendTypes: string[]) {
+  return defendTypes.reduce((acc, defendType) => acc * (typeChart[attackType]?.[defendType] ?? 1), 1)
+}
+
+function matchupHints(attacker: Row, defender: Row) {
+  const attackOptions = attacker.types.map((type, idx) => ({
+    type,
+    typeKo: attacker.types_ko[idx] ?? type,
+    multiplier: typeEffectiveness(type, defender.types),
+  }))
+  const defenseOptions = defender.types.map((type, idx) => ({
+    type,
+    typeKo: defender.types_ko[idx] ?? type,
+    multiplier: typeEffectiveness(type, attacker.types),
+  }))
+
+  const bestAttack = [...attackOptions].sort((a, b) => b.multiplier - a.multiplier)[0]
+  const worstDefense = [...defenseOptions].sort((a, b) => b.multiplier - a.multiplier)[0]
+  const resistAttack = [...attackOptions].sort((a, b) => a.multiplier - b.multiplier)[0]
+
+  return { bestAttack, worstDefense, resistAttack }
+}
+
+function togglePicked<T extends { picked: boolean }>(list: T[], idx: number, maxPicks = 3) {
+  const next = [...list]
+  const current = next[idx]
+  if (!current) return list
+  const pickedCount = next.filter((item) => item.picked).length
+  if (!current.picked && pickedCount >= maxPicks) return list
+  next[idx] = { ...current, picked: !current.picked }
+  return next
+}
+
+function calcDamage(attacker: Row, defender: Row, movePower: number, mode: CalcMode, stab = 1.5, effectiveness = 1) {
+  const attackStat = mode === 'physical' ? attacker.attack : attacker.spAttack
+  const defenseStat = mode === 'physical' ? defender.defense : defender.spDefense
+  const base = (((22 * movePower * attackStat) / Math.max(1, defenseStat)) / 50) + 2
+  const min = Math.floor(base * stab * effectiveness * 0.85)
+  const max = Math.floor(base * stab * effectiveness)
+  return {
+    min,
+    max,
+    minPct: ((min / defender.hp) * 100).toFixed(1),
+    maxPct: ((max / defender.hp) * 100).toFixed(1),
+  }
+}
+
+function filterSpeciesOptions(query: string) {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return speciesOptions
+  return speciesOptions.filter((option) => option.label.toLowerCase().includes(normalized) || option.key.toLowerCase().includes(normalized))
+}
+
+function displayName(row: Row, language: SiteLanguage) {
+  if (language === 'en') return row.name_en
+  if (language === 'ja') return getJaName(row.key, row.name_ko, row.name_en)
+  return row.name_ko
+}
+
+function displayTypes(row: Row, language: SiteLanguage) {
+  if (language === 'en') return row.types
+  if (language === 'ja') return getJaTypes(row.types)
+  return row.types_ko
+}
+
+function searchDisplayLabel(key: string, language: SiteLanguage) {
+  const row = indexByKey.get(key)
+  if (!row) return key
+  return displayName(row, language)
+}
+
+function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sample', idx: number) {
+  return a?.side === side && a?.idx === idx
+}
+
+function menuLabelForTab(tab: MainTab) {
+  switch (tab) {
+    case 'party': return '내 파티 관리'
+    case 'pick': return '상대 엔트리'
+    case 'calc': return '스피드&결정력 계산'
+  }
+}
+
+function HamburgerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
+      <path fill="currentColor" d="M4 7h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
+    </svg>
+  )
+}
+
+function TypeBadgeImage({ type }: { type: string }) {
+  const label = getTypeBadgeLabel(type)
+  return <img src={getTypeBadgeSrc(type)} alt={label} className="type-badge-image" title={label} />
+}
+
+function LanguageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
+      <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm6.93 9h-3.14a15.4 15.4 0 0 0-1.38-5.03A8.03 8.03 0 0 1 18.93 11ZM12 4.07c.78.95 1.86 3.15 2.31 6.93H9.69C10.14 7.22 11.22 5.02 12 4.07ZM4.07 13h3.14a15.4 15.4 0 0 0 1.38 5.03A8.03 8.03 0 0 1 4.07 13Zm3.14-2H4.07a8.03 8.03 0 0 1 4.52-5.03A15.4 15.4 0 0 0 7.21 11Zm4.79 8.93c-.78-.95-1.86-3.15-2.31-6.93h4.62c-.45 3.78-1.53 5.98-2.31 6.93ZM14.41 18.03A15.4 15.4 0 0 0 15.79 13h3.14a8.03 8.03 0 0 1-4.52 5.03Z"/>
+    </svg>
+  )
+}
+
+const NATURE_STAT_OPTIONS = [
+  ['none', '없음'],
+  ['attack', '공격'],
+  ['defense', '방어'],
+  ['spAttack', '특공'],
+  ['spDefense', '특방'],
+  ['speed', '스피드'],
+] as const
+
+export default function App() {
+  const persisted = React.useMemo(() => loadPersistedState(), [])
+  const [party, setParty] = React.useState<PartyMember[]>(() => sanitizeParty(persisted?.party))
+  const [opponents, setOpponents] = React.useState<OpponentState[]>(() => sanitizeOpponents(persisted?.opponents))
+  const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(persisted?.selectedMy, sanitizeParty(persisted?.party).length))
+  const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
+  const [movePower, setMovePower] = React.useState(90)
+  const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
+  const [stab, setStab] = React.useState(1.5)
+  const [effectiveness, setEffectiveness] = React.useState(1)
+  const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
+  const [mainSection, setMainSection] = React.useState<MainSection>(() => persisted?.mainSection === 'sample' ? 'sample' : 'single')
+  const [activeTab, setActiveTab] = React.useState<MainTab>('party')
+  const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
+  const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
+  const [moveSearch, setMoveSearch] = React.useState('')
+  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => persisted?.confirmedMovesByKey ?? {})
+  const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
+  const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
+  const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
+  const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
+  const [navMenuOpen, setNavMenuOpen] = React.useState(false)
+  const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
+  const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
+  const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+
+  React.useEffect(() => {
+    const safeSelectedMy = sanitizeSelectedIndex(selectedMy, party.length)
+    const safeSelectedOpp = sanitizeSelectedIndex(selectedOpp, opponents.length)
+    if (safeSelectedMy !== selectedMy) setSelectedMy(safeSelectedMy)
+    if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
+    setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
+    setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
+  }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    const payload: PersistedState = {
+      party,
+      opponents,
+      selectedMy,
+      selectedOpp,
+      battleNote,
+      confirmedMovesByKey,
+      mainSection,
+      sampleForge,
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+  }, [party, opponents, selectedMy, selectedOpp, battleNote, confirmedMovesByKey, mainSection, sampleForge])
+
+  const myMember = party[selectedMy] ?? party[0]
+  const oppMember = opponents[selectedOpp] ?? opponents[0]
+  const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
+  const myRow = indexByKey.get(myMember.key) ?? rows[0]
+  const oppRow = indexByKey.get(oppMember.key) ?? rows[0]
+
+  const mySpeed = partySpeedValue(myRow, myMember)
+  const oppSpeed = speedValue(oppRow, {
+    natureBoostStat: oppMember.natureBoost ? 'speed' : 'none',
+    scarf: oppMember.scarf || oppMember.item.includes('스카프'),
+    speedStage: oppMember.speedStage,
+  })
+  const pickedParty = party.filter((member) => member.picked)
+  const pickedOpponents = opponents.filter((member) => member.picked)
+  const toggleConfirmedMove = (key: string, move: string) => {
+    setConfirmedMovesByKey((prev) => {
+      const current = prev[key] ?? []
+      const next = current.includes(move) ? current.filter((item) => item !== move) : [...current, move]
+      return { ...prev, [key]: next }
+    })
+  }
+  const selectSpecies = (side: 'party' | 'opponent' | 'sample', idx: number, key: string) => {
+    if (side === 'party') {
+      const member = party[idx]
+      if (!member) return
+      const next = [...party]
+      next[idx] = { ...member, key }
+      setParty(next)
+      const nextSearch = [...partySearch]
+      nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
+      setPartySearch(nextSearch)
+    } else if (side === 'opponent') {
+      const member = opponents[idx]
+      if (!member) return
+      const next = [...opponents]
+      next[idx] = { ...member, key }
+      setOpponents(next)
+      const nextSearch = [...opponentSearch]
+      nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
+      setOpponentSearch(nextSearch)
+    } else {
+      setSampleForge((prev) => ({ ...prev, key }))
+      setSampleSearch(searchDisplayLabel(key, siteLanguage))
+    }
+    setActiveSearchField(null)
+  }
+  const trackedKeys = Array.from(new Set([...party.map((member) => member.key), ...opponents.map((member) => member.key)]))
+  const moveCards = trackedKeys
+    .map((key) => {
+      const moveSet = sampleMoves.find((entry) => entry.key === key)
+      const row = indexByKey.get(key)
+      if (!moveSet || !row) return null
+      const buckets = [
+        moveFilter === 'all' || moveFilter === 'core' ? moveSet.core.map((move) => ({ move, kind: 'core' as const })) : [],
+        moveFilter === 'all' || moveFilter === 'options' ? (moveSet.options ?? []).map((move) => ({ move, kind: 'options' as const })) : [],
+        moveFilter === 'all' || moveFilter === 'utility' ? (moveSet.utility ?? []).map((move) => ({ move, kind: 'utility' as const })) : [],
+      ].flat().filter((entry) => !moveSearch || entry.move.includes(moveSearch))
+      if (!buckets.length && moveSearch) return null
+      return { key, row, moveSet, buckets, confirmed: confirmedMovesByKey[key] ?? [] }
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+  const damage = calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness)
+  const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
+
+  const resetAll = () => {
+    setParty(defaultParty)
+    setOpponents(defaultOpponents)
+    setPartySearch(defaultParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setOpponentSearch(defaultOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setSelectedMy(0)
+    setSelectedOpp(0)
+    setMovePower(90)
+    setCalcMode('special')
+    setStab(1.5)
+    setEffectiveness(1)
+    setBattleNote('')
+    setConfirmedMovesByKey({})
+    setMainSection('single')
+    setSampleForge(defaultSampleForge())
+    setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
+    if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
+  }
+
+  const exportState = () => {
+    if (typeof window === 'undefined') return
+    const payload: ImportExportPayload = {
+      version: 1,
+      party,
+      opponents,
+      selectedMy,
+      selectedOpp,
+      battleNote,
+      confirmedMovesByKey,
+      mainSection,
+      sampleForge,
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'pokemon-champions-state.json'
+    a.click()
+    window.URL.revokeObjectURL(url)
+  }
+
+  const importState = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    try {
+      const text = await file.text()
+      const parsed = JSON.parse(text) as ImportExportPayload
+      const nextParty = sanitizeParty(parsed.party)
+      setParty(nextParty)
+      const nextOpponents = sanitizeOpponents(parsed.opponents)
+      setOpponents(nextOpponents)
+      setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+      setOpponentSearch(nextOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+      setSelectedMy(sanitizeSelectedIndex(parsed.selectedMy, nextParty.length))
+      setSelectedOpp(sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length))
+      setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
+      setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
+      setMainSection(parsed.mainSection === 'sample' ? 'sample' : 'single')
+      const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
+      setSampleForge(nextSampleForge)
+      setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
+    } catch {
+      if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  return (
+    <div className="app-shell">
+      <header>
+        <div className="header-top-row">
+          <button type="button" className="icon-button" aria-label="메뉴" title="Menu" onClick={() => setNavMenuOpen((prev) => !prev)}>
+            <HamburgerIcon />
+          </button>
+          <div>
+            <h1>Pokemon Champions Battle Assistant Demo</h1>
+            <p>파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.</p>
+          </div>
+        </div>
+        <div className="top-actions">
+          <div className="language-menu-wrap">
+            <button type="button" className="icon-button" aria-label="언어 선택" title="Language" onClick={() => setLanguageMenuOpen((prev) => !prev)}>
+              <LanguageIcon />
+            </button>
+            {languageMenuOpen ? (
+              <div className="language-menu">
+                <button type="button" className={`language-menu-item ${siteLanguage === 'ko' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ko'); setLanguageMenuOpen(false) }}>한국어</button>
+                <button type="button" className={`language-menu-item ${siteLanguage === 'ja' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ja'); setLanguageMenuOpen(false) }}>日本語</button>
+                <button type="button" className={`language-menu-item ${siteLanguage === 'en' ? 'active' : ''}`} onClick={() => { setSiteLanguage('en'); setLanguageMenuOpen(false) }}>English</button>
+              </div>
+            ) : null}
+          </div>
+          <button type="button" className="action-button" onClick={exportState}>상태 내보내기</button>
+          <button type="button" className="action-button" onClick={() => fileInputRef.current?.click()}>상태 불러오기</button>
+          <button type="button" className="action-button danger" onClick={resetAll}>전체 초기화</button>
+          <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
+        </div>
+        {navMenuOpen ? (
+          <div className="nav-drawer">
+            <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
+              싱글배틀 메뉴
+              <span>{menuLabelForTab(activeTab)}</span>
+            </button>
+            <button type="button" className={`nav-item ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setNavMenuOpen(false) }}>
+              포켓몬 샘플 깎기
+              <span>포켓몬 하나 집중 조정</span>
+            </button>
+          </div>
+        ) : null}
+      </header>
+
+      {tuningModalIndex !== null && party[tuningModalIndex] ? (
+        <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="row-between">
+              <h2>성격 / 매직넘버 / 최대치</h2>
+              <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>닫기</button>
+            </div>
+            <div className="modal-grid">
+              <label>
+                성격 보정
+                <select
+                  value={party[tuningModalIndex].tuning.natureBoostStat}
+                  onChange={(e) => {
+                    const next = [...party]
+                    next[tuningModalIndex] = {
+                      ...next[tuningModalIndex],
+                      tuning: { ...next[tuningModalIndex].tuning, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] },
+                      config: { ...next[tuningModalIndex].config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] },
+                    }
+                    setParty(next)
+                  }}
+                >
+                  {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <label>
+                매직넘버
+                <input
+                  type="number"
+                  min={0}
+                  max={255}
+                  value={party[tuningModalIndex].tuning.magicNumber}
+                  onChange={(e) => {
+                    const next = [...party]
+                    next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }
+                    setParty(next)
+                  }}
+                />
+              </label>
+              <label>
+                최대치
+                <input
+                  type="number"
+                  min={0}
+                  max={255}
+                  value={party[tuningModalIndex].tuning.maxValue}
+                  onChange={(e) => {
+                    const next = [...party]
+                    next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }
+                    setParty(next)
+                  }}
+                />
+              </label>
+            </div>
+            <div className="modal-preview-box">
+              <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(indexByKey.get(party[tuningModalIndex].key) ?? rows[0], siteLanguage)}</span></div>
+              <p className="muted">성격 보정: {NATURE_STAT_OPTIONS.find(([value]) => value === party[tuningModalIndex].tuning.natureBoostStat)?.[1] ?? '없음'}</p>
+              <p className="muted">매직넘버: {party[tuningModalIndex].tuning.magicNumber || '미지정'} · 최대치: {party[tuningModalIndex].tuning.maxValue || '미지정'}</p>
+              <p className="muted">참고 이미지 기준으로 실전에서 자주 보는 목표 실수치 메모용 UI로 맞췄습니다.</p>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <main className="grid">
+        <section className="panel wide">
+          <div className="row-between section-head">
+            <div>
+              <h2>{mainSection === 'single' ? '싱글배틀 메뉴' : '포켓몬 샘플 깎기'}</h2>
+              <p className="muted">{mainSection === 'single' ? '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.' : '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.'}</p>
+            </div>
+            {mainSection === 'single' ? (
+              <div className="tab-bar">
+                <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>내 파티 관리</button>
+                <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>상대 엔트리</button>
+                <button type="button" className={`tab-chip ${activeTab === 'calc' ? 'active' : ''}`} onClick={() => setActiveTab('calc')}>스피드&결정력 계산</button>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        {mainSection === 'single' && activeTab === 'calc' ? (
+          <section className="panel wide">
+            <h2>파티 한눈 요약</h2>
+            <div className="team-strip-grid">
+              <div>
+                <p className="muted">내 파티</p>
+                <div className="team-strip">
+                  {party.map((member, idx) => {
+                    const row = indexByKey.get(member.key) ?? rows[0]
+                    return <button key={`team-my-${idx}`} type="button" className={`team-pill ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>{displayName(row, siteLanguage)}</button>
+                  })}
+                </div>
+              </div>
+              <div>
+                <p className="muted">상대 파티</p>
+                <div className="team-strip">
+                  {opponents.map((member, idx) => {
+                    const row = indexByKey.get(member.key) ?? rows[0]
+                    return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{displayName(row, siteLanguage)}</button>
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {mainSection === 'single' && activeTab === 'party' ? <section className="party-overview panel wide">
+          <div className="party-columns party-manage-columns">
+            <div className="party-lane">
+              <div className="section-head row-between">
+                <h2>내 파티</h2>
+                <span className="muted-inline">선택: {displayName(myRow, siteLanguage)}</span>
+              </div>
+              <div className="entry-grid manage-entry-grid">
+              {party.map((member, idx) => {
+                const row = indexByKey.get(member.key) ?? rows[0]
+                return (
+                  <div key={`${member.key}-${idx}`} className={`card entry-card ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>
+                    <div className="entry-card-top">
+                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
+                      <div className="entry-card-head">
+                        <div className="row-between">
+                          <strong>{displayName(row, siteLanguage)}</strong>
+                          <span>S {partySpeedValue(row, member)}</span>
+                        </div>
+                        <div className="summary-line">
+                          <span className="muted">{displayTypes(row, siteLanguage).join(' / ')}</span>
+                          <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pick-row" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className={`pick-chip ${member.picked ? 'active' : ''}`}
+                        onClick={() => setParty(togglePicked(party, idx))}
+                      >
+                        {member.picked ? '선출 확정' : '선출 체크'}
+                      </button>
+                      <button
+                        type="button"
+                        className="pick-chip"
+                        onClick={() => setSelectedMy(idx)}
+                      >
+                        현재 대면
+                      </button>
+                      <button
+                        type="button"
+                        className="pick-chip"
+                        onClick={() => setTuningModalIndex(idx)}
+                      >
+                        튜닝 설정
+                      </button>
+                    </div>
+                    <label className="species-picker">
+                      종 선택
+                      <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          value={partySearch[idx] ?? ''}
+                          placeholder="포켓몬 검색"
+                          onFocus={() => setActiveSearchField({ side: 'party', idx })}
+                          onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)}
+                          onChange={(e) => {
+                            const next = [...partySearch]
+                            next[idx] = e.target.value
+                            setPartySearch(next)
+                            setActiveSearchField({ side: 'party', idx })
+                          }}
+                        />
+                        {sameSearchTarget(activeSearchField, 'party', idx) ? (
+                          <div className="autocomplete-menu">
+                            {filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8).map((option) => (
+                              <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('party', idx, option.key)}>
+                                {searchDisplayLabel(option.key, siteLanguage)}
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </label>
+                    <div className="ev-grid" onClick={(e) => e.stopPropagation()}>
+                      <div className="ev-total-row">
+                        <strong>능력 포인트</strong>
+                        <span>{totalEffortPoints(member.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                      </div>
+                      {([
+                        ['hp', 'HP'],
+                        ['attack', 'Atk'],
+                        ['defense', 'Def'],
+                        ['spAttack', 'SpA'],
+                        ['spDefense', 'SpD'],
+                        ['speed', 'Spe'],
+                      ] as const).map(([field, label]) => (
+                        <label key={field}>
+                          {label}
+                          <input
+                            type="number"
+                            min={0}
+                            max={CHAMPIONS_EFFORT_CAP}
+                            value={member.evs[field]}
+                            onChange={(e) => {
+                              const next = [...party]
+                              next[idx] = { ...member, evs: applyChampionsEffort(member.evs, field, e.target.value) }
+                              setParty(next)
+                            }}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                    <div className="stat-preview-list">
+                      {([
+                        ['hp', 'HP'],
+                        ['attack', '공격'],
+                        ['defense', '방어'],
+                        ['spAttack', '특수공격'],
+                        ['spDefense', '특수방어'],
+                        ['speed', '스피드'],
+                      ] as const).map(([field, label]) => (
+                        <div key={field} className="stat-preview-row">
+                          <span>{label}</span>
+                          <strong>{partyStatValue(row, member, field)}</strong>
+                          <span>+{member.evs[field]}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="tuning-summary muted">
+                      성격 보정 {NATURE_STAT_OPTIONS.find(([value]) => value === member.tuning.natureBoostStat)?.[1] ?? '없음'}
+                      {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
+                      {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
+                    </div>
+                    <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
+                      <label>
+                        성격 보정
+                        <select value={member.config.natureBoostStat} onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, config: { ...member.config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] } }
+                          setParty(next)
+                        }}>
+                          {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                        </select>
+                      </label>
+                      <label>
+                        스카프
+                        <input type="checkbox" checked={member.config.scarf} onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, config: { ...member.config, scarf: e.target.checked } }
+                          setParty(next)
+                        }} />
+                      </label>
+                      <label>
+                        랭크
+                        <select value={member.config.speedStage} onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, config: { ...member.config, speedStage: clampSpeedStage(e.target.value) } }
+                          setParty(next)
+                        }}>
+                          {SPEED_STAGE_OPTIONS.map((n) => <option key={n} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                )
+              })}
+              </div>
+            </div>
+          </div>
+        </section> : null}
+
+        {mainSection === 'single' && activeTab === 'pick' ? <>
+        <section className="panel wide">
+          <div className="row-between section-head">
+            <div>
+              <h2>상대 엔트리</h2>
+              <p className="muted">상대 6마리 엔트리를 한 번에 훑고, 공개 정보와 선출 추정만 빠르게 쌓는 용도입니다.</p>
+            </div>
+            <div className="pick-summary-badges">
+              <span className="pick-badge">엔트리 {opponents.length}/6</span>
+              <span className="pick-badge enemy">선출 추정 {pickedOpponents.length}/3</span>
+            </div>
+          </div>
+
+          <div className="pick-slot-row opponent-overview-row">
+            {opponents.map((member, idx) => {
+              const row = indexByKey.get(member.key) ?? rows[0]
+              return (
+                <button key={`opp-overview-${member.key}-${idx}`} type="button" className={`pick-slot-card enemy compact ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                  {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                  <span>{displayName(row, siteLanguage)}</span>
+                  <small>{member.picked ? '추정 체크됨' : '미체크'}</small>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <div className="entry-grid opponent-entry-grid">
+            {opponents.map((member, idx) => {
+              const row = indexByKey.get(member.key) ?? rows[0]
+              const revealed = member.revealedMoves.filter(Boolean)
+              return (
+                <div key={`opponent-entry-focus-${idx}`} className={`card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                  <div className="entry-card-top">
+                    {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
+                    <div className="entry-card-head">
+                      <div className="row-between compact-gap">
+                        <strong>{displayName(row, siteLanguage)}</strong>
+                        <span className={`pick-chip ${member.picked ? 'active' : ''}`}>{member.picked ? '선출 추정' : '미체크'}</span>
+                      </div>
+                      <div className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={`${row.key}-${type}`} type={type} />)}</div>
+                    </div>
+                  </div>
+
+                  <div className="opponent-entry-meta">
+                    <div><span className="muted-inline">도구</span><strong>{member.item || '-'}</strong></div>
+                    <div><span className="muted-inline">특성</span><strong>{member.ability || '-'}</strong></div>
+                    <div><span className="muted-inline">스피드</span><strong>{member.natureBoost ? '최속 가정' : '비최속 가정'}</strong></div>
+                  </div>
+
+                  <div className="pick-row" onClick={(e) => e.stopPropagation()}>
+                    <button type="button" className={`pick-chip ${member.picked ? 'active' : ''}`} onClick={() => setOpponents(togglePicked(opponents, idx))}>
+                      {member.picked ? '선출 추정 해제' : '선출 추정 체크'}
+                    </button>
+                    <button type="button" className="pick-chip" onClick={() => setSelectedOpp(idx)}>계산기 대상</button>
+                  </div>
+
+                  {revealed.length ? <p className="muted">공개 기술: {revealed.join(', ')}</p> : <p className="muted">공개 기술 아직 없음</p>}
+                  {member.notes ? <p className="muted">메모: {member.notes}</p> : <p className="muted">메모 없음</p>}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <h2>상대 엔트리 메모</h2>
+          <textarea
+            value={battleNote}
+            placeholder="예: 드래펄트 스카프 가능성 높음 / 로토무 볼체 공개 / 미믹큐는 막판 스윕용으로 보임"
+            onChange={(e) => setBattleNote(e.target.value)}
+          />
+        </section>
+        </> : mainSection === 'sample' ? <>
+        <section className="panel wide">
+          <div className="row-between section-head">
+            <h2>단일 샘플 빌더</h2>
+            <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
+          </div>
+          <div className="sample-builder-grid">
+            <div className="sample-main-card">
+              <label className="species-picker">
+                포켓몬 선택
+                <div className="autocomplete">
+                  <input
+                    value={sampleSearch}
+                    placeholder="포켓몬 검색"
+                    onFocus={() => setActiveSearchField({ side: 'sample', idx: 0 })}
+                    onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)}
+                    onChange={(e) => {
+                      setSampleSearch(e.target.value)
+                      setActiveSearchField({ side: 'sample', idx: 0 })
+                    }}
+                  />
+                  {sameSearchTarget(activeSearchField, 'sample', 0) ? (
+                    <div className="autocomplete-menu">
+                      {filterSpeciesOptions(sampleSearch).slice(0, 8).map((option) => (
+                        <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('sample', 0, option.key)}>
+                          {searchDisplayLabel(option.key, siteLanguage)}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </label>
+              <div className="sample-hero">
+                {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
+                <div>
+                  <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                  <div className="summary-line">
+                    <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
+                    <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                  </div>
+                  <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
+                </div>
+              </div>
+              <div className="ev-grid">
+                <div className="ev-total-row">
+                  <strong>능력 포인트</strong>
+                  <span>{totalEffortPoints(sampleForge.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                </div>
+                {([
+                  ['hp', 'HP'], ['attack', 'Atk'], ['defense', 'Def'], ['spAttack', 'SpA'], ['spDefense', 'SpD'], ['speed', 'Spe'],
+                ] as const).map(([field, label]) => (
+                  <label key={field}>
+                    {label}
+                    <input
+                      type="number"
+                      min={0}
+                      max={CHAMPIONS_EFFORT_CAP}
+                      value={sampleForge.evs[field]}
+                      onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, field, e.target.value) }))}
+                    />
+                  </label>
+                ))}
+              </div>
+              <div className="stat-preview-list">
+                {([
+                  ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
+                ] as const).map(([field, label]) => (
+                  <div key={field} className="stat-preview-row">
+                    <span>{label}</span>
+                    <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
+                    <span>+{sampleForge.evs[field]}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="inline-controls">
+                <label>
+                  성격 보정
+                  <select value={sampleForge.config.natureBoostStat} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] }, tuning: { ...prev.tuning, natureBoostStat: e.target.value as MemberConfig['natureBoostStat'] } }))}>
+                    {NATURE_STAT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  매직넘버
+                  <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
+                </label>
+                <label>
+                  최대치
+                  <input type="number" min={0} max={255} value={sampleForge.tuning.maxValue} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }))} />
+                </label>
+              </div>
+            </div>
+            <div className="move-card">
+              <div className="row-between">
+                <strong>샘플 기술</strong>
+                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>코어 1번 체크</button>
+              </div>
+              {sampleMoveSet ? (
+                <>
+                  <div className="move-chip-wrap">
+                    {sampleMoveSet.core.map((move) => (
+                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                    ))}
+                    {(sampleMoveSet.options ?? []).map((move) => (
+                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                    ))}
+                    {(sampleMoveSet.utility ?? []).map((move) => (
+                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                    ))}
+                  </div>
+                  <p className="muted">확정: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || '아직 없음'}</p>
+                  <p className="muted">매직넘버 {sampleForge.tuning.magicNumber || '미지정'} · 최대치 {sampleForge.tuning.maxValue || '미지정'}</p>
+                  {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
+                </>
+              ) : <p className="muted">이 포켓몬에 등록된 샘플 기술이 아직 없습니다.</p>}
+            </div>
+          </div>
+        </section>
+        </> : <>
+        <section className="panel wide">
+          <h2>대면 비교</h2>
+          <div className="matchup">
+            <div>
+              <h3>{displayName(myRow, siteLanguage)}</h3>
+              <p>{displayTypes(myRow, siteLanguage).join(' / ')}</p>
+              <p>실수치 스피드: <strong>{mySpeed}</strong></p>
+            </div>
+            <div className="versus">VS</div>
+            <div>
+              <h3>{displayName(oppRow, siteLanguage)}</h3>
+              <p>{displayTypes(oppRow, siteLanguage).join(' / ')}</p>
+              <p>가정 스피드: <strong>{oppSpeed}</strong></p>
+              <p className="muted">최속 {oppMember.natureBoost ? 'on' : 'off'} · 스카프 {oppMember.scarf || oppMember.item.includes('스카프') ? 'on' : 'off'} · 랭크 {oppMember.speedStage >= 0 ? `+${oppMember.speedStage}` : oppMember.speedStage}</p>
+            </div>
+          </div>
+          <div className="result-banner">
+            {mySpeed > oppSpeed ? '내가 선공' : mySpeed < oppSpeed ? '상대가 선공' : '동속'}
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <h2>선출 메모</h2>
+          <div className="pick-summary-grid">
+            <div className="pick-summary-box">
+              <strong>내 선출 ({pickedParty.length}/3)</strong>
+              <div className="pick-slot-row">
+                {pickedParty.length ? pickedParty.map((member, idx) => {
+                  const row = indexByKey.get(member.key) ?? rows[0]
+                  return (
+                    <div key={`picked-my-${idx}`} className="pick-slot-card">
+                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                      <span>{displayName(row, siteLanguage)}</span>
+                    </div>
+                  )
+                }) : <p className="muted">아직 체크 없음</p>}
+              </div>
+            </div>
+            <div className="pick-summary-box">
+              <strong>상대 선출 추정 ({pickedOpponents.length}/3)</strong>
+              <div className="pick-slot-row">
+                {pickedOpponents.length ? pickedOpponents.map((member, idx) => {
+                  const row = indexByKey.get(member.key) ?? rows[0]
+                  return (
+                    <div key={`picked-opp-${idx}`} className="pick-slot-card enemy">
+                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                      <span>{displayName(row, siteLanguage)}</span>
+                    </div>
+                  )
+                }) : <p className="muted">아직 체크 없음</p>}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <h2>간단 데미지 계산</h2>
+          <div className="preset-row">
+            {movePowerPresets.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
+                onClick={() => setMovePower(preset.value)}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+          <div className="calc-grid">
+            <label>
+              위력
+              <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
+            </label>
+            <label>
+              공격분류
+              <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
+                <option value="physical">물리</option>
+                <option value="special">특수</option>
+              </select>
+            </label>
+            <label>
+              STAB
+              <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
+                <option value={1}>없음</option>
+                <option value={1.5}>1.5</option>
+                <option value={2}>2.0</option>
+              </select>
+            </label>
+            <label>
+              상성
+              <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
+                <option value={0.25}>0.25x</option>
+                <option value={0.5}>0.5x</option>
+                <option value={1}>1x</option>
+                <option value={2}>2x</option>
+                <option value={4}>4x</option>
+              </select>
+            </label>
+          </div>
+          <div className="damage-box">
+            <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>
+            <p>{damage.min} ~ {damage.max} 데미지</p>
+            <p>{damage.minPct}% ~ {damage.maxPct}%</p>
+            <p>{Number(damage.maxPct) >= 100 ? '확정 1타 가능성 있음' : Number(damage.minPct) >= 50 ? '유리한 2타권' : '즉시 마무리 어려움'}</p>
+          </div>
+        </section>
+        </>}
+      </main>
+    </div>
+  )
+}
