@@ -97,7 +97,8 @@ type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
-type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: string[] }
+type MoveOption = { name: string; type: string | null }
+type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
@@ -264,12 +265,36 @@ function statGaugePercent(value: number) {
   return `${Math.max(0, Math.min(100, (value / STAT_GAUGE_MAX) * 100))}%`
 }
 
-function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
-  if (!entry) return [] as string[]
-  return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])]))
+function moveTypeThemeClass(type: string | null | undefined) {
+  switch (type) {
+    case 'normal': return 'move-type-normal'
+    case 'fire': return 'move-type-fire'
+    case 'water': return 'move-type-water'
+    case 'electric': return 'move-type-electric'
+    case 'grass': return 'move-type-grass'
+    case 'ice': return 'move-type-ice'
+    case 'fighting': return 'move-type-fighting'
+    case 'poison': return 'move-type-poison'
+    case 'ground': return 'move-type-ground'
+    case 'flying': return 'move-type-flying'
+    case 'psychic': return 'move-type-psychic'
+    case 'bug': return 'move-type-bug'
+    case 'rock': return 'move-type-rock'
+    case 'ghost': return 'move-type-ghost'
+    case 'dragon': return 'move-type-dragon'
+    case 'dark': return 'move-type-dark'
+    case 'steel': return 'move-type-steel'
+    case 'fairy': return 'move-type-fairy'
+    default: return 'move-type-unknown'
+  }
 }
 
-const moveNameCache = new Map<string, Promise<string>>()
+function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
+  if (!entry) return [] as MoveOption[]
+  return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])])).map((name) => ({ name, type: null }))
+}
+
+const moveMetaCache = new Map<string, Promise<MoveOption>>()
 
 function pokemonApiCandidates(key: string) {
   const candidates = [key]
@@ -291,23 +316,29 @@ function pokemonApiCandidates(key: string) {
   return Array.from(new Set(candidates))
 }
 
-async function fetchMoveName(url: string) {
-  if (!moveNameCache.has(url)) {
-    moveNameCache.set(url, fetch(url)
+async function fetchMoveMeta(url: string) {
+  if (!moveMetaCache.has(url)) {
+    moveMetaCache.set(url, fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error(`move ${res.status}`)
         return res.json()
       })
       .then((json) => {
         const ko = json.names?.find((entry: any) => entry.language?.name === 'ko')?.name
-        return ko || json.names?.find((entry: any) => entry.language?.name === 'en')?.name || json.name
+        return {
+          name: ko || json.names?.find((entry: any) => entry.language?.name === 'en')?.name || json.name,
+          type: typeof json.type?.name === 'string' ? json.type.name : null,
+        }
       })
       .catch(() => {
         const slug = url.split('/').filter(Boolean).pop() || ''
-        return slug.split('-').map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1)).join(' ')
+        return {
+          name: slug.split('-').map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1)).join(' '),
+          type: null,
+        }
       }))
   }
-  return moveNameCache.get(url)!
+  return moveMetaCache.get(url)!
 }
 
 async function fetchPokemonMovePool(key: string) {
@@ -322,8 +353,12 @@ async function fetchPokemonMovePool(key: string) {
   if (!pokemonJson) throw new Error(`move pool not found for ${key}`)
 
   const moveUrls = Array.from(new Set((pokemonJson.moves ?? []).map((entry: any) => entry.move?.url).filter(Boolean))) as string[]
-  const names = await Promise.all(moveUrls.map((url) => fetchMoveName(url)))
-  return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b, 'ko'))
+  const moves = await Promise.all(moveUrls.map((url) => fetchMoveMeta(url)))
+  const byName = new Map<string, MoveOption>()
+  for (const move of moves) {
+    if (!byName.has(move.name)) byName.set(move.name, move)
+  }
+  return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
 function natureLabel(natureId: NatureId) {
@@ -773,7 +808,7 @@ export default function App() {
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
-    const targetKeys = Array.from(new Set(party.map((member) => member.key).filter(Boolean)))
+    const targetKeys = Array.from(new Set([...party.map((member) => member.key), sampleForge.key].filter(Boolean)))
     targetKeys.forEach((key) => {
       if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready') return
       setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
@@ -784,7 +819,7 @@ export default function App() {
           setMovePoolByKey((prev) => ({ ...prev, [key]: { status: fallback.length ? 'ready' : 'error', moves: fallback } }))
         })
     })
-  }, [party, movePoolByKey])
+  }, [party, sampleForge.key, movePoolByKey])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -902,6 +937,9 @@ export default function App() {
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
+  const sampleMovePool = movePoolByKey[sampleForge.key]
+  const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
+  const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1381,6 +1419,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
+                const findMoveType = (moveName: string) => memberMoveOptions.find((option) => option.name === moveName)?.type ?? null
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
@@ -1518,7 +1557,7 @@ export default function App() {
                       </datalist> : null}
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
-                          <label key={`registered-move-${member.key}-${moveIdx}`} className="registered-move-slot">
+                          <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))}`}>
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
@@ -1532,13 +1571,13 @@ export default function App() {
                       {memberMoveSet ? <>
                         <div className="move-chip-wrap">
                           {memberMoveSet.core.map((move) => (
-                            <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                           {(memberMoveSet.options ?? []).map((move) => (
-                            <button key={`party-opt-${member.key}-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            <button key={`party-opt-${member.key}-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                           {(memberMoveSet.utility ?? []).map((move) => (
-                            <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                         </div>
                       </> : <p className="muted">기술 데이터가 없는 포켓몬만 직접 입력합니다.</p>}
@@ -1878,13 +1917,13 @@ export default function App() {
                 <>
                   <div className="move-chip-wrap">
                     {sampleMoveSet.core.map((move) => (
-                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
                     ))}
                     {(sampleMoveSet.options ?? []).map((move) => (
-                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
                     ))}
                     {(sampleMoveSet.utility ?? []).map((move) => (
-                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
                     ))}
                   </div>
                   <p className="muted">확정: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || '아직 없음'}</p>

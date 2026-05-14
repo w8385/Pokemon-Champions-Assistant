@@ -435,6 +435,9 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .registered-move-slot {
   display: grid;
   gap: 6px;
+  padding: 8px;
+  border: 1px solid #334155;
+  background: #0b1220;
 }
 .registered-move-slot span {
   font-size: 12px;
@@ -508,6 +511,41 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .move-chip.utility {
   background: #3f1d2e;
   border-color: #9d174d;
+}
+.move-type-unknown {
+  --move-bg: #1f2937;
+  --move-border: #475569;
+  --move-text: #e5eef7;
+}
+.move-type-normal { --move-bg: #3f3f46; --move-border: #a1a1aa; --move-text: #f5f5f5; }
+.move-type-fire { --move-bg: #7c2d12; --move-border: #fb923c; --move-text: #ffedd5; }
+.move-type-water { --move-bg: #1e3a8a; --move-border: #60a5fa; --move-text: #dbeafe; }
+.move-type-electric { --move-bg: #713f12; --move-border: #facc15; --move-text: #fef9c3; }
+.move-type-grass { --move-bg: #365314; --move-border: #84cc16; --move-text: #ecfccb; }
+.move-type-ice { --move-bg: #164e63; --move-border: #67e8f9; --move-text: #ecfeff; }
+.move-type-fighting { --move-bg: #7f1d1d; --move-border: #f87171; --move-text: #fee2e2; }
+.move-type-poison { --move-bg: #581c87; --move-border: #c084fc; --move-text: #f3e8ff; }
+.move-type-ground { --move-bg: #78350f; --move-border: #f59e0b; --move-text: #fef3c7; }
+.move-type-flying { --move-bg: #312e81; --move-border: #a5b4fc; --move-text: #eef2ff; }
+.move-type-psychic { --move-bg: #831843; --move-border: #f472b6; --move-text: #fce7f3; }
+.move-type-bug { --move-bg: #3f6212; --move-border: #a3e635; --move-text: #f7fee7; }
+.move-type-rock { --move-bg: #44403c; --move-border: #d6d3d1; --move-text: #fafaf9; }
+.move-type-ghost { --move-bg: #3730a3; --move-border: #818cf8; --move-text: #e0e7ff; }
+.move-type-dragon { --move-bg: #172554; --move-border: #38bdf8; --move-text: #e0f2fe; }
+.move-type-dark { --move-bg: #111827; --move-border: #9ca3af; --move-text: #f3f4f6; }
+.move-type-steel { --move-bg: #334155; --move-border: #cbd5e1; --move-text: #f8fafc; }
+.move-type-fairy { --move-bg: #701a75; --move-border: #f0abfc; --move-text: #fdf4ff; }
+.move-chip[class*="move-type-"] {
+  background: var(--move-bg);
+  border-color: var(--move-border);
+  color: var(--move-text);
+}
+.registered-move-slot[class*="move-type-"] {
+  background: color-mix(in srgb, var(--move-bg) 45%, #0b1220);
+  border-color: var(--move-border);
+}
+.registered-move-slot[class*="move-type-"] input {
+  border-color: color-mix(in srgb, var(--move-border) 55%, #334155);
 }
 .grid {
   display: grid;
