@@ -232,7 +232,9 @@ function itemSpriteSrc(key: string, item: string) {
 }
 
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
+const blankPartyMember = (): PartyMember => ({ key: '', config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: '' })
 const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
+const emptyParty: PartyMember[] = Array.from({ length: defaultParty.length }, () => blankPartyMember())
 const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(starterKeys[0], ''), ability: defaultAbilityForKey(starterKeys[0]) })
 const blankOpponent = (): OpponentState => ({
   key: '',
@@ -587,7 +589,8 @@ function sanitizeParty(input: unknown): PartyMember[] {
     .map((member) => {
       if (!member || typeof member !== 'object') return null
       const raw = member as Partial<PartyMember>
-      if (typeof raw.key !== 'string' || !indexByKey.has(raw.key)) return null
+      if (typeof raw.key !== 'string') return null
+      if (raw.key && !indexByKey.has(raw.key)) return null
       return {
         key: raw.key,
         config: sanitizeMemberConfig(raw.config),
@@ -1324,9 +1327,9 @@ export default function App() {
   }
 
   const resetPartyForFreshEntry = () => {
-    setParty(defaultParty)
-    setPartySearch(defaultParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
-    setPartyItemDrafts(defaultParty.map((member) => visibleChampionsItem(member.key, member.item)))
+    setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
+    setPartySearch(emptyParty.map(() => ''))
+    setPartyItemDrafts(emptyParty.map(() => ''))
     setSelectedMy(0)
     setActivePartyMetaEditor(null)
     setTuningModalIndex(null)
@@ -1677,8 +1680,8 @@ export default function App() {
                 <p className="muted">내 파티</p>
                 <div className="team-strip">
                   {party.map((member, idx) => {
-                    const row = indexByKey.get(member.key) ?? rows[0]
-                    return <button key={`team-my-${idx}`} type="button" className={`team-pill ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>{displayName(row, siteLanguage)}</button>
+                    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                    return <button key={`team-my-${idx}`} type="button" className={`team-pill ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</button>
                   })}
                 </div>
               </div>
@@ -1708,10 +1711,10 @@ export default function App() {
               </div>
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
-                const row = indexByKey.get(member.key) ?? rows[0]
+                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
                 const fixedMegaStone = megaStoneForKey(member.key)
                 const currentItem = visibleChampionsItem(member.key, member.item)
-                const abilityOptions = displayAbilities(row, siteLanguage)
+                const abilityOptions = row ? displayAbilities(row, siteLanguage) : []
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
@@ -1722,19 +1725,19 @@ export default function App() {
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
                     <div className="entry-card-top">
-                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
+                      {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
                       <div className="entry-card-head">
                         <div className="party-card-header">
                           <div className="party-card-title-block">
-                            <strong>{displayName(row, siteLanguage)}</strong>
-                            <div className="type-line">
+                            <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
+                            {row ? <div className="type-line">
                               <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                            </div>
+                            </div> : <p className="muted">포켓몬을 검색해서 추가하세요.</p>}
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="party-meta-grid" onClick={(e) => e.stopPropagation()}>
+                    {row ? <div className="party-meta-grid" onClick={(e) => e.stopPropagation()}>
                       <div className="party-meta-chip party-meta-chip-editor">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
                           <span>특성</span>
@@ -1810,7 +1813,7 @@ export default function App() {
                           </datalist> : null}
                         </div> : null}
                       </div>
-                    </div>
+                    </div> : null}
                     <label className="species-picker">
                       종 선택
                       <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
@@ -1842,7 +1845,7 @@ export default function App() {
                         ) : null}
                       </div>
                     </label>
-                    <div className="stat-preview-list">
+                    {row ? <div className="stat-preview-list">
                       {([
                         ['hp', 'HP'],
                         ['attack', '공격'],
@@ -1861,8 +1864,8 @@ export default function App() {
                           <span>+{member.evs[field]}</span>
                         </button>
                       ))}
-                    </div>
-                    <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
+                    </div> : null}
+                    {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>기술 배치</strong>
                         <span className="muted-inline">{memberMovePool?.status === 'loading' ? '기술풀 불러오는 중…' : '사용 가능 기술 검색'}</span>
@@ -1901,7 +1904,7 @@ export default function App() {
                           ))}
                         </div>
                       </> : <p className="muted">기술 데이터가 없는 포켓몬만 직접 입력합니다.</p>}
-                    </div>
+                    </div> : null}
                   </div>
                 )
               })}
