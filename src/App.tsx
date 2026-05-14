@@ -1081,6 +1081,7 @@ export default function App() {
                 const currentEffort = tuningMember.evs[stat.key]
                 const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
                 const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
+                const additionalAvailable = Math.max(0, availableCap - currentEffort)
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
                 const targetEffort = magicCandidate?.stat === stat.key ? magicCandidate.nextEffort : null
@@ -1137,7 +1138,7 @@ export default function App() {
                           type="range"
                           className="effort-gauge-range"
                           min={0}
-                          max={availableCap}
+                          max={CHAMPIONS_EFFORT_PER_STAT_CAP}
                           step={1}
                           value={currentEffort}
                           onChange={(e) => {
@@ -1238,7 +1239,7 @@ export default function App() {
                       >+1</button>
                     </div>
                     <div className="row-between effort-cell-meta">
-                      <span className="muted-inline">현재 {currentEffort}pt · 추가 가능 {maxSpendable}pt</span>
+                      <span className="muted-inline">현재 {currentEffort}pt · 추가 가능 {additionalAvailable}pt</span>
                       {magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">목표 {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">11배수 달성</span> : null}
                     </div>
                   </div>
