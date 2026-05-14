@@ -104,7 +104,7 @@ const MAX_OPPONENTS = 6
 const CHAMPIONS_EFFORT_CAP = 66
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
-const STAT_GAUGE_MAX = 300
+const STAT_GAUGE_MAX = 255
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
