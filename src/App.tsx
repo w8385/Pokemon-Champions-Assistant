@@ -1697,31 +1697,6 @@ export default function App() {
                         ) : null}
                       </div>
                     </label>
-                    <div className="ev-grid" onClick={(e) => e.stopPropagation()}>
-                      {([
-                        ['hp', 'HP'],
-                        ['attack', 'Atk'],
-                        ['defense', 'Def'],
-                        ['spAttack', 'SpA'],
-                        ['spDefense', 'SpD'],
-                        ['speed', 'Spe'],
-                      ] as const).map(([field, label]) => (
-                        <label key={field}>
-                          {label}
-                          <input
-                            type="number"
-                            min={0}
-                            max={CHAMPIONS_EFFORT_PER_STAT_CAP}
-                            value={member.evs[field]}
-                            onChange={(e) => {
-                              const next = [...party]
-                              next[idx] = { ...member, evs: applyChampionsEffort(member.evs, field, e.target.value) }
-                              setParty(next)
-                            }}
-                          />
-                        </label>
-                      ))}
-                    </div>
                     <div className="stat-preview-list">
                       {([
                         ['hp', 'HP'],
@@ -2095,22 +2070,6 @@ export default function App() {
                   </div>
                   <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
-              </div>
-              <div className="ev-grid">
-                {([
-                  ['hp', 'HP'], ['attack', 'Atk'], ['defense', 'Def'], ['spAttack', 'SpA'], ['spDefense', 'SpD'], ['speed', 'Spe'],
-                ] as const).map(([field, label]) => (
-                  <label key={field}>
-                    {label}
-                    <input
-                      type="number"
-                      min={0}
-                      max={CHAMPIONS_EFFORT_PER_STAT_CAP}
-                      value={sampleForge.evs[field]}
-                      onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, field, e.target.value) }))}
-                    />
-                  </label>
-                ))}
               </div>
               <div className="stat-preview-list">
                 {([
