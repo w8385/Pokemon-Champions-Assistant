@@ -1310,7 +1310,7 @@ export default function App() {
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
-                  <div key={`${member.key}-${idx}`} className={`card entry-card ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>
+                  <div key={`${member.key}-${idx}`} className="card entry-card">
                     <div className="entry-card-top">
                       {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
                       <div className="entry-card-head">
