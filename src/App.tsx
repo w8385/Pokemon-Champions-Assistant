@@ -99,6 +99,7 @@ type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
+type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
@@ -1159,6 +1160,10 @@ function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sa
   return a?.side === side && a?.idx === idx
 }
 
+function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample') {
+  return a?.key === key && a?.slotIdx === slotIdx && a?.scope === scope
+}
+
 function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   switch (tab) {
     case 'party': return translateText(language, '내 파티 관리')
@@ -1210,6 +1215,7 @@ export default function App() {
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => visibleChampionsItem(member.key, member.item)))
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
+  const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [navMenuOpen, setNavMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
@@ -1372,6 +1378,10 @@ export default function App() {
       current[3] = move
       return { ...prev, [key]: current }
     })
+  }
+  const selectMoveOption = (key: string, slotIdx: number, moveName: string) => {
+    setConfirmedMoveSlot(key, slotIdx, moveName)
+    setActiveMoveField(null)
   }
   const commitTopSpeciesOption = (side: 'party' | 'opponent' | 'sample', idx: number, rawQuery: string) => {
     const top = filterSpeciesOptions(rawQuery)[0]
@@ -2106,13 +2116,31 @@ export default function App() {
                               value={move}
                               list={memberMoveOptions.length ? `move-options-${member.key}` : undefined}
                               placeholder={memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                              onChange={(e) => setConfirmedMoveSlot(member.key, moveIdx, e.target.value)}
+                              onFocus={() => setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })}
+                              onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)}
+                              onChange={(e) => {
+                                setConfirmedMoveSlot(member.key, moveIdx, e.target.value)
+                                setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
+                              }}
                               onKeyDown={(e) => {
                                 if (e.key !== 'Enter') return
                                 const committed = commitTopMoveOption(member.key, moveIdx, move, memberMoveOptions)
-                                if (committed) e.preventDefault()
+                                if (committed) {
+                                  e.preventDefault()
+                                  setActiveMoveField(null)
+                                }
                               }}
                             />
+                            {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
+                              <div className="move-autocomplete-menu">
+                                {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option) => (
+                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
+                                    <span>{option.name}</span>
+                                    <span className="move-autocomplete-type">{option.type ?? ''}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            ) : null}
                           </label>
                         ))}
                       </div>
@@ -2553,13 +2581,31 @@ export default function App() {
                           value={move}
                           list={sampleMoveOptions.length ? `move-options-${sampleForge.key}` : undefined}
                           placeholder={sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                          onChange={(e) => setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)}
+                          onFocus={() => setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })}
+                          onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)}
+                          onChange={(e) => {
+                            setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)
+                            setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                          }}
                           onKeyDown={(e) => {
                             if (e.key !== 'Enter') return
                             const committed = commitTopMoveOption(sampleForge.key, moveIdx, move, sampleMoveOptions)
-                            if (committed) e.preventDefault()
+                            if (committed) {
+                              e.preventDefault()
+                              setActiveMoveField(null)
+                            }
                           }}
                         />
+                        {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
+                          <div className="move-autocomplete-menu">
+                            {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option) => (
+                              <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectMoveOption(sampleForge.key, moveIdx, option.name)}>
+                                <span>{option.name}</span>
+                                <span className="move-autocomplete-type">{option.type ?? ''}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
                       </label>
                     ))}
                   </div>

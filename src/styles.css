@@ -471,6 +471,8 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border: 1px solid #334155;
   background: #0b1220;
   min-width: 0;
+  position: relative;
+  overflow: visible;
 }
 .registered-move-slot span {
   font-size: 12px;
@@ -478,6 +480,42 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .registered-move-slot input {
   min-width: 0;
+}
+.move-autocomplete-menu {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: -1px;
+  right: -1px;
+  z-index: 30;
+  border: 1px solid #334155;
+  background: #0f172a;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+  max-height: 220px;
+  overflow-y: auto;
+}
+.move-autocomplete-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 0;
+  border-top: 1px solid #1f2937;
+  background: transparent;
+  color: #e5edf7;
+  text-align: left;
+  font: inherit;
+}
+.move-autocomplete-item:first-child {
+  border-top: 0;
+}
+.move-autocomplete-item:hover {
+  background: #172033;
+}
+.move-autocomplete-type {
+  color: #8da2b8;
+  font-size: 12px;
+  flex: 0 0 auto;
 }
 .sample-save-box,
 .saved-sample-list {
