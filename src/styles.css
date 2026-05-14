@@ -1188,6 +1188,98 @@ textarea { min-height: 72px; resize: vertical; }
   background: #111827;
   padding: 12px;
 }
+.speed-scenario-row {
+  margin-bottom: 0;
+  justify-content: flex-end;
+}
+.speed-target-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.speed-target-card,
+.speed-cut-card,
+.speed-empty-box {
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: #111827;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.speed-target-card {
+  padding: 16px;
+}
+.speed-target-card.enemy {
+  border-color: #7c2d12;
+  background: linear-gradient(180deg, rgba(124, 45, 18, 0.18), #111827);
+}
+.speed-target-head,
+.speed-cut-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.speed-target-head strong,
+.speed-cut-title strong {
+  display: block;
+  margin-bottom: 6px;
+}
+.speed-cut-title span {
+  color: #93a4b8;
+  font-size: 12px;
+}
+.speed-cut-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.speed-cut-card.active {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35) inset, 0 12px 24px rgba(0, 0, 0, 0.24);
+}
+.speed-cut-card.empty,
+.speed-empty-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 128px;
+  color: #93a4b8;
+  background: #0b1220;
+}
+.speed-cut-select {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #eef2f7;
+  padding: 14px;
+  text-align: left;
+  display: grid;
+  gap: 14px;
+  cursor: pointer;
+}
+.speed-cut-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.speed-cut-stats div {
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0b1220;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.speed-cut-stats span {
+  color: #93a4b8;
+  font-size: 11px;
+}
+.speed-cut-stats strong {
+  color: #eef2f7;
+  font-size: 15px;
+}
 .calc-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1557,6 +1649,8 @@ textarea { min-height: 72px; resize: vertical; }
   .matchup { grid-template-columns: 1fr; }
   .calc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .speed-target-panel { grid-template-columns: 1fr; }
+  .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }
   .drag-stat-list { grid-template-columns: 1fr; }
@@ -1574,6 +1668,7 @@ textarea { min-height: 72px; resize: vertical; }
   .move-card-grid { grid-template-columns: 1fr; }
   .training-grid { grid-template-columns: 1fr; }
   .speed-scenario-grid { grid-template-columns: 1fr; }
+  .speed-cut-grid { grid-template-columns: 1fr; }
   .magic-checkpoint-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .effort-gauge-scale { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .registered-move-grid { grid-template-columns: 1fr; }

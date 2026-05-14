@@ -98,6 +98,7 @@ type ImportExportPayload = PersistedState & {
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
+type SpeedScenarioId = 'neutral' | 'fast' | 'neutral-scarf' | 'fast-scarf'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
 type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
@@ -129,6 +130,8 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.',
+    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie',
+    '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
     '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
@@ -156,6 +159,8 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。',
+    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速',
+    '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
     '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
@@ -860,6 +865,22 @@ function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scar
   return { tieEffort, passEffort }
 }
 
+function mySpeedNeeds(row: Row, config: MemberConfig, targetSpeed: number) {
+  let tieEffort: number | null = null
+  let passEffort: number | null = null
+
+  for (let points = 0; points <= CHAMPIONS_EFFORT_PER_STAT_CAP; points += 1) {
+    let speed = actualStat(row.speed, points, natureMultiplier(config.nature, 'speed'))
+    speed = applySpeedStage(speed, config.speedStage)
+    if (config.scarf) speed = Math.floor(speed * 1.5)
+    if (tieEffort === null && speed === targetSpeed) tieEffort = points
+    if (passEffort === null && speed > targetSpeed) passEffort = points
+    if (tieEffort !== null && passEffort !== null) break
+  }
+
+  return { tieEffort, passEffort }
+}
+
 function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues) {
   switch (field) {
     case 'hp':
@@ -1244,6 +1265,7 @@ export default function App() {
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
   const [mainSection, setMainSection] = React.useState<MainSection>(() => persisted?.mainSection === 'sample' ? 'sample' : 'single')
   const [activeTab, setActiveTab] = React.useState<MainTab>('party')
+  const [activeSpeedScenario, setActiveSpeedScenario] = React.useState<SpeedScenarioId>('fast')
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
@@ -1382,6 +1404,14 @@ export default function App() {
       result: mySpeed > speedAtMax ? '내가 앞섬' : mySpeed < speedAtMax ? '상대가 앞섬' : '동속',
       ...needs,
     }
+  }) : []
+  const selectedSpeedScenario = opponentSpeedScenarios.find((scenario) => scenario.id === activeSpeedScenario) ?? opponentSpeedScenarios[0] ?? null
+  const partySpeedCutRows = selectedSpeedScenario ? party.map((member, idx) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+    if (!row) return { idx, row: null, currentSpeed: null, tieEffort: null, passEffort: null }
+    const currentSpeed = partySpeedValue(row, member)
+    const needs = mySpeedNeeds(row, member.config, selectedSpeedScenario.speedAtMax)
+    return { idx, row, currentSpeed, ...needs }
   }) : []
   const toggleConfirmedMove = (key: string, move: string) => {
     setConfirmedMovesByKey((prev) => {
@@ -2847,37 +2877,78 @@ export default function App() {
         </section>
         </> : <>
         {activeTab === 'speed' ? <section className="panel wide">
-          <h2>{siteLanguage === 'en' ? 'Pick Notes' : siteLanguage === 'ja' ? '選出メモ' : '선출 메모'}</h2>
-          <div className="pick-summary-grid">
-            <div className="pick-summary-box">
-              <strong>{siteLanguage === 'en' ? `My Picks (${pickedParty.length}/3)` : siteLanguage === 'ja' ? `自分の選出 (${pickedParty.length}/3)` : `내 선출 (${pickedParty.length}/3)`}</strong>
-              <div className="pick-slot-row">
-                {pickedParty.length ? pickedParty.map((member, idx) => {
-                  const row = indexByKey.get(member.key) ?? rows[0]
-                  return (
-                    <div key={`picked-my-${idx}`} className="pick-slot-card">
-                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                      <span>{displayName(row, siteLanguage)}</span>
-                    </div>
-                  )
-                }) : <p className="muted">{siteLanguage === 'en' ? 'Nothing checked yet' : siteLanguage === 'ja' ? 'まだチェックなし' : '아직 체크 없음'}</p>}
-              </div>
-            </div>
-            <div className="pick-summary-box">
-              <strong>{siteLanguage === 'en' ? `Opponent Picks (${pickedOpponents.length}/3)` : siteLanguage === 'ja' ? `相手の選出想定 (${pickedOpponents.length}/3)` : `상대 선출 추정 (${pickedOpponents.length}/3)`}</strong>
-              <div className="pick-slot-row">
-                {pickedOpponents.length ? pickedOpponents.map((member, idx) => {
-                  const row = indexByKey.get(member.key) ?? rows[0]
-                  return (
-                    <div key={`picked-opp-${idx}`} className="pick-slot-card enemy">
-                      {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                      <span>{displayName(row, siteLanguage)}</span>
-                    </div>
-                  )
-                }) : <p className="muted">{siteLanguage === 'en' ? 'Nothing checked yet' : siteLanguage === 'ja' ? 'まだチェックなし' : '아직 체크 없음'}</p>}
-              </div>
+          <div className="row-between section-head">
+            <h2>{lt('내 파티 추월컷')}</h2>
+            <div className="preset-row speed-scenario-row">
+              {opponentSpeedScenarios.map((scenario) => (
+                <button
+                  key={scenario.id}
+                  type="button"
+                  className={`preset-chip ${activeSpeedScenario === scenario.id ? 'active' : ''}`}
+                  onClick={() => setActiveSpeedScenario(scenario.id as SpeedScenarioId)}
+                >
+                  {lt(scenario.label)}
+                </button>
+              ))}
             </div>
           </div>
+          {oppRow && selectedSpeedScenario ? <>
+            <div className="speed-target-panel">
+              <div className="speed-target-card enemy">
+                <div className="speed-target-head">
+                  {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                  <div>
+                    <strong>{displayName(oppRow, siteLanguage)}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge enemy">{lt('상대 기준')}</span>
+                      <span className="pick-badge">{lt(selectedSpeedScenario.label)}</span>
+                      <span className="pick-badge">{lt('기준 속도')} {selectedSpeedScenario.speedAtMax}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="speed-target-card">
+                <div className="speed-target-head">
+                  {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                  <div>
+                    <strong>{displayName(myRow, siteLanguage)}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">{lt('실전 상태')}</span>
+                      <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
+                      <span className={`pick-badge ${mySpeed > selectedSpeedScenario.speedAtMax ? '' : 'enemy'}`}>{mySpeed > selectedSpeedScenario.speedAtMax ? lt('이미 추월') : lt(selectedSpeedScenario.result)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="speed-cut-grid">
+              {partySpeedCutRows.map((entry) => entry.row ? (
+                <div key={`speed-cut-${entry.idx}-${entry.row.key}`} className={`speed-cut-card ${entry.idx === selectedMy ? 'active' : ''}`}>
+                  <button type="button" className="speed-cut-select" onClick={() => setSelectedMy(entry.idx)}>
+                    <div className="speed-cut-title">
+                      {entry.row.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                      <div>
+                        <strong>{displayName(entry.row, siteLanguage)}</strong>
+                        <span>{lt('실수치 스피드')} {entry.currentSpeed}</span>
+                      </div>
+                    </div>
+                    <div className="speed-cut-stats">
+                      <div>
+                        <span>{lt('동속컷')}</span>
+                        <strong>{entry.tieEffort ?? '—'}</strong>
+                      </div>
+                      <div>
+                        <span>{lt('추월컷')}</span>
+                        <strong>{entry.currentSpeed && entry.currentSpeed > selectedSpeedScenario.speedAtMax ? lt('이미 추월') : entry.passEffort ?? lt('불가')}</strong>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              ) : (
+                <div key={`speed-cut-empty-${entry.idx}`} className="speed-cut-card empty">{emptySlotLabel(entry.idx, siteLanguage)}</div>
+              ))}
+            </div>
+          </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
         </section> : null}
 
         {activeTab === 'power' ? <section className="panel wide">
