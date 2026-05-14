@@ -821,12 +821,6 @@ function calcDamage(attacker: Row, defender: Row, movePower: number, mode: CalcM
   }
 }
 
-function filterSpeciesOptions(query: string) {
-  const normalized = query.trim().toLowerCase()
-  if (!normalized) return speciesOptions
-  return speciesOptions.filter((option) => option.label.toLowerCase().includes(normalized) || option.key.toLowerCase().includes(normalized))
-}
-
 function matchesLooseQuery(source: string, query: string) {
   if (!query) return true
   if (source.includes(query)) return true
@@ -836,6 +830,39 @@ function matchesLooseQuery(source: string, query: string) {
     if (cursor >= query.length) return true
   }
   return false
+}
+
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[\s'’._-]+/g, '')
+}
+
+function speciesSearchCandidates(row: Row) {
+  const base = [row.name_ko, row.name_en, row.key]
+  const extra: string[] = []
+  if (row.name_ko.startsWith('메가')) extra.push(row.name_ko.replace(/^메가/, ''))
+  if (row.name_en.toLowerCase().startsWith('mega ')) extra.push(row.name_en.replace(/^Mega\s+/i, ''))
+  if (row.key.startsWith('mega-')) extra.push(row.key.slice(5))
+  return Array.from(new Set([...base, ...extra].flatMap((entry) => [entry, normalizeSearchText(entry)])))
+}
+
+function filterSpeciesOptions(query: string) {
+  const normalized = normalizeSearchText(query.trim())
+  if (!normalized) return speciesOptions
+  return rows
+    .map((row) => {
+      const candidates = speciesSearchCandidates(row)
+      const score = candidates.reduce((best, candidate) => {
+        if (candidate === normalized) return Math.min(best, 0)
+        if (candidate.startsWith(normalized)) return Math.min(best, 1)
+        if (candidate.includes(normalized)) return Math.min(best, 2)
+        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        return best
+      }, Number.POSITIVE_INFINITY)
+      return Number.isFinite(score) ? { row, score } : null
+    })
+    .filter((entry): entry is { row: Row; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.row.name_ko.localeCompare(b.row.name_ko, 'ko'))
+    .map((entry) => ({ key: entry.row.key, label: `${entry.row.name_ko} (${entry.row.name_en})` }))
 }
 
 function filterItemOptions(query: string) {
@@ -884,20 +911,9 @@ function filterMoveOptions(query: string, options: MoveOption[]) {
 }
 
 function resolveSpeciesKey(raw: string) {
-  const normalized = raw.trim().toLowerCase()
+  const normalized = normalizeSearchText(raw.trim())
   if (!normalized) return null
-  const exact = rows.find((row) =>
-    row.key.toLowerCase() === normalized
-    || row.name_ko.toLowerCase() === normalized
-    || row.name_en.toLowerCase() === normalized
-  )
-  if (exact) return exact.key
-  const partial = rows.find((row) =>
-    row.key.toLowerCase().includes(normalized)
-    || row.name_ko.toLowerCase().includes(normalized)
-    || row.name_en.toLowerCase().includes(normalized)
-  )
-  return partial?.key ?? null
+  return filterSpeciesOptions(normalized)[0]?.key ?? null
 }
 
 function displayName(row: Row, language: SiteLanguage) {
@@ -1113,6 +1129,12 @@ export default function App() {
       current[3] = move
       return { ...prev, [key]: current }
     })
+  }
+  const commitTopSpeciesOption = (side: 'party' | 'opponent' | 'sample', idx: number, rawQuery: string) => {
+    const top = filterSpeciesOptions(rawQuery)[0]
+    if (!top) return false
+    selectSpecies(side, idx, top.key)
+    return true
   }
   const selectSpecies = (side: 'party' | 'opponent' | 'sample', idx: number, key: string) => {
     if (side === 'party') {
@@ -1685,6 +1707,11 @@ export default function App() {
                             setPartySearch(next)
                             setActiveSearchField({ side: 'party', idx })
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key !== 'Enter') return
+                            const committed = commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
+                            if (committed) e.preventDefault()
+                          }}
                         />
                         {sameSearchTarget(activeSearchField, 'party', idx) ? (
                           <div className="autocomplete-menu">
@@ -1936,6 +1963,11 @@ export default function App() {
                         setOpponentSearch(next)
                         setActiveSearchField({ side: 'opponent', idx: selectedOpp })
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'Enter') return
+                        const committed = commitTopSpeciesOption('opponent', selectedOpp, opponentSearch[selectedOpp] ?? '')
+                        if (committed) e.preventDefault()
+                      }}
                     />
                     {sameSearchTarget(activeSearchField, 'opponent', selectedOpp) ? (
                       <div className="autocomplete-menu">
@@ -2043,6 +2075,11 @@ export default function App() {
                     onChange={(e) => {
                       setSampleSearch(e.target.value)
                       setActiveSearchField({ side: 'sample', idx: 0 })
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return
+                      const committed = commitTopSpeciesOption('sample', 0, sampleSearch)
+                      if (committed) e.preventDefault()
                     }}
                   />
                   {sameSearchTarget(activeSearchField, 'sample', 0) ? (
