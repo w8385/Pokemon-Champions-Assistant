@@ -1,16 +1,15 @@
-# pokemon-champions-assistant-demo
+# Pokemon-Champions-Assistant
 
-실전 중 빠르게 스피드/선출/대면 판단을 보조하는 포케챔스용 데모입니다.
+실전 중 빠르게 스피드/상대 엔트리/대면 판단을 보조하는 포켓몬 챔피언스용 정적 웹앱입니다.
 
 ## 포함 기능
 
-- 내 파티 / 상대 파티 상태 저장
-- 최속 / 스카프 / 스피드 랭크 기반 선공 판정
-- 내/상대 선출 3마리 체크
-- 전체 스피드 순서 패널
-- 타입 상성 힌트
-- 간단 데미지 계산
-- 샘플 기술 추적기 (코어/선택/유틸/확정 기술)
+- 내 파티 관리
+- 상대 엔트리 관리
+- 스피드 & 결정력 계산
+- 단일 포켓몬 샘플 깎기
+- 성격 25종 / 도구 / 능력 포인트(66) 관리
+- 샘플 기술 추적
 - 상태 JSON 내보내기 / 불러오기 / 초기화
 
 ## 데이터 소스 정책
@@ -36,6 +35,19 @@ npm run build
 npm run preview
 ```
 
+## GitHub Pages 배포
+
+- GitHub Actions workflow: `.github/workflows/deploy-pages.yml`
+- `main` 브랜치 push 시 자동 배포
+- 저장소 경로 기준 base: `/Pokemon-Champions-Assistant/`
+
+GitHub에서 한 번만 켜야 하는 설정:
+
+1. Repository Settings → Pages
+2. Source를 `GitHub Actions`로 선택
+
+그 다음부터는 `main`에 push하면 자동으로 정적 페이지가 갱신됩니다.
+
 ## Docker 실행
 
 ```bash
@@ -48,5 +60,6 @@ docker compose up --build -d
 
 - 정적 산출물은 `dist/`
 - nginx SPA fallback 설정 포함
+- GitHub Actions 배포 시 Vite base 경로 자동 조정
 - 브라우저 localStorage에 상태 저장
 - 다른 기기로 옮길 때는 상단의 `상태 내보내기` 사용
