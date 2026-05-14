@@ -1758,15 +1758,14 @@ export default function App() {
 
         {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
-            <div className="party-lane">
-              <div className="section-head row-between">
-                <h2>내 파티 관리</h2>
-                <div className="inline-controls compact-actions">
-                  <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
-                  <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>내 파티 초기화</button>
-                </div>
+            <div className="section-head row-between">
+              <h2>내 파티 관리</h2>
+              <div className="inline-controls compact-actions">
+                <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
+                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>내 파티 초기화</button>
               </div>
-              <div className="entry-grid manage-entry-grid">
+            </div>
+            <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
                 const fixedMegaStone = megaStoneForKey(member.key)
@@ -1985,7 +1984,6 @@ export default function App() {
                   </div>
                 )
               })}
-              </div>
             </div>
           </div>
         </section> : null}
