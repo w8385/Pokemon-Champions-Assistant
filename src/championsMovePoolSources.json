@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-14T17:25:44.335Z",
+    "generatedAt": "2026-05-14T17:34:55.553Z",
     "sourceOfTruth": "src/championsMovePools.json",
     "seededFrom": "src/pokemonMovePools.json",
     "purpose": "포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터"
@@ -5070,7 +5070,7 @@
         "kingambit"
       ],
       "fetchedPokemonApiCandidate": null,
-      "moveCount": 61,
+      "moveCount": 60,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",

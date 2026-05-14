@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..')
 
 const baselinePath = path.join(root, 'src', 'pokemonMovePools.json')
 const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
+const moveNameOverridesPath = path.join(root, 'src', 'championsMoveNameOverrides.json')
 const whitelistPath = path.join(root, 'src', 'championsMovePools.json')
 const sourceMetaPath = path.join(root, 'src', 'championsMovePoolSources.json')
 const reportPath = path.join(root, 'reports', 'championsMoveWhitelistCoverage.json')
@@ -75,12 +76,17 @@ function pokemonApiCandidates(key) {
 
 const baseline = JSON.parse(await fs.readFile(baselinePath, 'utf8'))
 const verifiedRaw = JSON.parse(await fs.readFile(verifiedDataPath, 'utf8'))
+const moveNameOverrides = JSON.parse(await fs.readFile(moveNameOverridesPath, 'utf8'))
 const verifiedRows = Array.isArray(verifiedRaw)
   ? verifiedRaw
   : verifiedRaw.rows ?? verifiedRaw.pokemon ?? []
 
 const moveMetaCache = new Map()
 const pokemonMoveCache = new Map()
+
+function normalizeMoveName(name) {
+  return moveNameOverrides[name]?.ko ?? name
+}
 
 async function fetchJson(url) {
   const res = await fetch(url)
@@ -91,10 +97,12 @@ async function fetchJson(url) {
 async function fetchMoveMeta(url) {
   if (!moveMetaCache.has(url)) {
     moveMetaCache.set(url, fetchJson(url).then((json) => ({
-      name: json.names?.find((entry) => entry.language?.name === 'ko')?.name
+      name: normalizeMoveName(
+        json.names?.find((entry) => entry.language?.name === 'ko')?.name
         ?? json.names?.find((entry) => entry.language?.name === 'ja-Hrkt')?.name
         ?? json.names?.find((entry) => entry.language?.name === 'en')?.name
         ?? json.name,
+      ),
       type: typeof json.type?.name === 'string' ? json.type.name : null,
     })))
   }
@@ -132,6 +140,7 @@ const sources = {}
 const seededFromBaseline = []
 const seededFromApiAlias = []
 const missing = []
+const untranslatedMoves = new Set()
 
 for (const row of verifiedRows) {
   if (!row?.key) continue
@@ -140,7 +149,8 @@ for (const row of verifiedRows) {
   for (const poolKey of mergedFromKeys) {
     for (const move of baseline[poolKey] ?? []) {
       if (!move?.name) continue
-      if (!merged.has(move.name)) merged.set(move.name, { name: move.name, type: move.type ?? null })
+      const normalizedName = normalizeMoveName(move.name)
+      if (!merged.has(normalizedName)) merged.set(normalizedName, { name: normalizedName, type: move.type ?? null })
     }
   }
 
@@ -156,6 +166,9 @@ for (const row of verifiedRows) {
   }
 
   const moves = Array.from(merged.values()).sort(sortMoves)
+  for (const move of moves) {
+    if (/[A-Za-z]/.test(move.name)) untranslatedMoves.add(move.name)
+  }
   whitelist[row.key] = moves
 
   if (sourceStatus === 'seeded_from_pokeapi_baseline') seededFromBaseline.push(row.key)
@@ -191,9 +204,11 @@ const report = {
     seededFromBaseline: seededFromBaseline.length,
     seededFromApiAlias: seededFromApiAlias.length,
     missing: missing.length,
+    untranslatedMoveLabels: untranslatedMoves.size,
   },
   missingKeys: missing,
   seededFromApiAliasKeys: seededFromApiAlias,
+  untranslatedMoveLabels: Array.from(untranslatedMoves).sort((a, b) => a.localeCompare(b, 'en')),
   seededKeysSample: [...seededFromBaseline, ...seededFromApiAlias].slice(0, 30),
   policy: {
     whitelistFile: 'src/championsMovePools.json',

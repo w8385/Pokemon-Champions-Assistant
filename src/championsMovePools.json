@@ -5903,6 +5903,10 @@
       "type": "psychic"
     },
     {
+      "name": "트릭플라워",
+      "type": "grass"
+    },
+    {
       "name": "파괴광선",
       "type": "normal"
     },
@@ -5933,10 +5937,6 @@
     {
       "name": "Chilling Water",
       "type": "water"
-    },
-    {
-      "name": "Flower Trick",
-      "type": "grass"
     },
     {
       "name": "Tera Blast",
@@ -12013,6 +12013,10 @@
       "type": "normal"
     },
     {
+      "name": "인구폭탄",
+      "type": "normal"
+    },
+    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -12023,6 +12027,10 @@
     {
       "name": "전기자석파",
       "type": "electric"
+    },
+    {
+      "name": "정리정돈",
+      "type": "normal"
     },
     {
       "name": "제비반환",
@@ -12069,15 +12077,7 @@
       "type": "water"
     },
     {
-      "name": "Population Bomb",
-      "type": "normal"
-    },
-    {
       "name": "Tera Blast",
-      "type": "normal"
-    },
-    {
-      "name": "Tidy Up",
       "type": "normal"
     },
     {
@@ -25437,6 +25437,10 @@
       "type": "psychic"
     },
     {
+      "name": "제트펀치",
+      "type": "water"
+    },
+    {
       "name": "죽기살기",
       "type": "normal"
     },
@@ -25502,10 +25506,6 @@
     },
     {
       "name": "Chilling Water",
-      "type": "water"
-    },
-    {
-      "name": "Jet Punch",
       "type": "water"
     },
     {
@@ -31153,6 +31153,10 @@
       "type": "steel"
     },
     {
+      "name": "기가톤해머",
+      "type": "steel"
+    },
+    {
       "name": "깨트리다",
       "type": "fighting"
     },
@@ -31323,10 +31327,6 @@
     {
       "name": "힘껏치기",
       "type": "normal"
-    },
-    {
-      "name": "Gigaton Hammer",
-      "type": "steel"
     },
     {
       "name": "Pounce",
@@ -59939,6 +59939,10 @@
       "type": "fire"
     },
     {
+      "name": "토치송",
+      "type": "fire"
+    },
+    {
       "name": "파괴광선",
       "type": "normal"
     },
@@ -59973,10 +59977,6 @@
     {
       "name": "Tera Blast",
       "type": "normal"
-    },
-    {
-      "name": "Torch Song",
-      "type": "fire"
     }
   ],
   "vaporeon": [
@@ -76413,10 +76413,6 @@
       "type": "normal"
     },
     {
-      "name": "Kowtow Cleave",
-      "type": "dark"
-    },
-    {
       "name": "Tera Blast",
       "type": "normal"
     }
@@ -83457,6 +83453,10 @@
       "type": "psychic"
     },
     {
+      "name": "소금절이",
+      "type": "rock"
+    },
+    {
       "name": "스텔스록",
       "type": "rock"
     },
@@ -83539,10 +83539,6 @@
     {
       "name": "HP회복",
       "type": "normal"
-    },
-    {
-      "name": "Salt Cure",
-      "type": "rock"
     },
     {
       "name": "Tera Blast",
