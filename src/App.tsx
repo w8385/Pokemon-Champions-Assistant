@@ -1090,46 +1090,49 @@ export default function App() {
                       <strong>{stat.label}</strong>
                       <span>{actualValue}</span>
                     </div>
-                    <div className="effort-cell-grid" role="group" aria-label={`${stat.label} effort points`}>
-                      {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, segmentIdx) => {
-                        const segmentStart = segmentIdx * 11
-                        const segmentEnd = segmentStart + 11
-                        const segmentValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: segmentEnd } }, stat.key)
-                        return (
-                          <div key={`effort-segment-${stat.key}-${segmentIdx}`} className="effort-segment">
-                            <div className="effort-segment-cells">
-                              {Array.from({ length: 11 }, (_, innerIdx) => {
-                                const point = segmentStart + innerIdx + 1
-                                const filled = point <= currentEffort
-                                const reachable = point <= availableCap
-                                const target = targetEffort === point
-                                const classes = [
-                                  'effort-cell',
-                                  filled ? 'filled' : '',
-                                  reachable ? 'reachable' : 'locked',
-                                  target ? 'target' : '',
-                                ].filter(Boolean).join(' ')
-                                return (
-                                  <button
-                                    key={`effort-cell-${stat.key}-${point}`}
-                                    type="button"
-                                    className={classes}
-                                    disabled={!reachable}
-                                    onClick={() => {
-                                      const next = [...party]
-                                      next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
-                                      setParty(next)
-                                    }}
-                                    title={`${stat.label} ${point}포인트`}
-                                  />
-                                )
-                              })}
+                    <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
+                      <div className="effort-gauge-track">
+                        <div className="effort-gauge-fill" style={{ width: `${(currentEffort / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
+                        <div className="effort-gauge-available" style={{ width: `${(availableCap / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
+                        {targetEffort ? <div className="effort-gauge-target" style={{ left: `${(targetEffort / CHAMPIONS_EFFORT_CAP) * 100}%` }} /> : null}
+                        <div className="effort-gauge-ticks">
+                          {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 - 1 }, (_, idx) => (
+                            <span key={`effort-tick-${stat.key}-${idx}`} className="effort-gauge-tick" style={{ left: `${((idx + 1) * 11 / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
+                          ))}
+                        </div>
+                        <div className="effort-gauge-hitboxes">
+                          {Array.from({ length: CHAMPIONS_EFFORT_CAP }, (_, cellIdx) => {
+                            const point = cellIdx + 1
+                            const reachable = point <= availableCap
+                            return (
+                              <button
+                                key={`effort-cell-${stat.key}-${point}`}
+                                type="button"
+                                className="effort-gauge-hitbox"
+                                disabled={!reachable}
+                                onClick={() => {
+                                  const next = [...party]
+                                  next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
+                                  setParty(next)
+                                }}
+                                title={`${stat.label} ${point}포인트`}
+                              />
+                            )
+                          })}
+                        </div>
+                      </div>
+                      <div className="effort-gauge-scale">
+                        {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, idx) => {
+                          const checkpoint = (idx + 1) * 11
+                          const checkpointValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: checkpoint } }, stat.key)
+                          return (
+                            <div key={`effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item">
+                              <span>{checkpoint}pt</span>
+                              <small>{stat.key === magicCandidate?.stat ? checkpointValue : ''}</small>
                             </div>
-                            <div className="effort-segment-label">{segmentEnd}pt</div>
-                            <div className="effort-segment-value">{stat.key === magicCandidate?.stat ? segmentValue : ''}</div>
-                          </div>
-                        )
-                      })}
+                          )
+                        })}
+                      </div>
                     </div>
                     <div className="effort-cell-toolbar">
                       <button

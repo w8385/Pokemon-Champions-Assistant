@@ -233,55 +233,86 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-color: #facc15;
   box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.28) inset;
 }
-.effort-cell-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+.effort-gauge-wrap {
   margin: 12px 0 10px;
 }
-.effort-segment {
-  display: grid;
-  gap: 6px;
-}
-.effort-segment-cells {
-  display: grid;
-  grid-template-columns: repeat(11, minmax(0, 1fr));
-  gap: 3px;
-}
-.effort-cell {
-  appearance: none;
-  border: 1px solid #475569;
+.effort-gauge-track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
   background: #0f172a;
-  border-radius: 4px;
-  width: 100%;
-  aspect-ratio: 1 / 1.35;
+  border: 1px solid #334155;
+  overflow: hidden;
+}
+.effort-gauge-available {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: rgba(59, 130, 246, 0.14);
+}
+.effort-gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #fbbf24, #f97316);
+  z-index: 2;
+}
+.effort-gauge-ticks {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.effort-gauge-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(148, 163, 184, 0.65);
+  transform: translateX(-50%);
+}
+.effort-gauge-target {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: #facc15;
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.3);
+  transform: translateX(-50%);
+  z-index: 4;
+}
+.effort-gauge-hitboxes {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(66, minmax(0, 1fr));
+  z-index: 5;
+}
+.effort-gauge-hitbox {
+  appearance: none;
   padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
-  opacity: 0.9;
 }
-.effort-cell.reachable {
-  border-color: #64748b;
-}
-.effort-cell.filled {
-  background: linear-gradient(180deg, #fbbf24, #f97316);
-  border-color: #f59e0b;
-}
-.effort-cell.locked {
-  background: #1e293b;
-  border-color: #334155;
-  opacity: 0.45;
+.effort-gauge-hitbox:disabled {
   cursor: not-allowed;
 }
-.effort-cell.target {
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.95) inset;
+.effort-gauge-scale {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
 }
-.effort-segment-label,
-.effort-segment-value {
-  font-size: 11px;
+.effort-gauge-scale-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   color: #93a4b8;
+  font-size: 11px;
 }
-.effort-segment-value {
+.effort-gauge-scale-item small {
   min-height: 14px;
+  color: #cbd5e1;
 }
 .effort-cell-toolbar {
   display: flex;
@@ -973,5 +1004,5 @@ textarea { min-height: 72px; resize: vertical; }
   .training-grid { grid-template-columns: 1fr; }
   .speed-scenario-grid { grid-template-columns: 1fr; }
   .magic-checkpoint-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .effort-cell-grid { grid-template-columns: 1fr; }
+  .effort-gauge-scale { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
