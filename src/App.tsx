@@ -859,6 +859,16 @@ export default function App() {
     setActiveTab('party')
   }
 
+  const updateTuningEffortFromPointer = (slotIdx: number, stat: EffortStatKey, availableCap: number, clientX: number, element: HTMLDivElement) => {
+    const rect = element.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const nextValue = Math.round(ratio * availableCap)
+    const next = [...party]
+    next[slotIdx] = { ...next[slotIdx], evs: applyChampionsEffort(next[slotIdx].evs, stat, nextValue) }
+    setParty(next)
+  }
+
   const nextOpponentSlotIndex = (fromIdx: number) => {
     const emptyAfter = opponents.findIndex((member, idx) => idx > fromIdx && !member.key)
     if (emptyAfter >= 0) return emptyAfter
@@ -1080,7 +1090,21 @@ export default function App() {
                       <span>{actualValue}</span>
                     </div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
-                      <div className={`effort-gauge-track ${statThemeClass(stat.key)}`}>
+                      <div
+                        className={`effort-gauge-track ${statThemeClass(stat.key)}`}
+                        onPointerDown={(e) => {
+                          e.preventDefault()
+                          e.currentTarget.setPointerCapture(e.pointerId)
+                          updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget)
+                        }}
+                        onPointerMove={(e) => {
+                          if ((e.buttons & 1) !== 1) return
+                          updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget)
+                        }}
+                        onPointerUp={(e) => {
+                          if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId)
+                        }}
+                      >
                         <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">
                           {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
                             const point = cellIdx + 1
