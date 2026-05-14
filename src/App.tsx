@@ -632,7 +632,6 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
-  const [opponentQuickInput, setOpponentQuickInput] = React.useState('')
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
@@ -766,30 +765,6 @@ export default function App() {
     setOpponents(next)
     setOpponentSearch(next.map(() => ''))
     setSelectedOpp(0)
-    setOpponentQuickInput('')
-  }
-
-  const applyQuickOpponents = () => {
-    const tokens = opponentQuickInput
-      .split(/[\n,\/|]+/)
-      .map((entry) => entry.trim())
-      .filter(Boolean)
-      .slice(0, MAX_OPPONENTS)
-
-    if (!tokens.length) return
-
-    const next = emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] }))
-    tokens.forEach((token, idx) => {
-      const resolved = resolveSpeciesKey(token)
-      if (!resolved) return
-      next[idx] = { ...next[idx], key: resolved }
-    })
-    setOpponents(next)
-    setOpponentSearch(tokens.map((token, idx) => {
-      const resolved = next[idx]?.key
-      return resolved ? searchDisplayLabel(resolved, siteLanguage) : token
-    }).concat(Array.from({ length: Math.max(0, MAX_OPPONENTS - tokens.length) }, () => '')))
-    setSelectedOpp(0)
   }
 
   const resetAll = () => {
@@ -811,7 +786,6 @@ export default function App() {
     setSavedSamples([])
     setSampleLabelDraft('')
     setPartyAdvancedOpen(Array.from({ length: defaultParty.length }, () => false))
-    setOpponentQuickInput('')
     if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -861,7 +835,6 @@ export default function App() {
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
       setPartyAdvancedOpen(Array.from({ length: nextParty.length }, () => false))
-      setOpponentQuickInput('')
     } catch {
       if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
     } finally {
@@ -1268,7 +1241,7 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>상대 엔트리</h2>
-              <p className="muted">초기화하고 6마리를 빠르게 다시 채울 수 있게, 일괄 입력 중심으로 정리했습니다.</p>
+              <p className="muted">초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">엔트리 {opponents.length}/6</span>
@@ -1276,24 +1249,9 @@ export default function App() {
             </div>
           </div>
 
-          <div className="quick-entry-panel">
-            <label>
-              빠른 입력
-              <textarea
-                value={opponentQuickInput}
-                placeholder="예: 한 줄에 하나씩 또는 쉼표로 구분\n드래펄트\n로토무\n한카리아스"
-                onChange={(e) => setOpponentQuickInput(e.target.value)}
-              />
-            </label>
-            <div className="inline-controls">
-              <button type="button" className="action-button" onClick={applyQuickOpponents}>6마리 일괄 입력</button>
-              <button type="button" className="action-button" onClick={() => setOpponentQuickInput(opponents.map((member) => {
-                const row = member.key ? indexByKey.get(member.key) : null
-                return row ? displayName(row, 'ko') : ''
-              }).filter(Boolean).join('\n'))}>현재 엔트리 불러오기</button>
-              <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>상대 엔트리 초기화</button>
-            </div>
-            <p className="muted">이름 일부만 써도 최대한 맞춰 넣습니다. 못 찾은 칸은 비워둔 채로 상세패널에서 바로 수정하면 됩니다.</p>
+          <div className="inline-controls">
+            <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>상대 엔트리 초기화</button>
+            <span className="muted-inline">각 슬롯 검색창에 이름 일부만 입력해도 바로 채울 수 있습니다.</span>
           </div>
 
           <div className="pick-slot-row opponent-overview-row">
@@ -1317,12 +1275,35 @@ export default function App() {
               {opponents.map((member, idx) => {
                 const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
                 return (
-                  <button key={`opp-board-${idx}`} type="button" className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                  <div key={`opp-board-${idx}`} className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
                     {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                     <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
+                    <div className="autocomplete slot-autocomplete" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        value={opponentSearch[idx] ?? ''}
+                        placeholder={`슬롯 ${idx + 1} 검색`}
+                        onFocus={() => setActiveSearchField({ side: 'opponent', idx })}
+                        onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', idx) ? null : prev), 120)}
+                        onChange={(e) => {
+                          const next = [...opponentSearch]
+                          next[idx] = e.target.value
+                          setOpponentSearch(next)
+                          setActiveSearchField({ side: 'opponent', idx })
+                        }}
+                      />
+                      {sameSearchTarget(activeSearchField, 'opponent', idx) ? (
+                        <div className="autocomplete-menu">
+                          {filterSpeciesOptions(opponentSearch[idx] ?? '').slice(0, 8).map((option) => (
+                            <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('opponent', idx, option.key)}>
+                              {searchDisplayLabel(option.key, siteLanguage)}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                     <span>{member.ability || '특성 미기입'}</span>
                     <span>{member.item || '도구 미기입'}</span>
-                  </button>
+                  </div>
                 )
               })}
             </div>
