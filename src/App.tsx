@@ -165,6 +165,11 @@ function isAllowedChampionsItem(key: string, item: string) {
   return normalized === megaStoneForKey(key) || ITEM_OPTIONS.includes(normalized as typeof ITEM_OPTIONS[number])
 }
 
+function visibleChampionsItem(key: string, item: string) {
+  const normalized = normalizeItemForKey(key, item).trim()
+  return isAllowedChampionsItem(key, normalized) ? normalized : ''
+}
+
 function itemSpriteSrc(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
   const spriteSlug = ITEM_SPRITE_MAP[normalized]
@@ -1035,8 +1040,7 @@ export default function App() {
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
-  const sampleCurrentItem = normalizeItemForKey(sampleForge.key, sampleForge.item)
-  const sampleItemAllowed = isAllowedChampionsItem(sampleForge.key, sampleForge.item)
+  const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1485,8 +1489,7 @@ export default function App() {
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
                 const fixedMegaStone = megaStoneForKey(member.key)
-                const currentItem = normalizeItemForKey(member.key, member.item)
-                const itemAllowed = isAllowedChampionsItem(member.key, member.item)
+                const currentItem = visibleChampionsItem(member.key, member.item)
                 const abilityOptions = displayAbilities(row, siteLanguage)
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
@@ -1517,13 +1520,12 @@ export default function App() {
                             <span>특성</span>
                             <strong>{activeAbility || '미선택'}</strong>
                           </div>
-                          <div className={`party-meta-chip item-meta-chip ${itemAllowed ? 'valid' : 'invalid'}`}>
+                          <div className="party-meta-chip item-meta-chip">
                             <span>도구</span>
                             <div className="item-meta-row">
                               <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                               <strong>{currentItem || '미선택'}</strong>
                             </div>
-                            <small>{itemAllowed ? '포챔스 사용 가능' : '포챔스 사용 불가/미확인'}</small>
                           </div>
                           <div className="party-meta-chip wide">
                             <span>성격</span>
@@ -1628,9 +1630,10 @@ export default function App() {
                       <label>
                         도구
                         <>
-                        <input className={!itemAllowed ? 'invalid-input' : ''} list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                           const next = [...party]
-                          next[idx] = { ...member, item: normalizeItemForKey(member.key, e.target.value) }
+                          const nextItem = e.target.value
+                          next[idx] = { ...member, item: isAllowedChampionsItem(member.key, nextItem) ? normalizeItemForKey(member.key, nextItem) : '' }
                           setParty(next)
                         }} />
                         {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
@@ -1934,10 +1937,9 @@ export default function App() {
                     <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
-                  <div className={`item-hero-row ${sampleItemAllowed ? 'valid' : 'invalid'}`}>
+                  <div className="item-hero-row">
                     <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={sampleCurrentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                     <span>{sampleCurrentItem || '도구 미선택'}</span>
-                    <small>{sampleItemAllowed ? '포챔스 사용 가능' : '포챔스 사용 불가/미확인'}</small>
                   </div>
                   <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
@@ -1984,7 +1986,7 @@ export default function App() {
                 <label>
                   도구
                   <>
-                  <input className={!sampleItemAllowed ? 'invalid-input' : ''} list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: normalizeItemForKey(prev.key, e.target.value) }))} />
+                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: isAllowedChampionsItem(prev.key, e.target.value) ? normalizeItemForKey(prev.key, e.target.value) : '' }))} />
                   {!sampleFixedMegaStone ? <datalist id="item-options-sample">
                     {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
                   </datalist> : null}

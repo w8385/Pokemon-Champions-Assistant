@@ -689,19 +689,6 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.party-meta-chip small,
-.item-hero-row small {
-  font-size: 11px;
-  color: #8da2b8;
-}
-.item-meta-chip.valid,
-.item-hero-row.valid {
-  border-color: #1d4f38;
-}
-.item-meta-chip.invalid,
-.item-hero-row.invalid {
-  border-color: #7f1d1d;
-}
 .item-meta-row,
 .item-hero-row {
   display: flex;
@@ -725,10 +712,6 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   object-fit: contain;
   image-rendering: pixelated;
   flex: 0 0 auto;
-}
-.invalid-input {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15) inset;
 }
 .entry-sprite {
   width: 52px;
