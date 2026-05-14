@@ -100,6 +100,7 @@ type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
+type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
@@ -1164,6 +1165,10 @@ function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 
   return a?.key === key && a?.slotIdx === slotIdx && a?.scope === scope
 }
 
+function sameItemField(a: ItemFieldTarget, scope: 'party' | 'sample' | 'opponent', idx: number) {
+  return a?.scope === scope && a?.idx === idx
+}
+
 function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   switch (tab) {
     case 'party': return translateText(language, '내 파티 관리')
@@ -1216,6 +1221,7 @@ export default function App() {
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => visibleChampionsItem(member.key, member.item)))
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
+  const [activeItemField, setActiveItemField] = React.useState<ItemFieldTarget>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [navMenuOpen, setNavMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
@@ -1382,6 +1388,38 @@ export default function App() {
   const selectMoveOption = (key: string, slotIdx: number, moveName: string) => {
     setConfirmedMoveSlot(key, slotIdx, moveName)
     setActiveMoveField(null)
+  }
+  const selectPartyItemOption = (idx: number, member: PartyMember, itemName: string) => {
+    const resolved = resolveItemInput(member.key, itemName, siteLanguage)
+    const next = [...party]
+    next[idx] = { ...member, item: resolved }
+    setParty(next)
+    setPartyItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
+      return nextDrafts
+    })
+    setActiveItemField(null)
+  }
+  const selectSampleItemOption = (itemName: string) => {
+    const resolved = resolveItemInput(sampleForge.key, itemName, siteLanguage)
+    setSampleForge((prev) => ({ ...prev, item: resolved }))
+    setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
+    setActiveItemField(null)
+  }
+  const selectOpponentItemOption = (idx: number, itemName: string) => {
+    const member = opponents[idx]
+    if (!member) return
+    const resolved = resolveItemInput(member.key, itemName, siteLanguage)
+    const next = [...opponents]
+    next[idx] = { ...member, item: resolved }
+    setOpponents(next)
+    setOpponentItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
+      return nextDrafts
+    })
+    setActiveItemField(null)
   }
   const commitTopSpeciesOption = (side: 'party' | 'opponent' | 'sample', idx: number, rawQuery: string) => {
     const top = filterSpeciesOptions(rawQuery)[0]
@@ -2014,11 +2052,8 @@ export default function App() {
                           </div>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'item' ? <div className="party-meta-popover">
-                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone ? displayItemLabel(fixedMegaStone, siteLanguage) : partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
-                            const nextDrafts = [...partyItemDrafts]
-                            nextDrafts[idx] = e.target.value
-                            setPartyItemDrafts(nextDrafts)
-                          }} onBlur={() => {
+                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus value={fixedMegaStone ? displayItemLabel(fixedMegaStone, siteLanguage) : partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(fixedMegaStone)} onFocus={() => !fixedMegaStone && setActiveItemField({ scope: 'party', idx })} onBlur={() => {
+                            setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'party', idx) ? null : prev), 120)
                             const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '', siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, item: resolved }
@@ -2029,6 +2064,11 @@ export default function App() {
                               return nextDrafts
                             })
                             setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : prev), 120)
+                          }} onChange={(e) => {
+                            const nextDrafts = [...partyItemDrafts]
+                            nextDrafts[idx] = e.target.value
+                            setPartyItemDrafts(nextDrafts)
+                            setActiveItemField({ scope: 'party', idx })
                           }} onKeyDown={(e) => {
                             if (e.key !== 'Enter') return
                             e.preventDefault()
@@ -2041,11 +2081,16 @@ export default function App() {
                               nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
                               return nextDrafts
                             })
+                            setActiveItemField(null)
                             setActivePartyMetaEditor(null)
                           }} />
-                          {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
-                            {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
-                          </datalist> : null}
+                          {!fixedMegaStone && sameItemField(activeItemField, 'party', idx) ? <div className="move-autocomplete-menu">
+                            {filterItemOptions(partyItemDrafts[idx] || '', siteLanguage).slice(0, 8).map((item) => (
+                              <button key={`party-item-suggest-${idx}-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectPartyItemOption(idx, member, item)}>
+                                <span>{displayItemLabel(item, siteLanguage)}</span>
+                              </button>
+                            ))}
+                          </div> : null}
                         </div> : null}
                       </div>
                     </div> : null}
@@ -2299,15 +2344,17 @@ export default function App() {
                 <label>
                   {lt('도구')}
                   <input
-                    list={`item-options-opponent-${selectedOpp}`}
                     value={opponentItemDrafts[selectedOpp] ?? ''}
                     placeholder={lt('사용 가능 도구 선택')}
+                    onFocus={() => setActiveItemField({ scope: 'opponent', idx: selectedOpp })}
                     onChange={(e) => {
                       const nextDrafts = [...opponentItemDrafts]
                       nextDrafts[selectedOpp] = e.target.value
                       setOpponentItemDrafts(nextDrafts)
+                      setActiveItemField({ scope: 'opponent', idx: selectedOpp })
                     }}
                     onBlur={() => {
+                      setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'opponent', selectedOpp) ? null : prev), 120)
                       const resolved = resolveItemInput(oppMember.key, opponentItemDrafts[selectedOpp] || '', siteLanguage)
                       const next = [...opponents]
                       next[selectedOpp] = { ...oppMember, item: resolved }
@@ -2330,11 +2377,16 @@ export default function App() {
                         nextDrafts[selectedOpp] = displayItemLabel(resolved, siteLanguage)
                         return nextDrafts
                       })
+                      setActiveItemField(null)
                     }}
                   />
-                  <datalist id={`item-options-opponent-${selectedOpp}`}>
-                    {ITEM_OPTIONS.map((item) => <option key={`opp-item-${selectedOpp}-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
-                  </datalist>
+                  {sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu">
+                    {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
+                      <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
+                        <span>{displayItemLabel(item, siteLanguage)}</span>
+                      </button>
+                    ))}
+                  </div> : null}
                 </label>
                 <label>
                   {lt('특성')}
@@ -2506,7 +2558,11 @@ export default function App() {
                     </div>
                   </button>
                   {activeSampleMetaEditor === 'item' ? <div className="party-meta-popover">
-                    <input ref={sampleItemEditorRef} autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone ? displayItemLabel(sampleFixedMegaStone, siteLanguage) : sampleItemDraft} placeholder={sampleFixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
+                    <input ref={sampleItemEditorRef} autoFocus value={sampleFixedMegaStone ? displayItemLabel(sampleFixedMegaStone, siteLanguage) : sampleItemDraft} placeholder={sampleFixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(sampleFixedMegaStone)} onFocus={() => !sampleFixedMegaStone && setActiveItemField({ scope: 'sample', idx: 0 })} onChange={(e) => {
+                      setSampleItemDraft(e.target.value)
+                      if (!sampleFixedMegaStone) setActiveItemField({ scope: 'sample', idx: 0 })
+                    }} onBlur={() => {
+                      setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'sample', 0) ? null : prev), 120)
                       const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
                       setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
@@ -2517,11 +2573,16 @@ export default function App() {
                       const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
                       setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
+                      setActiveItemField(null)
                       setActiveSampleMetaEditor(null)
                     }} />
-                    {!sampleFixedMegaStone ? <datalist id="item-options-sample">
-                      {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
-                    </datalist> : null}
+                    {!sampleFixedMegaStone && sameItemField(activeItemField, 'sample', 0) ? <div className="move-autocomplete-menu">
+                      {filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8).map((item) => (
+                        <button key={`sample-item-suggest-${item}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectSampleItemOption(item)}>
+                          <span>{displayItemLabel(item, siteLanguage)}</span>
+                        </button>
+                      ))}
+                    </div> : null}
                   </div> : null}
                 </div>
               </div>
