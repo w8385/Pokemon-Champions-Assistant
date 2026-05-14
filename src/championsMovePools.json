@@ -12013,10 +12013,6 @@
       "type": "normal"
     },
     {
-      "name": "인구폭탄",
-      "type": "normal"
-    },
-    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -12043,6 +12039,10 @@
     {
       "name": "집단구타",
       "type": "dark"
+    },
+    {
+      "name": "찍찍베기",
+      "type": "normal"
     },
     {
       "name": "초롱초롱눈동자",
@@ -59939,10 +59939,6 @@
       "type": "fire"
     },
     {
-      "name": "토치송",
-      "type": "fire"
-    },
-    {
       "name": "파괴광선",
       "type": "normal"
     },
@@ -59952,6 +59948,10 @@
     },
     {
       "name": "플레어드라이브",
+      "type": "fire"
+    },
+    {
+      "name": "플레어송",
       "type": "fire"
     },
     {
