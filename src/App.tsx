@@ -1042,36 +1042,82 @@ export default function App() {
             </div>
             <div className="drag-stat-list">
               {EFFORT_STAT_OPTIONS.map((stat) => {
+                const currentEffort = tuningMember.evs[stat.key]
                 const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
+                const availableCap = Math.min(CHAMPIONS_EFFORT_CAP, currentEffort + maxSpendable)
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
-                const markerLeft = magicCandidate?.stat === stat.key && magicCandidate.nextEffort !== null && maxSpendable > 0
-                  ? `${(magicCandidate.nextEffort / maxSpendable) * 100}%`
-                  : null
+                const targetEffort = magicCandidate?.stat === stat.key ? magicCandidate.nextEffort : null
                 return (
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between">
                       <strong>{stat.label}</strong>
                       <span>{actualValue}</span>
                     </div>
-                    <div className="range-wrap">
-                      {markerLeft ? <span className="range-target-line" style={{ left: markerLeft }} /> : null}
-                      {markerLeft ? <span className="range-target-dot" style={{ left: markerLeft }} /> : null}
-                      <input
-                        type="range"
-                        min={0}
-                        max={maxSpendable}
-                        value={tuningMember.evs[stat.key]}
-                        onChange={(e) => {
+                    <div className="effort-cell-grid" role="group" aria-label={`${stat.label} effort points`}>
+                      {Array.from({ length: CHAMPIONS_EFFORT_CAP }, (_, cellIdx) => {
+                        const point = cellIdx + 1
+                        const filled = point <= currentEffort
+                        const reachable = point <= availableCap
+                        const target = targetEffort === point
+                        const classes = [
+                          'effort-cell',
+                          filled ? 'filled' : '',
+                          reachable ? 'reachable' : 'locked',
+                          target ? 'target' : '',
+                          point % 11 === 0 ? 'segment-end' : '',
+                        ].filter(Boolean).join(' ')
+                        return (
+                          <button
+                            key={`effort-cell-${stat.key}-${point}`}
+                            type="button"
+                            className={classes}
+                            disabled={!reachable}
+                            onClick={() => {
+                              const next = [...party]
+                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
+                              setParty(next)
+                            }}
+                            title={`${stat.label} ${point}포인트`}
+                          />
+                        )
+                      })}
+                    </div>
+                    <div className="effort-cell-toolbar">
+                      <button
+                        type="button"
+                        className="mini-action"
+                        onClick={() => {
                           const next = [...party]
-                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
+                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.max(0, currentEffort - 1)) }
                           setParty(next)
                         }}
-                      />
+                        disabled={currentEffort <= 0}
+                      >-1</button>
+                      <button
+                        type="button"
+                        className="mini-action"
+                        onClick={() => {
+                          const next = [...party]
+                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, 0) }
+                          setParty(next)
+                        }}
+                        disabled={currentEffort <= 0}
+                      >초기화</button>
+                      <button
+                        type="button"
+                        className="mini-action"
+                        onClick={() => {
+                          const next = [...party]
+                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.min(availableCap, currentEffort + 1)) }
+                          setParty(next)
+                        }}
+                        disabled={currentEffort >= availableCap}
+                      >+1</button>
                     </div>
-                    <div className="row-between">
-                      <span className="muted-inline">포인트 {tuningMember.evs[stat.key]} / {maxSpendable}</span>
-                      {magicCandidate?.stat === stat.key ? <span className="magic-inline">목표선</span> : isMagicStat ? <span className="magic-inline">11배수</span> : null}
+                    <div className="row-between effort-cell-meta">
+                      <span className="muted-inline">현재 {currentEffort}pt · 추가 가능 {maxSpendable}pt</span>
+                      {magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">목표 {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">11배수 달성</span> : null}
                     </div>
                   </div>
                 )
