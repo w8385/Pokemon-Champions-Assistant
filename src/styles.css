@@ -679,6 +679,21 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border: 1px solid #273449;
   background: #0b1220;
 }
+.party-meta-chip-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.party-meta-chip-button:hover {
+  border-color: #4e6ea8;
+  background: #101a2d;
+}
+.party-meta-chip-button:focus-visible {
+  outline: 1px solid #8bb8ff;
+  outline-offset: 1px;
+}
 .party-meta-chip span {
   font-size: 11px;
   color: #8da2b8;

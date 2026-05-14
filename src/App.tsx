@@ -501,6 +501,22 @@ function natureLabel(natureId: NatureId) {
   return `${nature.label} (${statLabel(nature.up)}↑ ${statLabel(nature.down)}↓)`
 }
 
+function natureChipLabel(natureId: NatureId) {
+  return natureById.get(natureId)?.label ?? natureId
+}
+
+function openPicker(el: HTMLInputElement | HTMLSelectElement | null) {
+  if (!el) return
+  el.focus()
+  if ('showPicker' in el && typeof el.showPicker === 'function') {
+    try {
+      el.showPicker()
+    } catch {
+      // ignore unsupported picker invocation
+    }
+  }
+}
+
 function boostedStatForNature(natureId: NatureId): StatKey | null {
   return natureById.get(natureId)?.up ?? null
 }
@@ -1013,6 +1029,9 @@ export default function App() {
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
+  const partyAbilityRefs = React.useRef<(HTMLSelectElement | null)[]>([])
+  const partyNatureRefs = React.useRef<(HTMLSelectElement | null)[]>([])
+  const partyItemRefs = React.useRef<(HTMLInputElement | null)[]>([])
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -1677,21 +1696,30 @@ export default function App() {
                       </div>
                     </div>
                     <div className="party-meta-grid">
-                      <div className="party-meta-chip">
+                      <button type="button" className="party-meta-chip party-meta-chip-button" onClick={(e) => {
+                        e.stopPropagation()
+                        openPicker(partyAbilityRefs.current[idx] ?? null)
+                      }}>
                         <span>특성</span>
                         <strong>{activeAbility || '미선택'}</strong>
-                      </div>
-                      <div className="party-meta-chip wide">
+                      </button>
+                      <button type="button" className="party-meta-chip party-meta-chip-button wide" onClick={(e) => {
+                        e.stopPropagation()
+                        openPicker(partyNatureRefs.current[idx] ?? null)
+                      }}>
                         <span>성격</span>
-                        <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
-                      </div>
-                      <div className="party-meta-chip item-meta-chip">
+                        <strong>{natureChipLabel(member.config.nature)}</strong>
+                      </button>
+                      <button type="button" className="party-meta-chip party-meta-chip-button item-meta-chip" onClick={(e) => {
+                        e.stopPropagation()
+                        openPicker(partyItemRefs.current[idx] ?? null)
+                      }}>
                         <span>도구</span>
                         <div className="item-meta-row">
                           <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                           <strong>{currentItem || '미선택'}</strong>
                         </div>
-                      </div>
+                      </button>
                     </div>
                     <label className="species-picker">
                       종 선택
@@ -1747,7 +1775,7 @@ export default function App() {
                     <div className="inline-controls" onClick={(e) => e.stopPropagation()}>
                       <label>
                         특성
-                        <select value={activeAbility} onChange={(e) => {
+                        <select ref={(el) => { partyAbilityRefs.current[idx] = el }} value={activeAbility} onChange={(e) => {
                           const next = [...party]
                           next[idx] = { ...member, ability: e.target.value }
                           setParty(next)
@@ -1757,7 +1785,7 @@ export default function App() {
                       </label>
                       <label>
                         성격
-                        <select value={member.config.nature} onChange={(e) => {
+                        <select ref={(el) => { partyNatureRefs.current[idx] = el }} value={member.config.nature} onChange={(e) => {
                           const next = [...party]
                           next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
                           setParty(next)
@@ -1768,7 +1796,7 @@ export default function App() {
                       <label>
                         도구
                         <>
-                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                        <input ref={(el) => { partyItemRefs.current[idx] = el }} list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                           const nextDrafts = [...partyItemDrafts]
                           nextDrafts[idx] = e.target.value
                           setPartyItemDrafts(nextDrafts)
