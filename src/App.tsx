@@ -1327,9 +1327,6 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="pick-row" onClick={(e) => e.stopPropagation()}>
-                      <span className="muted-inline">트레이닝은 항상 펼쳐집니다 · 스탯을 누르면 노력치 보정</span>
-                    </div>
                     <label className="species-picker">
                       종 선택
                       <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
