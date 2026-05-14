@@ -20,7 +20,7 @@ const typeBadgeLabels: Record<string, string> = {
 }
 
 export function getTypeBadgeSrc(type: string) {
-  return `/type-icons/${type}.svg`
+  return `${import.meta.env.BASE_URL}type-icons/${type}.svg`
 }
 
 export function getTypeBadgeLabel(type: string) {
