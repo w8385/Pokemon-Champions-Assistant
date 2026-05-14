@@ -1005,46 +1005,6 @@ export default function App() {
               <h2>성격 / 매직넘버 / 최대치</h2>
               <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>닫기</button>
             </div>
-            <div className="magic-helper-box">
-              <div className="row-between">
-                <strong>매직넘버 helper</strong>
-                <span className="muted-inline">구간별 체크포인트 보기</span>
-              </div>
-              {magicCandidate ? (
-                <>
-                  <p className="muted">
-                    성격 보정이 걸리는 {statLabel(magicCandidate.stat)} 기준으로 11의 배수를 맞추는 보조 UI입니다.
-                  </p>
-                  <div className="magic-chip-row">
-                    <span className={`magic-chip ${magicCandidate.reached ? 'active' : ''}`}>현재 실수치 {magicCandidate.currentActual}</span>
-                    <span className="magic-chip">현재 포인트 {magicCandidate.currentEffort}</span>
-                    {magicCandidate.nextActual ? <span className="magic-chip active">다음 매직넘버 {magicCandidate.nextActual}</span> : <span className="magic-chip">남은 포인트로 도달 불가</span>}
-                  </div>
-                  {magicCheckpoints ? <div className="magic-checkpoint-list">
-                    {magicCheckpoints.map((checkpoint) => (
-                      <button
-                        key={`magic-checkpoint-${checkpoint.effort}`}
-                        type="button"
-                        className={`magic-checkpoint ${checkpoint.active ? 'active' : checkpoint.cleared ? 'cleared' : ''}`}
-                        disabled={!checkpoint.reachable}
-                        onClick={() => {
-                          const next = [...party]
-                          next[tuningModalIndex] = {
-                            ...next[tuningModalIndex],
-                            evs: applyChampionsEffort(next[tuningModalIndex].evs, checkpoint.stat, checkpoint.effort),
-                            tuning: { ...next[tuningModalIndex].tuning, magicNumber: checkpoint.actual },
-                          }
-                          setParty(next)
-                        }}
-                      >
-                        <strong>{checkpoint.effort}pt</strong>
-                        <span>{checkpoint.actual}</span>
-                      </button>
-                    ))}
-                  </div> : null}
-                </>
-              ) : <p className="muted">무보정 성격은 매직넘버 helper를 띄우지 않습니다. 성격을 먼저 지정해 주세요.</p>}
-            </div>
             <div className="modal-grid">
               <label>
                 성격
