@@ -1838,7 +1838,7 @@ export default function App() {
       {tuningModalIndex !== null && tuningMember && tuningRow ? (
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="row-between">
+            <div className="row-between modal-header">
               <h2>{lt('노력치 보정')}</h2>
               <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>{lt('닫기')}</button>
             </div>

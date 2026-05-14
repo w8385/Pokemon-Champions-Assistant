@@ -169,18 +169,35 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   inset: 0;
   background: rgba(2, 6, 23, 0.68);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 24px;
   z-index: 40;
+  overflow-y: auto;
 }
 .modal-card {
   width: min(560px, 100%);
+  max-height: calc(100svh - 48px);
   border: 1px solid #334155;
   border-radius: 18px;
   background: #0f1720;
   padding: 18px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: auto 0;
+}
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: -18px -18px 0;
+  padding: 18px 18px 12px;
+  background: linear-gradient(180deg, rgba(15, 23, 32, 0.98), rgba(15, 23, 32, 0.92));
+  border-bottom: 1px solid rgba(51, 65, 85, 0.9);
+}
+.modal-header h2 {
+  margin: 0;
 }
 .modal-grid {
   display: grid;
@@ -413,6 +430,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 .mini-action {
   appearance: none;
@@ -420,7 +438,8 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   background: #0b1220;
   color: #e2e8f0;
   border-radius: 999px;
-  padding: 5px 10px;
+  min-height: 40px;
+  padding: 8px 12px;
   cursor: pointer;
   font-size: 12px;
 }
@@ -1698,4 +1717,32 @@ textarea { min-height: 72px; resize: vertical; }
   .magic-checkpoint-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .effort-gauge-scale { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .registered-move-grid { grid-template-columns: 1fr; }
+  .modal-backdrop {
+    padding: 0;
+    align-items: stretch;
+  }
+  .modal-card {
+    width: 100%;
+    max-height: 100svh;
+    min-height: 100svh;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    margin: 0;
+    padding: 14px 14px 20px;
+  }
+  .modal-header {
+    margin: -14px -14px 0;
+    padding: 14px 14px 10px;
+  }
+  .effort-gauge-track {
+    height: 30px;
+  }
+  .effort-gauge-hitbox {
+    min-height: 30px;
+  }
+  .effort-cell-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
