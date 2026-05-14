@@ -1236,15 +1236,6 @@ function itemAutocompletePrimaryLabel(item: string, language: SiteLanguage) {
   return localized && localized.trim() ? localized : item
 }
 
-function MovePoolStateBadges({ language }: { language: SiteLanguage }) {
-  return (
-    <div className="move-pool-badges" title={`${dataSourcePolicy.movePools.sourceOfTruth} · PokeAPI baseline seed · Champions verification in progress`}>
-      <span className="move-pool-badge seeded">{translateText(language, '시드')}</span>
-      <span className="move-pool-badge verifying">{translateText(language, '검증중')}</span>
-    </div>
-  )
-}
-
 function LanguageIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
@@ -2291,7 +2282,7 @@ export default function App() {
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>{lt('기술 배치')}</strong>
-                        {memberMovePool?.status === 'loading' ? <span className="muted-inline">{lt('기술풀 불러오는 중…')}</span> : <MovePoolStateBadges language={siteLanguage} />}
+                        {memberMovePool?.status === 'loading' ? <span className="muted-inline">{lt('기술풀 불러오는 중…')}</span> : null}
                       </div>
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
@@ -2615,8 +2606,8 @@ export default function App() {
             <h2>{lt('단일 샘플 빌더')}</h2>
             <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
           </div>
-          <div className="sample-builder-grid">
-            <div className="sample-main-card">
+          <div className="sample-builder-grid compact-sample-builder-grid">
+            <div className="sample-main-card flat-sample-main-card">
               <label className="species-picker">
                 {lt('포켓몬 선택')}
                 <div className="autocomplete">
@@ -2777,7 +2768,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <div className="inline-controls">
+              <div className="inline-controls sample-tuning-inline">
                 <label>
                   {lt('매직넘버')}
                   <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
@@ -2788,15 +2779,12 @@ export default function App() {
                 </label>
               </div>
             </div>
-            <div className="move-card">
+            <div className="move-card flat-sample-move-card">
               <div className="row-between">
                 <strong>{lt('샘플 기술')}</strong>
-                <div className="row-inline-actions">
-                  <MovePoolStateBadges language={siteLanguage} />
-                  <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
-                </div>
+                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
               </div>
-              <div className="sample-save-box">
+              <div className="sample-save-box flat-sample-save-box">
                 <label>
                   {lt('샘플 이름')}
                   <input value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
@@ -2867,7 +2855,7 @@ export default function App() {
                   {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
                 </>
               ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
-              <div className="saved-sample-list">
+              <div className="saved-sample-list flat-saved-sample-list">
                 <div className="row-between">
                   <strong>{lt('저장한 샘플')}</strong>
                   <span className="muted-inline">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>

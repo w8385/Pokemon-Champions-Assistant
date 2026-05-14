@@ -615,6 +615,25 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   background: #111827;
   padding: 14px;
 }
+.compact-sample-builder-grid {
+  gap: 12px;
+}
+.flat-sample-main-card,
+.flat-sample-move-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+.flat-sample-save-box,
+.flat-saved-sample-list {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.sample-tuning-inline {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .sample-hero {
   display: flex;
   gap: 12px;
@@ -635,32 +654,6 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-}
-.move-pool-badges {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.move-pool-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 999px;
-  border: 1px solid #334155;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-.move-pool-badge.seeded {
-  background: rgba(59, 130, 246, 0.14);
-  border-color: rgba(96, 165, 250, 0.45);
-  color: #bfdbfe;
-}
-.move-pool-badge.verifying {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(251, 191, 36, 0.45);
-  color: #fde68a;
 }
 .move-chip {
   appearance: none;
@@ -1700,6 +1693,7 @@ textarea { min-height: 72px; resize: vertical; }
   .modal-grid { grid-template-columns: 1fr; }
   .drag-stat-list { grid-template-columns: 1fr; }
   .sample-builder-grid { grid-template-columns: 1fr; }
+  .sample-tuning-inline { grid-template-columns: 1fr; }
   .quick-opponent-search-bar { grid-template-columns: 1fr; }
   .opponent-detail-layout { grid-template-columns: 1fr; }
   .opponent-board-grid { grid-template-columns: 1fr; }
