@@ -422,6 +422,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-radius: 12px;
   background: #111827;
   padding: 14px;
+  min-width: 0;
 }
 .inline-move-card {
   margin-top: 12px;
@@ -438,10 +439,14 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   padding: 8px;
   border: 1px solid #334155;
   background: #0b1220;
+  min-width: 0;
 }
 .registered-move-slot span {
   font-size: 12px;
   color: #93a4b8;
+}
+.registered-move-slot input {
+  min-width: 0;
 }
 .sample-save-box,
 .saved-sample-list {
@@ -489,12 +494,20 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .move-chip {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 12px;
   border: 1px solid #334155;
   color: #eef2f7;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .move-chip.confirmed {
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.45) inset;
