@@ -1314,7 +1314,7 @@ export default function App() {
                         className="pick-chip"
                         onClick={() => setTuningModalIndex(idx)}
                       >
-                        튜닝 설정
+                        노력치 보정
                       </button>
                     </div>
                     {isAdvancedOpen ? <>
