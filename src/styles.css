@@ -1285,6 +1285,32 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
+.damage-move-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.damage-move-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.damage-auto-badges {
+  margin-bottom: 14px;
+}
+.calc-lock-box {
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0b1220;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-weight: 700;
+  padding: 12px;
+}
 .ev-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

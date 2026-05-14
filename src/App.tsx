@@ -106,6 +106,7 @@ type MetaListField = { scope: 'party'; idx: number; field: 'ability' | 'nature' 
 type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
+type DamageMoveSelection = { key: string; move: string }
 
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
@@ -129,7 +130,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie',
     '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -158,7 +159,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速',
     '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -1266,6 +1267,7 @@ export default function App() {
   const [mainSection, setMainSection] = React.useState<MainSection>(() => persisted?.mainSection === 'sample' ? 'sample' : 'single')
   const [activeTab, setActiveTab] = React.useState<MainTab>('party')
   const [activeSpeedScenario, setActiveSpeedScenario] = React.useState<SpeedScenarioId>('fast')
+  const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
@@ -1382,6 +1384,17 @@ export default function App() {
   const myRow = indexByKey.get(myMember.key) ?? rows[0]
   const oppRow = oppMember.key ? (indexByKey.get(oppMember.key) ?? rows[0]) : null
 
+  React.useEffect(() => {
+    const moves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
+    if (!moves.length) {
+      if (selectedDamageMove !== null) setSelectedDamageMove(null)
+      return
+    }
+    if (!selectedDamageMove || selectedDamageMove.key !== myMember.key || !moves.includes(selectedDamageMove.move)) {
+      setSelectedDamageMove({ key: myMember.key, move: moves[0] })
+    }
+  }, [confirmedMovesByKey, myMember.key, selectedDamageMove])
+
   const mySpeed = partySpeedValue(myRow, myMember)
   const oppSpeed = oppRow ? speedValue(oppRow, {
     nature: oppMember.natureBoost ? 'jolly' : 'hardy',
@@ -1413,6 +1426,14 @@ export default function App() {
     const needs = mySpeedNeeds(row, member.config, selectedSpeedScenario.speedAtMax)
     return { idx, row, currentSpeed, ...needs }
   }) : []
+  const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
+  const myMovePool = movePoolByKey[myMember.key]
+  const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : (embeddedMovePoolForKey(myMember.key).length ? embeddedMovePoolForKey(myMember.key) : moveOptionsForEntry(myMoveSet))
+  const registeredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
+  const activeDamageMove = registeredDamageMoves.find((move) => move === selectedDamageMove?.move && myMember.key === selectedDamageMove?.key) ?? registeredDamageMoves[0] ?? ''
+  const activeDamageMoveType = myMoveOptions.find((option) => option.name === activeDamageMove)?.type ?? null
+  const autoStab = activeDamageMoveType && myRow.types.includes(activeDamageMoveType) ? 1.5 : 1
+  const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
   const toggleConfirmedMove = (key: string, move: string) => {
     setConfirmedMovesByKey((prev) => {
       const current = prev[key] ?? []
@@ -1575,7 +1596,7 @@ export default function App() {
       return { key, row, moveSet, buckets, confirmed: confirmedMovesByKey[key] ?? [] }
     })
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-  const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
+  const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, activeDamageMoveType ? autoStab : stab, activeDamageMoveType ? autoEffectiveness : effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : (embeddedMovePoolForKey(sampleForge.key).length ? embeddedMovePoolForKey(sampleForge.key) : moveOptionsForEntry(sampleMoveSet))
@@ -2952,8 +2973,34 @@ export default function App() {
         </section> : null}
 
         {activeTab === 'power' ? <section className="panel wide">
-          <h2>{lt('간단 데미지 계산')}</h2>
-          <p className="muted">{lt('상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.')}</p>
+          <div className="row-between section-head">
+            <h2>{lt('간단 데미지 계산')}</h2>
+            <div className="pick-summary-badges">
+              <span className="pick-badge">{lt('내 기술')}</span>
+              <span className="pick-badge enemy">{oppRow ? displayName(oppRow, siteLanguage) : lt('선택한 상대 없음')}</span>
+            </div>
+          </div>
+          <div className="damage-move-panel">
+            {registeredDamageMoves.length ? registeredDamageMoves.map((move) => {
+              const moveType = myMoveOptions.find((option) => option.name === move)?.type ?? null
+              return (
+                <button
+                  key={`damage-move-${myMember.key}-${move}`}
+                  type="button"
+                  className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${activeDamageMove === move ? 'confirmed' : ''}`}
+                  onClick={() => setSelectedDamageMove({ key: myMember.key, move })}
+                >
+                  {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                  <span>{move}</span>
+                </button>
+              )
+            }) : <div className="speed-empty-box">{lt('등록 기술 없음')}</div>}
+          </div>
+          <div className="pick-summary-badges damage-auto-badges">
+            {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
+            <span className="pick-badge">STAB {activeDamageMoveType ? autoStab : stab}</span>
+            <span className="pick-badge">{lt('상성')} {activeDamageMoveType ? autoEffectiveness : effectiveness}x</span>
+          </div>
           <div className="preset-row">
             {movePowerPresets.map((preset) => (
               <button
@@ -2968,25 +3015,25 @@ export default function App() {
           </div>
           <div className="calc-grid">
             <label>
-              {lt('위력')}
+              {lt('수동 위력')}
               <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
             </label>
             <label>
-              {lt('공격분류')}
+              {lt('수동 분류')}
               <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
                 <option value="physical">{lt('물리')}</option>
                 <option value="special">{lt('특수')}</option>
               </select>
             </label>
-            <label>
+            {!activeDamageMoveType ? <label>
               STAB
               <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
                 <option value={1}>{lt('없음')}</option>
                 <option value={1.5}>1.5</option>
                 <option value={2}>2.0</option>
               </select>
-            </label>
-            <label>
+            </label> : <div className="calc-lock-box">STAB {autoStab}</div>}
+            {!activeDamageMoveType ? <label>
               {lt('상성')}
               <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
                 <option value={0.25}>0.25x</option>
@@ -2995,10 +3042,10 @@ export default function App() {
                 <option value={2}>2x</option>
                 <option value={4}>4x</option>
               </select>
-            </label>
+            </label> : <div className="calc-lock-box">{lt('상성')} {autoEffectiveness}x</div>}
           </div>
           {oppRow && damage ? <div className="damage-box">
-            <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>
+            <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
             <p>{damage.min} ~ {damage.max} {siteLanguage === 'en' ? 'damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</p>
             <p>{damage.minPct}% ~ {damage.maxPct}%</p>
             <p>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</p>
