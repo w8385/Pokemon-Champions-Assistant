@@ -823,6 +823,13 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   gap: 10px;
   margin-top: 10px;
 }
+.compact-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 0;
+}
 label {
   display: flex;
   flex-direction: column;

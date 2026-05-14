@@ -1278,6 +1278,15 @@ export default function App() {
     setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
   }
 
+  const resetPartyForFreshEntry = () => {
+    setParty(defaultParty)
+    setPartySearch(defaultParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setPartyItemDrafts(defaultParty.map((member) => visibleChampionsItem(member.key, member.item)))
+    setSelectedMy(0)
+    setActivePartyMetaEditor(null)
+    setTuningModalIndex(null)
+  }
+
   const resetAll = () => {
     setParty(defaultParty)
     setPartyItemDrafts(defaultParty.map((member) => visibleChampionsItem(member.key, member.item)))
@@ -1647,7 +1656,10 @@ export default function App() {
             <div className="party-lane">
               <div className="section-head row-between">
                 <h2>내 파티 관리</h2>
-                <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
+                <div className="inline-controls compact-actions">
+                  <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
+                  <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>내 파티 초기화</button>
+                </div>
               </div>
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
