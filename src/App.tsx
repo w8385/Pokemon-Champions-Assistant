@@ -769,6 +769,7 @@ export default function App() {
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
+  const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1016,26 +1017,33 @@ export default function App() {
                 const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
+                const markerLeft = magicCandidate?.stat === stat.key && magicCandidate.nextEffort !== null && maxSpendable > 0
+                  ? `${(magicCandidate.nextEffort / maxSpendable) * 100}%`
+                  : null
                 return (
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between">
                       <strong>{stat.label}</strong>
                       <span>{actualValue}</span>
                     </div>
-                    <input
-                      type="range"
-                      min={0}
-                      max={maxSpendable}
-                      value={tuningMember.evs[stat.key]}
-                      onChange={(e) => {
-                        const next = [...party]
-                        next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
-                        setParty(next)
-                      }}
-                    />
+                    <div className="range-wrap">
+                      {markerLeft ? <span className="range-target-line" style={{ left: markerLeft }} /> : null}
+                      {markerLeft ? <span className="range-target-dot" style={{ left: markerLeft }} /> : null}
+                      <input
+                        type="range"
+                        min={0}
+                        max={maxSpendable}
+                        value={tuningMember.evs[stat.key]}
+                        onChange={(e) => {
+                          const next = [...party]
+                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
+                          setParty(next)
+                        }}
+                      />
+                    </div>
                     <div className="row-between">
                       <span className="muted-inline">포인트 {tuningMember.evs[stat.key]} / {maxSpendable}</span>
-                      {isMagicStat ? <span className="magic-inline">11배수</span> : null}
+                      {magicCandidate?.stat === stat.key ? <span className="magic-inline">목표선</span> : isMagicStat ? <span className="magic-inline">11배수</span> : null}
                     </div>
                   </div>
                 )
@@ -1127,20 +1135,6 @@ export default function App() {
                       </div>
                     </div>
                     <div className="pick-row" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        className={`pick-chip ${member.picked ? 'active' : ''}`}
-                        onClick={() => setParty(togglePicked(party, idx))}
-                      >
-                        {member.picked ? '선출 확정' : '선출 체크'}
-                      </button>
-                      <button
-                        type="button"
-                        className="pick-chip"
-                        onClick={() => setSelectedMy(idx)}
-                      >
-                        현재 대면
-                      </button>
                       <button
                         type="button"
                         className="pick-chip"
@@ -1253,29 +1247,55 @@ export default function App() {
                           setParty(next)
                         }} />
                       </label>
-                      <label>
-                        스카프
-                        <input type="checkbox" checked={member.config.scarf} onChange={(e) => {
-                          const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, scarf: e.target.checked } }
-                          setParty(next)
-                        }} />
-                      </label>
-                      <label>
-                        랭크
-                        <select value={member.config.speedStage} onChange={(e) => {
-                          const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, speedStage: clampSpeedStage(e.target.value) } }
-                          setParty(next)
-                        }}>
-                          {SPEED_STAGE_OPTIONS.map((n) => <option key={n} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
-                        </select>
-                      </label>
                     </div>
                     </> : null}
                   </div>
                 )
               })}
+              </div>
+            </div>
+            <div className="party-lane">
+              <div className="section-head row-between">
+                <h2>트레이닝</h2>
+                <span className="muted-inline">{displayName(myRow, siteLanguage)}</span>
+              </div>
+              <div className="move-card-grid training-grid">
+                <div className="move-card">
+                  <div className="row-between">
+                    <strong>기술 배치</strong>
+                    <span className="muted-inline">샘플 기반</span>
+                  </div>
+                  {myMoveSet ? <>
+                    <div className="move-chip-wrap">
+                      {myMoveSet.core.map((move) => (
+                        <button key={`party-core-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
+                      ))}
+                      {(myMoveSet.options ?? []).map((move) => (
+                        <button key={`party-opt-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
+                      ))}
+                      {(myMoveSet.utility ?? []).map((move) => (
+                        <button key={`party-util-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
+                      ))}
+                    </div>
+                    <p className="muted">확정 기술: {(confirmedMovesByKey[myMember.key] ?? []).join(', ') || '아직 없음'}</p>
+                  </> : <p className="muted">이 포켓몬의 샘플 기술 데이터가 아직 없습니다.</p>}
+                </div>
+                <div className="move-card">
+                  <div className="row-between">
+                    <strong>노력치 보정</strong>
+                    <span className="muted-inline">포인트 {totalEffortPoints(myMember.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                  </div>
+                  <div className="stat-preview-list compact-stat-list">
+                    {EFFORT_STAT_OPTIONS.map((stat) => (
+                      <div key={`party-training-${stat.key}`} className="stat-preview-row">
+                        <span>{stat.label}</span>
+                        <strong>{partyStatValue(myRow, myMember, stat.key)}</strong>
+                        <span>+{myMember.evs[stat.key]}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="muted">상세 드래그 조정과 매직넘버 helper는 각 카드의 `튜닝 설정`에서 여는 방식으로 두었습니다.</p>
+                </div>
               </div>
             </div>
           </div>

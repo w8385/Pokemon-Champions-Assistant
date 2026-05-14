@@ -201,9 +201,36 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-color: #facc15;
   box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.28) inset;
 }
+.range-wrap {
+  position: relative;
+  margin: 10px 0 8px;
+}
 .drag-stat-card input[type="range"] {
   width: 100%;
-  margin: 10px 0 8px;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+.range-target-line {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: rgba(250, 204, 21, 0.9);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+.range-target-dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #facc15;
+  border: 2px solid #111827;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 .hidden-file {
   display: none;
@@ -218,6 +245,9 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+.training-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .move-card {
   border: 1px solid #334155;
@@ -551,6 +581,9 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 6px;
   margin-top: 10px;
 }
+.compact-stat-list {
+  margin-top: 12px;
+}
 .stat-preview-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -852,5 +885,6 @@ textarea { min-height: 72px; resize: vertical; }
   .battle-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .move-toolbar { grid-template-columns: 1fr; }
   .move-card-grid { grid-template-columns: 1fr; }
+  .training-grid { grid-template-columns: 1fr; }
   .speed-scenario-grid { grid-template-columns: 1fr; }
 }
