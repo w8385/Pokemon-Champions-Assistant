@@ -102,6 +102,74 @@ type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 
+const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
+  en: {
+    '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
+    '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
+    '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
+    '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
+    '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature',
+    '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
+    '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.': 'Party management, opponent entry, and calculators are grouped into one menu.',
+    '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
+    '파티 한눈 요약': 'Party Overview', '내 파티': 'My Party', '상대 파티': 'Opponent Party',
+    '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
+    '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item',
+    '종 선택': 'Species', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
+    '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
+    '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
+    '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
+    '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
+    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
+    '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.',
+    '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
+    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
+    '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
+    '기합의띠': 'Focus Sash', '구애스카프': 'Choice Scarf', '구애안경': 'Choice Specs', '구애머리띠': 'Choice Band', '생명의구슬': 'Life Orb', '먹다남은음식': 'Leftovers', '돌격조끼': 'Assault Vest', '약점보험': 'Weakness Policy', '자뭉열매': 'Figy Berry', '오카열매': 'Occa Berry', '유루열매': 'Yache Berry', '리샘열매': 'Roseli Berry', '반짝가루': 'Bright Powder', '고스트메모리': 'Ghost Memory', '금속코트': 'Metal Coat', '검은진흙': 'Black Sludge', '부스트에너지': 'Booster Energy', '클리어참': 'Clear Amulet', '풍선': 'Air Balloon', '빛의점토': 'Light Clay',
+  },
+  ja: {
+    '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
+    '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
+    '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
+    '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
+    '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格',
+    '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
+    '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.': 'パーティ管理・相手エントリー・計算機を1つのメニューにまとめました。',
+    '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
+    '파티 한눈 요약': 'パーティ一覧', '내 파티': '自分のパーティ', '상대 파티': '相手パーティ',
+    '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
+    '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択',
+    '종 선택': 'ポケモン', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
+    '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
+    '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
+    '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
+    '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
+    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
+    '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。',
+    '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
+    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
+    '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
+    '기합의띠': 'きあいのタスキ', '구애스카프': 'こだわりスカーフ', '구애안경': 'こだわりメガネ', '구애머리띠': 'こだわりハチマキ', '생명의구슬': 'いのちのたま', '먹다남은음식': 'たべのこし', '돌격조끼': 'とつげきチョッキ', '약점보험': 'じゃくてんほけん', '자뭉열매': 'フィラのみ', '오카열매': 'オッカのみ', '유루열매': 'ヤチェのみ', '리샘열매': 'ロゼルのみ', '반짝가루': 'ひかりのこな', '고스트메모리': 'ゴーストメモリ', '금속코트': 'メタルコート', '검은진흙': 'くろいヘドロ', '부스트에너지': 'ブーストエナジー', '클리어참': 'クリアチャーム', '풍선': 'ふうせん', '빛의점토': 'ひかりのねんど',
+  },
+}
+
+function translateText(language: SiteLanguage, text: string) {
+  if (language === 'ko') return text
+  return UI_TRANSLATIONS[language][text] ?? text
+}
+
+function titleCaseSlug(value: string) {
+  return value.split('-').map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1)).join(' ')
+}
+
+function emptySlotLabel(index: number, language: SiteLanguage) {
+  return `${translateText(language, '빈 슬롯')} ${index + 1}`
+}
+
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
 const MAX_OPPONENTS = 6
@@ -356,13 +424,13 @@ function natureMultiplier(natureId: NatureId, stat: StatKey) {
   return 1
 }
 
-function statLabel(stat: StatKey) {
+function statLabel(stat: StatKey, language: SiteLanguage = 'ko') {
   switch (stat) {
-    case 'attack': return '공격'
-    case 'defense': return '방어'
-    case 'spAttack': return '특공'
-    case 'spDefense': return '특방'
-    case 'speed': return '스피드'
+    case 'attack': return translateText(language, '공격')
+    case 'defense': return translateText(language, '방어')
+    case 'spAttack': return translateText(language, '특공')
+    case 'spDefense': return translateText(language, '특방')
+    case 'speed': return translateText(language, '스피드')
   }
 }
 
@@ -496,15 +564,16 @@ async function fetchPokemonMovePool(key: string) {
   return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
-function natureLabel(natureId: NatureId) {
+function natureLabel(natureId: NatureId, language: SiteLanguage = 'ko') {
   const nature = natureById.get(natureId)
   if (!nature) return natureId
-  if (!nature.up || !nature.down) return `${nature.label} (무보정)`
-  return `${nature.label} (${statLabel(nature.up)}↑ ${statLabel(nature.down)}↓)`
+  const localized = translateText(language, nature.label)
+  if (!nature.up || !nature.down) return `${localized} (${translateText(language, '무보정')})`
+  return `${localized} (${statLabel(nature.up, language)}↑ ${statLabel(nature.down, language)}↓)`
 }
 
-function natureChipLabel(natureId: NatureId) {
-  return natureById.get(natureId)?.label ?? natureId
+function natureChipLabel(natureId: NatureId, language: SiteLanguage = 'ko') {
+  return translateText(language, natureById.get(natureId)?.label ?? natureId)
 }
 
 function focusAndOpenPicker(el: HTMLInputElement | HTMLSelectElement | null) {
@@ -884,13 +953,17 @@ function filterSpeciesOptions(query: string) {
     .map((entry) => ({ key: entry.row.key, label: `${entry.row.name_ko} (${entry.row.name_en})` }))
 }
 
-function filterItemOptions(query: string) {
+function displayItemLabel(item: string, language: SiteLanguage) {
+  return translateText(language, item)
+}
+
+function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return [...ITEM_OPTIONS]
   return [...ITEM_OPTIONS]
     .map((item) => {
       const aliases = ITEM_ALIASES[item] ?? []
-      const candidates = [item, ...aliases].map((entry) => entry.toLowerCase())
+      const candidates = [item, displayItemLabel(item, 'en'), displayItemLabel(item, 'ja'), ...aliases].map((entry) => entry.toLowerCase())
       const score = candidates.reduce((best, candidate) => {
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
@@ -905,10 +978,10 @@ function filterItemOptions(query: string) {
     .map((entry) => entry.item)
 }
 
-function resolveItemInput(key: string, raw: string) {
+function resolveItemInput(key: string, raw: string, language: SiteLanguage = 'ko') {
   const fixed = megaStoneForKey(key)
   if (fixed) return fixed
-  const top = filterItemOptions(raw)[0]
+  const top = filterItemOptions(raw, language)[0]
   return top && isAllowedChampionsItem(key, top) ? top : ''
 }
 
@@ -933,12 +1006,12 @@ function resolveAbilityInput(options: string[], raw: string) {
   return filterAbilityOptions(options, raw)[0] ?? options[0] ?? ''
 }
 
-function filterNatureOptions(query: string) {
+function filterNatureOptions(query: string, language: SiteLanguage = 'ko') {
   const normalized = query.trim().toLowerCase()
   const options = NATURES.map((nature) => ({
     id: nature.id,
-    shortLabel: natureChipLabel(nature.id),
-    fullLabel: natureLabel(nature.id),
+    shortLabel: natureChipLabel(nature.id, language),
+    fullLabel: natureLabel(nature.id, language),
   }))
   if (!normalized) return options
   return options
@@ -957,8 +1030,8 @@ function filterNatureOptions(query: string) {
     .sort((a, b) => a.score - b.score || a.shortLabel.localeCompare(b.shortLabel, 'ko'))
 }
 
-function resolveNatureInput(raw: string) {
-  return filterNatureOptions(raw)[0]?.id ?? 'hardy'
+function resolveNatureInput(raw: string, language: SiteLanguage = 'ko') {
+  return filterNatureOptions(raw, language)[0]?.id ?? 'hardy'
 }
 
 function filterMoveOptions(query: string, options: MoveOption[]) {
@@ -997,8 +1070,8 @@ function displayTypes(row: Row, language: SiteLanguage) {
 }
 
 function displayAbilities(row: Row, language: SiteLanguage) {
-  if (language === 'en') return row.abilities
-  if (language === 'ja') return row.abilities
+  if (language === 'en') return row.abilities.map(titleCaseSlug)
+  if (language === 'ja') return row.abilities.map(titleCaseSlug)
   return row.abilities_ko
 }
 
@@ -1018,12 +1091,12 @@ function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sa
   return a?.side === side && a?.idx === idx
 }
 
-function menuLabelForTab(tab: MainTab) {
+function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   switch (tab) {
-    case 'party': return '내 파티 관리'
-    case 'pick': return '상대 엔트리'
-    case 'speed': return '스피드 계산'
-    case 'power': return '결정력 계산'
+    case 'party': return translateText(language, '내 파티 관리')
+    case 'pick': return translateText(language, '상대 엔트리')
+    case 'speed': return translateText(language, '스피드 계산')
+    case 'power': return translateText(language, '결정력 계산')
   }
 }
 
@@ -1092,6 +1165,7 @@ export default function App() {
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
+  const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
 
   React.useEffect(() => {
     const safeSelectedMy = sanitizeSelectedIndex(selectedMy, party.length)
@@ -1100,12 +1174,12 @@ export default function App() {
     if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
-    setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? visibleChampionsItem(member.key, member.item)))
+    setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
-    setSampleItemDraft(visibleChampionsItem(sampleForge.key, sampleForge.item))
-  }, [sampleForge.key, sampleForge.item])
+    setSampleItemDraft(displayItemLabel(visibleChampionsItem(sampleForge.key, sampleForge.item), siteLanguage))
+  }, [sampleForge.key, sampleForge.item, siteLanguage])
 
   React.useEffect(() => {
     if (!activePartyMetaEditor) return
@@ -1295,7 +1369,7 @@ export default function App() {
   const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
 
   const saveCurrentSample = () => {
-    const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
+    const label = sampleLabelDraft.trim() || `${displayName(sampleRow, siteLanguage)} · ${natureLabel(sampleForge.config.nature, siteLanguage)}`
     const saved: SavedSample = {
       id: `sample-${Date.now()}`,
       label,
@@ -1442,7 +1516,7 @@ export default function App() {
       const parsed = JSON.parse(text) as ImportExportPayload
       const nextParty = sanitizeParty(parsed.party)
       setParty(nextParty)
-      setPartyItemDrafts(nextParty.map((member) => visibleChampionsItem(member.key, member.item)))
+      setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
       const nextOpponents = sanitizeOpponents(parsed.opponents)
       setOpponents(nextOpponents)
       setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
@@ -1454,12 +1528,12 @@ export default function App() {
       setMainSection(parsed.mainSection === 'sample' ? 'sample' : 'single')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
-      setSampleItemDraft(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item))
+      setSampleItemDraft(displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage))
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
     } catch {
-      if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
+      if (typeof window !== 'undefined') window.alert(siteLanguage === 'en' ? 'Import failed: please check the JSON format.' : siteLanguage === 'ja' ? '読み込みに失敗しました。JSON形式を確認してください。' : '불러오기 실패: JSON 형식을 확인하세요.')
     } finally {
       event.target.value = ''
     }
@@ -1471,29 +1545,29 @@ export default function App() {
         <div className="header-top-row">
           <div className="header-title-row">
             <div className="nav-menu-wrap">
-              <button type="button" className="icon-button" aria-label="메뉴" title="Menu" onClick={() => setNavMenuOpen((prev) => !prev)}>
+              <button type="button" className="icon-button" aria-label={siteLanguage === 'en' ? 'Menu' : siteLanguage === 'ja' ? 'メニュー' : '메뉴'} title={siteLanguage === 'en' ? 'Menu' : siteLanguage === 'ja' ? 'メニュー' : '메뉴'} onClick={() => setNavMenuOpen((prev) => !prev)}>
                 <HamburgerIcon />
               </button>
               {navMenuOpen ? (
                 <div className="nav-drawer">
                   <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
-                    싱글배틀 메뉴
-                    <span>{menuLabelForTab(activeTab)}</span>
+                    {lt('싱글배틀 메뉴')}
+                    <span>{menuLabelForTab(activeTab, siteLanguage)}</span>
                   </button>
                   <button type="button" className={`nav-item ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setNavMenuOpen(false) }}>
-                    포켓몬 샘플 깎기
-                    <span>포켓몬 하나 집중 조정</span>
+                    {lt('포켓몬 샘플 깎기')}
+                    <span>{lt('포켓몬 하나 집중 조정')}</span>
                   </button>
                 </div>
               ) : null}
             </div>
             <div>
               <h1>Pokemon Champions Battle Assistant Demo</h1>
-              <p>파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.</p>
+              <p>{lt('파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.')}</p>
             </div>
           </div>
           <div className="language-menu-wrap header-language-wrap">
-            <button type="button" className="icon-button" aria-label="언어 선택" title="Language" onClick={() => setLanguageMenuOpen((prev) => !prev)}>
+            <button type="button" className="icon-button" aria-label={siteLanguage === 'en' ? 'Choose language' : siteLanguage === 'ja' ? '言語選択' : '언어 선택'} title={siteLanguage === 'en' ? 'Language' : siteLanguage === 'ja' ? '言語' : '언어'} onClick={() => setLanguageMenuOpen((prev) => !prev)}>
               <LanguageIcon />
             </button>
             {languageMenuOpen ? (
@@ -1506,9 +1580,9 @@ export default function App() {
           </div>
         </div>
         <div className="top-actions">
-          <button type="button" className="action-button" onClick={exportState}>상태 내보내기</button>
-          <button type="button" className="action-button" onClick={() => fileInputRef.current?.click()}>상태 불러오기</button>
-          <button type="button" className="action-button danger" onClick={resetAll}>전체 초기화</button>
+          <button type="button" className="action-button" onClick={exportState}>{lt('상태 내보내기')}</button>
+          <button type="button" className="action-button" onClick={() => fileInputRef.current?.click()}>{lt('상태 불러오기')}</button>
+          <button type="button" className="action-button danger" onClick={resetAll}>{lt('전체 초기화')}</button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
         </div>
       </header>
@@ -1517,12 +1591,12 @@ export default function App() {
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="row-between">
-              <h2>노력치 보정</h2>
-              <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>닫기</button>
+              <h2>{lt('노력치 보정')}</h2>
+              <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>{lt('닫기')}</button>
             </div>
             <div className="modal-grid">
               <label>
-                성격
+                {lt('성격')}
                 <select
                   value={tuningMember.config.nature}
                   onChange={(e) => {
@@ -1534,7 +1608,7 @@ export default function App() {
                     setParty(next)
                   }}
                 >
-                  {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                  {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id, siteLanguage)}</option>)}
                 </select>
               </label>
             </div>
@@ -1550,10 +1624,10 @@ export default function App() {
                 return (
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between">
-                      <strong>{stat.label}</strong>
+                      <strong>{lt(stat.label)}</strong>
                       <span>{actualValue}</span>
                     </div>
-                    <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
+                    <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
                       <div
                         className={`effort-gauge-track ${statThemeClass(stat.key)}`}
                         onPointerDown={(e) => {
@@ -1590,7 +1664,7 @@ export default function App() {
                                   checkpointPoint ? 'checkpoint' : '',
                                   targetPoint ? 'target' : '',
                                 ].filter(Boolean).join(' ')}
-                                title={`${stat.label} ${point}포인트`}
+                                title={`${lt(stat.label)} ${point}pt`}
                               />
                             )
                           })}
@@ -1639,7 +1713,7 @@ export default function App() {
                                   next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
                                   setParty(next)
                                 }}
-                                title={`${stat.label} ${point}포인트`}
+                                title={`${lt(stat.label)} ${point}pt`}
                               />
                             )
                           })}
@@ -1677,7 +1751,7 @@ export default function App() {
                           setParty(next)
                         }}
                         disabled={currentEffort <= 0}
-                      >최소</button>
+                      >{lt('최소')}</button>
                       <button
                         type="button"
                         className="mini-action"
@@ -1687,7 +1761,7 @@ export default function App() {
                           setParty(next)
                         }}
                         disabled={currentEffort >= availableCap}
-                      >최대</button>
+                      >{lt('최대')}</button>
                       <button
                         type="button"
                         className="mini-action"
@@ -1700,8 +1774,8 @@ export default function App() {
                       >+1</button>
                     </div>
                     <div className="row-between effort-cell-meta">
-                      <span className="muted-inline">현재 {currentEffort}pt · 추가 가능 {additionalAvailable}pt</span>
-                      {magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">목표 {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">11배수 달성</span> : null}
+                      <span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>
+                      {magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}
                     </div>
                   </div>
                 )
@@ -1715,15 +1789,15 @@ export default function App() {
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{mainSection === 'single' ? '싱글배틀 메뉴' : '포켓몬 샘플 깎기'}</h2>
-              <p className="muted">{mainSection === 'single' ? '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.' : '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.'}</p>
+              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
+              <p className="muted">{mainSection === 'single' ? lt('기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.') : lt('포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.')}</p>
             </div>
             {mainSection === 'single' ? (
               <div className="tab-bar">
-                <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>내 파티 관리</button>
-                <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>상대 엔트리</button>
-                <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>스피드 계산</button>
-                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>결정력 계산</button>
+                <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
+                <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+                <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('결정력 계산')}</button>
               </div>
             ) : null}
           </div>
@@ -1731,23 +1805,23 @@ export default function App() {
 
         {mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power') ? (
           <section className="panel wide">
-            <h2>파티 한눈 요약</h2>
+            <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
               <div>
-                <p className="muted">내 파티</p>
+                <p className="muted">{lt('내 파티')}</p>
                 <div className="team-strip">
                   {party.map((member, idx) => {
                     const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                    return <button key={`team-my-${idx}`} type="button" className={`team-pill ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</button>
+                    return <button key={`team-my-${idx}`} type="button" className={`team-pill ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</button>
                   })}
                 </div>
               </div>
               <div>
-                <p className="muted">상대 파티</p>
+                <p className="muted">{lt('상대 파티')}</p>
                 <div className="team-strip">
                   {opponents.map((member, idx) => {
                     const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                    const label = opponentSearch[idx] || (row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`)
+                    const label = opponentSearch[idx] || (row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage))
                     return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{label}</button>
                   })}
                 </div>
@@ -1759,10 +1833,10 @@ export default function App() {
         {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between">
-              <h2>내 파티 관리</h2>
+              <h2>{lt('내 파티 관리')}</h2>
               <div className="inline-controls compact-actions">
-                <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
-                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>내 파티 초기화</button>
+                <span className="muted-inline">{lt('포켓몬별 기술배치 / 노력치보정')}</span>
+                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('내 파티 초기화')}</button>
               </div>
             </div>
             <div className="entry-grid manage-entry-grid">
@@ -1785,10 +1859,10 @@ export default function App() {
                       <div className="entry-card-head">
                         <div className="party-card-header">
                           <div className="party-card-title-block">
-                            <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
+                            <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
                             {row ? <div className="type-line">
                               <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                            </div> : <p className="muted">포켓몬을 검색해서 추가하세요.</p>}
+                            </div> : <p className="muted">{lt('포켓몬을 검색해서 추가하세요.')}</p>}
                           </div>
                         </div>
                       </div>
@@ -1796,11 +1870,11 @@ export default function App() {
                     {row ? <div className="party-meta-grid" onClick={(e) => e.stopPropagation()}>
                       <div className="party-meta-chip party-meta-chip-editor">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
-                          <span>특성</span>
-                          <strong>{activeAbility || '미선택'}</strong>
+                          <span>{lt('특성')}</span>
+                          <strong>{activeAbility || lt('미선택')}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover">
-                          <input ref={(el) => { partyAbilityEditorRefs.current[idx] = el }} autoFocus list={`ability-options-party-${idx}`} defaultValue={activeAbility} placeholder="특성 검색" onBlur={(e) => {
+                          <input ref={(el) => { partyAbilityEditorRefs.current[idx] = el }} autoFocus list={`ability-options-party-${idx}`} defaultValue={activeAbility} placeholder={lt('특성 검색')} onBlur={(e) => {
                             const resolved = resolveAbilityInput(abilityOptions, e.target.value)
                             const next = [...party]
                             next[idx] = { ...member, ability: resolved }
@@ -1822,12 +1896,12 @@ export default function App() {
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor wide">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : { idx, field: 'nature' })}>
-                          <span>성격</span>
-                          <strong>{natureChipLabel(member.config.nature)}</strong>
+                          <span>{lt('성격')}</span>
+                          <strong>{natureChipLabel(member.config.nature, siteLanguage)}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover">
-                          <input ref={(el) => { partyNatureEditorRefs.current[idx] = el }} autoFocus list={`nature-options-party-${idx}`} defaultValue={natureLabel(member.config.nature)} placeholder="성격 검색" onBlur={(e) => {
-                            const resolved = resolveNatureInput(e.target.value)
+                          <input ref={(el) => { partyNatureEditorRefs.current[idx] = el }} autoFocus list={`nature-options-party-${idx}`} defaultValue={natureLabel(member.config.nature, siteLanguage)} placeholder={lt('성격 검색')} onBlur={(e) => {
+                            const resolved = resolveNatureInput(e.target.value, siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, config: { ...member.config, nature: resolved } }
                             setParty(next)
@@ -1835,67 +1909,67 @@ export default function App() {
                           }} onKeyDown={(e) => {
                             if (e.key !== 'Enter') return
                             e.preventDefault()
-                            const resolved = resolveNatureInput(e.currentTarget.value)
+                            const resolved = resolveNatureInput(e.currentTarget.value, siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, config: { ...member.config, nature: resolved } }
                             setParty(next)
                             setActivePartyMetaEditor(null)
                           }} />
                           <datalist id={`nature-options-party-${idx}`}>
-                            {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id)} />)}
+                            {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id, siteLanguage)} />)}
                           </datalist>
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : { idx, field: 'item' })}>
-                          <span>도구</span>
+                          <span>{lt('도구')}</span>
                           <div className="item-meta-row">
-                            <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                            <strong>{currentItem || '미선택'}</strong>
+                            <img src={itemSpriteSrc(member.key, currentItem)} alt={displayItemLabel(currentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                            <strong>{currentItem ? displayItemLabel(currentItem, siteLanguage) : lt('미선택')}</strong>
                           </div>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'item' ? <div className="party-meta-popover">
-                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone ? displayItemLabel(fixedMegaStone, siteLanguage) : partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                             const nextDrafts = [...partyItemDrafts]
                             nextDrafts[idx] = e.target.value
                             setPartyItemDrafts(nextDrafts)
                           }} onBlur={() => {
-                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
+                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '', siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, item: resolved }
                             setParty(next)
                             setPartyItemDrafts((prev) => {
                               const nextDrafts = [...prev]
-                              nextDrafts[idx] = resolved
+                              nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
                               return nextDrafts
                             })
                             setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : prev), 120)
                           }} onKeyDown={(e) => {
                             if (e.key !== 'Enter') return
                             e.preventDefault()
-                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
+                            const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '', siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, item: resolved }
                             setParty(next)
                             setPartyItemDrafts((prev) => {
                               const nextDrafts = [...prev]
-                              nextDrafts[idx] = resolved
+                              nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
                               return nextDrafts
                             })
                             setActivePartyMetaEditor(null)
                           }} />
                           {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
-                            {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
+                            {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
                           </datalist> : null}
                         </div> : null}
                       </div>
                     </div> : null}
                     <label className="species-picker">
-                      종 선택
+                      {lt('종 선택')}
                       <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
                         <input
                           value={partySearch[idx] ?? ''}
-                          placeholder="포켓몬 검색"
+                          placeholder={lt('포켓몬 검색')}
                           onFocus={() => setActiveSearchField({ side: 'party', idx })}
                           onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)}
                           onChange={(e) => {
@@ -1935,7 +2009,7 @@ export default function App() {
                           setTuningModalIndex(idx)
                         }}>
                           <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, field)) }} /></div>
-                          <span>{label}</span>
+                          <span>{lt(label)}</span>
                           <strong>{partyStatValue(row, member, field)}</strong>
                           <span>+{member.evs[field]}</span>
                         </button>
@@ -1943,8 +2017,8 @@ export default function App() {
                     </div> : null}
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
-                        <strong>기술 배치</strong>
-                        <span className="muted-inline">{memberMovePool?.status === 'loading' ? '기술풀 불러오는 중…' : '사용 가능 기술 검색'}</span>
+                        <strong>{lt('기술 배치')}</strong>
+                        <span className="muted-inline">{memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : lt('사용 가능 기술 검색')}</span>
                       </div>
                       {memberMoveOptions.length ? <datalist id={`move-options-${member.key}`}>
                         {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move.name}`} value={move.name} />)}
@@ -1956,7 +2030,7 @@ export default function App() {
                             <input
                               value={move}
                               list={memberMoveOptions.length ? `move-options-${member.key}` : undefined}
-                              placeholder={memberMoveOptions.length ? '사용 가능 기술 검색' : '기술 입력'}
+                              placeholder={memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                               onChange={(e) => setConfirmedMoveSlot(member.key, moveIdx, e.target.value)}
                               onKeyDown={(e) => {
                                 if (e.key !== 'Enter') return
@@ -1979,7 +2053,7 @@ export default function App() {
                             <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                         </div>
-                      </> : <p className="muted">기술 데이터가 없는 포켓몬만 직접 입력합니다.</p>}
+                      </> : <p className="muted">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</p>}
                     </div> : null}
                   </div>
                 )
@@ -1992,28 +2066,28 @@ export default function App() {
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>상대 엔트리</h2>
-              <p className="muted">초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.</p>
+              <h2>{lt('상대 엔트리')}</h2>
+              <p className="muted">{lt('초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.')}</p>
             </div>
             <div className="pick-summary-badges">
-              <span className="pick-badge">엔트리 {opponents.length}/6</span>
-              <span className="pick-badge enemy">선출 추정 {pickedOpponents.length}/3</span>
+              <span className="pick-badge">{lt('엔트리')} {opponents.length}/6</span>
+              <span className="pick-badge enemy">{lt('선출 추정')} {pickedOpponents.length}/3</span>
             </div>
           </div>
 
           <div className="inline-controls">
-            <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>상대 엔트리 초기화</button>
-            <span className="muted-inline">검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.</span>
+            <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>{lt('상대 엔트리 초기화')}</button>
+            <span className="muted-inline">{lt('검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.')}</span>
           </div>
 
           <div className="quick-opponent-search-bar">
             <label className="species-picker">
-              상대 엔트리 빠른 입력
+              {lt('상대 엔트리 빠른 입력')}
               <div className="autocomplete">
                 <input
                   ref={opponentQuickInputRef}
                   value={opponentQuickSearch}
-                  placeholder={`${selectedOpp + 1}번 슬롯 검색 후 엔터`}
+                  placeholder={siteLanguage === 'en' ? `Search slot ${selectedOpp + 1} and press Enter` : siteLanguage === 'ja' ? `${selectedOpp + 1}番スロットを検索してEnter` : `${selectedOpp + 1}번 슬롯 검색 후 엔터`}
                   onFocus={() => setActiveSearchField({ side: 'opponentQuick', idx: 0 })}
                   onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)}
                   onChange={(e) => {
@@ -2039,7 +2113,7 @@ export default function App() {
               </div>
             </label>
             <div className="quick-opponent-hint">
-              <strong>현재 입력 슬롯</strong>
+              <strong>{lt('현재 입력 슬롯')}</strong>
               <span>{selectedOpp + 1} / {MAX_OPPONENTS}</span>
             </div>
           </div>
@@ -2050,9 +2124,9 @@ export default function App() {
               return (
                 <button key={`opp-overview-${member.key}-${idx}`} type="button" className={`pick-slot-card enemy compact ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
                   {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                  <span>{opponentSearch[idx] || (row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`)}</span>
-                  <small>{member.picked ? '추정 체크됨' : '미체크'}</small>
-                  <small>{member.item || '도구 없음'}</small>
+                  <span>{opponentSearch[idx] || (row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage))}</span>
+                  <small>{member.picked ? lt('추정 체크됨') : lt('미체크')}</small>
+                  <small>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 없음')}</small>
                 </button>
               )
             })}
@@ -2067,10 +2141,10 @@ export default function App() {
                 return (
                   <div key={`opp-board-${idx}`} className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
                     {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
-                    <strong>{row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`}</strong>
-                    <span>{opponentSearch[idx] || '포켓몬 미입력'}</span>
-                    <span>{member.ability || '특성 미기입'}</span>
-                    <span>{member.item || '도구 미기입'}</span>
+                    <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
+                    <span>{opponentSearch[idx] || lt('포켓몬 미입력')}</span>
+                    <span>{member.ability || lt('특성 미기입')}</span>
+                    <span>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 미기입')}</span>
                   </div>
                 )
               })}
@@ -2080,20 +2154,20 @@ export default function App() {
                 {oppMember.key && oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
                 <div className="entry-card-head">
                   <div className="row-between compact-gap">
-                    <strong>{oppMember.key ? displayName(oppRow, siteLanguage) : `빈 슬롯 ${selectedOpp + 1}`}</strong>
-                    <span className={`pick-chip ${oppMember.picked ? 'active' : ''}`}>{oppMember.picked ? '선출 추정' : '미체크'}</span>
+                    <strong>{oppMember.key ? displayName(oppRow, siteLanguage) : emptySlotLabel(selectedOpp, siteLanguage)}</strong>
+                    <span className={`pick-chip ${oppMember.picked ? 'active' : ''}`}>{oppMember.picked ? lt('선출 추정') : lt('미체크')}</span>
                   </div>
                   {oppMember.key ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
-                  <p className="muted">상세 패널에서 공개 정보를 바로 갱신합니다.</p>
+                  <p className="muted">{lt('상세 패널에서 공개 정보를 바로 갱신합니다.')}</p>
                 </div>
               </div>
               <div className="opponent-detail-fields">
                 <label className="species-picker">
-                  종 선택
+                  {lt('종 선택')}
                   <div className="autocomplete">
                     <input
                       value={opponentSearch[selectedOpp] ?? ''}
-                      placeholder="포켓몬 검색"
+                      placeholder={lt('포켓몬 검색')}
                       onFocus={() => setActiveSearchField({ side: 'opponent', idx: selectedOpp })}
                       onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', selectedOpp) ? null : prev), 120)}
                       onChange={(e) => {
@@ -2120,32 +2194,32 @@ export default function App() {
                   </div>
                 </label>
                 <label>
-                  도구
-                  <input value={oppMember.item} placeholder="예: 구애스카프" onChange={(e) => {
+                  {lt('도구')}
+                  <input value={oppMember.item} placeholder={siteLanguage === 'en' ? 'e.g. Choice Scarf' : siteLanguage === 'ja' ? '例: こだわりスカーフ' : '예: 구애스카프'} onChange={(e) => {
                     const next = [...opponents]
                     next[selectedOpp] = { ...oppMember, item: e.target.value }
                     setOpponents(next)
                   }} />
                 </label>
                 <label>
-                  특성
-                  <input value={oppMember.ability} placeholder="예: 클리어바디" onChange={(e) => {
+                  {lt('특성')}
+                  <input value={oppMember.ability} placeholder={siteLanguage === 'en' ? 'e.g. Clear Body' : siteLanguage === 'ja' ? '例: クリアボディ' : '예: 클리어바디'} onChange={(e) => {
                     const next = [...opponents]
                     next[selectedOpp] = { ...oppMember, ability: e.target.value }
                     setOpponents(next)
                   }} />
                 </label>
                 <label>
-                  공개 기술
-                  <input value={oppMember.revealedMoves.join(', ')} placeholder="예: 유턴, 도깨비불" onChange={(e) => {
+                  {lt('공개 기술')}
+                  <input value={oppMember.revealedMoves.join(', ')} placeholder={siteLanguage === 'en' ? 'e.g. U-turn, Will-O-Wisp' : siteLanguage === 'ja' ? '例: とんぼがえり, おにび' : '예: 유턴, 도깨비불'} onChange={(e) => {
                     const next = [...opponents]
                     next[selectedOpp] = { ...oppMember, revealedMoves: e.target.value.split(',').map((entry) => entry.trim()).filter(Boolean) }
                     setOpponents(next)
                   }} />
                 </label>
                 <label>
-                  메모
-                  <textarea value={oppMember.notes} placeholder="예: 물리형 가능성 높음" onChange={(e) => {
+                  {lt('메모')}
+                  <textarea value={oppMember.notes} placeholder={siteLanguage === 'en' ? 'e.g. likely physical set' : siteLanguage === 'ja' ? '例: 物理型の可能性高め' : '예: 물리형 가능성 높음'} onChange={(e) => {
                     const next = [...opponents]
                     next[selectedOpp] = { ...oppMember, notes: e.target.value }
                     setOpponents(next)
@@ -2153,7 +2227,7 @@ export default function App() {
                 </label>
                 <div className="inline-controls">
                   <label>
-                    최속 가정
+                    {lt('최속 가정')}
                     <input type="checkbox" checked={oppMember.natureBoost} onChange={(e) => {
                       const next = [...opponents]
                       next[selectedOpp] = { ...oppMember, natureBoost: e.target.checked }
@@ -2161,7 +2235,7 @@ export default function App() {
                     }} />
                   </label>
                   <label>
-                    스카프
+                    {lt('스카프')}
                     <input type="checkbox" checked={oppMember.scarf} onChange={(e) => {
                       const next = [...opponents]
                       next[selectedOpp] = { ...oppMember, scarf: e.target.checked }
@@ -2169,7 +2243,7 @@ export default function App() {
                     }} />
                   </label>
                   <label>
-                    랭크
+                    {lt('랭크')}
                     <select value={oppMember.speedStage} onChange={(e) => {
                       const next = [...opponents]
                       next[selectedOpp] = { ...oppMember, speedStage: clampSpeedStage(e.target.value) }
@@ -2179,7 +2253,7 @@ export default function App() {
                     </select>
                   </label>
                   <button type="button" className={`pick-chip ${oppMember.picked ? 'active' : ''}`} onClick={() => setOpponents(togglePicked(opponents, selectedOpp))}>
-                    {oppMember.picked ? '선출 추정 해제' : '선출 추정 체크'}
+                    {oppMember.picked ? lt('선출 추정 해제') : lt('선출 추정 체크')}
                   </button>
                 </div>
               </div>
@@ -2188,27 +2262,27 @@ export default function App() {
         </section>
 
         <section className="panel wide">
-          <h2>상대 엔트리 메모</h2>
+          <h2>{lt('상대 엔트리 메모')}</h2>
           <textarea
             value={battleNote}
-            placeholder="예: 드래펄트 스카프 가능성 높음 / 로토무 볼체 공개 / 미믹큐는 막판 스윕용으로 보임"
+            placeholder={siteLanguage === 'en' ? 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner' : siteLanguage === 'ja' ? '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り' : '예: 드래펄트 스카프 가능성 높음 / 로토무 볼체 공개 / 미믹큐는 막판 스윕용으로 보임'}
             onChange={(e) => setBattleNote(e.target.value)}
           />
         </section>
         </> : mainSection === 'sample' ? <>
         <section className="panel wide">
           <div className="row-between section-head">
-            <h2>단일 샘플 빌더</h2>
+            <h2>{lt('단일 샘플 빌더')}</h2>
             <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
           </div>
           <div className="sample-builder-grid">
             <div className="sample-main-card">
               <label className="species-picker">
-                포켓몬 선택
+                {lt('포켓몬 선택')}
                 <div className="autocomplete">
                   <input
                     value={sampleSearch}
-                    placeholder="포켓몬 검색"
+                    placeholder={lt('포켓몬 검색')}
                     onFocus={() => setActiveSearchField({ side: 'sample', idx: 0 })}
                     onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)}
                     onChange={(e) => {
@@ -2241,20 +2315,20 @@ export default function App() {
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
                   <div className="item-hero-row">
-                    <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={sampleCurrentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                    <span>{sampleCurrentItem || '도구 미선택'}</span>
+                    <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                    <span>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                   </div>
-                  <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
+                  <p className="muted">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
               </div>
               <div className="party-meta-grid sample-meta-grid">
                 <div className="party-meta-chip party-meta-chip-editor">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
-                    <span>특성</span>
-                    <strong>{sampleAbility || '미선택'}</strong>
+                    <span>{lt('특성')}</span>
+                    <strong>{sampleAbility || lt('미선택')}</strong>
                   </button>
                   {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover">
-                    <input ref={sampleAbilityEditorRef} autoFocus list="ability-options-sample" defaultValue={sampleAbility} placeholder="특성 검색" onBlur={(e) => {
+                    <input ref={sampleAbilityEditorRef} autoFocus list="ability-options-sample" defaultValue={sampleAbility} placeholder={lt('특성 검색')} onBlur={(e) => {
                       const resolved = resolveAbilityInput(sampleAbilityOptions, e.target.value)
                       setSampleForge((prev) => ({ ...prev, ability: resolved }))
                       setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)
@@ -2272,50 +2346,50 @@ export default function App() {
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor wide">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : 'nature')}>
-                    <span>성격</span>
-                    <strong>{natureChipLabel(sampleForge.config.nature)}</strong>
+                    <span>{lt('성격')}</span>
+                    <strong>{natureChipLabel(sampleForge.config.nature, siteLanguage)}</strong>
                   </button>
                   {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover">
-                    <input ref={sampleNatureEditorRef} autoFocus list="nature-options-sample" defaultValue={natureLabel(sampleForge.config.nature)} placeholder="성격 검색" onBlur={(e) => {
-                      const resolved = resolveNatureInput(e.target.value)
+                    <input ref={sampleNatureEditorRef} autoFocus list="nature-options-sample" defaultValue={natureLabel(sampleForge.config.nature, siteLanguage)} placeholder={lt('성격 검색')} onBlur={(e) => {
+                      const resolved = resolveNatureInput(e.target.value, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: resolved } }))
                       setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)
                     }} onKeyDown={(e) => {
                       if (e.key !== 'Enter') return
                       e.preventDefault()
-                      const resolved = resolveNatureInput(e.currentTarget.value)
+                      const resolved = resolveNatureInput(e.currentTarget.value, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: resolved } }))
                       setActiveSampleMetaEditor(null)
                     }} />
                     <datalist id="nature-options-sample">
-                      {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id)} />)}
+                      {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id, siteLanguage)} />)}
                     </datalist>
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : 'item')}>
-                    <span>도구</span>
+                    <span>{lt('도구')}</span>
                     <div className="item-meta-row">
-                      <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={sampleCurrentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                      <strong>{sampleCurrentItem || '미선택'}</strong>
+                      <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                      <strong>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('미선택')}</strong>
                     </div>
                   </button>
                   {activeSampleMetaEditor === 'item' ? <div className="party-meta-popover">
-                    <input ref={sampleItemEditorRef} autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
-                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                    <input ref={sampleItemEditorRef} autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone ? displayItemLabel(sampleFixedMegaStone, siteLanguage) : sampleItemDraft} placeholder={sampleFixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
+                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
-                      setSampleItemDraft(resolved)
+                      setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
                       setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : prev), 120)
                     }} onKeyDown={(e) => {
                       if (e.key !== 'Enter') return
                       e.preventDefault()
-                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
-                      setSampleItemDraft(resolved)
+                      setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
                       setActiveSampleMetaEditor(null)
                     }} />
                     {!sampleFixedMegaStone ? <datalist id="item-options-sample">
-                      {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
+                      {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
                     </datalist> : null}
                   </div> : null}
                 </div>
@@ -2326,7 +2400,7 @@ export default function App() {
                 ] as const).map(([field, label]) => (
                   <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
                     <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, field)) }} /></div>
-                    <span>{label}</span>
+                    <span>{lt(label)}</span>
                     <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
                     <span>+{sampleForge.evs[field]}</span>
                   </div>
@@ -2334,31 +2408,31 @@ export default function App() {
               </div>
               <div className="inline-controls">
                 <label>
-                  매직넘버
+                  {lt('매직넘버')}
                   <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
                 </label>
                 <label>
-                  최대치
+                  {lt('최대치')}
                   <input type="number" min={0} max={255} value={sampleForge.tuning.maxValue} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }))} />
                 </label>
               </div>
             </div>
             <div className="move-card">
               <div className="row-between">
-                <strong>샘플 기술</strong>
-                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>코어 1번 체크</button>
+                <strong>{lt('샘플 기술')}</strong>
+                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
               </div>
               <div className="sample-save-box">
                 <label>
-                  샘플 이름
-                  <input value={sampleLabelDraft} placeholder="예: 명랑 스카프 정리안" onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                  {lt('샘플 이름')}
+                  <input value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
                 </label>
                 <div className="inline-controls">
-                  <button type="button" className="action-button" onClick={saveCurrentSample}>현재 샘플 저장</button>
+                  <button type="button" className="action-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
                   <label>
-                    파티 슬롯에 적용
+                    {lt('파티 슬롯에 적용')}
                     <select value={selectedMy} onChange={(e) => applySampleToPartySlot(Number(e.target.value))}>
-                      {party.map((member, idx) => <option key={`apply-slot-${idx}`} value={idx}>{idx + 1}번 슬롯 · {displayName(indexByKey.get(member.key) ?? rows[0], siteLanguage)}</option>)}
+                      {party.map((member, idx) => <option key={`apply-slot-${idx}`} value={idx}>{siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番スロット` : `${idx + 1}번 슬롯`} · {displayName(indexByKey.get(member.key) ?? rows[0], siteLanguage)}</option>)}
                     </select>
                   </label>
                 </div>
@@ -2375,7 +2449,7 @@ export default function App() {
                         <input
                           value={move}
                           list={sampleMoveOptions.length ? `move-options-${sampleForge.key}` : undefined}
-                          placeholder={sampleMoveOptions.length ? '사용 가능 기술 검색' : '기술 입력'}
+                          placeholder={sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                           onChange={(e) => setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key !== 'Enter') return
@@ -2397,16 +2471,16 @@ export default function App() {
                       <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
                     ))}
                   </div>
-                  <p className="muted">확정: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || '아직 없음'}</p>
-                  <p className="muted">성격 {natureLabel(sampleForge.config.nature)}{sampleForge.item ? ` · 도구 ${sampleForge.item}` : ''}</p>
-                  <p className="muted">매직넘버 {sampleForge.tuning.magicNumber || '미지정'} · 최대치 {sampleForge.tuning.maxValue || '미지정'}</p>
+                  <p className="muted">{lt('확정')}: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || lt('아직 없음')}</p>
+                  <p className="muted">{lt('성격')} {natureLabel(sampleForge.config.nature, siteLanguage)}{sampleForge.item ? ` · ${lt('도구')} ${displayItemLabel(sampleForge.item, siteLanguage)}` : ''}</p>
+                  <p className="muted">{lt('매직넘버')} {sampleForge.tuning.magicNumber || lt('미지정')} · {lt('최대치')} {sampleForge.tuning.maxValue || lt('미지정')}</p>
                   {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
                 </>
-              ) : <p className="muted">이 포켓몬에 등록된 샘플 기술이 아직 없습니다.</p>}
+              ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
               <div className="saved-sample-list">
                 <div className="row-between">
-                  <strong>저장한 샘플</strong>
-                  <span className="muted-inline">{savedSamples.length}개</span>
+                  <strong>{lt('저장한 샘플')}</strong>
+                  <span className="muted-inline">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
                 </div>
                 {savedSamples.length ? savedSamples.map((entry) => {
                   const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
@@ -2414,30 +2488,30 @@ export default function App() {
                     <div key={entry.id} className="saved-sample-item">
                       <div>
                         <strong>{entry.label}</strong>
-                        <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature)}{entry.member.item ? ` · ${entry.member.item}` : ''}</p>
+                        <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}{entry.member.item ? ` · ${displayItemLabel(entry.member.item, siteLanguage)}` : ''}</p>
                       </div>
                       <div className="inline-controls">
                         <button type="button" className="pick-chip" onClick={() => {
                           setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
-                          setSampleItemDraft(visibleChampionsItem(entry.member.key, entry.member.item))
+                          setSampleItemDraft(displayItemLabel(visibleChampionsItem(entry.member.key, entry.member.item), siteLanguage))
                           setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
                           setActiveSampleMetaEditor(null)
-                        }}>불러오기</button>
-                        <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>삭제</button>
+                        }}>{lt('불러오기')}</button>
+                        <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('삭제')}</button>
                       </div>
                     </div>
                   )
-                }) : <p className="muted">아직 저장한 샘플이 없습니다.</p>}
+                }) : <p className="muted">{lt('아직 저장한 샘플이 없습니다.')}</p>}
               </div>
             </div>
           </div>
         </section>
         </> : <>
         {activeTab === 'speed' ? <section className="panel wide">
-          <h2>선출 메모</h2>
+          <h2>{siteLanguage === 'en' ? 'Pick Notes' : siteLanguage === 'ja' ? '選出メモ' : '선출 메모'}</h2>
           <div className="pick-summary-grid">
             <div className="pick-summary-box">
-              <strong>내 선출 ({pickedParty.length}/3)</strong>
+              <strong>{siteLanguage === 'en' ? `My Picks (${pickedParty.length}/3)` : siteLanguage === 'ja' ? `自分の選出 (${pickedParty.length}/3)` : `내 선출 (${pickedParty.length}/3)`}</strong>
               <div className="pick-slot-row">
                 {pickedParty.length ? pickedParty.map((member, idx) => {
                   const row = indexByKey.get(member.key) ?? rows[0]
@@ -2447,11 +2521,11 @@ export default function App() {
                       <span>{displayName(row, siteLanguage)}</span>
                     </div>
                   )
-                }) : <p className="muted">아직 체크 없음</p>}
+                }) : <p className="muted">{siteLanguage === 'en' ? 'Nothing checked yet' : siteLanguage === 'ja' ? 'まだチェックなし' : '아직 체크 없음'}</p>}
               </div>
             </div>
             <div className="pick-summary-box">
-              <strong>상대 선출 추정 ({pickedOpponents.length}/3)</strong>
+              <strong>{siteLanguage === 'en' ? `Opponent Picks (${pickedOpponents.length}/3)` : siteLanguage === 'ja' ? `相手の選出想定 (${pickedOpponents.length}/3)` : `상대 선출 추정 (${pickedOpponents.length}/3)`}</strong>
               <div className="pick-slot-row">
                 {pickedOpponents.length ? pickedOpponents.map((member, idx) => {
                   const row = indexByKey.get(member.key) ?? rows[0]
@@ -2461,15 +2535,15 @@ export default function App() {
                       <span>{displayName(row, siteLanguage)}</span>
                     </div>
                   )
-                }) : <p className="muted">아직 체크 없음</p>}
+                }) : <p className="muted">{siteLanguage === 'en' ? 'Nothing checked yet' : siteLanguage === 'ja' ? 'まだチェックなし' : '아직 체크 없음'}</p>}
               </div>
             </div>
           </div>
         </section> : null}
 
         {activeTab === 'power' ? <section className="panel wide">
-          <h2>간단 데미지 계산</h2>
-          <p className="muted">상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.</p>
+          <h2>{lt('간단 데미지 계산')}</h2>
+          <p className="muted">{lt('상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.')}</p>
           <div className="preset-row">
             {movePowerPresets.map((preset) => (
               <button
@@ -2478,32 +2552,32 @@ export default function App() {
                 className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
                 onClick={() => setMovePower(preset.value)}
               >
-                {preset.label}
+                {lt(preset.label)}
               </button>
             ))}
           </div>
           <div className="calc-grid">
             <label>
-              위력
+              {lt('위력')}
               <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
             </label>
             <label>
-              공격분류
+              {lt('공격분류')}
               <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
-                <option value="physical">물리</option>
-                <option value="special">특수</option>
+                <option value="physical">{lt('물리')}</option>
+                <option value="special">{lt('특수')}</option>
               </select>
             </label>
             <label>
               STAB
               <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
-                <option value={1}>없음</option>
+                <option value={1}>{lt('없음')}</option>
                 <option value={1.5}>1.5</option>
                 <option value={2}>2.0</option>
               </select>
             </label>
             <label>
-              상성
+              {lt('상성')}
               <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
                 <option value={0.25}>0.25x</option>
                 <option value={0.5}>0.5x</option>
@@ -2515,10 +2589,10 @@ export default function App() {
           </div>
           {oppRow && damage ? <div className="damage-box">
             <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>
-            <p>{damage.min} ~ {damage.max} 데미지</p>
+            <p>{damage.min} ~ {damage.max} {siteLanguage === 'en' ? 'damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</p>
             <p>{damage.minPct}% ~ {damage.maxPct}%</p>
-            <p>{Number(damage.maxPct) >= 100 ? '확정 1타 가능성 있음' : Number(damage.minPct) >= 50 ? '유리한 2타권' : '즉시 마무리 어려움'}</p>
-          </div> : <div className="damage-box"><p>상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.</p></div>}
+            <p>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</p>
+          </div> : <div className="damage-box"><p>{lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
         </section> : null}
         </>}
       </main>
