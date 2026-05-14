@@ -1018,6 +1018,7 @@ export default function App() {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const [activePartyMetaEditor, setActivePartyMetaEditor] = React.useState<{ idx: number; field: 'ability' | 'nature' | 'item' } | null>(null)
+  const [activeSampleMetaEditor, setActiveSampleMetaEditor] = React.useState<'ability' | 'nature' | 'item' | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -1033,7 +1034,7 @@ export default function App() {
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
-    setSampleItemDraft((prev) => prev || visibleChampionsItem(sampleForge.key, sampleForge.item))
+    setSampleItemDraft(visibleChampionsItem(sampleForge.key, sampleForge.item))
   }, [sampleForge.key, sampleForge.item])
 
   React.useEffect(() => {
@@ -1169,6 +1170,7 @@ export default function App() {
       setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item) }))
       setSampleItemDraft(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
+      setActiveSampleMetaEditor(null)
     }
     setActiveSearchField(null)
   }
@@ -1192,6 +1194,8 @@ export default function App() {
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : (embeddedMovePoolForKey(sampleForge.key).length ? embeddedMovePoolForKey(sampleForge.key) : moveOptionsForEntry(sampleMoveSet))
   const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
+  const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
+  while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
@@ -2128,6 +2132,63 @@ export default function App() {
                   <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
               </div>
+              <div className="party-meta-grid sample-meta-grid">
+                <div className="party-meta-chip party-meta-chip-editor">
+                  <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
+                    <span>특성</span>
+                    <strong>{sampleAbility || '미선택'}</strong>
+                  </button>
+                  {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover">
+                    <select autoFocus value={sampleAbility} onChange={(e) => {
+                      setSampleForge((prev) => ({ ...prev, ability: e.target.value }))
+                      setActiveSampleMetaEditor(null)
+                    }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)}>
+                      {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
+                    </select>
+                  </div> : null}
+                </div>
+                <div className="party-meta-chip party-meta-chip-editor wide">
+                  <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : 'nature')}>
+                    <span>성격</span>
+                    <strong>{natureChipLabel(sampleForge.config.nature)}</strong>
+                  </button>
+                  {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover">
+                    <select autoFocus value={sampleForge.config.nature} onChange={(e) => {
+                      setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))
+                      setActiveSampleMetaEditor(null)
+                    }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)}>
+                      {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                    </select>
+                  </div> : null}
+                </div>
+                <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
+                  <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : 'item')}>
+                    <span>도구</span>
+                    <div className="item-meta-row">
+                      <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={sampleCurrentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                      <strong>{sampleCurrentItem || '미선택'}</strong>
+                    </div>
+                  </button>
+                  {activeSampleMetaEditor === 'item' ? <div className="party-meta-popover">
+                    <input autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
+                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                      setSampleForge((prev) => ({ ...prev, item: resolved }))
+                      setSampleItemDraft(resolved)
+                      setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : prev), 120)
+                    }} onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return
+                      e.preventDefault()
+                      const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                      setSampleForge((prev) => ({ ...prev, item: resolved }))
+                      setSampleItemDraft(resolved)
+                      setActiveSampleMetaEditor(null)
+                    }} />
+                    {!sampleFixedMegaStone ? <datalist id="item-options-sample">
+                      {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
+                    </datalist> : null}
+                  </div> : null}
+                </div>
+              </div>
               <div className="stat-preview-list">
                 {([
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
@@ -2141,37 +2202,6 @@ export default function App() {
                 ))}
               </div>
               <div className="inline-controls">
-                <label>
-                  특성
-                  <select value={sampleAbility} onChange={(e) => setSampleForge((prev) => ({ ...prev, ability: e.target.value }))}>
-                    {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
-                  </select>
-                </label>
-                <label>
-                  도구
-                  <>
-                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
-                    const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
-                    setSampleForge((prev) => ({ ...prev, item: resolved }))
-                    setSampleItemDraft(resolved)
-                  }} onKeyDown={(e) => {
-                    if (e.key !== 'Enter') return
-                    e.preventDefault()
-                    const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
-                    setSampleForge((prev) => ({ ...prev, item: resolved }))
-                    setSampleItemDraft(resolved)
-                  }} />
-                  {!sampleFixedMegaStone ? <datalist id="item-options-sample">
-                    {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
-                  </datalist> : null}
-                  </>
-                </label>
-                <label>
-                  성격
-                  <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
-                    {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
-                  </select>
-                </label>
                 <label>
                   매직넘버
                   <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
@@ -2204,15 +2234,36 @@ export default function App() {
               </div>
               {sampleMoveSet ? (
                 <>
+                  {sampleMoveOptions.length ? <datalist id={`move-options-${sampleForge.key}`}>
+                    {sampleMoveOptions.map((move) => <option key={`sample-move-option-${sampleForge.key}-${move.name}`} value={move.name} />)}
+                  </datalist> : null}
+                  <div className="registered-move-grid">
+                    {sampleRegisteredMoves.map((move, moveIdx) => (
+                      <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))}`}>
+                        <span>{moveIdx + 1}번</span>
+                        <input
+                          value={move}
+                          list={sampleMoveOptions.length ? `move-options-${sampleForge.key}` : undefined}
+                          placeholder={sampleMoveOptions.length ? '사용 가능 기술 검색' : '기술 입력'}
+                          onChange={(e) => setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key !== 'Enter') return
+                            const committed = commitTopMoveOption(sampleForge.key, moveIdx, move, sampleMoveOptions)
+                            if (committed) e.preventDefault()
+                          }}
+                        />
+                      </label>
+                    ))}
+                  </div>
                   <div className="move-chip-wrap">
                     {sampleMoveSet.core.map((move) => (
-                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
                     ))}
                     {(sampleMoveSet.options ?? []).map((move) => (
-                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
                     ))}
                     {(sampleMoveSet.utility ?? []).map((move) => (
-                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(sampleForge.key, move)}>{move}</button>
+                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
                     ))}
                   </div>
                   <p className="muted">확정: {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || '아직 없음'}</p>
@@ -2237,7 +2288,9 @@ export default function App() {
                       <div className="inline-controls">
                         <button type="button" className="pick-chip" onClick={() => {
                           setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
+                          setSampleItemDraft(visibleChampionsItem(entry.member.key, entry.member.item))
                           setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
+                          setActiveSampleMetaEditor(null)
                         }}>불러오기</button>
                         <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>삭제</button>
                       </div>
