@@ -1659,16 +1659,16 @@ export default function App() {
                         <span>특성</span>
                         <strong>{activeAbility || '미선택'}</strong>
                       </div>
+                      <div className="party-meta-chip wide">
+                        <span>성격</span>
+                        <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
+                      </div>
                       <div className="party-meta-chip item-meta-chip">
                         <span>도구</span>
                         <div className="item-meta-row">
                           <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                           <strong>{currentItem || '미선택'}</strong>
                         </div>
-                      </div>
-                      <div className="party-meta-chip wide">
-                        <span>성격</span>
-                        <strong>{natureById.get(member.config.nature)?.label ?? natureLabel(member.config.nature)}</strong>
                       </div>
                     </div>
                     <label className="species-picker">
@@ -1758,6 +1758,16 @@ export default function App() {
                         </select>
                       </label>
                       <label>
+                        성격
+                        <select value={member.config.nature} onChange={(e) => {
+                          const next = [...party]
+                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
+                          setParty(next)
+                        }}>
+                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
+                        </select>
+                      </label>
+                      <label>
                         도구
                         <>
                         <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
@@ -1791,16 +1801,6 @@ export default function App() {
                           {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
                         </datalist> : null}
                         </>
-                      </label>
-                      <label>
-                        성격
-                        <select value={member.config.nature} onChange={(e) => {
-                          const next = [...party]
-                          next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
-                          setParty(next)
-                        }}>
-                          {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
-                        </select>
                       </label>
                     </div>
                     <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
