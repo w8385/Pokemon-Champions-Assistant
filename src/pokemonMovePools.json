@@ -46552,6 +46552,14 @@
   ],
   "umbreon": [
     {
+      "name": "Tera Blast",
+      "type": "normal"
+    },
+    {
+      "name": "Trailblaze",
+      "type": "grass"
+    },
+    {
       "name": "가드스웹",
       "type": "psychic"
     },
@@ -46920,6 +46928,10 @@
       "type": "normal"
     },
     {
+      "name": "하품",
+      "type": "normal"
+    },
+    {
       "name": "헤롱헤롱",
       "type": "normal"
     },
@@ -46934,14 +46946,6 @@
     {
       "name": "흉내쟁이",
       "type": "normal"
-    },
-    {
-      "name": "Tera Blast",
-      "type": "normal"
-    },
-    {
-      "name": "Trailblaze",
-      "type": "grass"
     }
   ],
   "scizor": [
