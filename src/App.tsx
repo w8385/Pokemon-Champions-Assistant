@@ -1191,6 +1191,11 @@ function TypeBadgeImage({ type }: { type: string }) {
   return <img src={getTypeBadgeSrc(type)} alt={label} className="type-badge-image" title={label} />
 }
 
+function SmallTypeBadgeImage({ type }: { type: string }) {
+  const label = getTypeBadgeLabel(type)
+  return <img src={getTypeBadgeSrc(type)} alt={label} className="move-autocomplete-type-icon" title={label} />
+}
+
 function LanguageIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
@@ -2175,9 +2180,11 @@ export default function App() {
                             {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
                               <div className="move-autocomplete-menu">
                                 {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option) => (
-                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
-                                    <span>{option.name}</span>
-                                    <span className="move-autocomplete-type">{option.type ?? ''}</span>
+                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
+                                    <span className="move-autocomplete-main">
+                                      {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
+                                      <span>{option.name}</span>
+                                    </span>
                                   </button>
                                 ))}
                               </div>
@@ -2652,9 +2659,11 @@ export default function App() {
                         {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
                           <div className="move-autocomplete-menu">
                             {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option) => (
-                              <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => selectMoveOption(sampleForge.key, moveIdx, option.name)}>
-                                <span>{option.name}</span>
-                                <span className="move-autocomplete-type">{option.type ?? ''}</span>
+                              <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectMoveOption(sampleForge.key, moveIdx, option.name)}>
+                                <span className="move-autocomplete-main">
+                                  {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
+                                  <span>{option.name}</span>
+                                </span>
                               </button>
                             ))}
                           </div>
