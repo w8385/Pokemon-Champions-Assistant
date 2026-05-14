@@ -510,6 +510,30 @@ function findMagicNumberCandidate(row: Row, member: PartyMember) {
   }
 }
 
+function magicCheckpointList(row: Row, member: PartyMember) {
+  const boostedStat = boostedStatForNature(member.config.nature)
+  if (!boostedStat) return null
+
+  const currentEffort = member.evs[boostedStat]
+  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
+  const availableCap = Math.min(CHAMPIONS_EFFORT_CAP, currentEffort + maxSpendable)
+
+  return Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, idx) => {
+    const effort = (idx + 1) * 11
+    const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
+    const actual = partyStatValue(row, candidateMember, boostedStat)
+    return {
+      stat: boostedStat,
+      effort,
+      actual,
+      reachable: effort <= availableCap,
+      active: currentEffort === effort,
+      cleared: currentEffort >= effort,
+      magic: actual % 11 === 0,
+    }
+  })
+}
+
 function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (typeChart[attackType]?.[defendType] ?? 1), 1)
 }
@@ -772,6 +796,7 @@ export default function App() {
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
+  const magicCheckpoints = tuningMember && tuningRow ? magicCheckpointList(tuningRow, tuningMember) : null
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -968,7 +993,7 @@ export default function App() {
             <div className="magic-helper-box">
               <div className="row-between">
                 <strong>매직넘버 helper</strong>
-                <span className="muted-inline">드래그로 바로 조정</span>
+                <span className="muted-inline">구간별 체크포인트 보기</span>
               </div>
               {magicCandidate ? (
                 <>
@@ -980,16 +1005,27 @@ export default function App() {
                     <span className="magic-chip">현재 포인트 {magicCandidate.currentEffort}</span>
                     {magicCandidate.nextActual ? <span className="magic-chip active">다음 매직넘버 {magicCandidate.nextActual}</span> : <span className="magic-chip">남은 포인트로 도달 불가</span>}
                   </div>
-                  {magicCandidate.nextEffort !== null ? <div className="inline-controls">
-                    <button type="button" className="action-button" onClick={() => {
-                      const next = [...party]
-                      next[tuningModalIndex] = {
-                        ...next[tuningModalIndex],
-                        evs: applyChampionsEffort(next[tuningModalIndex].evs, magicCandidate.stat, magicCandidate.nextEffort),
-                        tuning: { ...next[tuningModalIndex].tuning, magicNumber: magicCandidate.nextActual ?? 0 },
-                      }
-                      setParty(next)
-                    }}>다음 매직넘버로 맞추기</button>
+                  {magicCheckpoints ? <div className="magic-checkpoint-list">
+                    {magicCheckpoints.map((checkpoint) => (
+                      <button
+                        key={`magic-checkpoint-${checkpoint.effort}`}
+                        type="button"
+                        className={`magic-checkpoint ${checkpoint.active ? 'active' : checkpoint.cleared ? 'cleared' : ''}`}
+                        disabled={!checkpoint.reachable}
+                        onClick={() => {
+                          const next = [...party]
+                          next[tuningModalIndex] = {
+                            ...next[tuningModalIndex],
+                            evs: applyChampionsEffort(next[tuningModalIndex].evs, checkpoint.stat, checkpoint.effort),
+                            tuning: { ...next[tuningModalIndex].tuning, magicNumber: checkpoint.actual },
+                          }
+                          setParty(next)
+                        }}
+                      >
+                        <strong>{checkpoint.effort}pt</strong>
+                        <span>{checkpoint.actual}</span>
+                      </button>
+                    ))}
                   </div> : null}
                 </>
               ) : <p className="muted">무보정 성격은 매직넘버 helper를 띄우지 않습니다. 성격을 먼저 지정해 주세요.</p>}
@@ -1055,31 +1091,43 @@ export default function App() {
                       <span>{actualValue}</span>
                     </div>
                     <div className="effort-cell-grid" role="group" aria-label={`${stat.label} effort points`}>
-                      {Array.from({ length: CHAMPIONS_EFFORT_CAP }, (_, cellIdx) => {
-                        const point = cellIdx + 1
-                        const filled = point <= currentEffort
-                        const reachable = point <= availableCap
-                        const target = targetEffort === point
-                        const classes = [
-                          'effort-cell',
-                          filled ? 'filled' : '',
-                          reachable ? 'reachable' : 'locked',
-                          target ? 'target' : '',
-                          point % 11 === 0 ? 'segment-end' : '',
-                        ].filter(Boolean).join(' ')
+                      {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, segmentIdx) => {
+                        const segmentStart = segmentIdx * 11
+                        const segmentEnd = segmentStart + 11
+                        const segmentValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: segmentEnd } }, stat.key)
                         return (
-                          <button
-                            key={`effort-cell-${stat.key}-${point}`}
-                            type="button"
-                            className={classes}
-                            disabled={!reachable}
-                            onClick={() => {
-                              const next = [...party]
-                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
-                              setParty(next)
-                            }}
-                            title={`${stat.label} ${point}포인트`}
-                          />
+                          <div key={`effort-segment-${stat.key}-${segmentIdx}`} className="effort-segment">
+                            <div className="effort-segment-cells">
+                              {Array.from({ length: 11 }, (_, innerIdx) => {
+                                const point = segmentStart + innerIdx + 1
+                                const filled = point <= currentEffort
+                                const reachable = point <= availableCap
+                                const target = targetEffort === point
+                                const classes = [
+                                  'effort-cell',
+                                  filled ? 'filled' : '',
+                                  reachable ? 'reachable' : 'locked',
+                                  target ? 'target' : '',
+                                ].filter(Boolean).join(' ')
+                                return (
+                                  <button
+                                    key={`effort-cell-${stat.key}-${point}`}
+                                    type="button"
+                                    className={classes}
+                                    disabled={!reachable}
+                                    onClick={() => {
+                                      const next = [...party]
+                                      next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
+                                      setParty(next)
+                                    }}
+                                    title={`${stat.label} ${point}포인트`}
+                                  />
+                                )
+                              })}
+                            </div>
+                            <div className="effort-segment-label">{segmentEnd}pt</div>
+                            <div className="effort-segment-value">{stat.key === magicCandidate?.stat ? segmentValue : ''}</div>
+                          </div>
                         )
                       })}
                     </div>
@@ -1127,7 +1175,7 @@ export default function App() {
               <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(tuningRow, siteLanguage)}</span></div>
               <p className="muted">성격: {natureLabel(tuningMember.config.nature)}</p>
               <p className="muted">매직넘버: {tuningMember.tuning.magicNumber || '미지정'} · 최대치: {tuningMember.tuning.maxValue || '미지정'}</p>
-              <p className="muted">포케챔스식으로 드래그 조정하면서 목표 실수치 메모를 맞추는 흐름으로 바꿨습니다.</p>
+              <p className="muted">포케챔스식 구간 단위로 투자량과 체크포인트 실수치를 함께 보면서 맞추는 흐름입니다.</p>
             </div>
           </div>
         </div>

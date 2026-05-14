@@ -185,6 +185,38 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-color: #facc15;
   color: #fde68a;
 }
+.magic-checkpoint-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.magic-checkpoint {
+  appearance: none;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  background: #111827;
+  color: #e5eef7;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+}
+.magic-checkpoint.cleared {
+  border-color: #64748b;
+  background: #172033;
+}
+.magic-checkpoint.active {
+  border-color: #facc15;
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.4) inset;
+  background: #2a1f0b;
+}
+.magic-checkpoint:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .drag-stat-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -203,9 +235,18 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .effort-cell-grid {
   display: grid;
-  grid-template-columns: repeat(22, minmax(0, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
   margin: 12px 0 10px;
+}
+.effort-segment {
+  display: grid;
+  gap: 6px;
+}
+.effort-segment-cells {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  gap: 3px;
 }
 .effort-cell {
   appearance: none;
@@ -234,8 +275,13 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .effort-cell.target {
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.95) inset;
 }
-.effort-cell.segment-end {
-  margin-right: 6px;
+.effort-segment-label,
+.effort-segment-value {
+  font-size: 11px;
+  color: #93a4b8;
+}
+.effort-segment-value {
+  min-height: 14px;
 }
 .effort-cell-toolbar {
   display: flex;
@@ -926,4 +972,6 @@ textarea { min-height: 72px; resize: vertical; }
   .move-card-grid { grid-template-columns: 1fr; }
   .training-grid { grid-template-columns: 1fr; }
   .speed-scenario-grid { grid-template-columns: 1fr; }
+  .magic-checkpoint-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .effort-cell-grid { grid-template-columns: 1fr; }
 }
