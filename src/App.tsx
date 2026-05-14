@@ -2150,16 +2150,12 @@ export default function App() {
                         <strong>{lt('기술 배치')}</strong>
                         <span className="muted-inline">{memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : lt('사용 가능 기술 검색')}</span>
                       </div>
-                      {memberMoveOptions.length ? <datalist id={`move-options-${member.key}`}>
-                        {memberMoveOptions.map((move) => <option key={`move-option-${member.key}-${move.name}`} value={move.name} />)}
-                      </datalist> : null}
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
                           <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))}`}>
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
-                              list={memberMoveOptions.length ? `move-options-${member.key}` : undefined}
                               placeholder={memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                               onFocus={() => setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })}
                               onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)}
@@ -2631,16 +2627,12 @@ export default function App() {
               </div>
               {sampleMoveSet ? (
                 <>
-                  {sampleMoveOptions.length ? <datalist id={`move-options-${sampleForge.key}`}>
-                    {sampleMoveOptions.map((move) => <option key={`sample-move-option-${sampleForge.key}-${move.name}`} value={move.name} />)}
-                  </datalist> : null}
                   <div className="registered-move-grid">
                     {sampleRegisteredMoves.map((move, moveIdx) => (
                       <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))}`}>
                         <span>{moveIdx + 1}번</span>
                         <input
                           value={move}
-                          list={sampleMoveOptions.length ? `move-options-${sampleForge.key}` : undefined}
                           placeholder={sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                           onFocus={() => setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })}
                           onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)}
