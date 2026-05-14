@@ -102,6 +102,8 @@ const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
 const MAX_OPPONENTS = 6
 const CHAMPIONS_EFFORT_CAP = 66
+const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
+const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -273,10 +275,10 @@ function sanitizePartyTuning(input: unknown): PartyTuning {
   }
 }
 
-function clampEv(value: unknown) {
+function clampEv(value: unknown, max = CHAMPIONS_EFFORT_PER_STAT_CAP) {
   const num = Number(value)
   if (!Number.isFinite(num)) return 0
-  return Math.max(0, Math.min(CHAMPIONS_EFFORT_CAP, Math.trunc(num)))
+  return Math.max(0, Math.min(max, Math.trunc(num)))
 }
 
 function clampNonNegativeInt(value: unknown, max = 999) {
@@ -295,7 +297,7 @@ function remainingEffortPoints(evs: EffortValues, field?: EffortStatKey) {
 }
 
 function applyChampionsEffort(evs: EffortValues, field: keyof EffortValues, nextValue: unknown) {
-  const clamped = clampEv(nextValue)
+  const clamped = clampEv(nextValue, CHAMPIONS_EFFORT_PER_STAT_CAP)
   const remainder = remainingEffortPoints(evs, field)
   return {
     ...evs,
@@ -306,12 +308,12 @@ function applyChampionsEffort(evs: EffortValues, field: keyof EffortValues, next
 function sanitizeEvs(input: unknown): EffortValues {
   const evs = input && typeof input === 'object' ? (input as Partial<EffortValues>) : {}
   return {
-    hp: clampEv(evs.hp),
-    attack: clampEv(evs.attack),
-    defense: clampEv(evs.defense),
-    spAttack: clampEv(evs.spAttack),
-    spDefense: clampEv(evs.spDefense),
-    speed: clampEv(evs.speed),
+    hp: clampEv(evs.hp, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    attack: clampEv(evs.attack, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    defense: clampEv(evs.defense, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    spAttack: clampEv(evs.spAttack, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    spDefense: clampEv(evs.spDefense, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    speed: clampEv(evs.speed, CHAMPIONS_EFFORT_PER_STAT_CAP),
   }
 }
 
@@ -440,7 +442,7 @@ function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scar
   let tieEffort: number | null = null
   let passEffort: number | null = null
 
-  for (let points = 0; points <= CHAMPIONS_EFFORT_CAP; points += 1) {
+  for (let points = 0; points <= CHAMPIONS_EFFORT_PER_STAT_CAP; points += 1) {
     const speed = opponentScenarioSpeed(row, points, boosted, scarf, speedStage)
     if (tieEffort === null && speed === mySpeed) tieEffort = points
     if (passEffort === null && speed >= mySpeed) passEffort = points
@@ -471,16 +473,17 @@ function findMagicNumberCandidate(row: Row, member: PartyMember) {
   const boostedStat = boostedStatForNature(member.config.nature)
   if (!boostedStat) return null
 
-  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
   const currentActual = partyStatValue(row, member, boostedStat)
   const currentEffort = member.evs[boostedStat]
+  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
+  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
   const currentHit = currentActual % 11 === 0
 
   let nextEffort = currentEffort
   let nextActual = currentActual
   if (!currentHit) {
     let found = false
-    for (let effort = currentEffort; effort <= maxSpendable; effort += 1) {
+    for (let effort = currentEffort; effort <= availableCap; effort += 1) {
       const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
       const actual = partyStatValue(row, candidateMember, boostedStat)
       if (actual % 11 === 0) {
@@ -516,10 +519,9 @@ function magicCheckpointList(row: Row, member: PartyMember) {
 
   const currentEffort = member.evs[boostedStat]
   const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
-  const availableCap = Math.min(CHAMPIONS_EFFORT_CAP, currentEffort + maxSpendable)
+  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
 
-  return Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, idx) => {
-    const effort = (idx + 1) * 11
+  return EFFORT_CHECKPOINTS.map((effort) => {
     const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
     const actual = partyStatValue(row, candidateMember, boostedStat)
     return {
@@ -737,7 +739,7 @@ export default function App() {
     { id: 'neutral-scarf', label: '준속 스카프', boosted: false, scarf: true },
     { id: 'fast-scarf', label: '최속 스카프', boosted: true, scarf: true },
   ].map((scenario) => {
-    const speedAtMax = opponentScenarioSpeed(oppRow, CHAMPIONS_EFFORT_CAP, scenario.boosted, scenario.scarf, oppMember.speedStage)
+    const speedAtMax = opponentScenarioSpeed(oppRow, CHAMPIONS_EFFORT_PER_STAT_CAP, scenario.boosted, scenario.scarf, oppMember.speedStage)
     const needs = opponentScenarioNeeds(oppRow, mySpeed, scenario.boosted, scenario.scarf, oppMember.speedStage)
     return {
       ...scenario,
@@ -1080,7 +1082,7 @@ export default function App() {
               {EFFORT_STAT_OPTIONS.map((stat) => {
                 const currentEffort = tuningMember.evs[stat.key]
                 const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
-                const availableCap = Math.min(CHAMPIONS_EFFORT_CAP, currentEffort + maxSpendable)
+                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
                 const targetEffort = magicCandidate?.stat === stat.key ? magicCandidate.nextEffort : null
@@ -1092,16 +1094,16 @@ export default function App() {
                     </div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
                       <div className="effort-gauge-track">
-                        <div className="effort-gauge-fill" style={{ width: `${(currentEffort / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
-                        <div className="effort-gauge-available" style={{ width: `${(availableCap / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
-                        {targetEffort ? <div className="effort-gauge-target" style={{ left: `${(targetEffort / CHAMPIONS_EFFORT_CAP) * 100}%` }} /> : null}
+                        <div className="effort-gauge-available" style={{ width: `${(availableCap / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
+                        <div className="effort-gauge-fill" style={{ width: `${(currentEffort / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
+                        {targetEffort ? <div className="effort-gauge-target" style={{ left: `${(targetEffort / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} /> : null}
                         <div className="effort-gauge-ticks">
-                          {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 - 1 }, (_, idx) => (
-                            <span key={`effort-tick-${stat.key}-${idx}`} className="effort-gauge-tick" style={{ left: `${((idx + 1) * 11 / CHAMPIONS_EFFORT_CAP) * 100}%` }} />
+                          {EFFORT_CHECKPOINTS.slice(0, -1).map((checkpoint) => (
+                            <span key={`effort-tick-${stat.key}-${checkpoint}`} className="effort-gauge-tick" style={{ left: `${(checkpoint / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
                           ))}
                         </div>
                         <div className="effort-gauge-hitboxes">
-                          {Array.from({ length: CHAMPIONS_EFFORT_CAP }, (_, cellIdx) => {
+                          {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
                             const point = cellIdx + 1
                             const reachable = point <= availableCap
                             return (
@@ -1122,8 +1124,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="effort-gauge-scale">
-                        {Array.from({ length: CHAMPIONS_EFFORT_CAP / 11 }, (_, idx) => {
-                          const checkpoint = (idx + 1) * 11
+                        {EFFORT_CHECKPOINTS.map((checkpoint) => {
                           const checkpointValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: checkpoint } }, stat.key)
                           return (
                             <div key={`effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item">
@@ -1315,7 +1316,7 @@ export default function App() {
                     <div className="ev-grid" onClick={(e) => e.stopPropagation()}>
                       <div className="ev-total-row">
                         <strong>능력 포인트</strong>
-                        <span>{totalEffortPoints(member.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                        <span>{totalEffortPoints(member.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
                       </div>
                       {([
                         ['hp', 'HP'],
@@ -1330,7 +1331,7 @@ export default function App() {
                           <input
                             type="number"
                             min={0}
-                            max={CHAMPIONS_EFFORT_CAP}
+                            max={CHAMPIONS_EFFORT_PER_STAT_CAP}
                             value={member.evs[field]}
                             onChange={(e) => {
                               const next = [...party]
@@ -1418,7 +1419,7 @@ export default function App() {
                 <div className="move-card">
                   <div className="row-between">
                     <strong>노력치 보정</strong>
-                    <span className="muted-inline">포인트 {totalEffortPoints(myMember.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                    <span className="muted-inline">포인트 {totalEffortPoints(myMember.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
                   </div>
                   <div className="stat-preview-list compact-stat-list">
                     {EFFORT_STAT_OPTIONS.map((stat) => (
@@ -1684,7 +1685,7 @@ export default function App() {
               <div className="ev-grid">
                 <div className="ev-total-row">
                   <strong>능력 포인트</strong>
-                  <span>{totalEffortPoints(sampleForge.evs)} / {CHAMPIONS_EFFORT_CAP}</span>
+                  <span>{totalEffortPoints(sampleForge.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
                 </div>
                 {([
                   ['hp', 'HP'], ['attack', 'Atk'], ['defense', 'Def'], ['spAttack', 'SpA'], ['spDefense', 'SpD'], ['speed', 'Spe'],
@@ -1694,7 +1695,7 @@ export default function App() {
                     <input
                       type="number"
                       min={0}
-                      max={CHAMPIONS_EFFORT_CAP}
+                      max={CHAMPIONS_EFFORT_PER_STAT_CAP}
                       value={sampleForge.evs[field]}
                       onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, field, e.target.value) }))}
                     />

@@ -283,7 +283,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: repeat(66, minmax(0, 1fr));
+  grid-template-columns: repeat(32, minmax(0, 1fr));
   z-index: 5;
 }
 .effort-gauge-hitbox {
@@ -299,7 +299,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .effort-gauge-scale {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin-top: 8px;
 }
