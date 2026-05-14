@@ -110,6 +110,28 @@ const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 const STAT_GAUGE_MAX = 255
 const ITEM_OPTIONS = ['기합의띠', '구애스카프', '구애안경', '구애머리띠', '생명의구슬', '먹다남은음식', '돌격조끼', '약점보험', '자뭉열매', '오카열매', '유루열매', '리샘열매', '반짝가루', '고스트메모리', '금속코트', '검은진흙', '부스트에너지', '클리어참', '풍선', '빛의점토'] as const
+const ITEM_SPRITE_MAP: Record<string, string> = {
+  '기합의띠': 'focus-sash',
+  '구애스카프': 'choice-scarf',
+  '구애안경': 'choice-specs',
+  '구애머리띠': 'choice-band',
+  '생명의구슬': 'life-orb',
+  '먹다남은음식': 'leftovers',
+  '돌격조끼': 'assault-vest',
+  '약점보험': 'weakness-policy',
+  '자뭉열매': 'figy-berry',
+  '오카열매': 'occa-berry',
+  '유루열매': 'yache-berry',
+  '리샘열매': 'roseli-berry',
+  '반짝가루': 'bright-powder',
+  '고스트메모리': 'ghost-memory',
+  '금속코트': 'metal-coat',
+  '검은진흙': 'black-sludge',
+  '부스트에너지': 'booster-energy',
+  '클리어참': 'clear-amulet',
+  '풍선': 'air-balloon',
+  '빛의점토': 'light-clay',
+}
 
 const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -135,6 +157,20 @@ function megaStoneForKey(key: string) {
 
 function normalizeItemForKey(key: string, item: string) {
   return megaStoneForKey(key) ?? item
+}
+
+function isAllowedChampionsItem(key: string, item: string) {
+  const normalized = normalizeItemForKey(key, item).trim()
+  if (!normalized) return true
+  return normalized === megaStoneForKey(key) || ITEM_OPTIONS.includes(normalized as typeof ITEM_OPTIONS[number])
+}
+
+function itemSpriteSrc(key: string, item: string) {
+  const normalized = normalizeItemForKey(key, item).trim()
+  const spriteSlug = ITEM_SPRITE_MAP[normalized]
+  if (spriteSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
+  if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
+  return `${import.meta.env.BASE_URL}item-generic.svg`
 }
 
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
@@ -999,6 +1035,8 @@ export default function App() {
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
+  const sampleCurrentItem = normalizeItemForKey(sampleForge.key, sampleForge.item)
+  const sampleItemAllowed = isAllowedChampionsItem(sampleForge.key, sampleForge.item)
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1447,6 +1485,8 @@ export default function App() {
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
                 const fixedMegaStone = megaStoneForKey(member.key)
+                const currentItem = normalizeItemForKey(member.key, member.item)
+                const itemAllowed = isAllowedChampionsItem(member.key, member.item)
                 const abilityOptions = displayAbilities(row, siteLanguage)
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
@@ -1473,9 +1513,13 @@ export default function App() {
                           </div>
                         </div>
                         <div className="party-meta-grid">
-                          <div className="party-meta-chip">
+                          <div className={`party-meta-chip item-meta-chip ${itemAllowed ? 'valid' : 'invalid'}`}>
                             <span>도구</span>
-                            <strong>{fixedMegaStone || member.item || '미선택'}</strong>
+                            <div className="item-meta-row">
+                              <img src={itemSpriteSrc(member.key, currentItem)} alt={currentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                              <strong>{currentItem || '미선택'}</strong>
+                            </div>
+                            <small>{itemAllowed ? '포챔스 사용 가능' : '포챔스 사용 불가/미확인'}</small>
                           </div>
                           <div className="party-meta-chip">
                             <span>특성</span>
@@ -1565,7 +1609,7 @@ export default function App() {
                     </div>
                     <div className="tuning-summary muted">
                       성격 {natureLabel(member.config.nature)}
-                      {member.item ? ` · 도구 ${member.item}` : ''}
+                      {currentItem ? ` · 도구 ${currentItem}` : ''}
                       {activeAbility ? ` · 특성 ${activeAbility}` : ''}
                       {member.tuning.magicNumber ? ` · 매직넘버 ${member.tuning.magicNumber}` : ''}
                       {member.tuning.maxValue ? ` · 최대치 ${member.tuning.maxValue}` : ''}
@@ -1584,7 +1628,7 @@ export default function App() {
                       <label>
                         도구
                         <>
-                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                        <input className={!itemAllowed ? 'invalid-input' : ''} list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                           const next = [...party]
                           next[idx] = { ...member, item: normalizeItemForKey(member.key, e.target.value) }
                           setParty(next)
@@ -1890,6 +1934,11 @@ export default function App() {
                     <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
+                  <div className={`item-hero-row ${sampleItemAllowed ? 'valid' : 'invalid'}`}>
+                    <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={sampleCurrentItem || '도구'} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                    <span>{sampleCurrentItem || '도구 미선택'}</span>
+                    <small>{sampleItemAllowed ? '포챔스 사용 가능' : '포챔스 사용 불가/미확인'}</small>
+                  </div>
                   <p className="muted">실수치 스피드 {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
               </div>
@@ -1935,7 +1984,7 @@ export default function App() {
                 <label>
                   도구
                   <>
-                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: normalizeItemForKey(prev.key, e.target.value) }))} />
+                  <input className={!sampleItemAllowed ? 'invalid-input' : ''} list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: normalizeItemForKey(prev.key, e.target.value) }))} />
                   {!sampleFixedMegaStone ? <datalist id="item-options-sample">
                     {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
                   </datalist> : null}
