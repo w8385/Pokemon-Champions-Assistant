@@ -28,6 +28,7 @@ type Row = {
 }
 
 type StatKey = 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
+type EffortStatKey = keyof EffortValues
 type NatureId =
   | 'hardy' | 'lonely' | 'brave' | 'adamant' | 'naughty'
   | 'bold' | 'docile' | 'relaxed' | 'impish' | 'lax'
@@ -148,6 +149,15 @@ const movePowerPresets = [
   { label: '130 초고위력', value: 130 },
 ]
 
+const EFFORT_STAT_OPTIONS: { key: EffortStatKey; short: string; label: string }[] = [
+  { key: 'hp', short: 'HP', label: 'HP' },
+  { key: 'attack', short: 'Atk', label: '공격' },
+  { key: 'defense', short: 'Def', label: '방어' },
+  { key: 'spAttack', short: 'SpA', label: '특수공격' },
+  { key: 'spDefense', short: 'SpD', label: '특수방어' },
+  { key: 'speed', short: 'Spe', label: '스피드' },
+]
+
 const typeChart: Record<string, Partial<Record<string, number>>> = {
   Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
   Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
@@ -241,6 +251,10 @@ function natureLabel(natureId: NatureId) {
   return `${nature.label} (${statLabel(nature.up)}↑ ${statLabel(nature.down)}↓)`
 }
 
+function boostedStatForNature(natureId: NatureId): StatKey | null {
+  return natureById.get(natureId)?.up ?? null
+}
+
 function sanitizeMemberConfig(input: unknown): MemberConfig {
   const config = input && typeof input === 'object' ? (input as Partial<MemberConfig>) : {}
   const rawNature = typeof (config as { nature?: unknown }).nature === 'string' ? (config as { nature: NatureId }).nature : null
@@ -275,9 +289,14 @@ function totalEffortPoints(evs: EffortValues) {
   return evs.hp + evs.attack + evs.defense + evs.spAttack + evs.spDefense + evs.speed
 }
 
+function remainingEffortPoints(evs: EffortValues, field?: EffortStatKey) {
+  if (!field) return CHAMPIONS_EFFORT_CAP - totalEffortPoints(evs)
+  return CHAMPIONS_EFFORT_CAP - (totalEffortPoints(evs) - evs[field])
+}
+
 function applyChampionsEffort(evs: EffortValues, field: keyof EffortValues, nextValue: unknown) {
   const clamped = clampEv(nextValue)
-  const remainder = CHAMPIONS_EFFORT_CAP - (totalEffortPoints(evs) - evs[field])
+  const remainder = remainingEffortPoints(evs, field)
   return {
     ...evs,
     [field]: Math.max(0, Math.min(clamped, remainder)),
@@ -418,6 +437,49 @@ function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues
       return actualStat(row.spDefense, member.evs.spDefense, natureMultiplier(member.config.nature, 'spDefense'))
     case 'speed':
       return actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
+  }
+}
+
+function findMagicNumberCandidate(row: Row, member: PartyMember) {
+  const boostedStat = boostedStatForNature(member.config.nature)
+  if (!boostedStat) return null
+
+  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
+  const currentActual = partyStatValue(row, member, boostedStat)
+  const currentEffort = member.evs[boostedStat]
+  const currentHit = currentActual % 11 === 0
+
+  let nextEffort = currentEffort
+  let nextActual = currentActual
+  if (!currentHit) {
+    let found = false
+    for (let effort = currentEffort; effort <= maxSpendable; effort += 1) {
+      const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
+      const actual = partyStatValue(row, candidateMember, boostedStat)
+      if (actual % 11 === 0) {
+        nextEffort = effort
+        nextActual = actual
+        found = true
+        break
+      }
+    }
+    if (!found) return {
+      stat: boostedStat,
+      reached: false,
+      currentActual,
+      currentEffort,
+      nextEffort: null,
+      nextActual: null,
+    }
+  }
+
+  return {
+    stat: boostedStat,
+    reached: currentHit,
+    currentActual,
+    currentEffort,
+    nextEffort,
+    nextActual,
   }
 }
 
@@ -572,6 +634,9 @@ export default function App() {
   const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
   const [opponentQuickInput, setOpponentQuickInput] = React.useState('')
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+  const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
+  const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
+  const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
 
   React.useEffect(() => {
     const safeSelectedMy = sanitizeSelectedIndex(selectedMy, party.length)
@@ -848,18 +913,47 @@ export default function App() {
         ) : null}
       </header>
 
-      {tuningModalIndex !== null && party[tuningModalIndex] ? (
+      {tuningModalIndex !== null && tuningMember && tuningRow ? (
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="row-between">
               <h2>성격 / 매직넘버 / 최대치</h2>
               <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>닫기</button>
             </div>
+            <div className="magic-helper-box">
+              <div className="row-between">
+                <strong>매직넘버 helper</strong>
+                <span className="muted-inline">드래그로 바로 조정</span>
+              </div>
+              {magicCandidate ? (
+                <>
+                  <p className="muted">
+                    성격 보정이 걸리는 {statLabel(magicCandidate.stat)} 기준으로 11의 배수를 맞추는 보조 UI입니다.
+                  </p>
+                  <div className="magic-chip-row">
+                    <span className={`magic-chip ${magicCandidate.reached ? 'active' : ''}`}>현재 실수치 {magicCandidate.currentActual}</span>
+                    <span className="magic-chip">현재 포인트 {magicCandidate.currentEffort}</span>
+                    {magicCandidate.nextActual ? <span className="magic-chip active">다음 매직넘버 {magicCandidate.nextActual}</span> : <span className="magic-chip">남은 포인트로 도달 불가</span>}
+                  </div>
+                  {magicCandidate.nextEffort !== null ? <div className="inline-controls">
+                    <button type="button" className="action-button" onClick={() => {
+                      const next = [...party]
+                      next[tuningModalIndex] = {
+                        ...next[tuningModalIndex],
+                        evs: applyChampionsEffort(next[tuningModalIndex].evs, magicCandidate.stat, magicCandidate.nextEffort),
+                        tuning: { ...next[tuningModalIndex].tuning, magicNumber: magicCandidate.nextActual ?? 0 },
+                      }
+                      setParty(next)
+                    }}>다음 매직넘버로 맞추기</button>
+                  </div> : null}
+                </>
+              ) : <p className="muted">무보정 성격은 매직넘버 helper를 띄우지 않습니다. 성격을 먼저 지정해 주세요.</p>}
+            </div>
             <div className="modal-grid">
               <label>
                 성격
                 <select
-                  value={party[tuningModalIndex].config.nature}
+                  value={tuningMember.config.nature}
                   onChange={(e) => {
                     const next = [...party]
                     next[tuningModalIndex] = {
@@ -878,7 +972,7 @@ export default function App() {
                   type="number"
                   min={0}
                   max={255}
-                  value={party[tuningModalIndex].tuning.magicNumber}
+                  value={tuningMember.tuning.magicNumber}
                   onChange={(e) => {
                     const next = [...party]
                     next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }
@@ -892,7 +986,7 @@ export default function App() {
                   type="number"
                   min={0}
                   max={255}
-                  value={party[tuningModalIndex].tuning.maxValue}
+                  value={tuningMember.tuning.maxValue}
                   onChange={(e) => {
                     const next = [...party]
                     next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }
@@ -901,11 +995,41 @@ export default function App() {
                 />
               </label>
             </div>
+            <div className="drag-stat-list">
+              {EFFORT_STAT_OPTIONS.map((stat) => {
+                const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
+                const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
+                const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
+                return (
+                  <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${isMagicStat ? 'magic' : ''}`}>
+                    <div className="row-between">
+                      <strong>{stat.label}</strong>
+                      <span>{actualValue}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={maxSpendable}
+                      value={tuningMember.evs[stat.key]}
+                      onChange={(e) => {
+                        const next = [...party]
+                        next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
+                        setParty(next)
+                      }}
+                    />
+                    <div className="row-between">
+                      <span className="muted-inline">포인트 {tuningMember.evs[stat.key]} / {maxSpendable}</span>
+                      {isMagicStat ? <span className="magic-inline">11배수</span> : null}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
             <div className="modal-preview-box">
-              <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(indexByKey.get(party[tuningModalIndex].key) ?? rows[0], siteLanguage)}</span></div>
-              <p className="muted">성격: {natureLabel(party[tuningModalIndex].config.nature)}</p>
-              <p className="muted">매직넘버: {party[tuningModalIndex].tuning.magicNumber || '미지정'} · 최대치: {party[tuningModalIndex].tuning.maxValue || '미지정'}</p>
-              <p className="muted">참고 이미지 기준으로 실전에서 자주 보는 목표 실수치 메모용 UI로 맞췄습니다.</p>
+              <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(tuningRow, siteLanguage)}</span></div>
+              <p className="muted">성격: {natureLabel(tuningMember.config.nature)}</p>
+              <p className="muted">매직넘버: {tuningMember.tuning.magicNumber || '미지정'} · 최대치: {tuningMember.tuning.maxValue || '미지정'}</p>
+              <p className="muted">포케챔스식으로 드래그 조정하면서 목표 실수치 메모를 맞추는 흐름으로 바꿨습니다.</p>
             </div>
           </div>
         </div>
@@ -954,7 +1078,7 @@ export default function App() {
           </section>
         ) : null}
 
-        {mainSection === 'single' && activeTab === 'party' ? <section className="party-overview panel wide">
+        {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="party-lane">
               <div className="section-head row-between">
