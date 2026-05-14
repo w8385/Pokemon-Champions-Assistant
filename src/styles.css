@@ -177,6 +177,23 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   background: #111827;
   padding: 14px;
 }
+.sample-save-box,
+.saved-sample-list {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #243041;
+}
+.saved-sample-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #1f2937;
+}
+.saved-sample-item:last-child {
+  border-bottom: 0;
+}
 .sample-builder-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
@@ -626,6 +643,49 @@ textarea { min-height: 72px; resize: vertical; }
 .opponent-overview-row {
   margin-top: 14px;
 }
+.opponent-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.3fr);
+  gap: 16px;
+}
+.opponent-board-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.opponent-board-card {
+  appearance: none;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #0b1220;
+  color: #eef2f7;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+.opponent-board-card span {
+  color: #93a4b8;
+  font-size: 12px;
+}
+.opponent-board-card.active {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3) inset;
+}
+.opponent-detail-panel {
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #111827;
+  padding: 14px;
+}
+.opponent-detail-fields {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
 .opponent-entry-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -715,6 +775,8 @@ textarea { min-height: 72px; resize: vertical; }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }
   .sample-builder-grid { grid-template-columns: 1fr; }
+  .opponent-detail-layout { grid-template-columns: 1fr; }
+  .opponent-board-grid { grid-template-columns: 1fr; }
   .timeline-list { grid-template-columns: 1fr; }
   .pick-summary-grid { grid-template-columns: 1fr; }
   .pick-slot-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }

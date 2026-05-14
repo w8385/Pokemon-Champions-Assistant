@@ -67,6 +67,12 @@ type OpponentState = {
   picked: boolean
 }
 
+type SavedSample = {
+  id: string
+  label: string
+  member: PartyMember
+}
+
 type CalcMode = 'physical' | 'special'
 
 type PersistedState = {
@@ -78,6 +84,7 @@ type PersistedState = {
   confirmedMovesByKey?: Record<string, string[]>
   mainSection?: MainSection
   sampleForge?: PartyMember
+  savedSamples?: SavedSample[]
 }
 
 type ImportExportPayload = PersistedState & {
@@ -325,6 +332,23 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
   return cleaned.length ? cleaned : defaultOpponents
 }
 
+function sanitizeSavedSamples(input: unknown): SavedSample[] {
+  if (!Array.isArray(input)) return []
+  return input
+    .map((entry, idx) => {
+      if (!entry || typeof entry !== 'object') return null
+      const raw = entry as Partial<SavedSample>
+      const member = sanitizeParty([raw.member])[0]
+      if (!member) return null
+      return {
+        id: typeof raw.id === 'string' ? raw.id : `sample-${idx}`,
+        label: typeof raw.label === 'string' && raw.label.trim() ? raw.label : `${member.key}-${idx + 1}`,
+        member,
+      }
+    })
+    .filter((entry): entry is SavedSample => Boolean(entry))
+}
+
 function sanitizeSelectedIndex(value: unknown, listLength: number) {
   const num = Number(value)
   if (!Number.isInteger(num) || num < 0 || num >= listLength) return 0
@@ -370,7 +394,7 @@ function partySpeedValue(row: Row, member: PartyMember) {
 function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues) {
   switch (field) {
     case 'hp':
-      return actualStat(row.hp, member.evs.hp, false, true)
+      return actualStat(row.hp, member.evs.hp, 1, true)
     case 'attack':
       return actualStat(row.attack, member.evs.attack, natureMultiplier(member.config.nature, 'attack'))
     case 'defense':
@@ -513,6 +537,9 @@ export default function App() {
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
+  const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
+  const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
+  const [partyAdvancedOpen, setPartyAdvancedOpen] = React.useState<boolean[]>(() => Array.from({ length: sanitizeParty(persisted?.party).length }, () => false))
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
 
   React.useEffect(() => {
@@ -522,6 +549,7 @@ export default function App() {
     if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
+    setPartyAdvancedOpen((prev) => party.map((_, idx) => prev[idx] ?? false))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
@@ -535,9 +563,10 @@ export default function App() {
       confirmedMovesByKey,
       mainSection,
       sampleForge,
+      savedSamples,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, battleNote, confirmedMovesByKey, mainSection, sampleForge])
+  }, [party, opponents, selectedMy, selectedOpp, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
@@ -603,6 +632,39 @@ export default function App() {
   const damage = calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness)
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
 
+  const saveCurrentSample = () => {
+    const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
+    const saved: SavedSample = {
+      id: `sample-${Date.now()}`,
+      label,
+      member: { ...sampleForge, evs: { ...sampleForge.evs }, config: { ...sampleForge.config }, tuning: { ...sampleForge.tuning } },
+    }
+    setSavedSamples((prev) => [saved, ...prev])
+    setSampleLabelDraft('')
+  }
+
+  const applySampleToPartySlot = (slotIdx: number) => {
+    const target = party[slotIdx]
+    if (!target) return
+    const next = [...party]
+    next[slotIdx] = {
+      ...sampleForge,
+      picked: target.picked,
+      key: sampleForge.key,
+      evs: { ...sampleForge.evs },
+      config: { ...sampleForge.config },
+      tuning: { ...sampleForge.tuning },
+      item: sampleForge.item,
+    }
+    setParty(next)
+    const nextSearch = [...partySearch]
+    nextSearch[slotIdx] = searchDisplayLabel(sampleForge.key, siteLanguage)
+    setPartySearch(nextSearch)
+    setSelectedMy(slotIdx)
+    setMainSection('single')
+    setActiveTab('party')
+  }
+
   const resetAll = () => {
     setParty(defaultParty)
     setOpponents(defaultOpponents)
@@ -619,6 +681,9 @@ export default function App() {
     setMainSection('single')
     setSampleForge(defaultSampleForge())
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
+    setSavedSamples([])
+    setSampleLabelDraft('')
+    setPartyAdvancedOpen(Array.from({ length: defaultParty.length }, () => false))
     if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -634,6 +699,7 @@ export default function App() {
       confirmedMovesByKey,
       mainSection,
       sampleForge,
+      savedSamples,
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
@@ -664,6 +730,9 @@ export default function App() {
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
+      setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
+      setSampleLabelDraft('')
+      setPartyAdvancedOpen(Array.from({ length: nextParty.length }, () => false))
     } catch {
       if (typeof window !== 'undefined') window.alert('불러오기 실패: JSON 형식을 확인하세요.')
     } finally {
@@ -831,18 +900,23 @@ export default function App() {
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
+                const isAdvancedOpen = partyAdvancedOpen[idx] ?? false
                 return (
                   <div key={`${member.key}-${idx}`} className={`card entry-card ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>
                     <div className="entry-card-top">
                       {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
                       <div className="entry-card-head">
                         <div className="row-between">
-                          <strong>{displayName(row, siteLanguage)}</strong>
-                          <span>S {partySpeedValue(row, member)}</span>
-                        </div>
+                        <strong>{displayName(row, siteLanguage)}</strong>
+                        <span>S {partySpeedValue(row, member)}</span>
+                      </div>
                         <div className="summary-line">
                           <span className="muted">{displayTypes(row, siteLanguage).join(' / ')}</span>
                           <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                        </div>
+                        <div className="row-between compact-gap">
+                          <span className="muted-inline">{natureLabel(member.config.nature)}</span>
+                          <span className="muted-inline">{member.item || '도구 미입력'}</span>
                         </div>
                       </div>
                     </div>
@@ -864,11 +938,19 @@ export default function App() {
                       <button
                         type="button"
                         className="pick-chip"
+                        onClick={() => setPartyAdvancedOpen((prev) => prev.map((open, openIdx) => openIdx === idx ? !open : open))}
+                      >
+                        {isAdvancedOpen ? '고급 접기' : '고급 펼치기'}
+                      </button>
+                      <button
+                        type="button"
+                        className="pick-chip"
                         onClick={() => setTuningModalIndex(idx)}
                       >
                         튜닝 설정
                       </button>
                     </div>
+                    {isAdvancedOpen ? <>
                     <label className="species-picker">
                       종 선택
                       <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
@@ -984,6 +1066,7 @@ export default function App() {
                         </select>
                       </label>
                     </div>
+                    </> : null}
                   </div>
                 )
               })}
@@ -1013,6 +1096,7 @@ export default function App() {
                   {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                   <span>{displayName(row, siteLanguage)}</span>
                   <small>{member.picked ? '추정 체크됨' : '미체크'}</small>
+                  <small>{member.item || '도구 없음'}</small>
                 </button>
               )
             })}
@@ -1020,41 +1104,124 @@ export default function App() {
         </section>
 
         <section className="panel wide">
-          <div className="entry-grid opponent-entry-grid">
-            {opponents.map((member, idx) => {
-              const row = indexByKey.get(member.key) ?? rows[0]
-              const revealed = member.revealedMoves.filter(Boolean)
-              return (
-                <div key={`opponent-entry-focus-${idx}`} className={`card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
-                  <div className="entry-card-top">
-                    {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
-                    <div className="entry-card-head">
-                      <div className="row-between compact-gap">
-                        <strong>{displayName(row, siteLanguage)}</strong>
-                        <span className={`pick-chip ${member.picked ? 'active' : ''}`}>{member.picked ? '선출 추정' : '미체크'}</span>
-                      </div>
-                      <div className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={`${row.key}-${type}`} type={type} />)}</div>
-                    </div>
+          <div className="opponent-detail-layout">
+            <div className="opponent-board-grid">
+              {opponents.map((member, idx) => {
+                const row = indexByKey.get(member.key) ?? rows[0]
+                return (
+                  <button key={`opp-board-${idx}`} type="button" className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                    {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
+                    <strong>{displayName(row, siteLanguage)}</strong>
+                    <span>{member.ability || '특성 미기입'}</span>
+                    <span>{member.item || '도구 미기입'}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <div className="opponent-detail-panel">
+              <div className="entry-card-top">
+                {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
+                <div className="entry-card-head">
+                  <div className="row-between compact-gap">
+                    <strong>{displayName(oppRow, siteLanguage)}</strong>
+                    <span className={`pick-chip ${oppMember.picked ? 'active' : ''}`}>{oppMember.picked ? '선출 추정' : '미체크'}</span>
                   </div>
-
-                  <div className="opponent-entry-meta">
-                    <div><span className="muted-inline">도구</span><strong>{member.item || '-'}</strong></div>
-                    <div><span className="muted-inline">특성</span><strong>{member.ability || '-'}</strong></div>
-                    <div><span className="muted-inline">스피드</span><strong>{member.natureBoost ? '최속 가정' : '비최속 가정'}</strong></div>
-                  </div>
-
-                  <div className="pick-row" onClick={(e) => e.stopPropagation()}>
-                    <button type="button" className={`pick-chip ${member.picked ? 'active' : ''}`} onClick={() => setOpponents(togglePicked(opponents, idx))}>
-                      {member.picked ? '선출 추정 해제' : '선출 추정 체크'}
-                    </button>
-                    <button type="button" className="pick-chip" onClick={() => setSelectedOpp(idx)}>계산기 대상</button>
-                  </div>
-
-                  {revealed.length ? <p className="muted">공개 기술: {revealed.join(', ')}</p> : <p className="muted">공개 기술 아직 없음</p>}
-                  {member.notes ? <p className="muted">메모: {member.notes}</p> : <p className="muted">메모 없음</p>}
+                  <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div>
+                  <p className="muted">상세 패널에서 공개 정보를 바로 갱신합니다.</p>
                 </div>
-              )
-            })}
+              </div>
+              <div className="opponent-detail-fields">
+                <label className="species-picker">
+                  종 선택
+                  <div className="autocomplete">
+                    <input
+                      value={opponentSearch[selectedOpp] ?? ''}
+                      placeholder="포켓몬 검색"
+                      onFocus={() => setActiveSearchField({ side: 'opponent', idx: selectedOpp })}
+                      onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', selectedOpp) ? null : prev), 120)}
+                      onChange={(e) => {
+                        const next = [...opponentSearch]
+                        next[selectedOpp] = e.target.value
+                        setOpponentSearch(next)
+                        setActiveSearchField({ side: 'opponent', idx: selectedOpp })
+                      }}
+                    />
+                    {sameSearchTarget(activeSearchField, 'opponent', selectedOpp) ? (
+                      <div className="autocomplete-menu">
+                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '').slice(0, 8).map((option) => (
+                          <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('opponent', selectedOpp, option.key)}>
+                            {searchDisplayLabel(option.key, siteLanguage)}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </label>
+                <label>
+                  도구
+                  <input value={oppMember.item} placeholder="예: 구애스카프" onChange={(e) => {
+                    const next = [...opponents]
+                    next[selectedOpp] = { ...oppMember, item: e.target.value }
+                    setOpponents(next)
+                  }} />
+                </label>
+                <label>
+                  특성
+                  <input value={oppMember.ability} placeholder="예: 클리어바디" onChange={(e) => {
+                    const next = [...opponents]
+                    next[selectedOpp] = { ...oppMember, ability: e.target.value }
+                    setOpponents(next)
+                  }} />
+                </label>
+                <label>
+                  공개 기술
+                  <input value={oppMember.revealedMoves.join(', ')} placeholder="예: 유턴, 도깨비불" onChange={(e) => {
+                    const next = [...opponents]
+                    next[selectedOpp] = { ...oppMember, revealedMoves: e.target.value.split(',').map((entry) => entry.trim()).filter(Boolean) }
+                    setOpponents(next)
+                  }} />
+                </label>
+                <label>
+                  메모
+                  <textarea value={oppMember.notes} placeholder="예: 물리형 가능성 높음" onChange={(e) => {
+                    const next = [...opponents]
+                    next[selectedOpp] = { ...oppMember, notes: e.target.value }
+                    setOpponents(next)
+                  }} />
+                </label>
+                <div className="inline-controls">
+                  <label>
+                    최속 가정
+                    <input type="checkbox" checked={oppMember.natureBoost} onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, natureBoost: e.target.checked }
+                      setOpponents(next)
+                    }} />
+                  </label>
+                  <label>
+                    스카프
+                    <input type="checkbox" checked={oppMember.scarf} onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, scarf: e.target.checked }
+                      setOpponents(next)
+                    }} />
+                  </label>
+                  <label>
+                    랭크
+                    <select value={oppMember.speedStage} onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, speedStage: clampSpeedStage(e.target.value) }
+                      setOpponents(next)
+                    }}>
+                      {SPEED_STAGE_OPTIONS.map((n) => <option key={n} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
+                    </select>
+                  </label>
+                  <button type="button" className={`pick-chip ${oppMember.picked ? 'active' : ''}`} onClick={() => setOpponents(togglePicked(opponents, selectedOpp))}>
+                    {oppMember.picked ? '선출 추정 해제' : '선출 추정 체크'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1166,6 +1333,21 @@ export default function App() {
                 <strong>샘플 기술</strong>
                 <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>코어 1번 체크</button>
               </div>
+              <div className="sample-save-box">
+                <label>
+                  샘플 이름
+                  <input value={sampleLabelDraft} placeholder="예: 명랑 스카프 정리안" onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                </label>
+                <div className="inline-controls">
+                  <button type="button" className="action-button" onClick={saveCurrentSample}>현재 샘플 저장</button>
+                  <label>
+                    파티 슬롯에 적용
+                    <select value={selectedMy} onChange={(e) => applySampleToPartySlot(Number(e.target.value))}>
+                      {party.map((member, idx) => <option key={`apply-slot-${idx}`} value={idx}>{idx + 1}번 슬롯 · {displayName(indexByKey.get(member.key) ?? rows[0], siteLanguage)}</option>)}
+                    </select>
+                  </label>
+                </div>
+              </div>
               {sampleMoveSet ? (
                 <>
                   <div className="move-chip-wrap">
@@ -1185,6 +1367,30 @@ export default function App() {
                   {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
                 </>
               ) : <p className="muted">이 포켓몬에 등록된 샘플 기술이 아직 없습니다.</p>}
+              <div className="saved-sample-list">
+                <div className="row-between">
+                  <strong>저장한 샘플</strong>
+                  <span className="muted-inline">{savedSamples.length}개</span>
+                </div>
+                {savedSamples.length ? savedSamples.map((entry) => {
+                  const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
+                  return (
+                    <div key={entry.id} className="saved-sample-item">
+                      <div>
+                        <strong>{entry.label}</strong>
+                        <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature)}{entry.member.item ? ` · ${entry.member.item}` : ''}</p>
+                      </div>
+                      <div className="inline-controls">
+                        <button type="button" className="pick-chip" onClick={() => {
+                          setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
+                          setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
+                        }}>불러오기</button>
+                        <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>삭제</button>
+                      </div>
+                    </div>
+                  )
+                }) : <p className="muted">아직 저장한 샘플이 없습니다.</p>}
+              </div>
             </div>
           </div>
         </section>
