@@ -1178,7 +1178,7 @@ export default function App() {
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="row-between">
-              <h2>성격 / 매직넘버 / 최대치</h2>
+              <h2>노력치 보정</h2>
               <button type="button" className="action-button" onClick={() => setTuningModalIndex(null)}>닫기</button>
             </div>
             <div className="modal-grid">
@@ -1197,34 +1197,6 @@ export default function App() {
                 >
                   {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
                 </select>
-              </label>
-              <label>
-                매직넘버
-                <input
-                  type="number"
-                  min={0}
-                  max={255}
-                  value={tuningMember.tuning.magicNumber}
-                  onChange={(e) => {
-                    const next = [...party]
-                    next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }
-                    setParty(next)
-                  }}
-                />
-              </label>
-              <label>
-                최대치
-                <input
-                  type="number"
-                  min={0}
-                  max={255}
-                  value={tuningMember.tuning.maxValue}
-                  onChange={(e) => {
-                    const next = [...party]
-                    next[tuningModalIndex] = { ...next[tuningModalIndex], tuning: { ...next[tuningModalIndex].tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }
-                    setParty(next)
-                  }}
-                />
               </label>
             </div>
             <div className="drag-stat-list">
