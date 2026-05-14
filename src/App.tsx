@@ -536,6 +536,19 @@ function magicCheckpointList(row: Row, member: PartyMember) {
   })
 }
 
+function magicEffortPoints(row: Row, member: PartyMember, stat: EffortStatKey) {
+  const boostedStat = boostedStatForNature(member.config.nature)
+  if (boostedStat !== stat) return [] as number[]
+
+  const points: number[] = []
+  for (let effort = 1; effort <= CHAMPIONS_EFFORT_PER_STAT_CAP; effort += 1) {
+    const candidateMember = { ...member, evs: { ...member.evs, [stat]: effort } }
+    const actual = partyStatValue(row, candidateMember, stat)
+    if (actual % 11 === 0) points.push(effort)
+  }
+  return points
+}
+
 function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (typeChart[attackType]?.[defendType] ?? 1), 1)
 }
@@ -1086,6 +1099,7 @@ export default function App() {
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
                 const targetEffort = magicCandidate?.stat === stat.key ? magicCandidate.nextEffort : null
+                const magicPoints = magicEffortPoints(tuningRow, tuningMember, stat.key)
                 return (
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between">
@@ -1094,23 +1108,70 @@ export default function App() {
                     </div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${stat.label} effort points`}>
                       <div className="effort-gauge-track">
-                        <div className="effort-gauge-available" style={{ width: `${(availableCap / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
-                        <div className="effort-gauge-fill" style={{ width: `${(currentEffort / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
-                        {targetEffort ? <div className="effort-gauge-target" style={{ left: `${(targetEffort / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} /> : null}
-                        <div className="effort-gauge-ticks">
-                          {EFFORT_CHECKPOINTS.slice(0, -1).map((checkpoint) => (
-                            <span key={`effort-tick-${stat.key}-${checkpoint}`} className="effort-gauge-tick" style={{ left: `${(checkpoint / CHAMPIONS_EFFORT_PER_STAT_CAP) * 100}%` }} />
-                          ))}
+                        <div className="effort-gauge-cells" aria-hidden="true">
+                          {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
+                            const point = cellIdx + 1
+                            const reachable = point <= availableCap
+                            const filled = point <= currentEffort
+                            const magicPoint = magicPoints.includes(point)
+                            const currentPoint = point === currentEffort && currentEffort > 0
+                            const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32)
+                            const targetPoint = point === targetEffort
+                            return (
+                              <span
+                                key={`effort-cell-${stat.key}-${point}`}
+                                className={[
+                                  'effort-gauge-cell',
+                                  reachable ? 'reachable' : 'locked',
+                                  filled ? 'filled' : '',
+                                  magicPoint ? 'magic' : '',
+                                  currentPoint ? 'current' : '',
+                                  checkpointPoint ? 'checkpoint' : '',
+                                  targetPoint ? 'target' : '',
+                                ].filter(Boolean).join(' ')}
+                                title={`${stat.label} ${point}포인트`}
+                              />
+                            )
+                          })}
                         </div>
+                        <input
+                          type="range"
+                          className="effort-gauge-range"
+                          min={0}
+                          max={availableCap}
+                          step={1}
+                          value={currentEffort}
+                          onChange={(e) => {
+                            const next = [...party]
+                            next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
+                            setParty(next)
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                              e.preventDefault()
+                              const next = [...party]
+                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.max(0, currentEffort - 1)) }
+                              setParty(next)
+                            }
+                            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              const next = [...party]
+                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.min(availableCap, currentEffort + 1)) }
+                              setParty(next)
+                            }
+                          }}
+                        />
                         <div className="effort-gauge-hitboxes">
                           {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
                             const point = cellIdx + 1
                             const reachable = point <= availableCap
                             return (
                               <button
-                                key={`effort-cell-${stat.key}-${point}`}
+                                key={`effort-hitbox-${stat.key}-${point}`}
                                 type="button"
                                 className="effort-gauge-hitbox"
+                                tabIndex={-1}
+                                aria-hidden="true"
                                 disabled={!reachable}
                                 onClick={() => {
                                   const next = [...party]

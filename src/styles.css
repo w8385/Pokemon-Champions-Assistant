@@ -238,53 +238,70 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .effort-gauge-track {
   position: relative;
-  height: 16px;
+  height: 22px;
   border-radius: 999px;
   background: #0f172a;
   border: 1px solid #334155;
   overflow: hidden;
 }
-.effort-gauge-available {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: rgba(59, 130, 246, 0.14);
-}
-.effort-gauge-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: linear-gradient(90deg, #fbbf24, #f97316);
-  z-index: 2;
-}
-.effort-gauge-ticks {
+.effort-gauge-cells {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(32, minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
+  z-index: 1;
   pointer-events: none;
 }
-.effort-gauge-tick {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(148, 163, 184, 0.65);
-  transform: translateX(-50%);
+.effort-gauge-cell {
+  display: block;
+  min-width: 0;
+  border-radius: 2px;
+  background: #1e293b;
+  border-right: 1px solid rgba(148, 163, 184, 0.18);
 }
-.effort-gauge-target {
+.effort-gauge-cell.reachable {
+  background: #1f2937;
+}
+.effort-gauge-cell.filled {
+  background: #60a5fa;
+}
+.effort-gauge-cell.magic {
+  background: #ea580c;
+}
+.effort-gauge-cell.magic.filled {
+  background: #dc2626;
+}
+.effort-gauge-cell.locked {
+  opacity: 0.35;
+}
+.effort-gauge-cell.checkpoint {
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.35);
+}
+.effort-gauge-cell.current {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+.effort-gauge-cell.target {
+  box-shadow: inset 0 0 0 2px rgba(254, 240, 138, 0.95);
+}
+.effort-gauge-range {
   position: absolute;
-  top: -2px;
-  bottom: -2px;
-  width: 2px;
-  background: #facc15;
-  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.3);
-  transform: translateX(-50%);
-  z-index: 4;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  z-index: 3;
+  cursor: ew-resize;
 }
 .effort-gauge-hitboxes {
   position: absolute;
   inset: 0;
   display: grid;
   grid-template-columns: repeat(32, minmax(0, 1fr));
-  z-index: 5;
+  z-index: 2;
+  pointer-events: none;
 }
 .effort-gauge-hitbox {
   appearance: none;
@@ -296,6 +313,9 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .effort-gauge-hitbox:disabled {
   cursor: not-allowed;
+}
+.effort-gauge-track:focus-within {
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
 }
 .effort-gauge-scale {
   display: grid;
