@@ -1206,12 +1206,6 @@ export default function App() {
                 )
               })}
             </div>
-            <div className="modal-preview-box">
-              <div className="row-between"><strong>현재 튜닝 요약</strong><span>{displayName(tuningRow, siteLanguage)}</span></div>
-              <p className="muted">성격: {natureLabel(tuningMember.config.nature)}</p>
-              <p className="muted">매직넘버: {tuningMember.tuning.magicNumber || '미지정'} · 최대치: {tuningMember.tuning.maxValue || '미지정'}</p>
-              <p className="muted">포케챔스식 구간 단위로 투자량과 체크포인트 실수치를 함께 보면서 맞추는 흐름입니다.</p>
-            </div>
           </div>
         </div>
       ) : null}
