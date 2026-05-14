@@ -1336,13 +1336,17 @@ export default function App() {
   }
 
   const resetAll = () => {
-    setParty(defaultParty)
-    setPartyItemDrafts(defaultParty.map((member) => visibleChampionsItem(member.key, member.item)))
-    setOpponents(defaultOpponents)
-    setPartySearch(defaultParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
-    setOpponentSearch(defaultOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
+    setPartyItemDrafts(emptyParty.map(() => ''))
+    setOpponents(emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] })))
+    setPartySearch(emptyParty.map(() => ''))
+    setOpponentSearch(emptyOpponents.map(() => ''))
     setSelectedMy(0)
     setSelectedOpp(0)
+    setOpponentQuickSearch('')
+    setActivePartyMetaEditor(null)
+    setActiveSampleMetaEditor(null)
+    setTuningModalIndex(null)
     setMovePower(90)
     setCalcMode('special')
     setStab(1.5)
