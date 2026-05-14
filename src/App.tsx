@@ -667,14 +667,14 @@ export default function App() {
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
   const myRow = indexByKey.get(myMember.key) ?? rows[0]
-  const oppRow = indexByKey.get(oppMember.key) ?? rows[0]
+  const oppRow = oppMember.key ? (indexByKey.get(oppMember.key) ?? rows[0]) : null
 
   const mySpeed = partySpeedValue(myRow, myMember)
-  const oppSpeed = speedValue(oppRow, {
+  const oppSpeed = oppRow ? speedValue(oppRow, {
     nature: oppMember.natureBoost ? 'jolly' : 'hardy',
     scarf: oppMember.scarf || oppMember.item.includes('스카프'),
     speedStage: oppMember.speedStage,
-  })
+  }) : null
   const pickedParty = party.filter((member) => member.picked)
   const pickedOpponents = opponents.filter((member) => member.picked)
   const toggleConfirmedMove = (key: string, move: string) => {
@@ -724,7 +724,7 @@ export default function App() {
       return { key, row, moveSet, buckets, confirmed: confirmedMovesByKey[key] ?? [] }
     })
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-  const damage = calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness)
+  const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
 
   const saveCurrentSample = () => {
@@ -1042,8 +1042,9 @@ export default function App() {
                 <p className="muted">상대 파티</p>
                 <div className="team-strip">
                   {opponents.map((member, idx) => {
-                    const row = indexByKey.get(member.key) ?? rows[0]
-                    return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{displayName(row, siteLanguage)}</button>
+                    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                    const label = opponentSearch[idx] || (row ? displayName(row, siteLanguage) : `빈 슬롯 ${idx + 1}`)
+                    return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{label}</button>
                   })}
                 </div>
               </div>
@@ -1586,23 +1587,26 @@ export default function App() {
         </> : <>
         <section className="panel wide">
           <h2>대면 비교</h2>
-          <div className="matchup">
+          {!oppRow ? <p className="muted">상대 엔트리 탭에서 슬롯을 채우고 선택하면 계산기에 바로 동기화됩니다.</p> : <div className="matchup">
             <div>
               <h3>{displayName(myRow, siteLanguage)}</h3>
               <p>{displayTypes(myRow, siteLanguage).join(' / ')}</p>
               <p>실수치 스피드: <strong>{mySpeed}</strong></p>
+              <p className="muted">도구 {myMember.item || '미입력'} · 성격 {natureLabel(myMember.config.nature)}</p>
             </div>
             <div className="versus">VS</div>
             <div>
               <h3>{displayName(oppRow, siteLanguage)}</h3>
               <p>{displayTypes(oppRow, siteLanguage).join(' / ')}</p>
               <p>가정 스피드: <strong>{oppSpeed}</strong></p>
+              <p className="muted">도구 {oppMember.item || '미입력'} · 특성 {oppMember.ability || '미입력'}</p>
               <p className="muted">최속 {oppMember.natureBoost ? 'on' : 'off'} · 스카프 {oppMember.scarf || oppMember.item.includes('스카프') ? 'on' : 'off'} · 랭크 {oppMember.speedStage >= 0 ? `+${oppMember.speedStage}` : oppMember.speedStage}</p>
+              {oppMember.revealedMoves.length ? <p className="muted">공개 기술: {oppMember.revealedMoves.join(', ')}</p> : null}
             </div>
-          </div>
-          <div className="result-banner">
-            {mySpeed > oppSpeed ? '내가 선공' : mySpeed < oppSpeed ? '상대가 선공' : '동속'}
-          </div>
+          </div>}
+          {oppRow ? <div className="result-banner">
+            {mySpeed > (oppSpeed ?? 0) ? '내가 선공' : mySpeed < (oppSpeed ?? 0) ? '상대가 선공' : '동속'}
+          </div> : null}
         </section>
 
         <section className="panel wide">
@@ -1641,6 +1645,7 @@ export default function App() {
 
         <section className="panel wide">
           <h2>간단 데미지 계산</h2>
+          <p className="muted">상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.</p>
           <div className="preset-row">
             {movePowerPresets.map((preset) => (
               <button
@@ -1684,12 +1689,12 @@ export default function App() {
               </select>
             </label>
           </div>
-          <div className="damage-box">
+          {oppRow && damage ? <div className="damage-box">
             <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>
             <p>{damage.min} ~ {damage.max} 데미지</p>
             <p>{damage.minPct}% ~ {damage.maxPct}%</p>
             <p>{Number(damage.maxPct) >= 100 ? '확정 1타 가능성 있음' : Number(damage.minPct) >= 50 ? '유리한 2타권' : '즉시 마무리 어려움'}</p>
-          </div>
+          </div> : <div className="damage-box"><p>상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.</p></div>}
         </section>
         </>}
       </main>
