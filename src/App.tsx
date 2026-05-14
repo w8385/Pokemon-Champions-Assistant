@@ -12,6 +12,7 @@ type Row = {
   key: string
   name_ko: string
   name_en: string
+  name_ja?: string
   hp: number
   attack: number
   defense: number
@@ -252,7 +253,72 @@ const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-venusaur': 'venusaurite',
 }
 
-const rows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
+const TYPE_KO_BY_KEY: Record<string, string> = {
+  normal: '노말', fire: '불꽃', water: '물', electric: '전기', grass: '풀', ice: '얼음',
+  fighting: '격투', poison: '독', ground: '땅', flying: '비행', psychic: '에스퍼', bug: '벌레',
+  rock: '바위', ghost: '고스트', dragon: '드래곤', dark: '악', steel: '강철', fairy: '페어리',
+}
+
+function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
+  let value = actualStat(base, CHAMPIONS_EFFORT_PER_STAT_CAP, boosted ? 1.1 : 1)
+  if (scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function makeFormRow(base: Row, form: {
+  id: number
+  key: string
+  name_ko: string
+  name_en: string
+  name_ja: string
+  types: string[]
+  hp: number
+  attack: number
+  defense: number
+  spAttack: number
+  spDefense: number
+  speed: number
+  spriteId: number
+}) {
+  return {
+    ...base,
+    id: form.id,
+    key: form.key,
+    name_ko: form.name_ko,
+    name_en: form.name_en,
+    name_ja: form.name_ja,
+    types: form.types,
+    types_ko: form.types.map((type) => TYPE_KO_BY_KEY[type] ?? type),
+    hp: form.hp,
+    attack: form.attack,
+    defense: form.defense,
+    spAttack: form.spAttack,
+    spDefense: form.spDefense,
+    speed: form.speed,
+    fast: speedTemplate(form.speed, true, false),
+    neutral: speedTemplate(form.speed, false, false),
+    uninvested: actualStat(form.speed, 0, 1),
+    scarf_fast: speedTemplate(form.speed, true, true),
+    scarf_neutral: speedTemplate(form.speed, false, true),
+    sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${form.spriteId}.png`,
+  } satisfies Row
+}
+
+const baseRows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
+const baseIndexByKey = new Map(baseRows.map((row) => [row.key, row]))
+const extraFormRows: Row[] = [
+  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10008, key: 'rotom-heat', name_ko: '히트로토무', name_en: 'Rotom Heat', name_ja: 'ヒートロトム', types: ['electric', 'fire'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10008 }),
+  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10009, key: 'rotom-wash', name_ko: '워시로토무', name_en: 'Rotom Wash', name_ja: 'ウォッシュロトム', types: ['electric', 'water'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10009 }),
+  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10010, key: 'rotom-frost', name_ko: '프로스트로토무', name_en: 'Rotom Frost', name_ja: 'フロストロトム', types: ['electric', 'ice'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10010 }),
+  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10011, key: 'rotom-fan', name_ko: '스핀로토무', name_en: 'Rotom Fan', name_ja: 'スピンロトム', types: ['electric', 'flying'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10011 }),
+  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10012, key: 'rotom-mow', name_ko: '커트로토무', name_en: 'Rotom Mow', name_ja: 'カットロトム', types: ['electric', 'grass'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10012 }),
+  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10030, key: 'gourgeist-small', name_ko: '소형 호바귀', name_en: 'Gourgeist Small', name_ja: 'パンプジン(スモール)', types: ['ghost', 'grass'], hp: 55, attack: 85, defense: 122, spAttack: 58, spDefense: 75, speed: 99, spriteId: 10030 }),
+  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 711, key: 'gourgeist-average', name_ko: '보통 호바귀', name_en: 'Gourgeist Average', name_ja: 'パンプジン', types: ['ghost', 'grass'], hp: 65, attack: 90, defense: 122, spAttack: 58, spDefense: 75, speed: 84, spriteId: 711 }),
+  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10031, key: 'gourgeist-large', name_ko: '대형 호바귀', name_en: 'Gourgeist Large', name_ja: 'パンプジン(ラージ)', types: ['ghost', 'grass'], hp: 75, attack: 95, defense: 122, spAttack: 58, spDefense: 75, speed: 69, spriteId: 10031 }),
+  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10032, key: 'gourgeist-super', name_ko: '특대형 호바귀', name_en: 'Gourgeist Super', name_ja: 'パンプジン(スーパー)', types: ['ghost', 'grass'], hp: 85, attack: 100, defense: 122, spAttack: 58, spDefense: 75, speed: 54, spriteId: 10032 }),
+]
+
+const rows = [...baseRows, ...extraFormRows]
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
 const speciesOptions = rows.map((row) => ({
   key: row.key,
@@ -925,11 +991,13 @@ function normalizeSearchText(value: string) {
 }
 
 function speciesSearchCandidates(row: Row) {
-  const base = [row.name_ko, row.name_en, row.key]
+  const base = [row.name_ko, row.name_en, row.name_ja, row.key].filter(Boolean) as string[]
   const extra: string[] = []
   if (row.name_ko.startsWith('메가')) extra.push(row.name_ko.replace(/^메가/, ''))
   if (row.name_en.toLowerCase().startsWith('mega ')) extra.push(row.name_en.replace(/^Mega\s+/i, ''))
   if (row.key.startsWith('mega-')) extra.push(row.key.slice(5))
+  if (row.key.startsWith('rotom-')) extra.push(`로토무${row.name_ko.replace(/로토무$/, '')}`)
+  if (row.key.startsWith('gourgeist-')) extra.push(row.name_ko.replace(/^보통\s*/, ''), row.name_en.replace(/^Gourgeist\s*/, 'Gourgeist '))
   return Array.from(new Set([...base, ...extra].flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
@@ -1059,7 +1127,7 @@ function resolveSpeciesKey(raw: string) {
 
 function displayName(row: Row, language: SiteLanguage) {
   if (language === 'en') return row.name_en
-  if (language === 'ja') return getJaName(row.key, row.name_ko, row.name_en)
+  if (language === 'ja') return row.name_ja || getJaName(row.key, row.name_ko, row.name_en)
   return row.name_ko
 }
 
