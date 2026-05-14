@@ -612,8 +612,7 @@ function findMagicNumberCandidate(row: Row, member: PartyMember) {
 
   const currentActual = partyStatValue(row, member, boostedStat)
   const currentEffort = member.evs[boostedStat]
-  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
-  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
+  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(member.evs, boostedStat))
   const currentHit = currentActual % 11 === 0
 
   let nextEffort = currentEffort
@@ -1231,8 +1230,7 @@ export default function App() {
             <div className="drag-stat-list">
               {EFFORT_STAT_OPTIONS.map((stat) => {
                 const currentEffort = tuningMember.evs[stat.key]
-                const maxSpendable = remainingEffortPoints(tuningMember.evs, stat.key)
-                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
+                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(tuningMember.evs, stat.key))
                 const additionalAvailable = Math.max(0, availableCap - currentEffort)
                 const actualValue = partyStatValue(tuningRow, tuningMember, stat.key)
                 const isMagicStat = magicCandidate?.stat === stat.key && actualValue % 11 === 0
