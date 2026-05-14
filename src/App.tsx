@@ -774,6 +774,34 @@ function filterSpeciesOptions(query: string) {
   return speciesOptions.filter((option) => option.label.toLowerCase().includes(normalized) || option.key.toLowerCase().includes(normalized))
 }
 
+function matchesLooseQuery(source: string, query: string) {
+  if (!query) return true
+  if (source.includes(query)) return true
+  let cursor = 0
+  for (const char of source) {
+    if (char === query[cursor]) cursor += 1
+    if (cursor >= query.length) return true
+  }
+  return false
+}
+
+function filterMoveOptions(query: string, options: MoveOption[]) {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return options
+  const scored = options
+    .map((option) => {
+      const name = option.name.toLowerCase()
+      if (name === normalized) return { option, score: 0 }
+      if (name.startsWith(normalized)) return { option, score: 1 }
+      if (name.includes(normalized)) return { option, score: 2 }
+      if (matchesLooseQuery(name, normalized)) return { option, score: 3 }
+      return null
+    })
+    .filter((entry): entry is { option: MoveOption; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.option.name.localeCompare(b.option.name, 'ko'))
+  return scored.map((entry) => entry.option)
+}
+
 function resolveSpeciesKey(raw: string) {
   const normalized = raw.trim().toLowerCase()
   if (!normalized) return null
@@ -978,6 +1006,12 @@ export default function App() {
       const cleaned = current.map((entry) => entry.trim()).filter(Boolean).slice(0, 4)
       return { ...prev, [key]: cleaned }
     })
+  }
+  const commitTopMoveOption = (key: string, slotIdx: number, rawQuery: string, options: MoveOption[]) => {
+    const top = filterMoveOptions(rawQuery, options)[0]
+    if (!top) return false
+    setConfirmedMoveSlot(key, slotIdx, top.name)
+    return true
   }
   const applyMoveToSlot = (key: string, move: string) => {
     setConfirmedMovesByKey((prev) => {
@@ -1669,6 +1703,11 @@ export default function App() {
                               list={memberMoveOptions.length ? `move-options-${member.key}` : undefined}
                               placeholder={memberMoveOptions.length ? '사용 가능 기술 검색' : '기술 입력'}
                               onChange={(e) => setConfirmedMoveSlot(member.key, moveIdx, e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key !== 'Enter') return
+                                const committed = commitTopMoveOption(member.key, moveIdx, move, memberMoveOptions)
+                                if (committed) e.preventDefault()
+                              }}
                             />
                           </label>
                         ))}
