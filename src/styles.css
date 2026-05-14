@@ -772,7 +772,7 @@ textarea { min-height: 72px; resize: vertical; }
 .stat-preview-row {
   appearance: none;
   display: grid;
-  grid-template-columns: minmax(90px, 120px) 1fr auto auto;
+  grid-template-columns: 96px 1fr 56px 44px;
   gap: 10px;
   align-items: center;
   padding: 8px 10px;
@@ -788,6 +788,13 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .stat-preview-row strong {
   color: #eef2f7;
+}
+.stat-preview-row strong,
+.stat-preview-row span:last-child {
+  text-align: right;
+}
+.stat-preview-row span:last-child {
+  min-width: 44px;
 }
 .stat-preview-button {
   cursor: pointer;
