@@ -110,6 +110,19 @@ const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 const STAT_GAUGE_MAX = 255
 const ITEM_OPTIONS = ['기합의띠', '구애스카프', '구애안경', '구애머리띠', '생명의구슬', '먹다남은음식', '돌격조끼', '약점보험', '자뭉열매', '오카열매', '유루열매', '리샘열매', '반짝가루', '고스트메모리', '금속코트', '검은진흙', '부스트에너지', '클리어참', '풍선', '빛의점토'] as const
+const ITEM_ALIASES: Partial<Record<typeof ITEM_OPTIONS[number], string[]>> = {
+  '기합의띠': ['기띠', '띠'],
+  '구애스카프': ['스카프'],
+  '구애안경': ['안경'],
+  '구애머리띠': ['머리띠'],
+  '생명의구슬': ['생구'],
+  '먹다남은음식': ['먹밥', '남은음식'],
+  '돌격조끼': ['조끼'],
+  '약점보험': ['약보'],
+  '부스트에너지': ['부에'],
+  '클리어참': ['클참'],
+  '빛의점토': ['빛점토'],
+}
 const ITEM_SPRITE_MAP: Record<string, string> = {
   '기합의띠': 'focus-sash',
   '구애스카프': 'choice-scarf',
@@ -825,6 +838,34 @@ function matchesLooseQuery(source: string, query: string) {
   return false
 }
 
+function filterItemOptions(query: string) {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return [...ITEM_OPTIONS]
+  return [...ITEM_OPTIONS]
+    .map((item) => {
+      const aliases = ITEM_ALIASES[item] ?? []
+      const candidates = [item, ...aliases].map((entry) => entry.toLowerCase())
+      const score = candidates.reduce((best, candidate) => {
+        if (candidate === normalized) return Math.min(best, 0)
+        if (candidate.startsWith(normalized)) return Math.min(best, 1)
+        if (candidate.includes(normalized)) return Math.min(best, 2)
+        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        return best
+      }, Number.POSITIVE_INFINITY)
+      return Number.isFinite(score) ? { item, score } : null
+    })
+    .filter((entry): entry is { item: typeof ITEM_OPTIONS[number]; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.item.localeCompare(b.item, 'ko'))
+    .map((entry) => entry.item)
+}
+
+function resolveItemInput(key: string, raw: string) {
+  const fixed = megaStoneForKey(key)
+  if (fixed) return fixed
+  const top = filterItemOptions(raw)[0]
+  return top && isAllowedChampionsItem(key, top) ? top : ''
+}
+
 function filterMoveOptions(query: string, options: MoveOption[]) {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return options
@@ -951,6 +992,8 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
+  const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => visibleChampionsItem(member.key, member.item)))
+  const [sampleItemDraft, setSampleItemDraft] = React.useState(() => visibleChampionsItem((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, (persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).item))
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -965,7 +1008,12 @@ export default function App() {
     if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
+    setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? visibleChampionsItem(member.key, member.item)))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
+
+  React.useEffect(() => {
+    setSampleItemDraft((prev) => prev || visibleChampionsItem(sampleForge.key, sampleForge.item))
+  }, [sampleForge.key, sampleForge.item])
 
   React.useEffect(() => {
     const targetKeys = Array.from(new Set([...party.map((member) => member.key), sampleForge.key].filter(Boolean)))
@@ -1073,6 +1121,11 @@ export default function App() {
       const next = [...party]
       next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item) }
       setParty(next)
+      setPartyItemDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[idx] = visibleChampionsItem(key, next[idx].item)
+        return nextDrafts
+      })
       const nextSearch = [...partySearch]
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setPartySearch(nextSearch)
@@ -1087,6 +1140,7 @@ export default function App() {
       setOpponentSearch(nextSearch)
     } else {
       setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item) }))
+      setSampleItemDraft(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
     }
     setActiveSearchField(null)
@@ -1141,6 +1195,11 @@ export default function App() {
       item: sampleForge.item,
     }
     setParty(next)
+    setPartyItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[slotIdx] = visibleChampionsItem(sampleForge.key, sampleForge.item)
+      return nextDrafts
+    })
     const nextSearch = [...partySearch]
     nextSearch[slotIdx] = searchDisplayLabel(sampleForge.key, siteLanguage)
     setPartySearch(nextSearch)
@@ -1194,6 +1253,7 @@ export default function App() {
 
   const resetAll = () => {
     setParty(defaultParty)
+    setPartyItemDrafts(defaultParty.map((member) => visibleChampionsItem(member.key, member.item)))
     setOpponents(defaultOpponents)
     setPartySearch(defaultParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch(defaultOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
@@ -1207,6 +1267,7 @@ export default function App() {
     setConfirmedMovesByKey({})
     setMainSection('single')
     setSampleForge(defaultSampleForge())
+    setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
     setSampleLabelDraft('')
@@ -1244,6 +1305,7 @@ export default function App() {
       const parsed = JSON.parse(text) as ImportExportPayload
       const nextParty = sanitizeParty(parsed.party)
       setParty(nextParty)
+      setPartyItemDrafts(nextParty.map((member) => visibleChampionsItem(member.key, member.item)))
       const nextOpponents = sanitizeOpponents(parsed.opponents)
       setOpponents(nextOpponents)
       setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
@@ -1255,6 +1317,7 @@ export default function App() {
       setMainSection(parsed.mainSection === 'sample' ? 'sample' : 'single')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
+      setSampleItemDraft(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item))
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
@@ -1704,11 +1767,32 @@ export default function App() {
                       <label>
                         도구
                         <>
-                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || member.item} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                        <input list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                          const nextDrafts = [...partyItemDrafts]
+                          nextDrafts[idx] = e.target.value
+                          setPartyItemDrafts(nextDrafts)
+                        }} onBlur={() => {
+                          const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
                           const next = [...party]
-                          const nextItem = e.target.value
-                          next[idx] = { ...member, item: isAllowedChampionsItem(member.key, nextItem) ? normalizeItemForKey(member.key, nextItem) : '' }
+                          next[idx] = { ...member, item: resolved }
                           setParty(next)
+                          setPartyItemDrafts((prev) => {
+                            const nextDrafts = [...prev]
+                            nextDrafts[idx] = resolved
+                            return nextDrafts
+                          })
+                        }} onKeyDown={(e) => {
+                          if (e.key !== 'Enter') return
+                          e.preventDefault()
+                          const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '')
+                          const next = [...party]
+                          next[idx] = { ...member, item: resolved }
+                          setParty(next)
+                          setPartyItemDrafts((prev) => {
+                            const nextDrafts = [...prev]
+                            nextDrafts[idx] = resolved
+                            return nextDrafts
+                          })
                         }} />
                         {!fixedMegaStone ? <datalist id={`item-options-party-${idx}`}>
                           {ITEM_OPTIONS.map((item) => <option key={`party-item-${idx}-${item}`} value={item} />)}
@@ -2065,7 +2149,17 @@ export default function App() {
                 <label>
                   도구
                   <>
-                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleForge.item} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleForge((prev) => ({ ...prev, item: isAllowedChampionsItem(prev.key, e.target.value) ? normalizeItemForKey(prev.key, e.target.value) : '' }))} />
+                  <input list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
+                    const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                    setSampleForge((prev) => ({ ...prev, item: resolved }))
+                    setSampleItemDraft(resolved)
+                  }} onKeyDown={(e) => {
+                    if (e.key !== 'Enter') return
+                    e.preventDefault()
+                    const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
+                    setSampleForge((prev) => ({ ...prev, item: resolved }))
+                    setSampleItemDraft(resolved)
+                  }} />
                   {!sampleFixedMegaStone ? <datalist id="item-options-sample">
                     {ITEM_OPTIONS.map((item) => <option key={`sample-item-${item}`} value={item} />)}
                   </datalist> : null}
