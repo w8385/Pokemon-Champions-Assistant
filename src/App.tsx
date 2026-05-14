@@ -1209,6 +1209,11 @@ function itemAutocompleteSecondaryLabel(item: string, language: SiteLanguage) {
   return item
 }
 
+function itemAutocompletePrimaryLabel(item: string, language: SiteLanguage) {
+  const localized = displayItemLabel(item, language)
+  return localized && localized.trim() ? localized : item
+}
+
 function movePoolSourceNotice(language: SiteLanguage) {
   const base = `${dataSourcePolicy.movePools.primary} + 포챔스 수동 검증/보정`
   if (language === 'ko') return `가용기술 출처: ${base}`
@@ -2127,9 +2132,9 @@ export default function App() {
                             {filterItemOptions(partyItemDrafts[idx] || '', siteLanguage).slice(0, 8).map((item) => (
                               <button key={`party-item-suggest-${idx}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectPartyItemOption(idx, member, item)}>
                                 <span className="move-autocomplete-main">
-                                  <img src={itemSpriteSrc(member.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                                  <img src={itemSpriteSrc(member.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                                   <span className="item-autocomplete-copy">
-                                    <span>{displayItemLabel(item, siteLanguage)}</span>
+                                    <strong className="item-autocomplete-title">{itemAutocompletePrimaryLabel(item, siteLanguage)}</strong>
                                     {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
                                   </span>
                                 </span>
@@ -2428,9 +2433,9 @@ export default function App() {
                     {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
                       <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
                         <span className="move-autocomplete-main">
-                          <img src={itemSpriteSrc(oppMember.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                          <img src={itemSpriteSrc(oppMember.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                           <span className="item-autocomplete-copy">
-                            <span>{displayItemLabel(item, siteLanguage)}</span>
+                            <strong className="item-autocomplete-title">{itemAutocompletePrimaryLabel(item, siteLanguage)}</strong>
                             {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
                           </span>
                         </span>
@@ -2644,9 +2649,9 @@ export default function App() {
                       {filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8).map((item) => (
                         <button key={`sample-item-suggest-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectSampleItemOption(item)}>
                           <span className="move-autocomplete-main">
-                            <img src={itemSpriteSrc(sampleForge.key, item)} alt={displayItemLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                            <img src={itemSpriteSrc(sampleForge.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                             <span className="item-autocomplete-copy">
-                              <span>{displayItemLabel(item, siteLanguage)}</span>
+                              <strong className="item-autocomplete-title">{itemAutocompletePrimaryLabel(item, siteLanguage)}</strong>
                               {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
                             </span>
                           </span>

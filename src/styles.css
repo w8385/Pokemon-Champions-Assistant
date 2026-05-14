@@ -536,6 +536,17 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   gap: 1px;
   min-width: 0;
 }
+.item-autocomplete-title {
+  display: block;
+  width: 100%;
+  color: #eef2f7;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .item-autocomplete-sub {
   font-size: 11px;
   color: #8da2b8;
