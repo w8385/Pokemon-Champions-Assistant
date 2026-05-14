@@ -912,6 +912,55 @@ function resolveItemInput(key: string, raw: string) {
   return top && isAllowedChampionsItem(key, top) ? top : ''
 }
 
+function filterAbilityOptions(options: string[], query: string) {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return options
+  return options
+    .map((ability) => {
+      const lower = ability.toLowerCase()
+      if (lower === normalized) return { ability, score: 0 }
+      if (lower.startsWith(normalized)) return { ability, score: 1 }
+      if (lower.includes(normalized)) return { ability, score: 2 }
+      if (matchesLooseQuery(lower, normalized)) return { ability, score: 3 }
+      return null
+    })
+    .filter((entry): entry is { ability: string; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.ability.localeCompare(b.ability, 'ko'))
+    .map((entry) => entry.ability)
+}
+
+function resolveAbilityInput(options: string[], raw: string) {
+  return filterAbilityOptions(options, raw)[0] ?? options[0] ?? ''
+}
+
+function filterNatureOptions(query: string) {
+  const normalized = query.trim().toLowerCase()
+  const options = NATURES.map((nature) => ({
+    id: nature.id,
+    shortLabel: natureChipLabel(nature.id),
+    fullLabel: natureLabel(nature.id),
+  }))
+  if (!normalized) return options
+  return options
+    .map((option) => {
+      const candidates = [option.id, option.shortLabel, option.fullLabel].map((entry) => entry.toLowerCase())
+      const score = candidates.reduce<number>((best, candidate) => {
+        if (candidate === normalized) return Math.min(best, 0)
+        if (candidate.startsWith(normalized)) return Math.min(best, 1)
+        if (candidate.includes(normalized)) return Math.min(best, 2)
+        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        return best
+      }, Number.POSITIVE_INFINITY)
+      return Number.isFinite(score) ? { ...option, score } : null
+    })
+    .filter((entry): entry is { id: NatureId; shortLabel: string; fullLabel: string; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.shortLabel.localeCompare(b.shortLabel, 'ko'))
+}
+
+function resolveNatureInput(raw: string) {
+  return filterNatureOptions(raw)[0]?.id ?? 'hardy'
+}
+
 function filterMoveOptions(query: string, options: MoveOption[]) {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return options
@@ -1034,11 +1083,11 @@ export default function App() {
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const [activePartyMetaEditor, setActivePartyMetaEditor] = React.useState<{ idx: number; field: 'ability' | 'nature' | 'item' } | null>(null)
   const [activeSampleMetaEditor, setActiveSampleMetaEditor] = React.useState<'ability' | 'nature' | 'item' | null>(null)
-  const partyAbilityEditorRefs = React.useRef<(HTMLSelectElement | null)[]>([])
-  const partyNatureEditorRefs = React.useRef<(HTMLSelectElement | null)[]>([])
+  const partyAbilityEditorRefs = React.useRef<(HTMLInputElement | null)[]>([])
+  const partyNatureEditorRefs = React.useRef<(HTMLInputElement | null)[]>([])
   const partyItemEditorRefs = React.useRef<(HTMLInputElement | null)[]>([])
-  const sampleAbilityEditorRef = React.useRef<HTMLSelectElement | null>(null)
-  const sampleNatureEditorRef = React.useRef<HTMLSelectElement | null>(null)
+  const sampleAbilityEditorRef = React.useRef<HTMLInputElement | null>(null)
+  const sampleNatureEditorRef = React.useRef<HTMLInputElement | null>(null)
   const sampleItemEditorRef = React.useRef<HTMLInputElement | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
@@ -1420,16 +1469,30 @@ export default function App() {
     <div className="app-shell">
       <header>
         <div className="header-top-row">
-          <button type="button" className="icon-button" aria-label="메뉴" title="Menu" onClick={() => setNavMenuOpen((prev) => !prev)}>
-            <HamburgerIcon />
-          </button>
-          <div>
-            <h1>Pokemon Champions Battle Assistant Demo</h1>
-            <p>파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.</p>
+          <div className="header-title-row">
+            <div className="nav-menu-wrap">
+              <button type="button" className="icon-button" aria-label="메뉴" title="Menu" onClick={() => setNavMenuOpen((prev) => !prev)}>
+                <HamburgerIcon />
+              </button>
+              {navMenuOpen ? (
+                <div className="nav-drawer">
+                  <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
+                    싱글배틀 메뉴
+                    <span>{menuLabelForTab(activeTab)}</span>
+                  </button>
+                  <button type="button" className={`nav-item ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setNavMenuOpen(false) }}>
+                    포켓몬 샘플 깎기
+                    <span>포켓몬 하나 집중 조정</span>
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            <div>
+              <h1>Pokemon Champions Battle Assistant Demo</h1>
+              <p>파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.</p>
+            </div>
           </div>
-        </div>
-        <div className="top-actions">
-          <div className="language-menu-wrap">
+          <div className="language-menu-wrap header-language-wrap">
             <button type="button" className="icon-button" aria-label="언어 선택" title="Language" onClick={() => setLanguageMenuOpen((prev) => !prev)}>
               <LanguageIcon />
             </button>
@@ -1441,23 +1504,13 @@ export default function App() {
               </div>
             ) : null}
           </div>
+        </div>
+        <div className="top-actions">
           <button type="button" className="action-button" onClick={exportState}>상태 내보내기</button>
           <button type="button" className="action-button" onClick={() => fileInputRef.current?.click()}>상태 불러오기</button>
           <button type="button" className="action-button danger" onClick={resetAll}>전체 초기화</button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
         </div>
-        {navMenuOpen ? (
-          <div className="nav-drawer">
-            <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
-              싱글배틀 메뉴
-              <span>{menuLabelForTab(activeTab)}</span>
-            </button>
-            <button type="button" className={`nav-item ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setNavMenuOpen(false) }}>
-              포켓몬 샘플 깎기
-              <span>포켓몬 하나 집중 조정</span>
-            </button>
-          </div>
-        ) : null}
       </header>
 
       {tuningModalIndex !== null && tuningMember && tuningRow ? (
@@ -1748,14 +1801,24 @@ export default function App() {
                           <strong>{activeAbility || '미선택'}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover">
-                          <select ref={(el) => { partyAbilityEditorRefs.current[idx] = el }} autoFocus value={activeAbility} onChange={(e) => {
+                          <input ref={(el) => { partyAbilityEditorRefs.current[idx] = el }} autoFocus list={`ability-options-party-${idx}`} defaultValue={activeAbility} placeholder="특성 검색" onBlur={(e) => {
+                            const resolved = resolveAbilityInput(abilityOptions, e.target.value)
                             const next = [...party]
-                            next[idx] = { ...member, ability: e.target.value }
+                            next[idx] = { ...member, ability: resolved }
+                            setParty(next)
+                            setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : prev), 120)
+                          }} onKeyDown={(e) => {
+                            if (e.key !== 'Enter') return
+                            e.preventDefault()
+                            const resolved = resolveAbilityInput(abilityOptions, e.currentTarget.value)
+                            const next = [...party]
+                            next[idx] = { ...member, ability: resolved }
                             setParty(next)
                             setActivePartyMetaEditor(null)
-                          }} onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : prev), 120)}>
-                            {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
-                          </select>
+                          }} />
+                          <datalist id={`ability-options-party-${idx}`}>
+                            {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability} />)}
+                          </datalist>
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor wide">
@@ -1764,14 +1827,24 @@ export default function App() {
                           <strong>{natureChipLabel(member.config.nature)}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover">
-                          <select ref={(el) => { partyNatureEditorRefs.current[idx] = el }} autoFocus value={member.config.nature} onChange={(e) => {
+                          <input ref={(el) => { partyNatureEditorRefs.current[idx] = el }} autoFocus list={`nature-options-party-${idx}`} defaultValue={natureLabel(member.config.nature)} placeholder="성격 검색" onBlur={(e) => {
+                            const resolved = resolveNatureInput(e.target.value)
                             const next = [...party]
-                            next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
+                            next[idx] = { ...member, config: { ...member.config, nature: resolved } }
+                            setParty(next)
+                            setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : prev), 120)
+                          }} onKeyDown={(e) => {
+                            if (e.key !== 'Enter') return
+                            e.preventDefault()
+                            const resolved = resolveNatureInput(e.currentTarget.value)
+                            const next = [...party]
+                            next[idx] = { ...member, config: { ...member.config, nature: resolved } }
                             setParty(next)
                             setActivePartyMetaEditor(null)
-                          }} onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : prev), 120)}>
-                            {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
-                          </select>
+                          }} />
+                          <datalist id={`nature-options-party-${idx}`}>
+                            {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id)} />)}
+                          </datalist>
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
@@ -2183,12 +2256,20 @@ export default function App() {
                     <strong>{sampleAbility || '미선택'}</strong>
                   </button>
                   {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover">
-                    <select ref={sampleAbilityEditorRef} autoFocus value={sampleAbility} onChange={(e) => {
-                      setSampleForge((prev) => ({ ...prev, ability: e.target.value }))
+                    <input ref={sampleAbilityEditorRef} autoFocus list="ability-options-sample" defaultValue={sampleAbility} placeholder="특성 검색" onBlur={(e) => {
+                      const resolved = resolveAbilityInput(sampleAbilityOptions, e.target.value)
+                      setSampleForge((prev) => ({ ...prev, ability: resolved }))
+                      setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)
+                    }} onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return
+                      e.preventDefault()
+                      const resolved = resolveAbilityInput(sampleAbilityOptions, e.currentTarget.value)
+                      setSampleForge((prev) => ({ ...prev, ability: resolved }))
                       setActiveSampleMetaEditor(null)
-                    }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)}>
-                      {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
-                    </select>
+                    }} />
+                    <datalist id="ability-options-sample">
+                      {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability} />)}
+                    </datalist>
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor wide">
@@ -2197,12 +2278,20 @@ export default function App() {
                     <strong>{natureChipLabel(sampleForge.config.nature)}</strong>
                   </button>
                   {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover">
-                    <select ref={sampleNatureEditorRef} autoFocus value={sampleForge.config.nature} onChange={(e) => {
-                      setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))
+                    <input ref={sampleNatureEditorRef} autoFocus list="nature-options-sample" defaultValue={natureLabel(sampleForge.config.nature)} placeholder="성격 검색" onBlur={(e) => {
+                      const resolved = resolveNatureInput(e.target.value)
+                      setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: resolved } }))
+                      setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)
+                    }} onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return
+                      e.preventDefault()
+                      const resolved = resolveNatureInput(e.currentTarget.value)
+                      setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: resolved } }))
                       setActiveSampleMetaEditor(null)
-                    }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)}>
-                      {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id)}</option>)}
-                    </select>
+                    }} />
+                    <datalist id="nature-options-sample">
+                      {NATURES.map((nature) => <option key={nature.id} value={natureLabel(nature.id)} />)}
+                    </datalist>
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
