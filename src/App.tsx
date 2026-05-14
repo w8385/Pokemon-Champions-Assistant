@@ -423,6 +423,33 @@ function partySpeedValue(row: Row, member: PartyMember) {
   return value
 }
 
+function applySpeedStage(value: number, speedStage: number) {
+  if (speedStage > 0) return Math.floor(value * ((2 + speedStage) / 2))
+  if (speedStage < 0) return Math.floor(value * (2 / (2 + Math.abs(speedStage))))
+  return value
+}
+
+function opponentScenarioSpeed(row: Row, speedPoints: number, boosted: boolean, scarf: boolean, speedStage: number) {
+  let value = actualStat(row.speed, speedPoints, boosted ? 1.1 : 1)
+  value = applySpeedStage(value, speedStage)
+  if (scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scarf: boolean, speedStage: number) {
+  let tieEffort: number | null = null
+  let passEffort: number | null = null
+
+  for (let points = 0; points <= CHAMPIONS_EFFORT_CAP; points += 1) {
+    const speed = opponentScenarioSpeed(row, points, boosted, scarf, speedStage)
+    if (tieEffort === null && speed === mySpeed) tieEffort = points
+    if (passEffort === null && speed >= mySpeed) passEffort = points
+    if (tieEffort !== null && passEffort !== null) break
+  }
+
+  return { tieEffort, passEffort }
+}
+
 function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues) {
   switch (field) {
     case 'hp':
@@ -677,6 +704,21 @@ export default function App() {
   }) : null
   const pickedParty = party.filter((member) => member.picked)
   const pickedOpponents = opponents.filter((member) => member.picked)
+  const opponentSpeedScenarios = oppRow ? [
+    { id: 'neutral', label: '준속', boosted: false, scarf: false },
+    { id: 'fast', label: '최속', boosted: true, scarf: false },
+    { id: 'neutral-scarf', label: '준속 스카프', boosted: false, scarf: true },
+    { id: 'fast-scarf', label: '최속 스카프', boosted: true, scarf: true },
+  ].map((scenario) => {
+    const speedAtMax = opponentScenarioSpeed(oppRow, CHAMPIONS_EFFORT_CAP, scenario.boosted, scenario.scarf, oppMember.speedStage)
+    const needs = opponentScenarioNeeds(oppRow, mySpeed, scenario.boosted, scenario.scarf, oppMember.speedStage)
+    return {
+      ...scenario,
+      speedAtMax,
+      result: mySpeed > speedAtMax ? '내가 앞섬' : mySpeed < speedAtMax ? '상대가 앞섬' : '동속',
+      ...needs,
+    }
+  }) : []
   const toggleConfirmedMove = (key: string, move: string) => {
     setConfirmedMovesByKey((prev) => {
       const current = prev[key] ?? []
@@ -1606,6 +1648,23 @@ export default function App() {
           </div>}
           {oppRow ? <div className="result-banner">
             {mySpeed > (oppSpeed ?? 0) ? '내가 선공' : mySpeed < (oppSpeed ?? 0) ? '상대가 선공' : '동속'}
+          </div> : null}
+          {oppRow ? <div className="speed-scenario-grid">
+            {opponentSpeedScenarios.map((scenario) => (
+              <div key={scenario.id} className="speed-scenario-card">
+                <div className="row-between">
+                  <strong>{scenario.label}</strong>
+                  <span className="muted-inline">S {scenario.speedAtMax}</span>
+                </div>
+                <p className="muted">66포인트 기준: {scenario.result}</p>
+                <p className="muted">
+                  동속 필요 스핏: {scenario.tieEffort !== null ? `${scenario.tieEffort}` : '불가'}
+                </p>
+                <p className="muted">
+                  동속 이상 필요 스핏: {scenario.passEffort !== null ? `${scenario.passEffort}` : '불가'}
+                </p>
+              </div>
+            ))}
           </div> : null}
         </section>
 

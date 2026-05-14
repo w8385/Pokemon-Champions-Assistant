@@ -513,6 +513,18 @@ textarea { min-height: 72px; resize: vertical; }
   text-align: center;
   font-weight: 700;
 }
+.speed-scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.speed-scenario-card {
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #111827;
+  padding: 12px;
+}
 .calc-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -825,6 +837,7 @@ textarea { min-height: 72px; resize: vertical; }
   .team-strip-grid { grid-template-columns: 1fr; }
   .matchup { grid-template-columns: 1fr; }
   .calc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }
   .drag-stat-list { grid-template-columns: 1fr; }
@@ -839,4 +852,5 @@ textarea { min-height: 72px; resize: vertical; }
   .battle-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .move-toolbar { grid-template-columns: 1fr; }
   .move-card-grid { grid-template-columns: 1fr; }
+  .speed-scenario-grid { grid-template-columns: 1fr; }
 }
