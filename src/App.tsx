@@ -94,7 +94,7 @@ type ImportExportPayload = PersistedState & {
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'single' | 'sample'
-type MainTab = 'party' | 'pick' | 'calc'
+type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample'; idx: 0 } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
 
@@ -606,7 +606,8 @@ function menuLabelForTab(tab: MainTab) {
   switch (tab) {
     case 'party': return '내 파티 관리'
     case 'pick': return '상대 엔트리'
-    case 'calc': return '스피드&결정력 계산'
+    case 'speed': return '스피드 계산'
+    case 'power': return '결정력 계산'
   }
 }
 
@@ -1061,13 +1062,14 @@ export default function App() {
               <div className="tab-bar">
                 <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>내 파티 관리</button>
                 <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>상대 엔트리</button>
-                <button type="button" className={`tab-chip ${activeTab === 'calc' ? 'active' : ''}`} onClick={() => setActiveTab('calc')}>스피드&결정력 계산</button>
+                <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>스피드 계산</button>
+                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>결정력 계산</button>
               </div>
             ) : null}
           </div>
         </section>
 
-        {mainSection === 'single' && activeTab === 'calc' ? (
+        {mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power') ? (
           <section className="panel wide">
             <h2>파티 한눈 요약</h2>
             <div className="team-strip-grid">
@@ -1668,7 +1670,7 @@ export default function App() {
           </div> : null}
         </section>
 
-        <section className="panel wide">
+        {activeTab === 'speed' ? <section className="panel wide">
           <h2>선출 메모</h2>
           <div className="pick-summary-grid">
             <div className="pick-summary-box">
@@ -1700,9 +1702,9 @@ export default function App() {
               </div>
             </div>
           </div>
-        </section>
+        </section> : null}
 
-        <section className="panel wide">
+        {activeTab === 'power' ? <section className="panel wide">
           <h2>간단 데미지 계산</h2>
           <p className="muted">상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.</p>
           <div className="preset-row">
@@ -1754,7 +1756,7 @@ export default function App() {
             <p>{damage.minPct}% ~ {damage.maxPct}%</p>
             <p>{Number(damage.maxPct) >= 100 ? '확정 1타 가능성 있음' : Number(damage.minPct) >= 50 ? '유리한 2타권' : '즉시 마무리 어려움'}</p>
           </div> : <div className="damage-box"><p>상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.</p></div>}
-        </section>
+        </section> : null}
         </>}
       </main>
     </div>
