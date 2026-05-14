@@ -505,6 +505,18 @@ function natureChipLabel(natureId: NatureId) {
   return natureById.get(natureId)?.label ?? natureId
 }
 
+function focusAndOpenPicker(el: HTMLInputElement | HTMLSelectElement | null) {
+  if (!el) return
+  el.focus()
+  if ('showPicker' in el && typeof el.showPicker === 'function') {
+    try {
+      el.showPicker()
+    } catch {
+      // browser may reject programmatic picker open
+    }
+  }
+}
+
 function boostedStatForNature(natureId: NatureId): StatKey | null {
   return natureById.get(natureId)?.up ?? null
 }
@@ -1019,6 +1031,12 @@ export default function App() {
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const [activePartyMetaEditor, setActivePartyMetaEditor] = React.useState<{ idx: number; field: 'ability' | 'nature' | 'item' } | null>(null)
   const [activeSampleMetaEditor, setActiveSampleMetaEditor] = React.useState<'ability' | 'nature' | 'item' | null>(null)
+  const partyAbilityEditorRefs = React.useRef<(HTMLSelectElement | null)[]>([])
+  const partyNatureEditorRefs = React.useRef<(HTMLSelectElement | null)[]>([])
+  const partyItemEditorRefs = React.useRef<(HTMLInputElement | null)[]>([])
+  const sampleAbilityEditorRef = React.useRef<HTMLSelectElement | null>(null)
+  const sampleNatureEditorRef = React.useRef<HTMLSelectElement | null>(null)
+  const sampleItemEditorRef = React.useRef<HTMLInputElement | null>(null)
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -1036,6 +1054,29 @@ export default function App() {
   React.useEffect(() => {
     setSampleItemDraft(visibleChampionsItem(sampleForge.key, sampleForge.item))
   }, [sampleForge.key, sampleForge.item])
+
+  React.useEffect(() => {
+    if (!activePartyMetaEditor) return
+    const { idx, field } = activePartyMetaEditor
+    const el = field === 'ability'
+      ? partyAbilityEditorRefs.current[idx]
+      : field === 'nature'
+        ? partyNatureEditorRefs.current[idx]
+        : partyItemEditorRefs.current[idx]
+    const timer = window.setTimeout(() => focusAndOpenPicker(el ?? null), 0)
+    return () => window.clearTimeout(timer)
+  }, [activePartyMetaEditor])
+
+  React.useEffect(() => {
+    if (!activeSampleMetaEditor) return
+    const el = activeSampleMetaEditor === 'ability'
+      ? sampleAbilityEditorRef.current
+      : activeSampleMetaEditor === 'nature'
+        ? sampleNatureEditorRef.current
+        : sampleItemEditorRef.current
+    const timer = window.setTimeout(() => focusAndOpenPicker(el ?? null), 0)
+    return () => window.clearTimeout(timer)
+  }, [activeSampleMetaEditor])
 
   React.useEffect(() => {
     const targetKeys = Array.from(new Set([...party.map((member) => member.key), sampleForge.key].filter(Boolean)))
@@ -1704,7 +1745,7 @@ export default function App() {
                           <strong>{activeAbility || '미선택'}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover">
-                          <select autoFocus value={activeAbility} onChange={(e) => {
+                          <select ref={(el) => { partyAbilityEditorRefs.current[idx] = el }} autoFocus value={activeAbility} onChange={(e) => {
                             const next = [...party]
                             next[idx] = { ...member, ability: e.target.value }
                             setParty(next)
@@ -1720,7 +1761,7 @@ export default function App() {
                           <strong>{natureChipLabel(member.config.nature)}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover">
-                          <select autoFocus value={member.config.nature} onChange={(e) => {
+                          <select ref={(el) => { partyNatureEditorRefs.current[idx] = el }} autoFocus value={member.config.nature} onChange={(e) => {
                             const next = [...party]
                             next[idx] = { ...member, config: { ...member.config, nature: e.target.value as NatureId } }
                             setParty(next)
@@ -1739,7 +1780,7 @@ export default function App() {
                           </div>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'item' ? <div className="party-meta-popover">
-                          <input autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
+                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus list={fixedMegaStone ? undefined : `item-options-party-${idx}`} value={fixedMegaStone || partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(fixedMegaStone)} onChange={(e) => {
                             const nextDrafts = [...partyItemDrafts]
                             nextDrafts[idx] = e.target.value
                             setPartyItemDrafts(nextDrafts)
@@ -2139,7 +2180,7 @@ export default function App() {
                     <strong>{sampleAbility || '미선택'}</strong>
                   </button>
                   {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover">
-                    <select autoFocus value={sampleAbility} onChange={(e) => {
+                    <select ref={sampleAbilityEditorRef} autoFocus value={sampleAbility} onChange={(e) => {
                       setSampleForge((prev) => ({ ...prev, ability: e.target.value }))
                       setActiveSampleMetaEditor(null)
                     }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)}>
@@ -2153,7 +2194,7 @@ export default function App() {
                     <strong>{natureChipLabel(sampleForge.config.nature)}</strong>
                   </button>
                   {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover">
-                    <select autoFocus value={sampleForge.config.nature} onChange={(e) => {
+                    <select ref={sampleNatureEditorRef} autoFocus value={sampleForge.config.nature} onChange={(e) => {
                       setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))
                       setActiveSampleMetaEditor(null)
                     }} onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)}>
@@ -2170,7 +2211,7 @@ export default function App() {
                     </div>
                   </button>
                   {activeSampleMetaEditor === 'item' ? <div className="party-meta-popover">
-                    <input autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
+                    <input ref={sampleItemEditorRef} autoFocus list={sampleFixedMegaStone ? undefined : 'item-options-sample'} value={sampleFixedMegaStone || sampleItemDraft} placeholder={sampleFixedMegaStone ? '메가스톤 고정' : '사용 가능 도구 선택'} disabled={Boolean(sampleFixedMegaStone)} onChange={(e) => setSampleItemDraft(e.target.value)} onBlur={() => {
                       const resolved = resolveItemInput(sampleForge.key, sampleItemDraft)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
                       setSampleItemDraft(resolved)
