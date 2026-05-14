@@ -1208,6 +1208,7 @@ export default function App() {
   const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => persisted?.confirmedMovesByKey ?? {})
   const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
+  const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => visibleChampionsItem(member.key, member.item)))
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [navMenuOpen, setNavMenuOpen] = React.useState(false)
@@ -1243,6 +1244,7 @@ export default function App() {
     setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+    setOpponentItemDrafts((prev) => opponents.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
@@ -1396,8 +1398,13 @@ export default function App() {
       const member = opponents[idx]
       if (!member) return
       const next = [...opponents]
-      next[idx] = { ...member, key }
+      next[idx] = { ...member, key, item: normalizeItemForKey(key, member.item) }
       setOpponents(next)
+      setOpponentItemDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[idx] = displayItemLabel(visibleChampionsItem(key, next[idx].item), siteLanguage)
+        return nextDrafts
+      })
       const nextSearch = [...opponentSearch]
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
@@ -1496,8 +1503,13 @@ export default function App() {
     if (!resolvedKey) return
     const slotIdx = selectedOpp
     const next = [...opponents]
-    next[slotIdx] = { ...next[slotIdx], key: resolvedKey }
+    next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item) }
     setOpponents(next)
+    setOpponentItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[slotIdx] = displayItemLabel(visibleChampionsItem(resolvedKey, next[slotIdx].item), siteLanguage)
+      return nextDrafts
+    })
     const nextSearch = [...opponentSearch]
     nextSearch[slotIdx] = searchDisplayLabel(resolvedKey, siteLanguage)
     setOpponentSearch(nextSearch)
@@ -1512,6 +1524,7 @@ export default function App() {
     const next = emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] }))
     setOpponents(next)
     setOpponentSearch(next.map(() => ''))
+    setOpponentItemDrafts(next.map(() => ''))
     setSelectedOpp(0)
     setOpponentQuickSearch('')
     setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
@@ -1532,6 +1545,7 @@ export default function App() {
     setOpponents(emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] })))
     setPartySearch(emptyParty.map(() => ''))
     setOpponentSearch(emptyOpponents.map(() => ''))
+    setOpponentItemDrafts(emptyOpponents.map(() => ''))
     setSelectedMy(0)
     setSelectedOpp(0)
     setOpponentQuickSearch('')
@@ -1587,6 +1601,7 @@ export default function App() {
       setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
       const nextOpponents = sanitizeOpponents(parsed.opponents)
       setOpponents(nextOpponents)
+      setOpponentItemDrafts(nextOpponents.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
       setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
       setOpponentSearch(nextOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
       setSelectedMy(sanitizeSelectedIndex(parsed.selectedMy, nextParty.length))
@@ -2255,11 +2270,43 @@ export default function App() {
                 </label>
                 <label>
                   {lt('도구')}
-                  <input value={oppMember.item} placeholder={siteLanguage === 'en' ? 'e.g. Choice Scarf' : siteLanguage === 'ja' ? '例: こだわりスカーフ' : '예: 구애스카프'} onChange={(e) => {
-                    const next = [...opponents]
-                    next[selectedOpp] = { ...oppMember, item: e.target.value }
-                    setOpponents(next)
-                  }} />
+                  <input
+                    list={`item-options-opponent-${selectedOpp}`}
+                    value={opponentItemDrafts[selectedOpp] ?? ''}
+                    placeholder={lt('사용 가능 도구 선택')}
+                    onChange={(e) => {
+                      const nextDrafts = [...opponentItemDrafts]
+                      nextDrafts[selectedOpp] = e.target.value
+                      setOpponentItemDrafts(nextDrafts)
+                    }}
+                    onBlur={() => {
+                      const resolved = resolveItemInput(oppMember.key, opponentItemDrafts[selectedOpp] || '', siteLanguage)
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, item: resolved }
+                      setOpponents(next)
+                      setOpponentItemDrafts((prev) => {
+                        const nextDrafts = [...prev]
+                        nextDrafts[selectedOpp] = displayItemLabel(resolved, siteLanguage)
+                        return nextDrafts
+                      })
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return
+                      e.preventDefault()
+                      const resolved = resolveItemInput(oppMember.key, opponentItemDrafts[selectedOpp] || '', siteLanguage)
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, item: resolved }
+                      setOpponents(next)
+                      setOpponentItemDrafts((prev) => {
+                        const nextDrafts = [...prev]
+                        nextDrafts[selectedOpp] = displayItemLabel(resolved, siteLanguage)
+                        return nextDrafts
+                      })
+                    }}
+                  />
+                  <datalist id={`item-options-opponent-${selectedOpp}`}>
+                    {ITEM_OPTIONS.map((item) => <option key={`opp-item-${selectedOpp}-${item}`} value={displayItemLabel(item, siteLanguage)} />)}
+                  </datalist>
                 </label>
                 <label>
                   {lt('특성')}
