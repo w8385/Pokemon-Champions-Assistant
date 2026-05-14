@@ -1151,7 +1151,17 @@ export default function App() {
                           setParty(next)
                         }}
                         disabled={currentEffort <= 0}
-                      >초기화</button>
+                      >최소</button>
+                      <button
+                        type="button"
+                        className="mini-action"
+                        onClick={() => {
+                          const next = [...party]
+                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, availableCap) }
+                          setParty(next)
+                        }}
+                        disabled={currentEffort >= availableCap}
+                      >최대</button>
                       <button
                         type="button"
                         className="mini-action"
