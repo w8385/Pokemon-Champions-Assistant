@@ -421,6 +421,23 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   background: #111827;
   padding: 14px;
 }
+.inline-move-card {
+  margin-top: 12px;
+}
+.registered-move-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.registered-move-slot {
+  display: grid;
+  gap: 6px;
+}
+.registered-move-slot span {
+  font-size: 12px;
+  color: #93a4b8;
+}
 .sample-save-box,
 .saved-sample-list {
   margin-top: 14px;
@@ -1074,4 +1091,5 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-scenario-grid { grid-template-columns: 1fr; }
   .magic-checkpoint-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .effort-gauge-scale { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .registered-move-grid { grid-template-columns: 1fr; }
 }

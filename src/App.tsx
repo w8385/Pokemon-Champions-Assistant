@@ -524,29 +524,6 @@ function findMagicNumberCandidate(row: Row, member: PartyMember) {
   }
 }
 
-function magicCheckpointList(row: Row, member: PartyMember) {
-  const boostedStat = boostedStatForNature(member.config.nature)
-  if (!boostedStat) return null
-
-  const currentEffort = member.evs[boostedStat]
-  const maxSpendable = remainingEffortPoints(member.evs, boostedStat)
-  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, currentEffort + maxSpendable)
-
-  return EFFORT_CHECKPOINTS.map((effort) => {
-    const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
-    const actual = partyStatValue(row, candidateMember, boostedStat)
-    return {
-      stat: boostedStat,
-      effort,
-      actual,
-      reachable: effort <= availableCap,
-      active: currentEffort === effort,
-      cleared: currentEffort >= effort,
-      magic: actual % 11 === 0,
-    }
-  })
-}
-
 function magicEffortPoints(row: Row, member: PartyMember, stat: EffortStatKey) {
   const boostedStat = boostedStatForNature(member.config.nature)
   if (boostedStat !== stat) return [] as number[]
@@ -779,6 +756,28 @@ export default function App() {
       return { ...prev, [key]: next }
     })
   }
+  const setConfirmedMoveSlot = (key: string, slotIdx: number, move: string) => {
+    setConfirmedMovesByKey((prev) => {
+      const current = [...(prev[key] ?? [])]
+      while (current.length < 4) current.push('')
+      current[slotIdx] = move
+      const cleaned = current.map((entry) => entry.trim()).filter(Boolean).slice(0, 4)
+      return { ...prev, [key]: cleaned }
+    })
+  }
+  const applyMoveToSlot = (key: string, move: string) => {
+    setConfirmedMovesByKey((prev) => {
+      const current = [...(prev[key] ?? [])]
+      const existingIdx = current.indexOf(move)
+      if (existingIdx >= 0) {
+        current.splice(existingIdx, 1)
+        return { ...prev, [key]: current }
+      }
+      if (current.length < 4) return { ...prev, [key]: [...current, move] }
+      current[3] = move
+      return { ...prev, [key]: current }
+    })
+  }
   const selectSpecies = (side: 'party' | 'opponent' | 'sample', idx: number, key: string) => {
     if (side === 'party') {
       const member = party[idx]
@@ -821,8 +820,6 @@ export default function App() {
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, stab, effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
-  const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
-  const magicCheckpoints = tuningMember && tuningRow ? magicCheckpointList(tuningRow, tuningMember) : null
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, 'ko')} · ${natureLabel(sampleForge.config.nature)}`
@@ -1270,13 +1267,16 @@ export default function App() {
           <div className="party-columns party-manage-columns">
             <div className="party-lane">
               <div className="section-head row-between">
-                <h2>내 파티</h2>
-                <span className="muted-inline">선택: {displayName(myRow, siteLanguage)}</span>
+                <h2>내 파티 관리</h2>
+                <span className="muted-inline">포켓몬별 기술배치 / 노력치보정</span>
               </div>
               <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = indexByKey.get(member.key) ?? rows[0]
                 const isAdvancedOpen = partyAdvancedOpen[idx] ?? false
+                const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
+                const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
+                while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
                   <div key={`${member.key}-${idx}`} className={`card entry-card ${selectedMy === idx ? 'active' : ''}`} onClick={() => setSelectedMy(idx)}>
                     <div className="entry-card-top">
@@ -1410,54 +1410,41 @@ export default function App() {
                         }} />
                       </label>
                     </div>
+                    <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
+                      <div className="row-between">
+                        <strong>기술 배치</strong>
+                        <span className="muted-inline">최대 4개</span>
+                      </div>
+                      <div className="registered-move-grid">
+                        {registeredMoves.map((move, moveIdx) => (
+                          <label key={`registered-move-${member.key}-${moveIdx}`} className="registered-move-slot">
+                            <span>{moveIdx + 1}번</span>
+                            <input
+                              value={move}
+                              placeholder="기술 입력"
+                              onChange={(e) => setConfirmedMoveSlot(member.key, moveIdx, e.target.value)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                      {memberMoveSet ? <>
+                        <div className="move-chip-wrap">
+                          {memberMoveSet.core.map((move) => (
+                            <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                          ))}
+                          {(memberMoveSet.options ?? []).map((move) => (
+                            <button key={`party-opt-${member.key}-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                          ))}
+                          {(memberMoveSet.utility ?? []).map((move) => (
+                            <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                          ))}
+                        </div>
+                      </> : <p className="muted">샘플 기술 데이터가 없으면 위 4칸에 직접 입력하면 됩니다.</p>}
+                    </div>
                     </> : null}
                   </div>
                 )
               })}
-              </div>
-            </div>
-            <div className="party-lane">
-              <div className="section-head row-between">
-                <h2>트레이닝</h2>
-                <span className="muted-inline">{displayName(myRow, siteLanguage)}</span>
-              </div>
-              <div className="move-card-grid training-grid">
-                <div className="move-card">
-                  <div className="row-between">
-                    <strong>기술 배치</strong>
-                    <span className="muted-inline">샘플 기반</span>
-                  </div>
-                  {myMoveSet ? <>
-                    <div className="move-chip-wrap">
-                      {myMoveSet.core.map((move) => (
-                        <button key={`party-core-${move}`} type="button" className={`move-chip core ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
-                      ))}
-                      {(myMoveSet.options ?? []).map((move) => (
-                        <button key={`party-opt-${move}`} type="button" className={`move-chip options ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
-                      ))}
-                      {(myMoveSet.utility ?? []).map((move) => (
-                        <button key={`party-util-${move}`} type="button" className={`move-chip utility ${(confirmedMovesByKey[myMember.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => toggleConfirmedMove(myMember.key, move)}>{move}</button>
-                      ))}
-                    </div>
-                    <p className="muted">확정 기술: {(confirmedMovesByKey[myMember.key] ?? []).join(', ') || '아직 없음'}</p>
-                  </> : <p className="muted">이 포켓몬의 샘플 기술 데이터가 아직 없습니다.</p>}
-                </div>
-                <div className="move-card">
-                  <div className="row-between">
-                    <strong>노력치 보정</strong>
-                    <span className="muted-inline">포인트 {totalEffortPoints(myMember.evs)} / {CHAMPIONS_EFFORT_CAP} · 개별 최대 {CHAMPIONS_EFFORT_PER_STAT_CAP}</span>
-                  </div>
-                  <div className="stat-preview-list compact-stat-list">
-                    {EFFORT_STAT_OPTIONS.map((stat) => (
-                      <div key={`party-training-${stat.key}`} className={`stat-preview-row ${statThemeClass(stat.key)}`}>
-                        <span>{stat.label}</span>
-                        <strong>{partyStatValue(myRow, myMember, stat.key)}</strong>
-                        <span>+{myMember.evs[stat.key]}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="muted">상세 드래그 조정은 각 카드의 `튜닝 설정`에서 바로 할 수 있습니다.</p>
-                </div>
               </div>
             </div>
           </div>
