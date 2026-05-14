@@ -866,6 +866,37 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   box-sizing: border-box;
   line-height: 1.35;
 }
+.party-meta-option-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.party-meta-option {
+  width: 100%;
+  border: 1px solid transparent;
+  background: #101a2d;
+  color: #eef2f7;
+  text-align: left;
+  font: inherit;
+  line-height: 1.3;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.party-meta-option:hover,
+.party-meta-option:focus-visible {
+  background: #16253d;
+  border-color: #35507e;
+  outline: none;
+}
+.party-meta-option.active {
+  background: #1b2f4e;
+  border-color: #6ea8ff;
+  color: #f8fbff;
+  box-shadow: inset 0 0 0 1px rgba(139, 184, 255, 0.2);
+}
 .party-meta-popover input::placeholder {
   color: #7f93ab;
 }

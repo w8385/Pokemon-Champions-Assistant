@@ -101,6 +101,7 @@ type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
 type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
+type MetaListField = { scope: 'party'; idx: number; field: 'ability' | 'nature' } | { scope: 'sample'; field: 'ability' | 'nature' } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
@@ -1169,6 +1170,11 @@ function sameItemField(a: ItemFieldTarget, scope: 'party' | 'sample' | 'opponent
   return a?.scope === scope && a?.idx === idx
 }
 
+function sameMetaListField(a: MetaListField, scope: 'party' | 'sample', field: 'ability' | 'nature', idx = 0) {
+  if (!a || a.scope !== scope || a.field !== field) return false
+  return scope === 'party' ? a.idx === idx : true
+}
+
 function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   switch (tab) {
     case 'party': return translateText(language, '내 파티 관리')
@@ -1232,6 +1238,7 @@ export default function App() {
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [activeItemField, setActiveItemField] = React.useState<ItemFieldTarget>(null)
+  const [activeMetaListField, setActiveMetaListField] = React.useState<MetaListField>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [navMenuOpen, setNavMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
@@ -2014,21 +2021,28 @@ export default function App() {
                           <span>{lt('특성')}</span>
                           <strong>{activeAbility || lt('미선택')}</strong>
                         </button>
-                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover">
-                          <select
-                            ref={(el) => { partyAbilityEditorRefs.current[idx] = el }}
-                            autoFocus
-                            value={activeAbility}
-                            onChange={(e) => {
+                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
+                          const nextFocus = e.relatedTarget as Node | null
+                          if (!e.currentTarget.contains(nextFocus)) {
+                            setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : prev)
+                            setActiveMetaListField(null)
+                          }
+                        }}>
+                          {abilityOptions.map((ability, optionIdx) => <button
+                            key={`party-ability-${member.key}-${ability}`}
+                            type="button"
+                            ref={optionIdx === 0 ? (el) => { partyAbilityEditorRefs.current[idx] = el as HTMLSelectElement | null } : undefined}
+                            autoFocus={optionIdx === 0}
+                            className={`party-meta-option ${activeAbility === ability ? 'active' : ''}`}
+                            onFocus={() => setActiveMetaListField({ scope: 'party', idx, field: 'ability' })}
+                            onMouseDown={() => {
                               const next = [...party]
-                              next[idx] = { ...member, ability: e.currentTarget.value }
+                              next[idx] = { ...member, ability }
                               setParty(next)
+                              setActiveMetaListField(null)
                               setActivePartyMetaEditor(null)
                             }}
-                            onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : prev), 120)}
-                          >
-                            {abilityOptions.map((ability) => <option key={`party-ability-${member.key}-${ability}`} value={ability}>{ability}</option>)}
-                          </select>
+                          >{ability}</button>)}
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor wide">
@@ -2036,21 +2050,28 @@ export default function App() {
                           <span>{lt('성격')}</span>
                           <strong>{natureChipLabel(member.config.nature, siteLanguage)}</strong>
                         </button>
-                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover">
-                          <select
-                            ref={(el) => { partyNatureEditorRefs.current[idx] = el }}
-                            autoFocus
-                            value={member.config.nature}
-                            onChange={(e) => {
+                        {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'nature' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
+                          const nextFocus = e.relatedTarget as Node | null
+                          if (!e.currentTarget.contains(nextFocus)) {
+                            setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : prev)
+                            setActiveMetaListField(null)
+                          }
+                        }}>
+                          {NATURES.map((nature, optionIdx) => <button
+                            key={nature.id}
+                            type="button"
+                            ref={optionIdx === 0 ? (el) => { partyNatureEditorRefs.current[idx] = el as HTMLSelectElement | null } : undefined}
+                            autoFocus={optionIdx === 0}
+                            className={`party-meta-option ${member.config.nature === nature.id ? 'active' : ''}`}
+                            onFocus={() => setActiveMetaListField({ scope: 'party', idx, field: 'nature' })}
+                            onMouseDown={() => {
                               const next = [...party]
-                              next[idx] = { ...member, config: { ...member.config, nature: e.currentTarget.value as NatureId } }
+                              next[idx] = { ...member, config: { ...member.config, nature: nature.id as NatureId } }
                               setParty(next)
+                              setActiveMetaListField(null)
                               setActivePartyMetaEditor(null)
                             }}
-                            onBlur={() => setTimeout(() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'nature' ? null : prev), 120)}
-                          >
-                            {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id, siteLanguage)}</option>)}
-                          </select>
+                          >{natureLabel(nature.id, siteLanguage)}</button>)}
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
@@ -2534,19 +2555,26 @@ export default function App() {
                     <span>{lt('특성')}</span>
                     <strong>{sampleAbility || lt('미선택')}</strong>
                   </button>
-                  {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover">
-                    <select
-                      ref={sampleAbilityEditorRef}
-                      autoFocus
-                      value={sampleAbility}
-                      onChange={(e) => {
-                        setSampleForge((prev) => ({ ...prev, ability: e.currentTarget.value }))
+                  {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
+                    const nextFocus = e.relatedTarget as Node | null
+                    if (!e.currentTarget.contains(nextFocus)) {
+                      setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev)
+                      setActiveMetaListField(null)
+                    }
+                  }}>
+                    {sampleAbilityOptions.map((ability, optionIdx) => <button
+                      key={`sample-ability-${sampleForge.key}-${ability}`}
+                      type="button"
+                      ref={optionIdx === 0 ? (el) => { sampleAbilityEditorRef.current = el as HTMLSelectElement | null } : undefined}
+                      autoFocus={optionIdx === 0}
+                      className={`party-meta-option ${sampleAbility === ability ? 'active' : ''}`}
+                      onFocus={() => setActiveMetaListField({ scope: 'sample', field: 'ability' })}
+                      onMouseDown={() => {
+                        setSampleForge((prev) => ({ ...prev, ability }))
+                        setActiveMetaListField(null)
                         setActiveSampleMetaEditor(null)
                       }}
-                      onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : prev), 120)}
-                    >
-                      {sampleAbilityOptions.map((ability) => <option key={`sample-ability-${sampleForge.key}-${ability}`} value={ability}>{ability}</option>)}
-                    </select>
+                    >{ability}</button>)}
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor wide">
@@ -2554,19 +2582,26 @@ export default function App() {
                     <span>{lt('성격')}</span>
                     <strong>{natureChipLabel(sampleForge.config.nature, siteLanguage)}</strong>
                   </button>
-                  {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover">
-                    <select
-                      ref={sampleNatureEditorRef}
-                      autoFocus
-                      value={sampleForge.config.nature}
-                      onChange={(e) => {
-                        setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.currentTarget.value as NatureId } }))
+                  {activeSampleMetaEditor === 'nature' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
+                    const nextFocus = e.relatedTarget as Node | null
+                    if (!e.currentTarget.contains(nextFocus)) {
+                      setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev)
+                      setActiveMetaListField(null)
+                    }
+                  }}>
+                    {NATURES.map((nature, optionIdx) => <button
+                      key={nature.id}
+                      type="button"
+                      ref={optionIdx === 0 ? (el) => { sampleNatureEditorRef.current = el as HTMLSelectElement | null } : undefined}
+                      autoFocus={optionIdx === 0}
+                      className={`party-meta-option ${sampleForge.config.nature === nature.id ? 'active' : ''}`}
+                      onFocus={() => setActiveMetaListField({ scope: 'sample', field: 'nature' })}
+                      onMouseDown={() => {
+                        setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: nature.id as NatureId } }))
+                        setActiveMetaListField(null)
                         setActiveSampleMetaEditor(null)
                       }}
-                      onBlur={() => setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'nature' ? null : prev), 120)}
-                    >
-                      {NATURES.map((nature) => <option key={nature.id} value={nature.id}>{natureLabel(nature.id, siteLanguage)}</option>)}
-                    </select>
+                    >{natureLabel(nature.id, siteLanguage)}</button>)}
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
