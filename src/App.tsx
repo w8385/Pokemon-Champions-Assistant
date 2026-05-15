@@ -4205,7 +4205,7 @@ export default function App() {
                   {activeDamageMovePower === null ? <label>
                     {lt('수동 위력')}
                     <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
-                  </label> : <div className="calc-lock-box">{activeDamageMovePower}</div>}
+                  </label> : <div className="calc-lock-box">{lt('위력')} {activeDamageMovePower}</div>}
                   {!activeDamageMoveType ? <label>
                     자속
                     <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
