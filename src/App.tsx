@@ -465,19 +465,16 @@ function visibleChampionsItem(key: string, item: string) {
 }
 
 function itemSpriteSrc(key: string, item: string) {
+  const localSpriteSrc = (ref: string) => {
+    const cleaned = ref.split('?')[0]?.split('#')[0] ?? ref
+    const filename = cleaned.split('/').pop() || cleaned
+    return `${import.meta.env.BASE_URL}item-sprites/${filename.endsWith('.png') ? filename : `${filename}.png`}`
+  }
   const normalized = normalizeItemForKey(key, item).trim()
   const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
-  if (megaSlug) {
-    if (/^https?:\/\//.test(megaSlug)) return megaSlug
-    if (megaSlug.includes('/')) return `${import.meta.env.BASE_URL}${megaSlug.replace(/^\//, '')}`
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
-  }
+  if (megaSlug) return localSpriteSrc(megaSlug)
   const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized]
-  if (spriteSlug) {
-    if (/^https?:\/\//.test(spriteSlug)) return spriteSlug
-    if (spriteSlug.includes('/')) return `${import.meta.env.BASE_URL}${spriteSlug.replace(/^\//, '')}`
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
-  }
+  if (spriteSlug) return localSpriteSrc(spriteSlug)
   if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
   return `${import.meta.env.BASE_URL}item-generic.svg`
 }

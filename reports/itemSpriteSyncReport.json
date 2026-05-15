@@ -1,0 +1,656 @@
+{
+  "generatedAt": "2026-05-15T12:05:14.570Z",
+  "outputDir": "public/item-sprites",
+  "total": 81,
+  "downloaded": [
+    {
+      "kind": "item",
+      "key": "イトケのみ",
+      "ref": "passho-berry",
+      "assetName": "passho-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/passho-berry.png",
+      "outputPath": "public/item-sprites/passho-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "おうじゃのしるし",
+      "ref": "kings-rock",
+      "assetName": "kings-rock.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kings-rock.png",
+      "outputPath": "public/item-sprites/kings-rock.png"
+    },
+    {
+      "kind": "item",
+      "key": "オッカのみ",
+      "ref": "occa-berry",
+      "assetName": "occa-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/occa-berry.png",
+      "outputPath": "public/item-sprites/occa-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "オボンのみ",
+      "ref": "sitrus-berry",
+      "assetName": "sitrus-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sitrus-berry.png",
+      "outputPath": "public/item-sprites/sitrus-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "カゴのみ",
+      "ref": "chesto-berry",
+      "assetName": "chesto-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chesto-berry.png",
+      "outputPath": "public/item-sprites/chesto-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "カシブのみ",
+      "ref": "kasib-berry",
+      "assetName": "kasib-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kasib-berry.png",
+      "outputPath": "public/item-sprites/kasib-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "きあいのタスキ",
+      "ref": "focus-sash",
+      "assetName": "focus-sash.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/focus-sash.png",
+      "outputPath": "public/item-sprites/focus-sash.png"
+    },
+    {
+      "kind": "item",
+      "key": "きせきのタネ",
+      "ref": "miracle-seed",
+      "assetName": "miracle-seed.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/miracle-seed.png",
+      "outputPath": "public/item-sprites/miracle-seed.png"
+    },
+    {
+      "kind": "item",
+      "key": "くろいメガネ",
+      "ref": "black-glasses",
+      "assetName": "black-glasses.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/black-glasses.png",
+      "outputPath": "public/item-sprites/black-glasses.png"
+    },
+    {
+      "kind": "item",
+      "key": "くろおび",
+      "ref": "black-belt",
+      "assetName": "black-belt.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/black-belt.png",
+      "outputPath": "public/item-sprites/black-belt.png"
+    },
+    {
+      "kind": "item",
+      "key": "こだわりスカーフ",
+      "ref": "choice-scarf",
+      "assetName": "choice-scarf.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png",
+      "outputPath": "public/item-sprites/choice-scarf.png"
+    },
+    {
+      "kind": "item",
+      "key": "じしゃく",
+      "ref": "magnet",
+      "assetName": "magnet.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/magnet.png",
+      "outputPath": "public/item-sprites/magnet.png"
+    },
+    {
+      "kind": "item",
+      "key": "シュカのみ",
+      "ref": "shuca-berry",
+      "assetName": "shuca-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shuca-berry.png",
+      "outputPath": "public/item-sprites/shuca-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "シルクのスカーフ",
+      "ref": "silk-scarf",
+      "assetName": "silk-scarf.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/silk-scarf.png",
+      "outputPath": "public/item-sprites/silk-scarf.png"
+    },
+    {
+      "kind": "item",
+      "key": "しろいハーブ",
+      "ref": "white-herb",
+      "assetName": "white-herb.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/white-herb.png",
+      "outputPath": "public/item-sprites/white-herb.png"
+    },
+    {
+      "kind": "item",
+      "key": "しんぴのしずく",
+      "ref": "mystic-water",
+      "assetName": "mystic-water.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/mystic-water.png",
+      "outputPath": "public/item-sprites/mystic-water.png"
+    },
+    {
+      "kind": "item",
+      "key": "するどいくちばし",
+      "ref": "sharp-beak",
+      "assetName": "sharp-beak.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sharp-beak.png",
+      "outputPath": "public/item-sprites/sharp-beak.png"
+    },
+    {
+      "kind": "item",
+      "key": "せんせいのツメ",
+      "ref": "quick-claw",
+      "assetName": "quick-claw.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/quick-claw.png",
+      "outputPath": "public/item-sprites/quick-claw.png"
+    },
+    {
+      "kind": "item",
+      "key": "ソクノのみ",
+      "ref": "wacan-berry",
+      "assetName": "wacan-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/wacan-berry.png",
+      "outputPath": "public/item-sprites/wacan-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "たべのこし",
+      "ref": "leftovers",
+      "assetName": "leftovers.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leftovers.png",
+      "outputPath": "public/item-sprites/leftovers.png"
+    },
+    {
+      "kind": "item",
+      "key": "でんきだま",
+      "ref": "light-ball",
+      "assetName": "light-ball.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/light-ball.png",
+      "outputPath": "public/item-sprites/light-ball.png"
+    },
+    {
+      "kind": "item",
+      "key": "どくバリ",
+      "ref": "poison-barb",
+      "assetName": "poison-barb.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poison-barb.png",
+      "outputPath": "public/item-sprites/poison-barb.png"
+    },
+    {
+      "kind": "item",
+      "key": "とけないこおり",
+      "ref": "never-melt-ice",
+      "assetName": "never-melt-ice.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/never-melt-ice.png",
+      "outputPath": "public/item-sprites/never-melt-ice.png"
+    },
+    {
+      "kind": "item",
+      "key": "ナモのみ",
+      "ref": "colbur-berry",
+      "assetName": "colbur-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/colbur-berry.png",
+      "outputPath": "public/item-sprites/colbur-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "のろいのおふだ",
+      "ref": "spell-tag",
+      "assetName": "spell-tag.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/spell-tag.png",
+      "outputPath": "public/item-sprites/spell-tag.png"
+    },
+    {
+      "kind": "item",
+      "key": "バコウのみ",
+      "ref": "coba-berry",
+      "assetName": "coba-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/coba-berry.png",
+      "outputPath": "public/item-sprites/coba-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ハバンのみ",
+      "ref": "haban-berry",
+      "assetName": "haban-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/haban-berry.png",
+      "outputPath": "public/item-sprites/haban-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ビアーのみ",
+      "ref": "kebia-berry",
+      "assetName": "kebia-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kebia-berry.png",
+      "outputPath": "public/item-sprites/kebia-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ひかりのこな",
+      "ref": "bright-powder",
+      "assetName": "bright-powder.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/bright-powder.png",
+      "outputPath": "public/item-sprites/bright-powder.png"
+    },
+    {
+      "kind": "item",
+      "key": "ピントレンズ",
+      "ref": "scope-lens",
+      "assetName": "scope-lens.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/scope-lens.png",
+      "outputPath": "public/item-sprites/scope-lens.png"
+    },
+    {
+      "kind": "item",
+      "key": "まがったスプーン",
+      "ref": "twisted-spoon",
+      "assetName": "twisted-spoon.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/twisted-spoon.png",
+      "outputPath": "public/item-sprites/twisted-spoon.png"
+    },
+    {
+      "kind": "item",
+      "key": "メタルコート",
+      "ref": "metal-coat",
+      "assetName": "metal-coat.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/metal-coat.png",
+      "outputPath": "public/item-sprites/metal-coat.png"
+    },
+    {
+      "kind": "item",
+      "key": "メンタルハーブ",
+      "ref": "mental-herb",
+      "assetName": "mental-herb.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/mental-herb.png",
+      "outputPath": "public/item-sprites/mental-herb.png"
+    },
+    {
+      "kind": "item",
+      "key": "もくたん",
+      "ref": "charcoal",
+      "assetName": "charcoal.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charcoal.png",
+      "outputPath": "public/item-sprites/charcoal.png"
+    },
+    {
+      "kind": "item",
+      "key": "ヤチェのみ",
+      "ref": "yache-berry",
+      "assetName": "yache-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/yache-berry.png",
+      "outputPath": "public/item-sprites/yache-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "やわらかいすな",
+      "ref": "soft-sand",
+      "assetName": "soft-sand.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/soft-sand.png",
+      "outputPath": "public/item-sprites/soft-sand.png"
+    },
+    {
+      "kind": "item",
+      "key": "ヨプのみ",
+      "ref": "chople-berry",
+      "assetName": "chople-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chople-berry.png",
+      "outputPath": "public/item-sprites/chople-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ヨロギのみ",
+      "ref": "charti-berry",
+      "assetName": "charti-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charti-berry.png",
+      "outputPath": "public/item-sprites/charti-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ラムのみ",
+      "ref": "lum-berry",
+      "assetName": "lum-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lum-berry.png",
+      "outputPath": "public/item-sprites/lum-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "りゅうのキバ",
+      "ref": "dragon-fang",
+      "assetName": "dragon-fang.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dragon-fang.png",
+      "outputPath": "public/item-sprites/dragon-fang.png"
+    },
+    {
+      "kind": "item",
+      "key": "リリバのみ",
+      "ref": "babiri-berry",
+      "assetName": "babiri-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/babiri-berry.png",
+      "outputPath": "public/item-sprites/babiri-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "リンドのみ",
+      "ref": "rindo-berry",
+      "assetName": "rindo-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rindo-berry.png",
+      "outputPath": "public/item-sprites/rindo-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ロゼルのみ",
+      "ref": "roseli-berry",
+      "assetName": "roseli-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/roseli-berry.png",
+      "outputPath": "public/item-sprites/roseli-berry.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-abomasnow",
+      "ref": "abomasite",
+      "assetName": "abomasite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/abomasite.png",
+      "outputPath": "public/item-sprites/abomasite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-absol",
+      "ref": "absolite",
+      "assetName": "absolite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/absolite.png",
+      "outputPath": "public/item-sprites/absolite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-aerodactyl",
+      "ref": "aerodactylite",
+      "assetName": "aerodactylite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/aerodactylite.png",
+      "outputPath": "public/item-sprites/aerodactylite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-aggron",
+      "ref": "aggronite",
+      "assetName": "aggronite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/aggronite.png",
+      "outputPath": "public/item-sprites/aggronite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-alakazam",
+      "ref": "alakazite",
+      "assetName": "alakazite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/alakazite.png",
+      "outputPath": "public/item-sprites/alakazite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-altaria",
+      "ref": "altarianite",
+      "assetName": "altarianite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/altarianite.png",
+      "outputPath": "public/item-sprites/altarianite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-ampharos",
+      "ref": "ampharosite",
+      "assetName": "ampharosite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ampharosite.png",
+      "outputPath": "public/item-sprites/ampharosite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-audino",
+      "ref": "audinite",
+      "assetName": "audinite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/audinite.png",
+      "outputPath": "public/item-sprites/audinite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-banette",
+      "ref": "banettite",
+      "assetName": "banettite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/banettite.png",
+      "outputPath": "public/item-sprites/banettite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-beedrill",
+      "ref": "beedrillite",
+      "assetName": "beedrillite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/beedrillite.png",
+      "outputPath": "public/item-sprites/beedrillite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-blastoise",
+      "ref": "blastoisinite",
+      "assetName": "blastoisinite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/blastoisinite.png",
+      "outputPath": "public/item-sprites/blastoisinite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-camerupt",
+      "ref": "cameruptite",
+      "assetName": "cameruptite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/cameruptite.png",
+      "outputPath": "public/item-sprites/cameruptite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-charizard-x",
+      "ref": "charizardite-x",
+      "assetName": "charizardite-x.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charizardite-x.png",
+      "outputPath": "public/item-sprites/charizardite-x.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-charizard-y",
+      "ref": "charizardite-y",
+      "assetName": "charizardite-y.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charizardite-y.png",
+      "outputPath": "public/item-sprites/charizardite-y.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-gallade",
+      "ref": "galladite",
+      "assetName": "galladite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/galladite.png",
+      "outputPath": "public/item-sprites/galladite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-garchomp",
+      "ref": "garchompite",
+      "assetName": "garchompite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/garchompite.png",
+      "outputPath": "public/item-sprites/garchompite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-gardevoir",
+      "ref": "gardevoirite",
+      "assetName": "gardevoirite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gardevoirite.png",
+      "outputPath": "public/item-sprites/gardevoirite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-gengar",
+      "ref": "gengarite",
+      "assetName": "gengarite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gengarite.png",
+      "outputPath": "public/item-sprites/gengarite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-glalie",
+      "ref": "glalitite",
+      "assetName": "glalitite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/glalitite.png",
+      "outputPath": "public/item-sprites/glalitite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-gyarados",
+      "ref": "gyaradosite",
+      "assetName": "gyaradosite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gyaradosite.png",
+      "outputPath": "public/item-sprites/gyaradosite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-heracross",
+      "ref": "heracronite",
+      "assetName": "heracronite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/heracronite.png",
+      "outputPath": "public/item-sprites/heracronite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-houndoom",
+      "ref": "houndoominite",
+      "assetName": "houndoominite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/houndoominite.png",
+      "outputPath": "public/item-sprites/houndoominite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-kangaskhan",
+      "ref": "kangaskhanite",
+      "assetName": "kangaskhanite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kangaskhanite.png",
+      "outputPath": "public/item-sprites/kangaskhanite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-lopunny",
+      "ref": "lopunnite",
+      "assetName": "lopunnite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lopunnite.png",
+      "outputPath": "public/item-sprites/lopunnite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-lucario",
+      "ref": "lucarionite",
+      "assetName": "lucarionite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lucarionite.png",
+      "outputPath": "public/item-sprites/lucarionite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-manectric",
+      "ref": "manectite",
+      "assetName": "manectite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/manectite.png",
+      "outputPath": "public/item-sprites/manectite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-medicham",
+      "ref": "medichamite",
+      "assetName": "medichamite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/medichamite.png",
+      "outputPath": "public/item-sprites/medichamite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-pidgeot",
+      "ref": "pidgeotite",
+      "assetName": "pidgeotite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pidgeotite.png",
+      "outputPath": "public/item-sprites/pidgeotite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-pinsir",
+      "ref": "pinsirite",
+      "assetName": "pinsirite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pinsirite.png",
+      "outputPath": "public/item-sprites/pinsirite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-sableye",
+      "ref": "sablenite",
+      "assetName": "sablenite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sablenite.png",
+      "outputPath": "public/item-sprites/sablenite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-scizor",
+      "ref": "scizorite",
+      "assetName": "scizorite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/scizorite.png",
+      "outputPath": "public/item-sprites/scizorite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-sharpedo",
+      "ref": "sharpedonite",
+      "assetName": "sharpedonite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sharpedonite.png",
+      "outputPath": "public/item-sprites/sharpedonite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-slowbro",
+      "ref": "slowbronite",
+      "assetName": "slowbronite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/slowbronite.png",
+      "outputPath": "public/item-sprites/slowbronite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-steelix",
+      "ref": "steelixite",
+      "assetName": "steelixite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/steelixite.png",
+      "outputPath": "public/item-sprites/steelixite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-tyranitar",
+      "ref": "tyranitarite",
+      "assetName": "tyranitarite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tyranitarite.png",
+      "outputPath": "public/item-sprites/tyranitarite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-venusaur",
+      "ref": "venusaurite",
+      "assetName": "venusaurite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/venusaurite.png",
+      "outputPath": "public/item-sprites/venusaurite.png"
+    }
+  ],
+  "reusedLocal": [
+    {
+      "kind": "item",
+      "key": "ようせいのハネ",
+      "ref": "item-sprites/fairy-feather.png",
+      "assetName": "fairy-feather.png",
+      "outputPath": "public/item-sprites/fairy-feather.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-floette",
+      "ref": "item-sprites/floettite.png",
+      "assetName": "floettite.png",
+      "outputPath": "public/item-sprites/floettite.png"
+    }
+  ],
+  "failures": []
+}
