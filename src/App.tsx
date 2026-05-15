@@ -1895,14 +1895,6 @@ function menuLabelForSection(section: MainSection, activeTab: MainTab, language:
   return menuLabelForTab(activeTab, language)
 }
 
-function HamburgerIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
-      <path fill="currentColor" d="M4 7h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
-    </svg>
-  )
-}
-
 function TypeBadgeImage({ type }: { type: string }) {
   const label = getTypeBadgeLabel(type)
   return <img src={getTypeBadgeSrc(type)} alt={label} className="type-badge-image" title={label} />
@@ -1997,7 +1989,6 @@ export default function App() {
   const [activeOpponentAbilityField, setActiveOpponentAbilityField] = React.useState<number | null>(null)
   const [activeMetaListField, setActiveMetaListField] = React.useState<MetaListField>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
-  const [navMenuOpen, setNavMenuOpen] = React.useState(false)
   const [settingsMenuOpen, setSettingsMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
@@ -2914,30 +2905,16 @@ export default function App() {
       <header>
         <div className="header-top-row">
           <div className="header-title-row">
-            <div className="nav-menu-wrap">
-              <button type="button" className="icon-button" aria-label={siteLanguage === 'en' ? 'Menu' : siteLanguage === 'ja' ? 'メニュー' : '메뉴'} title={siteLanguage === 'en' ? 'Menu' : siteLanguage === 'ja' ? 'メニュー' : '메뉴'} onClick={() => setNavMenuOpen((prev) => !prev)}>
-                <HamburgerIcon />
-              </button>
-              {navMenuOpen ? (
-                <div className="nav-drawer">
-                  <button type="button" className={`nav-item ${mainSection === 'home' ? 'active' : ''}`} onClick={() => { setMainSection('home'); setNavMenuOpen(false) }}>
-                    {lt('홈')}
-                    <span>{lt('모드 선택')}</span>
-                  </button>
-                  <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
-                    {lt('싱글배틀 메뉴')}
-                    <span>{menuLabelForTab(activeTab, siteLanguage)}</span>
-                  </button>
-                  <button type="button" className={`nav-item ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setNavMenuOpen(false) }}>
-                    {lt('포켓몬 샘플 깎기')}
-                    <span>{lt('포켓몬 하나 집중 조정')}</span>
-                  </button>
-                </div>
-              ) : null}
-            </div>
-            <div>
-              <h1>Pokemon Champions Battle Assistant</h1>
-              <p>{mainSection === 'home' ? lt('정식 배포 준비') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
+            <div className="header-title-stack">
+              <div>
+                <h1>Pokemon Champions Battle Assistant</h1>
+                <p>{mainSection === 'home' ? lt('정식 배포 준비') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
+              </div>
+              <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
+                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
+                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
+              </div>
             </div>
           </div>
           <div className="header-utility-row">
