@@ -3251,9 +3251,9 @@
     "basculegion": {
       "status": "seeded_from_pokeapi_alias_fetch",
       "display_name": {
-        "ko": "대쓰여너",
-        "en": "Basculegion",
-        "ja": "Basculegion"
+        "ko": "대쓰여너(수컷)",
+        "en": "Basculegion Male",
+        "ja": "Basculegion Male"
       },
       "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
       "generatedFromKeys": [
@@ -6153,6 +6153,32 @@
       },
       "notes": [
         "폼/메가 키는 현재 베이스 종 기술풀을 병합해 시드했습니다."
+      ]
+    },
+    "basculegion-female": {
+      "status": "seeded_from_pokeapi_alias_fetch",
+      "display_name": {
+        "ko": "대쓰여너(암컷)",
+        "en": "Basculegion Female",
+        "ja": "Basculegion Female"
+      },
+      "baselineSource": "src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)",
+      "generatedFromKeys": [
+        "basculegion-female"
+      ],
+      "fetchedPokemonApiCandidate": "basculegion-female",
+      "moveCount": 53,
+      "verificationPolicy": {
+        "requiredSources": [
+          "champs.pokedb.tokyo",
+          "PokemonDB",
+          "Serebii"
+        ],
+        "currentState": "Needs Champions-specific verification before claiming definitive whitelist."
+      },
+      "notes": [
+        "암컷 폼은 PokeAPI basculegion-female 기준으로 별도 분리했습니다.",
+        "수컷 전용 기술인 사념의박치기를 제외했습니다."
       ]
     }
   }

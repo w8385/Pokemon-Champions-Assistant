@@ -4766,8 +4766,8 @@
       "id": 902,
       "key": "basculegion",
       "canonicalFormSlug": "base",
-      "name_ko": "대쓰여너",
-      "name_en": "Basculegion",
+      "name_ko": "대쓰여너(수컷)",
+      "name_en": "Basculegion Male",
       "types": [
         "water",
         "ghost"
@@ -4799,6 +4799,44 @@
       "scarf_neutral": 195,
       "sprite": "https://www.serebii.net/pokemonhome/pokemon/small/902.png",
       "sprite_status": "serebii-direct-fallback"
+    },
+    {
+      "id": 10248,
+      "key": "basculegion-female",
+      "canonicalFormSlug": "female",
+      "name_ko": "대쓰여너(암컷)",
+      "name_en": "Basculegion Female",
+      "types": [
+        "water",
+        "ghost"
+      ],
+      "types_ko": [
+        "물",
+        "고스트"
+      ],
+      "abilities": [
+        "swift-swim",
+        "adaptability",
+        "mold-breaker"
+      ],
+      "abilities_ko": [
+        "쓱쓱",
+        "적응력",
+        "틀깨기"
+      ],
+      "hp": 120,
+      "attack": 92,
+      "defense": 65,
+      "spAttack": 100,
+      "spDefense": 75,
+      "speed": 78,
+      "fast": 143,
+      "neutral": 130,
+      "uninvested": 98,
+      "scarf_fast": 214,
+      "scarf_neutral": 195,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10248.png",
+      "sprite_status": "pokeapi-official-artwork"
     },
     {
       "id": 10036,
@@ -9147,7 +9185,7 @@
       "sprite_status": "serebii-direct-fallback"
     }
   ],
-  "verified_sprite_count": 258,
-  "total": 258,
+  "verified_sprite_count": 259,
+  "total": 259,
   "untranslated_abilities": []
 }

@@ -93454,5 +93454,219 @@
       "name": "Trailblaze",
       "type": "grass"
     }
+  ],
+  "basculegion-female": [
+    {
+      "name": "객기",
+      "type": "normal"
+    },
+    {
+      "name": "겁나는얼굴",
+      "type": "normal"
+    },
+    {
+      "name": "고속이동",
+      "type": "psychic"
+    },
+    {
+      "name": "고스트다이브",
+      "type": "ghost"
+    },
+    {
+      "name": "기가임팩트",
+      "type": "normal"
+    },
+    {
+      "name": "깨물어부수기",
+      "type": "dark"
+    },
+    {
+      "name": "꼬리흔들기",
+      "type": "normal"
+    },
+    {
+      "name": "나이트헤드",
+      "type": "ghost"
+    },
+    {
+      "name": "난동부리기",
+      "type": "normal"
+    },
+    {
+      "name": "냉동빔",
+      "type": "ice"
+    },
+    {
+      "name": "눈보라",
+      "type": "ice"
+    },
+    {
+      "name": "대타출동",
+      "type": "normal"
+    },
+    {
+      "name": "돌진",
+      "type": "normal"
+    },
+    {
+      "name": "머드숏",
+      "type": "ground"
+    },
+    {
+      "name": "몸통박치기",
+      "type": "normal"
+    },
+    {
+      "name": "물기",
+      "type": "dark"
+    },
+    {
+      "name": "물대포",
+      "type": "water"
+    },
+    {
+      "name": "물붓기",
+      "type": "water"
+    },
+    {
+      "name": "물의파동",
+      "type": "water"
+    },
+    {
+      "name": "바다회오리",
+      "type": "water"
+    },
+    {
+      "name": "바둥바둥",
+      "type": "normal"
+    },
+    {
+      "name": "박치기",
+      "type": "normal"
+    },
+    {
+      "name": "방어",
+      "type": "normal"
+    },
+    {
+      "name": "병상첨병",
+      "type": "ghost"
+    },
+    {
+      "name": "비바라기",
+      "type": "water"
+    },
+    {
+      "name": "사이코팽",
+      "type": "psychic"
+    },
+    {
+      "name": "섀도볼",
+      "type": "ghost"
+    },
+    {
+      "name": "소란피기",
+      "type": "normal"
+    },
+    {
+      "name": "스케일샷",
+      "type": "dragon"
+    },
+    {
+      "name": "아쿠아브레이크",
+      "type": "water"
+    },
+    {
+      "name": "아쿠아제트",
+      "type": "water"
+    },
+    {
+      "name": "아픔나누기",
+      "type": "normal"
+    },
+    {
+      "name": "양날박치기",
+      "type": "rock"
+    },
+    {
+      "name": "얼다바람",
+      "type": "ice"
+    },
+    {
+      "name": "얼음엄니",
+      "type": "ice"
+    },
+    {
+      "name": "역린",
+      "type": "dragon"
+    },
+    {
+      "name": "원한",
+      "type": "ghost"
+    },
+    {
+      "name": "이상한빛",
+      "type": "ghost"
+    },
+    {
+      "name": "이판사판태클",
+      "type": "normal"
+    },
+    {
+      "name": "잠꼬대",
+      "type": "normal"
+    },
+    {
+      "name": "잠자기",
+      "type": "psychic"
+    },
+    {
+      "name": "죽기살기",
+      "type": "normal"
+    },
+    {
+      "name": "퀵턴",
+      "type": "water"
+    },
+    {
+      "name": "탁류",
+      "type": "water"
+    },
+    {
+      "name": "파괴광선",
+      "type": "normal"
+    },
+    {
+      "name": "파도타기",
+      "type": "water"
+    },
+    {
+      "name": "폭포오르기",
+      "type": "water"
+    },
+    {
+      "name": "하이드로펌프",
+      "type": "water"
+    },
+    {
+      "name": "Chilling Water",
+      "type": "water"
+    },
+    {
+      "name": "Last Respects",
+      "type": "ghost"
+    },
+    {
+      "name": "Snowscape",
+      "type": "ice"
+    },
+    {
+      "name": "Tera Blast",
+      "type": "normal"
+    },
+    {
+      "name": "Wave Crash",
+      "type": "water"
+    }
   ]
 }
