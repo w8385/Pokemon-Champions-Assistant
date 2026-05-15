@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "build:champions-whitelist": "node scripts/build-champions-move-whitelist.mjs",
-    "build:champions-learned-whitelist": "node scripts/build-champions-learned-move-whitelist.mjs"
+    "build:champions-learned-whitelist": "node scripts/build-champions-learned-move-whitelist.mjs",
+    "build:champions-item-whitelist": "node scripts/build-champions-item-whitelist.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",

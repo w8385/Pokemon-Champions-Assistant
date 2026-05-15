@@ -1212,49 +1212,28 @@ function resolveDamageModifiers(params: {
   if (attackStage) notes.push(`ATK ${attackStage > 0 ? '+' : ''}${attackStage}`)
   if (defenseStage) notes.push(`DEF ${defenseStage > 0 ? '+' : ''}${defenseStage}`)
 
-  if (attackerItem === '구애머리띠' && mode === 'physical') {
-    attackMultiplier *= 1.5
-    notes.push('구애머리띠')
-  }
-  if (attackerItem === '구애안경' && mode === 'special') {
-    attackMultiplier *= 1.5
-    notes.push('구애안경')
-  }
-  if (attackerItem === '생명의구슬') {
-    finalMultiplier *= 1.3
-    notes.push('생명의구슬')
-  }
-  if (attackerItem === '금속코트' && moveType === 'steel') {
+  if (attackerItem === 'メタルコート' && moveType === 'steel') {
     finalMultiplier *= 1.2
-    notes.push('금속코트')
-  }
-
-  if (defenderItem === '돌격조끼' && mode === 'special') {
-    defenseMultiplier *= 1.5
-    notes.push('돌격조끼')
+    notes.push('メタルコート')
   }
 
   if (moveType === 'ground' && defenderAbility === '부유') {
     adjustedEffectiveness = 0
     notes.push('부유')
   }
-  if (moveType === 'ground' && defenderItem === '풍선') {
-    adjustedEffectiveness = 0
-    notes.push('풍선')
-  }
 
   if (adjustedEffectiveness > 1) {
-    if (defenderItem === '오카열매' && moveType === 'fire') {
+    if (defenderItem === 'オッカのみ' && moveType === 'fire') {
       finalMultiplier *= 0.5
-      notes.push('오카열매')
+      notes.push('オッカのみ')
     }
-    if (defenderItem === '유루열매' && moveType === 'ice') {
+    if (defenderItem === 'ヤチェのみ' && moveType === 'ice') {
       finalMultiplier *= 0.5
-      notes.push('유루열매')
+      notes.push('ヤチェのみ')
     }
-    if (defenderItem === '리샘열매' && moveType === 'fairy') {
+    if (defenderItem === 'ロゼルのみ' && moveType === 'fairy') {
       finalMultiplier *= 0.5
-      notes.push('리샘열매')
+      notes.push('ロゼルのみ')
     }
   }
 

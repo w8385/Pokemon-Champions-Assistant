@@ -33,8 +33,9 @@ export const dataSourcePolicy = {
   },
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',
-    primary: '포켓몬 챔피언스에서 현재 UI가 허용하는 도구 목록만 분리한 파일',
-    supplements: ['별칭', '아이템 스프라이트 slug'],
-    caveat: '현재는 앱 내부 허용 목록 추출본이며, 향후 포챔스 실데이터 기준 검증이 필요할 수 있다.',
+    report: 'reports/championsItemWhitelistReport.json',
+    primary: '포챔스 공개 opendata JSON에서 역추출한 일반 도구 화이트리스트',
+    supplements: ['https://champs.pokedb.tokyo/guide/opendata', '메가스톤 제외 목록', '일부 아이템 sprite slug'],
+    caveat: '현재 공개 opendata에 등장한 일반 도구만 포함한다. 메가스톤은 종 고정 도구로 앱에서 별도 처리하며, `持ち物なし`는 빈 값으로 처리한다.',
   },
 } as const
