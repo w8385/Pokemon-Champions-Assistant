@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-14T18:34:57.720Z",
+  "generatedAt": "2026-05-15T05:53:08.449Z",
   "totals": {
     "speciesTracked": 11,
-    "recommendedMoves": 78,
-    "presentInWhitelist": 76,
-    "missingFromWhitelist": 2,
+    "recommendedMoves": 56,
+    "presentInWhitelist": 55,
+    "missingFromWhitelist": 1,
     "untranslatedRecommendedMoves": 0
   },
   "species": {
@@ -22,7 +22,7 @@
       },
       "notes": [
         "포챔스 통계 프록시에서는 인파이트/유턴/트리플악셀 비중이 높음",
-        "고스트 견제 여부 확인"
+        "냉동펀치/번개펀치는 저우선 커버 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -67,32 +67,12 @@
             "validationCount": 3,
             "sampleCount": 1,
             "note": null
-          },
-          {
-            "move": "냉동펀치",
-            "canonicalMove": "냉동펀치",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
           }
         ],
         "utility": [
           {
             "move": "앵콜",
             "canonicalMove": "앵콜",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "번개펀치",
-            "canonicalMove": "번개펀치",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -118,7 +98,8 @@
       },
       "notes": [
         "포챔스 통계 프록시에서는 화염방사/사이코키네시스/매지컬샤인이 상위",
-        "앵콜 여부가 샘플 분기점"
+        "앵콜 여부가 샘플 분기점",
+        "대타출동/명상은 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -163,32 +144,12 @@
             "validationCount": 3,
             "sampleCount": 1,
             "note": null
-          },
-          {
-            "move": "대타출동",
-            "canonicalMove": "대타출동",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
           }
         ],
         "utility": [
           {
             "move": "앵콜",
             "canonicalMove": "앵콜",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "명상",
-            "canonicalMove": "명상",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -214,7 +175,8 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 지진/역린 뒤로 스텔스록, 암석봉인 비중이 높음"
+        "포챔스 통계 기준 지진/역린 뒤로 스텔스록, 암석봉인 비중이 높음",
+        "독찌르기/칼춤은 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -251,16 +213,6 @@
             "note": null
           },
           {
-            "move": "독찌르기",
-            "canonicalMove": "독찌르기",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
             "move": "스케일샷",
             "canonicalMove": "스케일샷",
             "presentInWhitelist": true,
@@ -275,16 +227,6 @@
           {
             "move": "스텔스록",
             "canonicalMove": "스텔스록",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
-            "move": "칼춤",
-            "canonicalMove": "칼춤",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -309,7 +251,8 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 맹독/토치카/흑안개 채용이 높음"
+        "포챔스 통계 기준 맹독/흑안개 축 우선",
+        "토치카/냉동빔은 저우선 후보로 제외"
       ],
       "tiers": {
         "core": [
@@ -346,16 +289,6 @@
             "note": null
           },
           {
-            "move": "토치카",
-            "canonicalMove": "토치카",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
             "move": "흑안개",
             "canonicalMove": "흑안개",
             "presentInWhitelist": true,
@@ -370,16 +303,6 @@
           {
             "move": "독압정",
             "canonicalMove": "독압정",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "냉동빔",
-            "canonicalMove": "냉동빔",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -404,7 +327,8 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 날개쉬기/바디프레스/철벽 축 비중이 높음"
+        "포챔스 통계 기준 날개쉬기/바디프레스/철벽 축 비중이 높음",
+        "아이언헤드/도발/벌크업은 저빈도 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -449,42 +373,12 @@
             "validationCount": 3,
             "sampleCount": 1,
             "note": null
-          },
-          {
-            "move": "아이언헤드",
-            "canonicalMove": "아이언헤드",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
           }
         ],
         "utility": [
           {
-            "move": "도발",
-            "canonicalMove": "도발",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
             "move": "브레이브버드",
             "canonicalMove": "브레이브버드",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "벌크업",
-            "canonicalMove": "벌크업",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -511,7 +405,8 @@
       },
       "notes": [
         "포챔스 통계 기준 도각참 누락은 오류로 보고 바로 보강",
-        "기습/칼춤 확인이 우선"
+        "기습/칼춤 확인이 우선",
+        "메탈버스트는 실전 추적 우선도 낮아 제외"
       ],
       "tiers": {
         "core": [
@@ -578,16 +473,6 @@
             "validationCount": 3,
             "sampleCount": 2,
             "note": null
-          },
-          {
-            "move": "메탈버스트",
-            "canonicalMove": "메탈버스트",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 3,
-            "sampleCount": 2,
-            "note": null
           }
         ]
       },
@@ -606,7 +491,8 @@
         ]
       },
       "notes": [
-        "트릭/상태이상기 보유 확인"
+        "트릭/상태이상기 보유 확인",
+        "악의파동/전기자석파는 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -643,16 +529,6 @@
             "note": null
           },
           {
-            "move": "악의파동",
-            "canonicalMove": "악의파동",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
             "move": "트릭",
             "canonicalMove": "트릭",
             "presentInWhitelist": true,
@@ -667,16 +543,6 @@
           {
             "move": "도깨비불",
             "canonicalMove": "도깨비불",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
-            "move": "전기자석파",
-            "canonicalMove": "전기자석파",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "high",
@@ -702,7 +568,8 @@
         ]
       },
       "notes": [
-        "앵콜/명상 여부로 운영 달라짐"
+        "앵콜/명상 여부로 운영 달라짐",
+        "냉동빔/앵콜은 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -739,16 +606,6 @@
             "note": null
           },
           {
-            "move": "냉동빔",
-            "canonicalMove": "냉동빔",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
             "move": "에너지볼",
             "canonicalMove": "에너지볼",
             "presentInWhitelist": true,
@@ -763,16 +620,6 @@
           {
             "move": "명상",
             "canonicalMove": "명상",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "medium",
-            "validationCount": 2,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "앵콜",
-            "canonicalMove": "앵콜",
             "presentInWhitelist": true,
             "status": "verified_in_whitelist",
             "confidence": "medium",
@@ -797,7 +644,8 @@
         ]
       },
       "notes": [
-        "물리/특수/서포트 분기 추적"
+        "물리/특수/서포트 분기 추적",
+        "불대문자/전기자석파는 보조 저빈도 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -834,16 +682,6 @@
             "note": null
           },
           {
-            "move": "불대문자",
-            "canonicalMove": "불대문자",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
             "move": "유턴",
             "canonicalMove": "유턴",
             "presentInWhitelist": true,
@@ -855,16 +693,6 @@
           }
         ],
         "utility": [
-          {
-            "move": "전기자석파",
-            "canonicalMove": "전기자석파",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": null
-          },
           {
             "move": "도깨비불",
             "canonicalMove": "도깨비불",
@@ -891,7 +719,8 @@
         ]
       },
       "notes": [
-        "칼춤형인지 유틸형인지 확인"
+        "칼춤형인지 유틸형인지 확인",
+        "도깨비불/대타출동은 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -948,26 +777,6 @@
             "validationCount": 2,
             "sampleCount": 1,
             "note": null
-          },
-          {
-            "move": "도깨비불",
-            "canonicalMove": "도깨비불",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "medium",
-            "validationCount": 2,
-            "sampleCount": 1,
-            "note": null
-          },
-          {
-            "move": "대타출동",
-            "canonicalMove": "대타출동",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "medium",
-            "validationCount": 2,
-            "sampleCount": 1,
-            "note": null
           }
         ]
       },
@@ -986,7 +795,8 @@
         ]
       },
       "notes": [
-        "유턴/압정 여부 중요"
+        "유턴/압정 여부 중요",
+        "로우킥/도발은 저우선 분기로 제외"
       ],
       "tiers": {
         "core": [
@@ -1023,16 +833,6 @@
             "note": null
           },
           {
-            "move": "로우킥",
-            "canonicalMove": "로우킥",
-            "presentInWhitelist": false,
-            "status": "needs_verification",
-            "confidence": "conflict",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": "추천기에는 남아 있지만 현재 화이트리스트 미포함. 포챔스 실제 가용 여부 재검증 필요"
-          },
-          {
             "move": "치근거리기",
             "canonicalMove": "치근거리기",
             "presentInWhitelist": true,
@@ -1045,16 +845,6 @@
         ],
         "utility": [
           {
-            "move": "도발",
-            "canonicalMove": "도발",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
-            "validationCount": 2,
-            "sampleCount": 2,
-            "note": null
-          },
-          {
             "move": "압정뿌리기",
             "canonicalMove": "압정뿌리기",
             "presentInWhitelist": true,
@@ -1066,17 +856,12 @@
           }
         ]
       },
-      "missingMoves": [
-        "로우킥"
-      ]
+      "missingMoves": []
     }
   },
   "missingBySpecies": {
     "rotom": [
       "하이드로펌프"
-    ],
-    "meowscarada": [
-      "로우킥"
     ]
   }
 }

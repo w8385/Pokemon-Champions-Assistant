@@ -1,0 +1,803 @@
+{
+  "_meta": {
+    "generatedAt": "2026-05-15T05:53:08.635Z",
+    "purpose": "현재 사이트가 학습/추천하고 있는 종별 가용 기술만 추린 learned whitelist",
+    "sourceOfTruth": "src/sampleMoves.ts",
+    "comparedAgainst": "src/championsMovePools.json",
+    "caveat": "전체 기술풀이 아니라 현재 사이트가 학습한 종/추천기술만 포함한다."
+  },
+  "pokemon": {
+    "mega-lopunny": {
+      "displayName": {
+        "ko": "메가이어롭",
+        "en": "Mega Lopunny",
+        "ja": "Mega Lopunny"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend proxy (Lopunny base form)"
+        ],
+        "samples": [
+          "Smogon Dex ORAS/ND offensive sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 프록시에서는 인파이트/유턴/트리플악셀 비중이 높음",
+        "냉동펀치/번개펀치는 저우선 커버 분기로 제외"
+      ],
+      "availableMoves": [
+        "속이다",
+        "무릎차기",
+        "유턴",
+        "트리플악셀",
+        "앵콜"
+      ],
+      "moves": [
+        {
+          "name": "속이다",
+          "canonicalName": "속이다",
+          "type": "normal",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "무릎차기",
+          "canonicalName": "무릎차기",
+          "type": "fighting",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "유턴",
+          "canonicalName": "유턴",
+          "type": "bug",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "트리플악셀",
+          "canonicalName": "트리플악셀",
+          "type": "ice",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "앵콜",
+          "canonicalName": "앵콜",
+          "type": "normal",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "mega-delphox": {
+      "displayName": {
+        "ko": "메가마폭시",
+        "en": "Mega Delphox",
+        "ja": "Mega Delphox"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend proxy (Delphox base form)"
+        ],
+        "samples": [
+          "Smogon Dex custom attacker references"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 프록시에서는 화염방사/사이코키네시스/매지컬샤인이 상위",
+        "앵콜 여부가 샘플 분기점",
+        "대타출동/명상은 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "사이코키네시스",
+        "매지컬샤인",
+        "오버히트",
+        "사이코쇼크",
+        "앵콜"
+      ],
+      "moves": [
+        {
+          "name": "사이코키네시스",
+          "canonicalName": "사이코키네시스",
+          "type": "psychic",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "매지컬샤인",
+          "canonicalName": "매지컬샤인",
+          "type": "fairy",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "오버히트",
+          "canonicalName": "오버히트",
+          "type": "fire",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "사이코쇼크",
+          "canonicalName": "사이코쇼크",
+          "type": "psychic",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "앵콜",
+          "canonicalName": "앵콜",
+          "type": "normal",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "garchomp": {
+      "displayName": {
+        "ko": "한카리아스",
+        "en": "Garchomp",
+        "ja": "Garchomp"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex tank/SD sets",
+          "Pikalytics common move trends"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 지진/역린 뒤로 스텔스록, 암석봉인 비중이 높음",
+        "독찌르기/칼춤은 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "지진",
+        "역린",
+        "암석봉인",
+        "스케일샷",
+        "스텔스록"
+      ],
+      "moves": [
+        {
+          "name": "지진",
+          "canonicalName": "지진",
+          "type": "ground",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "역린",
+          "canonicalName": "역린",
+          "type": "dragon",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "암석봉인",
+          "canonicalName": "암석봉인",
+          "type": "rock",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "스케일샷",
+          "canonicalName": "스케일샷",
+          "type": "dragon",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "스텔스록",
+          "canonicalName": "스텔스록",
+          "type": "rock",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "toxapex": {
+      "displayName": {
+        "ko": "더시마사리",
+        "en": "Toxapex",
+        "ja": "Toxapex"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex defensive sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 맹독/흑안개 축 우선",
+        "토치카/냉동빔은 저우선 후보로 제외"
+      ],
+      "availableMoves": [
+        "열탕",
+        "HP회복",
+        "맹독",
+        "흑안개",
+        "독압정"
+      ],
+      "moves": [
+        {
+          "name": "열탕",
+          "canonicalName": "열탕",
+          "type": "water",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "회복",
+          "canonicalName": "HP회복",
+          "type": "normal",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "맹독",
+          "canonicalName": "맹독",
+          "type": "poison",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "흑안개",
+          "canonicalName": "흑안개",
+          "type": "ice",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "독압정",
+          "canonicalName": "독압정",
+          "type": "poison",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "corviknight": {
+      "displayName": {
+        "ko": "아머까오",
+        "en": "Corviknight",
+        "ja": "Corviknight"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex bulky pivot sets"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 날개쉬기/바디프레스/철벽 축 비중이 높음",
+        "아이언헤드/도발/벌크업은 저빈도 분기로 제외"
+      ],
+      "availableMoves": [
+        "날개쉬기",
+        "바디프레스",
+        "철벽",
+        "유턴",
+        "브레이브버드"
+      ],
+      "moves": [
+        {
+          "name": "날개쉬기",
+          "canonicalName": "날개쉬기",
+          "type": "flying",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "바디프레스",
+          "canonicalName": "바디프레스",
+          "type": "fighting",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "철벽",
+          "canonicalName": "철벽",
+          "type": "steel",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "유턴",
+          "canonicalName": "유턴",
+          "type": "bug",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "브레이브버드",
+          "canonicalName": "브레이브버드",
+          "type": "flying",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "kingambit": {
+      "displayName": {
+        "ko": "대도각참",
+        "en": "Kingambit",
+        "ja": "Kingambit"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii",
+          "Champions trend page season 1"
+        ],
+        "samples": [
+          "Smogon Dex sweeper sets",
+          "Pikalytics move frequency"
+        ]
+      },
+      "notes": [
+        "포챔스 통계 기준 도각참 누락은 오류로 보고 바로 보강",
+        "기습/칼춤 확인이 우선",
+        "메탈버스트는 실전 추적 우선도 낮아 제외"
+      ],
+      "availableMoves": [
+        "도각참",
+        "기습",
+        "아이언헤드",
+        "로우킥",
+        "칼춤",
+        "도발"
+      ],
+      "moves": [
+        {
+          "name": "도각참",
+          "canonicalName": "도각참",
+          "type": "dark",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "기습",
+          "canonicalName": "기습",
+          "type": "dark",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "아이언헤드",
+          "canonicalName": "아이언헤드",
+          "type": "steel",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "로우킥",
+          "canonicalName": "로우킥",
+          "type": "fighting",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "칼춤",
+          "canonicalName": "칼춤",
+          "type": "normal",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "도발",
+          "canonicalName": "도발",
+          "type": "dark",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "rotom": {
+      "displayName": {
+        "ko": "로토무",
+        "en": "Rotom",
+        "ja": "Rotom"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii Champions move list"
+        ],
+        "samples": [
+          "Smogon Dex pivot sets",
+          "Pikalytics utility trends"
+        ]
+      },
+      "notes": [
+        "트릭/상태이상기 보유 확인",
+        "악의파동/전기자석파는 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "볼트체인지",
+        "하이드로펌프",
+        "10만볼트",
+        "트릭",
+        "도깨비불"
+      ],
+      "moves": [
+        {
+          "name": "볼트체인지",
+          "canonicalName": "볼트체인지",
+          "type": "electric",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "하이드로펌프",
+          "canonicalName": "하이드로펌프",
+          "type": null,
+          "tier": "core",
+          "presentInChampionsPool": false,
+          "confidence": "conflict"
+        },
+        {
+          "name": "10만볼트",
+          "canonicalName": "10만볼트",
+          "type": "electric",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "트릭",
+          "canonicalName": "트릭",
+          "type": "psychic",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "도깨비불",
+          "canonicalName": "도깨비불",
+          "type": "fire",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "primarina": {
+      "displayName": {
+        "ko": "누리레느",
+        "en": "Primarina",
+        "ja": "Primarina"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex calm mind/offense sets"
+        ]
+      },
+      "notes": [
+        "앵콜/명상 여부로 운영 달라짐",
+        "냉동빔/앵콜은 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "문포스",
+        "하이드로펌프",
+        "하이퍼보이스",
+        "에너지볼",
+        "명상"
+      ],
+      "moves": [
+        {
+          "name": "문포스",
+          "canonicalName": "문포스",
+          "type": "fairy",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "하이드로펌프",
+          "canonicalName": "하이드로펌프",
+          "type": "water",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "하이퍼보이스",
+          "canonicalName": "하이퍼보이스",
+          "type": "normal",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "에너지볼",
+          "canonicalName": "에너지볼",
+          "type": "grass",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "명상",
+          "canonicalName": "명상",
+          "type": "psychic",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "medium"
+        }
+      ]
+    },
+    "dragapult": {
+      "displayName": {
+        "ko": "드래펄트",
+        "en": "Dragapult",
+        "ja": "Dragapult"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii Champions move list"
+        ],
+        "samples": [
+          "Smogon Dex offensive sets",
+          "Pikalytics common move usage"
+        ]
+      },
+      "notes": [
+        "물리/특수/서포트 분기 추적",
+        "불대문자/전기자석파는 보조 저빈도 분기로 제외"
+      ],
+      "availableMoves": [
+        "드래곤애로",
+        "고스트다이브",
+        "용성군",
+        "유턴",
+        "도깨비불"
+      ],
+      "moves": [
+        {
+          "name": "드래곤애로",
+          "canonicalName": "드래곤애로",
+          "type": "dragon",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "고스트다이브",
+          "canonicalName": "고스트다이브",
+          "type": "ghost",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "용성군",
+          "canonicalName": "용성군",
+          "type": "dragon",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "유턴",
+          "canonicalName": "유턴",
+          "type": "bug",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "도깨비불",
+          "canonicalName": "도깨비불",
+          "type": "fire",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    },
+    "mimikyu": {
+      "displayName": {
+        "ko": "따라큐",
+        "en": "Mimikyu",
+        "ja": "Mimikyu"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex setup sets"
+        ]
+      },
+      "notes": [
+        "칼춤형인지 유틸형인지 확인",
+        "도깨비불/대타출동은 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "치근거리기",
+        "섀도크루",
+        "야습",
+        "우드해머",
+        "칼춤"
+      ],
+      "moves": [
+        {
+          "name": "치근거리기",
+          "canonicalName": "치근거리기",
+          "type": "fairy",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "섀도클로",
+          "canonicalName": "섀도크루",
+          "type": "ghost",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "야습",
+          "canonicalName": "야습",
+          "type": "ghost",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "우드해머",
+          "canonicalName": "우드해머",
+          "type": "grass",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "칼춤",
+          "canonicalName": "칼춤",
+          "type": "normal",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "medium"
+        }
+      ]
+    },
+    "meowscarada": {
+      "displayName": {
+        "ko": "마스카나",
+        "en": "Meowscarada",
+        "ja": "Meowscarada"
+      },
+      "source": {
+        "structured": "PokeAPI species/moves baseline",
+        "validation": [
+          "PokemonDB",
+          "Serebii"
+        ],
+        "samples": [
+          "Smogon Dex pivot sets",
+          "Pikalytics support usage"
+        ]
+      },
+      "notes": [
+        "유턴/압정 여부 중요",
+        "로우킥/도발은 저우선 분기로 제외"
+      ],
+      "availableMoves": [
+        "트릭플라워",
+        "탁쳐서떨구기",
+        "유턴",
+        "치근거리기",
+        "압정뿌리기"
+      ],
+      "moves": [
+        {
+          "name": "트릭플라워",
+          "canonicalName": "트릭플라워",
+          "type": "grass",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "탁쳐서떨구기",
+          "canonicalName": "탁쳐서떨구기",
+          "type": "dark",
+          "tier": "core",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "유턴",
+          "canonicalName": "유턴",
+          "type": "bug",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "치근거리기",
+          "canonicalName": "치근거리기",
+          "type": "fairy",
+          "tier": "options",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "압정뿌리기",
+          "canonicalName": "압정뿌리기",
+          "type": "ground",
+          "tier": "utility",
+          "presentInChampionsPool": true,
+          "confidence": "high"
+        }
+      ]
+    }
+  }
+}

@@ -24,4 +24,11 @@ export const dataSourcePolicy = {
     secondary: 'Pikalytics',
     use: '실전 샘플의 코어 기술/선택지/운영 분기 추적',
   },
+  learnedMoveWhitelist: {
+    sourceOfTruth: 'src/championsLearnedMoveWhitelist.json',
+    report: 'reports/championsLearnedMoveWhitelistReport.json',
+    primary: '현재 사이트가 실제로 학습한 종별 추천기술 화이트리스트',
+    supplements: ['src/sampleMoves.ts', 'src/championsMovePools.json', 'src/championsRecommendationAuditOverrides.json'],
+    caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함한다.',
+  },
 } as const
