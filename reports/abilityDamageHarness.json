@@ -1,0 +1,371 @@
+{
+  "generatedAt": "2026-05-15T13:21:41.325Z",
+  "totalAbilities": 190,
+  "implementedCount": 27,
+  "categories": {
+    "implemented": {
+      "count": 27,
+      "abilities": [
+        "adaptability",
+        "dry-skin",
+        "earth-eater",
+        "fairy-aura",
+        "filter",
+        "flash-fire",
+        "fur-coat",
+        "guts",
+        "heatproof",
+        "huge-power",
+        "hustle",
+        "levitate",
+        "lightning-rod",
+        "motor-drive",
+        "protean",
+        "pure-power",
+        "sand-force",
+        "sap-sipper",
+        "sniper",
+        "solar-power",
+        "solid-rock",
+        "technician",
+        "thick-fat",
+        "unaware",
+        "volt-absorb",
+        "water-absorb",
+        "water-bubble"
+      ]
+    },
+    "requiresMoveTags": {
+      "count": 12,
+      "abilities": [
+        "aerilate",
+        "dragonize",
+        "iron-fist",
+        "liquid-voice",
+        "mega-launcher",
+        "mega-sol",
+        "piercing-drill",
+        "pixilate",
+        "refrigerate",
+        "sharpness",
+        "strong-jaw",
+        "tough-claws"
+      ]
+    },
+    "requiresHpOrStatusContext": {
+      "count": 10,
+      "abilities": [
+        "berserk",
+        "blaze",
+        "marvel-scale",
+        "merciless",
+        "multiscale",
+        "overgrow",
+        "poison-heal",
+        "quick-feet",
+        "swarm",
+        "torrent"
+      ]
+    },
+    "requiresTurnOrFieldContext": {
+      "count": 15,
+      "abilities": [
+        "analytic",
+        "electromorphosis",
+        "gale-wings",
+        "minus",
+        "opportunist",
+        "parental-bond",
+        "plus",
+        "quick-draw",
+        "reckless",
+        "rivalry",
+        "sheer-force",
+        "skill-link",
+        "stance-change",
+        "super-luck",
+        "supreme-overlord"
+      ]
+    },
+    "manualBattleState": {
+      "count": 10,
+      "abilities": [
+        "anger-point",
+        "competitive",
+        "contrary",
+        "defiant",
+        "gooey",
+        "intimidate",
+        "moxie",
+        "speed-boost",
+        "stamina",
+        "weak-armor"
+      ]
+    },
+    "weatherOrTerrainDriven": {
+      "count": 18,
+      "abilities": [
+        "chlorophyll",
+        "drizzle",
+        "drought",
+        "forecast",
+        "hydration",
+        "ice-body",
+        "leaf-guard",
+        "mimicry",
+        "rain-dish",
+        "sand-rush",
+        "sand-spit",
+        "sand-stream",
+        "sand-veil",
+        "slush-rush",
+        "snow-cloak",
+        "snow-warning",
+        "surge-surfer",
+        "swift-swim"
+      ]
+    },
+    "indirectOrNonDamage": {
+      "count": 98,
+      "abilities": [
+        "aftermath",
+        "anticipation",
+        "armor-tail",
+        "aroma-veil",
+        "big-pecks",
+        "bulletproof",
+        "cheek-pouch",
+        "clear-body",
+        "cloud-nine",
+        "compoundeyes",
+        "corrosion",
+        "cud-chew",
+        "curious-medicine",
+        "cursed-body",
+        "cute-charm",
+        "damp",
+        "disguise",
+        "early-bird",
+        "flame-body",
+        "flower-veil",
+        "friend-guard",
+        "frisk",
+        "gluttony",
+        "harvest",
+        "healer",
+        "heavy-metal",
+        "hospitality",
+        "hunger-switch",
+        "hyper-cutter",
+        "illuminate",
+        "illusion",
+        "immunity",
+        "imposter",
+        "infiltrator",
+        "innards-out",
+        "inner-focus",
+        "insomnia",
+        "justified",
+        "keen-eye",
+        "klutz",
+        "light-metal",
+        "limber",
+        "long-reach",
+        "magic-bounce",
+        "magic-guard",
+        "magician",
+        "magma-armor",
+        "mirror-armor",
+        "mold-breaker",
+        "moody",
+        "mummy",
+        "natural-cure",
+        "no-guard",
+        "oblivious",
+        "overcoat",
+        "own-tempo",
+        "pickpocket",
+        "pickup",
+        "poison-point",
+        "poison-touch",
+        "prankster",
+        "pressure",
+        "purifying-salt",
+        "queenly-majesty",
+        "receiver",
+        "regenerator",
+        "ripen",
+        "rock-head",
+        "rough-skin",
+        "scrappy",
+        "screen-cleaner",
+        "shadow-tag",
+        "shed-skin",
+        "shell-armor",
+        "shield-dust",
+        "soundproof",
+        "spicy-spray",
+        "stall",
+        "stalwart",
+        "static",
+        "steadfast",
+        "stench",
+        "sticky-hold",
+        "sturdy",
+        "supersweet-syrup",
+        "sweet-veil",
+        "symbiosis",
+        "synchronize",
+        "tangled-feet",
+        "telepathy",
+        "toxic-debris",
+        "trace",
+        "unburden",
+        "unnerve",
+        "unseen-fist",
+        "wandering-spirit",
+        "white-smoke",
+        "zero-to-hero"
+      ]
+    },
+    "uncategorized": {
+      "count": 0,
+      "abilities": []
+    }
+  },
+  "damageRelevantMissingCount": 54,
+  "damageRelevantMissing": [
+    "aerilate",
+    "analytic",
+    "berserk",
+    "blaze",
+    "chlorophyll",
+    "dragonize",
+    "drizzle",
+    "drought",
+    "electromorphosis",
+    "forecast",
+    "gale-wings",
+    "hydration",
+    "ice-body",
+    "iron-fist",
+    "leaf-guard",
+    "liquid-voice",
+    "marvel-scale",
+    "mega-launcher",
+    "mega-sol",
+    "merciless",
+    "mimicry",
+    "multiscale",
+    "opportunist",
+    "overgrow",
+    "parental-bond",
+    "piercing-drill",
+    "pixilate",
+    "plus",
+    "poison-heal",
+    "quick-draw",
+    "quick-feet",
+    "rain-dish",
+    "reckless",
+    "refrigerate",
+    "rivalry",
+    "sand-rush",
+    "sand-spit",
+    "sand-stream",
+    "sand-veil",
+    "sharpness",
+    "sheer-force",
+    "skill-link",
+    "slush-rush",
+    "snow-cloak",
+    "snow-warning",
+    "stance-change",
+    "strong-jaw",
+    "super-luck",
+    "supreme-overlord",
+    "surge-surfer",
+    "swarm",
+    "swift-swim",
+    "torrent",
+    "tough-claws"
+  ],
+  "notableDefenderAbilities": [
+    {
+      "ability": "dry-skin",
+      "implemented": true
+    },
+    {
+      "ability": "earth-eater",
+      "implemented": true
+    },
+    {
+      "ability": "fairy-aura",
+      "implemented": true
+    },
+    {
+      "ability": "filter",
+      "implemented": true
+    },
+    {
+      "ability": "flash-fire",
+      "implemented": true
+    },
+    {
+      "ability": "fur-coat",
+      "implemented": true
+    },
+    {
+      "ability": "heatproof",
+      "implemented": true
+    },
+    {
+      "ability": "levitate",
+      "implemented": true
+    },
+    {
+      "ability": "lightning-rod",
+      "implemented": true
+    },
+    {
+      "ability": "motor-drive",
+      "implemented": true
+    },
+    {
+      "ability": "multiscale",
+      "implemented": false
+    },
+    {
+      "ability": "purifying-salt",
+      "implemented": false
+    },
+    {
+      "ability": "sap-sipper",
+      "implemented": true
+    },
+    {
+      "ability": "solid-rock",
+      "implemented": true
+    },
+    {
+      "ability": "soundproof",
+      "implemented": false
+    },
+    {
+      "ability": "thick-fat",
+      "implemented": true
+    },
+    {
+      "ability": "volt-absorb",
+      "implemented": true
+    },
+    {
+      "ability": "water-absorb",
+      "implemented": true
+    },
+    {
+      "ability": "water-bubble",
+      "implemented": true
+    }
+  ]
+}

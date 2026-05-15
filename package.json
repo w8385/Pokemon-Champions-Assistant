@@ -12,6 +12,7 @@
     "build:champions-move-meta": "node scripts/build-champions-move-meta.mjs",
     "check:type-effectiveness": "node scripts/check-type-effectiveness-harness.mjs",
     "check:damage-parity": "node scripts/check-damage-parity.mjs",
+    "check:ability-damage": "node scripts/check-ability-damage-harness.mjs",
     "build:champions-item-whitelist": "node scripts/build-champions-item-whitelist.mjs",
     "sync:item-sprites": "node scripts/sync-item-sprites.mjs"
   },
