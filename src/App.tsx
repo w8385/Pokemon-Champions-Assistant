@@ -4168,17 +4168,9 @@ export default function App() {
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface">
-            <div className="pick-summary-badges damage-auto-badges">
-              <span className="pick-badge">Lv50</span>
-              <span className="pick-badge">{lt('상대 기본 내구 가정')} · {opponentBulkLabel(opponentBulkState, calcOpponentBulkPreset)}</span>
-              {activeDamageMoveType ? <span className="pick-badge">{TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
-              {activeDamageMoveCategory ? <span className="pick-badge">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
-              {activeDamageMovePower !== null ? <span className="pick-badge">{activeDamageMovePower}</span> : null}
-              {activeDamageMoveMeta?.variablePower ? <span className="pick-badge warn">{lt('가변 위력 기술이라 수동 입력이 필요함')}</span> : null}
-              <span className="pick-badge">자속 {activeDamageMoveType ? autoStab : stab}</span>
-              <span className="pick-badge">{lt('상성')} {damageModifiers.effectiveness}x</span>
-              {damageModifiers.notes.map((note) => <span key={note} className="pick-badge">{note}</span>)}
-            </div>
+            {activeDamageMoveMeta?.variablePower ? <div className="pick-summary-badges damage-auto-badges">
+              <span className="pick-badge warn">{lt('가변 위력 기술이라 수동 입력이 필요함')}</span>
+            </div> : null}
             {activeDamageMovePower === null ? <div className="preset-row damage-preset-row">
               {movePowerPresets.map((preset) => (
                 <button
