@@ -2385,8 +2385,6 @@ textarea { min-height: 72px; resize: vertical; }
 .speed-plane-range-marker {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   min-width: 24px;
   height: 22px;
   display: inline-flex;
@@ -2403,6 +2401,14 @@ textarea { min-height: 72px; resize: vertical; }
   line-height: 1;
   white-space: nowrap;
   z-index: 2;
+}
+.speed-plane-range-node.label-right .speed-plane-range-marker {
+  left: 14px;
+  transform: translateY(-50%);
+}
+.speed-plane-range-node.label-left .speed-plane-range-marker {
+  right: 14px;
+  transform: translateY(-50%);
 }
 .speed-plane-range-marker.item {
   padding: 0 5px;
