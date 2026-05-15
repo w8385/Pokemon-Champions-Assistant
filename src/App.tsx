@@ -3498,12 +3498,12 @@ export default function App() {
                         const maxScenario = band.maxScenario!
                         const minTop = speedAxisTop(minScenario.speedAtMax)
                         const maxTop = speedAxisTop(maxScenario.speedAtMax)
-                        const left = opponentSpeedBands.length === 1 ? 53 : 26 + ((54 / (opponentSpeedBands.length - 1)) * idx)
+                        const left = opponentSpeedBands.length === 1 ? 50 : 18 + ((60 / (opponentSpeedBands.length - 1)) * idx)
                         const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
                         const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
                         const guideHeight = Math.max(0, guideBottom - guideTop)
                         const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
-                        const labelSideClass = left > 72 ? 'label-left' : 'label-right'
+                        const labelSideClass = left > 70 ? 'label-left' : 'label-right'
                         return (
                           <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
                             {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
