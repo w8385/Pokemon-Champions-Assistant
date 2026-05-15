@@ -1207,12 +1207,31 @@ function resolveDamageModifiers(params: {
   let adjustedEffectiveness = effectiveness
   const notes: string[] = []
 
+  const typeBoostItems: Partial<Record<string, string>> = {
+    'きせきのタネ': 'grass',
+    'くろいメガネ': 'dark',
+    'くろおび': 'fighting',
+    'じしゃく': 'electric',
+    'シルクのスカーフ': 'normal',
+    'しんぴのしずく': 'water',
+    'するどいくちばし': 'flying',
+    'どくバリ': 'poison',
+    'とけないこおり': 'ice',
+    'のろいのおふだ': 'ghost',
+    'まがったスプーン': 'psychic',
+    'メタルコート': 'steel',
+    'もくたん': 'fire',
+    'やわらかいすな': 'ground',
+    'ようせいのハネ': 'fairy',
+    'りゅうのキバ': 'dragon',
+  }
+
   if (attackStage) notes.push(`ATK ${attackStage > 0 ? '+' : ''}${attackStage}`)
   if (defenseStage) notes.push(`DEF ${defenseStage > 0 ? '+' : ''}${defenseStage}`)
 
-  if (attackerItem === 'メタルコート' && moveType === 'steel') {
+  if (attackerItem && moveType && typeBoostItems[attackerItem] === moveType) {
     finalMultiplier *= 1.2
-    notes.push('メタルコート')
+    notes.push(attackerItem)
   }
 
   if (moveType === 'ground' && defenderAbility === '부유') {
