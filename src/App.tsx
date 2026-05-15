@@ -3544,10 +3544,8 @@ export default function App() {
                 <div className="entry-card-head">
                   <div className="row-between compact-gap">
                     <strong>{oppMember.key ? displayName(oppRow, siteLanguage) : emptySlotLabel(selectedOpp, siteLanguage)}</strong>
-                    <span className={`pick-chip ${oppMember.picked ? 'active' : ''}`}>{oppMember.picked ? lt('선출 추정') : lt('미체크')}</span>
                   </div>
                   {oppMember.key ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
-                  <p className="muted">{lt('상세 패널에서 공개 정보를 바로 갱신합니다.')}</p>
                 </div>
               </div>
               <div className="opponent-detail-fields">
@@ -3690,9 +3688,6 @@ export default function App() {
                       {SPEED_STAGE_OPTIONS.map((n) => <option key={n} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
                     </select>
                   </label>
-                  <button type="button" className={`pick-chip ${oppMember.picked ? 'active' : ''}`} onClick={() => setOpponents(togglePicked(opponents, selectedOpp))}>
-                    {oppMember.picked ? lt('선출 추정 해제') : lt('선출 추정 체크')}
-                  </button>
                 </div>
               </div>
             </div>
