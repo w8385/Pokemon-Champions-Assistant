@@ -2256,18 +2256,20 @@ textarea { min-height: 72px; resize: vertical; }
   bottom: 0;
   width: 0;
 }
-.speed-plane-band-label {
+.speed-plane-band-icon {
   position: absolute;
   top: 10px;
   left: 0;
   transform: translateX(-50%);
-  color: #cbd5e1;
-  font-size: 11px;
-  font-weight: 700;
   background: #0b1220;
-  padding: 2px 6px;
+  padding: 3px;
   border: 1px solid #334155;
   border-radius: 999px;
+}
+.speed-band-item-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 .speed-plane-guide {
   position: absolute;
@@ -2275,64 +2277,57 @@ textarea { min-height: 72px; resize: vertical; }
   transform: translateX(-50%);
   border-left: 1px dashed rgba(148, 163, 184, 0.45);
 }
-.speed-plane-range-line {
-  position: absolute;
-  left: 0;
-  transform: translateX(-50%);
-  border-left: 2px solid rgba(148, 163, 184, 0.6);
-}
-.speed-plane-node {
+.speed-plane-range-node {
   position: absolute;
   width: 15%;
   min-width: 108px;
+  transform: translateX(-50%);
   padding: 6px 8px;
   border-radius: 12px;
   border: 1px solid #334155;
   background: rgba(15, 23, 42, 0.96);
-  display: grid;
-  gap: 2px;
+  box-sizing: border-box;
 }
-.speed-plane-node-head {
+.speed-plane-range-node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  bottom: 18px;
+  border-left: 2px solid rgba(148, 163, 184, 0.6);
+  transform: translateX(-50%);
+}
+.speed-plane-range-node-head,
+.speed-plane-range-node-tail {
+  position: absolute;
+  left: 8px;
+  right: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
 }
-.speed-plane-node.above {
-  transform: translate(-50%, -100%);
+.speed-plane-range-node-head {
+  top: 5px;
 }
-.speed-plane-node.below {
-  transform: translate(-50%, 0%);
+.speed-plane-range-node-tail {
+  bottom: 5px;
 }
-.speed-plane-node.tie {
-  transform: translate(-50%, -50%);
-}
-.speed-plane-node.range-cap {
-  transform: translate(-50%, -100%);
-}
-.speed-plane-node.range-floor {
-  transform: translate(-50%, 0%);
-}
-.speed-plane-node strong {
-  font-size: 11px;
-  line-height: 1.1;
-}
-.speed-plane-node.above {
+.speed-plane-range-node.above {
   border-color: #f97316;
   background: rgba(124, 45, 18, 0.3);
 }
-.speed-plane-node.below {
+.speed-plane-range-node.below {
   border-color: #38bdf8;
 }
-.speed-plane-node.tie {
+.speed-plane-range-node.cross {
   border-color: #cbd5e1;
 }
-.speed-plane-node-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 6px;
+.speed-plane-range-node strong {
+  font-size: 11px;
+  line-height: 1.1;
 }
-.speed-plane-node-meta span {
+.speed-plane-range-node span {
   color: #93a4b8;
   font-size: 10px;
   line-height: 1.05;
@@ -2852,12 +2847,9 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-target-panel { grid-template-columns: 1fr; }
   .speed-plane-board { min-height: 420px; }
   .speed-compare-head-grid { grid-template-columns: 1fr; }
-  .speed-plane-node {
+  .speed-plane-range-node {
     width: 28%;
     min-width: 0;
-  }
-  .speed-plane-node-meta {
-    gap: 3px 4px;
   }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
