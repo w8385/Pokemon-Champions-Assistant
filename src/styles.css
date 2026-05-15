@@ -242,8 +242,8 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  margin-top: 28px;
-  padding-top: 6px;
+  margin-top: 44px;
+  padding-top: 10px;
 }
 .home-footer-card {
   display: grid;
@@ -253,7 +253,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   padding: 18px;
   border-radius: 18px;
   border: 1px solid rgba(51, 65, 85, 0.82);
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(11, 18, 32, 0.9));
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.68), rgba(11, 18, 32, 0.88));
 }
 .home-link-list {
   display: grid;
