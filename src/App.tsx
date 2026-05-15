@@ -106,6 +106,12 @@ type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveOption = { name: string; type: string | null }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 type DamageMoveSelection = { key: string; move: string }
+type ViewState = {
+  mainSection?: MainSection
+  activeTab?: MainTab
+  selectedMy?: number
+  selectedOpp?: number
+}
 
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
@@ -875,6 +881,39 @@ function loadPersistedState(): PersistedState | null {
   }
 }
 
+function parseViewStateFromUrl(): ViewState | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const rawHash = window.location.hash.replace(/^#/, '').trim()
+    if (!rawHash) return null
+    const params = new URLSearchParams(rawHash)
+    const mainSection = params.get('section') === 'sample' ? 'sample' : params.get('section') === 'single' ? 'single' : undefined
+    const activeTabParam = params.get('tab')
+    const activeTab = activeTabParam === 'party' || activeTabParam === 'pick' || activeTabParam === 'speed' || activeTabParam === 'power'
+      ? activeTabParam
+      : undefined
+    const selectedMy = params.get('my') !== null ? Number(params.get('my')) : undefined
+    const selectedOpp = params.get('opp') !== null ? Number(params.get('opp')) : undefined
+    return { mainSection, activeTab, selectedMy, selectedOpp }
+  } catch {
+    return null
+  }
+}
+
+function syncViewStateToUrl(viewState: ViewState) {
+  if (typeof window === 'undefined') return
+  const params = new URLSearchParams()
+  params.set('section', viewState.mainSection === 'sample' ? 'sample' : 'single')
+  if (viewState.mainSection !== 'sample' && viewState.activeTab) params.set('tab', viewState.activeTab)
+  if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
+  if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
+  const nextHash = params.toString()
+  if (window.location.hash.replace(/^#/, '') === nextHash) return
+  const url = new URL(window.location.href)
+  url.hash = nextHash
+  window.history.replaceState(null, '', url)
+}
+
 function actualStat(base: number, ev: number, natureMultiplierValue = 1, hp = false) {
   if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + ev
   const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + ev
@@ -1309,17 +1348,18 @@ function LanguageIcon() {
 
 export default function App() {
   const persisted = React.useMemo(() => loadPersistedState(), [])
+  const viewState = React.useMemo(() => parseViewStateFromUrl(), [])
   const [party, setParty] = React.useState<PartyMember[]>(() => sanitizeParty(persisted?.party))
   const [opponents, setOpponents] = React.useState<OpponentState[]>(() => sanitizeOpponents(persisted?.opponents))
-  const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(persisted?.selectedMy, sanitizeParty(persisted?.party).length))
-  const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
+  const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, sanitizeParty(persisted?.party).length))
+  const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedOpp ?? persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [stab, setStab] = React.useState(1.5)
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
-  const [mainSection, setMainSection] = React.useState<MainSection>(() => persisted?.mainSection === 'sample' ? 'sample' : 'single')
-  const [activeTab, setActiveTab] = React.useState<MainTab>('party')
+  const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection === 'sample' ? 'sample' : persisted?.mainSection === 'sample' ? 'sample' : 'single')
+  const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? 'party')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [calcMyMegaOn, setCalcMyMegaOn] = React.useState(false)
   const [calcOppMegaOn, setCalcOppMegaOn] = React.useState(false)
@@ -1435,6 +1475,15 @@ export default function App() {
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   }, [party, opponents, selectedMy, selectedOpp, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
+
+  React.useEffect(() => {
+    syncViewStateToUrl({
+      mainSection,
+      activeTab: mainSection === 'single' ? activeTab : undefined,
+      selectedMy,
+      selectedOpp,
+    })
+  }, [mainSection, activeTab, selectedMy, selectedOpp])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
