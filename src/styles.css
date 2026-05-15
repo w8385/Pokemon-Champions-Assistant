@@ -607,6 +607,17 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   max-height: 220px;
   overflow-y: auto;
 }
+.party-meta-popover .move-autocomplete-menu {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  box-shadow: none;
+  max-height: 240px;
+}
 .move-autocomplete-item {
   width: 100%;
   display: flex;
