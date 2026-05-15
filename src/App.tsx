@@ -5,7 +5,6 @@ import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
-import championsMovePools from './championsMovePools.json'
 
 type Row = {
   id: number
@@ -96,6 +95,7 @@ type ImportExportPayload = PersistedState & {
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
+type SampleCandidateFilter = 'all' | 'remaining' | 'locked'
 type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SpeedScenarioId = 'neutral' | 'fast' | 'neutral-scarf' | 'fast-scarf'
@@ -128,7 +128,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
-    '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie',
@@ -157,7 +157,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
-    '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速',
@@ -556,7 +556,13 @@ function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
 }
 
 const moveMetaCache = new Map<string, Promise<MoveOption>>()
-const embeddedMovePools = championsMovePools as Record<string, MoveOption[]>
+let embeddedMovePoolsPromise: Promise<Record<string, MoveOption[]>> | null = null
+
+function normalizeMoveSlots(moves: string[]) {
+  const normalized = moves.slice(0, 4).map((entry) => entry.trim())
+  while (normalized.length && !normalized[normalized.length - 1]) normalized.pop()
+  return normalized
+}
 
 function pokemonApiCandidates(key: string) {
   const candidates = [key]
@@ -586,7 +592,15 @@ function relatedMovePoolKeys(key: string) {
   return Array.from(new Set(keys))
 }
 
-function embeddedMovePoolForKey(key: string) {
+async function loadEmbeddedMovePools() {
+  if (!embeddedMovePoolsPromise) {
+    embeddedMovePoolsPromise = import('./championsMovePools.json').then((module) => module.default as Record<string, MoveOption[]>)
+  }
+  return embeddedMovePoolsPromise
+}
+
+async function embeddedMovePoolForKey(key: string) {
+  const embeddedMovePools = await loadEmbeddedMovePools()
   const merged = new Map<string, MoveOption>()
   for (const poolKey of relatedMovePoolKeys(key)) {
     for (const move of embeddedMovePools[poolKey] ?? []) {
@@ -1276,6 +1290,7 @@ export default function App() {
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
+  const [sampleCandidateFilter, setSampleCandidateFilter] = React.useState<SampleCandidateFilter>('all')
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => visibleChampionsItem(member.key, member.item)))
@@ -1337,15 +1352,17 @@ export default function App() {
   React.useEffect(() => {
     const targetKeys = Array.from(new Set([...party.map((member) => member.key), sampleForge.key].filter(Boolean)))
     targetKeys.forEach((key) => {
-      const embedded = embeddedMovePoolForKey(key)
-      if (embedded.length && movePoolByKey[key]?.status !== 'ready') {
-        setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves: embedded } }))
-        return
-      }
       if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready') return
       setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
-      fetchPokemonMovePool(key)
-        .then((moves) => setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves } })))
+      embeddedMovePoolForKey(key)
+        .then((embedded) => {
+          if (embedded.length) {
+            setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves: embedded } }))
+            return
+          }
+          return fetchPokemonMovePool(key)
+            .then((moves) => setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'ready', moves } })))
+        })
         .catch(() => {
           const fallback = moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))
           setMovePoolByKey((prev) => ({ ...prev, [key]: { status: fallback.length ? 'ready' : 'error', moves: fallback } }))
@@ -1419,7 +1436,7 @@ export default function App() {
   }) : []
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
-  const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : (embeddedMovePoolForKey(myMember.key).length ? embeddedMovePoolForKey(myMember.key) : moveOptionsForEntry(myMoveSet))
+  const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
   const registeredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const activeDamageMove = registeredDamageMoves.find((move) => move === selectedDamageMove?.move && myMember.key === selectedDamageMove?.key) ?? registeredDamageMoves[0] ?? ''
   const activeDamageMoveType = myMoveOptions.find((option) => option.name === activeDamageMove)?.type ?? null
@@ -1437,9 +1454,28 @@ export default function App() {
       const current = [...(prev[key] ?? [])]
       while (current.length < 4) current.push('')
       current[slotIdx] = move
-      const cleaned = current.map((entry) => entry.trim()).filter(Boolean).slice(0, 4)
-      return { ...prev, [key]: cleaned }
+      return { ...prev, [key]: normalizeMoveSlots(current) }
     })
+  }
+  const clearConfirmedMoveSlot = (key: string, slotIdx: number) => {
+    setConfirmedMovesByKey((prev) => {
+      const current = [...(prev[key] ?? [])]
+      while (current.length < 4) current.push('')
+      current[slotIdx] = ''
+      return { ...prev, [key]: normalizeMoveSlots(current) }
+    })
+  }
+  const shiftConfirmedMoveSlot = (key: string, slotIdx: number, direction: -1 | 1) => {
+    setConfirmedMovesByKey((prev) => {
+      const current = [...(prev[key] ?? [])]
+      while (current.length < 4) current.push('')
+      const targetIdx = slotIdx + direction
+      if (targetIdx < 0 || targetIdx >= 4) return prev
+      ;[current[slotIdx], current[targetIdx]] = [current[targetIdx], current[slotIdx]]
+      return { ...prev, [key]: normalizeMoveSlots(current) }
+    })
+    const targetIdx = slotIdx + direction
+    if (targetIdx >= 0 && targetIdx < 4) setActiveMoveField({ key, slotIdx: targetIdx, scope: 'sample' })
   }
   const commitTopMoveOption = (key: string, slotIdx: number, rawQuery: string, options: MoveOption[]) => {
     const top = filterMoveOptions(rawQuery, options)[0]
@@ -1447,13 +1483,19 @@ export default function App() {
     setConfirmedMoveSlot(key, slotIdx, top.name)
     return true
   }
-  const applyMoveToSlot = (key: string, move: string) => {
+  const applyMoveToSlot = (key: string, move: string, preferredSlotIdx?: number) => {
     setConfirmedMovesByKey((prev) => {
       const current = [...(prev[key] ?? [])]
       const existingIdx = current.indexOf(move)
-      if (existingIdx >= 0) {
+      if (existingIdx >= 0 && preferredSlotIdx === undefined) {
         current.splice(existingIdx, 1)
         return { ...prev, [key]: current }
+      }
+      if (preferredSlotIdx !== undefined) {
+        while (current.length < 4) current.push('')
+        if (existingIdx >= 0) current[existingIdx] = ''
+        current[preferredSlotIdx] = move
+        return { ...prev, [key]: normalizeMoveSlots(current) }
       }
       if (current.length < 4) return { ...prev, [key]: [...current, move] }
       current[3] = move
@@ -1590,14 +1632,80 @@ export default function App() {
   const damage = oppRow ? calcDamage(myRow, oppRow, movePower, calcMode, activeDamageMoveType ? autoStab : stab, activeDamageMoveType ? autoEffectiveness : effectiveness) : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
-  const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : (embeddedMovePoolForKey(sampleForge.key).length ? embeddedMovePoolForKey(sampleForge.key) : moveOptionsForEntry(sampleMoveSet))
+  const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
   const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
   const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
+  const sampleConfirmedMoves = sampleRegisteredMoves.filter(Boolean).slice(0, 4)
+  const nextOpenSampleSlot = (moves: string[], fromIdx: number) => {
+    for (let idx = fromIdx + 1; idx < 4; idx += 1) {
+      if (!moves[idx]?.trim()) return idx
+    }
+    for (let idx = 0; idx < fromIdx; idx += 1) {
+      if (!moves[idx]?.trim()) return idx
+    }
+    return null
+  }
+  const focusSampleSlot = (slotIdx: number | null) => {
+    if (slotIdx === null) {
+      setActiveMoveField(null)
+      return
+    }
+    setActiveMoveField({ key: sampleForge.key, slotIdx, scope: 'sample' })
+  }
+  const commitSampleMoveOption = (slotIdx: number, rawQuery: string) => {
+    const top = filterMoveOptions(rawQuery, sampleMoveOptions)[0]
+    if (!top) return false
+    const nextMoves = [...sampleRegisteredMoves]
+    nextMoves[slotIdx] = top.name
+    setConfirmedMoveSlot(sampleForge.key, slotIdx, top.name)
+    focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
+    return true
+  }
+  const selectSampleMoveOption = (slotIdx: number, moveName: string) => {
+    const nextMoves = [...sampleRegisteredMoves]
+    nextMoves[slotIdx] = moveName
+    setConfirmedMoveSlot(sampleForge.key, slotIdx, moveName)
+    focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
+  }
+  const applySampleCandidateMove = (move: string, preferredSlotIdx: number) => {
+    const nextMoves = [...sampleRegisteredMoves]
+    const existingIdx = nextMoves.indexOf(move)
+    if (existingIdx >= 0) nextMoves[existingIdx] = ''
+    nextMoves[preferredSlotIdx] = move
+    applyMoveToSlot(sampleForge.key, move, preferredSlotIdx)
+    focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
+  }
+  const sampleBaseMoveGroups = sampleMoveSet ? [
+    { key: 'core', label: lt('코어'), moves: sampleMoveSet.core, tone: 'core' },
+    { key: 'options', label: lt('선택'), moves: sampleMoveSet.options ?? [], tone: 'options' },
+    { key: 'utility', label: lt('유틸'), moves: sampleMoveSet.utility ?? [], tone: 'utility' },
+  ] : []
+  const sampleFilterCounts = {
+    all: sampleBaseMoveGroups.reduce((sum, group) => sum + group.moves.length, 0),
+    remaining: sampleBaseMoveGroups.reduce((sum, group) => sum + group.moves.filter((move) => !sampleConfirmedMoves.includes(move)).length, 0),
+    locked: sampleConfirmedMoves.length,
+  }
+  const sampleMoveGroups = sampleBaseMoveGroups.map((group) => ({
+    ...group,
+    moves: group.moves.filter((move) => {
+      const locked = sampleConfirmedMoves.includes(move)
+      if (sampleCandidateFilter === 'remaining') return !locked
+      if (sampleCandidateFilter === 'locked') return locked
+      return true
+    }),
+  })).filter((group) => group.moves.length > 0)
+  while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
+  const activeSampleMoveSlotIdx = activeMoveField?.scope === 'sample' && activeMoveField.key === sampleForge.key
+    ? activeMoveField.slotIdx
+    : Math.min(sampleConfirmedMoves.length, 3)
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
   const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
+  const sampleTuningFocus = [...EFFORT_STAT_OPTIONS]
+    .map((stat) => ({ key: stat.key, value: sampleForge.evs[stat.key], label: translateText(siteLanguage, stat.label) }))
+    .sort((a, b) => b.value - a.value)[0]
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, siteLanguage)} · ${natureLabel(sampleForge.config.nature, siteLanguage)}`
@@ -2032,11 +2140,24 @@ export default function App() {
               <p className="muted">{mainSection === 'single' ? lt('기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.') : lt('포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.')}</p>
             </div>
             {mainSection === 'single' ? (
-              <div className="tab-bar">
-                <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
-                <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
-                <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('결정력 계산')}</button>
+              <div className="battle-flow-nav">
+                <div className="battle-flow-diagram">
+                  <button type="button" className={`flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
+                  <span className="flow-arrow" aria-hidden="true">→</span>
+                  <button type="button" className={`flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+                  <span className="flow-arrow" aria-hidden="true">→</span>
+                  <div className="flow-branch-group">
+                    <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                    <span className="flow-or">or</span>
+                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('결정력 계산')}</button>
+                  </div>
+                </div>
+                <div className="tab-bar">
+                  <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
+                  <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+                  <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                  <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('결정력 계산')}</button>
+                </div>
               </div>
             ) : null}
           </div>
@@ -2087,7 +2208,7 @@ export default function App() {
                 const activeAbility = member.ability || abilityOptions[0] || defaultAbilityForKey(member.key)
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
-                const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : (embeddedMovePoolForKey(member.key).length ? embeddedMovePoolForKey(member.key) : moveOptionsForEntry(memberMoveSet))
+                const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const findMoveType = (moveName: string) => memberMoveOptions.find((option) => option.name === moveName)?.type ?? null
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
@@ -2227,6 +2348,7 @@ export default function App() {
                           </div> : null}
                         </div> : null}
                       </div>
+                      {memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div> : null}
                     <label className="species-picker">
                       {lt('종 선택')}
@@ -2282,15 +2404,15 @@ export default function App() {
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>{lt('기술 배치')}</strong>
-                        {memberMovePool?.status === 'loading' ? <span className="muted-inline">{lt('기술풀 불러오는 중…')}</span> : null}
+                        {memberMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
                       </div>
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => (
-                          <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))}`}>
+                          <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
-                              placeholder={memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
+                              placeholder={memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                               onFocus={() => setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })}
                               onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)}
                               onChange={(e) => {
@@ -2608,10 +2730,12 @@ export default function App() {
           </div>
           <div className="sample-builder-grid compact-sample-builder-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <label className="species-picker">
+              <div className="sample-panel-header sample-panel-header-main">
+                <label className="species-picker sample-species-picker">
                 {lt('포켓몬 선택')}
-                <div className="autocomplete">
+                <div className="autocomplete sample-species-search">
                   <input
+                    className="sample-species-search-input"
                     value={sampleSearch}
                     placeholder={lt('포켓몬 검색')}
                     onFocus={() => setActiveSearchField({ side: 'sample', idx: 0 })}
@@ -2637,21 +2761,34 @@ export default function App() {
                   ) : null}
                 </div>
               </label>
-              <div className="sample-hero">
+              <div className="sample-hero sample-hero-attached">
                 {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
-                <div>
+                <div className="sample-hero-copy">
                   <strong>{displayName(sampleRow, siteLanguage)}</strong>
                   <div className="summary-line">
                     <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
-                  <div className="item-hero-row">
-                    <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                    <span>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                  <div className="pick-summary-badges sample-hero-meta">
+                    <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                    <span className="pick-badge item-badge-inline">
+                      <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                      {sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}
+                    </span>
+                    <span className="pick-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
                   </div>
-                  <p className="muted">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</p>
                 </div>
               </div>
+              </div>
+              <details className="sample-drawer sample-meta-drawer">
+                <summary className="sample-drawer-summary sample-meta-summary">
+                  <span className="sample-meta-summary-label">{lt('세부 편집')}</span>
+                  <div className="pick-summary-badges sample-tuning-badges sample-meta-summary-badges">
+                    <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
+                    <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                    <span className="pick-badge sample-meta-summary-item">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                  </div>
+                </summary>
               <div className="party-meta-grid sample-meta-grid">
                 <div className="party-meta-chip party-meta-chip-editor">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
@@ -2756,128 +2893,252 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              <div className="stat-preview-list">
+              </details>
+              <div className="stat-preview-list sample-stat-preview-list">
                 {([
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
-                  <div key={field} className={`stat-preview-row ${statThemeClass(field)}`}>
+                  <div key={field} className={`stat-preview-row sample-stat-preview-row ${statThemeClass(field)}`}>
+                    <div className="sample-stat-topline">
+                      <span>{lt(label)}</span>
+                      <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
+                    </div>
                     <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, field)) }} /></div>
-                    <span>{lt(label)}</span>
-                    <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
-                    <span>+{sampleForge.evs[field]}</span>
+                    <span className="sample-stat-ev">+{sampleForge.evs[field]}</span>
                   </div>
                 ))}
               </div>
-              <div className="inline-controls sample-tuning-inline">
-                <label>
-                  {lt('매직넘버')}
-                  <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
-                </label>
-                <label>
-                  {lt('최대치')}
-                  <input type="number" min={0} max={255} value={sampleForge.tuning.maxValue} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }))} />
-                </label>
-              </div>
+              <details className="sample-drawer sample-tuning-drawer">
+                <summary className="sample-drawer-summary sample-tuning-summary">
+                  <span className="sample-tuning-summary-label">{lt('노력치 보정')}</span>
+                  <div className="pick-summary-badges sample-tuning-badges sample-tuning-summary-badges">
+                    <span className="pick-badge">{lt('매직넘버')} {sampleForge.tuning.magicNumber}</span>
+                    <span className="pick-badge">{lt('최대치')} {sampleForge.tuning.maxValue}</span>
+                    <span className="pick-badge sample-tuning-summary-focus">{sampleTuningFocus.value > 0 ? `${sampleTuningFocus.label} +${sampleTuningFocus.value}` : lt('미지정')}</span>
+                  </div>
+                </summary>
+                <div className="inline-controls sample-tuning-inline sample-tuning-body">
+                  <label>
+                    {lt('매직넘버')}
+                    <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
+                  </label>
+                  <label>
+                    {lt('최대치')}
+                    <input type="number" min={0} max={255} value={sampleForge.tuning.maxValue} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }))} />
+                  </label>
+                </div>
+              </details>
             </div>
             <div className="move-card flat-sample-move-card">
-              <div className="row-between">
+              <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 기술')}</strong>
-                <button type="button" className="action-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
+                <button type="button" className="action-button sample-quick-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
               </div>
               <div className="sample-save-box flat-sample-save-box">
-                <label>
-                  {lt('샘플 이름')}
-                  <input value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
-                </label>
-                <div className="sample-action-row">
-                  <button type="button" className="action-button" onClick={() => {
+                <div className="sample-save-head">
+                  <div className="sample-save-head-topline">
+                    <div className="pick-summary-badges sample-work-badges">
+                      <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
+                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                    </div>
+                    <span className="muted-inline sample-work-draft-label">{sampleLabelDraft.trim() || lt('샘플 이름')}</span>
+                  </div>
+                  <button type="button" className="action-button sample-flow-button" onClick={() => {
                     applySampleToPartySlot(selectedMy)
                     setTuningModalIndex(selectedMy)
                   }}>{lt('노력치 보정')}</button>
-                  <button type="button" className="action-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
                 </div>
-                <div className="sample-apply-strip">
-                  <span className="muted-inline">{lt('파티 슬롯에 적용')}</span>
-                  <div className="team-strip sample-slot-strip">
-                    {party.map((member, idx) => {
-                      const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                      return (
-                        <button
-                          key={`apply-slot-pill-${idx}`}
-                          type="button"
-                          className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
-                          onClick={() => applySampleToPartySlot(idx)}
-                        >
-                          {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
-                        </button>
-                      )
-                    })}
+                <label className="sample-label-field">
+                  <span className="sample-label-caption">{lt('샘플 이름')}</span>
+                  <input className="sample-label-input" value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                </label>
+                <div className="sample-action-row sample-save-action-row">
+                  <button type="button" className="action-button sample-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
+                </div>
+                <details className="sample-drawer sample-apply-drawer sample-managed-drawer">
+                  <summary className="sample-drawer-summary sample-managed-summary">
+                    <span>{lt('파티 슬롯에 적용')}</span>
+                    <div className="pick-summary-badges sample-apply-summary-badges">
+                      <span className="pick-badge">{siteLanguage === 'en' ? `Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番` : `${selectedMy + 1}번`}</span>
+                      <span className="pick-badge sample-apply-current-badge">{displayName(sampleRow, siteLanguage)}</span>
+                    </div>
+                  </summary>
+                  <div className="sample-apply-strip">
+                    <div className="team-strip sample-slot-strip">
+                      {party.map((member, idx) => {
+                        const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                        return (
+                          <button
+                            key={`apply-slot-pill-${idx}`}
+                            type="button"
+                            className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
+                            onClick={() => applySampleToPartySlot(idx)}
+                          >
+                            {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
+                </details>
               </div>
               {sampleMoveSet ? (
                 <>
-                  <div className="registered-move-grid">
-                    {sampleRegisteredMoves.map((move, moveIdx) => (
-                      <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))}`}>
-                        <span>{moveIdx + 1}번</span>
-                        <input
-                          value={move}
-                          placeholder={sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                          onFocus={() => setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })}
-                          onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)}
-                          onChange={(e) => {
-                            setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)
-                            setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key !== 'Enter') return
-                            const committed = commitTopMoveOption(sampleForge.key, moveIdx, move, sampleMoveOptions)
-                            if (committed) {
-                              e.preventDefault()
-                              setActiveMoveField(null)
-                            }
-                          }}
-                        />
-                        {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
-                          <div className="move-autocomplete-menu">
-                            {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option) => (
-                              <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectMoveOption(sampleForge.key, moveIdx, option.name)}>
-                                <span className="move-autocomplete-main">
-                                  {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
-                                  <span>{option.name}</span>
-                                </span>
+                  <div className="sample-tracking-cluster">
+                    <div className="sample-track-card sample-track-editor-card">
+                      <div className="row-between sample-track-head">
+                        <strong>{lt('확정 기술')}</strong>
+                        <div className="pick-summary-badges sample-slot-target-badges">
+                          {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
+                          <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
+                          <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                          <button type="button" className="pick-badge sample-slot-clear-badge" onClick={() => clearConfirmedMoveSlot(sampleForge.key, activeSampleMoveSlotIdx)}>{lt('슬롯 비우기')}</button>
+                        </div>
+                      </div>
+                      <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
+                        {sampleRegisteredMoves.map((move, moveIdx) => (
+                          <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
+                            <span>{moveIdx + 1}번</span>
+                            <input
+                              value={move}
+                              placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
+                              onFocus={() => setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })}
+                              onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)}
+                              onChange={(e) => {
+                                setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)
+                                setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key !== 'Enter') return
+                                const committed = commitSampleMoveOption(moveIdx, move)
+                                if (committed) {
+                                  e.preventDefault()
+                                }
+                              }}
+                            />
+                            {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
+                              <div className="move-autocomplete-menu">
+                                {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option) => (
+                                  <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
+                                    <span className="move-autocomplete-main">
+                                      {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
+                                      <span>{option.name}</span>
+                                    </span>
+                                  </button>
+                                ))}
+                              </div>
+                            ) : null}
+                          </label>
+                        ))}
+                      </div>
+                      {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
+                      <div className="sample-confirmed-grid">
+                        {Array.from({ length: 4 }).map((_, idx) => {
+                          const move = sampleRegisteredMoves[idx]
+                          return (
+                            <div
+                              key={`sample-confirmed-slot-${idx}`}
+                              className={`sample-confirmed-slot ${move ? 'filled' : 'empty'} ${move ? moveTypeThemeClass(sampleMoveType(move)) : ''} ${activeSampleMoveSlotIdx === idx ? 'active-target' : ''}`}
+                            >
+                              <button
+                                type="button"
+                                className="sample-confirmed-slot-main"
+                                onClick={() => setActiveMoveField({ key: sampleForge.key, slotIdx: idx, scope: 'sample' })}
+                              >
+                                <span className="sample-confirmed-slot-index">{idx + 1}</span>
+                                <strong>{move || emptySlotLabel(idx, siteLanguage)}</strong>
                               </button>
-                            ))}
+                              <div className="sample-confirmed-slot-actions">
+                                <button type="button" className="sample-slot-shift-button" onClick={() => shiftConfirmedMoveSlot(sampleForge.key, idx, -1)} disabled={idx === 0}>←</button>
+                                <button type="button" className="sample-slot-shift-button" onClick={() => shiftConfirmedMoveSlot(sampleForge.key, idx, 1)} disabled={idx === 3}>→</button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    <div className="sample-core-strip">
+                      <span className="sample-core-strip-label">{lt('코어 라인')}</span>
+                      <div className="pick-summary-badges sample-core-strip-badges">
+                        {(sampleMoveSet.core ?? []).map((move) => (
+                          <span key={`sample-core-line-${move}`} className={`pick-badge sample-core-line-badge ${moveTypeThemeClass(sampleMoveType(move))} ${sampleConfirmedMoves.includes(move) ? 'confirmed' : ''}`}>{move}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="sample-explorer-cluster">
+                    <div className="tab-bar sample-filter-bar">
+                      {([
+                        ['all', lt('전체')],
+                        ['remaining', lt('미확정')],
+                        ['locked', lt('확정만')],
+                      ] as const).map(([value, label]) => (
+                        <button key={`sample-filter-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleCandidateFilter === value ? 'active' : ''}`} onClick={() => setSampleCandidateFilter(value)}>
+                          <span>{label}</span>
+                          <strong>{sampleFilterCounts[value]}</strong>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="sample-move-bucket-grid">
+                      {sampleMoveGroups.length ? sampleMoveGroups.map((group) => {
+                      const hasLocked = group.moves.some((move) => sampleConfirmedMoves.includes(move))
+                      const shouldOpen = group.key === 'core' || hasLocked || sampleCandidateFilter !== 'all'
+                      return (
+                        <details key={`sample-group-${group.key}`} className={`sample-move-bucket ${group.tone}`} open={shouldOpen}>
+                          <summary className="sample-move-bucket-head sample-move-bucket-summary">
+                            <span className={`sample-move-bucket-label ${group.tone}`}>{group.label}</span>
+                            <div className="pick-summary-badges sample-group-meta-badges">
+                              {group.key === 'core' ? <span className="pick-badge sample-group-meta-accent">HOT</span> : null}
+                              <span className="pick-badge sample-group-count-badge">{group.moves.length}</span>
+                              <span className="sample-group-open-indicator" aria-hidden="true">⌄</span>
+                            </div>
+                          </summary>
+                          <div className="move-chip-wrap compact sample-bucket-body">
+                            {group.moves.map((move) => {
+                              const isConfirmed = sampleConfirmedMoves.includes(move)
+                              return (
+                                <button key={`sample-${group.key}-${move}`} type="button" className={`move-chip sample-candidate-chip ${group.tone} ${moveTypeThemeClass(sampleMoveType(move))} ${isConfirmed ? 'confirmed' : 'open'} ${activeSampleMoveSlotIdx >= 0 ? 'slot-targeted' : ''}`} onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}>
+                                  <span className={`sample-candidate-status ${isConfirmed ? 'confirmed' : 'open'}`}>{isConfirmed ? '✓' : '○'}</span>
+                                  <span className="sample-candidate-name">{move}</span>
+                                  {activeSampleMoveSlotIdx >= 0 ? <span className="sample-candidate-target-slot">{activeSampleMoveSlotIdx + 1}</span> : null}
+                                </button>
+                              )
+                            })}
                           </div>
-                        ) : null}
-                      </label>
-                    ))}
+                        </details>
+                      )
+                      }) : <div className="sample-empty-state">{lt('아직 없음')}</div>}
+                    </div>
                   </div>
-                  <div className="move-chip-wrap">
-                    {sampleMoveSet.core.map((move) => (
-                      <button key={`sample-core-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
-                    ))}
-                    {(sampleMoveSet.options ?? []).map((move) => (
-                      <button key={`sample-opt-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
-                    ))}
-                    {(sampleMoveSet.utility ?? []).map((move) => (
-                      <button key={`sample-util-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(sampleMoveType(move))} ${(confirmedMovesByKey[sampleForge.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(sampleForge.key, move)}>{move}</button>
-                    ))}
+                  <div className="pick-summary-badges sample-summary-badges compact">
+                    <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
+                    <span className="pick-badge sample-summary-inline-moves">{sampleConfirmedMoves.join(' · ') || lt('아직 없음')}</span>
+                    <span className="pick-badge">{natureLabel(sampleForge.config.nature, siteLanguage)}</span>
+                    {sampleForge.item ? <span className="pick-badge summary-item-badge">{displayItemLabel(sampleForge.item, siteLanguage)}</span> : null}
                   </div>
-                  <div className="pick-summary-badges sample-summary-badges">
-                    <span className="pick-badge">{lt('확정')} {(confirmedMovesByKey[sampleForge.key] ?? []).join(', ') || lt('아직 없음')}</span>
-                    <span className="pick-badge">{lt('성격')} {natureLabel(sampleForge.config.nature, siteLanguage)}</span>
-                    {sampleForge.item ? <span className="pick-badge">{lt('도구')} {displayItemLabel(sampleForge.item, siteLanguage)}</span> : null}
-                  </div>
-                  {sampleMoveSet.notes?.length ? <p className="muted">{sampleMoveSet.notes.join(' · ')}</p> : null}
+                  {sampleMoveSet.notes?.length ? <details className="sample-drawer sample-notes-drawer">
+                    <summary className="sample-drawer-summary sample-notes-summary">
+                      <span>{lt('샘플 메모')}</span>
+                      <div className="pick-summary-badges sample-notes-summary-badges">
+                        <span className="pick-badge sample-notes-latest-badge">{sampleMoveSet.notes[0]}</span>
+                        <span className="pick-badge">{sampleMoveSet.notes.length}</span>
+                      </div>
+                    </summary>
+                    <div className="sample-notes-body">
+                      <p className="muted sample-notes-copy">{sampleMoveSet.notes.join(' · ')}</p>
+                    </div>
+                  </details> : null}
                 </>
               ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
-              <div className="saved-sample-list flat-saved-sample-list">
-                <div className="row-between">
-                  <strong>{lt('저장한 샘플')}</strong>
-                  <span className="muted-inline">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
-                </div>
+              <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer">
+                <summary className="sample-drawer-summary sample-managed-summary">
+                  <span>{lt('저장한 샘플')}</span>
+                  <div className="pick-summary-badges saved-sample-summary-badges">
+                    {savedSamples[0] ? <span className="pick-badge saved-sample-latest-badge">{savedSamples[0].label}</span> : null}
+                    <span className="pick-badge">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
+                  </div>
+                </summary>
+                <div className="saved-sample-drawer-body">
                 {savedSamples.length ? savedSamples.map((entry) => {
                   const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
                   return (
@@ -2898,7 +3159,8 @@ export default function App() {
                     </div>
                   )
                 }) : <p className="muted">{lt('아직 저장한 샘플이 없습니다.')}</p>}
-              </div>
+                </div>
+              </details>
             </div>
           </div>
         </section>
