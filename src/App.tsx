@@ -1924,6 +1924,12 @@ export default function App() {
   const activeDamageMoveCategory = activeDamageMoveMeta?.category === 'physical' || activeDamageMoveMeta?.category === 'special' ? activeDamageMoveMeta.category : null
   const activeDamageMovePower = typeof activeDamageMoveMeta?.power === 'number' ? activeDamageMoveMeta.power : null
   const activeDamageMoveIsStatus = activeDamageMoveMeta?.category === 'status'
+
+  React.useEffect(() => {
+    if (!activeDamageMoveCategory) return
+    setCalcMode((prev) => (prev === activeDamageMoveCategory ? prev : activeDamageMoveCategory))
+  }, [activeDamageMoveCategory])
+
   const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, myMember.ability)
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
   const toggleConfirmedMove = (key: string, move: string) => {
