@@ -47,7 +47,37 @@ export const CHAMPIONS_ITEM_OPTIONS = [
 
 export type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]
 
-export const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {}
+export const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {
+  "きあいのタスキ": ["기합의띠", "기띠", "띠", "focus sash"],
+  "こだわりスカーフ": ["구애스카프", "스카프", "choice scarf"],
+  "たべのこし": ["먹다남은음식", "먹밥", "남은음식", "leftovers"],
+  "オボンのみ": ["오본열매", "obon"],
+  "メタルコート": ["금속코트", "metal coat"],
+  "メンタルハーブ": ["멘탈허브", "mental herb"],
+  "ひかりのこな": ["반짝가루", "bright powder"],
+  "オッカのみ": ["오카열매", "occa berry"],
+  "ヤチェのみ": ["유루열매", "야체열매", "yache berry"],
+  "ロゼルのみ": ["리샘열매", "로젤열매", "roseli berry"],
+  "しろいハーブ": ["하양허브", "white herb"],
+  "ピントレンズ": ["핀트렌즈", "scope lens"],
+  "くろいメガネ": ["검은안경", "black glasses"],
+  "くろおび": ["검은띠", "black belt"],
+  "じしゃく": ["자석", "magnet"],
+  "きせきのタネ": ["기적의씨", "miracle seed"],
+  "シルクのスカーフ": ["실크스카프", "silk scarf"],
+  "しんぴのしずく": ["신비의물방울", "mystic water"],
+  "するどいくちばし": ["예리한부리", "sharp beak"],
+  "せんせいのツメ": ["선제공격손톱", "quick claw"],
+  "でんきだま": ["전기구슬", "light ball"],
+  "どくバリ": ["독바늘", "poison barb"],
+  "とけないこおり": ["녹지않는얼음", "never melt ice"],
+  "のろいのおふだ": ["저주의부적", "spell tag"],
+  "まがったスプーン": ["휘어진스푼", "twisted spoon"],
+  "もくたん": ["목탄", "charcoal"],
+  "やわらかいすな": ["부드러운모래", "soft sand"],
+  "ようせいのハネ": ["요정의깃털"],
+  "りゅうのキバ": ["용의이빨", "dragon fang"],
+}
 
 export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {
   "きあいのタスキ": "focus-sash",

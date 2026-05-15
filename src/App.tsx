@@ -1305,7 +1305,7 @@ function displayItemLabel(item: string, language: SiteLanguage) {
 function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return [...CHAMPIONS_ITEM_OPTIONS]
-  return [...CHAMPIONS_ITEM_OPTIONS]
+  const matched = [...CHAMPIONS_ITEM_OPTIONS]
     .map((item) => {
       const aliases = CHAMPIONS_ITEM_ALIASES[item] ?? []
       const candidates = [item, displayItemLabel(item, 'en'), displayItemLabel(item, 'ja'), ...aliases].map((entry) => entry.toLowerCase())
@@ -1321,6 +1321,7 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
     .filter((entry): entry is { item: ChampionsItem; score: number } => Boolean(entry))
     .sort((a, b) => a.score - b.score || a.item.localeCompare(b.item, 'ko'))
     .map((entry) => entry.item)
+  return matched.length ? matched : [...CHAMPIONS_ITEM_OPTIONS]
 }
 
 function resolveItemInput(key: string, raw: string, language: SiteLanguage = 'ko') {
