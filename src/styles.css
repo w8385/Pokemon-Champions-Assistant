@@ -2178,6 +2178,11 @@ textarea { min-height: 72px; resize: vertical; }
   padding: 16px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
+.speed-compare-head-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
 .speed-plane-card {
   border: 1px solid #334155;
   border-radius: 18px;
@@ -2208,6 +2213,16 @@ textarea { min-height: 72px; resize: vertical; }
   overflow: hidden;
   padding-left: 46px;
 }
+.speed-plane-baseline-label {
+  position: absolute;
+  left: 52px;
+  transform: translateY(-50%);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  background: #0b1220;
+  padding: 0 6px;
+}
 .speed-plane-tick {
   position: absolute;
   left: 0;
@@ -2231,23 +2246,21 @@ textarea { min-height: 72px; resize: vertical; }
   transform: translateY(-50%);
   border-top: 2px solid #64748b;
 }
-.speed-plane-anchor {
-  position: absolute;
-  left: 46px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 10px;
-  border-radius: 14px;
-  border: 1px solid #60a5fa;
-  background: rgba(15, 23, 42, 0.92);
-  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2) inset;
-  transform: translate(-100%, -100%);
-}
-.speed-plane-anchor span,
 .speed-plane-node span {
   color: #cbd5e1;
   font-size: 12px;
+}
+.speed-plane-node-wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+}
+.speed-plane-guide {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  border-left: 1px dashed rgba(148, 163, 184, 0.45);
 }
 .speed-plane-node {
   position: absolute;
@@ -2805,6 +2818,7 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-target-panel { grid-template-columns: 1fr; }
   .speed-plane-board { min-height: 420px; }
+  .speed-compare-head-grid { grid-template-columns: 1fr; }
   .speed-plane-node {
     width: 34%;
     min-width: 0;

@@ -130,7 +130,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type',
-    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon',
+    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
     '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
@@ -159,7 +159,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ',
-    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン',
+    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
     '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
@@ -3235,22 +3235,23 @@ export default function App() {
           </div>
           {oppRow ? <>
             <div className="speed-scenario-ladder">
-              <div className="speed-inline-head">
-                <div className="speed-target-head">
-                  {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
-                  <div>
-                    <strong>{displayName(myRow, siteLanguage)}</strong>
-                    <div className="pick-summary-badges">
-                      <span className="pick-badge">{lt('내 포켓몬')}</span>
-                      <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
+              <div className="speed-compare-head-grid">
+                <div className="speed-inline-head">
+                  <div className="speed-target-head">
+                    {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                    <div>
+                      <strong>{displayName(myRow, siteLanguage)}</strong>
+                      <div className="pick-summary-badges">
+                        <span className="pick-badge">{lt('내 포켓몬')}</span>
+                        <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
+                      </div>
+                      {myMegaCandidates.length ? <div className="calc-toggle-row">
+                        <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
+                        <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
+                      </div> : null}
                     </div>
-                    {myMegaCandidates.length ? <div className="calc-toggle-row">
-                      <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
-                      <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
-                    </div> : null}
                   </div>
                 </div>
-              </div>
                 <div className="speed-ladder-head speed-target-card enemy">
                   <div className="speed-target-head">
                     {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
@@ -3266,10 +3267,11 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+              </div>
                 <div className="speed-plane-card">
                   <div className="speed-plane-header">
                     <strong>{lt('상대 조건 2차원 비교')}</strong>
-                    <span>{lt('실수치 스피드')} {mySpeed}</span>
+                    <span>{lt('기준선')} = {displayName(myRow, siteLanguage)} · {lt('실수치 스피드')} {mySpeed}</span>
                   </div>
                   <div className="speed-plane-board">
                     {speedAxisTicks.map((tick) => (
@@ -3278,25 +3280,26 @@ export default function App() {
                       </div>
                     ))}
                     <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
-                    <div className="speed-plane-anchor" style={{ top: `${speedAxisTop(mySpeed)}%` }}>
-                      <span>{displayName(myRow, siteLanguage)}</span>
-                      <strong>{mySpeed}</strong>
-                    </div>
+                    <div className="speed-plane-baseline-label" style={{ top: `${speedAxisTop(mySpeed)}%` }}>{lt('기준선')}</div>
                     {opponentSpeedScenarios.map((scenario, idx) => {
                       const top = speedAxisTop(scenario.speedAtMax)
                       const left = 28 + (idx * 18)
                       const verticalClass = scenario.speedAtMax > mySpeed ? 'above' : scenario.speedAtMax < mySpeed ? 'below' : 'tie'
+                      const guideTop = Math.min(top, speedAxisTop(mySpeed))
+                      const guideHeight = Math.abs(top - speedAxisTop(mySpeed))
                       return (
-                        <div
-                          key={`speed-scenario-${scenario.id}`}
-                          className={`speed-plane-node ${verticalClass}`}
-                          style={{ top: `${top}%`, left: `${left}%` }}
-                        >
-                          <strong>{lt(scenario.label)}</strong>
-                          <span>{scenario.speedAtMax}</span>
-                          <div className="speed-plane-node-meta">
-                            <span>{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
-                            <span>{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
+                        <div key={`speed-scenario-${scenario.id}`} className="speed-plane-node-wrap" style={{ left: `${left}%` }}>
+                          <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} />
+                          <div
+                            className={`speed-plane-node ${verticalClass}`}
+                            style={{ top: `${top}%` }}
+                          >
+                            <strong>{lt(scenario.label)}</strong>
+                            <span>{scenario.speedAtMax}</span>
+                            <div className="speed-plane-node-meta">
+                              <span>{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
+                              <span>{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
+                            </div>
                           </div>
                         </div>
                       )
