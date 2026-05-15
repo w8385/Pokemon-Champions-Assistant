@@ -2189,6 +2189,13 @@ input, select, textarea {
   cursor: pointer;
   min-height: 38px;
 }
+.opponent-item-search {
+  position: relative;
+}
+.opponent-meta-input {
+  width: 100%;
+  min-height: 38px;
+}
 .opponent-meta-select:disabled {
   cursor: not-allowed;
   color: #6b7c91;

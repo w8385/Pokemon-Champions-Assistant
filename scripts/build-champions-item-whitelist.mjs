@@ -5,18 +5,6 @@ const GUIDE_URL = 'https://champs.pokedb.tokyo/guide/opendata'
 const ROOT_URL = 'https://champs.pokedb.tokyo'
 const POKEAPI_ITEM_LIST_URL = 'https://pokeapi.co/api/v2/item?limit=2200'
 
-const ITEM_SPRITE_MAP = {
-  'きあいのタスキ': 'focus-sash',
-  'こだわりスカーフ': 'choice-scarf',
-  'たべのこし': 'leftovers',
-  'ひかりのこな': 'bright-powder',
-  'メタルコート': 'metal-coat',
-  'メンタルハーブ': 'mental-herb',
-  'オッカのみ': 'occa-berry',
-  'ヤチェのみ': 'yache-berry',
-  'ロゼルのみ': 'roseli-berry',
-}
-
 const MANUAL_SHORT_ALIASES = {
   'きあいのタスキ': ['기띠', '띠'],
   'こだわりスカーフ': ['스카프'],
@@ -138,10 +126,11 @@ const aliasEntries = whitelistItems.map((item) => {
   return [item, aliases]
 }).filter(([, aliases]) => aliases.length)
 
-const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${Object.entries(ITEM_SPRITE_MAP)
-  .filter(([item]) => whitelistItems.includes(item))
-  .map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`)
-  .join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
+const spriteEntries = whitelistItems
+  .map((item) => [item, detailsByJa.get(item)?.apiName ?? null])
+  .filter(([, apiName]) => typeof apiName === 'string' && apiName)
+
+const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${spriteEntries.map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`).join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
 
 const missingKoLabels = whitelistItems.filter((item) => !detailsByJa.get(item)?.ko)
 

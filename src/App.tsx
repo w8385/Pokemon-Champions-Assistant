@@ -1857,6 +1857,20 @@ export default function App() {
     })
     setActiveItemField(null)
   }
+  const commitOpponentItemInput = (idx: number, rawValue?: string) => {
+    const member = opponents[idx]
+    if (!member) return false
+    const resolved = resolveItemInput(member.key, rawValue ?? opponentItemDrafts[idx] ?? '', siteLanguage)
+    const next = [...opponents]
+    next[idx] = { ...member, item: resolved }
+    setOpponents(next)
+    setOpponentItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = displayItemLabel(resolved, siteLanguage)
+      return nextDrafts
+    })
+    return Boolean(resolved)
+  }
   const commitOpponentAbilityInput = (idx: number, rawValue?: string) => {
     const member = opponents[idx]
     if (!member) return false
@@ -3013,21 +3027,50 @@ export default function App() {
                 </label>
                 <label>
                   {lt('도구')}
-                  <select
-                    className="opponent-meta-select"
-                    value={oppMember.item}
-                    disabled={!oppMember.key}
-                    onChange={(e) => {
-                      const next = [...opponents]
-                      next[selectedOpp] = { ...oppMember, item: e.target.value }
-                      setOpponents(next)
-                    }}
-                  >
-                    <option value="">{oppMember.key ? lt('사용 가능 도구 선택') : lt('포켓몬 먼저 선택')}</option>
-                    {itemOptionsForKey(oppMember.key).map((item) => (
-                      <option key={`opp-item-option-${selectedOpp}-${item}`} value={item}>{displayItemLabel(item, siteLanguage)}</option>
-                    ))}
-                  </select>
+                  <div className="opponent-item-search">
+                    <div className="meta-item-input-row">
+                      <input
+                        className="opponent-meta-input"
+                        value={opponentItemDrafts[selectedOpp] ?? ''}
+                        placeholder={oppMember.key ? lt('사용 가능 도구 선택') : lt('포켓몬 먼저 선택')}
+                        disabled={!oppMember.key}
+                        onFocus={() => oppMember.key && setActiveItemField({ scope: 'opponent', idx: selectedOpp })}
+                        onBlur={() => {
+                          setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'opponent', selectedOpp) ? null : prev), 120)
+                          commitOpponentItemInput(selectedOpp)
+                        }}
+                        onChange={(e) => {
+                          const nextDrafts = [...opponentItemDrafts]
+                          nextDrafts[selectedOpp] = e.target.value
+                          setOpponentItemDrafts(nextDrafts)
+                          setActiveItemField({ scope: 'opponent', idx: selectedOpp })
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key !== 'Enter') return
+                          e.preventDefault()
+                          commitOpponentItemInput(selectedOpp)
+                          setActiveItemField(null)
+                        }}
+                      />
+                      {oppMember.key && (opponentItemDrafts[selectedOpp] || oppMember.item) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
+                        e.preventDefault()
+                        clearOpponentItemInput(selectedOpp)
+                      }}>×</button> : null}
+                    </div>
+                    {oppMember.key && sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu">
+                      {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
+                        <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
+                          <span className="move-autocomplete-main">
+                            <img src={itemSpriteSrc(oppMember.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                            <span className="item-autocomplete-copy">
+                              <strong className="item-autocomplete-title">{itemAutocompletePrimaryLabel(item, siteLanguage)}</strong>
+                              {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
+                            </span>
+                          </span>
+                        </button>
+                      ))}
+                    </div> : null}
+                  </div>
                 </label>
                 <label>
                   {lt('특성')}
