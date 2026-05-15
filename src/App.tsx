@@ -186,7 +186,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '작업 관리': 'Workspace', '언어': 'Language',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '작업 관리': 'Workspace', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '저작권 및 안내': 'Copyright & Notice', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -215,7 +215,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '작업 관리': '作業管理', '언어': '言語',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '작업 관리': '作業管理', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '저작권 및 안내': '著作権と案内', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -3194,6 +3194,19 @@ export default function App() {
                 <span className="action-button">{lt('들어가기')}</span>
               </div>
             </button>
+          </div>
+          <div className="home-footer-grid">
+            <div className="home-footer-card">
+              <span className="home-route-eyebrow">{lt('프로젝트 링크')}</span>
+              <div className="home-link-list">
+                <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">{lt('GitHub 저장소')}</a>
+                <a href="mailto:w8385@local">{lt('연락 이메일')} · w8385@local</a>
+              </div>
+            </div>
+            <div className="home-footer-card">
+              <span className="home-route-eyebrow">{lt('저작권 및 안내')}</span>
+              <p className="muted home-footer-copy">{lt('포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+            </div>
           </div>
         </section>
         ) : null}

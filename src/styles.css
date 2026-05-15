@@ -203,6 +203,36 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
+.home-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.home-footer-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(51, 65, 85, 0.82);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78), rgba(11, 18, 32, 0.88));
+}
+.home-link-list {
+  display: grid;
+  gap: 8px;
+}
+.home-link-list a {
+  color: #93c5fd;
+  text-decoration: none;
+  word-break: break-all;
+}
+.home-link-list a:hover {
+  text-decoration: underline;
+}
+.home-footer-copy {
+  margin: 0;
+  line-height: 1.5;
+}
 .home-route-card {
   appearance: none;
   display: grid;
@@ -3389,6 +3419,7 @@ textarea { min-height: 72px; resize: vertical; }
   .panel.wide { grid-column: span 1; }
   .top-action-cards { grid-template-columns: 1fr; }
   .home-route-grid { grid-template-columns: 1fr; }
+  .home-footer-grid { grid-template-columns: 1fr; }
   .party-overview { position: static; }
   .party-columns { grid-template-columns: 1fr; }
   .entry-grid { grid-template-columns: 1fr; }
