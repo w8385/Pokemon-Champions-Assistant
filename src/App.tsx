@@ -966,6 +966,17 @@ function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scar
   return { tieEffort, passEffort }
 }
 
+const DOUBLE_SPEED_ABILITY_SLUGS = ['swift-swim', 'sand-rush', 'chlorophyll', 'slush-rush', 'surge-surfer', 'unburden'] as const
+
+function speedAbilityCandidate(row: Row, language: SiteLanguage) {
+  const idx = row.abilities.findIndex((ability) => DOUBLE_SPEED_ABILITY_SLUGS.includes(ability as typeof DOUBLE_SPEED_ABILITY_SLUGS[number]))
+  if (idx < 0) return null
+  const slug = row.abilities[idx]
+  const koLabel = row.abilities_ko[idx] ?? titleCaseSlug(slug)
+  const label = language === 'en' ? titleCaseSlug(slug) : language === 'ja' ? titleCaseSlug(slug) : koLabel
+  return { slug, label }
+}
+
 function mySpeedNeeds(row: Row, config: MemberConfig, targetSpeed: number) {
   let tieEffort: number | null = null
   let passEffort: number | null = null
@@ -1539,6 +1550,7 @@ export default function App() {
       ...needs,
     }
   }) : []
+  const opponentDoubleSpeedAbility = oppRow ? speedAbilityCandidate(oppRow, siteLanguage) : null
   const opponentSpeedBands = oppRow ? [
     {
       id: 'no-scarf',
@@ -1552,6 +1564,23 @@ export default function App() {
       minScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'neutral-scarf'),
       maxScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'fast-scarf'),
     },
+    ...(opponentDoubleSpeedAbility ? [{
+      id: 'ability-double',
+      scarf: false,
+      abilityLabel: opponentDoubleSpeedAbility.label,
+      minScenario: (() => {
+        const speedAtMax = opponentScenarioSpeed(oppRow, CHAMPIONS_EFFORT_PER_STAT_CAP, false, false, oppMember.speedStage) * 2
+        const tieEffort = opponentScenarioNeeds(oppRow, mySpeed / 2, false, false, oppMember.speedStage).tieEffort
+        const passEffort = opponentScenarioNeeds(oppRow, mySpeed / 2, false, false, oppMember.speedStage).passEffort
+        return { id: 'neutral-double', label: '준속', speedAtMax, tieEffort, passEffort }
+      })(),
+      maxScenario: (() => {
+        const speedAtMax = opponentScenarioSpeed(oppRow, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, oppMember.speedStage) * 2
+        const tieEffort = opponentScenarioNeeds(oppRow, mySpeed / 2, true, false, oppMember.speedStage).tieEffort
+        const passEffort = opponentScenarioNeeds(oppRow, mySpeed / 2, true, false, oppMember.speedStage).passEffort
+        return { id: 'fast-double', label: '최속', speedAtMax, tieEffort, passEffort }
+      })(),
+    }] : []),
   ].filter((band) => band.minScenario && band.maxScenario) : []
   const speedAxisMin = 40
   const speedAxisMax = 340
@@ -3343,7 +3372,7 @@ export default function App() {
                       const maxScenario = band.maxScenario!
                       const minTop = speedAxisTop(minScenario.speedAtMax)
                       const maxTop = speedAxisTop(maxScenario.speedAtMax)
-                      const left = 34 + (idx * 28)
+                      const left = opponentSpeedBands.length === 1 ? 53 : 26 + ((54 / (opponentSpeedBands.length - 1)) * idx)
                       const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
                       const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
                       const guideHeight = Math.max(0, guideBottom - guideTop)
@@ -3353,7 +3382,7 @@ export default function App() {
                           <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} />
                           {band.scarf ? <div className="speed-plane-band-icon">
                             <img src={itemSpriteSrc('', '구애스카프')} alt={lt('스카프')} className="speed-band-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                          </div> : null}
+                          </div> : band.abilityLabel ? <div className="speed-plane-band-ability">{band.abilityLabel}</div> : null}
                           <div className={`speed-plane-range-node ${rangeClass}`} style={{ top: `${maxTop}%`, height: `${Math.max(18, minTop - maxTop)}%` }}>
                             <div className="speed-plane-range-node-head">
                               <span>{lt('최속')}</span>
