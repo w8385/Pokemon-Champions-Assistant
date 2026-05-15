@@ -3200,7 +3200,7 @@ export default function App() {
               <span className="home-route-eyebrow">{lt('프로젝트 링크')}</span>
               <div className="home-link-list">
                 <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">{lt('GitHub 저장소')}</a>
-                <a href="mailto:w8385@local">{lt('연락 이메일')} · w8385@local</a>
+                <a href="mailto:me@w8385.dev">{lt('연락 이메일')} · me@w8385.dev</a>
               </div>
             </div>
             <div className="home-footer-card">
