@@ -20,6 +20,7 @@ const MANUAL_KO_LABELS = {
 }
 
 const MANUAL_SPRITE_PATHS = {
+  'こだわりスカーフ': 'item-sprites/choice-scarf.png',
   'ようせいのハネ': 'item-sprites/fairy-feather.png',
 }
 

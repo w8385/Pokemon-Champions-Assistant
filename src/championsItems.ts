@@ -199,7 +199,7 @@ export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> =
   "きせきのタネ": "miracle-seed",
   "くろいメガネ": "black-glasses",
   "くろおび": "black-belt",
-  "こだわりスカーフ": "choice-scarf",
+  "こだわりスカーフ": "item-sprites/choice-scarf.png",
   "じしゃく": "magnet",
   "シュカのみ": "shuca-berry",
   "シルクのスカーフ": "silk-scarf",

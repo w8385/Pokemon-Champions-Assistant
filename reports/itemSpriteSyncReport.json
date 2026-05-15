@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T12:05:14.570Z",
+  "generatedAt": "2026-05-15T12:09:24.063Z",
   "outputDir": "public/item-sprites",
   "total": 81,
   "downloaded": [
@@ -82,14 +82,6 @@
       "assetName": "black-belt.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/black-belt.png",
       "outputPath": "public/item-sprites/black-belt.png"
-    },
-    {
-      "kind": "item",
-      "key": "こだわりスカーフ",
-      "ref": "choice-scarf",
-      "assetName": "choice-scarf.png",
-      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png",
-      "outputPath": "public/item-sprites/choice-scarf.png"
     },
     {
       "kind": "item",
@@ -637,6 +629,13 @@
     }
   ],
   "reusedLocal": [
+    {
+      "kind": "item",
+      "key": "こだわりスカーフ",
+      "ref": "item-sprites/choice-scarf.png",
+      "assetName": "choice-scarf.png",
+      "outputPath": "public/item-sprites/choice-scarf.png"
+    },
     {
       "kind": "item",
       "key": "ようせいのハネ",

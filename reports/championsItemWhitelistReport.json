@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T11:50:15.851Z",
+  "generatedAt": "2026-05-15T12:09:23.861Z",
   "sourceGuideUrl": "https://champs.pokedb.tokyo/guide/opendata",
   "sourceJsonUrls": [
     "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
@@ -73,8 +73,8 @@
       "url": "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json",
       "season": "M-1",
       "rule": "シングル",
-      "updatedAt": "2026-05-15 19:22:29",
-      "uniqueItemCount": 88,
+      "updatedAt": "2026-05-15 20:58:31",
+      "uniqueItemCount": 89,
       "uniqueItems": [
         "イトケのみ",
         "ウツボットナイト",
@@ -131,6 +131,7 @@
         "ビアーのみ",
         "ひかりのこな",
         "ピクシナイト",
+        "ピジョットナイト",
         "ピントレンズ",
         "フーディナイト",
         "フシギバナイト",
@@ -319,6 +320,7 @@
   },
   "missingKoLabels": [],
   "manualSpritePaths": {
+    "こだわりスカーフ": "item-sprites/choice-scarf.png",
     "ようせいのハネ": "item-sprites/fairy-feather.png"
   },
   "notes": [
