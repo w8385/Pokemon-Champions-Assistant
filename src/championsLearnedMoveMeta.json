@@ -1,51 +1,4047 @@
 {
-  "10만볼트": { "type": "electric", "category": "special", "power": 90, "accuracy": 100 },
-  "고스트다이브": { "type": "ghost", "category": "physical", "power": 90, "accuracy": 100 },
-  "기습": { "type": "dark", "category": "physical", "power": 70, "accuracy": 100, "priority": 1 },
-  "날개쉬기": { "type": "flying", "category": "status", "power": null, "accuracy": null },
-  "도각참": { "type": "dark", "category": "physical", "power": 85, "accuracy": 100 },
-  "도깨비불": { "type": "fire", "category": "status", "power": null, "accuracy": 85 },
-  "도발": { "type": "dark", "category": "status", "power": null, "accuracy": 100 },
-  "독압정": { "type": "poison", "category": "status", "power": null, "accuracy": null },
-  "인파이트": { "type": "fighting", "category": "physical", "power": 120, "accuracy": 100 },
-  "드래곤애로": { "type": "dragon", "category": "physical", "power": 50, "accuracy": 100, "hits": 2 },
-  "로우킥": { "type": "fighting", "category": "physical", "power": null, "accuracy": 100, "variablePower": true },
-  "매지컬샤인": { "type": "fairy", "category": "special", "power": 80, "accuracy": 100 },
-  "맹독": { "type": "poison", "category": "status", "power": null, "accuracy": 90 },
-  "명상": { "type": "psychic", "category": "status", "power": null, "accuracy": null },
-  "무릎차기": { "type": "fighting", "category": "physical", "power": 130, "accuracy": 90 },
-  "문포스": { "type": "fairy", "category": "special", "power": 95, "accuracy": 100 },
-  "바디프레스": { "type": "fighting", "category": "physical", "power": 80, "accuracy": 100, "usesDefenseAsAttack": true },
-  "볼트체인지": { "type": "electric", "category": "special", "power": 70, "accuracy": 100 },
-  "브레이브버드": { "type": "flying", "category": "physical", "power": 120, "accuracy": 100 },
-  "사이코쇼크": { "type": "psychic", "category": "special", "power": 80, "accuracy": 100, "targetsDefenseStat": "defense" },
-  "사이코키네시스": { "type": "psychic", "category": "special", "power": 90, "accuracy": 100 },
-  "섀도크루": { "type": "ghost", "category": "physical", "power": 70, "accuracy": 100 },
-  "속이다": { "type": "normal", "category": "physical", "power": 40, "accuracy": 100, "priority": 3 },
-  "스케일샷": { "type": "dragon", "category": "physical", "power": null, "accuracy": 90, "variablePower": true },
-  "스텔스록": { "type": "rock", "category": "status", "power": null, "accuracy": null },
-  "아이언헤드": { "type": "steel", "category": "physical", "power": 80, "accuracy": 100 },
-  "암석봉인": { "type": "rock", "category": "physical", "power": 60, "accuracy": 95 },
-  "압정뿌리기": { "type": "ground", "category": "status", "power": null, "accuracy": null },
-  "앵콜": { "type": "normal", "category": "status", "power": null, "accuracy": 100 },
-  "야습": { "type": "ghost", "category": "physical", "power": 40, "accuracy": 100, "priority": 1 },
-  "에너지볼": { "type": "grass", "category": "special", "power": 90, "accuracy": 100 },
-  "역린": { "type": "dragon", "category": "physical", "power": 120, "accuracy": 100 },
-  "열탕": { "type": "water", "category": "special", "power": 80, "accuracy": 100 },
-  "오버히트": { "type": "fire", "category": "special", "power": 130, "accuracy": 90 },
-  "용성군": { "type": "dragon", "category": "special", "power": 130, "accuracy": 90 },
-  "우드해머": { "type": "grass", "category": "physical", "power": 120, "accuracy": 100 },
-  "유턴": { "type": "bug", "category": "physical", "power": 70, "accuracy": 100 },
-  "지진": { "type": "ground", "category": "physical", "power": 100, "accuracy": 100 },
-  "철벽": { "type": "steel", "category": "status", "power": null, "accuracy": null },
-  "치근거리기": { "type": "fairy", "category": "physical", "power": 90, "accuracy": 90 },
-  "칼춤": { "type": "normal", "category": "status", "power": null, "accuracy": null },
-  "탁쳐서떨구기": { "type": "dark", "category": "physical", "power": 65, "accuracy": 100 },
-  "트리플악셀": { "type": "ice", "category": "physical", "power": null, "accuracy": 90, "variablePower": true },
-  "트릭": { "type": "psychic", "category": "status", "power": null, "accuracy": 100 },
-  "트릭플라워": { "type": "grass", "category": "physical", "power": 70, "accuracy": null, "alwaysCrit": true },
-  "하이드로펌프": { "type": "water", "category": "special", "power": 110, "accuracy": 80 },
-  "하이퍼보이스": { "type": "normal", "category": "special", "power": 90, "accuracy": 100 },
-  "흑안개": { "type": "ice", "category": "status", "power": null, "accuracy": null },
-  "HP회복": { "type": "normal", "category": "status", "power": null, "accuracy": null }
+  "10만마력": {
+    "type": "ground",
+    "category": "physical",
+    "power": 95,
+    "accuracy": 95
+  },
+  "10만볼트": {
+    "type": "electric",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "가드셰어": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "가드스웹": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "가로챔": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "가시대포": {
+    "type": "normal",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 100
+  },
+  "가위자르기": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 30
+  },
+  "가지찌르기": {
+    "type": "grass",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "각지기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "간지르기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "강철날개": {
+    "type": "steel",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 90
+  },
+  "객기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "거미집": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "거짓울음": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "거품": {
+    "type": "water",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "거품광선": {
+    "type": "water",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "검은눈빛": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "겁나는얼굴": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "경혈찌르기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "고드름떨구기": {
+    "type": "ice",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 90
+  },
+  "고드름침": {
+    "type": "ice",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 100
+  },
+  "고민씨": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "고속스핀": {
+    "type": "normal",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "고속이동": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "고스트다이브": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "고양이돈받기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "공중날기": {
+    "type": "flying",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 95
+  },
+  "광합성": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "괴력": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "괴상한바람": {
+    "type": "ghost",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "괴전파": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "구르기": {
+    "type": "rock",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 90
+  },
+  "구멍파기": {
+    "type": "ground",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "그래스믹서": {
+    "type": "grass",
+    "category": "special",
+    "power": 65,
+    "accuracy": 90
+  },
+  "그래스슬라이더": {
+    "type": "grass",
+    "category": "physical",
+    "power": 55,
+    "accuracy": 100
+  },
+  "그래스필드": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "그로우펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "그림자꿰매기": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "그림자분신": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "금속음": {
+    "type": "steel",
+    "category": "status",
+    "power": null,
+    "accuracy": 85
+  },
+  "금제": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "기가드레인": {
+    "type": "grass",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
+  },
+  "기가임팩트": {
+    "type": "normal",
+    "category": "physical",
+    "power": 150,
+    "accuracy": 90
+  },
+  "기가톤해머": {
+    "type": "steel",
+    "category": "physical",
+    "power": 160,
+    "accuracy": 100
+  },
+  "기관총": {
+    "type": "grass",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 100
+  },
+  "기사회생": {
+    "type": "fighting",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "기선제압": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100,
+    "priority": 3
+  },
+  "기습": {
+    "type": "dark",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "기어오르기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 100
+  },
+  "기충전": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "기프트패스": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "기합구슬": {
+    "type": "fighting",
+    "category": "special",
+    "power": 120,
+    "accuracy": 70
+  },
+  "길동무": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "김밥말이": {
+    "type": "normal",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 90
+  },
+  "깃털댄스": {
+    "type": "flying",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "깜짝베기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "깨물어부수기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "깨트리다": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "껍질깨기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "껍질에숨기": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "꼬리흔들기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "꽃가루경단": {
+    "type": "bug",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "꽃보라": {
+    "type": "grass",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "꽃잎댄스": {
+    "type": "grass",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
+  "꿀꺽": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "꿈먹기": {
+    "type": "psychic",
+    "category": "special",
+    "power": 100,
+    "accuracy": 100
+  },
+  "꿰뚫어보기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "끈적끈적네트": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "나뭇잎": {
+    "type": "grass",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "나비춤": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "나쁜음모": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "나이트버스트": {
+    "type": "dark",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95
+  },
+  "나이트헤드": {
+    "type": "ghost",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "난동부리기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "날개쉬기": {
+    "type": "flying",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "날개치기": {
+    "type": "flying",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "날따름": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 2
+  },
+  "날려버리기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": -6
+  },
+  "내던지기": {
+    "type": "dark",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "냄새구별": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "냉동빔": {
+    "type": "ice",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "냉동펀치": {
+    "type": "ice",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "노래하기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 55
+  },
+  "녹기": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "놀래키기": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100
+  },
+  "누르기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 100
+  },
+  "눈물그렁그렁": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "눈보라": {
+    "type": "ice",
+    "category": "special",
+    "power": 110,
+    "accuracy": 70
+  },
+  "눈사태": {
+    "type": "ice",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "priority": -4
+  },
+  "눈싸라기": {
+    "type": "ice",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "니들가드": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "니트로차지": {
+    "type": "fire",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "다과회": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "다이빙": {
+    "type": "water",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "단단해지기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "달의불빛": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "달콤한향기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "당신먼저": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "대지의파동": {
+    "type": "normal",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "대지의힘": {
+    "type": "ground",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "대타출동": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "대폭발": {
+    "type": "normal",
+    "category": "physical",
+    "power": 250,
+    "accuracy": 100
+  },
+  "더블니들": {
+    "type": "bug",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 100
+  },
+  "더블어택": {
+    "type": "normal",
+    "category": "physical",
+    "power": 35,
+    "accuracy": 90
+  },
+  "더블윙": {
+    "type": "flying",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 90
+  },
+  "더블촙": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 90
+  },
+  "더스트슈트": {
+    "type": "poison",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 80
+  },
+  "덤벼들기": {
+    "type": "bug",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "덩굴채찍": {
+    "type": "grass",
+    "category": "physical",
+    "power": 45,
+    "accuracy": 100
+  },
+  "데코레이션": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "도각참": {
+    "type": "dark",
+    "category": "physical",
+    "power": 85,
+    "accuracy": null
+  },
+  "도깨비불": {
+    "type": "fire",
+    "category": "status",
+    "power": null,
+    "accuracy": 85
+  },
+  "도둑질": {
+    "type": "dark",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "도발": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "도우미": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 5
+  },
+  "독가루": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 75
+  },
+  "독가스": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 90
+  },
+  "독실": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "독압정": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "독엄니": {
+    "type": "poison",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "독찌르기": {
+    "type": "poison",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "독침": {
+    "type": "poison",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 100
+  },
+  "돌떨구기": {
+    "type": "rock",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 90
+  },
+  "돌림노래": {
+    "type": "normal",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "돌진": {
+    "type": "normal",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 85
+  },
+  "동료만들기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "두번치기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100
+  },
+  "뒀다쓰기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 140,
+    "accuracy": 100
+  },
+  "드래곤다이브": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 75
+  },
+  "드래곤애로": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100,
+    "hits": 2
+  },
+  "드래곤옐": {
+    "type": "dragon",
+    "category": "status",
+    "power": 0,
+    "accuracy": 0
+  },
+  "드래곤크루": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "드래곤테일": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 90,
+    "priority": -6
+  },
+  "드레인키스": {
+    "type": "fairy",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "드레인펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "드릴라이너": {
+    "type": "ground",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 95
+  },
+  "따라가때리기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "따라하기": {
+    "type": "flying",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "땅가르기": {
+    "type": "ground",
+    "category": "physical",
+    "power": null,
+    "accuracy": 30
+  },
+  "땅고르기": {
+    "type": "ground",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "떨어뜨리기": {
+    "type": "rock",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "똬리틀기": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "뛰어오르다": {
+    "type": "flying",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 85
+  },
+  "라이징볼트": {
+    "type": "electric",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "락블레스트": {
+    "type": "rock",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 90
+  },
+  "락클라임": {
+    "type": "normal",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 85
+  },
+  "러스터캐논": {
+    "type": "steel",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "로우킥": {
+    "type": "fighting",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100,
+    "variablePower": true
+  },
+  "로케트박치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 130,
+    "accuracy": 100
+  },
+  "로킥": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100
+  },
+  "록온": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "록커트": {
+    "type": "rock",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "리벤지": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "priority": -4
+  },
+  "리사이클": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "리프레쉬": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "리프블레이드": {
+    "type": "grass",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "리프스톰": {
+    "type": "grass",
+    "category": "special",
+    "power": 130,
+    "accuracy": 90
+  },
+  "리플렉터": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "마구찌르기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 85
+  },
+  "마구할퀴기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 18,
+    "accuracy": 80
+  },
+  "마룻바닥세워막기": {
+    "type": "fighting",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "마법가루": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "마음의눈": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "마지막수단": {
+    "type": "normal",
+    "category": "special",
+    "power": null,
+    "accuracy": null
+  },
+  "마지막일침": {
+    "type": "bug",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "마하펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "막말내뱉기": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "막치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "망각술": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "매그니튜드": {
+    "type": "ground",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "매지컬샤인": {
+    "type": "fairy",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "매지컬플레임": {
+    "type": "fire",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
+  },
+  "매직룸": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "매직코트": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "매혹의보이스": {
+    "type": "fairy",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "맹독": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 90
+  },
+  "머드숏": {
+    "type": "ground",
+    "category": "special",
+    "power": 55,
+    "accuracy": 95
+  },
+  "멀리짖음": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "메가드레인": {
+    "type": "grass",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "메가톤킥": {
+    "type": "normal",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 75
+  },
+  "메가톤펀치": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 85
+  },
+  "메가폰": {
+    "type": "bug",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 85
+  },
+  "메지컬리프": {
+    "type": "grass",
+    "category": "special",
+    "power": 60,
+    "accuracy": null
+  },
+  "메탈버스트": {
+    "type": "steel",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "메탈크로우": {
+    "type": "steel",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 95
+  },
+  "메테오빔": {
+    "type": "rock",
+    "category": "special",
+    "power": 120,
+    "accuracy": 90
+  },
+  "멸망의노래": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "명상": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "모래바람": {
+    "type": "rock",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "모래뿌리기": {
+    "type": "ground",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "모래지옥": {
+    "type": "ground",
+    "category": "physical",
+    "power": 35,
+    "accuracy": 85
+  },
+  "목숨걸기": {
+    "type": "fighting",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "목화포자": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "몸통박치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "무릎차기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 130,
+    "accuracy": 90
+  },
+  "문포스": {
+    "type": "fairy",
+    "category": "special",
+    "power": 95,
+    "accuracy": 100
+  },
+  "물거품아리아": {
+    "type": "water",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "물기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "물놀이": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "물대포": {
+    "type": "water",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "물붓기": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "물수리검": {
+    "type": "water",
+    "category": "special",
+    "power": 15,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "물의맹세": {
+    "type": "water",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "물의파동": {
+    "type": "water",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "미라클아이": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "미래예지": {
+    "type": "psychic",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
+  "미러숏": {
+    "type": "steel",
+    "category": "special",
+    "power": 65,
+    "accuracy": 85
+  },
+  "미러코트": {
+    "type": "psychic",
+    "category": "special",
+    "power": null,
+    "accuracy": 100,
+    "priority": -5
+  },
+  "미러타입": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "미스트버스트": {
+    "type": "fairy",
+    "category": "special",
+    "power": 100,
+    "accuracy": 100
+  },
+  "미스트필드": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "바꿔치기": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "바늘미사일": {
+    "type": "bug",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 95
+  },
+  "바늘팔": {
+    "type": "grass",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "바다회오리": {
+    "type": "water",
+    "category": "special",
+    "power": 35,
+    "accuracy": 85
+  },
+  "바둥바둥": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "바디퍼지": {
+    "type": "steel",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "바디프레스": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "usesDefenseAsAttack": true
+  },
+  "바람일으키기": {
+    "type": "flying",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "바위깨기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "바크아웃": {
+    "type": "dark",
+    "category": "special",
+    "power": 55,
+    "accuracy": 95
+  },
+  "바톤터치": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "박치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "받아던지기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 70,
+    "accuracy": null,
+    "priority": -1
+  },
+  "발경": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "방어": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "방전": {
+    "type": "electric",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "배대뒤치기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 90,
+    "priority": -6
+  },
+  "배리어": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "배북": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "뱀눈초리": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "버티기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "번개": {
+    "type": "electric",
+    "category": "special",
+    "power": 110,
+    "accuracy": 70
+  },
+  "번개엄니": {
+    "type": "electric",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 95
+  },
+  "번개펀치": {
+    "type": "electric",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "벌레먹음": {
+    "type": "bug",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "벌레의야단법석": {
+    "type": "bug",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "벌레의저항": {
+    "type": "bug",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "벌크업": {
+    "type": "fighting",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "베놈쇼크": {
+    "type": "poison",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "베놈트랩": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "베어가르기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "변덕레이저": {
+    "type": "dragon",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "변신": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "병상첨병": {
+    "type": "ghost",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "보복": {
+    "type": "dark",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "보호색": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "본러쉬": {
+    "type": "ground",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 90
+  },
+  "볼부비부비": {
+    "type": "electric",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 100
+  },
+  "볼트체인지": {
+    "type": "electric",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "볼트태클": {
+    "type": "electric",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "봉인": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "부르짖기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "부리캐논": {
+    "type": "flying",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 100,
+    "priority": -3
+  },
+  "부식가스": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "부추기기": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "분노": {
+    "type": "normal",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 100
+  },
+  "분노가루": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 2
+  },
+  "분노의앞니": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 90
+  },
+  "분발": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "분연": {
+    "type": "fire",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "분진": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "분풀이": {
+    "type": "dark",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "분함의발구르기": {
+    "type": "ground",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "분화": {
+    "type": "fire",
+    "category": "special",
+    "power": 150,
+    "accuracy": 100
+  },
+  "불꽃세례": {
+    "type": "fire",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "불꽃엄니": {
+    "type": "fire",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 95
+  },
+  "불꽃의맹세": {
+    "type": "fire",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "불꽃채찍": {
+    "type": "fire",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "불꽃춤": {
+    "type": "fire",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "불꽃튀기기": {
+    "type": "fire",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "불꽃펀치": {
+    "type": "fire",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "불대문자": {
+    "type": "fire",
+    "category": "special",
+    "power": 110,
+    "accuracy": 85
+  },
+  "불릿펀치": {
+    "type": "steel",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "불사르기": {
+    "type": "fire",
+    "category": "special",
+    "power": 130,
+    "accuracy": 100
+  },
+  "불새": {
+    "type": "flying",
+    "category": "physical",
+    "power": 140,
+    "accuracy": 90
+  },
+  "불태우기": {
+    "type": "fire",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "브레이브버드": {
+    "type": "flying",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "브레이즈킥": {
+    "type": "fire",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 90
+  },
+  "브레이크크루": {
+    "type": "normal",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 95
+  },
+  "블러스트번": {
+    "type": "fire",
+    "category": "special",
+    "power": 150,
+    "accuracy": 90
+  },
+  "블록": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "비밀의힘": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "비밀이야기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "비바라기": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "비축하기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "빛의장막": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "뽐내기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 85
+  },
+  "뿌리박기": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "뿔드릴": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 30
+  },
+  "뿔찌르기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100
+  },
+  "사과산": {
+    "type": "grass",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "사념의박치기": {
+    "type": "psychic",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 90
+  },
+  "사슬묶기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "사이드체인지": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 2
+  },
+  "사이코노이즈": {
+    "type": "psychic",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
+  },
+  "사이코쇼크": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100,
+    "targetsDefenseStat": "defense"
+  },
+  "사이코웨이브": {
+    "type": "psychic",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "사이코커터": {
+    "type": "psychic",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "사이코키네시스": {
+    "type": "psychic",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "사이코팽": {
+    "type": "psychic",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 100
+  },
+  "사이코필드": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "생명의물방울": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "섀도볼": {
+    "type": "ghost",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "섀도크루": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "섀도펀치": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 60,
+    "accuracy": null
+  },
+  "선취": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "섬뜩한주문": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "성스러운칼": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "성장": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "세차게휘두르기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "셸블레이드": {
+    "type": "water",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 95
+  },
+  "셸암즈": {
+    "type": "poison",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "소금물": {
+    "type": "water",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "소금절이": {
+    "type": "rock",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "소란피기": {
+    "type": "normal",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "소울비트": {
+    "type": "dragon",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "속여때리기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 60,
+    "accuracy": null
+  },
+  "속이다": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 3
+  },
+  "속임수": {
+    "type": "dark",
+    "category": "physical",
+    "power": 95,
+    "accuracy": 100
+  },
+  "손가락흔들기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "손바닥치기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 100
+  },
+  "손톱갈기": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "솔라블레이드": {
+    "type": "grass",
+    "category": "physical",
+    "power": 125,
+    "accuracy": 100
+  },
+  "솔라빔": {
+    "type": "grass",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
+  "송전": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "수면가루": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 75
+  },
+  "순간이동": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": -6
+  },
+  "순서미루기": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "순풍": {
+    "type": "flying",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "숟가락휘기": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": 80
+  },
+  "숲의저주": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "스마트호른": {
+    "type": "steel",
+    "category": "physical",
+    "power": 70,
+    "accuracy": null
+  },
+  "스모그": {
+    "type": "poison",
+    "category": "special",
+    "power": 30,
+    "accuracy": 70
+  },
+  "스위프뺨치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 85
+  },
+  "스카이업퍼": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 90
+  },
+  "스케일노이즈": {
+    "type": "dragon",
+    "category": "special",
+    "power": 110,
+    "accuracy": 100
+  },
+  "스케일샷": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 90,
+    "variablePower": true
+  },
+  "스킬스웹": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "스텔스록": {
+    "type": "rock",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "스톤샤워": {
+    "type": "rock",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 90
+  },
+  "스톤에지": {
+    "type": "rock",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 80
+  },
+  "스파크": {
+    "type": "electric",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100
+  },
+  "스포트라이트": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 3
+  },
+  "스피드스웹": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "스피드스타": {
+    "type": "normal",
+    "category": "special",
+    "power": 60,
+    "accuracy": null
+  },
+  "승부굳히기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "시그널빔": {
+    "type": "bug",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
+  },
+  "시저크로스": {
+    "type": "bug",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "신비의부적": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "신속": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "priority": 2
+  },
+  "신통력": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "실뿜기": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": 95
+  },
+  "싫은소리": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 85
+  },
+  "심플빔": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "싱크로노이즈": {
+    "type": "psychic",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
+  "싸라기눈": {
+    "type": "ice",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "썬더다이브": {
+    "type": "electric",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 95
+  },
+  "씨뿌리기": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 90
+  },
+  "씨폭탄": {
+    "type": "grass",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "아로마미스트": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "아로마테라피": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "아이스볼": {
+    "type": "ice",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 90
+  },
+  "아이스해머": {
+    "type": "ice",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 90
+  },
+  "아이언롤러": {
+    "type": "steel",
+    "category": "physical",
+    "power": 130,
+    "accuracy": 100
+  },
+  "아이언테일": {
+    "type": "steel",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 75
+  },
+  "아이언헤드": {
+    "type": "steel",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "아침햇살": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "아쿠아링": {
+    "type": "water",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "아쿠아브레이크": {
+    "type": "water",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 100
+  },
+  "아쿠아제트": {
+    "type": "water",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "아쿠아테일": {
+    "type": "water",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 90
+  },
+  "아픔나누기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "악몽": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "악의파동": {
+    "type": "dark",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "안개제거": {
+    "type": "flying",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "안다리걸기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "알낳기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "암석봉인": {
+    "type": "rock",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 95
+  },
+  "암석포": {
+    "type": "rock",
+    "category": "physical",
+    "power": 150,
+    "accuracy": 90
+  },
+  "암해머": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 90
+  },
+  "압정뿌리기": {
+    "type": "ground",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "애교부리기": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "애시드봄": {
+    "type": "poison",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "애크러뱃": {
+    "type": "flying",
+    "category": "physical",
+    "power": 55,
+    "accuracy": 100
+  },
+  "액셀록": {
+    "type": "rock",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "앵콜": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "야금야금": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "야습": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "양날박치기": {
+    "type": "rock",
+    "category": "physical",
+    "power": 150,
+    "accuracy": 80
+  },
+  "어시스트파워": {
+    "type": "psychic",
+    "category": "special",
+    "power": 20,
+    "accuracy": 100
+  },
+  "얼다바람": {
+    "type": "ice",
+    "category": "special",
+    "power": 55,
+    "accuracy": 95
+  },
+  "얼음뭉치": {
+    "type": "ice",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "얼음숨결": {
+    "type": "ice",
+    "category": "special",
+    "power": 60,
+    "accuracy": 90
+  },
+  "얼음엄니": {
+    "type": "ice",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 95
+  },
+  "엄습하는일격": {
+    "type": "bug",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 90
+  },
+  "엄청난힘": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "업어후리기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "엉겨붙기": {
+    "type": "bug",
+    "category": "special",
+    "power": 20,
+    "accuracy": 100
+  },
+  "에너지볼": {
+    "type": "grass",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "에어슬래시": {
+    "type": "flying",
+    "category": "special",
+    "power": 75,
+    "accuracy": 95
+  },
+  "에어컷터": {
+    "type": "flying",
+    "category": "special",
+    "power": 60,
+    "accuracy": 95
+  },
+  "에코보이스": {
+    "type": "normal",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "역린": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "역할": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "연막": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "연속뺨치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 85
+  },
+  "연속자르기": {
+    "type": "bug",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 95
+  },
+  "연속펀치": {
+    "type": "normal",
+    "category": "physical",
+    "power": 18,
+    "accuracy": 85
+  },
+  "연옥": {
+    "type": "fire",
+    "category": "special",
+    "power": 100,
+    "accuracy": 50
+  },
+  "열불내기": {
+    "type": "fire",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "열사의대지": {
+    "type": "ground",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "열탕": {
+    "type": "water",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "열풍": {
+    "type": "fire",
+    "category": "special",
+    "power": 95,
+    "accuracy": 90
+  },
+  "염동력": {
+    "type": "psychic",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "예민해지기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "오라휠": {
+    "type": "electric",
+    "category": "physical",
+    "power": 110,
+    "accuracy": 100
+  },
+  "오로라베일": {
+    "type": "ice",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "오로라빔": {
+    "type": "ice",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "오물공격": {
+    "type": "poison",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "오물웨이브": {
+    "type": "poison",
+    "category": "special",
+    "power": 95,
+    "accuracy": 100
+  },
+  "오물폭탄": {
+    "type": "poison",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "오버히트": {
+    "type": "fire",
+    "category": "special",
+    "power": 130,
+    "accuracy": 90
+  },
+  "와이드가드": {
+    "type": "rock",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 3
+  },
+  "와이드브레이커": {
+    "type": "dragon",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "와이드포스": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "와일드볼트": {
+    "type": "electric",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "요가포즈": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "요정의바람": {
+    "type": "fairy",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "용성군": {
+    "type": "dragon",
+    "category": "special",
+    "power": 130,
+    "accuracy": 90
+  },
+  "용의분노": {
+    "type": "dragon",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "용의숨결": {
+    "type": "dragon",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "용의춤": {
+    "type": "dragon",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "용의파동": {
+    "type": "dragon",
+    "category": "special",
+    "power": 85,
+    "accuracy": 100
+  },
+  "용해액": {
+    "type": "poison",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "우드해머": {
+    "type": "grass",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "우드호른": {
+    "type": "grass",
+    "category": "physical",
+    "power": 75,
+    "accuracy": 100
+  },
+  "울부짖기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": -6
+  },
+  "울음소리": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "웅크리기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "원념": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "원더룸": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "원수갚기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "원시의힘": {
+    "type": "rock",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "원한": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "웨더볼": {
+    "type": "normal",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "위액": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "유턴": {
+    "type": "bug",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "유혹": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "은빛바람": {
+    "type": "bug",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "은혜갚기": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "이상한빛": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "이판사판태클": {
+    "type": "normal",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "인파이트": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "일구기": {
+    "type": "ground",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "일렉트로빔": {
+    "type": "electric",
+    "category": "special",
+    "power": 130,
+    "accuracy": 100
+  },
+  "일렉트릭네트": {
+    "type": "electric",
+    "category": "special",
+    "power": 55,
+    "accuracy": 95
+  },
+  "일렉트릭볼": {
+    "type": "electric",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "일렉트릭필드": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "잎날가르기": {
+    "type": "grass",
+    "category": "physical",
+    "power": 55,
+    "accuracy": 95
+  },
+  "자기암시": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "자기장조작": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "자연의은혜": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "자연의힘": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "자이로볼": {
+    "type": "steel",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "자폭": {
+    "type": "normal",
+    "category": "physical",
+    "power": 200,
+    "accuracy": 100
+  },
+  "작아지기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "잠깨움뺨치기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "잠꼬대": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "잠자기": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "잠재파워": {
+    "type": "normal",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "잼잼펀치": {
+    "type": "normal",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "저리가루": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 75
+  },
+  "저주": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "전격파": {
+    "type": "electric",
+    "category": "special",
+    "power": 60,
+    "accuracy": null
+  },
+  "전광석화": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "전기쇼크": {
+    "type": "electric",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "전기자석파": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": 90
+  },
+  "전자부유": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "전자포": {
+    "type": "electric",
+    "category": "special",
+    "power": 120,
+    "accuracy": 50
+  },
+  "절대영도": {
+    "type": "ice",
+    "category": "special",
+    "power": null,
+    "accuracy": 30
+  },
+  "점프킥": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 95
+  },
+  "정리정돈": {
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "제비반환": {
+    "type": "flying",
+    "category": "physical",
+    "power": 60,
+    "accuracy": null
+  },
+  "제트펀치": {
+    "type": "water",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "조수": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "조이기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 15,
+    "accuracy": 85
+  },
+  "주술": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "죽기살기": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "중력": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "쥐어짜기": {
+    "type": "normal",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "지구던지기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "지옥의바퀴": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 80
+  },
+  "지옥찌르기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "지진": {
+    "type": "ground",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 100
+  },
+  "지휘": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "진공파": {
+    "type": "fighting",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "진흙뿌리기": {
+    "type": "ground",
+    "category": "special",
+    "power": 20,
+    "accuracy": 100
+  },
+  "진흙폭탄": {
+    "type": "ground",
+    "category": "special",
+    "power": 65,
+    "accuracy": 85
+  },
+  "질투의불꽃": {
+    "type": "fire",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "집게덫": {
+    "type": "grass",
+    "category": "physical",
+    "power": 35,
+    "accuracy": 100
+  },
+  "집단구타": {
+    "type": "dark",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "짓밟기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100
+  },
+  "째려보기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "쪼기": {
+    "type": "flying",
+    "category": "physical",
+    "power": 35,
+    "accuracy": 100
+  },
+  "쪼아대기": {
+    "type": "flying",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "찍찍베기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 90
+  },
+  "찝게햄머": {
+    "type": "water",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 90
+  },
+  "찝기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 55,
+    "accuracy": 100
+  },
+  "차밍보이스": {
+    "type": "fairy",
+    "category": "special",
+    "power": 40,
+    "accuracy": null
+  },
+  "차지빔": {
+    "type": "electric",
+    "category": "special",
+    "power": 50,
+    "accuracy": 90
+  },
+  "참기": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": null,
+    "priority": 1
+  },
+  "천사의키스": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": 75
+  },
+  "철벽": {
+    "type": "steel",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "철제광선": {
+    "type": "steel",
+    "category": "special",
+    "power": 140,
+    "accuracy": 95
+  },
+  "초롱초롱눈동자": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "priority": 1
+  },
+  "초음파": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 55
+  },
+  "최면술": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": 60
+  },
+  "추억의선물": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "충전": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "치근거리기": {
+    "type": "fairy",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 90
+  },
+  "치료방울": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "치유소원": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "치유파동": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "친해지기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "카운터": {
+    "type": "fighting",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100,
+    "priority": -5
+  },
+  "칼등치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "칼바람": {
+    "type": "normal",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "칼춤": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "코골기": {
+    "type": "normal",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "코멧펀치": {
+    "type": "steel",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 90
+  },
+  "코스믹파워": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "코칭": {
+    "type": "fighting",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "코튼가드": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "쾌청": {
+    "type": "fire",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "퀵턴": {
+    "type": "water",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "크로스촙": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 80
+  },
+  "크로스포이즌": {
+    "type": "poison",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "클리어스모그": {
+    "type": "poison",
+    "category": "special",
+    "power": 50,
+    "accuracy": null
+  },
+  "킹실드": {
+    "type": "steel",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "탁류": {
+    "type": "water",
+    "category": "special",
+    "power": 90,
+    "accuracy": 85
+  },
+  "탁쳐서떨구기": {
+    "type": "dark",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 100
+  },
+  "탐내다": {
+    "type": "normal",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "태권당수": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "태만함": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "텔레키네시스": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "토치카": {
+    "type": "poison",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "토해내기": {
+    "type": "normal",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "튀어오르기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "트라이어택": {
+    "type": "normal",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "트로피컬킥": {
+    "type": "grass",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "트리플악셀": {
+    "type": "ice",
+    "category": "physical",
+    "power": 20,
+    "accuracy": 90,
+    "variablePower": true
+  },
+  "트릭": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "트릭가드": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 3
+  },
+  "트릭룸": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": -7
+  },
+  "트릭플라워": {
+    "type": "grass",
+    "category": "physical",
+    "power": 70,
+    "accuracy": null,
+    "alwaysCrit": true
+  },
+  "트림": {
+    "type": "poison",
+    "category": "special",
+    "power": 120,
+    "accuracy": 90
+  },
+  "트집": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "파괴광선": {
+    "type": "normal",
+    "category": "special",
+    "power": 150,
+    "accuracy": 90
+  },
+  "파도타기": {
+    "type": "water",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "파동탄": {
+    "type": "fighting",
+    "category": "special",
+    "power": 80,
+    "accuracy": null
+  },
+  "파라볼라차지": {
+    "type": "electric",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "파멸의빛": {
+    "type": "fairy",
+    "category": "special",
+    "power": 140,
+    "accuracy": 90
+  },
+  "파워셰어": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "파워스웹": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "파워젬": {
+    "type": "rock",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "파워트릭": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "파워휩": {
+    "type": "grass",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 85
+  },
+  "판별": {
+    "type": "fighting",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 4
+  },
+  "퍼스트가드": {
+    "type": "fighting",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 3
+  },
+  "페어리록": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "페인트": {
+    "type": "normal",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100,
+    "priority": 2
+  },
+  "포이즌테일": {
+    "type": "poison",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "폭발펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 50
+  },
+  "폭음파": {
+    "type": "normal",
+    "category": "special",
+    "power": 140,
+    "accuracy": 100
+  },
+  "폭포오르기": {
+    "type": "water",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "폭풍": {
+    "type": "flying",
+    "category": "special",
+    "power": 110,
+    "accuracy": 70
+  },
+  "폴터가이스트": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 110,
+    "accuracy": 90
+  },
+  "풀묶기": {
+    "type": "grass",
+    "category": "special",
+    "power": null,
+    "accuracy": 100
+  },
+  "풀베기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 95
+  },
+  "풀의맹세": {
+    "type": "grass",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "풀피리": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 55
+  },
+  "프레젠트": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 90
+  },
+  "프리즈드라이": {
+    "type": "ice",
+    "category": "special",
+    "power": 70,
+    "accuracy": 100
+  },
+  "프리폴": {
+    "type": "flying",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "플라스마샤워": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "priority": 1
+  },
+  "플라워가드": {
+    "type": "fairy",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "플라잉프레스": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 95
+  },
+  "플래시": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "플레어드라이브": {
+    "type": "fire",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "플레어송": {
+    "type": "fire",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "필살앞니": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 90
+  },
+  "하드프레스": {
+    "type": "steel",
+    "category": "physical",
+    "power": 0,
+    "accuracy": 100
+  },
+  "하드플랜트": {
+    "type": "grass",
+    "category": "special",
+    "power": 150,
+    "accuracy": 90
+  },
+  "하이드로캐논": {
+    "type": "water",
+    "category": "special",
+    "power": 150,
+    "accuracy": 90
+  },
+  "하이드로펌프": {
+    "type": "water",
+    "category": "special",
+    "power": 110,
+    "accuracy": 80
+  },
+  "하이퍼보이스": {
+    "type": "normal",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "하품": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "할퀴기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100
+  },
+  "핥기": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100
+  },
+  "해수스파우팅": {
+    "type": "water",
+    "category": "special",
+    "power": 150,
+    "accuracy": 100
+  },
+  "핼러윈": {
+    "type": "ghost",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "헤롱헤롱": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "헤비봄버": {
+    "type": "steel",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "혼내기": {
+    "type": "dark",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "화염방사": {
+    "type": "fire",
+    "category": "special",
+    "power": 90,
+    "accuracy": 100
+  },
+  "화염자동차": {
+    "type": "fire",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100
+  },
+  "화풀이": {
+    "type": "normal",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "환상빔": {
+    "type": "psychic",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100
+  },
+  "회복봉인": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "회오리": {
+    "type": "dragon",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "회오리불꽃": {
+    "type": "fire",
+    "category": "special",
+    "power": 35,
+    "accuracy": 85
+  },
+  "회전부리": {
+    "type": "flying",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "휘감기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 10,
+    "accuracy": 100
+  },
+  "흉내내기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "흉내쟁이": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "흑안개": {
+    "type": "ice",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "흔들흔들댄스": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "흙놀이": {
+    "type": "ground",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "흡수": {
+    "type": "grass",
+    "category": "special",
+    "power": 20,
+    "accuracy": 100
+  },
+  "흡혈": {
+    "type": "bug",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "희망사항": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "흰안개": {
+    "type": "ice",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "히트스탬프": {
+    "type": "fire",
+    "category": "physical",
+    "power": null,
+    "accuracy": 100
+  },
+  "힘껏치기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 75
+  },
+  "힘껏펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 150,
+    "accuracy": 100,
+    "priority": -3
+  },
+  "힘흡수": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 100
+  },
+  "Aqua Cutter": {
+    "type": "water",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
+  },
+  "Aqua Step": {
+    "type": "water",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "Armor Cannon": {
+    "type": "fire",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
+  "Axe Kick": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 90
+  },
+  "Bitter Blade": {
+    "type": "fire",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "Bitter Malice": {
+    "type": "ghost",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
+  },
+  "Ceaseless Edge": {
+    "type": "dark",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 90
+  },
+  "Chilling Water": {
+    "type": "water",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
+  "Chilly Reception": {
+    "type": "ice",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Comeuppance": {
+    "type": "dark",
+    "category": "physical",
+    "power": 1,
+    "accuracy": 100
+  },
+  "DD래리어트": {
+    "type": "dark",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 100
+  },
+  "Dire Claw": {
+    "type": "poison",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "G의힘": {
+    "type": "grass",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "Headlong Rush": {
+    "type": "ground",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "HP회복": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null
+  },
+  "Ice Spinner": {
+    "type": "ice",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
+  "Infernal Parade": {
+    "type": "ghost",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
+  },
+  "Last Respects": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "Lumina Crash": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "Matcha Gotcha": {
+    "type": "grass",
+    "category": "special",
+    "power": 80,
+    "accuracy": 90
+  },
+  "Mortal Spin": {
+    "type": "poison",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100
+  },
+  "Mountain Gale": {
+    "type": "ice",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 85
+  },
+  "Pounce": {
+    "type": "bug",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "Power Shift": {
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Psyshield Bash": {
+    "type": "psychic",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 90
+  },
+  "Raging Bull": {
+    "type": "normal",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "Raging Fury": {
+    "type": "fire",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
+  "Shed Tail": {
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Shelter": {
+    "type": "steel",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Snowscape": {
+    "type": "ice",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Spicy Extract": {
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
+  "Stone Axe": {
+    "type": "rock",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 90
+  },
+  "Syrup Bomb": {
+    "type": "grass",
+    "category": "special",
+    "power": 60,
+    "accuracy": 85
+  },
+  "Tera Blast": {
+    "type": "normal",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
+  },
+  "Trailblaze": {
+    "type": "grass",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
+  "Triple Arrows": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
+  "Twin Beam": {
+    "type": "psychic",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
+  "Wave Crash": {
+    "type": "water",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  }
 }

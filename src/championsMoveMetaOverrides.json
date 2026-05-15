@@ -1,0 +1,12 @@
+{
+  "기습": { "priority": 1 },
+  "드래곤애로": { "hits": 2 },
+  "로우킥": { "variablePower": true },
+  "바디프레스": { "usesDefenseAsAttack": true },
+  "사이코쇼크": { "targetsDefenseStat": "defense" },
+  "속이다": { "priority": 3 },
+  "스케일샷": { "variablePower": true },
+  "야습": { "priority": 1 },
+  "트리플악셀": { "variablePower": true },
+  "트릭플라워": { "alwaysCrit": true }
+}

@@ -31,6 +31,13 @@ export const dataSourcePolicy = {
     supplements: ['src/sampleMoves.ts', 'src/championsMovePools.json', 'src/championsRecommendationAuditOverrides.json'],
     caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함한다.',
   },
+  moveMeta: {
+    sourceOfTruth: 'src/championsLearnedMoveMeta.json',
+    report: 'reports/championsMoveMetaReport.json',
+    primary: '포챔스 move pool에 등장하는 기술명을 PokeAPI move detail과 매칭해 생성한 계산기용 메타',
+    supplements: ['src/championsMovePools.json', 'src/championsMoveNameOverrides.json', 'src/championsMoveMetaNameAliases.json', 'src/championsMoveMetaOverrides.json', 'reports/pokeapiMoveDetailsCache.json'],
+    caveat: '기본 타입/분류/위력/명중은 PokeAPI 기반 자동 생성이고, 다단히트·가변위력·예외 계산은 overrides로 보정한다.',
+  },
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',
     report: 'reports/championsItemWhitelistReport.json',

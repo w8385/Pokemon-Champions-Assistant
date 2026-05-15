@@ -1,0 +1,4009 @@
+{
+  "generatedAt": "2026-05-15T10:06:25.942Z",
+  "source": {
+    "movePools": "src/championsMovePools.json",
+    "moveNameOverrides": "src/championsMoveNameOverrides.json",
+    "moveMetaOverrides": "src/championsMoveMetaOverrides.json",
+    "pokeApi": "https://pokeapi.co/api/v2/move?limit=2000",
+    "cache": "reports/pokeapiMoveDetailsCache.json"
+  },
+  "totals": {
+    "championsPoolMoves": 665,
+    "generatedMetaMoves": 665,
+    "unmatchedMoves": 0,
+    "cachedMoveDetails": 937
+  },
+  "unmatchedMoves": [],
+  "generatedMoves": [
+    {
+      "moveName": "10만마력",
+      "apiName": "high-horsepower",
+      "ko": "10만마력",
+      "en": "High Horsepower"
+    },
+    {
+      "moveName": "10만볼트",
+      "apiName": "thunderbolt",
+      "ko": "10만볼트",
+      "en": "Thunderbolt"
+    },
+    {
+      "moveName": "가드셰어",
+      "apiName": "guard-split",
+      "ko": "가드셰어",
+      "en": "Guard Split"
+    },
+    {
+      "moveName": "가드스웹",
+      "apiName": "guard-swap",
+      "ko": "가드스웹",
+      "en": "Guard Swap"
+    },
+    {
+      "moveName": "가로챔",
+      "apiName": "snatch",
+      "ko": "가로챔",
+      "en": "Snatch"
+    },
+    {
+      "moveName": "가시대포",
+      "apiName": "spike-cannon",
+      "ko": "가시대포",
+      "en": "Spike Cannon"
+    },
+    {
+      "moveName": "가위자르기",
+      "apiName": "guillotine",
+      "ko": "가위자르기",
+      "en": "Guillotine"
+    },
+    {
+      "moveName": "가지찌르기",
+      "apiName": "branch-poke",
+      "ko": "가지찌르기",
+      "en": "Branch Poke"
+    },
+    {
+      "moveName": "각지기",
+      "apiName": "sharpen",
+      "ko": "각지기",
+      "en": "Sharpen"
+    },
+    {
+      "moveName": "간지르기",
+      "apiName": "tickle",
+      "ko": "간지르기",
+      "en": "Tickle"
+    },
+    {
+      "moveName": "강철날개",
+      "apiName": "steel-wing",
+      "ko": "강철날개",
+      "en": "Steel Wing"
+    },
+    {
+      "moveName": "객기",
+      "apiName": "facade",
+      "ko": "객기",
+      "en": "Facade"
+    },
+    {
+      "moveName": "거미집",
+      "apiName": "spider-web",
+      "ko": "거미집",
+      "en": "Spider Web"
+    },
+    {
+      "moveName": "거짓울음",
+      "apiName": "fake-tears",
+      "ko": "거짓울음",
+      "en": "Fake Tears"
+    },
+    {
+      "moveName": "거품",
+      "apiName": "bubble",
+      "ko": "거품",
+      "en": "Bubble"
+    },
+    {
+      "moveName": "거품광선",
+      "apiName": "bubble-beam",
+      "ko": "거품광선",
+      "en": "Bubble Beam"
+    },
+    {
+      "moveName": "검은눈빛",
+      "apiName": "mean-look",
+      "ko": "검은눈빛",
+      "en": "Mean Look"
+    },
+    {
+      "moveName": "겁나는얼굴",
+      "apiName": "scary-face",
+      "ko": "겁나는얼굴",
+      "en": "Scary Face"
+    },
+    {
+      "moveName": "경혈찌르기",
+      "apiName": "acupressure",
+      "ko": "경혈찌르기",
+      "en": "Acupressure"
+    },
+    {
+      "moveName": "고드름떨구기",
+      "apiName": "icicle-crash",
+      "ko": "고드름떨구기",
+      "en": "Icicle Crash"
+    },
+    {
+      "moveName": "고드름침",
+      "apiName": "icicle-spear",
+      "ko": "고드름침",
+      "en": "Icicle Spear"
+    },
+    {
+      "moveName": "고민씨",
+      "apiName": "worry-seed",
+      "ko": "고민씨",
+      "en": "Worry Seed"
+    },
+    {
+      "moveName": "고속스핀",
+      "apiName": "rapid-spin",
+      "ko": "고속스핀",
+      "en": "Rapid Spin"
+    },
+    {
+      "moveName": "고속이동",
+      "apiName": "agility",
+      "ko": "고속이동",
+      "en": "Agility"
+    },
+    {
+      "moveName": "고스트다이브",
+      "apiName": "phantom-force",
+      "ko": "고스트다이브",
+      "en": "Phantom Force"
+    },
+    {
+      "moveName": "고양이돈받기",
+      "apiName": "pay-day",
+      "ko": "고양이돈받기",
+      "en": "Pay Day"
+    },
+    {
+      "moveName": "공중날기",
+      "apiName": "fly",
+      "ko": "공중날기",
+      "en": "Fly"
+    },
+    {
+      "moveName": "광합성",
+      "apiName": "synthesis",
+      "ko": "광합성",
+      "en": "Synthesis"
+    },
+    {
+      "moveName": "괴력",
+      "apiName": "strength",
+      "ko": "괴력",
+      "en": "Strength"
+    },
+    {
+      "moveName": "괴상한바람",
+      "apiName": "ominous-wind",
+      "ko": "괴상한바람",
+      "en": "Ominous Wind"
+    },
+    {
+      "moveName": "괴전파",
+      "apiName": "eerie-impulse",
+      "ko": "괴전파",
+      "en": "Eerie Impulse"
+    },
+    {
+      "moveName": "구르기",
+      "apiName": "rollout",
+      "ko": "구르기",
+      "en": "Rollout"
+    },
+    {
+      "moveName": "구멍파기",
+      "apiName": "dig",
+      "ko": "구멍파기",
+      "en": "Dig"
+    },
+    {
+      "moveName": "그래스믹서",
+      "apiName": "leaf-tornado",
+      "ko": "그래스믹서",
+      "en": "Leaf Tornado"
+    },
+    {
+      "moveName": "그래스슬라이더",
+      "apiName": "grassy-glide",
+      "ko": "그래스슬라이더",
+      "en": "Grassy Glide"
+    },
+    {
+      "moveName": "그래스필드",
+      "apiName": "grassy-terrain",
+      "ko": "그래스필드",
+      "en": "Grassy Terrain"
+    },
+    {
+      "moveName": "그로우펀치",
+      "apiName": "power-up-punch",
+      "ko": "그로우펀치",
+      "en": "Power-Up Punch"
+    },
+    {
+      "moveName": "그림자꿰매기",
+      "apiName": "spirit-shackle",
+      "ko": "그림자꿰매기",
+      "en": "Spirit Shackle"
+    },
+    {
+      "moveName": "그림자분신",
+      "apiName": "double-team",
+      "ko": "그림자분신",
+      "en": "Double Team"
+    },
+    {
+      "moveName": "금속음",
+      "apiName": "metal-sound",
+      "ko": "금속음",
+      "en": "Metal Sound"
+    },
+    {
+      "moveName": "금제",
+      "apiName": "embargo",
+      "ko": "금제",
+      "en": "Embargo"
+    },
+    {
+      "moveName": "기가드레인",
+      "apiName": "giga-drain",
+      "ko": "기가드레인",
+      "en": "Giga Drain"
+    },
+    {
+      "moveName": "기가임팩트",
+      "apiName": "giga-impact",
+      "ko": "기가임팩트",
+      "en": "Giga Impact"
+    },
+    {
+      "moveName": "기가톤해머",
+      "apiName": "gigaton-hammer",
+      "ko": null,
+      "en": "Gigaton Hammer"
+    },
+    {
+      "moveName": "기관총",
+      "apiName": "bullet-seed",
+      "ko": "기관총",
+      "en": "Bullet Seed"
+    },
+    {
+      "moveName": "기사회생",
+      "apiName": "reversal",
+      "ko": "기사회생",
+      "en": "Reversal"
+    },
+    {
+      "moveName": "기선제압",
+      "apiName": "upper-hand",
+      "ko": "기선제압",
+      "en": "Upper Hand"
+    },
+    {
+      "moveName": "기습",
+      "apiName": "sucker-punch",
+      "ko": "기습",
+      "en": "Sucker Punch"
+    },
+    {
+      "moveName": "기어오르기",
+      "apiName": "power-trip",
+      "ko": "기어오르기",
+      "en": "Power Trip"
+    },
+    {
+      "moveName": "기충전",
+      "apiName": "focus-energy",
+      "ko": "기충전",
+      "en": "Focus Energy"
+    },
+    {
+      "moveName": "기프트패스",
+      "apiName": "bestow",
+      "ko": "기프트패스",
+      "en": "Bestow"
+    },
+    {
+      "moveName": "기합구슬",
+      "apiName": "focus-blast",
+      "ko": "기합구슬",
+      "en": "Focus Blast"
+    },
+    {
+      "moveName": "길동무",
+      "apiName": "destiny-bond",
+      "ko": "길동무",
+      "en": "Destiny Bond"
+    },
+    {
+      "moveName": "김밥말이",
+      "apiName": "wrap",
+      "ko": "김밥말이",
+      "en": "Wrap"
+    },
+    {
+      "moveName": "깃털댄스",
+      "apiName": "feather-dance",
+      "ko": "깃털댄스",
+      "en": "Feather Dance"
+    },
+    {
+      "moveName": "깜짝베기",
+      "apiName": "night-slash",
+      "ko": "깜짝베기",
+      "en": "Night Slash"
+    },
+    {
+      "moveName": "깨물어부수기",
+      "apiName": "crunch",
+      "ko": "깨물어부수기",
+      "en": "Crunch"
+    },
+    {
+      "moveName": "깨트리다",
+      "apiName": "brick-break",
+      "ko": "깨트리다",
+      "en": "Brick Break"
+    },
+    {
+      "moveName": "껍질깨기",
+      "apiName": "shell-smash",
+      "ko": "껍질깨기",
+      "en": "Shell Smash"
+    },
+    {
+      "moveName": "껍질에숨기",
+      "apiName": "withdraw",
+      "ko": "껍질에숨기",
+      "en": "Withdraw"
+    },
+    {
+      "moveName": "꼬리흔들기",
+      "apiName": "tail-whip",
+      "ko": "꼬리흔들기",
+      "en": "Tail Whip"
+    },
+    {
+      "moveName": "꽃가루경단",
+      "apiName": "pollen-puff",
+      "ko": "꽃가루경단",
+      "en": "Pollen Puff"
+    },
+    {
+      "moveName": "꽃보라",
+      "apiName": "petal-blizzard",
+      "ko": "꽃보라",
+      "en": "Petal Blizzard"
+    },
+    {
+      "moveName": "꽃잎댄스",
+      "apiName": "petal-dance",
+      "ko": "꽃잎댄스",
+      "en": "Petal Dance"
+    },
+    {
+      "moveName": "꿀꺽",
+      "apiName": "swallow",
+      "ko": "꿀꺽",
+      "en": "Swallow"
+    },
+    {
+      "moveName": "꿈먹기",
+      "apiName": "dream-eater",
+      "ko": "꿈먹기",
+      "en": "Dream Eater"
+    },
+    {
+      "moveName": "꿰뚫어보기",
+      "apiName": "foresight",
+      "ko": "꿰뚫어보기",
+      "en": "Foresight"
+    },
+    {
+      "moveName": "끈적끈적네트",
+      "apiName": "sticky-web",
+      "ko": "끈적끈적네트",
+      "en": "Sticky Web"
+    },
+    {
+      "moveName": "나뭇잎",
+      "apiName": "leafage",
+      "ko": "나뭇잎",
+      "en": "Leafage"
+    },
+    {
+      "moveName": "나비춤",
+      "apiName": "quiver-dance",
+      "ko": "나비춤",
+      "en": "Quiver Dance"
+    },
+    {
+      "moveName": "나쁜음모",
+      "apiName": "nasty-plot",
+      "ko": "나쁜음모",
+      "en": "Nasty Plot"
+    },
+    {
+      "moveName": "나이트버스트",
+      "apiName": "night-daze",
+      "ko": "나이트버스트",
+      "en": "Night Daze"
+    },
+    {
+      "moveName": "나이트헤드",
+      "apiName": "night-shade",
+      "ko": "나이트헤드",
+      "en": "Night Shade"
+    },
+    {
+      "moveName": "난동부리기",
+      "apiName": "thrash",
+      "ko": "난동부리기",
+      "en": "Thrash"
+    },
+    {
+      "moveName": "날개쉬기",
+      "apiName": "roost",
+      "ko": "날개쉬기",
+      "en": "Roost"
+    },
+    {
+      "moveName": "날개치기",
+      "apiName": "wing-attack",
+      "ko": "날개치기",
+      "en": "Wing Attack"
+    },
+    {
+      "moveName": "날따름",
+      "apiName": "follow-me",
+      "ko": "날따름",
+      "en": "Follow Me"
+    },
+    {
+      "moveName": "날려버리기",
+      "apiName": "whirlwind",
+      "ko": "날려버리기",
+      "en": "Whirlwind"
+    },
+    {
+      "moveName": "내던지기",
+      "apiName": "fling",
+      "ko": "내던지기",
+      "en": "Fling"
+    },
+    {
+      "moveName": "냄새구별",
+      "apiName": "odor-sleuth",
+      "ko": "냄새구별",
+      "en": "Odor Sleuth"
+    },
+    {
+      "moveName": "냉동빔",
+      "apiName": "ice-beam",
+      "ko": "냉동빔",
+      "en": "Ice Beam"
+    },
+    {
+      "moveName": "냉동펀치",
+      "apiName": "ice-punch",
+      "ko": "냉동펀치",
+      "en": "Ice Punch"
+    },
+    {
+      "moveName": "노래하기",
+      "apiName": "sing",
+      "ko": "노래하기",
+      "en": "Sing"
+    },
+    {
+      "moveName": "녹기",
+      "apiName": "acid-armor",
+      "ko": "녹기",
+      "en": "Acid Armor"
+    },
+    {
+      "moveName": "놀래키기",
+      "apiName": "astonish",
+      "ko": "놀래키기",
+      "en": "Astonish"
+    },
+    {
+      "moveName": "누르기",
+      "apiName": "body-slam",
+      "ko": "누르기",
+      "en": "Body Slam"
+    },
+    {
+      "moveName": "눈물그렁그렁",
+      "apiName": "tearful-look",
+      "ko": "눈물그렁그렁",
+      "en": "Tearful Look"
+    },
+    {
+      "moveName": "눈보라",
+      "apiName": "blizzard",
+      "ko": "눈보라",
+      "en": "Blizzard"
+    },
+    {
+      "moveName": "눈사태",
+      "apiName": "avalanche",
+      "ko": "눈사태",
+      "en": "Avalanche"
+    },
+    {
+      "moveName": "눈싸라기",
+      "apiName": "powder-snow",
+      "ko": "눈싸라기",
+      "en": "Powder Snow"
+    },
+    {
+      "moveName": "니들가드",
+      "apiName": "spiky-shield",
+      "ko": "니들가드",
+      "en": "Spiky Shield"
+    },
+    {
+      "moveName": "니트로차지",
+      "apiName": "flame-charge",
+      "ko": "니트로차지",
+      "en": "Flame Charge"
+    },
+    {
+      "moveName": "다과회",
+      "apiName": "teatime",
+      "ko": "다과회",
+      "en": "Teatime"
+    },
+    {
+      "moveName": "다이빙",
+      "apiName": "dive",
+      "ko": "다이빙",
+      "en": "Dive"
+    },
+    {
+      "moveName": "단단해지기",
+      "apiName": "harden",
+      "ko": "단단해지기",
+      "en": "Harden"
+    },
+    {
+      "moveName": "달의불빛",
+      "apiName": "moonlight",
+      "ko": "달의불빛",
+      "en": "Moonlight"
+    },
+    {
+      "moveName": "달콤한향기",
+      "apiName": "sweet-scent",
+      "ko": "달콤한향기",
+      "en": "Sweet Scent"
+    },
+    {
+      "moveName": "당신먼저",
+      "apiName": "after-you",
+      "ko": "당신먼저",
+      "en": "After You"
+    },
+    {
+      "moveName": "대지의파동",
+      "apiName": "terrain-pulse",
+      "ko": "대지의파동",
+      "en": "Terrain Pulse"
+    },
+    {
+      "moveName": "대지의힘",
+      "apiName": "earth-power",
+      "ko": "대지의힘",
+      "en": "Earth Power"
+    },
+    {
+      "moveName": "대타출동",
+      "apiName": "substitute",
+      "ko": "대타출동",
+      "en": "Substitute"
+    },
+    {
+      "moveName": "대폭발",
+      "apiName": "explosion",
+      "ko": "대폭발",
+      "en": "Explosion"
+    },
+    {
+      "moveName": "더블니들",
+      "apiName": "twineedle",
+      "ko": "더블니들",
+      "en": "Twineedle"
+    },
+    {
+      "moveName": "더블어택",
+      "apiName": "double-hit",
+      "ko": "더블어택",
+      "en": "Double Hit"
+    },
+    {
+      "moveName": "더블윙",
+      "apiName": "dual-wingbeat",
+      "ko": "더블윙",
+      "en": "Dual Wingbeat"
+    },
+    {
+      "moveName": "더블촙",
+      "apiName": "dual-chop",
+      "ko": "더블촙",
+      "en": "Dual Chop"
+    },
+    {
+      "moveName": "더스트슈트",
+      "apiName": "gunk-shot",
+      "ko": "더스트슈트",
+      "en": "Gunk Shot"
+    },
+    {
+      "moveName": "덤벼들기",
+      "apiName": "lunge",
+      "ko": "덤벼들기",
+      "en": "Lunge"
+    },
+    {
+      "moveName": "덩굴채찍",
+      "apiName": "vine-whip",
+      "ko": "덩굴채찍",
+      "en": "Vine Whip"
+    },
+    {
+      "moveName": "데코레이션",
+      "apiName": "decorate",
+      "ko": "데코레이션",
+      "en": "Decorate"
+    },
+    {
+      "moveName": "도각참",
+      "apiName": "kowtow-cleave",
+      "ko": null,
+      "en": "Kowtow Cleave"
+    },
+    {
+      "moveName": "도깨비불",
+      "apiName": "will-o-wisp",
+      "ko": "도깨비불",
+      "en": "Will-O-Wisp"
+    },
+    {
+      "moveName": "도둑질",
+      "apiName": "thief",
+      "ko": "도둑질",
+      "en": "Thief"
+    },
+    {
+      "moveName": "도발",
+      "apiName": "taunt",
+      "ko": "도발",
+      "en": "Taunt"
+    },
+    {
+      "moveName": "도우미",
+      "apiName": "helping-hand",
+      "ko": "도우미",
+      "en": "Helping Hand"
+    },
+    {
+      "moveName": "독가루",
+      "apiName": "poison-powder",
+      "ko": "독가루",
+      "en": "Poison Powder"
+    },
+    {
+      "moveName": "독가스",
+      "apiName": "poison-gas",
+      "ko": "독가스",
+      "en": "Poison Gas"
+    },
+    {
+      "moveName": "독실",
+      "apiName": "toxic-thread",
+      "ko": "독실",
+      "en": "Toxic Thread"
+    },
+    {
+      "moveName": "독압정",
+      "apiName": "toxic-spikes",
+      "ko": "독압정",
+      "en": "Toxic Spikes"
+    },
+    {
+      "moveName": "독엄니",
+      "apiName": "poison-fang",
+      "ko": "독엄니",
+      "en": "Poison Fang"
+    },
+    {
+      "moveName": "독찌르기",
+      "apiName": "poison-jab",
+      "ko": "독찌르기",
+      "en": "Poison Jab"
+    },
+    {
+      "moveName": "독침",
+      "apiName": "poison-sting",
+      "ko": "독침",
+      "en": "Poison Sting"
+    },
+    {
+      "moveName": "돌떨구기",
+      "apiName": "rock-throw",
+      "ko": "돌떨구기",
+      "en": "Rock Throw"
+    },
+    {
+      "moveName": "돌림노래",
+      "apiName": "round",
+      "ko": "돌림노래",
+      "en": "Round"
+    },
+    {
+      "moveName": "돌진",
+      "apiName": "take-down",
+      "ko": "돌진",
+      "en": "Take Down"
+    },
+    {
+      "moveName": "동료만들기",
+      "apiName": "entrainment",
+      "ko": "동료만들기",
+      "en": "Entrainment"
+    },
+    {
+      "moveName": "두번치기",
+      "apiName": "double-kick",
+      "ko": "두번치기",
+      "en": "Double Kick"
+    },
+    {
+      "moveName": "뒀다쓰기",
+      "apiName": "last-resort",
+      "ko": "뒀다쓰기",
+      "en": "Last Resort"
+    },
+    {
+      "moveName": "드래곤다이브",
+      "apiName": "dragon-rush",
+      "ko": "드래곤다이브",
+      "en": "Dragon Rush"
+    },
+    {
+      "moveName": "드래곤애로",
+      "apiName": "dragon-darts",
+      "ko": "드래곤애로",
+      "en": "Dragon Darts"
+    },
+    {
+      "moveName": "드래곤옐",
+      "apiName": "dragon-cheer",
+      "ko": "드래곤옐",
+      "en": "Dragon Cheer"
+    },
+    {
+      "moveName": "드래곤크루",
+      "apiName": "dragon-claw",
+      "ko": "드래곤크루",
+      "en": "Dragon Claw"
+    },
+    {
+      "moveName": "드래곤테일",
+      "apiName": "dragon-tail",
+      "ko": "드래곤테일",
+      "en": "Dragon Tail"
+    },
+    {
+      "moveName": "드레인키스",
+      "apiName": "draining-kiss",
+      "ko": "드레인키스",
+      "en": "Draining Kiss"
+    },
+    {
+      "moveName": "드레인펀치",
+      "apiName": "drain-punch",
+      "ko": "드레인펀치",
+      "en": "Drain Punch"
+    },
+    {
+      "moveName": "드릴라이너",
+      "apiName": "drill-run",
+      "ko": "드릴라이너",
+      "en": "Drill Run"
+    },
+    {
+      "moveName": "따라가때리기",
+      "apiName": "pursuit",
+      "ko": "따라가때리기",
+      "en": "Pursuit"
+    },
+    {
+      "moveName": "따라하기",
+      "apiName": "mirror-move",
+      "ko": "따라하기",
+      "en": "Mirror Move"
+    },
+    {
+      "moveName": "땅가르기",
+      "apiName": "fissure",
+      "ko": "땅가르기",
+      "en": "Fissure"
+    },
+    {
+      "moveName": "땅고르기",
+      "apiName": "bulldoze",
+      "ko": "땅고르기",
+      "en": "Bulldoze"
+    },
+    {
+      "moveName": "떨어뜨리기",
+      "apiName": "smack-down",
+      "ko": "떨어뜨리기",
+      "en": "Smack Down"
+    },
+    {
+      "moveName": "똬리틀기",
+      "apiName": "coil",
+      "ko": "똬리틀기",
+      "en": "Coil"
+    },
+    {
+      "moveName": "뛰어오르다",
+      "apiName": "bounce",
+      "ko": "뛰어오르다",
+      "en": "Bounce"
+    },
+    {
+      "moveName": "라이징볼트",
+      "apiName": "rising-voltage",
+      "ko": "라이징볼트",
+      "en": "Rising Voltage"
+    },
+    {
+      "moveName": "락블레스트",
+      "apiName": "rock-blast",
+      "ko": "락블레스트",
+      "en": "Rock Blast"
+    },
+    {
+      "moveName": "락클라임",
+      "apiName": "rock-climb",
+      "ko": "락클라임",
+      "en": "Rock Climb"
+    },
+    {
+      "moveName": "러스터캐논",
+      "apiName": "flash-cannon",
+      "ko": "러스터캐논",
+      "en": "Flash Cannon"
+    },
+    {
+      "moveName": "로우킥",
+      "apiName": "low-kick",
+      "ko": "안다리걸기",
+      "en": "Low Kick"
+    },
+    {
+      "moveName": "로케트박치기",
+      "apiName": "skull-bash",
+      "ko": "로케트박치기",
+      "en": "Skull Bash"
+    },
+    {
+      "moveName": "로킥",
+      "apiName": "low-sweep",
+      "ko": "로킥",
+      "en": "Low Sweep"
+    },
+    {
+      "moveName": "록온",
+      "apiName": "lock-on",
+      "ko": "록온",
+      "en": "Lock-On"
+    },
+    {
+      "moveName": "록커트",
+      "apiName": "rock-polish",
+      "ko": "록커트",
+      "en": "Rock Polish"
+    },
+    {
+      "moveName": "리벤지",
+      "apiName": "revenge",
+      "ko": "리벤지",
+      "en": "Revenge"
+    },
+    {
+      "moveName": "리사이클",
+      "apiName": "recycle",
+      "ko": "리사이클",
+      "en": "Recycle"
+    },
+    {
+      "moveName": "리프레쉬",
+      "apiName": "refresh",
+      "ko": "리프레쉬",
+      "en": "Refresh"
+    },
+    {
+      "moveName": "리프블레이드",
+      "apiName": "leaf-blade",
+      "ko": "리프블레이드",
+      "en": "Leaf Blade"
+    },
+    {
+      "moveName": "리프스톰",
+      "apiName": "leaf-storm",
+      "ko": "리프스톰",
+      "en": "Leaf Storm"
+    },
+    {
+      "moveName": "리플렉터",
+      "apiName": "reflect",
+      "ko": "리플렉터",
+      "en": "Reflect"
+    },
+    {
+      "moveName": "마구찌르기",
+      "apiName": "fury-attack",
+      "ko": "마구찌르기",
+      "en": "Fury Attack"
+    },
+    {
+      "moveName": "마구할퀴기",
+      "apiName": "fury-swipes",
+      "ko": "마구할퀴기",
+      "en": "Fury Swipes"
+    },
+    {
+      "moveName": "마룻바닥세워막기",
+      "apiName": "mat-block",
+      "ko": "마룻바닥세워막기",
+      "en": "Mat Block"
+    },
+    {
+      "moveName": "마법가루",
+      "apiName": "magic-powder",
+      "ko": "마법가루",
+      "en": "Magic Powder"
+    },
+    {
+      "moveName": "마음의눈",
+      "apiName": "mind-reader",
+      "ko": "마음의눈",
+      "en": "Mind Reader"
+    },
+    {
+      "moveName": "마지막수단",
+      "apiName": "trump-card",
+      "ko": "마지막수단",
+      "en": "Trump Card"
+    },
+    {
+      "moveName": "마지막일침",
+      "apiName": "fell-stinger",
+      "ko": "마지막일침",
+      "en": "Fell Stinger"
+    },
+    {
+      "moveName": "마하펀치",
+      "apiName": "mach-punch",
+      "ko": "마하펀치",
+      "en": "Mach Punch"
+    },
+    {
+      "moveName": "막말내뱉기",
+      "apiName": "parting-shot",
+      "ko": "막말내뱉기",
+      "en": "Parting Shot"
+    },
+    {
+      "moveName": "막치기",
+      "apiName": "pound",
+      "ko": "막치기",
+      "en": "Pound"
+    },
+    {
+      "moveName": "망각술",
+      "apiName": "amnesia",
+      "ko": "망각술",
+      "en": "Amnesia"
+    },
+    {
+      "moveName": "매그니튜드",
+      "apiName": "magnitude",
+      "ko": "매그니튜드",
+      "en": "Magnitude"
+    },
+    {
+      "moveName": "매지컬샤인",
+      "apiName": "dazzling-gleam",
+      "ko": "매지컬샤인",
+      "en": "Dazzling Gleam"
+    },
+    {
+      "moveName": "매지컬플레임",
+      "apiName": "mystical-fire",
+      "ko": "매지컬플레임",
+      "en": "Mystical Fire"
+    },
+    {
+      "moveName": "매직룸",
+      "apiName": "magic-room",
+      "ko": "매직룸",
+      "en": "Magic Room"
+    },
+    {
+      "moveName": "매직코트",
+      "apiName": "magic-coat",
+      "ko": "매직코트",
+      "en": "Magic Coat"
+    },
+    {
+      "moveName": "매혹의보이스",
+      "apiName": "alluring-voice",
+      "ko": "매혹의보이스",
+      "en": "Alluring Voice"
+    },
+    {
+      "moveName": "맹독",
+      "apiName": "toxic",
+      "ko": "맹독",
+      "en": "Toxic"
+    },
+    {
+      "moveName": "머드숏",
+      "apiName": "mud-shot",
+      "ko": "머드숏",
+      "en": "Mud Shot"
+    },
+    {
+      "moveName": "멀리짖음",
+      "apiName": "howl",
+      "ko": "멀리짖음",
+      "en": "Howl"
+    },
+    {
+      "moveName": "메가드레인",
+      "apiName": "mega-drain",
+      "ko": "메가드레인",
+      "en": "Mega Drain"
+    },
+    {
+      "moveName": "메가톤킥",
+      "apiName": "mega-kick",
+      "ko": "메가톤킥",
+      "en": "Mega Kick"
+    },
+    {
+      "moveName": "메가톤펀치",
+      "apiName": "mega-punch",
+      "ko": "메가톤펀치",
+      "en": "Mega Punch"
+    },
+    {
+      "moveName": "메가폰",
+      "apiName": "megahorn",
+      "ko": "메가폰",
+      "en": "Megahorn"
+    },
+    {
+      "moveName": "메지컬리프",
+      "apiName": "magical-leaf",
+      "ko": "메지컬리프",
+      "en": "Magical Leaf"
+    },
+    {
+      "moveName": "메탈버스트",
+      "apiName": "metal-burst",
+      "ko": "메탈버스트",
+      "en": "Metal Burst"
+    },
+    {
+      "moveName": "메탈크로우",
+      "apiName": "metal-claw",
+      "ko": "메탈크로우",
+      "en": "Metal Claw"
+    },
+    {
+      "moveName": "메테오빔",
+      "apiName": "meteor-beam",
+      "ko": "메테오빔",
+      "en": "Meteor Beam"
+    },
+    {
+      "moveName": "멸망의노래",
+      "apiName": "perish-song",
+      "ko": "멸망의노래",
+      "en": "Perish Song"
+    },
+    {
+      "moveName": "명상",
+      "apiName": "calm-mind",
+      "ko": "명상",
+      "en": "Calm Mind"
+    },
+    {
+      "moveName": "모래바람",
+      "apiName": "sandstorm",
+      "ko": "모래바람",
+      "en": "Sandstorm"
+    },
+    {
+      "moveName": "모래뿌리기",
+      "apiName": "sand-attack",
+      "ko": "모래뿌리기",
+      "en": "Sand Attack"
+    },
+    {
+      "moveName": "모래지옥",
+      "apiName": "sand-tomb",
+      "ko": "모래지옥",
+      "en": "Sand Tomb"
+    },
+    {
+      "moveName": "목숨걸기",
+      "apiName": "final-gambit",
+      "ko": "목숨걸기",
+      "en": "Final Gambit"
+    },
+    {
+      "moveName": "목화포자",
+      "apiName": "cotton-spore",
+      "ko": "목화포자",
+      "en": "Cotton Spore"
+    },
+    {
+      "moveName": "몸통박치기",
+      "apiName": "tackle",
+      "ko": "몸통박치기",
+      "en": "Tackle"
+    },
+    {
+      "moveName": "무릎차기",
+      "apiName": "high-jump-kick",
+      "ko": "무릎차기",
+      "en": "High Jump Kick"
+    },
+    {
+      "moveName": "문포스",
+      "apiName": "moonblast",
+      "ko": "문포스",
+      "en": "Moonblast"
+    },
+    {
+      "moveName": "물거품아리아",
+      "apiName": "sparkling-aria",
+      "ko": "물거품아리아",
+      "en": "Sparkling Aria"
+    },
+    {
+      "moveName": "물기",
+      "apiName": "bite",
+      "ko": "물기",
+      "en": "Bite"
+    },
+    {
+      "moveName": "물놀이",
+      "apiName": "water-sport",
+      "ko": "물놀이",
+      "en": "Water Sport"
+    },
+    {
+      "moveName": "물대포",
+      "apiName": "water-gun",
+      "ko": "물대포",
+      "en": "Water Gun"
+    },
+    {
+      "moveName": "물붓기",
+      "apiName": "soak",
+      "ko": "물붓기",
+      "en": "Soak"
+    },
+    {
+      "moveName": "물수리검",
+      "apiName": "water-shuriken",
+      "ko": "물수리검",
+      "en": "Water Shuriken"
+    },
+    {
+      "moveName": "물의맹세",
+      "apiName": "water-pledge",
+      "ko": "물의맹세",
+      "en": "Water Pledge"
+    },
+    {
+      "moveName": "물의파동",
+      "apiName": "water-pulse",
+      "ko": "물의파동",
+      "en": "Water Pulse"
+    },
+    {
+      "moveName": "미라클아이",
+      "apiName": "miracle-eye",
+      "ko": "미라클아이",
+      "en": "Miracle Eye"
+    },
+    {
+      "moveName": "미래예지",
+      "apiName": "future-sight",
+      "ko": "미래예지",
+      "en": "Future Sight"
+    },
+    {
+      "moveName": "미러숏",
+      "apiName": "mirror-shot",
+      "ko": "미러숏",
+      "en": "Mirror Shot"
+    },
+    {
+      "moveName": "미러코트",
+      "apiName": "mirror-coat",
+      "ko": "미러코트",
+      "en": "Mirror Coat"
+    },
+    {
+      "moveName": "미러타입",
+      "apiName": "reflect-type",
+      "ko": "미러타입",
+      "en": "Reflect Type"
+    },
+    {
+      "moveName": "미스트버스트",
+      "apiName": "misty-explosion",
+      "ko": "미스트버스트",
+      "en": "Misty Explosion"
+    },
+    {
+      "moveName": "미스트필드",
+      "apiName": "misty-terrain",
+      "ko": "미스트필드",
+      "en": "Misty Terrain"
+    },
+    {
+      "moveName": "바꿔치기",
+      "apiName": "switcheroo",
+      "ko": "바꿔치기",
+      "en": "Switcheroo"
+    },
+    {
+      "moveName": "바늘미사일",
+      "apiName": "pin-missile",
+      "ko": "바늘미사일",
+      "en": "Pin Missile"
+    },
+    {
+      "moveName": "바늘팔",
+      "apiName": "needle-arm",
+      "ko": "바늘팔",
+      "en": "Needle Arm"
+    },
+    {
+      "moveName": "바다회오리",
+      "apiName": "whirlpool",
+      "ko": "바다회오리",
+      "en": "Whirlpool"
+    },
+    {
+      "moveName": "바둥바둥",
+      "apiName": "flail",
+      "ko": "바둥바둥",
+      "en": "Flail"
+    },
+    {
+      "moveName": "바디퍼지",
+      "apiName": "autotomize",
+      "ko": "바디퍼지",
+      "en": "Autotomize"
+    },
+    {
+      "moveName": "바디프레스",
+      "apiName": "body-press",
+      "ko": "바디프레스",
+      "en": "Body Press"
+    },
+    {
+      "moveName": "바람일으키기",
+      "apiName": "gust",
+      "ko": "바람일으키기",
+      "en": "Gust"
+    },
+    {
+      "moveName": "바위깨기",
+      "apiName": "rock-smash",
+      "ko": "바위깨기",
+      "en": "Rock Smash"
+    },
+    {
+      "moveName": "바크아웃",
+      "apiName": "snarl",
+      "ko": "바크아웃",
+      "en": "Snarl"
+    },
+    {
+      "moveName": "바톤터치",
+      "apiName": "baton-pass",
+      "ko": "바톤터치",
+      "en": "Baton Pass"
+    },
+    {
+      "moveName": "박치기",
+      "apiName": "headbutt",
+      "ko": "박치기",
+      "en": "Headbutt"
+    },
+    {
+      "moveName": "받아던지기",
+      "apiName": "vital-throw",
+      "ko": "받아던지기",
+      "en": "Vital Throw"
+    },
+    {
+      "moveName": "발경",
+      "apiName": "force-palm",
+      "ko": "발경",
+      "en": "Force Palm"
+    },
+    {
+      "moveName": "방어",
+      "apiName": "protect",
+      "ko": "방어",
+      "en": "Protect"
+    },
+    {
+      "moveName": "방전",
+      "apiName": "discharge",
+      "ko": "방전",
+      "en": "Discharge"
+    },
+    {
+      "moveName": "배대뒤치기",
+      "apiName": "circle-throw",
+      "ko": "배대뒤치기",
+      "en": "Circle Throw"
+    },
+    {
+      "moveName": "배리어",
+      "apiName": "barrier",
+      "ko": "배리어",
+      "en": "Barrier"
+    },
+    {
+      "moveName": "배북",
+      "apiName": "belly-drum",
+      "ko": "배북",
+      "en": "Belly Drum"
+    },
+    {
+      "moveName": "뱀눈초리",
+      "apiName": "glare",
+      "ko": "뱀눈초리",
+      "en": "Glare"
+    },
+    {
+      "moveName": "버티기",
+      "apiName": "endure",
+      "ko": "버티기",
+      "en": "Endure"
+    },
+    {
+      "moveName": "번개",
+      "apiName": "thunder",
+      "ko": "번개",
+      "en": "Thunder"
+    },
+    {
+      "moveName": "번개엄니",
+      "apiName": "thunder-fang",
+      "ko": "번개엄니",
+      "en": "Thunder Fang"
+    },
+    {
+      "moveName": "번개펀치",
+      "apiName": "thunder-punch",
+      "ko": "번개펀치",
+      "en": "Thunder Punch"
+    },
+    {
+      "moveName": "벌레먹음",
+      "apiName": "bug-bite",
+      "ko": "벌레먹음",
+      "en": "Bug Bite"
+    },
+    {
+      "moveName": "벌레의야단법석",
+      "apiName": "bug-buzz",
+      "ko": "벌레의야단법석",
+      "en": "Bug Buzz"
+    },
+    {
+      "moveName": "벌레의저항",
+      "apiName": "struggle-bug",
+      "ko": "벌레의저항",
+      "en": "Struggle Bug"
+    },
+    {
+      "moveName": "벌크업",
+      "apiName": "bulk-up",
+      "ko": "벌크업",
+      "en": "Bulk Up"
+    },
+    {
+      "moveName": "베놈쇼크",
+      "apiName": "venoshock",
+      "ko": "베놈쇼크",
+      "en": "Venoshock"
+    },
+    {
+      "moveName": "베놈트랩",
+      "apiName": "venom-drench",
+      "ko": "베놈트랩",
+      "en": "Venom Drench"
+    },
+    {
+      "moveName": "베어가르기",
+      "apiName": "slash",
+      "ko": "베어가르기",
+      "en": "Slash"
+    },
+    {
+      "moveName": "변덕레이저",
+      "apiName": "fickle-beam",
+      "ko": "변덕레이저",
+      "en": "Fickle Beam"
+    },
+    {
+      "moveName": "변신",
+      "apiName": "transform",
+      "ko": "변신",
+      "en": "Transform"
+    },
+    {
+      "moveName": "병상첨병",
+      "apiName": "hex",
+      "ko": "병상첨병",
+      "en": "Hex"
+    },
+    {
+      "moveName": "보복",
+      "apiName": "payback",
+      "ko": "보복",
+      "en": "Payback"
+    },
+    {
+      "moveName": "보호색",
+      "apiName": "camouflage",
+      "ko": "보호색",
+      "en": "Camouflage"
+    },
+    {
+      "moveName": "본러쉬",
+      "apiName": "bone-rush",
+      "ko": "본러쉬",
+      "en": "Bone Rush"
+    },
+    {
+      "moveName": "볼부비부비",
+      "apiName": "nuzzle",
+      "ko": "볼부비부비",
+      "en": "Nuzzle"
+    },
+    {
+      "moveName": "볼트체인지",
+      "apiName": "volt-switch",
+      "ko": "볼트체인지",
+      "en": "Volt Switch"
+    },
+    {
+      "moveName": "볼트태클",
+      "apiName": "volt-tackle",
+      "ko": "볼트태클",
+      "en": "Volt Tackle"
+    },
+    {
+      "moveName": "봉인",
+      "apiName": "imprison",
+      "ko": "봉인",
+      "en": "Imprison"
+    },
+    {
+      "moveName": "부르짖기",
+      "apiName": "noble-roar",
+      "ko": "부르짖기",
+      "en": "Noble Roar"
+    },
+    {
+      "moveName": "부리캐논",
+      "apiName": "beak-blast",
+      "ko": "부리캐논",
+      "en": "Beak Blast"
+    },
+    {
+      "moveName": "부식가스",
+      "apiName": "corrosive-gas",
+      "ko": "부식가스",
+      "en": "Corrosive Gas"
+    },
+    {
+      "moveName": "부추기기",
+      "apiName": "flatter",
+      "ko": "부추기기",
+      "en": "Flatter"
+    },
+    {
+      "moveName": "분노",
+      "apiName": "rage",
+      "ko": "분노",
+      "en": "Rage"
+    },
+    {
+      "moveName": "분노가루",
+      "apiName": "rage-powder",
+      "ko": "분노가루",
+      "en": "Rage Powder"
+    },
+    {
+      "moveName": "분노의앞니",
+      "apiName": "super-fang",
+      "ko": "분노의앞니",
+      "en": "Super Fang"
+    },
+    {
+      "moveName": "분발",
+      "apiName": "work-up",
+      "ko": "분발",
+      "en": "Work Up"
+    },
+    {
+      "moveName": "분연",
+      "apiName": "lava-plume",
+      "ko": "분연",
+      "en": "Lava Plume"
+    },
+    {
+      "moveName": "분진",
+      "apiName": "powder",
+      "ko": "분진",
+      "en": "Powder"
+    },
+    {
+      "moveName": "분풀이",
+      "apiName": "lash-out",
+      "ko": "분풀이",
+      "en": "Lash Out"
+    },
+    {
+      "moveName": "분함의발구르기",
+      "apiName": "stomping-tantrum",
+      "ko": "분함의발구르기",
+      "en": "Stomping Tantrum"
+    },
+    {
+      "moveName": "분화",
+      "apiName": "eruption",
+      "ko": "분화",
+      "en": "Eruption"
+    },
+    {
+      "moveName": "불꽃세례",
+      "apiName": "ember",
+      "ko": "불꽃세례",
+      "en": "Ember"
+    },
+    {
+      "moveName": "불꽃엄니",
+      "apiName": "fire-fang",
+      "ko": "불꽃엄니",
+      "en": "Fire Fang"
+    },
+    {
+      "moveName": "불꽃의맹세",
+      "apiName": "fire-pledge",
+      "ko": "불꽃의맹세",
+      "en": "Fire Pledge"
+    },
+    {
+      "moveName": "불꽃채찍",
+      "apiName": "fire-lash",
+      "ko": "불꽃채찍",
+      "en": "Fire Lash"
+    },
+    {
+      "moveName": "불꽃춤",
+      "apiName": "fiery-dance",
+      "ko": "불꽃춤",
+      "en": "Fiery Dance"
+    },
+    {
+      "moveName": "불꽃튀기기",
+      "apiName": "flame-burst",
+      "ko": "불꽃튀기기",
+      "en": "Flame Burst"
+    },
+    {
+      "moveName": "불꽃펀치",
+      "apiName": "fire-punch",
+      "ko": "불꽃펀치",
+      "en": "Fire Punch"
+    },
+    {
+      "moveName": "불대문자",
+      "apiName": "fire-blast",
+      "ko": "불대문자",
+      "en": "Fire Blast"
+    },
+    {
+      "moveName": "불릿펀치",
+      "apiName": "bullet-punch",
+      "ko": "불릿펀치",
+      "en": "Bullet Punch"
+    },
+    {
+      "moveName": "불사르기",
+      "apiName": "burn-up",
+      "ko": "불사르기",
+      "en": "Burn Up"
+    },
+    {
+      "moveName": "불새",
+      "apiName": "sky-attack",
+      "ko": "불새",
+      "en": "Sky Attack"
+    },
+    {
+      "moveName": "불태우기",
+      "apiName": "incinerate",
+      "ko": "불태우기",
+      "en": "Incinerate"
+    },
+    {
+      "moveName": "브레이브버드",
+      "apiName": "brave-bird",
+      "ko": "브레이브버드",
+      "en": "Brave Bird"
+    },
+    {
+      "moveName": "브레이즈킥",
+      "apiName": "blaze-kick",
+      "ko": "브레이즈킥",
+      "en": "Blaze Kick"
+    },
+    {
+      "moveName": "브레이크크루",
+      "apiName": "crush-claw",
+      "ko": "브레이크크루",
+      "en": "Crush Claw"
+    },
+    {
+      "moveName": "블러스트번",
+      "apiName": "blast-burn",
+      "ko": "블러스트번",
+      "en": "Blast Burn"
+    },
+    {
+      "moveName": "블록",
+      "apiName": "block",
+      "ko": "블록",
+      "en": "Block"
+    },
+    {
+      "moveName": "비밀의힘",
+      "apiName": "secret-power",
+      "ko": "비밀의힘",
+      "en": "Secret Power"
+    },
+    {
+      "moveName": "비밀이야기",
+      "apiName": "confide",
+      "ko": "비밀이야기",
+      "en": "Confide"
+    },
+    {
+      "moveName": "비바라기",
+      "apiName": "rain-dance",
+      "ko": "비바라기",
+      "en": "Rain Dance"
+    },
+    {
+      "moveName": "비축하기",
+      "apiName": "stockpile",
+      "ko": "비축하기",
+      "en": "Stockpile"
+    },
+    {
+      "moveName": "빛의장막",
+      "apiName": "light-screen",
+      "ko": "빛의장막",
+      "en": "Light Screen"
+    },
+    {
+      "moveName": "뽐내기",
+      "apiName": "swagger",
+      "ko": "뽐내기",
+      "en": "Swagger"
+    },
+    {
+      "moveName": "뿌리박기",
+      "apiName": "ingrain",
+      "ko": "뿌리박기",
+      "en": "Ingrain"
+    },
+    {
+      "moveName": "뿔드릴",
+      "apiName": "horn-drill",
+      "ko": "뿔드릴",
+      "en": "Horn Drill"
+    },
+    {
+      "moveName": "뿔찌르기",
+      "apiName": "horn-attack",
+      "ko": "뿔찌르기",
+      "en": "Horn Attack"
+    },
+    {
+      "moveName": "사과산",
+      "apiName": "apple-acid",
+      "ko": "사과산",
+      "en": "Apple Acid"
+    },
+    {
+      "moveName": "사념의박치기",
+      "apiName": "zen-headbutt",
+      "ko": "사념의박치기",
+      "en": "Zen Headbutt"
+    },
+    {
+      "moveName": "사슬묶기",
+      "apiName": "disable",
+      "ko": "사슬묶기",
+      "en": "Disable"
+    },
+    {
+      "moveName": "사이드체인지",
+      "apiName": "ally-switch",
+      "ko": "사이드체인지",
+      "en": "Ally Switch"
+    },
+    {
+      "moveName": "사이코노이즈",
+      "apiName": "psychic-noise",
+      "ko": "사이코노이즈",
+      "en": "Psychic Noise"
+    },
+    {
+      "moveName": "사이코쇼크",
+      "apiName": "psyshock",
+      "ko": "사이코쇼크",
+      "en": "Psyshock"
+    },
+    {
+      "moveName": "사이코웨이브",
+      "apiName": "psywave",
+      "ko": "사이코웨이브",
+      "en": "Psywave"
+    },
+    {
+      "moveName": "사이코커터",
+      "apiName": "psycho-cut",
+      "ko": "사이코커터",
+      "en": "Psycho Cut"
+    },
+    {
+      "moveName": "사이코키네시스",
+      "apiName": "psychic",
+      "ko": "사이코키네시스",
+      "en": "Psychic"
+    },
+    {
+      "moveName": "사이코팽",
+      "apiName": "psychic-fangs",
+      "ko": "사이코팽",
+      "en": "Psychic Fangs"
+    },
+    {
+      "moveName": "사이코필드",
+      "apiName": "psychic-terrain",
+      "ko": "사이코필드",
+      "en": "Psychic Terrain"
+    },
+    {
+      "moveName": "생명의물방울",
+      "apiName": "life-dew",
+      "ko": "생명의물방울",
+      "en": "Life Dew"
+    },
+    {
+      "moveName": "섀도볼",
+      "apiName": "shadow-ball",
+      "ko": "섀도볼",
+      "en": "Shadow Ball"
+    },
+    {
+      "moveName": "섀도크루",
+      "apiName": "shadow-claw",
+      "ko": "섀도크루",
+      "en": "Shadow Claw"
+    },
+    {
+      "moveName": "섀도펀치",
+      "apiName": "shadow-punch",
+      "ko": "섀도펀치",
+      "en": "Shadow Punch"
+    },
+    {
+      "moveName": "선취",
+      "apiName": "me-first",
+      "ko": "선취",
+      "en": "Me First"
+    },
+    {
+      "moveName": "섬뜩한주문",
+      "apiName": "eerie-spell",
+      "ko": "섬뜩한주문",
+      "en": "Eerie Spell"
+    },
+    {
+      "moveName": "성스러운칼",
+      "apiName": "sacred-sword",
+      "ko": "성스러운칼",
+      "en": "Sacred Sword"
+    },
+    {
+      "moveName": "성장",
+      "apiName": "growth",
+      "ko": "성장",
+      "en": "Growth"
+    },
+    {
+      "moveName": "세차게휘두르기",
+      "apiName": "brutal-swing",
+      "ko": "세차게휘두르기",
+      "en": "Brutal Swing"
+    },
+    {
+      "moveName": "셸블레이드",
+      "apiName": "razor-shell",
+      "ko": "셸블레이드",
+      "en": "Razor Shell"
+    },
+    {
+      "moveName": "셸암즈",
+      "apiName": "shell-side-arm",
+      "ko": "셸암즈",
+      "en": "Shell Side Arm"
+    },
+    {
+      "moveName": "소금물",
+      "apiName": "brine",
+      "ko": "소금물",
+      "en": "Brine"
+    },
+    {
+      "moveName": "소금절이",
+      "apiName": "salt-cure",
+      "ko": null,
+      "en": "Salt Cure"
+    },
+    {
+      "moveName": "소란피기",
+      "apiName": "uproar",
+      "ko": "소란피기",
+      "en": "Uproar"
+    },
+    {
+      "moveName": "소울비트",
+      "apiName": "clangorous-soul",
+      "ko": "소울비트",
+      "en": "Clangorous Soul"
+    },
+    {
+      "moveName": "속여때리기",
+      "apiName": "feint-attack",
+      "ko": "속여때리기",
+      "en": "Feint Attack"
+    },
+    {
+      "moveName": "속이다",
+      "apiName": "fake-out",
+      "ko": "속이다",
+      "en": "Fake Out"
+    },
+    {
+      "moveName": "속임수",
+      "apiName": "foul-play",
+      "ko": "속임수",
+      "en": "Foul Play"
+    },
+    {
+      "moveName": "손가락흔들기",
+      "apiName": "metronome",
+      "ko": "손가락흔들기",
+      "en": "Metronome"
+    },
+    {
+      "moveName": "손바닥치기",
+      "apiName": "arm-thrust",
+      "ko": "손바닥치기",
+      "en": "Arm Thrust"
+    },
+    {
+      "moveName": "손톱갈기",
+      "apiName": "hone-claws",
+      "ko": "손톱갈기",
+      "en": "Hone Claws"
+    },
+    {
+      "moveName": "솔라블레이드",
+      "apiName": "solar-blade",
+      "ko": "솔라블레이드",
+      "en": "Solar Blade"
+    },
+    {
+      "moveName": "솔라빔",
+      "apiName": "solar-beam",
+      "ko": "솔라빔",
+      "en": "Solar Beam"
+    },
+    {
+      "moveName": "송전",
+      "apiName": "electrify",
+      "ko": "송전",
+      "en": "Electrify"
+    },
+    {
+      "moveName": "수면가루",
+      "apiName": "sleep-powder",
+      "ko": "수면가루",
+      "en": "Sleep Powder"
+    },
+    {
+      "moveName": "순간이동",
+      "apiName": "teleport",
+      "ko": "순간이동",
+      "en": "Teleport"
+    },
+    {
+      "moveName": "순서미루기",
+      "apiName": "quash",
+      "ko": "순서미루기",
+      "en": "Quash"
+    },
+    {
+      "moveName": "순풍",
+      "apiName": "tailwind",
+      "ko": "순풍",
+      "en": "Tailwind"
+    },
+    {
+      "moveName": "숟가락휘기",
+      "apiName": "kinesis",
+      "ko": "숟가락휘기",
+      "en": "Kinesis"
+    },
+    {
+      "moveName": "숲의저주",
+      "apiName": "forests-curse",
+      "ko": "숲의저주",
+      "en": "Forest’s Curse"
+    },
+    {
+      "moveName": "스마트호른",
+      "apiName": "smart-strike",
+      "ko": "스마트호른",
+      "en": "Smart Strike"
+    },
+    {
+      "moveName": "스모그",
+      "apiName": "smog",
+      "ko": "스모그",
+      "en": "Smog"
+    },
+    {
+      "moveName": "스위프뺨치기",
+      "apiName": "tail-slap",
+      "ko": "스위프뺨치기",
+      "en": "Tail Slap"
+    },
+    {
+      "moveName": "스카이업퍼",
+      "apiName": "sky-uppercut",
+      "ko": "스카이업퍼",
+      "en": "Sky Uppercut"
+    },
+    {
+      "moveName": "스케일노이즈",
+      "apiName": "clanging-scales",
+      "ko": "스케일노이즈",
+      "en": "Clanging Scales"
+    },
+    {
+      "moveName": "스케일샷",
+      "apiName": "scale-shot",
+      "ko": "스케일샷",
+      "en": "Scale Shot"
+    },
+    {
+      "moveName": "스킬스웹",
+      "apiName": "skill-swap",
+      "ko": "스킬스웹",
+      "en": "Skill Swap"
+    },
+    {
+      "moveName": "스텔스록",
+      "apiName": "stealth-rock",
+      "ko": "스텔스록",
+      "en": "Stealth Rock"
+    },
+    {
+      "moveName": "스톤샤워",
+      "apiName": "rock-slide",
+      "ko": "스톤샤워",
+      "en": "Rock Slide"
+    },
+    {
+      "moveName": "스톤에지",
+      "apiName": "stone-edge",
+      "ko": "스톤에지",
+      "en": "Stone Edge"
+    },
+    {
+      "moveName": "스파크",
+      "apiName": "spark",
+      "ko": "스파크",
+      "en": "Spark"
+    },
+    {
+      "moveName": "스포트라이트",
+      "apiName": "spotlight",
+      "ko": "스포트라이트",
+      "en": "Spotlight"
+    },
+    {
+      "moveName": "스피드스웹",
+      "apiName": "speed-swap",
+      "ko": "스피드스웹",
+      "en": "Speed Swap"
+    },
+    {
+      "moveName": "스피드스타",
+      "apiName": "swift",
+      "ko": "스피드스타",
+      "en": "Swift"
+    },
+    {
+      "moveName": "승부굳히기",
+      "apiName": "assurance",
+      "ko": "승부굳히기",
+      "en": "Assurance"
+    },
+    {
+      "moveName": "시그널빔",
+      "apiName": "signal-beam",
+      "ko": "시그널빔",
+      "en": "Signal Beam"
+    },
+    {
+      "moveName": "시저크로스",
+      "apiName": "x-scissor",
+      "ko": "시저크로스",
+      "en": "X-Scissor"
+    },
+    {
+      "moveName": "신비의부적",
+      "apiName": "safeguard",
+      "ko": "신비의부적",
+      "en": "Safeguard"
+    },
+    {
+      "moveName": "신속",
+      "apiName": "extreme-speed",
+      "ko": "신속",
+      "en": "Extreme Speed"
+    },
+    {
+      "moveName": "신통력",
+      "apiName": "extrasensory",
+      "ko": "신통력",
+      "en": "Extrasensory"
+    },
+    {
+      "moveName": "실뿜기",
+      "apiName": "string-shot",
+      "ko": "실뿜기",
+      "en": "String Shot"
+    },
+    {
+      "moveName": "싫은소리",
+      "apiName": "screech",
+      "ko": "싫은소리",
+      "en": "Screech"
+    },
+    {
+      "moveName": "심플빔",
+      "apiName": "simple-beam",
+      "ko": "심플빔",
+      "en": "Simple Beam"
+    },
+    {
+      "moveName": "싱크로노이즈",
+      "apiName": "synchronoise",
+      "ko": "싱크로노이즈",
+      "en": "Synchronoise"
+    },
+    {
+      "moveName": "싸라기눈",
+      "apiName": "hail",
+      "ko": "싸라기눈",
+      "en": "Hail"
+    },
+    {
+      "moveName": "썬더다이브",
+      "apiName": "supercell-slam",
+      "ko": "썬더다이브",
+      "en": "Supercell Slam"
+    },
+    {
+      "moveName": "씨뿌리기",
+      "apiName": "leech-seed",
+      "ko": "씨뿌리기",
+      "en": "Leech Seed"
+    },
+    {
+      "moveName": "씨폭탄",
+      "apiName": "seed-bomb",
+      "ko": "씨폭탄",
+      "en": "Seed Bomb"
+    },
+    {
+      "moveName": "아로마미스트",
+      "apiName": "aromatic-mist",
+      "ko": "아로마미스트",
+      "en": "Aromatic Mist"
+    },
+    {
+      "moveName": "아로마테라피",
+      "apiName": "aromatherapy",
+      "ko": "아로마테라피",
+      "en": "Aromatherapy"
+    },
+    {
+      "moveName": "아이스볼",
+      "apiName": "ice-ball",
+      "ko": "아이스볼",
+      "en": "Ice Ball"
+    },
+    {
+      "moveName": "아이스해머",
+      "apiName": "ice-hammer",
+      "ko": "아이스해머",
+      "en": "Ice Hammer"
+    },
+    {
+      "moveName": "아이언롤러",
+      "apiName": "steel-roller",
+      "ko": "아이언롤러",
+      "en": "Steel Roller"
+    },
+    {
+      "moveName": "아이언테일",
+      "apiName": "iron-tail",
+      "ko": "아이언테일",
+      "en": "Iron Tail"
+    },
+    {
+      "moveName": "아이언헤드",
+      "apiName": "iron-head",
+      "ko": "아이언헤드",
+      "en": "Iron Head"
+    },
+    {
+      "moveName": "아침햇살",
+      "apiName": "morning-sun",
+      "ko": "아침햇살",
+      "en": "Morning Sun"
+    },
+    {
+      "moveName": "아쿠아링",
+      "apiName": "aqua-ring",
+      "ko": "아쿠아링",
+      "en": "Aqua Ring"
+    },
+    {
+      "moveName": "아쿠아브레이크",
+      "apiName": "liquidation",
+      "ko": "아쿠아브레이크",
+      "en": "Liquidation"
+    },
+    {
+      "moveName": "아쿠아제트",
+      "apiName": "aqua-jet",
+      "ko": "아쿠아제트",
+      "en": "Aqua Jet"
+    },
+    {
+      "moveName": "아쿠아테일",
+      "apiName": "aqua-tail",
+      "ko": "아쿠아테일",
+      "en": "Aqua Tail"
+    },
+    {
+      "moveName": "아픔나누기",
+      "apiName": "pain-split",
+      "ko": "아픔나누기",
+      "en": "Pain Split"
+    },
+    {
+      "moveName": "악몽",
+      "apiName": "nightmare",
+      "ko": "악몽",
+      "en": "Nightmare"
+    },
+    {
+      "moveName": "악의파동",
+      "apiName": "dark-pulse",
+      "ko": "악의파동",
+      "en": "Dark Pulse"
+    },
+    {
+      "moveName": "안개제거",
+      "apiName": "defog",
+      "ko": "안개제거",
+      "en": "Defog"
+    },
+    {
+      "moveName": "안다리걸기",
+      "apiName": "low-kick",
+      "ko": "안다리걸기",
+      "en": "Low Kick"
+    },
+    {
+      "moveName": "알낳기",
+      "apiName": "soft-boiled",
+      "ko": "알낳기",
+      "en": "Soft-Boiled"
+    },
+    {
+      "moveName": "암석봉인",
+      "apiName": "rock-tomb",
+      "ko": "암석봉인",
+      "en": "Rock Tomb"
+    },
+    {
+      "moveName": "암석포",
+      "apiName": "rock-wrecker",
+      "ko": "암석포",
+      "en": "Rock Wrecker"
+    },
+    {
+      "moveName": "암해머",
+      "apiName": "hammer-arm",
+      "ko": "암해머",
+      "en": "Hammer Arm"
+    },
+    {
+      "moveName": "압정뿌리기",
+      "apiName": "spikes",
+      "ko": "압정뿌리기",
+      "en": "Spikes"
+    },
+    {
+      "moveName": "애교부리기",
+      "apiName": "charm",
+      "ko": "애교부리기",
+      "en": "Charm"
+    },
+    {
+      "moveName": "애시드봄",
+      "apiName": "acid-spray",
+      "ko": "애시드봄",
+      "en": "Acid Spray"
+    },
+    {
+      "moveName": "애크러뱃",
+      "apiName": "acrobatics",
+      "ko": "애크러뱃",
+      "en": "Acrobatics"
+    },
+    {
+      "moveName": "액셀록",
+      "apiName": "accelerock",
+      "ko": "액셀록",
+      "en": "Accelerock"
+    },
+    {
+      "moveName": "앵콜",
+      "apiName": "encore",
+      "ko": "앵콜",
+      "en": "Encore"
+    },
+    {
+      "moveName": "야금야금",
+      "apiName": "chip-away",
+      "ko": "야금야금",
+      "en": "Chip Away"
+    },
+    {
+      "moveName": "야습",
+      "apiName": "shadow-sneak",
+      "ko": "야습",
+      "en": "Shadow Sneak"
+    },
+    {
+      "moveName": "양날박치기",
+      "apiName": "head-smash",
+      "ko": "양날박치기",
+      "en": "Head Smash"
+    },
+    {
+      "moveName": "어시스트파워",
+      "apiName": "stored-power",
+      "ko": "어시스트파워",
+      "en": "Stored Power"
+    },
+    {
+      "moveName": "얼다바람",
+      "apiName": "icy-wind",
+      "ko": "얼다바람",
+      "en": "Icy Wind"
+    },
+    {
+      "moveName": "얼음뭉치",
+      "apiName": "ice-shard",
+      "ko": "얼음뭉치",
+      "en": "Ice Shard"
+    },
+    {
+      "moveName": "얼음숨결",
+      "apiName": "frost-breath",
+      "ko": "얼음숨결",
+      "en": "Frost Breath"
+    },
+    {
+      "moveName": "얼음엄니",
+      "apiName": "ice-fang",
+      "ko": "얼음엄니",
+      "en": "Ice Fang"
+    },
+    {
+      "moveName": "엄습하는일격",
+      "apiName": "skitter-smack",
+      "ko": "엄습하는일격",
+      "en": "Skitter Smack"
+    },
+    {
+      "moveName": "엄청난힘",
+      "apiName": "superpower",
+      "ko": "엄청난힘",
+      "en": "Superpower"
+    },
+    {
+      "moveName": "업어후리기",
+      "apiName": "storm-throw",
+      "ko": "업어후리기",
+      "en": "Storm Throw"
+    },
+    {
+      "moveName": "엉겨붙기",
+      "apiName": "infestation",
+      "ko": "엉겨붙기",
+      "en": "Infestation"
+    },
+    {
+      "moveName": "에너지볼",
+      "apiName": "energy-ball",
+      "ko": "에너지볼",
+      "en": "Energy Ball"
+    },
+    {
+      "moveName": "에어슬래시",
+      "apiName": "air-slash",
+      "ko": "에어슬래시",
+      "en": "Air Slash"
+    },
+    {
+      "moveName": "에어컷터",
+      "apiName": "air-cutter",
+      "ko": "에어컷터",
+      "en": "Air Cutter"
+    },
+    {
+      "moveName": "에코보이스",
+      "apiName": "echoed-voice",
+      "ko": "에코보이스",
+      "en": "Echoed Voice"
+    },
+    {
+      "moveName": "역린",
+      "apiName": "outrage",
+      "ko": "역린",
+      "en": "Outrage"
+    },
+    {
+      "moveName": "역할",
+      "apiName": "role-play",
+      "ko": "역할",
+      "en": "Role Play"
+    },
+    {
+      "moveName": "연막",
+      "apiName": "smokescreen",
+      "ko": "연막",
+      "en": "Smokescreen"
+    },
+    {
+      "moveName": "연속뺨치기",
+      "apiName": "double-slap",
+      "ko": "연속뺨치기",
+      "en": "Double Slap"
+    },
+    {
+      "moveName": "연속자르기",
+      "apiName": "fury-cutter",
+      "ko": "연속자르기",
+      "en": "Fury Cutter"
+    },
+    {
+      "moveName": "연속펀치",
+      "apiName": "comet-punch",
+      "ko": "연속펀치",
+      "en": "Comet Punch"
+    },
+    {
+      "moveName": "연옥",
+      "apiName": "inferno",
+      "ko": "연옥",
+      "en": "Inferno"
+    },
+    {
+      "moveName": "열불내기",
+      "apiName": "temper-flare",
+      "ko": "열불내기",
+      "en": "Temper Flare"
+    },
+    {
+      "moveName": "열사의대지",
+      "apiName": "scorching-sands",
+      "ko": "열사의대지",
+      "en": "Scorching Sands"
+    },
+    {
+      "moveName": "열탕",
+      "apiName": "scald",
+      "ko": "열탕",
+      "en": "Scald"
+    },
+    {
+      "moveName": "열풍",
+      "apiName": "heat-wave",
+      "ko": "열풍",
+      "en": "Heat Wave"
+    },
+    {
+      "moveName": "염동력",
+      "apiName": "confusion",
+      "ko": "염동력",
+      "en": "Confusion"
+    },
+    {
+      "moveName": "예민해지기",
+      "apiName": "laser-focus",
+      "ko": "예민해지기",
+      "en": "Laser Focus"
+    },
+    {
+      "moveName": "오라휠",
+      "apiName": "aura-wheel",
+      "ko": "오라휠",
+      "en": "Aura Wheel"
+    },
+    {
+      "moveName": "오로라베일",
+      "apiName": "aurora-veil",
+      "ko": "오로라베일",
+      "en": "Aurora Veil"
+    },
+    {
+      "moveName": "오로라빔",
+      "apiName": "aurora-beam",
+      "ko": "오로라빔",
+      "en": "Aurora Beam"
+    },
+    {
+      "moveName": "오물공격",
+      "apiName": "sludge",
+      "ko": "오물공격",
+      "en": "Sludge"
+    },
+    {
+      "moveName": "오물웨이브",
+      "apiName": "sludge-wave",
+      "ko": "오물웨이브",
+      "en": "Sludge Wave"
+    },
+    {
+      "moveName": "오물폭탄",
+      "apiName": "sludge-bomb",
+      "ko": "오물폭탄",
+      "en": "Sludge Bomb"
+    },
+    {
+      "moveName": "오버히트",
+      "apiName": "overheat",
+      "ko": "오버히트",
+      "en": "Overheat"
+    },
+    {
+      "moveName": "와이드가드",
+      "apiName": "wide-guard",
+      "ko": "와이드가드",
+      "en": "Wide Guard"
+    },
+    {
+      "moveName": "와이드브레이커",
+      "apiName": "breaking-swipe",
+      "ko": "와이드브레이커",
+      "en": "Breaking Swipe"
+    },
+    {
+      "moveName": "와이드포스",
+      "apiName": "expanding-force",
+      "ko": "와이드포스",
+      "en": "Expanding Force"
+    },
+    {
+      "moveName": "와일드볼트",
+      "apiName": "wild-charge",
+      "ko": "와일드볼트",
+      "en": "Wild Charge"
+    },
+    {
+      "moveName": "요가포즈",
+      "apiName": "meditate",
+      "ko": "요가포즈",
+      "en": "Meditate"
+    },
+    {
+      "moveName": "요정의바람",
+      "apiName": "fairy-wind",
+      "ko": "요정의바람",
+      "en": "Fairy Wind"
+    },
+    {
+      "moveName": "용성군",
+      "apiName": "draco-meteor",
+      "ko": "용성군",
+      "en": "Draco Meteor"
+    },
+    {
+      "moveName": "용의분노",
+      "apiName": "dragon-rage",
+      "ko": "용의분노",
+      "en": "Dragon Rage"
+    },
+    {
+      "moveName": "용의숨결",
+      "apiName": "dragon-breath",
+      "ko": "용의숨결",
+      "en": "Dragon Breath"
+    },
+    {
+      "moveName": "용의춤",
+      "apiName": "dragon-dance",
+      "ko": "용의춤",
+      "en": "Dragon Dance"
+    },
+    {
+      "moveName": "용의파동",
+      "apiName": "dragon-pulse",
+      "ko": "용의파동",
+      "en": "Dragon Pulse"
+    },
+    {
+      "moveName": "용해액",
+      "apiName": "acid",
+      "ko": "용해액",
+      "en": "Acid"
+    },
+    {
+      "moveName": "우드해머",
+      "apiName": "wood-hammer",
+      "ko": "우드해머",
+      "en": "Wood Hammer"
+    },
+    {
+      "moveName": "우드호른",
+      "apiName": "horn-leech",
+      "ko": "우드호른",
+      "en": "Horn Leech"
+    },
+    {
+      "moveName": "울부짖기",
+      "apiName": "roar",
+      "ko": "울부짖기",
+      "en": "Roar"
+    },
+    {
+      "moveName": "울음소리",
+      "apiName": "growl",
+      "ko": "울음소리",
+      "en": "Growl"
+    },
+    {
+      "moveName": "웅크리기",
+      "apiName": "defense-curl",
+      "ko": "웅크리기",
+      "en": "Defense Curl"
+    },
+    {
+      "moveName": "원념",
+      "apiName": "grudge",
+      "ko": "원념",
+      "en": "Grudge"
+    },
+    {
+      "moveName": "원더룸",
+      "apiName": "wonder-room",
+      "ko": "원더룸",
+      "en": "Wonder Room"
+    },
+    {
+      "moveName": "원수갚기",
+      "apiName": "retaliate",
+      "ko": "원수갚기",
+      "en": "Retaliate"
+    },
+    {
+      "moveName": "원시의힘",
+      "apiName": "ancient-power",
+      "ko": "원시의힘",
+      "en": "Ancient Power"
+    },
+    {
+      "moveName": "원한",
+      "apiName": "spite",
+      "ko": "원한",
+      "en": "Spite"
+    },
+    {
+      "moveName": "웨더볼",
+      "apiName": "weather-ball",
+      "ko": "웨더볼",
+      "en": "Weather Ball"
+    },
+    {
+      "moveName": "위액",
+      "apiName": "gastro-acid",
+      "ko": "위액",
+      "en": "Gastro Acid"
+    },
+    {
+      "moveName": "유턴",
+      "apiName": "u-turn",
+      "ko": "유턴",
+      "en": "U-turn"
+    },
+    {
+      "moveName": "유혹",
+      "apiName": "captivate",
+      "ko": "유혹",
+      "en": "Captivate"
+    },
+    {
+      "moveName": "은빛바람",
+      "apiName": "silver-wind",
+      "ko": "은빛바람",
+      "en": "Silver Wind"
+    },
+    {
+      "moveName": "은혜갚기",
+      "apiName": "return",
+      "ko": "은혜갚기",
+      "en": "Return"
+    },
+    {
+      "moveName": "이상한빛",
+      "apiName": "confuse-ray",
+      "ko": "이상한빛",
+      "en": "Confuse Ray"
+    },
+    {
+      "moveName": "이판사판태클",
+      "apiName": "double-edge",
+      "ko": "이판사판태클",
+      "en": "Double-Edge"
+    },
+    {
+      "moveName": "인파이트",
+      "apiName": "close-combat",
+      "ko": "인파이트",
+      "en": "Close Combat"
+    },
+    {
+      "moveName": "일구기",
+      "apiName": "rototiller",
+      "ko": "일구기",
+      "en": "Rototiller"
+    },
+    {
+      "moveName": "일렉트로빔",
+      "apiName": "electro-shot",
+      "ko": "일렉트로빔",
+      "en": "Electro Shot"
+    },
+    {
+      "moveName": "일렉트릭네트",
+      "apiName": "electroweb",
+      "ko": "일렉트릭네트",
+      "en": "Electroweb"
+    },
+    {
+      "moveName": "일렉트릭볼",
+      "apiName": "electro-ball",
+      "ko": "일렉트릭볼",
+      "en": "Electro Ball"
+    },
+    {
+      "moveName": "일렉트릭필드",
+      "apiName": "electric-terrain",
+      "ko": "일렉트릭필드",
+      "en": "Electric Terrain"
+    },
+    {
+      "moveName": "잎날가르기",
+      "apiName": "razor-leaf",
+      "ko": "잎날가르기",
+      "en": "Razor Leaf"
+    },
+    {
+      "moveName": "자기암시",
+      "apiName": "psych-up",
+      "ko": "자기암시",
+      "en": "Psych Up"
+    },
+    {
+      "moveName": "자기장조작",
+      "apiName": "magnetic-flux",
+      "ko": "자기장조작",
+      "en": "Magnetic Flux"
+    },
+    {
+      "moveName": "자연의은혜",
+      "apiName": "natural-gift",
+      "ko": "자연의은혜",
+      "en": "Natural Gift"
+    },
+    {
+      "moveName": "자연의힘",
+      "apiName": "nature-power",
+      "ko": "자연의힘",
+      "en": "Nature Power"
+    },
+    {
+      "moveName": "자이로볼",
+      "apiName": "gyro-ball",
+      "ko": "자이로볼",
+      "en": "Gyro Ball"
+    },
+    {
+      "moveName": "자폭",
+      "apiName": "self-destruct",
+      "ko": "자폭",
+      "en": "Self-Destruct"
+    },
+    {
+      "moveName": "작아지기",
+      "apiName": "minimize",
+      "ko": "작아지기",
+      "en": "Minimize"
+    },
+    {
+      "moveName": "잠깨움뺨치기",
+      "apiName": "wake-up-slap",
+      "ko": "잠깨움뺨치기",
+      "en": "Wake-Up Slap"
+    },
+    {
+      "moveName": "잠꼬대",
+      "apiName": "sleep-talk",
+      "ko": "잠꼬대",
+      "en": "Sleep Talk"
+    },
+    {
+      "moveName": "잠자기",
+      "apiName": "rest",
+      "ko": "잠자기",
+      "en": "Rest"
+    },
+    {
+      "moveName": "잠재파워",
+      "apiName": "hidden-power",
+      "ko": "잠재파워",
+      "en": "Hidden Power"
+    },
+    {
+      "moveName": "잼잼펀치",
+      "apiName": "dizzy-punch",
+      "ko": "잼잼펀치",
+      "en": "Dizzy Punch"
+    },
+    {
+      "moveName": "저리가루",
+      "apiName": "stun-spore",
+      "ko": "저리가루",
+      "en": "Stun Spore"
+    },
+    {
+      "moveName": "저주",
+      "apiName": "curse",
+      "ko": "저주",
+      "en": "Curse"
+    },
+    {
+      "moveName": "전격파",
+      "apiName": "shock-wave",
+      "ko": "전격파",
+      "en": "Shock Wave"
+    },
+    {
+      "moveName": "전광석화",
+      "apiName": "quick-attack",
+      "ko": "전광석화",
+      "en": "Quick Attack"
+    },
+    {
+      "moveName": "전기쇼크",
+      "apiName": "thunder-shock",
+      "ko": "전기쇼크",
+      "en": "Thunder Shock"
+    },
+    {
+      "moveName": "전기자석파",
+      "apiName": "thunder-wave",
+      "ko": "전기자석파",
+      "en": "Thunder Wave"
+    },
+    {
+      "moveName": "전자부유",
+      "apiName": "magnet-rise",
+      "ko": "전자부유",
+      "en": "Magnet Rise"
+    },
+    {
+      "moveName": "전자포",
+      "apiName": "zap-cannon",
+      "ko": "전자포",
+      "en": "Zap Cannon"
+    },
+    {
+      "moveName": "절대영도",
+      "apiName": "sheer-cold",
+      "ko": "절대영도",
+      "en": "Sheer Cold"
+    },
+    {
+      "moveName": "점프킥",
+      "apiName": "jump-kick",
+      "ko": "점프킥",
+      "en": "Jump Kick"
+    },
+    {
+      "moveName": "정리정돈",
+      "apiName": "tidy-up",
+      "ko": null,
+      "en": "Tidy Up"
+    },
+    {
+      "moveName": "제비반환",
+      "apiName": "aerial-ace",
+      "ko": "제비반환",
+      "en": "Aerial Ace"
+    },
+    {
+      "moveName": "제트펀치",
+      "apiName": "jet-punch",
+      "ko": null,
+      "en": "Jet Punch"
+    },
+    {
+      "moveName": "조수",
+      "apiName": "assist",
+      "ko": "조수",
+      "en": "Assist"
+    },
+    {
+      "moveName": "조이기",
+      "apiName": "bind",
+      "ko": "조이기",
+      "en": "Bind"
+    },
+    {
+      "moveName": "주술",
+      "apiName": "lucky-chant",
+      "ko": "주술",
+      "en": "Lucky Chant"
+    },
+    {
+      "moveName": "죽기살기",
+      "apiName": "endeavor",
+      "ko": "죽기살기",
+      "en": "Endeavor"
+    },
+    {
+      "moveName": "중력",
+      "apiName": "gravity",
+      "ko": "중력",
+      "en": "Gravity"
+    },
+    {
+      "moveName": "쥐어짜기",
+      "apiName": "wring-out",
+      "ko": "쥐어짜기",
+      "en": "Wring Out"
+    },
+    {
+      "moveName": "지구던지기",
+      "apiName": "seismic-toss",
+      "ko": "지구던지기",
+      "en": "Seismic Toss"
+    },
+    {
+      "moveName": "지옥의바퀴",
+      "apiName": "submission",
+      "ko": "지옥의바퀴",
+      "en": "Submission"
+    },
+    {
+      "moveName": "지옥찌르기",
+      "apiName": "throat-chop",
+      "ko": "지옥찌르기",
+      "en": "Throat Chop"
+    },
+    {
+      "moveName": "지진",
+      "apiName": "earthquake",
+      "ko": "지진",
+      "en": "Earthquake"
+    },
+    {
+      "moveName": "지휘",
+      "apiName": "instruct",
+      "ko": "지휘",
+      "en": "Instruct"
+    },
+    {
+      "moveName": "진공파",
+      "apiName": "vacuum-wave",
+      "ko": "진공파",
+      "en": "Vacuum Wave"
+    },
+    {
+      "moveName": "진흙뿌리기",
+      "apiName": "mud-slap",
+      "ko": "진흙뿌리기",
+      "en": "Mud-Slap"
+    },
+    {
+      "moveName": "진흙폭탄",
+      "apiName": "mud-bomb",
+      "ko": "진흙폭탄",
+      "en": "Mud Bomb"
+    },
+    {
+      "moveName": "질투의불꽃",
+      "apiName": "burning-jealousy",
+      "ko": "질투의불꽃",
+      "en": "Burning Jealousy"
+    },
+    {
+      "moveName": "집게덫",
+      "apiName": "snap-trap",
+      "ko": "집게덫",
+      "en": "Snap Trap"
+    },
+    {
+      "moveName": "집단구타",
+      "apiName": "beat-up",
+      "ko": "집단구타",
+      "en": "Beat Up"
+    },
+    {
+      "moveName": "짓밟기",
+      "apiName": "stomp",
+      "ko": "짓밟기",
+      "en": "Stomp"
+    },
+    {
+      "moveName": "째려보기",
+      "apiName": "leer",
+      "ko": "째려보기",
+      "en": "Leer"
+    },
+    {
+      "moveName": "쪼기",
+      "apiName": "peck",
+      "ko": "쪼기",
+      "en": "Peck"
+    },
+    {
+      "moveName": "쪼아대기",
+      "apiName": "pluck",
+      "ko": "쪼아대기",
+      "en": "Pluck"
+    },
+    {
+      "moveName": "찍찍베기",
+      "apiName": "population-bomb",
+      "ko": null,
+      "en": "Population Bomb"
+    },
+    {
+      "moveName": "찝게햄머",
+      "apiName": "crabhammer",
+      "ko": "찝게햄머",
+      "en": "Crabhammer"
+    },
+    {
+      "moveName": "찝기",
+      "apiName": "vice-grip",
+      "ko": "찝기",
+      "en": "Vise Grip"
+    },
+    {
+      "moveName": "차밍보이스",
+      "apiName": "disarming-voice",
+      "ko": "차밍보이스",
+      "en": "Disarming Voice"
+    },
+    {
+      "moveName": "차지빔",
+      "apiName": "charge-beam",
+      "ko": "차지빔",
+      "en": "Charge Beam"
+    },
+    {
+      "moveName": "참기",
+      "apiName": "bide",
+      "ko": "참기",
+      "en": "Bide"
+    },
+    {
+      "moveName": "천사의키스",
+      "apiName": "sweet-kiss",
+      "ko": "천사의키스",
+      "en": "Sweet Kiss"
+    },
+    {
+      "moveName": "철벽",
+      "apiName": "iron-defense",
+      "ko": "철벽",
+      "en": "Iron Defense"
+    },
+    {
+      "moveName": "철제광선",
+      "apiName": "steel-beam",
+      "ko": "철제광선",
+      "en": "Steel Beam"
+    },
+    {
+      "moveName": "초롱초롱눈동자",
+      "apiName": "baby-doll-eyes",
+      "ko": "초롱초롱눈동자",
+      "en": "Baby-Doll Eyes"
+    },
+    {
+      "moveName": "초음파",
+      "apiName": "supersonic",
+      "ko": "초음파",
+      "en": "Supersonic"
+    },
+    {
+      "moveName": "최면술",
+      "apiName": "hypnosis",
+      "ko": "최면술",
+      "en": "Hypnosis"
+    },
+    {
+      "moveName": "추억의선물",
+      "apiName": "memento",
+      "ko": "추억의선물",
+      "en": "Memento"
+    },
+    {
+      "moveName": "충전",
+      "apiName": "charge",
+      "ko": "충전",
+      "en": "Charge"
+    },
+    {
+      "moveName": "치근거리기",
+      "apiName": "play-rough",
+      "ko": "치근거리기",
+      "en": "Play Rough"
+    },
+    {
+      "moveName": "치료방울",
+      "apiName": "heal-bell",
+      "ko": "치료방울",
+      "en": "Heal Bell"
+    },
+    {
+      "moveName": "치유소원",
+      "apiName": "healing-wish",
+      "ko": "치유소원",
+      "en": "Healing Wish"
+    },
+    {
+      "moveName": "치유파동",
+      "apiName": "heal-pulse",
+      "ko": "치유파동",
+      "en": "Heal Pulse"
+    },
+    {
+      "moveName": "친해지기",
+      "apiName": "play-nice",
+      "ko": "친해지기",
+      "en": "Play Nice"
+    },
+    {
+      "moveName": "카운터",
+      "apiName": "counter",
+      "ko": "카운터",
+      "en": "Counter"
+    },
+    {
+      "moveName": "칼등치기",
+      "apiName": "false-swipe",
+      "ko": "칼등치기",
+      "en": "False Swipe"
+    },
+    {
+      "moveName": "칼바람",
+      "apiName": "razor-wind",
+      "ko": "칼바람",
+      "en": "Razor Wind"
+    },
+    {
+      "moveName": "칼춤",
+      "apiName": "swords-dance",
+      "ko": "칼춤",
+      "en": "Swords Dance"
+    },
+    {
+      "moveName": "코골기",
+      "apiName": "snore",
+      "ko": "코골기",
+      "en": "Snore"
+    },
+    {
+      "moveName": "코멧펀치",
+      "apiName": "meteor-mash",
+      "ko": "코멧펀치",
+      "en": "Meteor Mash"
+    },
+    {
+      "moveName": "코스믹파워",
+      "apiName": "cosmic-power",
+      "ko": "코스믹파워",
+      "en": "Cosmic Power"
+    },
+    {
+      "moveName": "코칭",
+      "apiName": "coaching",
+      "ko": "코칭",
+      "en": "Coaching"
+    },
+    {
+      "moveName": "코튼가드",
+      "apiName": "cotton-guard",
+      "ko": "코튼가드",
+      "en": "Cotton Guard"
+    },
+    {
+      "moveName": "쾌청",
+      "apiName": "sunny-day",
+      "ko": "쾌청",
+      "en": "Sunny Day"
+    },
+    {
+      "moveName": "퀵턴",
+      "apiName": "flip-turn",
+      "ko": "퀵턴",
+      "en": "Flip Turn"
+    },
+    {
+      "moveName": "크로스촙",
+      "apiName": "cross-chop",
+      "ko": "크로스촙",
+      "en": "Cross Chop"
+    },
+    {
+      "moveName": "크로스포이즌",
+      "apiName": "cross-poison",
+      "ko": "크로스포이즌",
+      "en": "Cross Poison"
+    },
+    {
+      "moveName": "클리어스모그",
+      "apiName": "clear-smog",
+      "ko": "클리어스모그",
+      "en": "Clear Smog"
+    },
+    {
+      "moveName": "킹실드",
+      "apiName": "kings-shield",
+      "ko": "킹실드",
+      "en": "King’s Shield"
+    },
+    {
+      "moveName": "탁류",
+      "apiName": "muddy-water",
+      "ko": "탁류",
+      "en": "Muddy Water"
+    },
+    {
+      "moveName": "탁쳐서떨구기",
+      "apiName": "knock-off",
+      "ko": "탁쳐서떨구기",
+      "en": "Knock Off"
+    },
+    {
+      "moveName": "탐내다",
+      "apiName": "covet",
+      "ko": "탐내다",
+      "en": "Covet"
+    },
+    {
+      "moveName": "태권당수",
+      "apiName": "karate-chop",
+      "ko": "태권당수",
+      "en": "Karate Chop"
+    },
+    {
+      "moveName": "태만함",
+      "apiName": "slack-off",
+      "ko": "태만함",
+      "en": "Slack Off"
+    },
+    {
+      "moveName": "텔레키네시스",
+      "apiName": "telekinesis",
+      "ko": "텔레키네시스",
+      "en": "Telekinesis"
+    },
+    {
+      "moveName": "토치카",
+      "apiName": "baneful-bunker",
+      "ko": "토치카",
+      "en": "Baneful Bunker"
+    },
+    {
+      "moveName": "토해내기",
+      "apiName": "spit-up",
+      "ko": "토해내기",
+      "en": "Spit Up"
+    },
+    {
+      "moveName": "튀어오르기",
+      "apiName": "splash",
+      "ko": "튀어오르기",
+      "en": "Splash"
+    },
+    {
+      "moveName": "트라이어택",
+      "apiName": "tri-attack",
+      "ko": "트라이어택",
+      "en": "Tri Attack"
+    },
+    {
+      "moveName": "트로피컬킥",
+      "apiName": "trop-kick",
+      "ko": "트로피컬킥",
+      "en": "Trop Kick"
+    },
+    {
+      "moveName": "트리플악셀",
+      "apiName": "triple-axel",
+      "ko": "트리플악셀",
+      "en": "Triple Axel"
+    },
+    {
+      "moveName": "트릭",
+      "apiName": "trick",
+      "ko": "트릭",
+      "en": "Trick"
+    },
+    {
+      "moveName": "트릭가드",
+      "apiName": "crafty-shield",
+      "ko": "트릭가드",
+      "en": "Crafty Shield"
+    },
+    {
+      "moveName": "트릭룸",
+      "apiName": "trick-room",
+      "ko": "트릭룸",
+      "en": "Trick Room"
+    },
+    {
+      "moveName": "트릭플라워",
+      "apiName": "flower-trick",
+      "ko": null,
+      "en": "Flower Trick"
+    },
+    {
+      "moveName": "트림",
+      "apiName": "belch",
+      "ko": "트림",
+      "en": "Belch"
+    },
+    {
+      "moveName": "트집",
+      "apiName": "torment",
+      "ko": "트집",
+      "en": "Torment"
+    },
+    {
+      "moveName": "파괴광선",
+      "apiName": "hyper-beam",
+      "ko": "파괴광선",
+      "en": "Hyper Beam"
+    },
+    {
+      "moveName": "파도타기",
+      "apiName": "surf",
+      "ko": "파도타기",
+      "en": "Surf"
+    },
+    {
+      "moveName": "파동탄",
+      "apiName": "aura-sphere",
+      "ko": "파동탄",
+      "en": "Aura Sphere"
+    },
+    {
+      "moveName": "파라볼라차지",
+      "apiName": "parabolic-charge",
+      "ko": "파라볼라차지",
+      "en": "Parabolic Charge"
+    },
+    {
+      "moveName": "파멸의빛",
+      "apiName": "light-of-ruin",
+      "ko": "파멸의빛",
+      "en": "Light of Ruin"
+    },
+    {
+      "moveName": "파워셰어",
+      "apiName": "power-split",
+      "ko": "파워셰어",
+      "en": "Power Split"
+    },
+    {
+      "moveName": "파워스웹",
+      "apiName": "power-swap",
+      "ko": "파워스웹",
+      "en": "Power Swap"
+    },
+    {
+      "moveName": "파워젬",
+      "apiName": "power-gem",
+      "ko": "파워젬",
+      "en": "Power Gem"
+    },
+    {
+      "moveName": "파워트릭",
+      "apiName": "power-trick",
+      "ko": "파워트릭",
+      "en": "Power Trick"
+    },
+    {
+      "moveName": "파워휩",
+      "apiName": "power-whip",
+      "ko": "파워휩",
+      "en": "Power Whip"
+    },
+    {
+      "moveName": "판별",
+      "apiName": "detect",
+      "ko": "판별",
+      "en": "Detect"
+    },
+    {
+      "moveName": "퍼스트가드",
+      "apiName": "quick-guard",
+      "ko": "퍼스트가드",
+      "en": "Quick Guard"
+    },
+    {
+      "moveName": "페어리록",
+      "apiName": "fairy-lock",
+      "ko": "페어리록",
+      "en": "Fairy Lock"
+    },
+    {
+      "moveName": "페인트",
+      "apiName": "feint",
+      "ko": "페인트",
+      "en": "Feint"
+    },
+    {
+      "moveName": "포이즌테일",
+      "apiName": "poison-tail",
+      "ko": "포이즌테일",
+      "en": "Poison Tail"
+    },
+    {
+      "moveName": "폭발펀치",
+      "apiName": "dynamic-punch",
+      "ko": "폭발펀치",
+      "en": "Dynamic Punch"
+    },
+    {
+      "moveName": "폭음파",
+      "apiName": "boomburst",
+      "ko": "폭음파",
+      "en": "Boomburst"
+    },
+    {
+      "moveName": "폭포오르기",
+      "apiName": "waterfall",
+      "ko": "폭포오르기",
+      "en": "Waterfall"
+    },
+    {
+      "moveName": "폭풍",
+      "apiName": "hurricane",
+      "ko": "폭풍",
+      "en": "Hurricane"
+    },
+    {
+      "moveName": "폴터가이스트",
+      "apiName": "poltergeist",
+      "ko": "폴터가이스트",
+      "en": "Poltergeist"
+    },
+    {
+      "moveName": "풀묶기",
+      "apiName": "grass-knot",
+      "ko": "풀묶기",
+      "en": "Grass Knot"
+    },
+    {
+      "moveName": "풀베기",
+      "apiName": "cut",
+      "ko": "풀베기",
+      "en": "Cut"
+    },
+    {
+      "moveName": "풀의맹세",
+      "apiName": "grass-pledge",
+      "ko": "풀의맹세",
+      "en": "Grass Pledge"
+    },
+    {
+      "moveName": "풀피리",
+      "apiName": "grass-whistle",
+      "ko": "풀피리",
+      "en": "Grass Whistle"
+    },
+    {
+      "moveName": "프레젠트",
+      "apiName": "present",
+      "ko": "프레젠트",
+      "en": "Present"
+    },
+    {
+      "moveName": "프리즈드라이",
+      "apiName": "freeze-dry",
+      "ko": "프리즈드라이",
+      "en": "Freeze-Dry"
+    },
+    {
+      "moveName": "프리폴",
+      "apiName": "sky-drop",
+      "ko": "프리폴",
+      "en": "Sky Drop"
+    },
+    {
+      "moveName": "플라스마샤워",
+      "apiName": "ion-deluge",
+      "ko": "플라스마샤워",
+      "en": "Ion Deluge"
+    },
+    {
+      "moveName": "플라워가드",
+      "apiName": "flower-shield",
+      "ko": "플라워가드",
+      "en": "Flower Shield"
+    },
+    {
+      "moveName": "플라잉프레스",
+      "apiName": "flying-press",
+      "ko": "플라잉프레스",
+      "en": "Flying Press"
+    },
+    {
+      "moveName": "플래시",
+      "apiName": "flash",
+      "ko": "플래시",
+      "en": "Flash"
+    },
+    {
+      "moveName": "플레어드라이브",
+      "apiName": "flare-blitz",
+      "ko": "플레어드라이브",
+      "en": "Flare Blitz"
+    },
+    {
+      "moveName": "플레어송",
+      "apiName": "torch-song",
+      "ko": null,
+      "en": "Torch Song"
+    },
+    {
+      "moveName": "필살앞니",
+      "apiName": "hyper-fang",
+      "ko": "필살앞니",
+      "en": "Hyper Fang"
+    },
+    {
+      "moveName": "하드프레스",
+      "apiName": "hard-press",
+      "ko": "하드프레스",
+      "en": "Hard Press"
+    },
+    {
+      "moveName": "하드플랜트",
+      "apiName": "frenzy-plant",
+      "ko": "하드플랜트",
+      "en": "Frenzy Plant"
+    },
+    {
+      "moveName": "하이드로캐논",
+      "apiName": "hydro-cannon",
+      "ko": "하이드로캐논",
+      "en": "Hydro Cannon"
+    },
+    {
+      "moveName": "하이드로펌프",
+      "apiName": "hydro-pump",
+      "ko": "하이드로펌프",
+      "en": "Hydro Pump"
+    },
+    {
+      "moveName": "하이퍼보이스",
+      "apiName": "hyper-voice",
+      "ko": "하이퍼보이스",
+      "en": "Hyper Voice"
+    },
+    {
+      "moveName": "하품",
+      "apiName": "yawn",
+      "ko": "하품",
+      "en": "Yawn"
+    },
+    {
+      "moveName": "할퀴기",
+      "apiName": "scratch",
+      "ko": "할퀴기",
+      "en": "Scratch"
+    },
+    {
+      "moveName": "핥기",
+      "apiName": "lick",
+      "ko": "핥기",
+      "en": "Lick"
+    },
+    {
+      "moveName": "해수스파우팅",
+      "apiName": "water-spout",
+      "ko": "해수스파우팅",
+      "en": "Water Spout"
+    },
+    {
+      "moveName": "핼러윈",
+      "apiName": "trick-or-treat",
+      "ko": "핼러윈",
+      "en": "Trick-or-Treat"
+    },
+    {
+      "moveName": "헤롱헤롱",
+      "apiName": "attract",
+      "ko": "헤롱헤롱",
+      "en": "Attract"
+    },
+    {
+      "moveName": "헤비봄버",
+      "apiName": "heavy-slam",
+      "ko": "헤비봄버",
+      "en": "Heavy Slam"
+    },
+    {
+      "moveName": "혼내기",
+      "apiName": "punishment",
+      "ko": "혼내기",
+      "en": "Punishment"
+    },
+    {
+      "moveName": "화염방사",
+      "apiName": "flamethrower",
+      "ko": "화염방사",
+      "en": "Flamethrower"
+    },
+    {
+      "moveName": "화염자동차",
+      "apiName": "flame-wheel",
+      "ko": "화염자동차",
+      "en": "Flame Wheel"
+    },
+    {
+      "moveName": "화풀이",
+      "apiName": "frustration",
+      "ko": "화풀이",
+      "en": "Frustration"
+    },
+    {
+      "moveName": "환상빔",
+      "apiName": "psybeam",
+      "ko": "환상빔",
+      "en": "Psybeam"
+    },
+    {
+      "moveName": "회복봉인",
+      "apiName": "heal-block",
+      "ko": "회복봉인",
+      "en": "Heal Block"
+    },
+    {
+      "moveName": "회오리",
+      "apiName": "twister",
+      "ko": "회오리",
+      "en": "Twister"
+    },
+    {
+      "moveName": "회오리불꽃",
+      "apiName": "fire-spin",
+      "ko": "회오리불꽃",
+      "en": "Fire Spin"
+    },
+    {
+      "moveName": "회전부리",
+      "apiName": "drill-peck",
+      "ko": "회전부리",
+      "en": "Drill Peck"
+    },
+    {
+      "moveName": "휘감기",
+      "apiName": "constrict",
+      "ko": "휘감기",
+      "en": "Constrict"
+    },
+    {
+      "moveName": "흉내내기",
+      "apiName": "mimic",
+      "ko": "흉내내기",
+      "en": "Mimic"
+    },
+    {
+      "moveName": "흉내쟁이",
+      "apiName": "copycat",
+      "ko": "흉내쟁이",
+      "en": "Copycat"
+    },
+    {
+      "moveName": "흑안개",
+      "apiName": "haze",
+      "ko": "흑안개",
+      "en": "Haze"
+    },
+    {
+      "moveName": "흔들흔들댄스",
+      "apiName": "teeter-dance",
+      "ko": "흔들흔들댄스",
+      "en": "Teeter Dance"
+    },
+    {
+      "moveName": "흙놀이",
+      "apiName": "mud-sport",
+      "ko": "흙놀이",
+      "en": "Mud Sport"
+    },
+    {
+      "moveName": "흡수",
+      "apiName": "absorb",
+      "ko": "흡수",
+      "en": "Absorb"
+    },
+    {
+      "moveName": "흡혈",
+      "apiName": "leech-life",
+      "ko": "흡혈",
+      "en": "Leech Life"
+    },
+    {
+      "moveName": "희망사항",
+      "apiName": "wish",
+      "ko": "희망사항",
+      "en": "Wish"
+    },
+    {
+      "moveName": "흰안개",
+      "apiName": "mist",
+      "ko": "흰안개",
+      "en": "Mist"
+    },
+    {
+      "moveName": "히트스탬프",
+      "apiName": "heat-crash",
+      "ko": "히트스탬프",
+      "en": "Heat Crash"
+    },
+    {
+      "moveName": "힘껏치기",
+      "apiName": "slam",
+      "ko": "힘껏치기",
+      "en": "Slam"
+    },
+    {
+      "moveName": "힘껏펀치",
+      "apiName": "focus-punch",
+      "ko": "힘껏펀치",
+      "en": "Focus Punch"
+    },
+    {
+      "moveName": "힘흡수",
+      "apiName": "strength-sap",
+      "ko": "힘흡수",
+      "en": "Strength Sap"
+    },
+    {
+      "moveName": "Aqua Cutter",
+      "apiName": "aqua-cutter",
+      "ko": null,
+      "en": "Aqua Cutter"
+    },
+    {
+      "moveName": "Aqua Step",
+      "apiName": "aqua-step",
+      "ko": null,
+      "en": "Aqua Step"
+    },
+    {
+      "moveName": "Armor Cannon",
+      "apiName": "armor-cannon",
+      "ko": null,
+      "en": "Armor Cannon"
+    },
+    {
+      "moveName": "Axe Kick",
+      "apiName": "axe-kick",
+      "ko": null,
+      "en": "Axe Kick"
+    },
+    {
+      "moveName": "Bitter Blade",
+      "apiName": "bitter-blade",
+      "ko": null,
+      "en": "Bitter Blade"
+    },
+    {
+      "moveName": "Bitter Malice",
+      "apiName": "bitter-malice",
+      "ko": null,
+      "en": "Bitter Malice"
+    },
+    {
+      "moveName": "Ceaseless Edge",
+      "apiName": "ceaseless-edge",
+      "ko": null,
+      "en": "Ceaseless Edge"
+    },
+    {
+      "moveName": "Chilling Water",
+      "apiName": "chilling-water",
+      "ko": null,
+      "en": "Chilling Water"
+    },
+    {
+      "moveName": "Chilly Reception",
+      "apiName": "chilly-reception",
+      "ko": null,
+      "en": "Chilly Reception"
+    },
+    {
+      "moveName": "Comeuppance",
+      "apiName": "comeuppance",
+      "ko": null,
+      "en": "Comeuppance"
+    },
+    {
+      "moveName": "DD래리어트",
+      "apiName": "darkest-lariat",
+      "ko": "DD래리어트",
+      "en": "Darkest Lariat"
+    },
+    {
+      "moveName": "Dire Claw",
+      "apiName": "dire-claw",
+      "ko": null,
+      "en": "Dire Claw"
+    },
+    {
+      "moveName": "G의힘",
+      "apiName": "grav-apple",
+      "ko": "G의힘",
+      "en": "Grav Apple"
+    },
+    {
+      "moveName": "Headlong Rush",
+      "apiName": "headlong-rush",
+      "ko": null,
+      "en": "Headlong Rush"
+    },
+    {
+      "moveName": "HP회복",
+      "apiName": "recover",
+      "ko": "HP회복",
+      "en": "Recover"
+    },
+    {
+      "moveName": "Ice Spinner",
+      "apiName": "ice-spinner",
+      "ko": null,
+      "en": "Ice Spinner"
+    },
+    {
+      "moveName": "Infernal Parade",
+      "apiName": "infernal-parade",
+      "ko": null,
+      "en": "Infernal Parade"
+    },
+    {
+      "moveName": "Last Respects",
+      "apiName": "last-respects",
+      "ko": null,
+      "en": "Last Respects"
+    },
+    {
+      "moveName": "Lumina Crash",
+      "apiName": "lumina-crash",
+      "ko": null,
+      "en": "Lumina Crash"
+    },
+    {
+      "moveName": "Matcha Gotcha",
+      "apiName": "matcha-gotcha",
+      "ko": null,
+      "en": "Matcha Gotcha"
+    },
+    {
+      "moveName": "Mortal Spin",
+      "apiName": "mortal-spin",
+      "ko": null,
+      "en": "Mortal Spin"
+    },
+    {
+      "moveName": "Mountain Gale",
+      "apiName": "mountain-gale",
+      "ko": null,
+      "en": "Mountain Gale"
+    },
+    {
+      "moveName": "Pounce",
+      "apiName": "pounce",
+      "ko": null,
+      "en": "Pounce"
+    },
+    {
+      "moveName": "Power Shift",
+      "apiName": "power-shift",
+      "ko": null,
+      "en": "Power Shift"
+    },
+    {
+      "moveName": "Psyshield Bash",
+      "apiName": "psyshield-bash",
+      "ko": null,
+      "en": "Psyshield Bash"
+    },
+    {
+      "moveName": "Raging Bull",
+      "apiName": "raging-bull",
+      "ko": null,
+      "en": "Raging Bull"
+    },
+    {
+      "moveName": "Raging Fury",
+      "apiName": "raging-fury",
+      "ko": null,
+      "en": "Raging Fury"
+    },
+    {
+      "moveName": "Shed Tail",
+      "apiName": "shed-tail",
+      "ko": null,
+      "en": "Shed Tail"
+    },
+    {
+      "moveName": "Shelter",
+      "apiName": "shelter",
+      "ko": null,
+      "en": "Shelter"
+    },
+    {
+      "moveName": "Snowscape",
+      "apiName": "snowscape",
+      "ko": null,
+      "en": "Snowscape"
+    },
+    {
+      "moveName": "Spicy Extract",
+      "apiName": "spicy-extract",
+      "ko": null,
+      "en": "Spicy Extract"
+    },
+    {
+      "moveName": "Stone Axe",
+      "apiName": "stone-axe",
+      "ko": null,
+      "en": "Stone Axe"
+    },
+    {
+      "moveName": "Syrup Bomb",
+      "apiName": "syrup-bomb",
+      "ko": null,
+      "en": "Syrup Bomb"
+    },
+    {
+      "moveName": "Tera Blast",
+      "apiName": "tera-blast",
+      "ko": null,
+      "en": "Tera Blast"
+    },
+    {
+      "moveName": "Trailblaze",
+      "apiName": "trailblaze",
+      "ko": null,
+      "en": "Trailblaze"
+    },
+    {
+      "moveName": "Triple Arrows",
+      "apiName": "triple-arrows",
+      "ko": null,
+      "en": "Triple Arrows"
+    },
+    {
+      "moveName": "Twin Beam",
+      "apiName": "twin-beam",
+      "ko": null,
+      "en": "Twin Beam"
+    },
+    {
+      "moveName": "Wave Crash",
+      "apiName": "wave-crash",
+      "ko": null,
+      "en": "Wave Crash"
+    }
+  ]
+}
