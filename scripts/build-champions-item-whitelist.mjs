@@ -3,6 +3,8 @@ import path from 'node:path'
 
 const GUIDE_URL = 'https://champs.pokedb.tokyo/guide/opendata'
 const ROOT_URL = 'https://champs.pokedb.tokyo'
+const POKEAPI_ITEM_LIST_URL = 'https://pokeapi.co/api/v2/item?limit=2200'
+
 const ITEM_SPRITE_MAP = {
   'きあいのタスキ': 'focus-sash',
   'こだわりスカーフ': 'choice-scarf',
@@ -15,36 +17,13 @@ const ITEM_SPRITE_MAP = {
   'ロゼルのみ': 'roseli-berry',
 }
 
-const ITEM_ALIASES = {
-  'きあいのタスキ': ['기합의띠', '기띠', '띠', 'focus sash'],
-  'こだわりスカーフ': ['구애스카프', '스카프', 'choice scarf'],
-  'たべのこし': ['먹다남은음식', '먹밥', '남은음식', 'leftovers'],
-  'オボンのみ': ['오본열매', 'obon'],
-  'メタルコート': ['금속코트', 'metal coat'],
-  'メンタルハーブ': ['멘탈허브', 'mental herb'],
-  'ひかりのこな': ['반짝가루', 'bright powder'],
-  'オッカのみ': ['오카열매', 'occa berry'],
-  'ヤチェのみ': ['유루열매', '야체열매', 'yache berry'],
-  'ロゼルのみ': ['리샘열매', '로젤열매', 'roseli berry'],
-  'しろいハーブ': ['하양허브', 'white herb'],
-  'ピントレンズ': ['핀트렌즈', 'scope lens'],
-  'くろいメガネ': ['검은안경', 'black glasses'],
-  'くろおび': ['검은띠', 'black belt'],
-  'じしゃく': ['자석', 'magnet'],
-  'きせきのタネ': ['기적의씨', 'miracle seed'],
-  'シルクのスカーフ': ['실크스카프', 'silk scarf'],
-  'しんぴのしずく': ['신비의물방울', 'mystic water'],
-  'するどいくちばし': ['예리한부리', 'sharp beak'],
-  'せんせいのツメ': ['선제공격손톱', 'quick claw'],
-  'でんきだま': ['전기구슬', 'light ball'],
-  'どくバリ': ['독바늘', 'poison barb'],
-  'とけないこおり': ['녹지않는얼음', 'never melt ice'],
-  'のろいのおふだ': ['저주의부적', 'spell tag'],
-  'まがったスプーン': ['휘어진스푼', 'twisted spoon'],
-  'もくたん': ['목탄', 'charcoal'],
-  'やわらかいすな': ['부드러운모래', 'soft sand'],
-  'ようせいのハネ': ['요정의깃털'],
-  'りゅうのキバ': ['용의이빨', 'dragon fang'],
+const MANUAL_SHORT_ALIASES = {
+  'きあいのタスキ': ['기띠', '띠'],
+  'こだわりスカーフ': ['스카프'],
+  'たべのこし': ['먹밥', '남은음식'],
+  'ひかりのこな': ['반짝가루'],
+  'メタルコート': ['금속코트'],
+  'メンタルハーブ': ['멘탈허브'],
 }
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
@@ -55,8 +34,8 @@ function absoluteUrl(href) {
   return new URL(href, ROOT_URL).toString()
 }
 
-function uniqueSorted(values) {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b, 'ja'))
+function uniqueSorted(values, locale = 'ja') {
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b, locale))
 }
 
 function isMegaStone(item) {
@@ -65,6 +44,16 @@ function isMegaStone(item) {
 
 function toTsStringArray(items, indent = '  ') {
   return items.map((item) => `${indent}${JSON.stringify(item)},`).join('\n')
+}
+
+async function getJson(url) {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
+  return res.json()
+}
+
+function getLocalizedName(names, lang) {
+  return names.find((entry) => entry.language?.name === lang)?.name ?? null
 }
 
 const guideHtml = await fetch(GUIDE_URL).then((res) => {
@@ -81,10 +70,7 @@ if (!jsonUrls.length) throw new Error('No opendata JSON URLs found on guide page
 const datasets = []
 const allItems = []
 for (const url of jsonUrls) {
-  const data = await fetch(url).then((res) => {
-    if (!res.ok) throw new Error(`Failed to fetch dataset ${url}: ${res.status}`)
-    return res.json()
-  })
+  const data = await getJson(url)
   const items = []
   for (const teamEntry of data.teams ?? []) {
     for (const member of teamEntry.team ?? []) {
@@ -108,20 +94,62 @@ const excludedMegaStones = uniqueItems.filter(isMegaStone)
 const excludedNoItem = uniqueItems.filter((item) => item === '持ち物なし')
 const whitelistItems = uniqueItems.filter((item) => item !== '持ち物なし' && !isMegaStone(item))
 
-const aliasEntries = Object.entries(ITEM_ALIASES)
-  .filter(([item]) => whitelistItems.includes(item))
-  .map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`)
-  .join('\n')
+const itemList = await getJson(POKEAPI_ITEM_LIST_URL)
+const detailsByJa = new Map()
+let cursor = 0
+const concurrency = 24
 
-const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${Object.entries(ITEM_SPRITE_MAP)
+async function worker() {
+  while (cursor < itemList.results.length) {
+    const index = cursor
+    cursor += 1
+    const entry = itemList.results[index]
+    try {
+      const data = await getJson(entry.url)
+      const ja = getLocalizedName(data.names, 'ja-Hrkt') ?? getLocalizedName(data.names, 'ja')
+      if (!ja || !whitelistItems.includes(ja)) continue
+      detailsByJa.set(ja, {
+        apiName: entry.name,
+        ko: getLocalizedName(data.names, 'ko'),
+        en: getLocalizedName(data.names, 'en'),
+      })
+    } catch {
+      // skip bad item detail; report will show missing label
+    }
+  }
+}
+
+await Promise.all(Array.from({ length: concurrency }, () => worker()))
+
+const koLabelEntries = whitelistItems
+  .map((item) => [item, detailsByJa.get(item)?.ko ?? null])
+  .filter(([, ko]) => typeof ko === 'string' && ko)
+
+const enLabelEntries = whitelistItems
+  .map((item) => [item, detailsByJa.get(item)?.en ?? null])
+  .filter(([, en]) => typeof en === 'string' && en)
+
+const aliasEntries = whitelistItems.map((item) => {
+  const aliases = uniqueSorted([
+    ...(detailsByJa.get(item)?.ko ? [detailsByJa.get(item).ko] : []),
+    ...(detailsByJa.get(item)?.en ? [detailsByJa.get(item).en] : []),
+    ...(MANUAL_SHORT_ALIASES[item] ?? []),
+  ], 'ko')
+  return [item, aliases]
+}).filter(([, aliases]) => aliases.length)
+
+const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${Object.entries(ITEM_SPRITE_MAP)
   .filter(([item]) => whitelistItems.includes(item))
   .map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`)
-  .join('\n')}\n}\n`
+  .join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
+
+const missingKoLabels = whitelistItems.filter((item) => !detailsByJa.get(item)?.ko)
 
 const report = {
   generatedAt: new Date().toISOString(),
   sourceGuideUrl: GUIDE_URL,
   sourceJsonUrls: jsonUrls,
+  sourcePokeApiItemListUrl: POKEAPI_ITEM_LIST_URL,
   datasets,
   extractedItemCount: uniqueItems.length,
   whitelistItemCount: whitelistItems.length,
@@ -130,8 +158,12 @@ const report = {
   excludedNoItemCount: excludedNoItem.length,
   excludedNoItem,
   whitelistItems,
+  verifiedKoLabels: Object.fromEntries(koLabelEntries),
+  missingKoLabels,
   notes: [
     'Whitelist is built from publicly linked Champions opendata JSON files.',
+    'Japanese item names remain the source-of-truth for reverse-mapping Champions opendata.',
+    'Korean labels are sourced from PokeAPI item names when available.',
     'Mega stones are excluded because the app handles mega items separately via species-locked item generation.',
     '持ち物なし is excluded because the app represents no-item as an empty value.',
   ],
@@ -141,3 +173,4 @@ await fs.writeFile(srcPath, ts)
 await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`)
 console.log(`wrote ${path.relative(rootDir, srcPath)} (${whitelistItems.length} items)`)
 console.log(`wrote ${path.relative(rootDir, reportPath)}`)
+if (missingKoLabels.length) console.log(`missing ko labels: ${missingKoLabels.join(', ')}`)

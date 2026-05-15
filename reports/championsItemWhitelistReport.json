@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-05-15T07:56:49.919Z",
+  "generatedAt": "2026-05-15T08:24:40.533Z",
   "sourceGuideUrl": "https://champs.pokedb.tokyo/guide/opendata",
   "sourceJsonUrls": [
     "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
     "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json"
   ],
+  "sourcePokeApiItemListUrl": "https://pokeapi.co/api/v2/item?limit=2200",
   "datasets": [
     {
       "url": "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
@@ -72,7 +73,7 @@
       "url": "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json",
       "season": "M-1",
       "rule": "シングル",
-      "updatedAt": "2026-05-15 15:29:20",
+      "updatedAt": "2026-05-15 16:03:53",
       "uniqueItemCount": 88,
       "uniqueItems": [
         "イトケのみ",
@@ -270,8 +271,58 @@
     "リンドのみ",
     "ロゼルのみ"
   ],
+  "verifiedKoLabels": {
+    "イトケのみ": "꼬시개열매",
+    "おうじゃのしるし": "왕의징표석",
+    "オッカのみ": "오카열매",
+    "オボンのみ": "자뭉열매",
+    "カゴのみ": "유루열매",
+    "カシブのみ": "수불열매",
+    "きあいのタスキ": "기합의띠",
+    "きせきのタネ": "기적의씨",
+    "くろいメガネ": "검은안경",
+    "くろおび": "검은띠",
+    "こだわりスカーフ": "구애스카프",
+    "じしゃく": "자석",
+    "シュカのみ": "슈캐열매",
+    "シルクのスカーフ": "실크스카프",
+    "しろいハーブ": "하양허브",
+    "しんぴのしずく": "신비의물방울",
+    "するどいくちばし": "예리한부리",
+    "せんせいのツメ": "선제공격손톱",
+    "ソクノのみ": "초나열매",
+    "たべのこし": "먹다남은음식",
+    "でんきだま": "전기구슬",
+    "どくバリ": "독바늘",
+    "とけないこおり": "녹지않는얼음",
+    "ナモのみ": "마코열매",
+    "のろいのおふだ": "저주의부적",
+    "バコウのみ": "바코열매",
+    "ハバンのみ": "하반열매",
+    "ビアーのみ": "으름열매",
+    "ひかりのこな": "반짝가루",
+    "ピントレンズ": "초점렌즈",
+    "まがったスプーン": "휘어진스푼",
+    "メタルコート": "금속코트",
+    "メンタルハーブ": "멘탈허브",
+    "もくたん": "목탄",
+    "ヤチェのみ": "플카열매",
+    "やわらかいすな": "부드러운모래",
+    "ヨプのみ": "로플열매",
+    "ヨロギのみ": "루미열매",
+    "ラムのみ": "리샘열매",
+    "りゅうのキバ": "용의이빨",
+    "リリバのみ": "바리비열매",
+    "リンドのみ": "린드열매",
+    "ロゼルのみ": "로셀열매"
+  },
+  "missingKoLabels": [
+    "ようせいのハネ"
+  ],
   "notes": [
     "Whitelist is built from publicly linked Champions opendata JSON files.",
+    "Japanese item names remain the source-of-truth for reverse-mapping Champions opendata.",
+    "Korean labels are sourced from PokeAPI item names when available.",
     "Mega stones are excluded because the app handles mega items separately via species-locked item generation.",
     "持ち物なし is excluded because the app represents no-item as an empty value."
   ]
