@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-15T11:33:26.348Z",
+    "generatedAt": "2026-05-15T11:38:38.673Z",
     "sourceOfTruth": "src/championsMovePools.json",
     "seededFrom": "src/pokemonMovePools.json",
     "purpose": "포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터"
@@ -342,7 +342,7 @@
         "meowstic"
       ],
       "fetchedPokemonApiCandidate": "meowstic-male",
-      "moveCount": 91,
+      "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -754,7 +754,7 @@
         "lycanroc"
       ],
       "fetchedPokemonApiCandidate": "lycanroc-midday",
-      "moveCount": 76,
+      "moveCount": 101,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -853,7 +853,7 @@
         "raichu-alolan"
       ],
       "fetchedPokemonApiCandidate": "raichu-alola",
-      "moveCount": 101,
+      "moveCount": 123,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -1045,7 +1045,7 @@
         "ninetales-alolan"
       ],
       "fetchedPokemonApiCandidate": "ninetales-alola",
-      "moveCount": 94,
+      "moveCount": 125,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -1306,7 +1306,7 @@
         "meowstic"
       ],
       "fetchedPokemonApiCandidate": "meowstic-male",
-      "moveCount": 91,
+      "moveCount": 95,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -1613,7 +1613,7 @@
         "tauros-paldean"
       ],
       "fetchedPokemonApiCandidate": "tauros-paldea-combat-breed",
-      "moveCount": 50,
+      "moveCount": 111,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -1941,7 +1941,7 @@
         "mimikyu"
       ],
       "fetchedPokemonApiCandidate": "mimikyu-disguised",
-      "moveCount": 87,
+      "moveCount": 88,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -2151,7 +2151,7 @@
         "floette"
       ],
       "fetchedPokemonApiCandidate": "floette",
-      "moveCount": 68,
+      "moveCount": 69,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -2177,7 +2177,7 @@
         "floette-eternal-flower"
       ],
       "fetchedPokemonApiCandidate": "floette",
-      "moveCount": 68,
+      "moveCount": 69,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -5640,7 +5640,7 @@
         "stunfisk-galarian"
       ],
       "fetchedPokemonApiCandidate": "stunfisk-galar",
-      "moveCount": 57,
+      "moveCount": 86,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -5688,7 +5688,7 @@
         "slowbro-galarian"
       ],
       "fetchedPokemonApiCandidate": "slowbro-galar",
-      "moveCount": 107,
+      "moveCount": 151,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -5759,7 +5759,7 @@
         "slowking-galarian"
       ],
       "fetchedPokemonApiCandidate": "slowking-galar",
-      "moveCount": 108,
+      "moveCount": 150,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",

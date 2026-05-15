@@ -131,24 +131,24 @@ async function fetchMoveMeta(url) {
 async function fetchPokemonMovePoolFromApi(key) {
   if (pokemonMoveCache.has(key)) return pokemonMoveCache.get(key)
   const task = (async () => {
+    const merged = new Map()
+    const fetchedCandidates = []
     for (const candidate of pokemonApiCandidates(key)) {
       try {
         const pokemon = await fetchJson(`https://pokeapi.co/api/v2/pokemon/${candidate}`)
         const moves = await Promise.all(
           (pokemon.moves ?? []).map((entry) => fetchMoveMeta(entry.move.url).catch(() => null))
         )
-        const deduped = new Map()
         for (const move of moves) {
           if (!move?.name) continue
-          if (!deduped.has(move.name)) deduped.set(move.name, move)
+          if (!merged.has(move.name)) merged.set(move.name, move)
         }
-        const sorted = Array.from(deduped.values()).sort(sortMoves)
-        if (sorted.length) return { moves: sorted, candidate }
+        if (moves.length) fetchedCandidates.push(candidate)
       } catch {
         // try next candidate
       }
     }
-    return { moves: [], candidate: null }
+    return { moves: Array.from(merged.values()).sort(sortMoves), candidate: fetchedCandidates[0] ?? null, candidates: fetchedCandidates }
   })()
   pokemonMoveCache.set(key, task)
   return task

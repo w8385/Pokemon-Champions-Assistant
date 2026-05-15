@@ -5039,11 +5039,19 @@
       "type": "poison"
     },
     {
+      "name": "메지컬리프",
+      "type": "grass"
+    },
+    {
       "name": "명상",
       "type": "psychic"
     },
     {
       "name": "미라클아이",
+      "type": "psychic"
+    },
+    {
+      "name": "미래예지",
       "type": "psychic"
     },
     {
@@ -5123,6 +5131,10 @@
       "type": "ghost"
     },
     {
+      "name": "선취",
+      "type": "normal"
+    },
+    {
       "name": "속이다",
       "type": "normal"
     },
@@ -5145,6 +5157,10 @@
     {
       "name": "신비의부적",
       "type": "normal"
+    },
+    {
+      "name": "신통력",
+      "type": "psychic"
     },
     {
       "name": "아이언테일",
@@ -11145,8 +11161,20 @@
       "type": "normal"
     },
     {
+      "name": "기사회생",
+      "type": "fighting"
+    },
+    {
+      "name": "기선제압",
+      "type": "fighting"
+    },
+    {
       "name": "기습",
       "type": "dark"
+    },
+    {
+      "name": "기충전",
+      "type": "normal"
     },
     {
       "name": "깨물어부수기",
@@ -11155,6 +11183,14 @@
     {
       "name": "깨트리다",
       "type": "fighting"
+    },
+    {
+      "name": "난동부리기",
+      "type": "normal"
+    },
+    {
+      "name": "내던지기",
+      "type": "dark"
     },
     {
       "name": "냄새구별",
@@ -11171,6 +11207,10 @@
     {
       "name": "대타출동",
       "type": "normal"
+    },
+    {
+      "name": "더블촙",
+      "type": "dragon"
     },
     {
       "name": "도발",
@@ -11213,8 +11253,16 @@
       "type": "normal"
     },
     {
+      "name": "로킥",
+      "type": "fighting"
+    },
+    {
       "name": "록커트",
       "type": "rock"
+    },
+    {
+      "name": "리벤지",
+      "type": "fighting"
     },
     {
       "name": "맹독",
@@ -11222,6 +11270,14 @@
     },
     {
       "name": "멀리짖음",
+      "type": "normal"
+    },
+    {
+      "name": "메가톤킥",
+      "type": "normal"
+    },
+    {
+      "name": "메가톤펀치",
       "type": "normal"
     },
     {
@@ -11257,8 +11313,24 @@
       "type": "electric"
     },
     {
+      "name": "번개펀치",
+      "type": "electric"
+    },
+    {
       "name": "벌크업",
       "type": "fighting"
+    },
+    {
+      "name": "보복",
+      "type": "dark"
+    },
+    {
+      "name": "분발",
+      "type": "normal"
+    },
+    {
+      "name": "분풀이",
+      "type": "dark"
     },
     {
       "name": "분함의발구르기",
@@ -11267,6 +11339,14 @@
     {
       "name": "불꽃엄니",
       "type": "fire"
+    },
+    {
+      "name": "불꽃펀치",
+      "type": "fire"
+    },
+    {
+      "name": "브레이크크루",
+      "type": "normal"
     },
     {
       "name": "비밀이야기",
@@ -11283,6 +11363,18 @@
     {
       "name": "사이코팽",
       "type": "psychic"
+    },
+    {
+      "name": "섀도크루",
+      "type": "ghost"
+    },
+    {
+      "name": "소란피기",
+      "type": "normal"
+    },
+    {
+      "name": "속임수",
+      "type": "dark"
     },
     {
       "name": "스위프뺨치기",
@@ -11333,6 +11425,14 @@
       "type": "normal"
     },
     {
+      "name": "역린",
+      "type": "dragon"
+    },
+    {
+      "name": "예민해지기",
+      "type": "normal"
+    },
+    {
       "name": "울부짖기",
       "type": "normal"
     },
@@ -11369,6 +11469,10 @@
       "type": "normal"
     },
     {
+      "name": "지옥찌르기",
+      "type": "dark"
+    },
+    {
       "name": "진흙뿌리기",
       "type": "ground"
     },
@@ -11385,6 +11489,10 @@
       "type": "fairy"
     },
     {
+      "name": "카운터",
+      "type": "fighting"
+    },
+    {
       "name": "칼춤",
       "type": "normal"
     },
@@ -11395,6 +11503,10 @@
     {
       "name": "쾌청",
       "type": "fire"
+    },
+    {
+      "name": "탁쳐서떨구기",
+      "type": "dark"
     },
     {
       "name": "탐내다",
@@ -11415,6 +11527,10 @@
     {
       "name": "화풀이",
       "type": "normal"
+    },
+    {
+      "name": "힘껏펀치",
+      "type": "fighting"
     },
     {
       "name": "Tera Blast",
@@ -12541,8 +12657,16 @@
       "type": "normal"
     },
     {
+      "name": "괴력",
+      "type": "normal"
+    },
+    {
       "name": "괴전파",
       "type": "electric"
+    },
+    {
+      "name": "구르기",
+      "type": "rock"
     },
     {
       "name": "구멍파기",
@@ -12617,6 +12741,10 @@
       "type": "electric"
     },
     {
+      "name": "로케트박치기",
+      "type": "normal"
+    },
+    {
       "name": "리사이클",
       "type": "normal"
     },
@@ -12657,6 +12785,10 @@
       "type": "psychic"
     },
     {
+      "name": "바위깨기",
+      "type": "fighting"
+    },
+    {
       "name": "박치기",
       "type": "normal"
     },
@@ -12687,6 +12819,14 @@
     {
       "name": "볼트체인지",
       "type": "electric"
+    },
+    {
+      "name": "분노",
+      "type": "normal"
+    },
+    {
+      "name": "비밀의힘",
+      "type": "normal"
     },
     {
       "name": "비밀이야기",
@@ -12723,6 +12863,10 @@
     {
       "name": "사이코필드",
       "type": "psychic"
+    },
+    {
+      "name": "세차게휘두르기",
+      "type": "dark"
     },
     {
       "name": "소란피기",
@@ -12797,7 +12941,19 @@
       "type": "normal"
     },
     {
+      "name": "웅크리기",
+      "type": "normal"
+    },
+    {
+      "name": "유혹",
+      "type": "normal"
+    },
+    {
       "name": "은혜갚기",
+      "type": "normal"
+    },
+    {
+      "name": "이판사판태클",
       "type": "normal"
     },
     {
@@ -12813,6 +12969,10 @@
       "type": "electric"
     },
     {
+      "name": "자연의은혜",
+      "type": "normal"
+    },
+    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -12823,6 +12983,10 @@
     {
       "name": "잠재파워",
       "type": "normal"
+    },
+    {
+      "name": "저주",
+      "type": "ghost"
     },
     {
       "name": "전격파",
@@ -12845,6 +13009,10 @@
       "type": "electric"
     },
     {
+      "name": "전자포",
+      "type": "electric"
+    },
+    {
       "name": "죽기살기",
       "type": "normal"
     },
@@ -12853,8 +13021,24 @@
       "type": "fighting"
     },
     {
+      "name": "지옥의바퀴",
+      "type": "fighting"
+    },
+    {
+      "name": "진흙뿌리기",
+      "type": "ground"
+    },
+    {
+      "name": "차밍보이스",
+      "type": "fairy"
+    },
+    {
       "name": "차지빔",
       "type": "electric"
+    },
+    {
+      "name": "참기",
+      "type": "normal"
     },
     {
       "name": "천사의키스",
@@ -12871,6 +13055,10 @@
     {
       "name": "친해지기",
       "type": "normal"
+    },
+    {
+      "name": "카운터",
+      "type": "fighting"
     },
     {
       "name": "코골기",
@@ -12897,12 +13085,24 @@
       "type": "water"
     },
     {
+      "name": "판별",
+      "type": "fighting"
+    },
+    {
       "name": "페인트",
       "type": "normal"
     },
     {
+      "name": "폭발펀치",
+      "type": "fighting"
+    },
+    {
       "name": "풀묶기",
       "type": "grass"
+    },
+    {
+      "name": "플래시",
+      "type": "normal"
     },
     {
       "name": "헤롱헤롱",
@@ -12910,6 +13110,10 @@
     },
     {
       "name": "화풀이",
+      "type": "normal"
+    },
+    {
+      "name": "흉내내기",
       "type": "normal"
     },
     {
@@ -15853,6 +16057,10 @@
       "type": "psychic"
     },
     {
+      "name": "괴상한바람",
+      "type": "ghost"
+    },
+    {
       "name": "구멍파기",
       "type": "ground"
     },
@@ -15877,6 +16085,10 @@
       "type": "dark"
     },
     {
+      "name": "나이트헤드",
+      "type": "ghost"
+    },
+    {
       "name": "냉동빔",
       "type": "ice"
     },
@@ -15897,8 +16109,16 @@
       "type": "ice"
     },
     {
+      "name": "니트로차지",
+      "type": "fire"
+    },
+    {
       "name": "대타출동",
       "type": "normal"
+    },
+    {
+      "name": "도깨비불",
+      "type": "fire"
     },
     {
       "name": "도우미",
@@ -15917,12 +16137,20 @@
       "type": "fairy"
     },
     {
+      "name": "로케트박치기",
+      "type": "normal"
+    },
+    {
       "name": "리플렉터",
       "type": "psychic"
     },
     {
       "name": "매지컬샤인",
       "type": "fairy"
+    },
+    {
+      "name": "매지컬플레임",
+      "type": "fire"
     },
     {
       "name": "맹독",
@@ -15953,6 +16181,10 @@
       "type": "normal"
     },
     {
+      "name": "바크아웃",
+      "type": "dark"
+    },
+    {
       "name": "바톤터치",
       "type": "normal"
     },
@@ -15981,6 +16213,26 @@
       "type": "psychic"
     },
     {
+      "name": "분노",
+      "type": "normal"
+    },
+    {
+      "name": "불꽃세례",
+      "type": "fire"
+    },
+    {
+      "name": "불대문자",
+      "type": "fire"
+    },
+    {
+      "name": "불태우기",
+      "type": "fire"
+    },
+    {
+      "name": "비밀의힘",
+      "type": "normal"
+    },
+    {
       "name": "비밀이야기",
       "type": "normal"
     },
@@ -16003,6 +16255,10 @@
     {
       "name": "사이코쇼크",
       "type": "psychic"
+    },
+    {
+      "name": "섀도볼",
+      "type": "ghost"
     },
     {
       "name": "속임수",
@@ -16085,6 +16341,18 @@
       "type": "psychic"
     },
     {
+      "name": "연옥",
+      "type": "fire"
+    },
+    {
+      "name": "열사의대지",
+      "type": "ground"
+    },
+    {
+      "name": "열풍",
+      "type": "fire"
+    },
+    {
       "name": "예민해지기",
       "type": "normal"
     },
@@ -16095,6 +16363,10 @@
     {
       "name": "오로라빔",
       "type": "ice"
+    },
+    {
+      "name": "오버히트",
+      "type": "fire"
     },
     {
       "name": "울부짖기",
@@ -16117,6 +16389,10 @@
       "type": "normal"
     },
     {
+      "name": "유혹",
+      "type": "normal"
+    },
+    {
       "name": "은혜갚기",
       "type": "normal"
     },
@@ -16133,6 +16409,10 @@
       "type": "normal"
     },
     {
+      "name": "자연의은혜",
+      "type": "normal"
+    },
+    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -16145,12 +16425,28 @@
       "type": "normal"
     },
     {
+      "name": "저주",
+      "type": "ghost"
+    },
+    {
+      "name": "전광석화",
+      "type": "normal"
+    },
+    {
       "name": "절대영도",
       "type": "ice"
     },
     {
+      "name": "질투의불꽃",
+      "type": "fire"
+    },
+    {
       "name": "차밍보이스",
       "type": "fairy"
+    },
+    {
+      "name": "참기",
+      "type": "normal"
     },
     {
       "name": "초롱초롱눈동자",
@@ -16161,6 +16457,10 @@
       "type": "psychic"
     },
     {
+      "name": "추억의선물",
+      "type": "dark"
+    },
+    {
       "name": "치근거리기",
       "type": "fairy"
     },
@@ -16169,8 +16469,16 @@
       "type": "normal"
     },
     {
+      "name": "치유소원",
+      "type": "psychic"
+    },
+    {
       "name": "코골기",
       "type": "normal"
+    },
+    {
+      "name": "쾌청",
+      "type": "fire"
     },
     {
       "name": "탐내다",
@@ -16189,11 +16497,31 @@
       "type": "psychic"
     },
     {
+      "name": "플레어드라이브",
+      "type": "fire"
+    },
+    {
       "name": "헤롱헤롱",
       "type": "normal"
     },
     {
+      "name": "화염방사",
+      "type": "fire"
+    },
+    {
+      "name": "화염자동차",
+      "type": "fire"
+    },
+    {
       "name": "화풀이",
+      "type": "normal"
+    },
+    {
+      "name": "회오리불꽃",
+      "type": "fire"
+    },
+    {
+      "name": "흉내내기",
       "type": "normal"
     },
     {
@@ -19847,11 +20175,19 @@
       "type": "poison"
     },
     {
+      "name": "메지컬리프",
+      "type": "grass"
+    },
+    {
       "name": "명상",
       "type": "psychic"
     },
     {
       "name": "미라클아이",
+      "type": "psychic"
+    },
+    {
+      "name": "미래예지",
       "type": "psychic"
     },
     {
@@ -19931,6 +20267,10 @@
       "type": "ghost"
     },
     {
+      "name": "선취",
+      "type": "normal"
+    },
+    {
       "name": "속이다",
       "type": "normal"
     },
@@ -19953,6 +20293,10 @@
     {
       "name": "신비의부적",
       "type": "normal"
+    },
+    {
+      "name": "신통력",
+      "type": "psychic"
     },
     {
       "name": "아이언테일",
@@ -23757,6 +24101,10 @@
       "type": "ground"
     },
     {
+      "name": "10만볼트",
+      "type": "electric"
+    },
+    {
       "name": "객기",
       "type": "normal"
     },
@@ -23765,8 +24113,16 @@
       "type": "normal"
     },
     {
+      "name": "괴력",
+      "type": "normal"
+    },
+    {
       "name": "구멍파기",
       "type": "ground"
+    },
+    {
+      "name": "그림자분신",
+      "type": "normal"
     },
     {
       "name": "기가임팩트",
@@ -23777,6 +24133,10 @@
       "type": "fighting"
     },
     {
+      "name": "기충전",
+      "type": "normal"
+    },
+    {
       "name": "꼬리흔들기",
       "type": "normal"
     },
@@ -23785,16 +24145,40 @@
       "type": "normal"
     },
     {
+      "name": "냉동빔",
+      "type": "ice"
+    },
+    {
       "name": "누르기",
       "type": "normal"
+    },
+    {
+      "name": "눈보라",
+      "type": "ice"
+    },
+    {
+      "name": "니트로차지",
+      "type": "fire"
     },
     {
       "name": "대타출동",
       "type": "normal"
     },
     {
+      "name": "도깨비불",
+      "type": "fire"
+    },
+    {
       "name": "도둑질",
       "type": "dark"
+    },
+    {
+      "name": "도우미",
+      "type": "normal"
+    },
+    {
+      "name": "돌림노래",
+      "type": "normal"
     },
     {
       "name": "돌진",
@@ -23809,8 +24193,40 @@
       "type": "ground"
     },
     {
+      "name": "따라가때리기",
+      "type": "dark"
+    },
+    {
+      "name": "땅가르기",
+      "type": "ground"
+    },
+    {
       "name": "땅고르기",
       "type": "ground"
+    },
+    {
+      "name": "락클라임",
+      "type": "normal"
+    },
+    {
+      "name": "로케트박치기",
+      "type": "normal"
+    },
+    {
+      "name": "리벤지",
+      "type": "fighting"
+    },
+    {
+      "name": "리프레쉬",
+      "type": "normal"
+    },
+    {
+      "name": "맹독",
+      "type": "poison"
+    },
+    {
+      "name": "메가폰",
+      "type": "bug"
     },
     {
       "name": "모래바람",
@@ -23821,7 +24237,19 @@
       "type": "normal"
     },
     {
+      "name": "물의파동",
+      "type": "water"
+    },
+    {
+      "name": "바다회오리",
+      "type": "water"
+    },
+    {
       "name": "바디프레스",
+      "type": "fighting"
+    },
+    {
+      "name": "바위깨기",
       "type": "fighting"
     },
     {
@@ -23837,8 +24265,20 @@
       "type": "normal"
     },
     {
+      "name": "번개",
+      "type": "electric"
+    },
+    {
       "name": "벌크업",
       "type": "fighting"
+    },
+    {
+      "name": "보복",
+      "type": "dark"
+    },
+    {
+      "name": "분노",
+      "type": "normal"
     },
     {
       "name": "분발",
@@ -23853,6 +24293,22 @@
       "type": "ground"
     },
     {
+      "name": "불대문자",
+      "type": "fire"
+    },
+    {
+      "name": "불태우기",
+      "type": "fire"
+    },
+    {
+      "name": "비밀의힘",
+      "type": "normal"
+    },
+    {
+      "name": "비밀이야기",
+      "type": "normal"
+    },
+    {
       "name": "비바라기",
       "type": "water"
     },
@@ -23861,8 +24317,28 @@
       "type": "normal"
     },
     {
+      "name": "뿔드릴",
+      "type": "normal"
+    },
+    {
+      "name": "뿔찌르기",
+      "type": "normal"
+    },
+    {
       "name": "사념의박치기",
       "type": "psychic"
+    },
+    {
+      "name": "섀도볼",
+      "type": "ghost"
+    },
+    {
+      "name": "소란피기",
+      "type": "normal"
+    },
+    {
+      "name": "솔라빔",
+      "type": "grass"
     },
     {
       "name": "스마트호른",
@@ -23881,20 +24357,64 @@
       "type": "dark"
     },
     {
+      "name": "아이언테일",
+      "type": "steel"
+    },
+    {
       "name": "아이언헤드",
       "type": "steel"
+    },
+    {
+      "name": "아쿠아브레이크",
+      "type": "water"
+    },
+    {
+      "name": "아쿠아제트",
+      "type": "water"
     },
     {
       "name": "암석봉인",
       "type": "rock"
     },
     {
+      "name": "얼다바람",
+      "type": "ice"
+    },
+    {
       "name": "역린",
       "type": "dragon"
     },
     {
+      "name": "역할",
+      "type": "psychic"
+    },
+    {
+      "name": "열불내기",
+      "type": "fire"
+    },
+    {
+      "name": "오버히트",
+      "type": "fire"
+    },
+    {
       "name": "와일드볼트",
       "type": "electric"
+    },
+    {
+      "name": "원수갚기",
+      "type": "normal"
+    },
+    {
+      "name": "원한",
+      "type": "ghost"
+    },
+    {
+      "name": "유혹",
+      "type": "normal"
+    },
+    {
+      "name": "은혜갚기",
+      "type": "normal"
     },
     {
       "name": "이판사판태클",
@@ -23905,6 +24425,10 @@
       "type": "fighting"
     },
     {
+      "name": "자연의은혜",
+      "type": "normal"
+    },
+    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -23913,8 +24437,20 @@
       "type": "psychic"
     },
     {
+      "name": "잠재파워",
+      "type": "normal"
+    },
+    {
       "name": "저주",
       "type": "ghost"
+    },
+    {
+      "name": "전격파",
+      "type": "electric"
+    },
+    {
+      "name": "전자포",
+      "type": "electric"
     },
     {
       "name": "죽기살기",
@@ -23929,6 +24465,22 @@
       "type": "ground"
     },
     {
+      "name": "짓밟기",
+      "type": "normal"
+    },
+    {
+      "name": "째려보기",
+      "type": "normal"
+    },
+    {
+      "name": "참기",
+      "type": "normal"
+    },
+    {
+      "name": "코골기",
+      "type": "normal"
+    },
+    {
       "name": "쾌청",
       "type": "fire"
     },
@@ -23938,6 +24490,38 @@
     },
     {
       "name": "파도타기",
+      "type": "water"
+    },
+    {
+      "name": "플레어드라이브",
+      "type": "fire"
+    },
+    {
+      "name": "하이드로펌프",
+      "type": "water"
+    },
+    {
+      "name": "헤롱헤롱",
+      "type": "normal"
+    },
+    {
+      "name": "화염방사",
+      "type": "fire"
+    },
+    {
+      "name": "화풀이",
+      "type": "normal"
+    },
+    {
+      "name": "회오리불꽃",
+      "type": "fire"
+    },
+    {
+      "name": "흉내내기",
+      "type": "normal"
+    },
+    {
+      "name": "Chilling Water",
       "type": "water"
     },
     {
@@ -23951,6 +24535,10 @@
     {
       "name": "Trailblaze",
       "type": "grass"
+    },
+    {
+      "name": "Wave Crash",
+      "type": "water"
     }
   ],
   "mega-dragonite": [
@@ -28927,6 +29515,10 @@
       "type": "normal"
     },
     {
+      "name": "파도타기",
+      "type": "water"
+    },
+    {
       "name": "할퀴기",
       "type": "normal"
     },
@@ -32005,6 +32597,10 @@
       "type": "psychic"
     },
     {
+      "name": "파멸의빛",
+      "type": "fairy"
+    },
+    {
       "name": "풀묶기",
       "type": "grass"
     },
@@ -32277,6 +32873,10 @@
     {
       "name": "트릭",
       "type": "psychic"
+    },
+    {
+      "name": "파멸의빛",
+      "type": "fairy"
     },
     {
       "name": "풀묶기",
@@ -84005,12 +84605,24 @@
   ],
   "stunfisk-galarian": [
     {
+      "name": "10만볼트",
+      "type": "electric"
+    },
+    {
       "name": "객기",
       "type": "normal"
     },
     {
+      "name": "괴전파",
+      "type": "electric"
+    },
+    {
       "name": "구멍파기",
       "type": "ground"
+    },
+    {
+      "name": "그림자분신",
+      "type": "normal"
     },
     {
       "name": "금속음",
@@ -84065,6 +84677,10 @@
       "type": "fighting"
     },
     {
+      "name": "맹독",
+      "type": "poison"
+    },
+    {
       "name": "머드숏",
       "type": "ground"
     },
@@ -84085,6 +84701,10 @@
       "type": "water"
     },
     {
+      "name": "물의파동",
+      "type": "water"
+    },
+    {
       "name": "미러타입",
       "type": "normal"
     },
@@ -84097,12 +84717,24 @@
       "type": "normal"
     },
     {
+      "name": "방전",
+      "type": "electric"
+    },
+    {
       "name": "버티기",
       "type": "normal"
     },
     {
+      "name": "번개",
+      "type": "electric"
+    },
+    {
       "name": "보복",
       "type": "dark"
+    },
+    {
+      "name": "보호색",
+      "type": "normal"
     },
     {
       "name": "분풀이",
@@ -84113,8 +84745,24 @@
       "type": "ground"
     },
     {
+      "name": "비밀의힘",
+      "type": "normal"
+    },
+    {
+      "name": "비밀이야기",
+      "type": "normal"
+    },
+    {
       "name": "비바라기",
       "type": "water"
+    },
+    {
+      "name": "뽐내기",
+      "type": "normal"
+    },
+    {
+      "name": "선취",
+      "type": "normal"
     },
     {
       "name": "소란피기",
@@ -84137,8 +84785,16 @@
       "type": "rock"
     },
     {
+      "name": "스파크",
+      "type": "electric"
+    },
+    {
       "name": "싫은소리",
       "type": "normal"
+    },
+    {
+      "name": "아쿠아테일",
+      "type": "water"
     },
     {
       "name": "아픔나누기",
@@ -84151,6 +84807,10 @@
     {
       "name": "얼음엄니",
       "type": "ice"
+    },
+    {
+      "name": "엉겨붙기",
+      "type": "bug"
     },
     {
       "name": "열탕",
@@ -84169,6 +84829,18 @@
       "type": "ghost"
     },
     {
+      "name": "은혜갚기",
+      "type": "normal"
+    },
+    {
+      "name": "일렉트릭네트",
+      "type": "electric"
+    },
+    {
+      "name": "일렉트릭필드",
+      "type": "electric"
+    },
+    {
       "name": "잠꼬대",
       "type": "normal"
     },
@@ -84177,15 +84849,35 @@
       "type": "psychic"
     },
     {
+      "name": "잠재파워",
+      "type": "normal"
+    },
+    {
       "name": "저주",
       "type": "ghost"
+    },
+    {
+      "name": "전격파",
+      "type": "electric"
+    },
+    {
+      "name": "전기쇼크",
+      "type": "electric"
     },
     {
       "name": "전기자석파",
       "type": "electric"
     },
     {
+      "name": "전자부유",
+      "type": "electric"
+    },
+    {
       "name": "조이기",
+      "type": "normal"
+    },
+    {
+      "name": "죽기살기",
       "type": "normal"
     },
     {
@@ -84197,8 +84889,16 @@
       "type": "ground"
     },
     {
+      "name": "진흙폭탄",
+      "type": "ground"
+    },
+    {
       "name": "집게덫",
       "type": "grass"
+    },
+    {
+      "name": "참기",
+      "type": "normal"
     },
     {
       "name": "철벽",
@@ -84207,6 +84907,10 @@
     {
       "name": "철제광선",
       "type": "steel"
+    },
+    {
+      "name": "충전",
+      "type": "electric"
     },
     {
       "name": "카운터",
@@ -84225,12 +84929,24 @@
       "type": "water"
     },
     {
+      "name": "플래시",
+      "type": "normal"
+    },
+    {
       "name": "하품",
       "type": "normal"
     },
     {
       "name": "헤롱헤롱",
       "type": "normal"
+    },
+    {
+      "name": "화풀이",
+      "type": "normal"
+    },
+    {
+      "name": "흙놀이",
+      "type": "ground"
     }
   ],
   "stunfisk": [
@@ -84537,6 +85253,10 @@
       "type": "normal"
     },
     {
+      "name": "거품광선",
+      "type": "water"
+    },
+    {
       "name": "겁나는얼굴",
       "type": "normal"
     },
@@ -84545,8 +85265,16 @@
       "type": "normal"
     },
     {
+      "name": "괴력",
+      "type": "normal"
+    },
+    {
       "name": "구멍파기",
       "type": "ground"
+    },
+    {
+      "name": "그림자분신",
+      "type": "normal"
     },
     {
       "name": "기가임팩트",
@@ -84563,6 +85291,10 @@
     {
       "name": "껍질에숨기",
       "type": "water"
+    },
+    {
+      "name": "꿈먹기",
+      "type": "psychic"
     },
     {
       "name": "나쁜음모",
@@ -84597,6 +85329,10 @@
       "type": "water"
     },
     {
+      "name": "당신먼저",
+      "type": "normal"
+    },
+    {
       "name": "대타출동",
       "type": "normal"
     },
@@ -84625,6 +85361,10 @@
       "type": "fighting"
     },
     {
+      "name": "땅가르기",
+      "type": "ground"
+    },
+    {
       "name": "땅고르기",
       "type": "ground"
     },
@@ -84637,7 +85377,23 @@
       "type": "rock"
     },
     {
+      "name": "로케트박치기",
+      "type": "normal"
+    },
+    {
+      "name": "리사이클",
+      "type": "normal"
+    },
+    {
+      "name": "리플렉터",
+      "type": "psychic"
+    },
+    {
       "name": "망각술",
+      "type": "psychic"
+    },
+    {
+      "name": "매직코트",
       "type": "psychic"
     },
     {
@@ -84669,6 +85425,10 @@
       "type": "normal"
     },
     {
+      "name": "물대포",
+      "type": "water"
+    },
+    {
       "name": "물의파동",
       "type": "water"
     },
@@ -84682,6 +85442,10 @@
     },
     {
       "name": "바디프레스",
+      "type": "fighting"
+    },
+    {
+      "name": "바위깨기",
       "type": "fighting"
     },
     {
@@ -84705,8 +85469,28 @@
       "type": "psychic"
     },
     {
+      "name": "분노",
+      "type": "normal"
+    },
+    {
       "name": "불대문자",
       "type": "fire"
+    },
+    {
+      "name": "불태우기",
+      "type": "fire"
+    },
+    {
+      "name": "블록",
+      "type": "normal"
+    },
+    {
+      "name": "비밀의힘",
+      "type": "normal"
+    },
+    {
+      "name": "비밀이야기",
+      "type": "normal"
     },
     {
       "name": "비바라기",
@@ -84717,6 +85501,10 @@
       "type": "psychic"
     },
     {
+      "name": "뽐내기",
+      "type": "normal"
+    },
+    {
       "name": "사념의박치기",
       "type": "psychic"
     },
@@ -84725,7 +85513,15 @@
       "type": "normal"
     },
     {
+      "name": "사이코노이즈",
+      "type": "psychic"
+    },
+    {
       "name": "사이코쇼크",
+      "type": "psychic"
+    },
+    {
+      "name": "사이코웨이브",
       "type": "psychic"
     },
     {
@@ -84765,12 +85561,20 @@
       "type": "normal"
     },
     {
+      "name": "순간이동",
+      "type": "psychic"
+    },
+    {
       "name": "스킬스웹",
       "type": "psychic"
     },
     {
       "name": "스피드스타",
       "type": "normal"
+    },
+    {
+      "name": "시그널빔",
+      "type": "bug"
     },
     {
       "name": "신비의부적",
@@ -84789,6 +85593,14 @@
       "type": "water"
     },
     {
+      "name": "아쿠아테일",
+      "type": "water"
+    },
+    {
+      "name": "악몽",
+      "type": "ghost"
+    },
+    {
       "name": "애시드봄",
       "type": "poison"
     },
@@ -84803,6 +85615,14 @@
     {
       "name": "얼음엄니",
       "type": "ice"
+    },
+    {
+      "name": "에코보이스",
+      "type": "normal"
+    },
+    {
+      "name": "연속자르기",
+      "type": "bug"
     },
     {
       "name": "열탕",
@@ -84841,11 +85661,23 @@
       "type": "normal"
     },
     {
+      "name": "유혹",
+      "type": "normal"
+    },
+    {
+      "name": "은혜갚기",
+      "type": "normal"
+    },
+    {
       "name": "이판사판태클",
       "type": "normal"
     },
     {
       "name": "자기암시",
+      "type": "normal"
+    },
+    {
+      "name": "자연의은혜",
       "type": "normal"
     },
     {
@@ -84857,6 +85689,10 @@
       "type": "psychic"
     },
     {
+      "name": "잠재파워",
+      "type": "normal"
+    },
+    {
       "name": "저주",
       "type": "ghost"
     },
@@ -84865,8 +85701,36 @@
       "type": "electric"
     },
     {
+      "name": "전자포",
+      "type": "electric"
+    },
+    {
+      "name": "제비반환",
+      "type": "flying"
+    },
+    {
+      "name": "지구던지기",
+      "type": "fighting"
+    },
+    {
+      "name": "지옥의바퀴",
+      "type": "fighting"
+    },
+    {
       "name": "지진",
       "type": "ground"
+    },
+    {
+      "name": "진흙뿌리기",
+      "type": "ground"
+    },
+    {
+      "name": "짓밟기",
+      "type": "normal"
+    },
+    {
+      "name": "참기",
+      "type": "normal"
     },
     {
       "name": "철벽",
@@ -84875,6 +85739,10 @@
     {
       "name": "치유파동",
       "type": "psychic"
+    },
+    {
+      "name": "카운터",
+      "type": "fighting"
     },
     {
       "name": "코골기",
@@ -84891,6 +85759,10 @@
     {
       "name": "태만함",
       "type": "normal"
+    },
+    {
+      "name": "텔레키네시스",
+      "type": "psychic"
     },
     {
       "name": "트라이어택",
@@ -84917,12 +85789,20 @@
       "type": "rock"
     },
     {
+      "name": "폭발펀치",
+      "type": "fighting"
+    },
+    {
       "name": "폭포오르기",
       "type": "water"
     },
     {
       "name": "풀묶기",
       "type": "grass"
+    },
+    {
+      "name": "플래시",
+      "type": "normal"
     },
     {
       "name": "하이드로펌프",
@@ -84941,12 +85821,24 @@
       "type": "fire"
     },
     {
+      "name": "화풀이",
+      "type": "normal"
+    },
+    {
       "name": "환상빔",
       "type": "psychic"
     },
     {
+      "name": "흉내내기",
+      "type": "normal"
+    },
+    {
       "name": "흑안개",
       "type": "ice"
+    },
+    {
+      "name": "힘껏펀치",
+      "type": "fighting"
     },
     {
       "name": "Chilling Water",
@@ -86067,8 +86959,20 @@
       "type": "normal"
     },
     {
+      "name": "괴력",
+      "type": "normal"
+    },
+    {
       "name": "구멍파기",
       "type": "ground"
+    },
+    {
+      "name": "그로우펀치",
+      "type": "fighting"
+    },
+    {
+      "name": "그림자분신",
+      "type": "normal"
     },
     {
       "name": "기가임팩트",
@@ -86081,6 +86985,10 @@
     {
       "name": "깨트리다",
       "type": "fighting"
+    },
+    {
+      "name": "꿈먹기",
+      "type": "psychic"
     },
     {
       "name": "나쁜음모",
@@ -86115,6 +87023,10 @@
       "type": "water"
     },
     {
+      "name": "당신먼저",
+      "type": "normal"
+    },
+    {
       "name": "대타출동",
       "type": "normal"
     },
@@ -86143,6 +87055,10 @@
       "type": "normal"
     },
     {
+      "name": "드래곤테일",
+      "type": "dragon"
+    },
+    {
       "name": "드레인펀치",
       "type": "fighting"
     },
@@ -86155,7 +87071,23 @@
       "type": "fighting"
     },
     {
+      "name": "리사이클",
+      "type": "normal"
+    },
+    {
+      "name": "리플렉터",
+      "type": "psychic"
+    },
+    {
+      "name": "마지막수단",
+      "type": "normal"
+    },
+    {
       "name": "망각술",
+      "type": "psychic"
+    },
+    {
+      "name": "매직코트",
       "type": "psychic"
     },
     {
@@ -86183,6 +87115,10 @@
       "type": "normal"
     },
     {
+      "name": "물대포",
+      "type": "water"
+    },
+    {
       "name": "물의파동",
       "type": "water"
     },
@@ -86193,6 +87129,10 @@
     {
       "name": "바다회오리",
       "type": "water"
+    },
+    {
+      "name": "바위깨기",
+      "type": "fighting"
     },
     {
       "name": "바크아웃",
@@ -86243,6 +87183,22 @@
       "type": "fire"
     },
     {
+      "name": "불태우기",
+      "type": "fire"
+    },
+    {
+      "name": "블록",
+      "type": "normal"
+    },
+    {
+      "name": "비밀의힘",
+      "type": "normal"
+    },
+    {
+      "name": "비밀이야기",
+      "type": "normal"
+    },
+    {
       "name": "비바라기",
       "type": "water"
     },
@@ -86261,6 +87217,10 @@
     {
       "name": "사슬묶기",
       "type": "normal"
+    },
+    {
+      "name": "사이드체인지",
+      "type": "psychic"
     },
     {
       "name": "사이코노이즈",
@@ -86303,12 +87263,24 @@
       "type": "normal"
     },
     {
+      "name": "순서미루기",
+      "type": "dark"
+    },
+    {
       "name": "스킬스웹",
       "type": "psychic"
     },
     {
+      "name": "스톤샤워",
+      "type": "rock"
+    },
+    {
       "name": "스피드스타",
       "type": "normal"
+    },
+    {
+      "name": "시그널빔",
+      "type": "bug"
     },
     {
       "name": "신비의부적",
@@ -86327,6 +87299,18 @@
       "type": "water"
     },
     {
+      "name": "아쿠아테일",
+      "type": "water"
+    },
+    {
+      "name": "악몽",
+      "type": "ghost"
+    },
+    {
+      "name": "암석봉인",
+      "type": "rock"
+    },
+    {
       "name": "애시드봄",
       "type": "poison"
     },
@@ -86339,12 +87323,24 @@
       "type": "ice"
     },
     {
+      "name": "에코보이스",
+      "type": "normal"
+    },
+    {
+      "name": "연속자르기",
+      "type": "bug"
+    },
+    {
       "name": "열탕",
       "type": "water"
     },
     {
       "name": "염동력",
       "type": "psychic"
+    },
+    {
+      "name": "예민해지기",
+      "type": "normal"
     },
     {
       "name": "오물웨이브",
@@ -86375,7 +87371,23 @@
       "type": "normal"
     },
     {
+      "name": "유혹",
+      "type": "normal"
+    },
+    {
+      "name": "은혜갚기",
+      "type": "normal"
+    },
+    {
+      "name": "이판사판태클",
+      "type": "normal"
+    },
+    {
       "name": "자기암시",
+      "type": "normal"
+    },
+    {
+      "name": "자연의은혜",
       "type": "normal"
     },
     {
@@ -86387,6 +87399,10 @@
       "type": "psychic"
     },
     {
+      "name": "잠재파워",
+      "type": "normal"
+    },
+    {
       "name": "저주",
       "type": "ghost"
     },
@@ -86395,7 +87411,19 @@
       "type": "electric"
     },
     {
+      "name": "전자포",
+      "type": "electric"
+    },
+    {
+      "name": "지구던지기",
+      "type": "fighting"
+    },
+    {
       "name": "지진",
+      "type": "ground"
+    },
+    {
+      "name": "진흙뿌리기",
       "type": "ground"
     },
     {
@@ -86405,6 +87433,10 @@
     {
       "name": "치유파동",
       "type": "psychic"
+    },
+    {
+      "name": "카운터",
+      "type": "fighting"
     },
     {
       "name": "코골기",
@@ -86421,6 +87453,10 @@
     {
       "name": "태만함",
       "type": "normal"
+    },
+    {
+      "name": "텔레키네시스",
+      "type": "psychic"
     },
     {
       "name": "트라이어택",
@@ -86447,12 +87483,20 @@
       "type": "rock"
     },
     {
+      "name": "폭발펀치",
+      "type": "fighting"
+    },
+    {
       "name": "폭포오르기",
       "type": "water"
     },
     {
       "name": "풀묶기",
       "type": "grass"
+    },
+    {
+      "name": "플래시",
+      "type": "normal"
     },
     {
       "name": "하이드로펌프",
@@ -86471,8 +87515,20 @@
       "type": "fire"
     },
     {
+      "name": "화풀이",
+      "type": "normal"
+    },
+    {
       "name": "환상빔",
       "type": "psychic"
+    },
+    {
+      "name": "흉내내기",
+      "type": "normal"
+    },
+    {
+      "name": "힘껏펀치",
+      "type": "fighting"
     },
     {
       "name": "Chilling Water",
@@ -86480,6 +87536,10 @@
     },
     {
       "name": "Chilly Reception",
+      "type": "ice"
+    },
+    {
+      "name": "Snowscape",
       "type": "ice"
     },
     {
