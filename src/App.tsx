@@ -3503,7 +3503,7 @@ export default function App() {
                         const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
                         const guideHeight = Math.max(0, guideBottom - guideTop)
                         const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
-                        const labelSideClass = idx % 2 === 0 ? 'label-right' : 'label-left'
+                        const labelSideClass = left > 72 ? 'label-left' : 'label-right'
                         return (
                           <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
                             {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}

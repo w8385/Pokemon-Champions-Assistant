@@ -2377,6 +2377,8 @@ textarea { min-height: 72px; resize: vertical; }
   position: absolute;
   width: 0;
   min-width: 0;
+  --speed-node-column-gap: 18px;
+  --speed-node-card-width: 118px;
   transform: translateX(-50%);
   box-sizing: border-box;
   z-index: 1;
@@ -2403,11 +2405,11 @@ textarea { min-height: 72px; resize: vertical; }
   z-index: 2;
 }
 .speed-plane-range-node.label-right .speed-plane-range-marker {
-  left: 14px;
+  left: var(--speed-node-column-gap);
   transform: translateY(-50%);
 }
 .speed-plane-range-node.label-left .speed-plane-range-marker {
-  right: 14px;
+  right: var(--speed-node-column-gap);
   transform: translateY(-50%);
 }
 .speed-plane-range-marker.item {
@@ -2451,7 +2453,7 @@ textarea { min-height: 72px; resize: vertical; }
 .speed-plane-range-node-head,
 .speed-plane-range-node-tail {
   position: absolute;
-  width: 118px;
+  width: var(--speed-node-card-width);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -2464,11 +2466,11 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .speed-plane-range-node.label-right .speed-plane-range-node-head,
 .speed-plane-range-node.label-right .speed-plane-range-node-tail {
-  left: 16px;
+  left: var(--speed-node-column-gap);
 }
 .speed-plane-range-node.label-left .speed-plane-range-node-head,
 .speed-plane-range-node.label-left .speed-plane-range-node-tail {
-  right: 16px;
+  right: var(--speed-node-column-gap);
   align-items: flex-end;
   text-align: right;
 }
