@@ -2213,22 +2213,39 @@ textarea { min-height: 72px; resize: vertical; }
     linear-gradient(180deg, rgba(96, 165, 250, 0.05), rgba(96, 165, 250, 0) 40%, rgba(124, 45, 18, 0.08) 100%),
     #0b1220;
   overflow: hidden;
+  padding-left: 52px;
 }
-.speed-plane-baseline {
+.speed-plane-tick {
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  transform: translateY(-50%);
+  border-top: 1px dashed rgba(100, 116, 139, 0.22);
+}
+.speed-plane-tick span {
+  position: absolute;
+  left: 10px;
+  top: -9px;
+  color: #64748b;
+  font-size: 11px;
+  background: #0b1220;
+  padding: 0 4px;
+}
+.speed-plane-baseline {
+  position: absolute;
+  left: 52px;
+  right: 0;
+  transform: translateY(-50%);
   border-top: 2px solid #64748b;
 }
 .speed-plane-anchor {
   position: absolute;
-  top: calc(50% - 28px);
   left: 18px;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 14px;
   border: 1px solid #60a5fa;
   background: rgba(15, 23, 42, 0.92);
@@ -2241,15 +2258,18 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .speed-plane-node {
   position: absolute;
-  width: 22%;
-  min-width: 140px;
+  width: 16%;
+  min-width: 108px;
   transform: translate(-50%, -50%);
-  padding: 10px 12px;
+  padding: 8px 9px;
   border-radius: 14px;
   border: 1px solid #334155;
   background: rgba(15, 23, 42, 0.96);
   display: grid;
-  gap: 4px;
+  gap: 3px;
+}
+.speed-plane-node strong {
+  font-size: 12px;
 }
 .speed-plane-node.enemy-ahead {
   border-color: #f97316;
@@ -2262,13 +2282,13 @@ textarea { min-height: 72px; resize: vertical; }
   border-color: #cbd5e1;
 }
 .speed-plane-node-meta {
-  margin-top: 4px;
+  margin-top: 2px;
   display: grid;
   gap: 2px;
 }
 .speed-plane-node-meta span {
   color: #93a4b8;
-  font-size: 11px;
+  font-size: 10px;
 }
 .speed-plane-legend {
   display: flex;
@@ -2792,7 +2812,7 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-anchor-card { position: static; }
   .speed-plane-board { min-height: 420px; }
   .speed-plane-node {
-    width: 42%;
+    width: 34%;
     min-width: 0;
   }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

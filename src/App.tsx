@@ -1490,7 +1490,14 @@ export default function App() {
       ...needs,
     }
   }) : []
-  const maxScenarioDiff = opponentSpeedScenarios.reduce((max, scenario) => Math.max(max, Math.abs(scenario.speedAtMax - mySpeed)), 1)
+  const speedAxisMin = 40
+  const speedAxisMax = 340
+  const speedAxisTicks = [40, 100, 160, 220, 280, 340]
+  const speedAxisTop = (speed: number) => {
+    const clamped = Math.max(speedAxisMin, Math.min(speedAxisMax, speed))
+    const ratio = (clamped - speedAxisMin) / (speedAxisMax - speedAxisMin)
+    return 100 - (ratio * 100)
+  }
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
@@ -3266,16 +3273,19 @@ export default function App() {
                     <span>{lt('실수치 스피드')} {mySpeed}</span>
                   </div>
                   <div className="speed-plane-board">
-                    <div className="speed-plane-baseline" />
-                    <div className="speed-plane-anchor">
+                    {speedAxisTicks.map((tick) => (
+                      <div key={`speed-tick-${tick}`} className="speed-plane-tick" style={{ top: `${speedAxisTop(tick)}%` }}>
+                        <span>{tick}</span>
+                      </div>
+                    ))}
+                    <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
+                    <div className="speed-plane-anchor" style={{ top: `${speedAxisTop(mySpeed)}%` }}>
                       <span>{displayName(myRow, siteLanguage)}</span>
                       <strong>{mySpeed}</strong>
                     </div>
                     {opponentSpeedScenarios.map((scenario, idx) => {
-                      const diff = scenario.speedAtMax - mySpeed
-                      const normalized = maxScenarioDiff ? diff / maxScenarioDiff : 0
-                      const top = 50 - (normalized * 30)
-                      const left = 12 + (idx * 24)
+                      const top = speedAxisTop(scenario.speedAtMax)
+                      const left = 28 + (idx * 18)
                       return (
                         <div
                           key={`speed-scenario-${scenario.id}`}
