@@ -3234,8 +3234,8 @@ export default function App() {
             <h2>{lt('내 파티 추월컷')}</h2>
           </div>
           {oppRow ? <>
-            <div className="speed-compare-board">
-              <aside className="speed-anchor-card">
+            <div className="speed-scenario-ladder">
+              <div className="speed-inline-head">
                 <div className="speed-target-head">
                   {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
                   <div>
@@ -3250,8 +3250,7 @@ export default function App() {
                     </div> : null}
                   </div>
                 </div>
-              </aside>
-              <div className="speed-scenario-ladder">
+              </div>
                 <div className="speed-ladder-head speed-target-card enemy">
                   <div className="speed-target-head">
                     {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
@@ -3286,10 +3285,11 @@ export default function App() {
                     {opponentSpeedScenarios.map((scenario, idx) => {
                       const top = speedAxisTop(scenario.speedAtMax)
                       const left = 28 + (idx * 18)
+                      const verticalClass = scenario.speedAtMax > mySpeed ? 'above' : scenario.speedAtMax < mySpeed ? 'below' : 'tie'
                       return (
                         <div
                           key={`speed-scenario-${scenario.id}`}
-                          className={`speed-plane-node ${scenario.result === '동속' ? 'is-tie' : scenario.result === '상대가 앞섬' ? 'enemy-ahead' : 'my-ahead'}`}
+                          className={`speed-plane-node ${verticalClass}`}
                           style={{ top: `${top}%`, left: `${left}%` }}
                         >
                           <strong>{lt(scenario.label)}</strong>
@@ -3302,13 +3302,7 @@ export default function App() {
                       )
                     })}
                   </div>
-                  <div className="speed-plane-legend">
-                    <span className="pick-badge enemy">{lt('상대가 앞섬')}</span>
-                    <span className="pick-badge">{lt('동속')}</span>
-                    <span className="pick-badge">{lt('내가 앞섬')}</span>
-                  </div>
                 </div>
-              </div>
             </div>
           </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
         </section> : null}
