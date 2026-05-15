@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-05-15T10:38:22.195Z",
+  "source": {
+    "local": "src/App.tsx#typeChart",
+    "remote": "PokeAPI /type endpoints"
+  },
+  "totals": {
+    "types": 18,
+    "pairs": 324,
+    "mismatches": 0
+  },
+  "mismatches": []
+}

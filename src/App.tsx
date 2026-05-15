@@ -538,6 +538,13 @@ const typeChart: Record<string, Partial<Record<string, number>>> = {
   Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 },
 }
 
+const normalizedTypeChart: Record<string, Partial<Record<string, number>>> = Object.fromEntries(
+  Object.entries(typeChart).map(([attackType, targets]) => [
+    attackType.toLowerCase(),
+    Object.fromEntries(Object.entries(targets).map(([defendType, value]) => [defendType.toLowerCase(), value])),
+  ]),
+)
+
 function clampSpeedStage(value: unknown) {
   const num = Number(value)
   if (!Number.isFinite(num)) return 0
@@ -1305,7 +1312,8 @@ function magicEffortPoints(row: Row, member: PartyMember, stat: EffortStatKey) {
 }
 
 function typeEffectiveness(attackType: string, defendTypes: string[]) {
-  return defendTypes.reduce((acc, defendType) => acc * (typeChart[attackType]?.[defendType] ?? 1), 1)
+  const attackKey = attackType.toLowerCase()
+  return defendTypes.reduce((acc, defendType) => acc * (normalizedTypeChart[attackKey]?.[defendType.toLowerCase()] ?? 1), 1)
 }
 
 function matchupHints(attacker: Row, defender: Row) {
@@ -4163,9 +4171,9 @@ export default function App() {
             <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge">Lv50</span>
               <span className="pick-badge">{lt('상대 기본 내구 가정')} · {opponentBulkLabel(opponentBulkState, calcOpponentBulkPreset)}</span>
-              {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
-              {activeDamageMoveCategory ? <span className="pick-badge">{lt('자동 분류')} · {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
-              {activeDamageMovePower !== null ? <span className="pick-badge">{lt('자동 위력')} · {activeDamageMovePower}</span> : null}
+              {activeDamageMoveType ? <span className="pick-badge">{TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
+              {activeDamageMoveCategory ? <span className="pick-badge">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
+              {activeDamageMovePower !== null ? <span className="pick-badge">{activeDamageMovePower}</span> : null}
               {activeDamageMoveMeta?.variablePower ? <span className="pick-badge warn">{lt('가변 위력 기술이라 수동 입력이 필요함')}</span> : null}
               <span className="pick-badge">STAB {activeDamageMoveType ? autoStab : stab}</span>
               <span className="pick-badge">{lt('상성')} {damageModifiers.effectiveness}x</span>
@@ -4190,14 +4198,14 @@ export default function App() {
                   {activeDamageMovePower === null ? <label>
                     {lt('수동 위력')}
                     <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
-                  </label> : <div className="calc-lock-box">{lt('자동 위력')} {activeDamageMovePower}</div>}
+                  </label> : <div className="calc-lock-box">{activeDamageMovePower}</div>}
                   {activeDamageMoveCategory === null ? <label>
                     {lt('수동 분류')}
                     <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
                       <option value="physical">{lt('물리')}</option>
                       <option value="special">{lt('특수')}</option>
                     </select>
-                  </label> : <div className="calc-lock-box">{lt('자동 분류')} {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
+                  </label> : <div className="calc-lock-box">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
                   {!activeDamageMoveType ? <label>
                     STAB
                     <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>

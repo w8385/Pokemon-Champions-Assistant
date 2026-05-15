@@ -10,6 +10,7 @@
     "build:champions-whitelist": "node scripts/build-champions-move-whitelist.mjs",
     "build:champions-learned-whitelist": "node scripts/build-champions-learned-move-whitelist.mjs",
     "build:champions-move-meta": "node scripts/build-champions-move-meta.mjs",
+    "check:type-effectiveness": "node scripts/check-type-effectiveness-harness.mjs",
     "build:champions-item-whitelist": "node scripts/build-champions-item-whitelist.mjs"
   },
   "dependencies": {
