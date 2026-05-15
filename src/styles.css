@@ -46,6 +46,12 @@ header {
   gap: 12px;
   flex: 1;
 }
+.header-utility-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 0 0 auto;
+}
 header h1 { margin: 0 0 8px; }
 header p { margin: 0 0 14px; color: #93a4b8; }
 .top-actions {
@@ -66,6 +72,9 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .header-language-wrap {
   flex: 0 0 auto;
+}
+.settings-menu-wrap {
+  position: relative;
 }
 .icon-button {
   appearance: none;
@@ -95,6 +104,61 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   background: #0b1220;
   box-shadow: 0 12px 30px rgba(0,0,0,0.35);
   z-index: 30;
+}
+.settings-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 32;
+  display: grid;
+  gap: 10px;
+  width: min(340px, calc(100vw - 48px));
+  padding: 10px;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: rgba(11, 18, 32, 0.98);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.settings-menu-section {
+  display: grid;
+  gap: 8px;
+}
+.settings-menu-title {
+  color: #93a4b8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 2px;
+}
+.settings-action-item {
+  appearance: none;
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.98));
+  color: #eef2f7;
+  text-align: left;
+  cursor: pointer;
+}
+.settings-action-item strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+.settings-action-item span {
+  color: #93a4b8;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.settings-action-item.danger {
+  border-color: rgba(127, 29, 29, 0.9);
+  background: linear-gradient(180deg, rgba(69, 10, 10, 0.5), rgba(11, 18, 32, 0.98));
+}
+.settings-action-item.danger span {
+  color: #fca5a5;
 }
 .language-menu-item {
   appearance: none;
@@ -3345,6 +3409,8 @@ textarea { min-height: 72px; resize: vertical; }
   font-weight: 700;
 }
 @media (max-width: 960px) {
+  .header-top-row { align-items: flex-start; }
+  .header-utility-row { gap: 6px; }
   .grid { grid-template-columns: 1fr; }
   .panel.wide { grid-column: span 1; }
   .top-action-cards { grid-template-columns: 1fr; }
