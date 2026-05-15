@@ -31,4 +31,10 @@ export const dataSourcePolicy = {
     supplements: ['src/sampleMoves.ts', 'src/championsMovePools.json', 'src/championsRecommendationAuditOverrides.json'],
     caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함한다.',
   },
+  itemWhitelist: {
+    sourceOfTruth: 'src/championsItems.ts',
+    primary: '포켓몬 챔피언스에서 현재 UI가 허용하는 도구 목록만 분리한 파일',
+    supplements: ['별칭', '아이템 스프라이트 slug'],
+    caveat: '현재는 앱 내부 허용 목록 추출본이며, 향후 포챔스 실데이터 기준 검증이 필요할 수 있다.',
+  },
 } as const

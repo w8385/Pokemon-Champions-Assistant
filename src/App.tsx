@@ -1,6 +1,7 @@
 import React from 'react'
 import championsData from './pokemon_champions_verified_data.json'
 import championsLearnedMoveMeta from './championsLearnedMoveMeta.json'
+import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
@@ -216,42 +217,6 @@ const CHAMPIONS_EFFORT_CAP = 66
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 const STAT_GAUGE_MAX = 255
-const ITEM_OPTIONS = ['기합의띠', '구애스카프', '구애안경', '구애머리띠', '생명의구슬', '먹다남은음식', '돌격조끼', '약점보험', '자뭉열매', '오카열매', '유루열매', '리샘열매', '반짝가루', '고스트메모리', '금속코트', '검은진흙', '부스트에너지', '클리어참', '풍선', '빛의점토'] as const
-const ITEM_ALIASES: Partial<Record<typeof ITEM_OPTIONS[number], string[]>> = {
-  '기합의띠': ['기띠', '띠'],
-  '구애스카프': ['스카프'],
-  '구애안경': ['안경'],
-  '구애머리띠': ['머리띠'],
-  '생명의구슬': ['생구'],
-  '먹다남은음식': ['먹밥', '남은음식'],
-  '돌격조끼': ['조끼'],
-  '약점보험': ['약보'],
-  '부스트에너지': ['부에'],
-  '클리어참': ['클참'],
-  '빛의점토': ['빛점토'],
-}
-const ITEM_SPRITE_MAP: Record<string, string> = {
-  '기합의띠': 'focus-sash',
-  '구애스카프': 'choice-scarf',
-  '구애안경': 'choice-specs',
-  '구애머리띠': 'choice-band',
-  '생명의구슬': 'life-orb',
-  '먹다남은음식': 'leftovers',
-  '돌격조끼': 'assault-vest',
-  '약점보험': 'weakness-policy',
-  '자뭉열매': 'figy-berry',
-  '오카열매': 'occa-berry',
-  '유루열매': 'yache-berry',
-  '리샘열매': 'roseli-berry',
-  '반짝가루': 'bright-powder',
-  '고스트메모리': 'ghost-memory',
-  '금속코트': 'metal-coat',
-  '검은진흙': 'black-sludge',
-  '부스트에너지': 'booster-energy',
-  '클리어참': 'clear-amulet',
-  '풍선': 'air-balloon',
-  '빛의점토': 'light-clay',
-}
 const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-abomasnow': 'abomasite',
   'mega-absol': 'absolite',
@@ -385,7 +350,7 @@ function normalizeItemForKey(key: string, item: string) {
 function isAllowedChampionsItem(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
   if (!normalized) return true
-  return normalized === megaStoneForKey(key) || ITEM_OPTIONS.includes(normalized as typeof ITEM_OPTIONS[number])
+  return normalized === megaStoneForKey(key) || CHAMPIONS_ITEM_OPTIONS.includes(normalized as ChampionsItem)
 }
 
 function visibleChampionsItem(key: string, item: string) {
@@ -397,7 +362,7 @@ function itemSpriteSrc(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
   const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
   if (megaSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
-  const spriteSlug = ITEM_SPRITE_MAP[normalized]
+  const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized]
   if (spriteSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
   if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
   return `${import.meta.env.BASE_URL}item-generic.svg`
@@ -1362,10 +1327,10 @@ function displayItemLabel(item: string, language: SiteLanguage) {
 
 function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
   const normalized = query.trim().toLowerCase()
-  if (!normalized) return [...ITEM_OPTIONS]
-  return [...ITEM_OPTIONS]
+  if (!normalized) return [...CHAMPIONS_ITEM_OPTIONS]
+  return [...CHAMPIONS_ITEM_OPTIONS]
     .map((item) => {
-      const aliases = ITEM_ALIASES[item] ?? []
+      const aliases = CHAMPIONS_ITEM_ALIASES[item] ?? []
       const candidates = [item, displayItemLabel(item, 'en'), displayItemLabel(item, 'ja'), ...aliases].map((entry) => entry.toLowerCase())
       const score = candidates.reduce((best, candidate) => {
         if (candidate === normalized) return Math.min(best, 0)
@@ -1376,7 +1341,7 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
       }, Number.POSITIVE_INFINITY)
       return Number.isFinite(score) ? { item, score } : null
     })
-    .filter((entry): entry is { item: typeof ITEM_OPTIONS[number]; score: number } => Boolean(entry))
+    .filter((entry): entry is { item: ChampionsItem; score: number } => Boolean(entry))
     .sort((a, b) => a.score - b.score || a.item.localeCompare(b.item, 'ko'))
     .map((entry) => entry.item)
 }
@@ -1487,7 +1452,7 @@ function abilitiesForKey(key: string, language: SiteLanguage) {
 function itemOptionsForKey(key: string) {
   const fixed = megaStoneForKey(key)
   if (fixed) return [fixed]
-  return ITEM_OPTIONS.filter((item) => isAllowedChampionsItem(key, item))
+  return CHAMPIONS_ITEM_OPTIONS.filter((item) => isAllowedChampionsItem(key, item))
 }
 
 function defaultAbilityForKey(key: string) {
