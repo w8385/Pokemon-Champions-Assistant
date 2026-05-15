@@ -434,6 +434,24 @@ const speciesOptions = rows.map((row) => ({
   label: `${row.name_ko} (${row.name_en})`,
 }))
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
+const ITEM_ALIAS_TO_CANONICAL = new Map(
+  CHAMPIONS_ITEM_OPTIONS.flatMap((item) => {
+    const variants = [
+      item,
+      localizedChampionsItemLabel(item, 'ko'),
+      localizedChampionsItemLabel(item, 'en'),
+      ...(CHAMPIONS_ITEM_ALIASES[item] ?? []),
+    ]
+    return [...new Set(variants.map((variant) => variant.trim()).filter(Boolean))]
+      .map((variant) => [variant.toLowerCase(), item] as const)
+  }),
+)
+
+function canonicalChampionsItemName(item: string) {
+  const normalized = item.trim()
+  if (!normalized) return ''
+  return ITEM_ALIAS_TO_CANONICAL.get(normalized.toLowerCase()) ?? normalized
+}
 
 function megaStoneForKey(key: string) {
   if (!key.startsWith('mega-')) return null
@@ -450,7 +468,7 @@ function megaStoneForKey(key: string) {
 }
 
 function normalizeItemForKey(key: string, item: string) {
-  return megaStoneForKey(key) ?? item
+  return megaStoneForKey(key) ?? canonicalChampionsItemName(item)
 }
 
 function isAllowedChampionsItem(key: string, item: string) {
