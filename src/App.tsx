@@ -468,7 +468,11 @@ function itemSpriteSrc(key: string, item: string) {
   const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
   if (megaSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
   const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized]
-  if (spriteSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
+  if (spriteSlug) {
+    if (/^https?:\/\//.test(spriteSlug)) return spriteSlug
+    if (spriteSlug.includes('/')) return `${import.meta.env.BASE_URL}${spriteSlug.replace(/^\//, '')}`
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteSlug}.png`
+  }
   if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
   return `${import.meta.env.BASE_URL}item-generic.svg`
 }

@@ -19,6 +19,10 @@ const MANUAL_KO_LABELS = {
   'ようせいのハネ': '요정의깃털',
 }
 
+const MANUAL_SPRITE_PATHS = {
+  'ようせいのハネ': 'item-sprites/fairy-feather.png',
+}
+
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
 const srcPath = path.join(rootDir, 'src', 'championsItems.ts')
 const reportPath = path.join(rootDir, 'reports', 'championsItemWhitelistReport.json')
@@ -132,7 +136,7 @@ const aliasEntries = whitelistItems.map((item) => {
 }).filter(([, aliases]) => aliases.length)
 
 const spriteEntries = whitelistItems
-  .map((item) => [item, detailsByJa.get(item)?.apiName ?? null])
+  .map((item) => [item, MANUAL_SPRITE_PATHS[item] ?? detailsByJa.get(item)?.apiName ?? null])
   .filter(([, apiName]) => typeof apiName === 'string' && apiName)
 
 const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${spriteEntries.map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`).join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
@@ -154,6 +158,7 @@ const report = {
   whitelistItems,
   verifiedKoLabels: Object.fromEntries(koLabelEntries),
   missingKoLabels,
+  manualSpritePaths: MANUAL_SPRITE_PATHS,
   notes: [
     'Whitelist is built from publicly linked Champions opendata JSON files.',
     'Japanese item names remain the source-of-truth for reverse-mapping Champions opendata.',

@@ -225,7 +225,7 @@ export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> =
   "もくたん": "charcoal",
   "ヤチェのみ": "yache-berry",
   "やわらかいすな": "soft-sand",
-  "ようせいのハネ": "fairy-feather",
+  "ようせいのハネ": "item-sprites/fairy-feather.png",
   "ヨプのみ": "chople-berry",
   "ヨロギのみ": "charti-berry",
   "ラムのみ": "lum-berry",

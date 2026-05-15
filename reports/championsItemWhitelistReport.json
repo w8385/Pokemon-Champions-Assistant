@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T08:34:02.163Z",
+  "generatedAt": "2026-05-15T11:50:15.851Z",
   "sourceGuideUrl": "https://champs.pokedb.tokyo/guide/opendata",
   "sourceJsonUrls": [
     "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
@@ -11,7 +11,7 @@
       "url": "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
       "season": "M-1",
       "rule": "ダブル",
-      "updatedAt": "2026-05-15 14:07:55",
+      "updatedAt": "2026-05-15 17:21:53",
       "uniqueItemCount": 53,
       "uniqueItems": [
         "イトケのみ",
@@ -73,7 +73,7 @@
       "url": "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json",
       "season": "M-1",
       "rule": "シングル",
-      "updatedAt": "2026-05-15 16:03:53",
+      "updatedAt": "2026-05-15 19:22:29",
       "uniqueItemCount": 88,
       "uniqueItems": [
         "イトケのみ",
@@ -318,6 +318,9 @@
     "ロゼルのみ": "로셀열매"
   },
   "missingKoLabels": [],
+  "manualSpritePaths": {
+    "ようせいのハネ": "item-sprites/fairy-feather.png"
+  },
   "notes": [
     "Whitelist is built from publicly linked Champions opendata JSON files.",
     "Japanese item names remain the source-of-truth for reverse-mapping Champions opendata.",
