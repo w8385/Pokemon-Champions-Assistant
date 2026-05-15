@@ -137,7 +137,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
-    '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
+    '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '비스카프': 'No Scarf', '스카프': 'Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
     '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
@@ -166,7 +166,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
-    '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
+    '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '비스카프': '非スカーフ', '스카프': 'スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
     '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
@@ -1539,6 +1539,20 @@ export default function App() {
       ...needs,
     }
   }) : []
+  const opponentSpeedBands = oppRow ? [
+    {
+      id: 'no-scarf',
+      label: '비스카프',
+      minScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'neutral'),
+      maxScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'fast'),
+    },
+    {
+      id: 'scarf',
+      label: '스카프',
+      minScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'neutral-scarf'),
+      maxScenario: opponentSpeedScenarios.find((scenario) => scenario.id === 'fast-scarf'),
+    },
+  ].filter((band) => band.minScenario && band.maxScenario) : []
   const speedAxisMin = 40
   const speedAxisMax = 340
   const speedAxisTicks = [40, 100, 160, 220, 280, 340]
@@ -3330,26 +3344,40 @@ export default function App() {
                     ))}
                     <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
                     <div className="speed-plane-baseline-label" style={{ top: `${speedAxisTop(mySpeed)}%` }}>{lt('기준선')}</div>
-                    {opponentSpeedScenarios.map((scenario, idx) => {
-                      const top = speedAxisTop(scenario.speedAtMax)
-                      const left = 28 + (idx * 18)
-                      const verticalClass = scenario.speedAtMax > mySpeed ? 'above' : scenario.speedAtMax < mySpeed ? 'below' : 'tie'
-                      const guideTop = Math.min(top, speedAxisTop(mySpeed))
-                      const guideHeight = Math.abs(top - speedAxisTop(mySpeed))
+                    {opponentSpeedBands.map((band, idx) => {
+                      const minScenario = band.minScenario!
+                      const maxScenario = band.maxScenario!
+                      const minTop = speedAxisTop(minScenario.speedAtMax)
+                      const maxTop = speedAxisTop(maxScenario.speedAtMax)
+                      const left = 34 + (idx * 28)
+                      const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
+                      const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
+                      const guideHeight = Math.max(0, guideBottom - guideTop)
+                      const minClass = minScenario.speedAtMax > mySpeed ? 'above' : minScenario.speedAtMax < mySpeed ? 'below' : 'tie'
+                      const maxClass = maxScenario.speedAtMax > mySpeed ? 'above' : maxScenario.speedAtMax < mySpeed ? 'below' : 'tie'
                       return (
-                        <div key={`speed-scenario-${scenario.id}`} className="speed-plane-node-wrap" style={{ left: `${left}%` }}>
+                        <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
                           <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} />
-                          <div
-                            className={`speed-plane-node ${verticalClass}`}
-                            style={{ top: `${top}%` }}
-                          >
+                          <div className="speed-plane-band-label">{lt(band.label)}</div>
+                          <div className={`speed-plane-node range-cap ${maxClass}`} style={{ top: `${maxTop}%` }}>
                             <div className="speed-plane-node-head">
-                              <strong>{lt(scenario.label)}</strong>
-                              <span>{scenario.speedAtMax}</span>
+                              <strong>{lt('최속')}</strong>
+                              <span>{maxScenario.speedAtMax}</span>
                             </div>
                             <div className="speed-plane-node-meta">
-                              <span>{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
-                              <span>{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
+                              <span>{lt('동속컷')} {maxScenario.tieEffort ?? '—'}</span>
+                              <span>{lt('추월컷')} {maxScenario.passEffort ?? lt('불가')}</span>
+                            </div>
+                          </div>
+                          <div className="speed-plane-range-line" style={{ top: `${maxTop}%`, height: `${Math.max(0, minTop - maxTop)}%` }} />
+                          <div className={`speed-plane-node range-floor ${minClass}`} style={{ top: `${minTop}%` }}>
+                            <div className="speed-plane-node-head">
+                              <strong>{lt('준속')}</strong>
+                              <span>{minScenario.speedAtMax}</span>
+                            </div>
+                            <div className="speed-plane-node-meta">
+                              <span>{lt('동속컷')} {minScenario.tieEffort ?? '—'}</span>
+                              <span>{lt('추월컷')} {minScenario.passEffort ?? lt('불가')}</span>
                             </div>
                           </div>
                         </div>

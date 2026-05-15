@@ -2250,11 +2250,24 @@ textarea { min-height: 72px; resize: vertical; }
   color: #cbd5e1;
   font-size: 12px;
 }
-.speed-plane-node-wrap {
+.speed-plane-band-wrap {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 0;
+}
+.speed-plane-band-label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  transform: translateX(-50%);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  background: #0b1220;
+  padding: 2px 6px;
+  border: 1px solid #334155;
+  border-radius: 999px;
 }
 .speed-plane-guide {
   position: absolute;
@@ -2262,9 +2275,15 @@ textarea { min-height: 72px; resize: vertical; }
   transform: translateX(-50%);
   border-left: 1px dashed rgba(148, 163, 184, 0.45);
 }
+.speed-plane-range-line {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  border-left: 2px solid rgba(148, 163, 184, 0.6);
+}
 .speed-plane-node {
   position: absolute;
-  width: 16%;
+  width: 15%;
   min-width: 108px;
   padding: 6px 8px;
   border-radius: 12px;
@@ -2287,6 +2306,12 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .speed-plane-node.tie {
   transform: translate(-50%, -50%);
+}
+.speed-plane-node.range-cap {
+  transform: translate(-50%, -100%);
+}
+.speed-plane-node.range-floor {
+  transform: translate(-50%, 0%);
 }
 .speed-plane-node strong {
   font-size: 11px;
@@ -2828,7 +2853,7 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-plane-board { min-height: 420px; }
   .speed-compare-head-grid { grid-template-columns: 1fr; }
   .speed-plane-node {
-    width: 30%;
+    width: 28%;
     min-width: 0;
   }
   .speed-plane-node-meta {
