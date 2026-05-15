@@ -144,6 +144,7 @@ type DamageCalcModifiers = {
   finalMultiplier?: number
   incomingScreenName?: string | null
   critical?: boolean
+  burned?: boolean
 }
 type BattleStatBlock = {
   hp: number
@@ -1360,6 +1361,40 @@ function togglePicked<T extends { picked: boolean }>(list: T[], idx: number, max
   return next
 }
 
+const DAMAGE_MOD_SCALE = 4096
+
+function pokeRound(num: number) {
+  return num % 1 > 0.5 ? Math.ceil(num) : Math.floor(num)
+}
+
+function chainMods(mods: number[], lowerBound = 410, upperBound = 131172) {
+  let value = DAMAGE_MOD_SCALE
+  for (const mod of mods) {
+    if (mod !== DAMAGE_MOD_SCALE) value = (value * mod + 2048) >> 12
+  }
+  return Math.max(Math.min(value, upperBound), lowerBound)
+}
+
+function fixedMod(multiplier = 1) {
+  return Math.round(multiplier * DAMAGE_MOD_SCALE)
+}
+
+function applyFixedMod(value: number, mod: number) {
+  return Math.floor((value * mod) / DAMAGE_MOD_SCALE)
+}
+
+function getBaseDamage(level: number, basePower: number, attack: number, defense: number) {
+  return Math.floor(Math.floor(Math.floor(((2 * level) / 5 + 2) * basePower * attack / defense) / 50) + 2)
+}
+
+function getFinalDamageRoll(baseAmount: number, roll: number, effectiveness: number, isBurned: boolean, stabMod: number, finalMod: number) {
+  let damageAmount = Math.floor((baseAmount * roll) / 100)
+  if (stabMod !== DAMAGE_MOD_SCALE) damageAmount = Math.floor((damageAmount * stabMod) / DAMAGE_MOD_SCALE)
+  damageAmount = Math.floor(pokeRound(damageAmount) * effectiveness)
+  if (isBurned) damageAmount = Math.floor(damageAmount / 2)
+  return Math.max(1, pokeRound((damageAmount * finalMod) / DAMAGE_MOD_SCALE))
+}
+
 function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePower: number, mode: CalcMode, stab = 1.5, effectiveness = 1, moveMeta?: MoveMeta | null, modifiers?: DamageCalcModifiers) {
   const resolvedMode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : mode
   const resolvedPower = typeof moveMeta?.power === 'number' ? moveMeta.power : movePower
@@ -1369,20 +1404,19 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
   if (moveMeta?.usesDefenseAsAttack) attackStat = attacker.defense
   if (moveMeta?.targetsDefenseStat === 'defense') defenseStat = defender.defense
   if (moveMeta?.targetsDefenseStat === 'spDefense') defenseStat = defender.spDefense
-  const effectivePower = resolvedPower * (modifiers?.powerMultiplier ?? 1)
-  attackStat = attackStat * (modifiers?.attackMultiplier ?? 1)
-  defenseStat = defenseStat * (modifiers?.defenseMultiplier ?? 1)
+  const powerMod = fixedMod(modifiers?.powerMultiplier ?? 1)
+  const attackMod = fixedMod(modifiers?.attackMultiplier ?? 1)
+  const defenseMod = fixedMod(modifiers?.defenseMultiplier ?? 1)
   const level = 50
-  const levelFactor = Math.floor((2 * level) / 5) + 2
-  const scaledAttack = Math.max(1, Math.floor(attackStat))
-  const scaledDefense = Math.max(1, Math.floor(defenseStat))
-  const scaledPower = Math.max(1, Math.floor(effectivePower))
-  const base = Math.floor(Math.floor((levelFactor * scaledPower * scaledAttack) / scaledDefense) / 50) + 2
-  const critMultiplier = (moveMeta?.alwaysCrit || modifiers?.critical) ? 1.5 : 1
+  const scaledAttack = Math.max(1, applyFixedMod(Math.floor(attackStat), attackMod))
+  const scaledDefense = Math.max(1, applyFixedMod(Math.floor(defenseStat), defenseMod))
+  const scaledPower = Math.max(1, applyFixedMod(Math.floor(resolvedPower), powerMod))
+  let base = getBaseDamage(level, scaledPower, scaledAttack, scaledDefense)
+  if (moveMeta?.alwaysCrit || modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
   const hitCount = Math.max(1, moveMeta?.hits ?? 1)
-  const finalMultiplier = modifiers?.finalMultiplier ?? 1
-  const commonModifier = stab * effectiveness * critMultiplier * finalMultiplier
-  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => Math.floor(base * commonModifier * (random / 100)) * hitCount)
+  const finalMod = chainMods([fixedMod(modifiers?.finalMultiplier ?? 1)])
+  const stabMod = fixedMod(stab)
+  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => getFinalDamageRoll(base, random, effectiveness, Boolean(modifiers?.burned), stabMod, finalMod) * hitCount)
   const min = rolls[0]
   const max = rolls[rolls.length - 1]
   return {
@@ -1453,10 +1487,8 @@ function resolveDamageModifiers(params: {
   if (attackStage) notes.push(`ATK ${attackStage > 0 ? '+' : ''}${attackStage}`)
   if (defenseStage) notes.push(`DEF ${defenseStage > 0 ? '+' : ''}${defenseStage}`)
 
-  if (burned && mode === 'physical' && attackerAbility !== '근성') {
-    finalMultiplier *= 0.5
-    notes.push('화상')
-  }
+  const burnApplies = burned && mode === 'physical' && attackerAbility !== '근성'
+  if (burnApplies) notes.push('화상')
 
   if (critical) notes.push('급소')
 
@@ -1550,6 +1582,8 @@ function resolveDamageModifiers(params: {
     finalMultiplier,
     incomingScreenName,
     effectiveness: adjustedEffectiveness,
+    critical,
+    burned: burnApplies,
     notes,
   }
 }
