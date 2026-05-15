@@ -7,6 +7,7 @@
   "도깨비불": { "type": "fire", "category": "status", "power": null, "accuracy": 85 },
   "도발": { "type": "dark", "category": "status", "power": null, "accuracy": 100 },
   "독압정": { "type": "poison", "category": "status", "power": null, "accuracy": null },
+  "인파이트": { "type": "fighting", "category": "physical", "power": 120, "accuracy": 100 },
   "드래곤애로": { "type": "dragon", "category": "physical", "power": 50, "accuracy": 100, "hits": 2 },
   "로우킥": { "type": "fighting", "category": "physical", "power": null, "accuracy": 100, "variablePower": true },
   "매지컬샤인": { "type": "fairy", "category": "special", "power": 80, "accuracy": 100 },
