@@ -2404,27 +2404,12 @@ textarea { min-height: 72px; resize: vertical; }
   white-space: nowrap;
   z-index: 2;
 }
-.speed-plane-range-marker.base {
-  padding: 0 7px;
-}
 .speed-plane-range-marker.item {
   padding: 0 5px;
 }
 .speed-plane-range-marker.ability {
   color: #fde68a;
   border-color: rgba(250, 204, 21, 0.35);
-}
-.speed-plane-range-marker-base-bars {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-.speed-plane-range-marker-base-bars i {
-  display: block;
-  width: 6px;
-  height: 2px;
-  border-radius: 999px;
-  background: #94a3b8;
 }
 .speed-plane-range-marker-burst {
   color: #facc15;
