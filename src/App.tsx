@@ -1490,6 +1490,7 @@ export default function App() {
       ...needs,
     }
   }) : []
+  const maxScenarioDiff = opponentSpeedScenarios.reduce((max, scenario) => Math.max(max, Math.abs(scenario.speedAtMax - mySpeed)), 1)
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
@@ -3259,31 +3260,43 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className="speed-ladder-list">
-                  {opponentSpeedScenarios.map((scenario) => (
-                    <div key={`speed-scenario-${scenario.id}`} className={`speed-ladder-row ${scenario.result === '동속' ? 'is-tie' : scenario.result === '상대가 앞섬' ? 'enemy-ahead' : 'my-ahead'}`}>
-                      <div className="speed-ladder-meta">
-                        <strong>{lt(scenario.label)}</strong>
-                        <span>{lt('기준 속도')} {scenario.speedAtMax}</span>
-                      </div>
-                      <div className="speed-ladder-track">
-                        <div className="speed-ladder-line" />
-                        <div className="speed-ladder-anchor">
-                          <span>{displayName(myRow, siteLanguage)}</span>
-                          <strong>{mySpeed}</strong>
-                        </div>
-                        <div className="speed-ladder-opponent">
-                          <span>{displayName(oppRow, siteLanguage)}</span>
-                          <strong>{scenario.speedAtMax}</strong>
-                        </div>
-                      </div>
-                      <div className="speed-ladder-cuts">
-                        <span className="pick-badge">{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
-                        <span className="pick-badge">{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
-                        <span className={`pick-badge ${scenario.result === '상대가 앞섬' ? 'enemy' : ''}`}>{lt(scenario.result)}</span>
-                      </div>
+                <div className="speed-plane-card">
+                  <div className="speed-plane-header">
+                    <strong>{lt('상대 조건 2차원 비교')}</strong>
+                    <span>{lt('실수치 스피드')} {mySpeed}</span>
+                  </div>
+                  <div className="speed-plane-board">
+                    <div className="speed-plane-baseline" />
+                    <div className="speed-plane-anchor">
+                      <span>{displayName(myRow, siteLanguage)}</span>
+                      <strong>{mySpeed}</strong>
                     </div>
-                  ))}
+                    {opponentSpeedScenarios.map((scenario, idx) => {
+                      const diff = scenario.speedAtMax - mySpeed
+                      const normalized = maxScenarioDiff ? diff / maxScenarioDiff : 0
+                      const top = 50 - (normalized * 30)
+                      const left = 12 + (idx * 24)
+                      return (
+                        <div
+                          key={`speed-scenario-${scenario.id}`}
+                          className={`speed-plane-node ${scenario.result === '동속' ? 'is-tie' : scenario.result === '상대가 앞섬' ? 'enemy-ahead' : 'my-ahead'}`}
+                          style={{ top: `${top}%`, left: `${left}%` }}
+                        >
+                          <strong>{lt(scenario.label)}</strong>
+                          <span>{scenario.speedAtMax}</span>
+                          <div className="speed-plane-node-meta">
+                            <span>{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
+                            <span>{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="speed-plane-legend">
+                    <span className="pick-badge enemy">{lt('상대가 앞섬')}</span>
+                    <span className="pick-badge">{lt('동속')}</span>
+                    <span className="pick-badge">{lt('내가 앞섬')}</span>
+                  </div>
                 </div>
               </div>
             </div>

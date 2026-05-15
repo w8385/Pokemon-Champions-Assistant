@@ -2186,83 +2186,93 @@ textarea { min-height: 72px; resize: vertical; }
   display: grid;
   gap: 12px;
 }
-.speed-ladder-list {
-  display: grid;
-  gap: 10px;
-}
-.speed-ladder-row {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
+.speed-plane-card {
   border: 1px solid #334155;
-  border-radius: 16px;
+  border-radius: 18px;
   background: #111827;
   padding: 14px;
+  display: grid;
+  gap: 12px;
 }
-.speed-ladder-meta strong {
-  display: block;
-  margin-bottom: 4px;
+.speed-plane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
-.speed-ladder-meta span {
+.speed-plane-header span {
   color: #93a4b8;
   font-size: 12px;
 }
-.speed-ladder-track {
+.speed-plane-board {
   position: relative;
-  min-height: 76px;
-  padding: 10px 0;
+  min-height: 320px;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(96, 165, 250, 0.05), rgba(96, 165, 250, 0) 40%, rgba(124, 45, 18, 0.08) 100%),
+    #0b1220;
+  overflow: hidden;
 }
-.speed-ladder-line {
+.speed-plane-baseline {
   position: absolute;
   left: 0;
   right: 0;
   top: 50%;
-  border-top: 1px solid #475569;
+  border-top: 2px solid #64748b;
 }
-.speed-ladder-anchor,
-.speed-ladder-opponent {
+.speed-plane-anchor {
   position: absolute;
-  left: 0;
-  right: 0;
+  top: calc(50% - 28px);
+  left: 18px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #334155;
-  background: #0b1220;
-}
-.speed-ladder-anchor {
-  top: calc(50% - 20px);
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid #60a5fa;
+  background: rgba(15, 23, 42, 0.92);
   box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2) inset;
 }
-.speed-ladder-opponent {
-  width: calc(100% - 28px);
-  left: 14px;
-  right: 14px;
-  border-color: #7c2d12;
-  background: rgba(124, 45, 18, 0.18);
-}
-.speed-ladder-row.enemy-ahead .speed-ladder-opponent {
-  top: 0;
-}
-.speed-ladder-row.my-ahead .speed-ladder-opponent {
-  bottom: 0;
-}
-.speed-ladder-row.is-tie .speed-ladder-opponent {
-  top: calc(50% - 20px);
-}
-.speed-ladder-anchor span,
-.speed-ladder-opponent span {
+.speed-plane-anchor span,
+.speed-plane-node span {
   color: #cbd5e1;
   font-size: 12px;
 }
-.speed-ladder-cuts {
+.speed-plane-node {
+  position: absolute;
+  width: 22%;
+  min-width: 140px;
+  transform: translate(-50%, -50%);
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid #334155;
+  background: rgba(15, 23, 42, 0.96);
+  display: grid;
+  gap: 4px;
+}
+.speed-plane-node.enemy-ahead {
+  border-color: #f97316;
+  background: rgba(124, 45, 18, 0.3);
+}
+.speed-plane-node.my-ahead {
+  border-color: #38bdf8;
+}
+.speed-plane-node.is-tie {
+  border-color: #cbd5e1;
+}
+.speed-plane-node-meta {
+  margin-top: 4px;
+  display: grid;
+  gap: 2px;
+}
+.speed-plane-node-meta span {
+  color: #93a4b8;
+  font-size: 11px;
+}
+.speed-plane-legend {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 6px;
 }
 .speed-target-card.enemy {
@@ -2780,8 +2790,11 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-target-panel { grid-template-columns: 1fr; }
   .speed-compare-board { grid-template-columns: 1fr; }
   .speed-anchor-card { position: static; }
-  .speed-ladder-row { grid-template-columns: 1fr; }
-  .speed-ladder-cuts { justify-content: flex-start; }
+  .speed-plane-board { min-height: 420px; }
+  .speed-plane-node {
+    width: 42%;
+    min-width: 0;
+  }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }
