@@ -98,7 +98,6 @@ type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type SampleCandidateFilter = 'all' | 'remaining' | 'locked'
 type MainSection = 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
-type SpeedScenarioId = 'neutral' | 'fast' | 'neutral-scarf' | 'fast-scarf'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
 type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
@@ -131,7 +130,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type',
-    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie',
+    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon',
     '준속': 'Neutral', '최속': 'Fast', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
     '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
@@ -160,7 +159,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ',
-    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速',
+    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン',
     '준속': '準速', '최속': '最速', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
     '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
@@ -590,6 +589,28 @@ function relatedMovePoolKeys(key: string) {
   const [first, ...rest] = key.split('-')
   if (['alolan', 'galarian', 'hisuian', 'paldean'].includes(first) && rest.length) keys.push(rest.join('-'))
   return Array.from(new Set(keys))
+}
+
+function megaBaseKey(key: string) {
+  if (!key.startsWith('mega-')) return key
+  const raw = key.slice(5)
+  if (raw.endsWith('-x') || raw.endsWith('-y')) return raw.slice(0, -2)
+  return raw
+}
+
+function megaCandidateKeysForBase(baseKey: string) {
+  return rows
+    .filter((row) => row.key.startsWith('mega-') && megaBaseKey(row.key) === baseKey)
+    .map((row) => row.key)
+    .sort((a, b) => a.localeCompare(b, 'en'))
+}
+
+function resolveCalcKeyWithMega(key: string, megaOn: boolean) {
+  const baseKey = megaBaseKey(key)
+  const megaCandidates = megaCandidateKeysForBase(baseKey)
+  if (!megaCandidates.length) return key
+  if (megaOn) return megaCandidates[0]
+  return baseKey
 }
 
 async function loadEmbeddedMovePools() {
@@ -1042,10 +1063,12 @@ function speciesSearchCandidates(row: Row) {
   return Array.from(new Set([...base, ...extra].flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
-function filterSpeciesOptions(query: string) {
+function filterSpeciesOptions(query: string, options?: { includeMega?: boolean }) {
+  const includeMega = options?.includeMega ?? true
   const normalized = normalizeSearchText(query.trim())
-  if (!normalized) return speciesOptions
-  return rows
+  const candidateRows = includeMega ? rows : rows.filter((row) => !row.key.startsWith('mega-'))
+  if (!normalized) return candidateRows.map((row) => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
+  return candidateRows
     .map((row) => {
       const candidates = speciesSearchCandidates(row)
       const score = candidates.reduce((best, candidate) => {
@@ -1160,10 +1183,10 @@ function filterMoveOptions(query: string, options: MoveOption[]) {
   return scored.map((entry) => entry.option)
 }
 
-function resolveSpeciesKey(raw: string) {
+function resolveSpeciesKey(raw: string, options?: { includeMega?: boolean }) {
   const normalized = normalizeSearchText(raw.trim())
   if (!normalized) return null
-  return filterSpeciesOptions(normalized)[0]?.key ?? null
+  return filterSpeciesOptions(normalized, options)[0]?.key ?? null
 }
 
 function displayName(row: Row, language: SiteLanguage) {
@@ -1271,8 +1294,9 @@ export default function App() {
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
   const [mainSection, setMainSection] = React.useState<MainSection>(() => persisted?.mainSection === 'sample' ? 'sample' : 'single')
   const [activeTab, setActiveTab] = React.useState<MainTab>('party')
-  const [activeSpeedScenario, setActiveSpeedScenario] = React.useState<SpeedScenarioId>('fast')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
+  const [calcMyMegaOn, setCalcMyMegaOn] = React.useState(false)
+  const [calcOppMegaOn, setCalcOppMegaOn] = React.useState(false)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
@@ -1389,8 +1413,22 @@ export default function App() {
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
-  const myRow = indexByKey.get(myMember.key) ?? rows[0]
-  const oppRow = oppMember.key ? (indexByKey.get(oppMember.key) ?? rows[0]) : null
+  const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaOn)
+  const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaOn) : ''
+  const myRow = indexByKey.get(calcMyKey) ?? rows[0]
+  const oppRow = calcOppKey ? (indexByKey.get(calcOppKey) ?? rows[0]) : null
+  const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
+  const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
+
+  React.useEffect(() => {
+    const megaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
+    setCalcMyMegaOn(myMember.key.startsWith('mega-') ? true : (megaCandidates.length ? false : false))
+  }, [myMember.key])
+
+  React.useEffect(() => {
+    const megaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
+    setCalcOppMegaOn(oppMember.key.startsWith('mega-') ? true : (megaCandidates.length ? false : false))
+  }, [oppMember.key])
 
   React.useEffect(() => {
     const moves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
@@ -1425,14 +1463,6 @@ export default function App() {
       result: mySpeed > speedAtMax ? '내가 앞섬' : mySpeed < speedAtMax ? '상대가 앞섬' : '동속',
       ...needs,
     }
-  }) : []
-  const selectedSpeedScenario = opponentSpeedScenarios.find((scenario) => scenario.id === activeSpeedScenario) ?? opponentSpeedScenarios[0] ?? null
-  const partySpeedCutRows = selectedSpeedScenario ? party.map((member, idx) => {
-    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-    if (!row) return { idx, row: null, currentSpeed: null, tieEffort: null, passEffort: null }
-    const currentSpeed = partySpeedValue(row, member)
-    const needs = mySpeedNeeds(row, member.config, selectedSpeedScenario.speedAtMax)
-    return { idx, row, currentSpeed, ...needs }
   }) : []
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
@@ -1572,7 +1602,7 @@ export default function App() {
     setTimeout(() => sampleItemEditorRef.current?.focus(), 0)
   }
   const commitTopSpeciesOption = (side: 'party' | 'opponent' | 'sample', idx: number, rawQuery: string) => {
-    const top = filterSpeciesOptions(rawQuery)[0]
+    const top = filterSpeciesOptions(rawQuery, { includeMega: side !== 'opponent' })[0]
     if (!top) return false
     selectSpecies(side, idx, top.key)
     return true
@@ -1763,7 +1793,7 @@ export default function App() {
   }
 
   const commitOpponentQuickSearch = (forcedKey?: string) => {
-    const resolvedKey = forcedKey ?? resolveSpeciesKey(opponentQuickSearch) ?? filterSpeciesOptions(opponentQuickSearch)[0]?.key
+    const resolvedKey = forcedKey ?? resolveSpeciesKey(opponentQuickSearch, { includeMega: false }) ?? filterSpeciesOptions(opponentQuickSearch, { includeMega: false })[0]?.key
     if (!resolvedKey) return
     const slotIdx = selectedOpp
     const next = [...opponents]
@@ -2505,7 +2535,7 @@ export default function App() {
                 />
                 {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
                   <div className="autocomplete-menu">
-                    {filterSpeciesOptions(opponentQuickSearch).slice(0, 8).map((option) => (
+                      {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option) => (
                       <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => commitOpponentQuickSearch(option.key)}>
                         {searchDisplayLabel(option.key, siteLanguage)}
                       </button>
@@ -2586,7 +2616,7 @@ export default function App() {
                     />
                     {sameSearchTarget(activeSearchField, 'opponent', selectedOpp) ? (
                       <div className="autocomplete-menu">
-                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '').slice(0, 8).map((option) => (
+                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8).map((option) => (
                           <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('opponent', selectedOpp, option.key)}>
                             {searchDisplayLabel(option.key, siteLanguage)}
                           </button>
@@ -3168,73 +3198,74 @@ export default function App() {
         {activeTab === 'speed' ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('내 파티 추월컷')}</h2>
-            <div className="preset-row speed-scenario-row">
-              {opponentSpeedScenarios.map((scenario) => (
-                <button
-                  key={scenario.id}
-                  type="button"
-                  className={`preset-chip ${activeSpeedScenario === scenario.id ? 'active' : ''}`}
-                  onClick={() => setActiveSpeedScenario(scenario.id as SpeedScenarioId)}
-                >
-                  {lt(scenario.label)}
-                </button>
-              ))}
-            </div>
           </div>
-          {oppRow && selectedSpeedScenario ? <>
-            <div className="speed-target-panel">
-              <div className="speed-target-card enemy">
-                <div className="speed-target-head">
-                  {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
-                  <div>
-                    <strong>{displayName(oppRow, siteLanguage)}</strong>
-                    <div className="pick-summary-badges">
-                      <span className="pick-badge enemy">{lt('상대 기준')}</span>
-                      <span className="pick-badge">{lt(selectedSpeedScenario.label)}</span>
-                      <span className="pick-badge">{lt('기준 속도')} {selectedSpeedScenario.speedAtMax}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {oppRow ? <>
+            <div className="speed-target-panel compare-target-panel">
               <div className="speed-target-card">
                 <div className="speed-target-head">
                   {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
                   <div>
                     <strong>{displayName(myRow, siteLanguage)}</strong>
                     <div className="pick-summary-badges">
-                      <span className="pick-badge">{lt('실전 상태')}</span>
+                      <span className="pick-badge">{lt('내 포켓몬')}</span>
                       <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
-                      <span className={`pick-badge ${mySpeed > selectedSpeedScenario.speedAtMax ? '' : 'enemy'}`}>{mySpeed > selectedSpeedScenario.speedAtMax ? lt('이미 추월') : lt(selectedSpeedScenario.result)}</span>
                     </div>
+                    {myMegaCandidates.length ? <div className="calc-toggle-row">
+                      <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
+                      <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
+                    </div> : null}
+                  </div>
+                </div>
+              </div>
+              <div className="speed-target-card enemy">
+                <div className="speed-target-head">
+                  {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                  <div>
+                    <strong>{displayName(oppRow, siteLanguage)}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+                    </div>
+                    {oppMegaCandidates.length ? <div className="calc-toggle-row">
+                      <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
+                      <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
+                    </div> : null}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="speed-cut-grid">
-              {partySpeedCutRows.map((entry) => entry.row ? (
-                <div key={`speed-cut-${entry.idx}-${entry.row.key}`} className={`speed-cut-card ${entry.idx === selectedMy ? 'active' : ''}`}>
-                  <button type="button" className="speed-cut-select" onClick={() => setSelectedMy(entry.idx)}>
+            <div className="speed-cut-grid speed-compare-grid">
+              {opponentSpeedScenarios.map((scenario) => (
+                <div key={`speed-scenario-${scenario.id}`} className="speed-cut-card active">
+                  <div className="speed-cut-select readonly">
                     <div className="speed-cut-title">
-                      {entry.row.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="pick-slot-sprite" /> : null}
                       <div>
-                        <strong>{displayName(entry.row, siteLanguage)}</strong>
-                        <span>{lt('실수치 스피드')} {entry.currentSpeed}</span>
+                        <strong>{lt(scenario.label)}</strong>
+                        <span>{lt('기준 속도')} {scenario.speedAtMax}</span>
                       </div>
                     </div>
-                    <div className="speed-cut-stats">
+                    <div className="speed-cut-stats scenario-split-stats">
+                      <div>
+                        <span>{displayName(myRow, siteLanguage)}</span>
+                        <strong>{mySpeed}</strong>
+                      </div>
+                      <div>
+                        <span>{displayName(oppRow, siteLanguage)}</span>
+                        <strong>{scenario.speedAtMax}</strong>
+                      </div>
                       <div>
                         <span>{lt('동속컷')}</span>
-                        <strong>{entry.tieEffort ?? '—'}</strong>
+                        <strong>{scenario.tieEffort ?? '—'}</strong>
                       </div>
                       <div>
                         <span>{lt('추월컷')}</span>
-                        <strong>{entry.currentSpeed && entry.currentSpeed > selectedSpeedScenario.speedAtMax ? lt('이미 추월') : entry.passEffort ?? lt('불가')}</strong>
+                        <strong>{mySpeed > scenario.speedAtMax ? lt('이미 추월') : scenario.passEffort ?? lt('불가')}</strong>
                       </div>
                     </div>
-                  </button>
+                    <div className="pick-summary-badges">
+                      <span className={`pick-badge ${scenario.result === '상대가 앞섬' ? 'enemy' : ''}`}>{lt(scenario.result)}</span>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div key={`speed-cut-empty-${entry.idx}`} className="speed-cut-card empty">{emptySlotLabel(entry.idx, siteLanguage)}</div>
               ))}
             </div>
           </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
@@ -3246,6 +3277,38 @@ export default function App() {
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('내 기술')}</span>
               <span className="pick-badge enemy">{oppRow ? displayName(oppRow, siteLanguage) : lt('선택한 상대 없음')}</span>
+            </div>
+          </div>
+          <div className="speed-target-panel compare-target-panel damage-compare-panel">
+            <div className="speed-target-card">
+              <div className="speed-target-head">
+                {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                <div>
+                  <strong>{displayName(myRow, siteLanguage)}</strong>
+                  <div className="pick-summary-badges">
+                    <span className="pick-badge">{lt('내 포켓몬')}</span>
+                  </div>
+                  {myMegaCandidates.length ? <div className="calc-toggle-row">
+                    <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
+                    <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
+                  </div> : null}
+                </div>
+              </div>
+            </div>
+            <div className="speed-target-card enemy">
+              <div className="speed-target-head">
+                {oppRow?.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                <div>
+                  <strong>{oppRow ? displayName(oppRow, siteLanguage) : lt('선택한 상대 없음')}</strong>
+                  <div className="pick-summary-badges">
+                    <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+                  </div>
+                  {oppMegaCandidates.length ? <div className="calc-toggle-row">
+                    <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
+                    <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
+                  </div> : null}
+                </div>
+              </div>
             </div>
           </div>
           <div className="damage-move-panel">
