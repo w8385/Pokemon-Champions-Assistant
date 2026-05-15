@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-15T13:37:31.448Z",
+  "generatedAt": "2026-05-15T13:44:14.711Z",
   "totals": {
     "species": 259,
     "seededFromBaseline": 237,
     "seededFromApiAlias": 22,
     "missing": 0,
-    "untranslatedMoveLabels": 37
+    "untranslatedMoveLabels": 3
   },
   "missingKeys": [],
   "seededFromApiAliasKeys": [
@@ -33,43 +33,9 @@
     "slowking-galarian"
   ],
   "untranslatedMoveLabels": [
-    "Aqua Cutter",
-    "Aqua Step",
-    "Armor Cannon",
-    "Axe Kick",
-    "Bitter Blade",
-    "Bitter Malice",
-    "Ceaseless Edge",
-    "Chilling Water",
-    "Chilly Reception",
-    "Comeuppance",
     "DD래리어트",
-    "Dire Claw",
     "G의힘",
-    "Headlong Rush",
-    "HP회복",
-    "Ice Spinner",
-    "Infernal Parade",
-    "Lumina Crash",
-    "Matcha Gotcha",
-    "Mortal Spin",
-    "Mountain Gale",
-    "Pounce",
-    "Power Shift",
-    "Psyshield Bash",
-    "Raging Bull",
-    "Raging Fury",
-    "Shed Tail",
-    "Shelter",
-    "Snowscape",
-    "Spicy Extract",
-    "Stone Axe",
-    "Syrup Bomb",
-    "Tera Blast",
-    "Trailblaze",
-    "Triple Arrows",
-    "Twin Beam",
-    "Wave Crash"
+    "HP회복"
   ],
   "seededKeysSample": [
     "mega-alakazam",

@@ -11,6 +11,12 @@
     "power": 90,
     "accuracy": 100
   },
+  "3연화살": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
   "가드셰어": {
     "type": "psychic",
     "category": "status",
@@ -65,6 +71,12 @@
     "category": "physical",
     "power": 70,
     "accuracy": 90
+  },
+  "개척하기": {
+    "type": "grass",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
   },
   "객기": {
     "type": "normal",
@@ -362,6 +374,12 @@
     "power": null,
     "accuracy": null
   },
+  "꼬리자르기": {
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
   "꼬리흔들기": {
     "type": "normal",
     "category": "status",
@@ -514,6 +532,12 @@
     "power": 30,
     "accuracy": 100
   },
+  "농성": {
+    "type": "steel",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
   "누르기": {
     "type": "normal",
     "category": "physical",
@@ -576,6 +600,12 @@
     "power": null,
     "accuracy": null
   },
+  "달려들기": {
+    "type": "bug",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
   "달의불빛": {
     "type": "fairy",
     "category": "status",
@@ -593,6 +623,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "대격분": {
+    "type": "fire",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
   },
   "대지의파동": {
     "type": "normal",
@@ -825,6 +861,12 @@
     "power": 80,
     "accuracy": 95
   },
+  "들이받기": {
+    "type": "ground",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 100
+  },
   "따라가때리기": {
     "type": "dark",
     "category": "physical",
@@ -891,6 +933,12 @@
     "power": 80,
     "accuracy": 100
   },
+  "레이징볼": {
+    "type": "normal",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
   "로우킥": {
     "type": "fighting",
     "category": "physical",
@@ -921,6 +969,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "루미나콜리전": {
+    "type": "psychic",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
   },
   "리벤지": {
     "type": "fighting",
@@ -1367,6 +1421,12 @@
     "power": 60,
     "accuracy": 100
   },
+  "발꿈치찍기": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 120,
+    "accuracy": 90
+  },
   "방어": {
     "type": "normal",
     "category": "status",
@@ -1393,11 +1453,23 @@
     "power": null,
     "accuracy": null
   },
+  "배리어러시": {
+    "type": "psychic",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 90
+  },
   "배북": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "백귀야행": {
+    "type": "ghost",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100
   },
   "뱀눈초리": {
     "type": "normal",
@@ -1716,6 +1788,12 @@
     "power": null,
     "accuracy": null
   },
+  "비검천중파": {
+    "type": "dark",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 90
+  },
   "비밀의힘": {
     "type": "normal",
     "category": "physical",
@@ -1739,6 +1817,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "빙산바람": {
+    "type": "ice",
+    "category": "physical",
+    "power": 100,
+    "accuracy": 85
   },
   "빛의장막": {
     "type": "psychic",
@@ -1866,6 +1950,12 @@
     "type": "normal",
     "category": "status",
     "power": null,
+    "accuracy": null
+  },
+  "설경": {
+    "type": "ice",
+    "category": "status",
+    "power": 0,
     "accuracy": null
   },
   "섬뜩한주문": {
@@ -2124,6 +2214,12 @@
     "power": 75,
     "accuracy": 100
   },
+  "시럽봄": {
+    "type": "grass",
+    "category": "special",
+    "power": 60,
+    "accuracy": 85
+  },
   "시저크로스": {
     "type": "bug",
     "category": "physical",
@@ -2185,6 +2281,12 @@
     "power": 100,
     "accuracy": 95
   },
+  "썰렁개그": {
+    "type": "ice",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
   "씨뿌리기": {
     "type": "grass",
     "category": "status",
@@ -2209,11 +2311,23 @@
     "power": null,
     "accuracy": null
   },
+  "아머캐논": {
+    "type": "fire",
+    "category": "special",
+    "power": 120,
+    "accuracy": 100
+  },
   "아이스볼": {
     "type": "ice",
     "category": "physical",
     "power": 30,
     "accuracy": 90
+  },
+  "아이스스피너": {
+    "type": "ice",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
   },
   "아이스해머": {
     "type": "ice",
@@ -2257,12 +2371,24 @@
     "power": 85,
     "accuracy": 100
   },
+  "아쿠아스텝": {
+    "type": "water",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
+  },
   "아쿠아제트": {
     "type": "water",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
     "priority": 1
+  },
+  "아쿠아커터": {
+    "type": "water",
+    "category": "physical",
+    "power": 70,
+    "accuracy": 100
   },
   "아쿠아테일": {
     "type": "water",
@@ -2312,6 +2438,12 @@
     "power": 60,
     "accuracy": 95
   },
+  "암석액스": {
+    "type": "rock",
+    "category": "physical",
+    "power": 65,
+    "accuracy": 90
+  },
   "암석포": {
     "type": "rock",
     "category": "physical",
@@ -2329,6 +2461,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "앙갚음": {
+    "type": "dark",
+    "category": "physical",
+    "power": 1,
+    "accuracy": 100
   },
   "애교부리기": {
     "type": "fairy",
@@ -2689,6 +2827,12 @@
     "power": null,
     "accuracy": null
   },
+  "원념의칼": {
+    "type": "fire",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100
+  },
   "원더룸": {
     "type": "psychic",
     "category": "status",
@@ -2717,6 +2861,12 @@
     "type": "normal",
     "category": "special",
     "power": 50,
+    "accuracy": 100
+  },
+  "웨이브태클": {
+    "type": "water",
+    "category": "physical",
+    "power": 120,
     "accuracy": 100
   },
   "위액": {
@@ -3112,6 +3262,12 @@
     "power": 50,
     "accuracy": 90
   },
+  "찬물끼얹기": {
+    "type": "water",
+    "category": "special",
+    "power": 50,
+    "accuracy": 100
+  },
   "참기": {
     "type": "normal",
     "category": "physical",
@@ -3124,6 +3280,12 @@
     "category": "status",
     "power": null,
     "accuracy": 75
+  },
+  "천추지한": {
+    "type": "ghost",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100
   },
   "철벽": {
     "type": "steel",
@@ -3283,6 +3445,12 @@
     "power": 50,
     "accuracy": null
   },
+  "킬러스핀": {
+    "type": "poison",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 100
+  },
   "킹실드": {
     "type": "steel",
     "category": "status",
@@ -3319,6 +3487,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "테라버스트": {
+    "type": "normal",
+    "category": "special",
+    "power": 80,
+    "accuracy": 100
   },
   "텔레키네시스": {
     "type": "psychic",
@@ -3397,6 +3571,12 @@
     "power": 120,
     "accuracy": 90
   },
+  "트윈빔": {
+    "type": "psychic",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100
+  },
   "트집": {
     "type": "dark",
     "category": "status",
@@ -3445,6 +3625,12 @@
     "power": null,
     "accuracy": null
   },
+  "파워시프트": {
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
   "파워젬": {
     "type": "rock",
     "category": "special",
@@ -3482,6 +3668,12 @@
     "category": "status",
     "power": null,
     "accuracy": null
+  },
+  "페이탈클로": {
+    "type": "poison",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100
   },
   "페인트": {
     "type": "normal",
@@ -3623,6 +3815,12 @@
     "power": 150,
     "accuracy": 90
   },
+  "하바네로엑기스": {
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": null
+  },
   "하이드로캐논": {
     "type": "water",
     "category": "special",
@@ -3743,6 +3941,12 @@
     "power": 10,
     "accuracy": 100
   },
+  "휘적휘적포": {
+    "type": "grass",
+    "category": "special",
+    "power": 80,
+    "accuracy": 90
+  },
   "흉내내기": {
     "type": "normal",
     "category": "status",
@@ -3822,76 +4026,10 @@
     "power": null,
     "accuracy": 100
   },
-  "Aqua Cutter": {
-    "type": "water",
-    "category": "physical",
-    "power": 70,
-    "accuracy": 100
-  },
-  "Aqua Step": {
-    "type": "water",
-    "category": "physical",
-    "power": 80,
-    "accuracy": 100
-  },
-  "Armor Cannon": {
-    "type": "fire",
-    "category": "special",
-    "power": 120,
-    "accuracy": 100
-  },
-  "Axe Kick": {
-    "type": "fighting",
-    "category": "physical",
-    "power": 120,
-    "accuracy": 90
-  },
-  "Bitter Blade": {
-    "type": "fire",
-    "category": "physical",
-    "power": 90,
-    "accuracy": 100
-  },
-  "Bitter Malice": {
-    "type": "ghost",
-    "category": "special",
-    "power": 75,
-    "accuracy": 100
-  },
-  "Ceaseless Edge": {
-    "type": "dark",
-    "category": "physical",
-    "power": 65,
-    "accuracy": 90
-  },
-  "Chilling Water": {
-    "type": "water",
-    "category": "special",
-    "power": 50,
-    "accuracy": 100
-  },
-  "Chilly Reception": {
-    "type": "ice",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Comeuppance": {
-    "type": "dark",
-    "category": "physical",
-    "power": 1,
-    "accuracy": 100
-  },
   "DD래리어트": {
     "type": "dark",
     "category": "physical",
     "power": 85,
-    "accuracy": 100
-  },
-  "Dire Claw": {
-    "type": "poison",
-    "category": "physical",
-    "power": 80,
     "accuracy": 100
   },
   "G의힘": {
@@ -3900,148 +4038,10 @@
     "power": 80,
     "accuracy": 100
   },
-  "Headlong Rush": {
-    "type": "ground",
-    "category": "physical",
-    "power": 120,
-    "accuracy": 100
-  },
   "HP회복": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null
-  },
-  "Ice Spinner": {
-    "type": "ice",
-    "category": "physical",
-    "power": 80,
-    "accuracy": 100
-  },
-  "Infernal Parade": {
-    "type": "ghost",
-    "category": "special",
-    "power": 60,
-    "accuracy": 100
-  },
-  "Lumina Crash": {
-    "type": "psychic",
-    "category": "special",
-    "power": 80,
-    "accuracy": 100
-  },
-  "Matcha Gotcha": {
-    "type": "grass",
-    "category": "special",
-    "power": 80,
-    "accuracy": 90
-  },
-  "Mortal Spin": {
-    "type": "poison",
-    "category": "physical",
-    "power": 30,
-    "accuracy": 100
-  },
-  "Mountain Gale": {
-    "type": "ice",
-    "category": "physical",
-    "power": 100,
-    "accuracy": 85
-  },
-  "Pounce": {
-    "type": "bug",
-    "category": "physical",
-    "power": 50,
-    "accuracy": 100
-  },
-  "Power Shift": {
-    "type": "normal",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Psyshield Bash": {
-    "type": "psychic",
-    "category": "physical",
-    "power": 70,
-    "accuracy": 90
-  },
-  "Raging Bull": {
-    "type": "normal",
-    "category": "physical",
-    "power": 90,
-    "accuracy": 100
-  },
-  "Raging Fury": {
-    "type": "fire",
-    "category": "physical",
-    "power": 120,
-    "accuracy": 100
-  },
-  "Shed Tail": {
-    "type": "normal",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Shelter": {
-    "type": "steel",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Snowscape": {
-    "type": "ice",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Spicy Extract": {
-    "type": "grass",
-    "category": "status",
-    "power": 0,
-    "accuracy": null
-  },
-  "Stone Axe": {
-    "type": "rock",
-    "category": "physical",
-    "power": 65,
-    "accuracy": 90
-  },
-  "Syrup Bomb": {
-    "type": "grass",
-    "category": "special",
-    "power": 60,
-    "accuracy": 85
-  },
-  "Tera Blast": {
-    "type": "normal",
-    "category": "special",
-    "power": 80,
-    "accuracy": 100
-  },
-  "Trailblaze": {
-    "type": "grass",
-    "category": "physical",
-    "power": 50,
-    "accuracy": 100
-  },
-  "Triple Arrows": {
-    "type": "fighting",
-    "category": "physical",
-    "power": 90,
-    "accuracy": 100
-  },
-  "Twin Beam": {
-    "type": "psychic",
-    "category": "special",
-    "power": 40,
-    "accuracy": 100
-  },
-  "Wave Crash": {
-    "type": "water",
-    "category": "physical",
-    "power": 120,
-    "accuracy": 100
   }
 }

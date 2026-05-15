@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T13:37:32.230Z",
+  "generatedAt": "2026-05-15T13:44:15.447Z",
   "source": {
     "movePools": "src/championsMovePools.json",
     "moveNameOverrides": "src/championsMoveNameOverrides.json",
@@ -26,6 +26,12 @@
       "apiName": "thunderbolt",
       "ko": "10만볼트",
       "en": "Thunderbolt"
+    },
+    {
+      "moveName": "3연화살",
+      "apiName": "triple-arrows",
+      "ko": null,
+      "en": "Triple Arrows"
     },
     {
       "moveName": "가드셰어",
@@ -80,6 +86,12 @@
       "apiName": "steel-wing",
       "ko": "강철날개",
       "en": "Steel Wing"
+    },
+    {
+      "moveName": "개척하기",
+      "apiName": "trailblaze",
+      "ko": null,
+      "en": "Trailblaze"
     },
     {
       "moveName": "객기",
@@ -376,6 +388,12 @@
       "en": "Withdraw"
     },
     {
+      "moveName": "꼬리자르기",
+      "apiName": "shed-tail",
+      "ko": null,
+      "en": "Shed Tail"
+    },
+    {
       "moveName": "꼬리흔들기",
       "apiName": "tail-whip",
       "ko": "꼬리흔들기",
@@ -526,6 +544,12 @@
       "en": "Astonish"
     },
     {
+      "moveName": "농성",
+      "apiName": "shelter",
+      "ko": null,
+      "en": "Shelter"
+    },
+    {
       "moveName": "누르기",
       "apiName": "body-slam",
       "ko": "누르기",
@@ -586,6 +610,12 @@
       "en": "Harden"
     },
     {
+      "moveName": "달려들기",
+      "apiName": "pounce",
+      "ko": null,
+      "en": "Pounce"
+    },
+    {
       "moveName": "달의불빛",
       "apiName": "moonlight",
       "ko": "달의불빛",
@@ -602,6 +632,12 @@
       "apiName": "after-you",
       "ko": "당신먼저",
       "en": "After You"
+    },
+    {
+      "moveName": "대격분",
+      "apiName": "raging-fury",
+      "ko": null,
+      "en": "Raging Fury"
     },
     {
       "moveName": "대지의파동",
@@ -832,6 +868,12 @@
       "en": "Drill Run"
     },
     {
+      "moveName": "들이받기",
+      "apiName": "headlong-rush",
+      "ko": null,
+      "en": "Headlong Rush"
+    },
+    {
       "moveName": "따라가때리기",
       "apiName": "pursuit",
       "ko": "따라가때리기",
@@ -898,6 +940,12 @@
       "en": "Flash Cannon"
     },
     {
+      "moveName": "레이징볼",
+      "apiName": "raging-bull",
+      "ko": null,
+      "en": "Raging Bull"
+    },
+    {
       "moveName": "로우킥",
       "apiName": "low-kick",
       "ko": "안다리걸기",
@@ -926,6 +974,12 @@
       "apiName": "rock-polish",
       "ko": "록커트",
       "en": "Rock Polish"
+    },
+    {
+      "moveName": "루미나콜리전",
+      "apiName": "lumina-crash",
+      "ko": null,
+      "en": "Lumina Crash"
     },
     {
       "moveName": "리벤지",
@@ -1366,6 +1420,12 @@
       "en": "Force Palm"
     },
     {
+      "moveName": "발꿈치찍기",
+      "apiName": "axe-kick",
+      "ko": null,
+      "en": "Axe Kick"
+    },
+    {
       "moveName": "방어",
       "apiName": "protect",
       "ko": "방어",
@@ -1390,10 +1450,22 @@
       "en": "Barrier"
     },
     {
+      "moveName": "배리어러시",
+      "apiName": "psyshield-bash",
+      "ko": null,
+      "en": "Psyshield Bash"
+    },
+    {
       "moveName": "배북",
       "apiName": "belly-drum",
       "ko": "배북",
       "en": "Belly Drum"
+    },
+    {
+      "moveName": "백귀야행",
+      "apiName": "infernal-parade",
+      "ko": null,
+      "en": "Infernal Parade"
     },
     {
       "moveName": "뱀눈초리",
@@ -1708,6 +1780,12 @@
       "en": "Block"
     },
     {
+      "moveName": "비검천중파",
+      "apiName": "ceaseless-edge",
+      "ko": null,
+      "en": "Ceaseless Edge"
+    },
+    {
       "moveName": "비밀의힘",
       "apiName": "secret-power",
       "ko": "비밀의힘",
@@ -1730,6 +1808,12 @@
       "apiName": "stockpile",
       "ko": "비축하기",
       "en": "Stockpile"
+    },
+    {
+      "moveName": "빙산바람",
+      "apiName": "mountain-gale",
+      "ko": null,
+      "en": "Mountain Gale"
     },
     {
       "moveName": "빛의장막",
@@ -1856,6 +1940,12 @@
       "apiName": "me-first",
       "ko": "선취",
       "en": "Me First"
+    },
+    {
+      "moveName": "설경",
+      "apiName": "snowscape",
+      "ko": null,
+      "en": "Snowscape"
     },
     {
       "moveName": "섬뜩한주문",
@@ -2110,6 +2200,12 @@
       "en": "Signal Beam"
     },
     {
+      "moveName": "시럽봄",
+      "apiName": "syrup-bomb",
+      "ko": null,
+      "en": "Syrup Bomb"
+    },
+    {
       "moveName": "시저크로스",
       "apiName": "x-scissor",
       "ko": "시저크로스",
@@ -2170,6 +2266,12 @@
       "en": "Supercell Slam"
     },
     {
+      "moveName": "썰렁개그",
+      "apiName": "chilly-reception",
+      "ko": null,
+      "en": "Chilly Reception"
+    },
+    {
       "moveName": "씨뿌리기",
       "apiName": "leech-seed",
       "ko": "씨뿌리기",
@@ -2194,10 +2296,22 @@
       "en": "Aromatherapy"
     },
     {
+      "moveName": "아머캐논",
+      "apiName": "armor-cannon",
+      "ko": null,
+      "en": "Armor Cannon"
+    },
+    {
       "moveName": "아이스볼",
       "apiName": "ice-ball",
       "ko": "아이스볼",
       "en": "Ice Ball"
+    },
+    {
+      "moveName": "아이스스피너",
+      "apiName": "ice-spinner",
+      "ko": null,
+      "en": "Ice Spinner"
     },
     {
       "moveName": "아이스해머",
@@ -2242,10 +2356,22 @@
       "en": "Liquidation"
     },
     {
+      "moveName": "아쿠아스텝",
+      "apiName": "aqua-step",
+      "ko": null,
+      "en": "Aqua Step"
+    },
+    {
       "moveName": "아쿠아제트",
       "apiName": "aqua-jet",
       "ko": "아쿠아제트",
       "en": "Aqua Jet"
+    },
+    {
+      "moveName": "아쿠아커터",
+      "apiName": "aqua-cutter",
+      "ko": null,
+      "en": "Aqua Cutter"
     },
     {
       "moveName": "아쿠아테일",
@@ -2296,6 +2422,12 @@
       "en": "Rock Tomb"
     },
     {
+      "moveName": "암석액스",
+      "apiName": "stone-axe",
+      "ko": null,
+      "en": "Stone Axe"
+    },
+    {
       "moveName": "암석포",
       "apiName": "rock-wrecker",
       "ko": "암석포",
@@ -2312,6 +2444,12 @@
       "apiName": "spikes",
       "ko": "압정뿌리기",
       "en": "Spikes"
+    },
+    {
+      "moveName": "앙갚음",
+      "apiName": "comeuppance",
+      "ko": null,
+      "en": "Comeuppance"
     },
     {
       "moveName": "애교부리기",
@@ -2668,6 +2806,12 @@
       "en": "Grudge"
     },
     {
+      "moveName": "원념의칼",
+      "apiName": "bitter-blade",
+      "ko": null,
+      "en": "Bitter Blade"
+    },
+    {
       "moveName": "원더룸",
       "apiName": "wonder-room",
       "ko": "원더룸",
@@ -2696,6 +2840,12 @@
       "apiName": "weather-ball",
       "ko": "웨더볼",
       "en": "Weather Ball"
+    },
+    {
+      "moveName": "웨이브태클",
+      "apiName": "wave-crash",
+      "ko": null,
+      "en": "Wave Crash"
     },
     {
       "moveName": "위액",
@@ -3088,6 +3238,12 @@
       "en": "Charge Beam"
     },
     {
+      "moveName": "찬물끼얹기",
+      "apiName": "chilling-water",
+      "ko": null,
+      "en": "Chilling Water"
+    },
+    {
       "moveName": "참기",
       "apiName": "bide",
       "ko": "참기",
@@ -3098,6 +3254,12 @@
       "apiName": "sweet-kiss",
       "ko": "천사의키스",
       "en": "Sweet Kiss"
+    },
+    {
+      "moveName": "천추지한",
+      "apiName": "bitter-malice",
+      "ko": null,
+      "en": "Bitter Malice"
     },
     {
       "moveName": "철벽",
@@ -3256,6 +3418,12 @@
       "en": "Clear Smog"
     },
     {
+      "moveName": "킬러스핀",
+      "apiName": "mortal-spin",
+      "ko": null,
+      "en": "Mortal Spin"
+    },
+    {
       "moveName": "킹실드",
       "apiName": "kings-shield",
       "ko": "킹실드",
@@ -3290,6 +3458,12 @@
       "apiName": "slack-off",
       "ko": "태만함",
       "en": "Slack Off"
+    },
+    {
+      "moveName": "테라버스트",
+      "apiName": "tera-blast",
+      "ko": null,
+      "en": "Tera Blast"
     },
     {
       "moveName": "텔레키네시스",
@@ -3364,6 +3538,12 @@
       "en": "Belch"
     },
     {
+      "moveName": "트윈빔",
+      "apiName": "twin-beam",
+      "ko": null,
+      "en": "Twin Beam"
+    },
+    {
       "moveName": "트집",
       "apiName": "torment",
       "ko": "트집",
@@ -3412,6 +3592,12 @@
       "en": "Power Swap"
     },
     {
+      "moveName": "파워시프트",
+      "apiName": "power-shift",
+      "ko": null,
+      "en": "Power Shift"
+    },
+    {
       "moveName": "파워젬",
       "apiName": "power-gem",
       "ko": "파워젬",
@@ -3446,6 +3632,12 @@
       "apiName": "fairy-lock",
       "ko": "페어리록",
       "en": "Fairy Lock"
+    },
+    {
+      "moveName": "페이탈클로",
+      "apiName": "dire-claw",
+      "ko": null,
+      "en": "Dire Claw"
     },
     {
       "moveName": "페인트",
@@ -3586,6 +3778,12 @@
       "en": "Frenzy Plant"
     },
     {
+      "moveName": "하바네로엑기스",
+      "apiName": "spicy-extract",
+      "ko": null,
+      "en": "Spicy Extract"
+    },
+    {
       "moveName": "하이드로캐논",
       "apiName": "hydro-cannon",
       "ko": "하이드로캐논",
@@ -3706,6 +3904,12 @@
       "en": "Constrict"
     },
     {
+      "moveName": "휘적휘적포",
+      "apiName": "matcha-gotcha",
+      "ko": null,
+      "en": "Matcha Gotcha"
+    },
+    {
       "moveName": "흉내내기",
       "apiName": "mimic",
       "ko": "흉내내기",
@@ -3784,76 +3988,10 @@
       "en": "Strength Sap"
     },
     {
-      "moveName": "Aqua Cutter",
-      "apiName": "aqua-cutter",
-      "ko": null,
-      "en": "Aqua Cutter"
-    },
-    {
-      "moveName": "Aqua Step",
-      "apiName": "aqua-step",
-      "ko": null,
-      "en": "Aqua Step"
-    },
-    {
-      "moveName": "Armor Cannon",
-      "apiName": "armor-cannon",
-      "ko": null,
-      "en": "Armor Cannon"
-    },
-    {
-      "moveName": "Axe Kick",
-      "apiName": "axe-kick",
-      "ko": null,
-      "en": "Axe Kick"
-    },
-    {
-      "moveName": "Bitter Blade",
-      "apiName": "bitter-blade",
-      "ko": null,
-      "en": "Bitter Blade"
-    },
-    {
-      "moveName": "Bitter Malice",
-      "apiName": "bitter-malice",
-      "ko": null,
-      "en": "Bitter Malice"
-    },
-    {
-      "moveName": "Ceaseless Edge",
-      "apiName": "ceaseless-edge",
-      "ko": null,
-      "en": "Ceaseless Edge"
-    },
-    {
-      "moveName": "Chilling Water",
-      "apiName": "chilling-water",
-      "ko": null,
-      "en": "Chilling Water"
-    },
-    {
-      "moveName": "Chilly Reception",
-      "apiName": "chilly-reception",
-      "ko": null,
-      "en": "Chilly Reception"
-    },
-    {
-      "moveName": "Comeuppance",
-      "apiName": "comeuppance",
-      "ko": null,
-      "en": "Comeuppance"
-    },
-    {
       "moveName": "DD래리어트",
       "apiName": "darkest-lariat",
       "ko": "DD래리어트",
       "en": "Darkest Lariat"
-    },
-    {
-      "moveName": "Dire Claw",
-      "apiName": "dire-claw",
-      "ko": null,
-      "en": "Dire Claw"
     },
     {
       "moveName": "G의힘",
@@ -3862,148 +4000,10 @@
       "en": "Grav Apple"
     },
     {
-      "moveName": "Headlong Rush",
-      "apiName": "headlong-rush",
-      "ko": null,
-      "en": "Headlong Rush"
-    },
-    {
       "moveName": "HP회복",
       "apiName": "recover",
       "ko": "HP회복",
       "en": "Recover"
-    },
-    {
-      "moveName": "Ice Spinner",
-      "apiName": "ice-spinner",
-      "ko": null,
-      "en": "Ice Spinner"
-    },
-    {
-      "moveName": "Infernal Parade",
-      "apiName": "infernal-parade",
-      "ko": null,
-      "en": "Infernal Parade"
-    },
-    {
-      "moveName": "Lumina Crash",
-      "apiName": "lumina-crash",
-      "ko": null,
-      "en": "Lumina Crash"
-    },
-    {
-      "moveName": "Matcha Gotcha",
-      "apiName": "matcha-gotcha",
-      "ko": null,
-      "en": "Matcha Gotcha"
-    },
-    {
-      "moveName": "Mortal Spin",
-      "apiName": "mortal-spin",
-      "ko": null,
-      "en": "Mortal Spin"
-    },
-    {
-      "moveName": "Mountain Gale",
-      "apiName": "mountain-gale",
-      "ko": null,
-      "en": "Mountain Gale"
-    },
-    {
-      "moveName": "Pounce",
-      "apiName": "pounce",
-      "ko": null,
-      "en": "Pounce"
-    },
-    {
-      "moveName": "Power Shift",
-      "apiName": "power-shift",
-      "ko": null,
-      "en": "Power Shift"
-    },
-    {
-      "moveName": "Psyshield Bash",
-      "apiName": "psyshield-bash",
-      "ko": null,
-      "en": "Psyshield Bash"
-    },
-    {
-      "moveName": "Raging Bull",
-      "apiName": "raging-bull",
-      "ko": null,
-      "en": "Raging Bull"
-    },
-    {
-      "moveName": "Raging Fury",
-      "apiName": "raging-fury",
-      "ko": null,
-      "en": "Raging Fury"
-    },
-    {
-      "moveName": "Shed Tail",
-      "apiName": "shed-tail",
-      "ko": null,
-      "en": "Shed Tail"
-    },
-    {
-      "moveName": "Shelter",
-      "apiName": "shelter",
-      "ko": null,
-      "en": "Shelter"
-    },
-    {
-      "moveName": "Snowscape",
-      "apiName": "snowscape",
-      "ko": null,
-      "en": "Snowscape"
-    },
-    {
-      "moveName": "Spicy Extract",
-      "apiName": "spicy-extract",
-      "ko": null,
-      "en": "Spicy Extract"
-    },
-    {
-      "moveName": "Stone Axe",
-      "apiName": "stone-axe",
-      "ko": null,
-      "en": "Stone Axe"
-    },
-    {
-      "moveName": "Syrup Bomb",
-      "apiName": "syrup-bomb",
-      "ko": null,
-      "en": "Syrup Bomb"
-    },
-    {
-      "moveName": "Tera Blast",
-      "apiName": "tera-blast",
-      "ko": null,
-      "en": "Tera Blast"
-    },
-    {
-      "moveName": "Trailblaze",
-      "apiName": "trailblaze",
-      "ko": null,
-      "en": "Trailblaze"
-    },
-    {
-      "moveName": "Triple Arrows",
-      "apiName": "triple-arrows",
-      "ko": null,
-      "en": "Triple Arrows"
-    },
-    {
-      "moveName": "Twin Beam",
-      "apiName": "twin-beam",
-      "ko": null,
-      "en": "Twin Beam"
-    },
-    {
-      "moveName": "Wave Crash",
-      "apiName": "wave-crash",
-      "ko": null,
-      "en": "Wave Crash"
     }
   ]
 }
