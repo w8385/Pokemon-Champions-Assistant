@@ -3352,10 +3352,14 @@ export default function App() {
                           e.stopPropagation()
                           setTuningModalIndex(idx)
                         }}>
+                          <div className="stat-preview-topline">
+                            <span>{lt(label)}</span>
+                            <strong>{partyStatValue(row, member, field)}</strong>
+                          </div>
                           <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, field)) }} /></div>
-                          <span>{lt(label)}</span>
-                          <strong>{partyStatValue(row, member, field)}</strong>
-                          <span>+{member.evs[field]}</span>
+                          <div className="stat-preview-meta">
+                            <span className="stat-preview-ev">EV +{member.evs[field]}</span>
+                          </div>
                         </button>
                       ))}
                     </div> : null}
@@ -3856,12 +3860,14 @@ export default function App() {
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
                   <div key={field} className={`stat-preview-row sample-stat-preview-row ${statThemeClass(field)}`}>
-                    <div className="sample-stat-topline">
+                    <div className="stat-preview-topline sample-stat-topline">
                       <span>{lt(label)}</span>
                       <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
                     </div>
                     <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, field)) }} /></div>
-                    <span className="sample-stat-ev">+{sampleForge.evs[field]}</span>
+                    <div className="stat-preview-meta">
+                      <span className="stat-preview-ev sample-stat-ev">EV +{sampleForge.evs[field]}</span>
+                    </div>
                   </div>
                 ))}
               </div>
