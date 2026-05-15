@@ -3294,8 +3294,10 @@ export default function App() {
                             className={`speed-plane-node ${verticalClass}`}
                             style={{ top: `${top}%` }}
                           >
-                            <strong>{lt(scenario.label)}</strong>
-                            <span>{scenario.speedAtMax}</span>
+                            <div className="speed-plane-node-head">
+                              <strong>{lt(scenario.label)}</strong>
+                              <span>{scenario.speedAtMax}</span>
+                            </div>
                             <div className="speed-plane-node-meta">
                               <span>{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
                               <span>{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>

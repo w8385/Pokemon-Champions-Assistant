@@ -2266,12 +2266,18 @@ textarea { min-height: 72px; resize: vertical; }
   position: absolute;
   width: 16%;
   min-width: 108px;
-  padding: 8px 9px;
-  border-radius: 14px;
+  padding: 6px 8px;
+  border-radius: 12px;
   border: 1px solid #334155;
   background: rgba(15, 23, 42, 0.96);
   display: grid;
-  gap: 3px;
+  gap: 2px;
+}
+.speed-plane-node-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 .speed-plane-node.above {
   transform: translate(-50%, -100%);
@@ -2283,7 +2289,8 @@ textarea { min-height: 72px; resize: vertical; }
   transform: translate(-50%, -50%);
 }
 .speed-plane-node strong {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.1;
 }
 .speed-plane-node.above {
   border-color: #f97316;
@@ -2296,13 +2303,14 @@ textarea { min-height: 72px; resize: vertical; }
   border-color: #cbd5e1;
 }
 .speed-plane-node-meta {
-  margin-top: 2px;
-  display: grid;
-  gap: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
 }
 .speed-plane-node-meta span {
   color: #93a4b8;
   font-size: 10px;
+  line-height: 1.05;
 }
 .speed-target-card.enemy {
   border-color: #7c2d12;
@@ -2820,8 +2828,11 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-plane-board { min-height: 420px; }
   .speed-compare-head-grid { grid-template-columns: 1fr; }
   .speed-plane-node {
-    width: 34%;
+    width: 30%;
     min-width: 0;
+  }
+  .speed-plane-node-meta {
+    gap: 3px 4px;
   }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
