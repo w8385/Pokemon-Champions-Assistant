@@ -3366,12 +3366,6 @@ export default function App() {
           <div className="row-between section-head home-hero-head">
             <div>
               <h2>{lt('정식 배포 준비')}</h2>
-              <p className="muted">{lt('홈페이지에서 시작할 메뉴를 고르세요.')}</p>
-            </div>
-            <div className="pick-summary-badges home-hero-badges">
-              <span className="pick-badge">{lt('현재 작업')} · {menuLabelForSection(mainSection, activeTab, siteLanguage)}</span>
-              <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
-              <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
             </div>
           </div>
           <div className="home-route-grid">
@@ -3381,20 +3375,12 @@ export default function App() {
                 <strong>{lt('싱글배틀 워크벤치')}</strong>
                 <p>{lt('파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.')}</p>
               </div>
-              <div className="home-route-card-meta">
-                <span className="pick-badge">{menuLabelForTab(activeTab, siteLanguage)}</span>
-                <span className="action-button">{lt('들어가기')}</span>
-              </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('포켓몬 샘플 깎기')}</span>
                 <strong>{lt('샘플 빌더 워크벤치')}</strong>
                 <p>{lt('단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.')}</p>
-              </div>
-              <div className="home-route-card-meta">
-                <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
-                <span className="action-button">{lt('들어가기')}</span>
               </div>
             </button>
           </div>
