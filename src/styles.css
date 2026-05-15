@@ -7,7 +7,7 @@
 }
 
 :root {
-  font-family: 'Droid Sans Fallback Local', 'Noto Sans KR', 'Noto Sans JP', Inter, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans JP', 'Droid Sans Fallback Local', Inter, system-ui, sans-serif;
   color: #e5eef7;
   background: #0f1720;
   text-rendering: optimizeLegibility;
@@ -2270,7 +2270,37 @@ textarea { min-height: 72px; resize: vertical; }
     linear-gradient(180deg, rgba(96, 165, 250, 0.05), rgba(96, 165, 250, 0) 40%, rgba(124, 45, 18, 0.08) 100%),
     #0b1220;
   overflow: hidden;
-  padding-left: 46px;
+  padding: 34px 0 0 46px;
+}
+.speed-plane-axis-legend {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.speed-plane-axis-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 65, 85, 0.88);
+  background: rgba(11, 18, 32, 0.92);
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 700;
+}
+.speed-plane-axis-chip.upper {
+  border-color: rgba(249, 115, 22, 0.45);
+  color: #fdba74;
+}
+.speed-plane-axis-chip.lower {
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #7dd3fc;
 }
 .speed-plane-baseline-label {
   position: absolute;
@@ -2279,8 +2309,11 @@ textarea { min-height: 72px; resize: vertical; }
   color: #cbd5e1;
   font-size: 11px;
   font-weight: 700;
-  background: #0b1220;
-  padding: 0 6px;
+  background: rgba(11, 18, 32, 0.94);
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  z-index: 2;
 }
 .speed-plane-baseline-label.alt {
   color: #fcd34d;
@@ -2331,20 +2364,17 @@ textarea { min-height: 72px; resize: vertical; }
   position: absolute;
   left: 0;
   transform: translateX(-50%);
-  border-left: 1px dashed rgba(148, 163, 184, 0.45);
+  border-left: 1px dashed rgba(148, 163, 184, 0.26);
   z-index: 0;
 }
 .speed-plane-range-node {
   position: absolute;
-  width: 15%;
-  min-width: 108px;
+  width: 0;
+  min-width: 0;
   transform: translateX(-50%);
-  padding: 14px 8px 8px;
-  border-radius: 12px;
-  border: 1px solid #334155;
-  background: rgba(15, 23, 42, 0.96);
   box-sizing: border-box;
   z-index: 1;
+  overflow: visible;
 }
 .speed-plane-range-marker {
   position: absolute;
@@ -2366,6 +2396,7 @@ textarea { min-height: 72px; resize: vertical; }
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
+  z-index: 2;
 }
 .speed-plane-range-marker.base {
   padding: 0 7px;
@@ -2392,49 +2423,91 @@ textarea { min-height: 72px; resize: vertical; }
 .speed-plane-range-marker-burst {
   color: #facc15;
 }
-.speed-plane-range-node::before {
-  content: '';
+.speed-plane-range-line {
   position: absolute;
   left: 50%;
-  top: 24px;
-  bottom: 18px;
-  border-left: 2px solid rgba(148, 163, 184, 0.6);
+  top: 0;
+  bottom: 0;
+  width: 3px;
   transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(249, 115, 22, 0.95), rgba(148, 163, 184, 0.62) 48%, rgba(56, 189, 248, 0.95));
+  opacity: 0.95;
+}
+.speed-plane-range-line i {
+  position: absolute;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 2px solid #0b1220;
+}
+.speed-plane-range-line .top-dot {
+  top: 0;
+  background: #fb923c;
+}
+.speed-plane-range-line .bottom-dot {
+  top: 100%;
+  background: #38bdf8;
 }
 .speed-plane-range-node-head,
 .speed-plane-range-node-tail {
   position: absolute;
-  left: 8px;
-  right: 8px;
+  width: 118px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(51, 65, 85, 0.82);
+  background: rgba(11, 18, 32, 0.96);
+  z-index: 1;
+}
+.speed-plane-range-node.label-right .speed-plane-range-node-head,
+.speed-plane-range-node.label-right .speed-plane-range-node-tail {
+  left: 16px;
+}
+.speed-plane-range-node.label-left .speed-plane-range-node-head,
+.speed-plane-range-node.label-left .speed-plane-range-node-tail {
+  right: 16px;
+  align-items: flex-end;
+  text-align: right;
 }
 .speed-plane-range-node-head {
-  top: 8px;
+  top: -2px;
+  transform: translateY(-100%);
 }
 .speed-plane-range-node-tail {
-  bottom: 8px;
+  bottom: -2px;
+  transform: translateY(100%);
 }
-.speed-plane-range-node.above {
-  border-color: #f97316;
-  background: rgba(124, 45, 18, 0.3);
+.speed-plane-range-node.above .speed-plane-range-node-head {
+  border-color: rgba(249, 115, 22, 0.42);
 }
-.speed-plane-range-node.below {
-  border-color: #38bdf8;
+.speed-plane-range-node.below .speed-plane-range-node-tail {
+  border-color: rgba(56, 189, 248, 0.42);
 }
-.speed-plane-range-node.cross {
-  border-color: #cbd5e1;
+.speed-plane-range-node.cross .speed-plane-range-node-head,
+.speed-plane-range-node.cross .speed-plane-range-node-tail {
+  border-color: rgba(148, 163, 184, 0.42);
 }
 .speed-plane-range-node strong {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.1;
+  color: #eef2f7;
 }
 .speed-plane-range-node span {
   color: #93a4b8;
   font-size: 10px;
-  line-height: 1.05;
+  line-height: 1.1;
+}
+.speed-plane-range-node-head strong {
+  color: #fdba74;
+}
+.speed-plane-range-node-tail strong {
+  color: #7dd3fc;
 }
 .speed-target-card.enemy {
   border-color: #7c2d12;
