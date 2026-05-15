@@ -3111,7 +3111,7 @@ export default function App() {
             <div className="header-title-stack">
               <div>
                 <h1>Pokemon Champions Battle Assistant</h1>
-                <p>{mainSection === 'home' ? lt('정식 배포 준비') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
+                {mainSection === 'home' ? null : <p>{menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>}
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
@@ -3363,11 +3363,7 @@ export default function App() {
       <main className="grid">
         {mainSection === 'home' ? (
         <section className="panel wide home-hero-panel">
-          <div className="row-between section-head home-hero-head">
-            <div>
-              <h2>{lt('정식 배포 준비')}</h2>
-            </div>
-          </div>
+          <div className="row-between section-head home-hero-head" />
           <div className="home-route-grid">
             <button type="button" className="home-route-card accent" onClick={() => setMainSection('single')}>
               <div className="home-route-card-copy">
