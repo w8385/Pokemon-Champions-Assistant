@@ -188,7 +188,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
     '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
-    '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature',
+    '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
     '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.': 'Party management, opponent entry, and calculators are grouped into one menu.',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
@@ -217,7 +217,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
     '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
-    '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格',
+    '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
     '기존 파티 관리/상대 엔트리/계산기를 한 메뉴로 묶었습니다.': 'パーティ管理・相手エントリー・計算機を1つのメニューにまとめました。',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
@@ -2943,10 +2943,19 @@ export default function App() {
             ) : null}
           </div>
         </div>
-        <div className="top-actions">
-          <button type="button" className="action-button" onClick={exportState}>{lt('상태 내보내기')}</button>
-          <button type="button" className="action-button" onClick={() => fileInputRef.current?.click()}>{lt('상태 불러오기')}</button>
-          <button type="button" className="action-button danger" onClick={resetAll}>{lt('전체 초기화')}</button>
+        <div className="top-actions top-action-cards">
+          <button type="button" className="action-button top-action-card" onClick={exportState}>
+            <strong>{lt('백업 저장')}</strong>
+            <span>{lt('현재 작업 상태를 JSON으로 저장')}</span>
+          </button>
+          <button type="button" className="action-button top-action-card" onClick={() => fileInputRef.current?.click()}>
+            <strong>{lt('백업 불러오기')}</strong>
+            <span>{lt('저장한 JSON 상태 파일을 불러오기')}</span>
+          </button>
+          <button type="button" className="action-button danger top-action-card top-action-card-danger" onClick={resetAll}>
+            <strong>{lt('전체 데이터 초기화')}</strong>
+            <span>{lt('파티·상대·샘플을 전부 초기화')}</span>
+          </button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
         </div>
       </header>

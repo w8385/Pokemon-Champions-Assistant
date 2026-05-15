@@ -55,6 +55,12 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   margin-bottom: 24px;
   align-items: center;
 }
+.top-action-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
 .language-menu-wrap {
   position: relative;
 }
@@ -281,6 +287,32 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   border-radius: 10px;
   padding: 9px 12px;
   cursor: pointer;
+}
+.top-action-card {
+  display: grid;
+  gap: 4px;
+  min-height: 64px;
+  text-align: left;
+  align-content: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.98));
+}
+.top-action-card strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+.top-action-card span {
+  color: #93a4b8;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.top-action-card-danger {
+  border-color: rgba(127, 29, 29, 0.9);
+  background: linear-gradient(180deg, rgba(69, 10, 10, 0.5), rgba(11, 18, 32, 0.98));
+}
+.top-action-card-danger span {
+  color: #fca5a5;
 }
 .action-button.danger {
   border-color: #7f1d1d;
@@ -3315,6 +3347,7 @@ textarea { min-height: 72px; resize: vertical; }
 @media (max-width: 960px) {
   .grid { grid-template-columns: 1fr; }
   .panel.wide { grid-column: span 1; }
+  .top-action-cards { grid-template-columns: 1fr; }
   .home-route-grid { grid-template-columns: 1fr; }
   .party-overview { position: static; }
   .party-columns { grid-template-columns: 1fr; }
