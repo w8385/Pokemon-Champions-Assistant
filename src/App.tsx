@@ -288,6 +288,7 @@ const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-lucario': 'lucarionite',
   'mega-manectric': 'manectite',
   'mega-medicham': 'medichamite',
+  'mega-floette': 'item-sprites/floettite.png',
   'mega-pidgeot': 'pidgeotite',
   'mega-pinsir': 'pinsirite',
   'mega-sableye': 'sablenite',
