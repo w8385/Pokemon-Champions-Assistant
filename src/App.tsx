@@ -90,6 +90,7 @@ type PersistedState = {
   selectedOpp?: number
   calcAttackStage?: number
   calcDefenseStage?: number
+  calcHitCount?: number
   calcWeather?: DamageWeather
   calcTerrain?: DamageTerrain
   calcBurned?: boolean
@@ -131,6 +132,7 @@ type MoveMeta = {
   power: number | null
   accuracy?: number | null
   hits?: number
+  hitPowers?: number[]
   variablePower?: boolean
   usesDefenseAsAttack?: boolean
   targetsDefenseStat?: 'defense' | 'spDefense'
@@ -201,7 +203,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '급소': 'Critical Hit', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -229,7 +231,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '급소': '急所', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -1332,6 +1334,44 @@ function variablePowerHint(moveName: string, lt: (key: string) => string) {
   }
 }
 
+function multiHitOptions(moveName: string) {
+  switch (moveName) {
+    case '드래곤애로':
+      return [2]
+    case '스케일샷':
+      return [2, 3, 4, 5]
+    case '트리플악셀':
+      return [1, 2, 3]
+    default:
+      return null
+  }
+}
+
+function resolveMultiHitMeta(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null) {
+  if (!moveMeta) return moveMeta
+  if (moveName === '드래곤애로') return { ...moveMeta, hits: 2, hitPowers: [50, 50] }
+  if (moveName === '스케일샷') {
+    const hits = hitCount && hitCount >= 2 && hitCount <= 5 ? hitCount : 2
+    return { ...moveMeta, power: 25, hits, hitPowers: Array.from({ length: hits }, () => 25), variablePower: false }
+  }
+  if (moveName === '트리플악셀') {
+    const hits = hitCount && hitCount >= 1 && hitCount <= 3 ? hitCount : 3
+    return { ...moveMeta, power: 20, hits, hitPowers: [20, 40, 60].slice(0, hits), variablePower: false }
+  }
+  return moveMeta
+}
+
+function multiHitSummary(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null) {
+  const resolved = resolveMultiHitMeta(moveName, moveMeta, hitCount)
+  const powers = resolved?.hitPowers ?? []
+  if (!powers.length) return null
+  const totalPower = powers.reduce((sum, value) => sum + value, 0)
+  return {
+    hits: powers.length,
+    totalPower,
+  }
+}
+
 function matchupHints(attacker: Row, defender: Row) {
   const attackOptions = attacker.types.map((type, idx) => ({
     type,
@@ -1410,13 +1450,15 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
   const level = 50
   const scaledAttack = Math.max(1, applyFixedMod(Math.floor(attackStat), attackMod))
   const scaledDefense = Math.max(1, applyFixedMod(Math.floor(defenseStat), defenseMod))
-  const scaledPower = Math.max(1, applyFixedMod(Math.floor(resolvedPower), powerMod))
-  let base = getBaseDamage(level, scaledPower, scaledAttack, scaledDefense)
-  if (moveMeta?.alwaysCrit || modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
-  const hitCount = Math.max(1, moveMeta?.hits ?? 1)
+  const hitPowers = moveMeta?.hitPowers?.length ? moveMeta.hitPowers : Array.from({ length: Math.max(1, moveMeta?.hits ?? 1) }, () => resolvedPower)
   const finalMod = chainMods([fixedMod(modifiers?.finalMultiplier ?? 1)])
   const stabMod = fixedMod(stab)
-  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => getFinalDamageRoll(base, random, effectiveness, Boolean(modifiers?.burned), stabMod, finalMod) * hitCount)
+  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => hitPowers.reduce((sum, power) => {
+    const scaledPower = Math.max(1, applyFixedMod(Math.floor(power), powerMod))
+    let base = getBaseDamage(level, scaledPower, scaledAttack, scaledDefense)
+    if (moveMeta?.alwaysCrit || modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
+    return sum + getFinalDamageRoll(base, random, effectiveness, Boolean(modifiers?.burned), stabMod, finalMod)
+  }, 0))
   const min = rolls[0]
   const max = rolls[rolls.length - 1]
   return {
@@ -1861,6 +1903,10 @@ export default function App() {
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcAttackStage, setCalcAttackStage] = React.useState(() => clampBattleStage(persisted?.calcAttackStage))
   const [calcDefenseStage, setCalcDefenseStage] = React.useState(() => clampBattleStage(persisted?.calcDefenseStage))
+  const [calcHitCount, setCalcHitCount] = React.useState(() => {
+    const value = Number(persisted?.calcHitCount)
+    return Number.isFinite(value) ? Math.max(1, Math.trunc(value)) : 3
+  })
   const initialOpponentBulkPreset = React.useMemo(() => sanitizeOpponentBulkPreset(persisted?.calcOpponentBulkPreset), [persisted])
   const initialOpponentBulkState = React.useMemo(() => sanitizeOpponentBulkState({
     hpEv: persisted?.calcOpponentHpEv,
@@ -1999,6 +2045,7 @@ export default function App() {
       selectedOpp,
       calcAttackStage,
       calcDefenseStage,
+      calcHitCount,
       calcWeather,
       calcTerrain,
       calcBurned,
@@ -2019,7 +2066,7 @@ export default function App() {
       savedSamples,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcAttackStage, calcDefenseStage, calcWeather, calcTerrain, calcBurned, calcCritical, calcReflect, calcLightScreen, calcAuroraVeil, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
+  }, [party, opponents, selectedMy, selectedOpp, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcReflect, calcLightScreen, calcAuroraVeil, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -2139,7 +2186,11 @@ export default function App() {
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
   const registeredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const activeDamageMove = registeredDamageMoves.find((move) => move === selectedDamageMove?.move && myMember.key === selectedDamageMove?.key) ?? registeredDamageMoves[0] ?? ''
-  const activeDamageMoveMeta = resolveMoveMeta(activeDamageMove, myMoveOptions, movePoolByKey)
+  const activeDamageMoveBaseMeta = resolveMoveMeta(activeDamageMove, myMoveOptions, movePoolByKey)
+  const activeDamageMoveHitOptions = multiHitOptions(activeDamageMove)
+  const activeDamageMoveHitCount = activeDamageMoveHitOptions?.includes(calcHitCount) ? calcHitCount : (activeDamageMoveHitOptions?.[0] ?? null)
+  const activeDamageMoveMeta = resolveMultiHitMeta(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount)
+  const activeDamageMoveHitSummary = multiHitSummary(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount)
   const activeDamageMoveType = activeDamageMoveMeta?.type ?? null
   const activeDamageMoveCategory = activeDamageMoveMeta?.category === 'physical' || activeDamageMoveMeta?.category === 'special' ? activeDamageMoveMeta.category : null
   const activeDamageMovePower = typeof activeDamageMoveMeta?.power === 'number' ? activeDamageMoveMeta.power : null
@@ -2150,6 +2201,11 @@ export default function App() {
     if (!activeDamageMoveCategory) return
     setCalcMode((prev) => (prev === activeDamageMoveCategory ? prev : activeDamageMoveCategory))
   }, [activeDamageMoveCategory])
+
+  React.useEffect(() => {
+    if (!activeDamageMoveHitOptions?.length) return
+    setCalcHitCount((prev) => (activeDamageMoveHitOptions.includes(prev) ? prev : activeDamageMoveHitOptions[0]))
+  }, [activeDamageMove, activeDamageMoveHitOptions])
 
   const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, myMember.ability)
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
@@ -2671,6 +2727,7 @@ export default function App() {
     setCalcMode('special')
     setCalcAttackStage(0)
     setCalcDefenseStage(0)
+    setCalcHitCount(3)
     setCalcWeather('none')
     setCalcTerrain('none')
     setCalcBurned(false)
@@ -2707,6 +2764,7 @@ export default function App() {
       selectedOpp,
       calcAttackStage,
       calcDefenseStage,
+      calcHitCount,
       calcWeather,
       calcTerrain,
       calcBurned,
@@ -2754,6 +2812,7 @@ export default function App() {
       setSelectedOpp(sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length))
       setCalcAttackStage(clampBattleStage(parsed.calcAttackStage))
       setCalcDefenseStage(clampBattleStage(parsed.calcDefenseStage))
+      setCalcHitCount(Number.isFinite(Number(parsed.calcHitCount)) ? Math.max(1, Math.trunc(Number(parsed.calcHitCount))) : 3)
       setCalcWeather(parsed.calcWeather ?? 'none')
       setCalcTerrain(parsed.calcTerrain ?? 'none')
       setCalcBurned(Boolean(parsed.calcBurned))
@@ -4231,7 +4290,7 @@ export default function App() {
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface">
-            {activeDamageMoveMeta?.variablePower ? <div className="pick-summary-badges damage-auto-badges">
+            {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt)}</span>
             </div> : null}
             {activeDamageMovePower === null ? <div className="preset-row damage-preset-row">
@@ -4257,7 +4316,13 @@ export default function App() {
                       <option value="special">{lt('특수')}</option>
                     </select>
                   </label> : <div className="calc-lock-box">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
-                  {activeDamageMovePower === null ? <label>
+                  {activeDamageMoveHitOptions?.length ? <label>
+                    {lt('타수')}
+                    <select value={activeDamageMoveHitCount ?? activeDamageMoveHitOptions[0]} onChange={(e) => setCalcHitCount(Math.max(1, Math.trunc(Number(e.target.value))))} disabled={activeDamageMoveHitOptions.length === 1}>
+                      {activeDamageMoveHitOptions.map((hit) => <option key={`hit-${hit}`} value={hit}>{`${hit} ${lt('타수')}`}</option>)}
+                    </select>
+                    {activeDamageMoveHitSummary ? <small>{lt('총위력')} {activeDamageMoveHitSummary.totalPower}</small> : null}
+                  </label> : activeDamageMovePower === null ? <label>
                     {lt('수동 위력')}
                     <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
                   </label> : <div className="calc-lock-box">{lt('위력')} {activeDamageMovePower}</div>}

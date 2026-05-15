@@ -2671,7 +2671,7 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .damage-calc-grid.compact.field-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 .calc-grid > label,
 .calc-lock-box {
@@ -2685,6 +2685,11 @@ textarea { min-height: 72px; resize: vertical; }
   display: grid;
   align-content: start;
   gap: 8px;
+}
+.calc-grid > label small {
+  color: #93a4b8;
+  font-size: 11px;
+  font-weight: 700;
 }
 .calc-grid > label input,
 .calc-grid > label select {
