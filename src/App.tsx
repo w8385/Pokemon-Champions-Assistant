@@ -127,6 +127,13 @@ type DamageCalcModifiers = {
   powerMultiplier?: number
   finalMultiplier?: number
 }
+type BattleStatBlock = {
+  hp: number
+  attack: number
+  defense: number
+  spAttack: number
+  spDefense: number
+}
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 type DamageMoveSelection = { key: string; move: string }
 type ViewState = {
@@ -158,7 +165,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -186,7 +193,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -948,6 +955,26 @@ function applySpeedStage(value: number, speedStage: number) {
   return value
 }
 
+function buildPartyBattleStats(row: Row, member: PartyMember): BattleStatBlock {
+  return {
+    hp: actualStat(row.hp, member.evs.hp, 1, true),
+    attack: actualStat(row.attack, member.evs.attack, natureMultiplier(member.config.nature, 'attack')),
+    defense: actualStat(row.defense, member.evs.defense, natureMultiplier(member.config.nature, 'defense')),
+    spAttack: actualStat(row.spAttack, member.evs.spAttack, natureMultiplier(member.config.nature, 'spAttack')),
+    spDefense: actualStat(row.spDefense, member.evs.spDefense, natureMultiplier(member.config.nature, 'spDefense')),
+  }
+}
+
+function buildNeutralBattleStats(row: Row): BattleStatBlock {
+  return {
+    hp: actualStat(row.hp, 0, 1, true),
+    attack: actualStat(row.attack, 0, 1),
+    defense: actualStat(row.defense, 0, 1),
+    spAttack: actualStat(row.spAttack, 0, 1),
+    spDefense: actualStat(row.spDefense, 0, 1),
+  }
+}
+
 function battleStageMultiplier(stage: number) {
   if (stage > 0) return (2 + stage) / 2
   if (stage < 0) return 2 / (2 + Math.abs(stage))
@@ -1153,7 +1180,7 @@ function togglePicked<T extends { picked: boolean }>(list: T[], idx: number, max
   return next
 }
 
-function calcDamage(attacker: Row, defender: Row, movePower: number, mode: CalcMode, stab = 1.5, effectiveness = 1, moveMeta?: MoveMeta | null, modifiers?: DamageCalcModifiers) {
+function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePower: number, mode: CalcMode, stab = 1.5, effectiveness = 1, moveMeta?: MoveMeta | null, modifiers?: DamageCalcModifiers) {
   const resolvedMode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : mode
   const resolvedPower = typeof moveMeta?.power === 'number' ? moveMeta.power : movePower
   if (!resolvedPower) return null
@@ -1165,15 +1192,23 @@ function calcDamage(attacker: Row, defender: Row, movePower: number, mode: CalcM
   const effectivePower = resolvedPower * (modifiers?.powerMultiplier ?? 1)
   attackStat = attackStat * (modifiers?.attackMultiplier ?? 1)
   defenseStat = defenseStat * (modifiers?.defenseMultiplier ?? 1)
-  const base = (((22 * effectivePower * attackStat) / Math.max(1, defenseStat)) / 50) + 2
+  const level = 50
+  const levelFactor = Math.floor((2 * level) / 5) + 2
+  const scaledAttack = Math.max(1, Math.floor(attackStat))
+  const scaledDefense = Math.max(1, Math.floor(defenseStat))
+  const scaledPower = Math.max(1, Math.floor(effectivePower))
+  const base = Math.floor(Math.floor((levelFactor * scaledPower * scaledAttack) / scaledDefense) / 50) + 2
   const critMultiplier = moveMeta?.alwaysCrit ? 1.5 : 1
   const hitCount = Math.max(1, moveMeta?.hits ?? 1)
   const finalMultiplier = modifiers?.finalMultiplier ?? 1
-  const min = Math.floor(base * stab * effectiveness * critMultiplier * finalMultiplier * 0.85) * hitCount
-  const max = Math.floor(base * stab * effectiveness * critMultiplier * finalMultiplier) * hitCount
+  const commonModifier = stab * effectiveness * critMultiplier * finalMultiplier
+  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => Math.floor(base * commonModifier * (random / 100)) * hitCount)
+  const min = rolls[0]
+  const max = rolls[rolls.length - 1]
   return {
     min,
     max,
+    rolls,
     minPct: ((min / defender.hp) * 100).toFixed(1),
     maxPct: ((max / defender.hp) * 100).toFixed(1),
   }
@@ -1680,6 +1715,8 @@ export default function App() {
   const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaOn) : ''
   const myRow = indexByKey.get(calcMyKey) ?? rows[0]
   const oppRow = calcOppKey ? (indexByKey.get(calcOppKey) ?? rows[0]) : null
+  const myBattleStats = buildPartyBattleStats(myRow, myMember)
+  const oppBattleStats = oppRow ? buildNeutralBattleStats(oppRow) : null
   const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
   const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
 
@@ -2054,8 +2091,8 @@ export default function App() {
     attackStage: calcAttackStage,
     defenseStage: calcDefenseStage,
   })
-  const damage = oppRow && !activeDamageMoveIsStatus
-    ? calcDamage(myRow, oppRow, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
+  const damage = oppRow && oppBattleStats && !activeDamageMoveIsStatus
+    ? calcDamage(myBattleStats, oppBattleStats, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
     : null
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
@@ -3780,6 +3817,8 @@ export default function App() {
           </div>
           <div className="damage-surface-card damage-control-surface">
             <div className="pick-summary-badges damage-auto-badges">
+              <span className="pick-badge">Lv50</span>
+              <span className="pick-badge">{lt('상대 기본 내구 가정')} · 0EV / neutral</span>
               {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
               {activeDamageMoveCategory ? <span className="pick-badge">{lt('자동 분류')} · {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
               {activeDamageMovePower !== null ? <span className="pick-badge">{lt('자동 위력')} · {activeDamageMovePower}</span> : null}
