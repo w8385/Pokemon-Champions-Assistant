@@ -32,6 +32,8 @@ textarea {
 }
 header {
   position: relative;
+  margin-bottom: -1px;
+  z-index: 4;
 }
 .header-top-row {
   display: flex;
@@ -49,49 +51,56 @@ header {
 .header-title-stack {
   min-width: 0;
   display: grid;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
 }
 .header-primary-tabs {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
+  gap: 0;
   flex-wrap: wrap;
-  padding: 6px 0 0;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.72);
+  width: 100%;
+  max-width: 100%;
+  padding: 0 4px;
+  margin-top: 4px;
+  margin-bottom: -1px;
+  border-bottom: 1px solid #243041;
+  position: relative;
+  z-index: 2;
 }
 .header-primary-tab {
-  min-height: 42px;
-  padding: 0 18px 3px;
-  border-radius: 14px 14px 0 0;
-  border-bottom-color: transparent;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.56), rgba(11, 18, 32, 0.82));
-  color: #9fb0c8;
+  min-height: 43px;
+  padding: 0 18px 1px;
+  margin-right: 2px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #8ea0b8;
   position: relative;
   top: 1px;
+  transition: background 140ms ease, color 140ms ease;
 }
 .header-primary-tab:hover {
-  color: #e2e8f0;
-  border-color: rgba(71, 85, 105, 0.92);
-  border-bottom-color: transparent;
-  background: linear-gradient(180deg, rgba(23, 37, 84, 0.34), rgba(11, 18, 32, 0.9));
+  color: #dbe7f5;
+  background: rgba(30, 41, 59, 0.28);
 }
 .header-primary-tab.active {
-  border-color: rgba(96, 165, 250, 0.56);
-  border-bottom-color: #111827;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(17, 24, 39, 1));
-  color: #eff6ff;
-  box-shadow: inset 0 1px 0 rgba(191, 219, 254, 0.08);
+  background: rgba(17, 24, 39, 0.98);
+  color: #f8fbff;
+  border: 1px solid #243041;
+  border-bottom-color: rgba(17, 24, 39, 0.98);
+  border-radius: 10px 10px 0 0;
+  box-shadow: inset 0 2px 0 #60a5fa;
 }
 .header-primary-tab.active::after {
   content: '';
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 8px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
   height: 2px;
-  border-radius: 999px;
-  background: #60a5fa;
+  background: rgba(17, 24, 39, 0.98);
 }
 .header-utility-row {
   display: flex;
@@ -3450,11 +3459,12 @@ textarea { min-height: 72px; resize: vertical; }
 @media (max-width: 960px) {
   .header-top-row { align-items: flex-start; }
   .header-utility-row { gap: 6px; }
-  .header-primary-tabs { gap: 4px; }
+  .header-primary-tabs { gap: 0; width: 100%; padding: 0; }
   .header-primary-tab {
-    flex: 1 1 calc(50% - 4px);
+    flex: 1 1 calc(50% - 2px);
     justify-content: center;
-    padding: 0 14px 3px;
+    padding: 0 14px 1px;
+    margin-right: 2px;
   }
   .grid { grid-template-columns: 1fr; }
   .panel.wide { grid-column: span 1; }
