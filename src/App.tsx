@@ -554,6 +554,34 @@ function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
   return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])])).map((name) => ({ name, type: null }))
 }
 
+const MOVE_NAME_ALIASES: Record<string, string> = {
+  '회복': 'HP회복',
+  '섀도클로': '섀도크루',
+  '앙코르': '앵콜',
+}
+
+function moveNameCandidates(name: string) {
+  const base = name.trim()
+  const alias = MOVE_NAME_ALIASES[base]
+  return Array.from(new Set([base, alias].filter(Boolean).flatMap((entry) => [entry as string, normalizeSearchText(entry as string)])))
+}
+
+function findMatchingMoveOption(name: string, options: MoveOption[]) {
+  if (!name || !options.length) return null
+  const candidates = moveNameCandidates(name)
+  return options.find((option) => candidates.includes(option.name) || candidates.includes(normalizeSearchText(option.name))) ?? null
+}
+
+function resolveMoveType(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>) {
+  const direct = findMatchingMoveOption(name, preferredOptions)
+  if (direct?.type) return direct.type
+  for (const pool of Object.values(movePools)) {
+    const matched = findMatchingMoveOption(name, pool.moves)
+    if (matched?.type) return matched.type
+  }
+  return null
+}
+
 const moveMetaCache = new Map<string, Promise<MoveOption>>()
 let embeddedMovePoolsPromise: Promise<Record<string, MoveOption[]>> | null = null
 
@@ -1469,7 +1497,7 @@ export default function App() {
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
   const registeredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const activeDamageMove = registeredDamageMoves.find((move) => move === selectedDamageMove?.move && myMember.key === selectedDamageMove?.key) ?? registeredDamageMoves[0] ?? ''
-  const activeDamageMoveType = myMoveOptions.find((option) => option.name === activeDamageMove)?.type ?? null
+  const activeDamageMoveType = resolveMoveType(activeDamageMove, myMoveOptions, movePoolByKey)
   const autoStab = activeDamageMoveType && myRow.types.includes(activeDamageMoveType) ? 1.5 : 1
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
   const toggleConfirmedMove = (key: string, move: string) => {
@@ -1663,7 +1691,7 @@ export default function App() {
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
-  const sampleMoveType = (moveName: string) => sampleMoveOptions.find((option) => option.name === moveName)?.type ?? null
+  const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
   const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const sampleConfirmedMoves = sampleRegisteredMoves.filter(Boolean).slice(0, 4)
@@ -2239,7 +2267,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
-                const findMoveType = (moveName: string) => memberMoveOptions.find((option) => option.name === moveName)?.type ?? null
+                const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
@@ -3313,7 +3341,7 @@ export default function App() {
           </div>
           <div className="damage-move-panel">
             {registeredDamageMoves.length ? registeredDamageMoves.map((move) => {
-              const moveType = myMoveOptions.find((option) => option.name === move)?.type ?? null
+              const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
               return (
                 <button
                   key={`damage-move-${myMember.key}-${move}`}
