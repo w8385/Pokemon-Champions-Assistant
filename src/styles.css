@@ -17,6 +17,7 @@
 body {
   margin: 0;
   background: linear-gradient(180deg, #111827, #0b1220);
+  overflow-x: hidden;
 }
 button,
 input,
@@ -29,6 +30,7 @@ textarea {
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
+  overflow-x: hidden;
 }
 header {
   position: relative;
@@ -103,8 +105,19 @@ header {
   gap: 8px;
   flex: 0 0 auto;
 }
-header h1 { margin: 0 0 8px; }
-header p { margin: 0 0 14px; color: #93a4b8; }
+header h1 {
+  margin: 0 0 8px;
+  max-width: 100%;
+  font-size: clamp(24px, 4.2vw, 36px);
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+header p {
+  margin: 0 0 14px;
+  color: #93a4b8;
+  overflow-wrap: anywhere;
+}
 .top-actions {
   display: flex;
   gap: 8px;
@@ -276,6 +289,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   margin: 0;
   font-size: inherit;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 .home-route-card {
   appearance: none;
@@ -1919,7 +1933,11 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
+.grid > * {
+  min-width: 0;
+}
 .panel {
+  min-width: 0;
   background: rgba(17, 24, 39, 0.88);
   border: 1px solid #243041;
   border-radius: 16px;
@@ -3455,11 +3473,43 @@ textarea { min-height: 72px; resize: vertical; }
   font-weight: 700;
 }
 @media (max-width: 960px) {
-  .header-top-row { align-items: flex-start; }
-  .header-utility-row { gap: 6px; }
-  .header-primary-tabs { gap: 0; width: 100%; padding: 0 0 10px; }
+  .app-shell {
+    padding: 18px;
+  }
+  .header-top-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .header-title-row {
+    width: 100%;
+  }
+  .header-title-stack {
+    gap: 8px;
+  }
+  .header-utility-row {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .header-primary-tabs {
+    flex-wrap: nowrap;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 0 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .header-primary-tabs::-webkit-scrollbar {
+    display: none;
+  }
   .header-primary-tab {
-    flex: 1 1 calc(50% - 2px);
+    flex: 0 0 auto;
+    white-space: nowrap;
     justify-content: center;
     padding: 0 10px;
   }
@@ -3564,8 +3614,27 @@ textarea { min-height: 72px; resize: vertical; }
   .effort-gauge-hitbox {
     min-height: 30px;
   }
-  .effort-cell-meta {
-    align-items: flex-start;
-    flex-direction: column;
+}
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 14px;
+  }
+  .header-primary-tabs {
+    padding: 0 0 8px;
+  }
+  .header-primary-tab {
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 14px;
+  }
+  header h1 {
+    margin-bottom: 6px;
+    font-size: 22px;
+    line-height: 1.14;
+  }
+  header p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
   }
 }
