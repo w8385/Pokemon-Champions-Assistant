@@ -3114,9 +3114,9 @@ export default function App() {
                 <p>{mainSection === 'home' ? lt('정식 배포 준비') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
-                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
-                <button type="button" className={`tab-chip header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
               </div>
             </div>
           </div>

@@ -94,7 +94,7 @@ header {
   right: 14px;
   bottom: -11px;
   height: 2px;
-  border-radius: 999px;
+  border-radius: 0;
   background: #60a5fa;
 }
 .header-utility-row {
