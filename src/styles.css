@@ -247,6 +247,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .home-footer-text-row {
   display: grid;
   gap: 10px;
+  font-size: 14px;
 }
 .home-footer-label {
   font-size: 13px;
@@ -265,7 +266,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   color: #93c5fd;
   text-decoration: none;
   word-break: break-all;
-  font-size: 15px;
+  font-size: inherit;
   line-height: 1.6;
 }
 .home-link-list a:hover {
@@ -273,7 +274,7 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .home-footer-copy {
   margin: 0;
-  font-size: 15px;
+  font-size: inherit;
   line-height: 1.6;
 }
 .home-route-card {
