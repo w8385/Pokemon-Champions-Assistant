@@ -186,7 +186,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -215,7 +215,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -2629,6 +2629,39 @@ export default function App() {
   const sampleTuningFocus = [...EFFORT_STAT_OPTIONS]
     .map((stat) => ({ key: stat.key, value: sampleForge.evs[stat.key], label: translateText(siteLanguage, stat.label) }))
     .sort((a, b) => b.value - a.value)[0]
+  const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
+
+  const scrollToSampleSection = (sectionId: string) => {
+    if (typeof document === 'undefined') return
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const applyMemberToPartySlot = (member: PartyMember, slotIdx: number) => {
+    const target = party[slotIdx]
+    if (!target) return
+    const next = [...party]
+    next[slotIdx] = {
+      ...member,
+      picked: target.picked,
+      key: member.key,
+      evs: { ...member.evs },
+      config: { ...member.config },
+      tuning: { ...member.tuning },
+      item: member.item,
+    }
+    setParty(next)
+    setPartyItemDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[slotIdx] = visibleChampionsItem(member.key, member.item)
+      return nextDrafts
+    })
+    const nextSearch = [...partySearch]
+    nextSearch[slotIdx] = searchDisplayLabel(member.key, siteLanguage)
+    setPartySearch(nextSearch)
+    setSelectedMy(slotIdx)
+    setMainSection('single')
+    setActiveTab('party')
+  }
 
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, siteLanguage)} · ${natureLabel(sampleForge.config.nature, siteLanguage)}`
@@ -2642,30 +2675,7 @@ export default function App() {
   }
 
   const applySampleToPartySlot = (slotIdx: number) => {
-    const target = party[slotIdx]
-    if (!target) return
-    const next = [...party]
-    next[slotIdx] = {
-      ...sampleForge,
-      picked: target.picked,
-      key: sampleForge.key,
-      evs: { ...sampleForge.evs },
-      config: { ...sampleForge.config },
-      tuning: { ...sampleForge.tuning },
-      item: sampleForge.item,
-    }
-    setParty(next)
-    setPartyItemDrafts((prev) => {
-      const nextDrafts = [...prev]
-      nextDrafts[slotIdx] = visibleChampionsItem(sampleForge.key, sampleForge.item)
-      return nextDrafts
-    })
-    const nextSearch = [...partySearch]
-    nextSearch[slotIdx] = searchDisplayLabel(sampleForge.key, siteLanguage)
-    setPartySearch(nextSearch)
-    setSelectedMy(slotIdx)
-    setMainSection('single')
-    setActiveTab('party')
+    applyMemberToPartySlot(sampleForge, slotIdx)
   }
 
   const updateTuningEffortFromPointer = (slotIdx: number, stat: EffortStatKey, availableCap: number, clientX: number, element: HTMLDivElement) => {
@@ -3777,6 +3787,11 @@ export default function App() {
               <div className="pick-summary-badges">
                 <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                 <span className="pick-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
+                <span className="pick-badge">{lt('노력치 합')} {sampleEvTotal}</span>
+              </div>
+              <div className="pick-row sample-overview-actions">
+                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
+                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
               </div>
             </div>
             <div className="sample-overview-card">
@@ -3785,6 +3800,19 @@ export default function App() {
               <div className="pick-summary-badges">
                 <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                 <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
+                <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
+              </div>
+            </div>
+            <div className="sample-overview-card sample-workflow-card">
+              <span className="muted">{lt('작업 흐름')}</span>
+              <strong>{lt('저장/적용')}</strong>
+              <div className="pick-summary-badges">
+                <span className="pick-badge">{lt('파티 슬롯')} {selectedMy + 1}</span>
+                <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              </div>
+              <div className="pick-row sample-overview-actions">
+                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
+                <button type="button" className="pick-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{lt('파티 슬롯에 적용')}</button>
               </div>
             </div>
           </div>
@@ -3795,7 +3823,7 @@ export default function App() {
             <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
           </div>
           <div className="sample-builder-grid compact-sample-builder-grid">
-            <div className="sample-main-card flat-sample-main-card">
+            <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
                 <label className="species-picker sample-species-picker">
                 {lt('포켓몬 선택')}
@@ -3997,7 +4025,7 @@ export default function App() {
                 </div>
               </details>
             </div>
-            <div className="move-card flat-sample-move-card">
+            <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 기술')}</strong>
                 <button type="button" className="action-button sample-quick-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
@@ -4201,7 +4229,7 @@ export default function App() {
             </div>
           </div>
         </section>
-        <section className="panel wide">
+        <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">
               <span>{lt('저장한 샘플')}</span>
@@ -4214,10 +4242,14 @@ export default function App() {
             {savedSamples.length ? savedSamples.map((entry) => {
               const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
               return (
-                <div key={entry.id} className="saved-sample-item">
+                <div key={entry.id} className="saved-sample-item sample-saved-card-item">
                   <div>
                     <strong>{entry.label}</strong>
                     <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}{entry.member.item ? ` · ${displayItemLabel(entry.member.item, siteLanguage)}` : ''}</p>
+                    <div className="pick-summary-badges sample-saved-item-badges">
+                      <span className="pick-badge">{lt('노력치 합')} {Object.values(entry.member.evs).reduce((sum, value) => sum + value, 0)}</span>
+                      <span className="pick-badge">{lt('실수치 스피드')} {partyStatValue(savedRow, entry.member, 'speed')}</span>
+                    </div>
                   </div>
                   <div className="inline-controls">
                     <button type="button" className="pick-chip" onClick={() => {
@@ -4226,6 +4258,7 @@ export default function App() {
                       setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
                       setActiveSampleMetaEditor(null)
                     }}>{lt('불러오기')}</button>
+                    <button type="button" className="pick-chip" onClick={() => applyMemberToPartySlot(entry.member, selectedMy)}>{lt('파티 슬롯에 적용')}</button>
                     <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('삭제')}</button>
                   </div>
                 </div>
