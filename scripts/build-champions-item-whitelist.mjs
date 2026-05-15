@@ -12,6 +12,11 @@ const MANUAL_SHORT_ALIASES = {
   'ひかりのこな': ['반짝가루'],
   'メタルコート': ['금속코트'],
   'メンタルハーブ': ['멘탈허브'],
+  'ようせいのハネ': ['요정의깃털'],
+}
+
+const MANUAL_KO_LABELS = {
+  'ようせいのハネ': '요정의깃털',
 }
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
@@ -110,7 +115,7 @@ async function worker() {
 await Promise.all(Array.from({ length: concurrency }, () => worker()))
 
 const koLabelEntries = whitelistItems
-  .map((item) => [item, detailsByJa.get(item)?.ko ?? null])
+  .map((item) => [item, MANUAL_KO_LABELS[item] ?? detailsByJa.get(item)?.ko ?? null])
   .filter(([, ko]) => typeof ko === 'string' && ko)
 
 const enLabelEntries = whitelistItems
@@ -132,7 +137,7 @@ const spriteEntries = whitelistItems
 
 const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${spriteEntries.map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`).join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
 
-const missingKoLabels = whitelistItems.filter((item) => !detailsByJa.get(item)?.ko)
+const missingKoLabels = whitelistItems.filter((item) => !(MANUAL_KO_LABELS[item] ?? detailsByJa.get(item)?.ko))
 
 const report = {
   generatedAt: new Date().toISOString(),
