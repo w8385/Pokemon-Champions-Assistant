@@ -556,8 +556,6 @@ function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
 
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
-  '섀도클로': '섀도크루',
-  '앙코르': '앵콜',
 }
 
 function moveNameCandidates(name: string) {
