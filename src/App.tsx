@@ -3651,6 +3651,10 @@ export default function App() {
               <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
             </div>
             <div className="damage-summary-grid">
+              <div className="damage-summary-card verdict">
+                <span>{siteLanguage === 'en' ? 'Read' : siteLanguage === 'ja' ? '判定' : '판정'}</span>
+                <strong>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</strong>
+              </div>
               <div className="damage-summary-card">
                 <span>{siteLanguage === 'en' ? 'Damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</span>
                 <strong>{damage.min} ~ {damage.max}</strong>
@@ -3658,10 +3662,6 @@ export default function App() {
               <div className="damage-summary-card accent">
                 <span>{siteLanguage === 'en' ? 'Percent' : siteLanguage === 'ja' ? '割合' : '비율'}</span>
                 <strong>{damage.minPct}% ~ {damage.maxPct}%</strong>
-              </div>
-              <div className="damage-summary-card verdict">
-                <span>{siteLanguage === 'en' ? 'Read' : siteLanguage === 'ja' ? '判定' : '판정'}</span>
-                <strong>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</strong>
               </div>
             </div>
           </div> : <div className="damage-box empty"><p>{lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
