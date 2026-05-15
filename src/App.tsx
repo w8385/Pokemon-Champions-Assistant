@@ -3398,20 +3398,22 @@ export default function App() {
               </div>
             </button>
           </div>
-          <div className="home-footer-grid">
-            <div className="home-footer-card">
-              <span className="home-route-eyebrow">{lt('프로젝트 링크')}</span>
-              <div className="home-link-list">
-                <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">{lt('GitHub 저장소')}</a>
-                <a href="mailto:me@w8385.dev">{lt('연락 이메일')} · me@w8385.dev</a>
-              </div>
-            </div>
-            <div className="home-footer-card">
-              <span className="home-route-eyebrow">{lt('저작권 및 안내')}</span>
-              <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지의 권리는 각 권리자에게 있습니다. 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+        </section>
+        ) : null}
+        {mainSection === 'home' ? (
+        <div className="home-footer-text-block">
+          <div className="home-footer-text-row">
+            <span className="home-footer-label">{lt('프로젝트 링크')}</span>
+            <div className="home-link-list text-only">
+              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">{lt('GitHub 저장소')}</a>
+              <a href="mailto:me@w8385.dev">{lt('연락 이메일')} · me@w8385.dev</a>
             </div>
           </div>
-        </section>
+          <div className="home-footer-text-row">
+            <span className="home-footer-label">{lt('저작권 및 안내')}</span>
+            <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+          </div>
+        </div>
         ) : null}
         {mainSection !== 'home' ? <section className="panel wide">
           <div className="row-between section-head">
