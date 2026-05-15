@@ -4216,15 +4216,15 @@ export default function App() {
                       <option value={4}>4x</option>
                     </select>
                   </label> : <div className="calc-lock-box">{lt('상성')} {damageModifiers.effectiveness}x</div>}
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
+                    <span>{lt('화상')}</span>
+                  </label>
                   <label>
                     {lt('내 화력 랭크')}
                     <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
                       {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
                     </select>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
-                    <span>{lt('화상')}</span>
                   </label>
                 </div>
               </div>
