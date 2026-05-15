@@ -3578,40 +3578,43 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="damage-move-panel">
-            {registeredDamageMoves.length ? registeredDamageMoves.map((move) => {
-              const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
-              return (
+          <div className="damage-surface-card damage-move-surface">
+            <div className="damage-move-panel">
+              {registeredDamageMoves.length ? registeredDamageMoves.map((move) => {
+                const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
+                return (
+                  <button
+                    key={`damage-move-${myMember.key}-${move}`}
+                    type="button"
+                    className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${activeDamageMove === move ? 'confirmed' : ''}`}
+                    onClick={() => setSelectedDamageMove({ key: myMember.key, move })}
+                  >
+                    {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                    <span>{move}</span>
+                  </button>
+                )
+              }) : <div className="speed-empty-box">{lt('등록 기술 없음')}</div>}
+            </div>
+          </div>
+          <div className="damage-surface-card damage-control-surface">
+            <div className="pick-summary-badges damage-auto-badges">
+              {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
+              <span className="pick-badge">STAB {activeDamageMoveType ? autoStab : stab}</span>
+              <span className="pick-badge">{lt('상성')} {activeDamageMoveType ? autoEffectiveness : effectiveness}x</span>
+            </div>
+            <div className="preset-row damage-preset-row">
+              {movePowerPresets.map((preset) => (
                 <button
-                  key={`damage-move-${myMember.key}-${move}`}
+                  key={preset.label}
                   type="button"
-                  className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${activeDamageMove === move ? 'confirmed' : ''}`}
-                  onClick={() => setSelectedDamageMove({ key: myMember.key, move })}
+                  className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
+                  onClick={() => setMovePower(preset.value)}
                 >
-                  {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
-                  <span>{move}</span>
+                  {lt(preset.label)}
                 </button>
-              )
-            }) : <div className="speed-empty-box">{lt('등록 기술 없음')}</div>}
-          </div>
-          <div className="pick-summary-badges damage-auto-badges">
-            {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
-            <span className="pick-badge">STAB {activeDamageMoveType ? autoStab : stab}</span>
-            <span className="pick-badge">{lt('상성')} {activeDamageMoveType ? autoEffectiveness : effectiveness}x</span>
-          </div>
-          <div className="preset-row">
-            {movePowerPresets.map((preset) => (
-              <button
-                key={preset.label}
-                type="button"
-                className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
-                onClick={() => setMovePower(preset.value)}
-              >
-                {lt(preset.label)}
-              </button>
-            ))}
-          </div>
-          <div className="calc-grid">
+              ))}
+            </div>
+            <div className="calc-grid damage-calc-grid">
             <label>
               {lt('수동 위력')}
               <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
@@ -3642,12 +3645,26 @@ export default function App() {
               </select>
             </label> : <div className="calc-lock-box">{lt('상성')} {autoEffectiveness}x</div>}
           </div>
+          </div>
           {oppRow && damage ? <div className="damage-box">
-            <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
-            <p>{damage.min} ~ {damage.max} {siteLanguage === 'en' ? 'damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</p>
-            <p>{damage.minPct}% ~ {damage.maxPct}%</p>
-            <p>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</p>
-          </div> : <div className="damage-box"><p>{lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
+            <div className="damage-box-head">
+              <strong>{displayName(myRow, siteLanguage)}</strong> → <strong>{displayName(oppRow, siteLanguage)}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
+            </div>
+            <div className="damage-summary-grid">
+              <div className="damage-summary-card">
+                <span>{siteLanguage === 'en' ? 'Damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</span>
+                <strong>{damage.min} ~ {damage.max}</strong>
+              </div>
+              <div className="damage-summary-card accent">
+                <span>{siteLanguage === 'en' ? 'Percent' : siteLanguage === 'ja' ? '割合' : '비율'}</span>
+                <strong>{damage.minPct}% ~ {damage.maxPct}%</strong>
+              </div>
+              <div className="damage-summary-card verdict">
+                <span>{siteLanguage === 'en' ? 'Read' : siteLanguage === 'ja' ? '判定' : '판정'}</span>
+                <strong>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</strong>
+              </div>
+            </div>
+          </div> : <div className="damage-box empty"><p>{lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
         </section> : null}
         </>}
       </main>
