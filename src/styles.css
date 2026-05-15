@@ -2167,6 +2167,104 @@ textarea { min-height: 72px; resize: vertical; }
 .speed-target-card {
   padding: 16px;
 }
+.speed-compare-board {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.speed-anchor-card {
+  position: sticky;
+  top: 16px;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.16), #111827);
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.speed-scenario-ladder {
+  display: grid;
+  gap: 12px;
+}
+.speed-ladder-list {
+  display: grid;
+  gap: 10px;
+}
+.speed-ladder-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: #111827;
+  padding: 14px;
+}
+.speed-ladder-meta strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.speed-ladder-meta span {
+  color: #93a4b8;
+  font-size: 12px;
+}
+.speed-ladder-track {
+  position: relative;
+  min-height: 76px;
+  padding: 10px 0;
+}
+.speed-ladder-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid #475569;
+}
+.speed-ladder-anchor,
+.speed-ladder-opponent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  background: #0b1220;
+}
+.speed-ladder-anchor {
+  top: calc(50% - 20px);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2) inset;
+}
+.speed-ladder-opponent {
+  width: calc(100% - 28px);
+  left: 14px;
+  right: 14px;
+  border-color: #7c2d12;
+  background: rgba(124, 45, 18, 0.18);
+}
+.speed-ladder-row.enemy-ahead .speed-ladder-opponent {
+  top: 0;
+}
+.speed-ladder-row.my-ahead .speed-ladder-opponent {
+  bottom: 0;
+}
+.speed-ladder-row.is-tie .speed-ladder-opponent {
+  top: calc(50% - 20px);
+}
+.speed-ladder-anchor span,
+.speed-ladder-opponent span {
+  color: #cbd5e1;
+  font-size: 12px;
+}
+.speed-ladder-cuts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
 .speed-target-card.enemy {
   border-color: #7c2d12;
   background: linear-gradient(180deg, rgba(124, 45, 18, 0.18), #111827);
@@ -2680,6 +2778,10 @@ textarea { min-height: 72px; resize: vertical; }
   .calc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-target-panel { grid-template-columns: 1fr; }
+  .speed-compare-board { grid-template-columns: 1fr; }
+  .speed-anchor-card { position: static; }
+  .speed-ladder-row { grid-template-columns: 1fr; }
+  .speed-ladder-cuts { justify-content: flex-start; }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }

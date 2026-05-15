@@ -922,7 +922,7 @@ function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scar
   for (let points = 0; points <= CHAMPIONS_EFFORT_PER_STAT_CAP; points += 1) {
     const speed = opponentScenarioSpeed(row, points, boosted, scarf, speedStage)
     if (tieEffort === null && speed === mySpeed) tieEffort = points
-    if (passEffort === null && speed >= mySpeed) passEffort = points
+    if (passEffort === null && speed > mySpeed) passEffort = points
     if (tieEffort !== null && passEffort !== null) break
   }
 
@@ -3228,8 +3228,8 @@ export default function App() {
             <h2>{lt('내 파티 추월컷')}</h2>
           </div>
           {oppRow ? <>
-            <div className="speed-target-panel compare-target-panel">
-              <div className="speed-target-card">
+            <div className="speed-compare-board">
+              <aside className="speed-anchor-card">
                 <div className="speed-target-head">
                   {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
                   <div>
@@ -3244,57 +3244,50 @@ export default function App() {
                     </div> : null}
                   </div>
                 </div>
-              </div>
-              <div className="speed-target-card enemy">
-                <div className="speed-target-head">
-                  {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
-                  <div>
-                    <strong>{displayName(oppRow, siteLanguage)}</strong>
-                    <div className="pick-summary-badges">
-                      <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+              </aside>
+              <div className="speed-scenario-ladder">
+                <div className="speed-ladder-head speed-target-card enemy">
+                  <div className="speed-target-head">
+                    {oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
+                    <div>
+                      <strong>{displayName(oppRow, siteLanguage)}</strong>
+                      <div className="pick-summary-badges">
+                        <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+                      </div>
+                      {oppMegaCandidates.length ? <div className="calc-toggle-row">
+                        <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
+                        <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
+                      </div> : null}
                     </div>
-                    {oppMegaCandidates.length ? <div className="calc-toggle-row">
-                      <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
-                      <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
-                    </div> : null}
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="speed-cut-grid speed-compare-grid">
-              {opponentSpeedScenarios.map((scenario) => (
-                <div key={`speed-scenario-${scenario.id}`} className="speed-cut-card active">
-                  <div className="speed-cut-select readonly">
-                    <div className="speed-cut-title">
-                      <div>
+                <div className="speed-ladder-list">
+                  {opponentSpeedScenarios.map((scenario) => (
+                    <div key={`speed-scenario-${scenario.id}`} className={`speed-ladder-row ${scenario.result === '동속' ? 'is-tie' : scenario.result === '상대가 앞섬' ? 'enemy-ahead' : 'my-ahead'}`}>
+                      <div className="speed-ladder-meta">
                         <strong>{lt(scenario.label)}</strong>
                         <span>{lt('기준 속도')} {scenario.speedAtMax}</span>
                       </div>
-                    </div>
-                    <div className="speed-cut-stats scenario-split-stats">
-                      <div>
-                        <span>{displayName(myRow, siteLanguage)}</span>
-                        <strong>{mySpeed}</strong>
+                      <div className="speed-ladder-track">
+                        <div className="speed-ladder-line" />
+                        <div className="speed-ladder-anchor">
+                          <span>{displayName(myRow, siteLanguage)}</span>
+                          <strong>{mySpeed}</strong>
+                        </div>
+                        <div className="speed-ladder-opponent">
+                          <span>{displayName(oppRow, siteLanguage)}</span>
+                          <strong>{scenario.speedAtMax}</strong>
+                        </div>
                       </div>
-                      <div>
-                        <span>{displayName(oppRow, siteLanguage)}</span>
-                        <strong>{scenario.speedAtMax}</strong>
-                      </div>
-                      <div>
-                        <span>{lt('동속컷')}</span>
-                        <strong>{scenario.tieEffort ?? '—'}</strong>
-                      </div>
-                      <div>
-                        <span>{lt('추월컷')}</span>
-                        <strong>{mySpeed > scenario.speedAtMax ? lt('이미 추월') : scenario.passEffort ?? lt('불가')}</strong>
+                      <div className="speed-ladder-cuts">
+                        <span className="pick-badge">{lt('동속컷')} {scenario.tieEffort ?? '—'}</span>
+                        <span className="pick-badge">{lt('추월컷')} {scenario.passEffort ?? lt('불가')}</span>
+                        <span className={`pick-badge ${scenario.result === '상대가 앞섬' ? 'enemy' : ''}`}>{lt(scenario.result)}</span>
                       </div>
                     </div>
-                    <div className="pick-summary-badges">
-                      <span className={`pick-badge ${scenario.result === '상대가 앞섬' ? 'enemy' : ''}`}>{lt(scenario.result)}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
         </section> : null}
