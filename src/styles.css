@@ -666,6 +666,22 @@ header p { margin: 0 0 14px; color: #93a4b8; }
   color: #8da2b8;
   line-height: 1.2;
 }
+.ability-autocomplete-item.active {
+  background: #172554;
+}
+.ability-autocomplete-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 3px 7px;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.96);
+  color: #93c5fd;
+  font-size: 10px;
+  font-weight: 700;
+}
 .move-autocomplete-type-icon {
   width: 18px;
   height: 18px;
@@ -1944,6 +1960,18 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 .meta-item-input-row input {
   padding-right: 34px;
 }
+.dropdown-input-row input {
+  padding-right: 52px;
+}
+.dropdown-input-caret {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
+  color: #7f93ab;
+  font-size: 11px;
+  pointer-events: none;
+}
 .meta-item-clear-button {
   position: absolute;
   top: 50%;
@@ -2136,6 +2164,14 @@ input, select, textarea {
   border-radius: 8px;
   padding: 8px 10px;
   color-scheme: dark;
+}
+.opponent-meta-select {
+  cursor: pointer;
+  min-height: 38px;
+}
+.opponent-meta-select:disabled {
+  cursor: not-allowed;
+  color: #6b7c91;
 }
 textarea { min-height: 72px; resize: vertical; }
 .matchup {
@@ -2806,6 +2842,7 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 12px;
 }
 .opponent-board-card {
+  position: relative;
   border: 1px solid #334155;
   border-radius: 14px;
   background: #0b1220;
@@ -2817,6 +2854,28 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 6px;
   cursor: pointer;
   text-align: center;
+}
+ .opponent-board-slot-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid #334155;
+  background: rgba(15, 23, 42, 0.96);
+  color: #93a4b8;
+  font-size: 11px;
+  font-weight: 700;
+}
+.opponent-board-slot-badge.active {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: rgba(23, 37, 84, 0.98);
+  color: #dbeafe;
 }
 .opponent-board-card span {
   color: #93a4b8;

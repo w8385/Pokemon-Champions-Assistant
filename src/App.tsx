@@ -125,7 +125,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
     '파티 한눈 요약': 'Party Overview', '내 파티': 'My Party', '상대 파티': 'Opponent Party',
     '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
-    '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item',
+    '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item', '사용 가능 특성 선택': 'Choose listed ability', '포켓몬 먼저 선택': 'Choose Pokémon first',
     '종 선택': 'Species', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
     '시드': 'Seeded', '검증중': 'Verifying',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
@@ -154,7 +154,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
     '파티 한눈 요약': 'パーティ一覧', '내 파티': '自分のパーティ', '상대 파티': '相手パーティ',
     '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
-    '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択',
+    '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択', '사용 가능 특성 선택': '使用可能な特性を選択', '포켓몬 먼저 선택': '先にポケモンを選択',
     '종 선택': 'ポケモン', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
     '시드': 'シード', '검증중': '検証中',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
@@ -1328,6 +1328,18 @@ function displayAbilities(row: Row, language: SiteLanguage) {
   return row.abilities_ko
 }
 
+function abilitiesForKey(key: string, language: SiteLanguage) {
+  const row = indexByKey.get(key)
+  if (!row) return [] as string[]
+  return displayAbilities(row, language)
+}
+
+function itemOptionsForKey(key: string) {
+  const fixed = megaStoneForKey(key)
+  if (fixed) return [fixed]
+  return ITEM_OPTIONS.filter((item) => isAllowedChampionsItem(key, item))
+}
+
 function defaultAbilityForKey(key: string) {
   const row = indexByKey.get(key)
   if (!row) return ''
@@ -1426,9 +1438,11 @@ export default function App() {
   const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => visibleChampionsItem(member.key, member.item)))
+  const [opponentAbilityDrafts, setOpponentAbilityDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => member.ability ?? ''))
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [activeItemField, setActiveItemField] = React.useState<ItemFieldTarget>(null)
+  const [activeOpponentAbilityField, setActiveOpponentAbilityField] = React.useState<number | null>(null)
   const [activeMetaListField, setActiveMetaListField] = React.useState<MetaListField>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [navMenuOpen, setNavMenuOpen] = React.useState(false)
@@ -1466,6 +1480,7 @@ export default function App() {
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setOpponentItemDrafts((prev) => opponents.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+    setOpponentAbilityDrafts((prev) => opponents.map((member, idx) => prev[idx] ?? member.ability ?? ''))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
 
   React.useEffect(() => {
@@ -1740,6 +1755,58 @@ export default function App() {
     })
     setActiveItemField(null)
   }
+  const commitOpponentAbilityInput = (idx: number, rawValue?: string) => {
+    const member = opponents[idx]
+    if (!member) return false
+    const options = abilitiesForKey(member.key, siteLanguage)
+    if (!options.length) {
+      const next = [...opponents]
+      next[idx] = { ...member, ability: '' }
+      setOpponents(next)
+      setOpponentAbilityDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[idx] = ''
+        return nextDrafts
+      })
+      return false
+    }
+    const resolved = resolveAbilityInput(options, rawValue ?? opponentAbilityDrafts[idx] ?? '')
+    const next = [...opponents]
+    next[idx] = { ...member, ability: resolved }
+    setOpponents(next)
+    setOpponentAbilityDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = resolved
+      return nextDrafts
+    })
+    return Boolean(resolved)
+  }
+  const selectOpponentAbilityOption = (idx: number, ability: string) => {
+    const member = opponents[idx]
+    if (!member) return
+    const next = [...opponents]
+    next[idx] = { ...member, ability }
+    setOpponents(next)
+    setOpponentAbilityDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = ability
+      return nextDrafts
+    })
+    setActiveOpponentAbilityField(null)
+  }
+  const clearOpponentAbilityInput = (idx: number) => {
+    const member = opponents[idx]
+    if (!member) return
+    const next = [...opponents]
+    next[idx] = { ...member, ability: '' }
+    setOpponents(next)
+    setOpponentAbilityDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[idx] = ''
+      return nextDrafts
+    })
+    setActiveOpponentAbilityField(idx)
+  }
   const clearPartyItemInput = (idx: number, member: PartyMember) => {
     if (megaStoneForKey(member.key)) return
     const next = [...party]
@@ -1797,12 +1864,19 @@ export default function App() {
     } else if (side === 'opponent') {
       const member = opponents[idx]
       if (!member) return
+      const allowedAbilities = abilitiesForKey(key, siteLanguage)
+      const nextAbility = allowedAbilities.includes(member.ability) ? member.ability : ''
       const next = [...opponents]
-      next[idx] = { ...member, key, item: normalizeItemForKey(key, member.item) }
+      next[idx] = { ...member, key, item: normalizeItemForKey(key, member.item), ability: nextAbility }
       setOpponents(next)
       setOpponentItemDrafts((prev) => {
         const nextDrafts = [...prev]
         nextDrafts[idx] = displayItemLabel(visibleChampionsItem(key, next[idx].item), siteLanguage)
+        return nextDrafts
+      })
+      setOpponentAbilityDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[idx] = nextAbility
         return nextDrafts
       })
       const nextSearch = [...opponentSearch]
@@ -1968,12 +2042,19 @@ export default function App() {
     const resolvedKey = forcedKey ?? resolveSpeciesKey(opponentQuickSearch, { includeMega: false }) ?? filterSpeciesOptions(opponentQuickSearch, { includeMega: false })[0]?.key
     if (!resolvedKey) return
     const slotIdx = selectedOpp
+    const allowedAbilities = abilitiesForKey(resolvedKey, siteLanguage)
+    const nextAbility = allowedAbilities.includes(opponents[slotIdx]?.ability) ? opponents[slotIdx]?.ability ?? '' : ''
     const next = [...opponents]
-    next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item) }
+    next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item), ability: nextAbility }
     setOpponents(next)
     setOpponentItemDrafts((prev) => {
       const nextDrafts = [...prev]
       nextDrafts[slotIdx] = displayItemLabel(visibleChampionsItem(resolvedKey, next[slotIdx].item), siteLanguage)
+      return nextDrafts
+    })
+    setOpponentAbilityDrafts((prev) => {
+      const nextDrafts = [...prev]
+      nextDrafts[slotIdx] = nextAbility
       return nextDrafts
     })
     const nextSearch = [...opponentSearch]
@@ -1991,6 +2072,8 @@ export default function App() {
     setOpponents(next)
     setOpponentSearch(next.map(() => ''))
     setOpponentItemDrafts(next.map(() => ''))
+    setOpponentAbilityDrafts(next.map(() => ''))
+    setActiveOpponentAbilityField(null)
     setSelectedOpp(0)
     setOpponentQuickSearch('')
     setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
@@ -2024,6 +2107,8 @@ export default function App() {
     setPartySearch(emptyParty.map(() => ''))
     setOpponentSearch(emptyOpponents.map(() => ''))
     setOpponentItemDrafts(emptyOpponents.map(() => ''))
+    setOpponentAbilityDrafts(emptyOpponents.map(() => ''))
+    setActiveOpponentAbilityField(null)
     setSelectedMy(0)
     setSelectedOpp(0)
     setOpponentQuickSearch('')
@@ -2080,6 +2165,7 @@ export default function App() {
       const nextOpponents = sanitizeOpponents(parsed.opponents)
       setOpponents(nextOpponents)
       setOpponentItemDrafts(nextOpponents.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+      setOpponentAbilityDrafts(nextOpponents.map((member) => member.ability ?? ''))
       setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
       setOpponentSearch(nextOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
       setSelectedMy(sanitizeSelectedIndex(parsed.selectedMy, nextParty.length))
@@ -2750,13 +2836,14 @@ export default function App() {
               {opponents.map((member, idx) => {
                 const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
                 return (
-                  <div key={`opp-board-${idx}`} className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                  <button key={`opp-board-${idx}`} type="button" className={`opponent-board-card ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>
+                    <span className={`opponent-board-slot-badge ${selectedOpp === idx ? 'active' : ''}`}>{selectedOpp === idx ? lt('현재') : `${idx + 1}`}</span>
                     {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                     <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
                     <span>{opponentSearch[idx] || lt('포켓몬 미입력')}</span>
                     <span>{member.ability || lt('특성 미기입')}</span>
                     <span>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 미기입')}</span>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -2806,70 +2893,39 @@ export default function App() {
                 </label>
                 <label>
                   {lt('도구')}
-                  <div className="meta-item-input-row">
-                  <input
-                    value={opponentItemDrafts[selectedOpp] ?? ''}
-                    placeholder={lt('사용 가능 도구 선택')}
-                    onFocus={() => setActiveItemField({ scope: 'opponent', idx: selectedOpp })}
+                  <select
+                    className="opponent-meta-select"
+                    value={oppMember.item}
+                    disabled={!oppMember.key}
                     onChange={(e) => {
-                      const nextDrafts = [...opponentItemDrafts]
-                      nextDrafts[selectedOpp] = e.target.value
-                      setOpponentItemDrafts(nextDrafts)
-                      setActiveItemField({ scope: 'opponent', idx: selectedOpp })
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'opponent', selectedOpp) ? null : prev), 120)
-                      const resolved = resolveItemInput(oppMember.key, opponentItemDrafts[selectedOpp] || '', siteLanguage)
                       const next = [...opponents]
-                      next[selectedOpp] = { ...oppMember, item: resolved }
+                      next[selectedOpp] = { ...oppMember, item: e.target.value }
                       setOpponents(next)
-                      setOpponentItemDrafts((prev) => {
-                        const nextDrafts = [...prev]
-                        nextDrafts[selectedOpp] = displayItemLabel(resolved, siteLanguage)
-                        return nextDrafts
-                      })
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key !== 'Enter') return
-                      e.preventDefault()
-                      const resolved = resolveItemInput(oppMember.key, opponentItemDrafts[selectedOpp] || '', siteLanguage)
-                      const next = [...opponents]
-                      next[selectedOpp] = { ...oppMember, item: resolved }
-                      setOpponents(next)
-                      setOpponentItemDrafts((prev) => {
-                        const nextDrafts = [...prev]
-                        nextDrafts[selectedOpp] = displayItemLabel(resolved, siteLanguage)
-                        return nextDrafts
-                      })
-                      setActiveItemField(null)
-                    }}
-                  />
-                  {(opponentItemDrafts[selectedOpp] || oppMember.item) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
-                    e.preventDefault()
-                    clearOpponentItemInput(selectedOpp)
-                  }}>×</button> : null}
-                  </div>
-                  {sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu">
-                    {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
-                      <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
-                        <span className="move-autocomplete-main">
-                          <img src={itemSpriteSrc(oppMember.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                          <span className="item-autocomplete-copy">
-                            <strong className="item-autocomplete-title">{itemAutocompletePrimaryLabel(item, siteLanguage)}</strong>
-                            {itemAutocompleteSecondaryLabel(item, siteLanguage) ? <span className="item-autocomplete-sub">{itemAutocompleteSecondaryLabel(item, siteLanguage)}</span> : null}
-                          </span>
-                        </span>
-                      </button>
+                  >
+                    <option value="">{oppMember.key ? lt('사용 가능 도구 선택') : lt('포켓몬 먼저 선택')}</option>
+                    {itemOptionsForKey(oppMember.key).map((item) => (
+                      <option key={`opp-item-option-${selectedOpp}-${item}`} value={item}>{displayItemLabel(item, siteLanguage)}</option>
                     ))}
-                  </div> : null}
+                  </select>
                 </label>
                 <label>
                   {lt('특성')}
-                  <input value={oppMember.ability} placeholder={siteLanguage === 'en' ? 'e.g. Clear Body' : siteLanguage === 'ja' ? '例: クリアボディ' : '예: 클리어바디'} onChange={(e) => {
-                    const next = [...opponents]
-                    next[selectedOpp] = { ...oppMember, ability: e.target.value }
-                    setOpponents(next)
-                  }} />
+                  <select
+                    className="opponent-meta-select"
+                    value={oppMember.ability}
+                    disabled={!oppMember.key}
+                    onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, ability: e.target.value }
+                      setOpponents(next)
+                    }}
+                  >
+                    <option value="">{oppMember.key ? lt('사용 가능 특성 선택') : lt('포켓몬 먼저 선택')}</option>
+                    {abilitiesForKey(oppMember.key, siteLanguage).map((ability) => (
+                      <option key={`opp-ability-option-${selectedOpp}-${ability}`} value={ability}>{ability}</option>
+                    ))}
+                  </select>
                 </label>
                 <label>
                   {lt('공개 기술')}
