@@ -81,7 +81,7 @@ type SavedSample = {
 type CalcMode = 'physical' | 'special'
 type DamageWeather = 'none' | 'sun' | 'rain' | 'sand' | 'snow'
 type DamageTerrain = 'none' | 'electric' | 'grassy' | 'psychic' | 'misty'
-type OpponentBulkPreset = 'neutral-0' | 'hp-32' | 'phys-32' | 'spdef-32'
+type OpponentBulkPreset = 'neutral-0' | 'hp-32' | 'phys-32' | 'spdef-32' | 'custom'
 
 type PersistedState = {
   party?: PartyMember[]
@@ -97,6 +97,11 @@ type PersistedState = {
   calcLightScreen?: boolean
   calcAuroraVeil?: boolean
   calcOpponentBulkPreset?: OpponentBulkPreset
+  calcOpponentHpEv?: number
+  calcOpponentDefenseEv?: number
+  calcOpponentSpDefenseEv?: number
+  calcOpponentDefenseNature?: number
+  calcOpponentSpDefenseNature?: number
   battleNote?: string
   confirmedMovesByKey?: Record<string, string[]>
   mainSection?: MainSection
@@ -154,6 +159,14 @@ type OpponentBulkConfig = {
   spDefenseNature: number
   label: string
 }
+
+type OpponentBulkState = {
+  hpEv: number
+  defenseEv: number
+  spDefenseEv: number
+  defenseNature: number
+  spDefenseNature: number
+}
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 type DamageMoveSelection = { key: string; move: string }
 type ViewState = {
@@ -185,7 +198,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '가변 위력 기술이라 수동 입력이 필요함': 'Variable-power move: manual power input required', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '가변 위력 기술이라 수동 입력이 필요함': 'Variable-power move: manual power input required', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -213,7 +226,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '가변 위력 기술이라 수동 입력이 필요함': '可変威力技のため手動入力が必要', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '가변 위력 기술이라 수동 입력이 필요함': '可変威力技のため手動入力が必要', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -287,11 +300,66 @@ const TYPE_KO_BY_KEY: Record<string, string> = {
   rock: '바위', ghost: '고스트', dragon: '드래곤', dark: '악', steel: '강철', fairy: '페어리',
 }
 
-const OPPONENT_BULK_PRESETS: Record<OpponentBulkPreset, OpponentBulkConfig> = {
+const OPPONENT_BULK_PRESETS: Record<Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig> = {
   'neutral-0': { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: '무보정 0EV' },
   'hp-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: 'HP 32' },
   'phys-32': { hpEv: 32, defenseEv: 32, spDefenseEv: 0, defenseNature: 1.1, spDefenseNature: 1, label: 'HB 32/32 +' },
   'spdef-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 32, defenseNature: 1, spDefenseNature: 1.1, label: 'HD 32/32 +' },
+}
+
+function sanitizeOpponentBulkPreset(value: unknown): OpponentBulkPreset {
+  return value === 'neutral-0' || value === 'hp-32' || value === 'phys-32' || value === 'spdef-32' || value === 'custom'
+    ? value
+    : 'neutral-0'
+}
+
+function sanitizeOpponentNatureMultiplier(value: unknown) {
+  return Number(value) === 1.1 ? 1.1 : 1
+}
+
+function opponentBulkStateFromPreset(preset: OpponentBulkPreset): OpponentBulkState {
+  const resolved = sanitizeOpponentBulkPreset(preset)
+  const config = resolved === 'custom' ? OPPONENT_BULK_PRESETS['neutral-0'] : OPPONENT_BULK_PRESETS[resolved]
+  return {
+    hpEv: config.hpEv,
+    defenseEv: config.defenseEv,
+    spDefenseEv: config.spDefenseEv,
+    defenseNature: config.defenseNature,
+    spDefenseNature: config.spDefenseNature,
+  }
+}
+
+function sanitizeOpponentBulkState(raw?: Partial<OpponentBulkState> | null, preset: OpponentBulkPreset = 'neutral-0'): OpponentBulkState {
+  const base = opponentBulkStateFromPreset(preset)
+  return {
+    hpEv: clampEv(raw?.hpEv ?? base.hpEv, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    defenseEv: clampEv(raw?.defenseEv ?? base.defenseEv, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    spDefenseEv: clampEv(raw?.spDefenseEv ?? base.spDefenseEv, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    defenseNature: sanitizeOpponentNatureMultiplier(raw?.defenseNature ?? base.defenseNature),
+    spDefenseNature: sanitizeOpponentNatureMultiplier(raw?.spDefenseNature ?? base.spDefenseNature),
+  }
+}
+
+function detectOpponentBulkPreset(state: OpponentBulkState): OpponentBulkPreset {
+  for (const [preset, config] of Object.entries(OPPONENT_BULK_PRESETS) as [Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig][]) {
+    if (
+      state.hpEv === config.hpEv &&
+      state.defenseEv === config.defenseEv &&
+      state.spDefenseEv === config.spDefenseEv &&
+      state.defenseNature === config.defenseNature &&
+      state.spDefenseNature === config.spDefenseNature
+    ) return preset
+  }
+  return 'custom'
+}
+
+function opponentBulkLabel(state: OpponentBulkState, preset: OpponentBulkPreset) {
+  if (preset !== 'custom') return OPPONENT_BULK_PRESETS[preset].label
+  const natureBits = [
+    state.defenseNature > 1 ? '+Def' : null,
+    state.spDefenseNature > 1 ? '+SpD' : null,
+  ].filter(Boolean)
+  return `HP ${state.hpEv} · B ${state.defenseEv} · D ${state.spDefenseEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
 }
 
 function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
@@ -1016,8 +1084,7 @@ function buildPartyBattleStats(row: Row, member: PartyMember): BattleStatBlock {
   }
 }
 
-function buildOpponentBattleStats(row: Row, preset: OpponentBulkPreset): BattleStatBlock {
-  const config = OPPONENT_BULK_PRESETS[preset]
+function buildOpponentBattleStats(row: Row, config: OpponentBulkState): BattleStatBlock {
   return {
     hp: actualStat(row.hp, config.hpEv, 1, true),
     attack: actualStat(row.attack, 0, 1),
@@ -1025,6 +1092,44 @@ function buildOpponentBattleStats(row: Row, preset: OpponentBulkPreset): BattleS
     spAttack: actualStat(row.spAttack, 0, 1),
     spDefense: actualStat(row.spDefense, config.spDefenseEv, config.spDefenseNature),
   }
+}
+
+function koChanceForHits(rolls: number[], hp: number, hitCount: number) {
+  let states = new Map<number, number>([[0, 1]])
+  for (let turn = 0; turn < hitCount; turn += 1) {
+    const next = new Map<number, number>()
+    for (const [sum, ways] of states) {
+      for (const roll of rolls) {
+        const total = Math.min(hp, sum + roll)
+        next.set(total, (next.get(total) ?? 0) + ways)
+      }
+    }
+    states = next
+  }
+  const success = states.get(hp) ?? 0
+  return success / Math.pow(rolls.length, hitCount)
+}
+
+function resolveDamageVerdict(damage: { min: number, max: number, rolls: number[] }, hp: number, language: SiteLanguage) {
+  for (let hitCount = 1; hitCount <= 8; hitCount += 1) {
+    const chance = koChanceForHits(damage.rolls, hp, hitCount)
+    if (chance >= 1) {
+      return language === 'en'
+        ? `Guaranteed ${hitCount}HKO`
+        : language === 'ja'
+          ? `確定 ${hitCount}発`
+          : `확정 ${hitCount}타`
+    }
+    if (chance > 0) {
+      const chancePct = (chance * 100).toFixed(chance >= 0.1 ? 1 : 2).replace(/\.0$/, '')
+      return language === 'en'
+        ? `Roll ${hitCount}HKO · ${chancePct}%`
+        : language === 'ja'
+          ? `乱数 ${hitCount}発 · ${chancePct}%`
+          : `난수 ${hitCount}타 · ${chancePct}%`
+    }
+  }
+  return language === 'en' ? 'Needs long game' : language === 'ja' ? '長期戦' : '장기전'
 }
 
 function battleStageMultiplier(stage: number) {
@@ -1692,13 +1797,26 @@ export default function App() {
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcAttackStage, setCalcAttackStage] = React.useState(() => clampBattleStage(persisted?.calcAttackStage))
   const [calcDefenseStage, setCalcDefenseStage] = React.useState(() => clampBattleStage(persisted?.calcDefenseStage))
+  const initialOpponentBulkPreset = React.useMemo(() => sanitizeOpponentBulkPreset(persisted?.calcOpponentBulkPreset), [persisted])
+  const initialOpponentBulkState = React.useMemo(() => sanitizeOpponentBulkState({
+    hpEv: persisted?.calcOpponentHpEv,
+    defenseEv: persisted?.calcOpponentDefenseEv,
+    spDefenseEv: persisted?.calcOpponentSpDefenseEv,
+    defenseNature: persisted?.calcOpponentDefenseNature,
+    spDefenseNature: persisted?.calcOpponentSpDefenseNature,
+  }, initialOpponentBulkPreset), [initialOpponentBulkPreset, persisted])
   const [calcWeather, setCalcWeather] = React.useState<DamageWeather>(() => persisted?.calcWeather ?? 'none')
   const [calcTerrain, setCalcTerrain] = React.useState<DamageTerrain>(() => persisted?.calcTerrain ?? 'none')
   const [calcBurned, setCalcBurned] = React.useState(() => Boolean(persisted?.calcBurned))
   const [calcReflect, setCalcReflect] = React.useState(() => Boolean(persisted?.calcReflect))
   const [calcLightScreen, setCalcLightScreen] = React.useState(() => Boolean(persisted?.calcLightScreen))
   const [calcAuroraVeil, setCalcAuroraVeil] = React.useState(() => Boolean(persisted?.calcAuroraVeil))
-  const [calcOpponentBulkPreset, setCalcOpponentBulkPreset] = React.useState<OpponentBulkPreset>(() => persisted?.calcOpponentBulkPreset ?? 'neutral-0')
+  const [calcOpponentBulkPreset, setCalcOpponentBulkPreset] = React.useState<OpponentBulkPreset>(initialOpponentBulkPreset)
+  const [calcOpponentHpEv, setCalcOpponentHpEv] = React.useState(initialOpponentBulkState.hpEv)
+  const [calcOpponentDefenseEv, setCalcOpponentDefenseEv] = React.useState(initialOpponentBulkState.defenseEv)
+  const [calcOpponentSpDefenseEv, setCalcOpponentSpDefenseEv] = React.useState(initialOpponentBulkState.spDefenseEv)
+  const [calcOpponentDefenseNature, setCalcOpponentDefenseNature] = React.useState(initialOpponentBulkState.defenseNature)
+  const [calcOpponentSpDefenseNature, setCalcOpponentSpDefenseNature] = React.useState(initialOpponentBulkState.spDefenseNature)
   const [stab, setStab] = React.useState(1.5)
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
@@ -1823,6 +1941,11 @@ export default function App() {
       calcLightScreen,
       calcAuroraVeil,
       calcOpponentBulkPreset,
+      calcOpponentHpEv,
+      calcOpponentDefenseEv,
+      calcOpponentSpDefenseEv,
+      calcOpponentDefenseNature,
+      calcOpponentSpDefenseNature,
       battleNote,
       confirmedMovesByKey,
       mainSection,
@@ -1830,7 +1953,7 @@ export default function App() {
       savedSamples,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcAttackStage, calcDefenseStage, calcWeather, calcTerrain, calcBurned, calcReflect, calcLightScreen, calcAuroraVeil, calcOpponentBulkPreset, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
+  }, [party, opponents, selectedMy, selectedOpp, calcAttackStage, calcDefenseStage, calcWeather, calcTerrain, calcBurned, calcReflect, calcLightScreen, calcAuroraVeil, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -1848,8 +1971,15 @@ export default function App() {
   const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaOn) : ''
   const myRow = indexByKey.get(calcMyKey) ?? rows[0]
   const oppRow = calcOppKey ? (indexByKey.get(calcOppKey) ?? rows[0]) : null
+  const opponentBulkState = React.useMemo<OpponentBulkState>(() => ({
+    hpEv: calcOpponentHpEv,
+    defenseEv: calcOpponentDefenseEv,
+    spDefenseEv: calcOpponentSpDefenseEv,
+    defenseNature: calcOpponentDefenseNature,
+    spDefenseNature: calcOpponentSpDefenseNature,
+  }), [calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature])
   const myBattleStats = buildPartyBattleStats(myRow, myMember)
-  const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, calcOpponentBulkPreset) : null
+  const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null
   const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
   const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
 
@@ -2240,6 +2370,26 @@ export default function App() {
   const damage = oppRow && oppBattleStats && !activeDamageMoveIsStatus
     ? calcDamage(myBattleStats, oppBattleStats, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
     : null
+  const damageVerdict = oppBattleStats && damage ? resolveDamageVerdict(damage, oppBattleStats.hp, siteLanguage) : null
+  const applyOpponentBulkPresetSelection = (preset: OpponentBulkPreset) => {
+    setCalcOpponentBulkPreset(preset)
+    if (preset === 'custom') return
+    const next = opponentBulkStateFromPreset(preset)
+    setCalcOpponentHpEv(next.hpEv)
+    setCalcOpponentDefenseEv(next.defenseEv)
+    setCalcOpponentSpDefenseEv(next.spDefenseEv)
+    setCalcOpponentDefenseNature(next.defenseNature)
+    setCalcOpponentSpDefenseNature(next.spDefenseNature)
+  }
+  const updateOpponentBulkState = (patch: Partial<OpponentBulkState>) => {
+    const nextState = sanitizeOpponentBulkState({ ...opponentBulkState, ...patch }, 'custom')
+    setCalcOpponentHpEv(nextState.hpEv)
+    setCalcOpponentDefenseEv(nextState.defenseEv)
+    setCalcOpponentSpDefenseEv(nextState.spDefenseEv)
+    setCalcOpponentDefenseNature(nextState.defenseNature)
+    setCalcOpponentSpDefenseNature(nextState.spDefenseNature)
+    setCalcOpponentBulkPreset(detectOpponentBulkPreset(nextState))
+  }
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
@@ -2460,6 +2610,11 @@ export default function App() {
     setCalcLightScreen(false)
     setCalcAuroraVeil(false)
     setCalcOpponentBulkPreset('neutral-0')
+    setCalcOpponentHpEv(0)
+    setCalcOpponentDefenseEv(0)
+    setCalcOpponentSpDefenseEv(0)
+    setCalcOpponentDefenseNature(1)
+    setCalcOpponentSpDefenseNature(1)
     setStab(1.5)
     setEffectiveness(1)
     setBattleNote('')
@@ -2490,6 +2645,11 @@ export default function App() {
       calcLightScreen,
       calcAuroraVeil,
       calcOpponentBulkPreset,
+      calcOpponentHpEv,
+      calcOpponentDefenseEv,
+      calcOpponentSpDefenseEv,
+      calcOpponentDefenseNature,
+      calcOpponentSpDefenseNature,
       battleNote,
       confirmedMovesByKey,
       mainSection,
@@ -2530,7 +2690,20 @@ export default function App() {
       setCalcReflect(Boolean(parsed.calcReflect))
       setCalcLightScreen(Boolean(parsed.calcLightScreen))
       setCalcAuroraVeil(Boolean(parsed.calcAuroraVeil))
-      setCalcOpponentBulkPreset(parsed.calcOpponentBulkPreset ?? 'neutral-0')
+      const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
+      const nextBulkState = sanitizeOpponentBulkState({
+        hpEv: parsed.calcOpponentHpEv,
+        defenseEv: parsed.calcOpponentDefenseEv,
+        spDefenseEv: parsed.calcOpponentSpDefenseEv,
+        defenseNature: parsed.calcOpponentDefenseNature,
+        spDefenseNature: parsed.calcOpponentSpDefenseNature,
+      }, nextBulkPreset)
+      setCalcOpponentBulkPreset(nextBulkPreset)
+      setCalcOpponentHpEv(nextBulkState.hpEv)
+      setCalcOpponentDefenseEv(nextBulkState.defenseEv)
+      setCalcOpponentSpDefenseEv(nextBulkState.spDefenseEv)
+      setCalcOpponentDefenseNature(nextBulkState.defenseNature)
+      setCalcOpponentSpDefenseNature(nextBulkState.spDefenseNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
       setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
       setMainSection(parsed.mainSection === 'sample' ? 'sample' : 'single')
@@ -3989,7 +4162,7 @@ export default function App() {
           <div className="damage-surface-card damage-control-surface">
             <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge">Lv50</span>
-              <span className="pick-badge">{lt('상대 기본 내구 가정')} · {OPPONENT_BULK_PRESETS[calcOpponentBulkPreset].label}</span>
+              <span className="pick-badge">{lt('상대 기본 내구 가정')} · {opponentBulkLabel(opponentBulkState, calcOpponentBulkPreset)}</span>
               {activeDamageMoveType ? <span className="pick-badge">{lt('자동 타입')} · {TYPE_KO_BY_KEY[activeDamageMoveType] ?? activeDamageMoveType}</span> : null}
               {activeDamageMoveCategory ? <span className="pick-badge">{lt('자동 분류')} · {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
               {activeDamageMovePower !== null ? <span className="pick-badge">{lt('자동 위력')} · {activeDamageMovePower}</span> : null}
@@ -4010,91 +4183,127 @@ export default function App() {
                 </button>
               ))}
             </div> : null}
-            <div className="calc-grid damage-calc-grid">
-            <label>
-              {lt('상대 내구 프리셋')}
-              <select value={calcOpponentBulkPreset} onChange={(e) => setCalcOpponentBulkPreset(e.target.value as OpponentBulkPreset)}>
-                {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={key} value={key}>{preset.label}</option>)}
-              </select>
-            </label>
-            <label>
-              {lt('날씨')}
-              <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
-                <option value="none">{lt('없음')}</option>
-                <option value="sun">{lt('쾌청')}</option>
-                <option value="rain">{lt('비')}</option>
-                <option value="sand">{lt('모래바람')}</option>
-                <option value="snow">{lt('싸라기눈')}</option>
-              </select>
-            </label>
-            <label>
-              {lt('필드')}
-              <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
-                <option value="none">{lt('없음')}</option>
-                <option value="electric">{lt('일렉트릭필드')}</option>
-                <option value="grassy">{lt('그래스필드')}</option>
-                <option value="psychic">{lt('사이코필드')}</option>
-                <option value="misty">{lt('미스트필드')}</option>
-              </select>
-            </label>
-            {activeDamageMovePower === null ? <label>
-              {lt('수동 위력')}
-              <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
-            </label> : <div className="calc-lock-box">{lt('자동 위력')} {activeDamageMovePower}</div>}
-            {activeDamageMoveCategory === null ? <label>
-              {lt('수동 분류')}
-              <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
-                <option value="physical">{lt('물리')}</option>
-                <option value="special">{lt('특수')}</option>
-              </select>
-            </label> : <div className="calc-lock-box">{lt('자동 분류')} {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
-            {!activeDamageMoveType ? <label>
-              STAB
-              <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
-                <option value={1}>{lt('없음')}</option>
-                <option value={1.5}>1.5</option>
-                <option value={2}>2.0</option>
-              </select>
-            </label> : <div className="calc-lock-box">STAB {autoStab}</div>}
-            {!activeDamageMoveType ? <label>
-              {lt('상성')}
-              <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
-                <option value={0.25}>0.25x</option>
-                <option value={0.5}>0.5x</option>
-                <option value={1}>1x</option>
-                <option value={2}>2x</option>
-                <option value={4}>4x</option>
-              </select>
-            </label> : <div className="calc-lock-box">{lt('상성')} {damageModifiers.effectiveness}x</div>}
-            <label>
-              {lt('내 화력 랭크')}
-              <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
-                {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-              </select>
-            </label>
-            <label>
-              {lt('상대 내구 랭크')}
-              <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
-                {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-              </select>
-            </label>
-            <label className="calc-toggle-box">
-              <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
-              <span>{lt('화상')}</span>
-            </label>
-            <label className="calc-toggle-box">
-              <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
-              <span>{lt('리플렉터')}</span>
-            </label>
-            <label className="calc-toggle-box">
-              <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
-              <span>{lt('빛의장막')}</span>
-            </label>
-            <label className="calc-toggle-box">
-              <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
-              <span>{lt('오로라베일')}</span>
-            </label>
-          </div>
+            <div className="damage-control-groups">
+              <div className="damage-control-group">
+                <div className="damage-control-group-title">{lt('화력 조건')}</div>
+                <div className="calc-grid damage-calc-grid compact">
+                  {activeDamageMovePower === null ? <label>
+                    {lt('수동 위력')}
+                    <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
+                  </label> : <div className="calc-lock-box">{lt('자동 위력')} {activeDamageMovePower}</div>}
+                  {activeDamageMoveCategory === null ? <label>
+                    {lt('수동 분류')}
+                    <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
+                      <option value="physical">{lt('물리')}</option>
+                      <option value="special">{lt('특수')}</option>
+                    </select>
+                  </label> : <div className="calc-lock-box">{lt('자동 분류')} {lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
+                  {!activeDamageMoveType ? <label>
+                    STAB
+                    <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
+                      <option value={1}>{lt('없음')}</option>
+                      <option value={1.5}>1.5</option>
+                      <option value={2}>2.0</option>
+                    </select>
+                  </label> : <div className="calc-lock-box">STAB {autoStab}</div>}
+                  {!activeDamageMoveType ? <label>
+                    {lt('상성')}
+                    <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
+                      <option value={0.25}>0.25x</option>
+                      <option value={0.5}>0.5x</option>
+                      <option value={1}>1x</option>
+                      <option value={2}>2x</option>
+                      <option value={4}>4x</option>
+                    </select>
+                  </label> : <div className="calc-lock-box">{lt('상성')} {damageModifiers.effectiveness}x</div>}
+                  <label>
+                    {lt('내 화력 랭크')}
+                    <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
+                      {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                    </select>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
+                    <span>{lt('화상')}</span>
+                  </label>
+                </div>
+              </div>
+              <div className="damage-control-group">
+                <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                <div className="calc-grid damage-calc-grid compact">
+                  <label>
+                    {lt('날씨')}
+                    <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
+                      <option value="none">{lt('없음')}</option>
+                      <option value="sun">{lt('쾌청')}</option>
+                      <option value="rain">{lt('비')}</option>
+                      <option value="sand">{lt('모래바람')}</option>
+                      <option value="snow">{lt('싸라기눈')}</option>
+                    </select>
+                  </label>
+                  <label>
+                    {lt('필드')}
+                    <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
+                      <option value="none">{lt('없음')}</option>
+                      <option value="electric">{lt('일렉트릭필드')}</option>
+                      <option value="grassy">{lt('그래스필드')}</option>
+                      <option value="psychic">{lt('사이코필드')}</option>
+                      <option value="misty">{lt('미스트필드')}</option>
+                    </select>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
+                    <span>{lt('리플렉터')}</span>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
+                    <span>{lt('빛의장막')}</span>
+                  </label>
+                  <label className="calc-toggle-box span-2">
+                    <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
+                    <span>{lt('오로라베일')}</span>
+                  </label>
+                </div>
+              </div>
+              <div className="damage-control-group">
+                <div className="damage-control-group-title">{lt('상대 내구')}</div>
+                <div className="calc-grid damage-calc-grid compact defender-grid">
+                  <label>
+                    {lt('상대 내구 프리셋')}
+                    <select value={calcOpponentBulkPreset} onChange={(e) => applyOpponentBulkPresetSelection(e.target.value as OpponentBulkPreset)}>
+                      {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={key} value={key}>{preset.label}</option>)}
+                      <option value="custom">{lt('직접 조절')}</option>
+                    </select>
+                  </label>
+                  <label>
+                    {lt('상대 HP')}
+                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                  </label>
+                  <label>
+                    {lt('상대 물방')}
+                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentDefenseEv} onChange={(e) => updateOpponentBulkState({ defenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                  </label>
+                  <label>
+                    {lt('상대 특방')}
+                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpDefenseEv} onChange={(e) => updateOpponentBulkState({ spDefenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcOpponentDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ defenseNature: e.target.checked ? 1.1 : 1 })} />
+                    <span>{lt('+방어 성격')}</span>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcOpponentSpDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                    <span>{lt('+특방 성격')}</span>
+                  </label>
+                  <label>
+                    {lt('상대 내구 랭크')}
+                    <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
+                      {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
           {oppRow && damage ? <div className="damage-box">
             <div className="damage-box-head">
@@ -4103,7 +4312,7 @@ export default function App() {
             <div className="damage-summary-grid">
               <div className="damage-summary-card verdict">
                 <span>{siteLanguage === 'en' ? 'Read' : siteLanguage === 'ja' ? '判定' : '판정'}</span>
-                <strong>{Number(damage.maxPct) >= 100 ? lt('확정 1타 가능성 있음') : Number(damage.minPct) >= 50 ? lt('유리한 2타권') : lt('즉시 마무리 어려움')}</strong>
+                <strong>{damageVerdict}</strong>
               </div>
               <div className="damage-summary-card">
                 <span>{siteLanguage === 'en' ? 'Damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</span>
