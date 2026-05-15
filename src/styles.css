@@ -2249,7 +2249,7 @@ textarea { min-height: 72px; resize: vertical; }
   padding: 0;
   display: grid;
   gap: 8px;
-  overflow: hidden;
+  overflow: visible;
 }
 .speed-plane-header {
   display: flex;
@@ -2264,13 +2264,13 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .speed-plane-board {
   position: relative;
-  min-height: 320px;
+  min-height: 420px;
   border-top: 1px solid #334155;
   background:
     linear-gradient(180deg, rgba(96, 165, 250, 0.05), rgba(96, 165, 250, 0) 40%, rgba(124, 45, 18, 0.08) 100%),
     #0b1220;
-  overflow: hidden;
-  padding: 34px 0 0 46px;
+  overflow: visible;
+  padding: 70px 0 74px 46px;
 }
 .speed-plane-axis-legend {
   position: absolute;
@@ -2476,11 +2476,11 @@ textarea { min-height: 72px; resize: vertical; }
   text-align: right;
 }
 .speed-plane-range-node-head {
-  top: -2px;
+  top: -10px;
   transform: translateY(-100%);
 }
 .speed-plane-range-node-tail {
-  bottom: -2px;
+  bottom: -10px;
   transform: translateY(100%);
 }
 .speed-plane-range-node.above .speed-plane-range-node-head {

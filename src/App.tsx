@@ -1651,6 +1651,7 @@ export default function App() {
     const ratio = (clamped - speedAxisMin) / (speedAxisMax - speedAxisMin)
     return 100 - (ratio * 100)
   }
+  const speedBandTop = (speed: number) => Math.max(12, Math.min(86, speedAxisTop(speed)))
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
@@ -3495,8 +3496,8 @@ export default function App() {
                     {opponentSpeedBands.map((band, idx) => {
                       const minScenario = band.minScenario!
                       const maxScenario = band.maxScenario!
-                      const minTop = speedAxisTop(minScenario.speedAtMax)
-                      const maxTop = speedAxisTop(maxScenario.speedAtMax)
+                      const minTop = speedBandTop(minScenario.speedAtMax)
+                      const maxTop = speedBandTop(maxScenario.speedAtMax)
                       const left = opponentSpeedBands.length === 1 ? 53 : 26 + ((54 / (opponentSpeedBands.length - 1)) * idx)
                       const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
                       const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
