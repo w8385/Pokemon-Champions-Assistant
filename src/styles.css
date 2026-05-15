@@ -2671,6 +2671,21 @@ textarea { min-height: 72px; resize: vertical; }
   color: #cbd5e1;
   font-weight: 700;
 }
+.calc-toggle-box {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between;
+  gap: 12px;
+}
+.calc-toggle-box input {
+  width: 18px;
+  height: 18px;
+  accent-color: #8b5cf6;
+}
+.calc-toggle-box span {
+  color: #e2e8f0;
+  font-weight: 700;
+}
 .ev-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
