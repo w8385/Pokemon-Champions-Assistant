@@ -589,11 +589,24 @@ const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
 }
+const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
+  Object.entries(MOVE_NAME_ALIASES).map(([name, alias]) => [normalizeSearchText(name), alias] as const),
+)
+
+const MOVE_META_BY_NAME = championsLearnedMoveMeta as Record<string, MoveMeta>
+const MOVE_META_BY_NORMALIZED = new Map(
+  Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => [normalizeSearchText(name), meta] as const),
+)
 
 function moveNameCandidates(name: string) {
   const base = name.trim()
-  const alias = MOVE_NAME_ALIASES[base]
+  const alias = MOVE_NAME_ALIASES[base] ?? MOVE_NAME_ALIASES_BY_NORMALIZED.get(normalizeSearchText(base))
   return Array.from(new Set([base, alias].filter(Boolean).flatMap((entry) => [entry as string, normalizeSearchText(entry as string)])))
+}
+
+function lookupMoveMeta(name: string) {
+  if (!name) return null
+  return MOVE_META_BY_NAME[name] ?? MOVE_META_BY_NORMALIZED.get(normalizeSearchText(name)) ?? null
 }
 
 function findMatchingMoveOption(name: string, options: MoveOption[]) {
@@ -616,8 +629,19 @@ function resolveMoveMeta(name: string, preferredOptions: MoveOption[], movePools
   if (!name) return null
   const candidates = moveNameCandidates(name)
   for (const candidate of candidates) {
-    const meta = (championsLearnedMoveMeta as Record<string, MoveMeta>)[candidate]
+    const meta = lookupMoveMeta(candidate)
     if (meta) return meta
+  }
+  const direct = findMatchingMoveOption(name, preferredOptions)
+  if (direct) {
+    const directMeta = lookupMoveMeta(direct.name)
+    if (directMeta) return directMeta
+  }
+  for (const pool of Object.values(movePools)) {
+    const matched = findMatchingMoveOption(name, pool.moves)
+    if (!matched) continue
+    const matchedMeta = lookupMoveMeta(matched.name)
+    if (matchedMeta) return matchedMeta
   }
   const resolvedType = resolveMoveType(name, preferredOptions, movePools)
   return resolvedType ? { type: resolvedType, category: null, power: null } : null
@@ -1411,7 +1435,7 @@ function matchesLooseQuery(source: string, query: string) {
 }
 
 function normalizeSearchText(value: string) {
-  return value.toLowerCase().replace(/[\s'’._-]+/g, '')
+  return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
 }
 
 function speciesSearchCandidates(row: Row) {
