@@ -2246,6 +2246,9 @@ textarea { min-height: 72px; resize: vertical; }
   background: #0b1220;
   padding: 0 6px;
 }
+.speed-plane-baseline-label.alt {
+  color: #fcd34d;
+}
 .speed-plane-tick {
   position: absolute;
   left: 0;
@@ -2268,6 +2271,10 @@ textarea { min-height: 72px; resize: vertical; }
   right: 0;
   transform: translateY(-50%);
   border-top: 2px solid #64748b;
+}
+.speed-plane-baseline.alt {
+  border-top-color: rgba(250, 204, 21, 0.75);
+  border-top-style: dashed;
 }
 .speed-plane-node span {
   color: #cbd5e1;
@@ -2728,6 +2735,18 @@ textarea { min-height: 72px; resize: vertical; }
   background: #0b1220;
   color: #e2e8f0;
   font-size: 12px;
+}
+.pick-badge.subtle {
+  border-color: rgba(250, 204, 21, 0.35);
+  color: #fde68a;
+}
+.pick-badge.icon-badge {
+  padding: 4px 7px;
+}
+.pick-badge-item-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 .pick-badge.enemy {
   border-color: #7c2d12;

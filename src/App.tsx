@@ -935,7 +935,7 @@ function partySpeedValue(row: Row, member: PartyMember) {
   let value = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
   else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
-  if (member.config.scarf) value = Math.floor(value * 1.5)
+  if (member.config.scarf || member.item.includes('스카프')) value = Math.floor(value * 1.5)
   return value
 }
 
@@ -967,6 +967,51 @@ function opponentScenarioNeeds(row: Row, mySpeed: number, boosted: boolean, scar
 }
 
 const DOUBLE_SPEED_ABILITY_SLUGS = ['swift-swim', 'sand-rush', 'chlorophyll', 'slush-rush', 'surge-surfer', 'unburden'] as const
+
+const MY_SPEED_ABILITY_MARKERS: Record<string, { type: 'stage' | 'multiplier', value: number }> = {
+  'weak-armor': { type: 'stage', value: 2 },
+  'speed-boost': { type: 'stage', value: 1 },
+  'motor-drive': { type: 'stage', value: 1 },
+  'quick-feet': { type: 'multiplier', value: 1.5 },
+  'swift-swim': { type: 'multiplier', value: 2 },
+  'sand-rush': { type: 'multiplier', value: 2 },
+  'chlorophyll': { type: 'multiplier', value: 2 },
+  'slush-rush': { type: 'multiplier', value: 2 },
+  'surge-surfer': { type: 'multiplier', value: 2 },
+  'unburden': { type: 'multiplier', value: 2 },
+}
+
+function resolveSelectedAbility(row: Row, selectedAbility: string, language: SiteLanguage) {
+  const normalized = selectedAbility.trim().toLowerCase()
+  const abilityLabels = displayAbilities(row, language)
+  const idx = row.abilities.findIndex((slug, abilityIdx) => {
+    const ko = (row.abilities_ko[abilityIdx] ?? '').trim().toLowerCase()
+    const en = titleCaseSlug(slug).trim().toLowerCase()
+    const shown = (abilityLabels[abilityIdx] ?? '').trim().toLowerCase()
+    return normalized === ko || normalized === en || normalized === shown || normalized === slug.trim().toLowerCase()
+  })
+  if (idx < 0) return null
+  return {
+    slug: row.abilities[idx],
+    label: row.abilities_ko[idx] ?? titleCaseSlug(row.abilities[idx]),
+  }
+}
+
+function mySpeedAbilityMarker(row: Row, member: PartyMember, language: SiteLanguage) {
+  const ability = resolveSelectedAbility(row, member.ability, language)
+  if (!ability) return null
+  const effect = MY_SPEED_ABILITY_MARKERS[ability.slug]
+  if (!effect) return null
+  const baseSpeed = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
+  const totalStage = effect.type === 'stage' ? member.config.speedStage + effect.value : member.config.speedStage
+  let speed = applySpeedStage(baseSpeed, totalStage)
+  if (member.config.scarf || member.item.includes('스카프')) speed = Math.floor(speed * 1.5)
+  if (effect.type === 'multiplier') speed = Math.floor(speed * effect.value)
+  return {
+    label: ability.label,
+    speed,
+  }
+}
 
 function speedAbilityCandidate(row: Row, language: SiteLanguage) {
   const idx = row.abilities.findIndex((ability) => DOUBLE_SPEED_ABILITY_SLUGS.includes(ability as typeof DOUBLE_SPEED_ABILITY_SLUGS[number]))
@@ -1528,6 +1573,7 @@ export default function App() {
   }, [confirmedMovesByKey, myMember.key, selectedDamageMove])
 
   const mySpeed = partySpeedValue(myRow, myMember)
+  const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage) : null
   const oppSpeed = oppRow ? speedValue(oppRow, {
     nature: oppMember.natureBoost ? 'jolly' : 'hardy',
     scarf: oppMember.scarf || oppMember.item.includes('스카프'),
@@ -3343,6 +3389,8 @@ export default function App() {
                       <div className="pick-summary-badges">
                         <span className="pick-badge">{lt('내 포켓몬')}</span>
                         <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
+                        {myMember.item.includes('스카프') ? <span className="pick-badge icon-badge"><img src={itemSpriteSrc(myMember.key, '구애스카프')} alt={lt('스카프')} className="pick-badge-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /></span> : null}
+                        {mySpeedAbilityLine ? <span className="pick-badge subtle">{mySpeedAbilityLine.label} {mySpeedAbilityLine.speed}</span> : null}
                       </div>
                       {myMegaCandidates.length ? <div className="calc-toggle-row">
                         <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
@@ -3380,6 +3428,10 @@ export default function App() {
                     ))}
                     <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
                     <div className="speed-plane-baseline-label" style={{ top: `${speedAxisTop(mySpeed)}%` }}>{lt('기준선')}</div>
+                    {mySpeedAbilityLine ? <>
+                      <div className="speed-plane-baseline alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }} />
+                      <div className="speed-plane-baseline-label alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }}>{mySpeedAbilityLine.label}</div>
+                    </> : null}
                     {opponentSpeedBands.map((band, idx) => {
                       const minScenario = band.minScenario!
                       const maxScenario = band.maxScenario!
@@ -3392,7 +3444,7 @@ export default function App() {
                       const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
                       return (
                         <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
-                          <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} />
+                          {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
                           {band.scarf ? <div className="speed-plane-band-icon">
                             <img src={itemSpriteSrc('', '구애스카프')} alt={lt('스카프')} className="speed-band-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                           </div> : band.abilityLabel ? <div className="speed-plane-band-ability">{band.abilityLabel}</div> : null}
