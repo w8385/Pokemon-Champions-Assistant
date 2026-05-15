@@ -2666,11 +2666,12 @@ textarea { min-height: 72px; resize: vertical; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.damage-calc-grid.compact {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-}
+.damage-calc-grid.compact.offense-grid,
 .damage-calc-grid.compact.defender-grid {
   grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.damage-calc-grid.compact.field-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 .calc-grid > label,
 .calc-lock-box {
@@ -2713,6 +2714,16 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .calc-toggle-box.span-2 {
   grid-column: span 2;
+}
+
+@media (max-width: 1180px) {
+  .damage-calc-grid.compact.offense-grid,
+  .damage-calc-grid.compact.defender-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .damage-calc-grid.compact.field-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .ev-grid {
   display: grid;
@@ -3207,8 +3218,9 @@ textarea { min-height: 72px; resize: vertical; }
     min-width: 0;
   }
   .speed-cut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .damage-calc-grid.compact,
-  .damage-calc-grid.compact.defender-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .damage-calc-grid.compact.offense-grid,
+  .damage-calc-grid.compact.defender-grid,
+  .damage-calc-grid.compact.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .calc-toggle-box.span-2 { grid-column: span 1; }
   .damage-summary-grid { grid-template-columns: 1fr; }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

@@ -4245,7 +4245,7 @@ export default function App() {
             <div className="damage-control-groups">
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>
-                <div className="calc-grid damage-calc-grid compact">
+                <div className="calc-grid damage-calc-grid compact offense-grid">
                   {activeDamageMoveCategory === null ? <label>
                     {lt('수동 분류')}
                     <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
@@ -4331,7 +4331,7 @@ export default function App() {
               </div>
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                <div className="calc-grid damage-calc-grid compact">
+                <div className="calc-grid damage-calc-grid compact field-grid">
                   <label>
                     {lt('날씨')}
                     <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
