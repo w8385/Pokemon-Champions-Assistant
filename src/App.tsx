@@ -117,7 +117,7 @@ type ImportExportPayload = PersistedState & {
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type SampleCandidateFilter = 'all' | 'remaining' | 'locked'
-type MainSection = 'single' | 'sample'
+type MainSection = 'home' | 'single' | 'sample'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
@@ -186,6 +186,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -214,6 +215,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -1050,15 +1052,22 @@ function parseViewStateFromUrl(): ViewState | null {
   if (typeof window === 'undefined') return null
   try {
     const rawHash = window.location.hash.replace(/^#/, '').trim()
-    if (!rawHash) return null
-    const params = new URLSearchParams(rawHash)
-    const mainSection = params.get('section') === 'sample' ? 'sample' : params.get('section') === 'single' ? 'single' : undefined
-    const activeTabParam = params.get('tab')
+    const normalizedHash = rawHash || '/'
+    const routeUrl = new URL(normalizedHash.startsWith('/') ? normalizedHash : `/${normalizedHash}`, 'https://openclaw.local')
+    const routePath = routeUrl.pathname.replace(/\/+$/, '') || '/'
+    const mainSection: MainSection | undefined = routePath === '/single'
+      ? 'single'
+      : routePath === '/sample-builder'
+        ? 'sample'
+        : routePath === '/'
+          ? 'home'
+          : undefined
+    const activeTabParam = routeUrl.searchParams.get('tab')
     const activeTab = activeTabParam === 'party' || activeTabParam === 'pick' || activeTabParam === 'speed' || activeTabParam === 'power'
       ? activeTabParam
       : undefined
-    const selectedMy = params.get('my') !== null ? Number(params.get('my')) : undefined
-    const selectedOpp = params.get('opp') !== null ? Number(params.get('opp')) : undefined
+    const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
+    const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
     return { mainSection, activeTab, selectedMy, selectedOpp }
   } catch {
     return null
@@ -1068,12 +1077,12 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  params.set('section', viewState.mainSection === 'sample' ? 'sample' : 'single')
-  if (viewState.mainSection !== 'sample' && viewState.activeTab) params.set('tab', viewState.activeTab)
+  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : '/'
+  if (viewState.mainSection === 'single' && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
-  const nextHash = params.toString()
-  if (window.location.hash.replace(/^#/, '') === nextHash) return
+  const nextHash = `${routePath}${params.toString() ? `?${params.toString()}` : ''}`
+  if ((window.location.hash.replace(/^#/, '') || '/') === nextHash) return
   const url = new URL(window.location.href)
   url.hash = nextHash
   window.history.replaceState(null, '', url)
@@ -1880,6 +1889,12 @@ function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   }
 }
 
+function menuLabelForSection(section: MainSection, activeTab: MainTab, language: SiteLanguage = 'ko') {
+  if (section === 'home') return translateText(language, '홈')
+  if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
+  return menuLabelForTab(activeTab, language)
+}
+
 function HamburgerIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
@@ -1955,7 +1970,7 @@ export default function App() {
   const [stab, setStab] = React.useState(1.5)
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
-  const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection === 'sample' ? 'sample' : persisted?.mainSection === 'sample' ? 'sample' : 'single')
+  const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
   const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? 'party')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [calcMyMegaOn, setCalcMyMegaOn] = React.useState(false)
@@ -2860,7 +2875,7 @@ export default function App() {
       setCalcOpponentSpDefenseNature(nextBulkState.spDefenseNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
       setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
-      setMainSection(parsed.mainSection === 'sample' ? 'sample' : 'single')
+      setMainSection(parsed.mainSection ?? 'home')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
       setSampleItemDraft(displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage))
@@ -2885,6 +2900,10 @@ export default function App() {
               </button>
               {navMenuOpen ? (
                 <div className="nav-drawer">
+                  <button type="button" className={`nav-item ${mainSection === 'home' ? 'active' : ''}`} onClick={() => { setMainSection('home'); setNavMenuOpen(false) }}>
+                    {lt('홈')}
+                    <span>{lt('모드 선택')}</span>
+                  </button>
                   <button type="button" className={`nav-item ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); setNavMenuOpen(false) }}>
                     {lt('싱글배틀 메뉴')}
                     <span>{menuLabelForTab(activeTab, siteLanguage)}</span>
@@ -2897,8 +2916,8 @@ export default function App() {
               ) : null}
             </div>
             <div>
-              <h1>Pokemon Champions Battle Assistant Demo</h1>
-              <p>{lt('파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.')}</p>
+              <h1>Pokemon Champions Battle Assistant</h1>
+              <p>{mainSection === 'home' ? lt('정식 배포 준비') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
             </div>
           </div>
           <div className="language-menu-wrap header-language-wrap">
@@ -3121,7 +3140,46 @@ export default function App() {
       ) : null}
 
       <main className="grid">
-        <section className="panel wide">
+        {mainSection === 'home' ? (
+        <section className="panel wide home-hero-panel">
+          <div className="row-between section-head home-hero-head">
+            <div>
+              <h2>{lt('정식 배포 준비')}</h2>
+              <p className="muted">{lt('홈페이지에서 시작할 메뉴를 고르세요.')}</p>
+            </div>
+            <div className="pick-summary-badges home-hero-badges">
+              <span className="pick-badge">{lt('현재 작업')} · {menuLabelForSection(mainSection, activeTab, siteLanguage)}</span>
+              <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
+              <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+            </div>
+          </div>
+          <div className="home-route-grid">
+            <button type="button" className="home-route-card accent" onClick={() => setMainSection('single')}>
+              <div className="home-route-card-copy">
+                <span className="home-route-eyebrow">{lt('싱글배틀 메뉴')}</span>
+                <strong>{lt('싱글배틀 워크벤치')}</strong>
+                <p>{lt('파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.')}</p>
+              </div>
+              <div className="home-route-card-meta">
+                <span className="pick-badge">{menuLabelForTab(activeTab, siteLanguage)}</span>
+                <span className="action-button">{lt('들어가기')}</span>
+              </div>
+            </button>
+            <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
+              <div className="home-route-card-copy">
+                <span className="home-route-eyebrow">{lt('포켓몬 샘플 깎기')}</span>
+                <strong>{lt('샘플 빌더 워크벤치')}</strong>
+                <p>{lt('단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.')}</p>
+              </div>
+              <div className="home-route-card-meta">
+                <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
+                <span className="action-button">{lt('들어가기')}</span>
+              </div>
+            </button>
+          </div>
+        </section>
+        ) : null}
+        {mainSection !== 'home' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
               <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
@@ -3142,7 +3200,7 @@ export default function App() {
               </div>
             ) : null}
           </div>
-        </section>
+        </section> : null}
 
         {mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power') ? (
           <section className="panel wide">
@@ -3450,7 +3508,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {mainSection === 'single' && activeTab === 'pick' ? <>
+        {mainSection === 'home' ? null : mainSection === 'single' && activeTab === 'pick' ? <>
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
@@ -3703,6 +3761,34 @@ export default function App() {
           />
         </section>
         </> : mainSection === 'sample' ? <>
+        <section className="panel wide">
+          <div className="row-between section-head">
+            <h2>{lt('샘플 개요')}</h2>
+            <div className="pick-summary-badges home-hero-badges">
+              <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
+              <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
+              <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+            </div>
+          </div>
+          <div className="team-strip-grid sample-overview-grid">
+            <div className="sample-overview-card">
+              <span className="muted">{lt('현재 작업')}</span>
+              <strong>{displayName(sampleRow, siteLanguage)}</strong>
+              <div className="pick-summary-badges">
+                <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                <span className="pick-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
+              </div>
+            </div>
+            <div className="sample-overview-card">
+              <span className="muted">{lt('샘플 작업대')}</span>
+              <strong>{sampleLabelDraft.trim() || lt('샘플 이름')}</strong>
+              <div className="pick-summary-badges">
+                <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('단일 샘플 빌더')}</h2>
@@ -4112,39 +4198,41 @@ export default function App() {
                   </details> : null}
                 </>
               ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
-              <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer">
-                <summary className="sample-drawer-summary sample-managed-summary">
-                  <span>{lt('저장한 샘플')}</span>
-                  <div className="pick-summary-badges saved-sample-summary-badges">
-                    {savedSamples[0] ? <span className="pick-badge saved-sample-latest-badge">{savedSamples[0].label}</span> : null}
-                    <span className="pick-badge">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
-                  </div>
-                </summary>
-                <div className="saved-sample-drawer-body">
-                {savedSamples.length ? savedSamples.map((entry) => {
-                  const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
-                  return (
-                    <div key={entry.id} className="saved-sample-item">
-                      <div>
-                        <strong>{entry.label}</strong>
-                        <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}{entry.member.item ? ` · ${displayItemLabel(entry.member.item, siteLanguage)}` : ''}</p>
-                      </div>
-                      <div className="inline-controls">
-                        <button type="button" className="pick-chip" onClick={() => {
-                          setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
-                          setSampleItemDraft(displayItemLabel(visibleChampionsItem(entry.member.key, entry.member.item), siteLanguage))
-                          setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
-                          setActiveSampleMetaEditor(null)
-                        }}>{lt('불러오기')}</button>
-                        <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('삭제')}</button>
-                      </div>
-                    </div>
-                  )
-                }) : <p className="muted">{lt('아직 저장한 샘플이 없습니다.')}</p>}
-                </div>
-              </details>
             </div>
           </div>
+        </section>
+        <section className="panel wide">
+          <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
+            <summary className="sample-drawer-summary sample-managed-summary">
+              <span>{lt('저장한 샘플')}</span>
+              <div className="pick-summary-badges saved-sample-summary-badges">
+                {savedSamples[0] ? <span className="pick-badge saved-sample-latest-badge">{savedSamples[0].label}</span> : null}
+                <span className="pick-badge">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
+              </div>
+            </summary>
+            <div className="saved-sample-drawer-body">
+            {savedSamples.length ? savedSamples.map((entry) => {
+              const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
+              return (
+                <div key={entry.id} className="saved-sample-item">
+                  <div>
+                    <strong>{entry.label}</strong>
+                    <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}{entry.member.item ? ` · ${displayItemLabel(entry.member.item, siteLanguage)}` : ''}</p>
+                  </div>
+                  <div className="inline-controls">
+                    <button type="button" className="pick-chip" onClick={() => {
+                      setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
+                      setSampleItemDraft(displayItemLabel(visibleChampionsItem(entry.member.key, entry.member.item), siteLanguage))
+                      setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
+                      setActiveSampleMetaEditor(null)
+                    }}>{lt('불러오기')}</button>
+                    <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('삭제')}</button>
+                  </div>
+                </div>
+              )
+            }) : <p className="muted">{lt('아직 저장한 샘플이 없습니다.')}</p>}
+            </div>
+          </details>
         </section>
         </> : <>
         {activeTab === 'speed' ? <section className="panel wide">
