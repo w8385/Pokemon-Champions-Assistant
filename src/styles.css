@@ -2169,7 +2169,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .speed-scenario-ladder {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 .speed-inline-head {
   border: 1px solid #334155;
@@ -2189,7 +2189,7 @@ textarea { min-height: 72px; resize: vertical; }
   background: #111827;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 8px;
   overflow: hidden;
 }
 .speed-plane-header {
@@ -2197,7 +2197,7 @@ textarea { min-height: 72px; resize: vertical; }
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 14px 14px 0;
+  padding: 10px 14px 0;
 }
 .speed-plane-header span {
   color: #93a4b8;
