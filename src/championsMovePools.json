@@ -31789,6 +31789,10 @@
       "type": "grass"
     },
     {
+      "name": "꽃가루경단",
+      "type": "bug"
+    },
+    {
       "name": "꽃보라",
       "type": "grass"
     },
@@ -31817,12 +31821,20 @@
       "type": "normal"
     },
     {
+      "name": "드레인키스",
+      "type": "fairy"
+    },
+    {
       "name": "매지컬샤인",
       "type": "fairy"
     },
     {
       "name": "매직코트",
       "type": "psychic"
+    },
+    {
+      "name": "매혹의보이스",
+      "type": "fairy"
     },
     {
       "name": "맹독",
@@ -31849,7 +31861,15 @@
       "type": "fairy"
     },
     {
+      "name": "바톤터치",
+      "type": "normal"
+    },
+    {
       "name": "방어",
+      "type": "normal"
+    },
+    {
+      "name": "버티기",
       "type": "normal"
     },
     {
@@ -31865,6 +31885,10 @@
       "type": "water"
     },
     {
+      "name": "빛의장막",
+      "type": "psychic"
+    },
+    {
       "name": "뽐내기",
       "type": "normal"
     },
@@ -31877,8 +31901,20 @@
       "type": "psychic"
     },
     {
+      "name": "손가락흔들기",
+      "type": "normal"
+    },
+    {
       "name": "솔라빔",
       "type": "grass"
+    },
+    {
+      "name": "스킬스웹",
+      "type": "psychic"
+    },
+    {
+      "name": "스피드스타",
+      "type": "normal"
     },
     {
       "name": "신비의부적",
@@ -31891,6 +31927,14 @@
     {
       "name": "아로마테라피",
       "type": "grass"
+    },
+    {
+      "name": "애교부리기",
+      "type": "fairy"
+    },
+    {
+      "name": "어시스트파워",
+      "type": "psychic"
     },
     {
       "name": "에너지볼",
@@ -31937,6 +31981,10 @@
       "type": "normal"
     },
     {
+      "name": "차밍보이스",
+      "type": "fairy"
+    },
+    {
       "name": "치료방울",
       "type": "normal"
     },
@@ -31953,8 +32001,8 @@
       "type": "normal"
     },
     {
-      "name": "파멸의빛",
-      "type": "fairy"
+      "name": "트릭",
+      "type": "psychic"
     },
     {
       "name": "풀묶기",
@@ -31975,6 +32023,18 @@
     {
       "name": "희망사항",
       "type": "normal"
+    },
+    {
+      "name": "Chilling Water",
+      "type": "water"
+    },
+    {
+      "name": "Tera Blast",
+      "type": "normal"
+    },
+    {
+      "name": "Trailblaze",
+      "type": "grass"
     }
   ],
   "floette-eternal-flower": [
@@ -32003,6 +32063,10 @@
       "type": "grass"
     },
     {
+      "name": "꽃가루경단",
+      "type": "bug"
+    },
+    {
       "name": "꽃보라",
       "type": "grass"
     },
@@ -32031,12 +32095,20 @@
       "type": "normal"
     },
     {
+      "name": "드레인키스",
+      "type": "fairy"
+    },
+    {
       "name": "매지컬샤인",
       "type": "fairy"
     },
     {
       "name": "매직코트",
       "type": "psychic"
+    },
+    {
+      "name": "매혹의보이스",
+      "type": "fairy"
     },
     {
       "name": "맹독",
@@ -32063,7 +32135,15 @@
       "type": "fairy"
     },
     {
+      "name": "바톤터치",
+      "type": "normal"
+    },
+    {
       "name": "방어",
+      "type": "normal"
+    },
+    {
+      "name": "버티기",
       "type": "normal"
     },
     {
@@ -32079,6 +32159,10 @@
       "type": "water"
     },
     {
+      "name": "빛의장막",
+      "type": "psychic"
+    },
+    {
       "name": "뽐내기",
       "type": "normal"
     },
@@ -32091,8 +32175,20 @@
       "type": "psychic"
     },
     {
+      "name": "손가락흔들기",
+      "type": "normal"
+    },
+    {
       "name": "솔라빔",
       "type": "grass"
+    },
+    {
+      "name": "스킬스웹",
+      "type": "psychic"
+    },
+    {
+      "name": "스피드스타",
+      "type": "normal"
     },
     {
       "name": "신비의부적",
@@ -32105,6 +32201,14 @@
     {
       "name": "아로마테라피",
       "type": "grass"
+    },
+    {
+      "name": "애교부리기",
+      "type": "fairy"
+    },
+    {
+      "name": "어시스트파워",
+      "type": "psychic"
     },
     {
       "name": "에너지볼",
@@ -32151,6 +32255,10 @@
       "type": "normal"
     },
     {
+      "name": "차밍보이스",
+      "type": "fairy"
+    },
+    {
       "name": "치료방울",
       "type": "normal"
     },
@@ -32167,8 +32275,8 @@
       "type": "normal"
     },
     {
-      "name": "파멸의빛",
-      "type": "fairy"
+      "name": "트릭",
+      "type": "psychic"
     },
     {
       "name": "풀묶기",
@@ -32189,6 +32297,18 @@
     {
       "name": "희망사항",
       "type": "normal"
+    },
+    {
+      "name": "Chilling Water",
+      "type": "water"
+    },
+    {
+      "name": "Tera Blast",
+      "type": "normal"
+    },
+    {
+      "name": "Trailblaze",
+      "type": "grass"
     }
   ],
   "mega-garchomp": [

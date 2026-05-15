@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-15T05:53:08.468Z",
+    "generatedAt": "2026-05-15T11:33:26.348Z",
     "sourceOfTruth": "src/championsMovePools.json",
     "seededFrom": "src/pokemonMovePools.json",
     "purpose": "포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터"
@@ -2150,8 +2150,8 @@
         "mega-floette",
         "floette"
       ],
-      "fetchedPokemonApiCandidate": "floette-eternal",
-      "moveCount": 53,
+      "fetchedPokemonApiCandidate": "floette",
+      "moveCount": 68,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",
@@ -2176,8 +2176,8 @@
       "generatedFromKeys": [
         "floette-eternal-flower"
       ],
-      "fetchedPokemonApiCandidate": "floette-eternal",
-      "moveCount": 53,
+      "fetchedPokemonApiCandidate": "floette",
+      "moveCount": 68,
       "verificationPolicy": {
         "requiredSources": [
           "champs.pokedb.tokyo",

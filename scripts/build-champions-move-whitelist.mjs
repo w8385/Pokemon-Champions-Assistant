@@ -36,8 +36,8 @@ const POKEMON_ALIAS_CANDIDATES = {
   'slowking-galarian': ['slowking-galar'],
   'mega-charizard-x': ['charizard-mega-x'],
   'mega-charizard-y': ['charizard-mega-y'],
-  'mega-floette': ['floette-eternal'],
-  'floette-eternal-flower': ['floette-eternal'],
+  'mega-floette': ['floette', 'floette-eternal'],
+  'floette-eternal-flower': ['floette', 'floette-eternal'],
 }
 
 function relatedMovePoolKeys(key) {
