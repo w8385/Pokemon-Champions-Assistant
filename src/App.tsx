@@ -139,6 +139,32 @@ type MoveMeta = {
   alwaysCrit?: boolean
   priority?: number
 }
+
+const PUNCH_MOVE_NAMES = new Set([
+  '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
+  '불꽃펀치', '불릿펀치', '섀도펀치', '연속펀치', '잼잼펀치', '제트펀치', '코멧펀치', '폭발펀치', '힘껏펀치',
+].map(normalizeSearchText))
+
+const BITE_MOVE_NAMES = new Set([
+  '물기', '깨물어부수기', '번개엄니', '불꽃엄니', '얼음엄니', '독엄니', '사이코팽', '아쿠아팽',
+].map(normalizeSearchText))
+
+const PULSE_MOVE_NAMES = new Set([
+  '대지의파동', '물의파동', '악의파동', '용의파동', '치유파동', '파동탄',
+].map(normalizeSearchText))
+
+const SOUND_MOVE_NAMES = new Set([
+  '매혹의보이스', '에코보이스', '차밍보이스', '하이퍼보이스', '노래하기', '돌림노래', '멸망의노래', '폭음파',
+].map(normalizeSearchText))
+
+const SLICING_MOVE_NAMES = new Set([
+  '사이코커터', '아쿠아커터', '에어슬래시', '리프블레이드', '셸블레이드', '솔라블레이드',
+  '깜짝베기', '찍찍베기', '풀베기', '성스러운칼', '원념의칼', '시저크로스', '크로스포이즌', '연속자르기', '베어가르기',
+].map(normalizeSearchText))
+
+const CONTACT_MOVE_NAMES = new Set([
+  '아쿠아브레이크', '애크러뱃', '엄청난힘', '원념의칼', '치근거리기', '용의클로', '플레어드라이브', '인파이트',
+].map(normalizeSearchText))
 type DamageCalcModifiers = {
   attackMultiplier?: number
   defenseMultiplier?: number
@@ -708,6 +734,26 @@ function moveNameCandidates(name: string) {
   const base = name.trim()
   const alias = MOVE_NAME_ALIASES[base] ?? MOVE_NAME_ALIASES_BY_NORMALIZED.get(normalizeSearchText(base))
   return Array.from(new Set([base, alias].filter(Boolean).flatMap((entry) => [entry as string, normalizeSearchText(entry as string)])))
+}
+
+function moveMatchesTaggedSet(moveName: string, taggedMoves: Set<string>) {
+  return moveNameCandidates(moveName).some((candidate) => taggedMoves.has(normalizeSearchText(candidate)))
+}
+
+function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string) {
+  if (!moveMeta) return moveMeta
+  const isDamaging = moveMeta.category === 'physical' || moveMeta.category === 'special'
+  if (!isDamaging) return moveMeta
+  if (moveMeta.type === 'normal') {
+    if (attackerAbility === 'aerilate') return { ...moveMeta, type: 'flying' }
+    if (attackerAbility === 'pixilate') return { ...moveMeta, type: 'fairy' }
+    if (attackerAbility === 'refrigerate') return { ...moveMeta, type: 'ice' }
+    if (attackerAbility === 'dragonize') return { ...moveMeta, type: 'dragon' }
+  }
+  if (attackerAbility === 'liquid-voice' && moveMatchesTaggedSet(moveName, SOUND_MOVE_NAMES)) {
+    return { ...moveMeta, type: 'water' }
+  }
+  return moveMeta
 }
 
 function lookupMoveMeta(name: string) {
@@ -1514,8 +1560,10 @@ function resolveStabMultiplier(attackerTypes: string[], moveType: string | null,
 function abilityNoteLabel(ability: string) {
   const labels: Record<string, string> = {
     'adaptability': '적응력',
+    'aerilate': '스카이스킨',
     'beads-of-ruin': '구슬의재앙',
     'dark-aura': '다크오라',
+    'dragonize': '드래고나이즈',
     'dragons-maw': '용의턱',
     'dry-skin': '건조피부',
     'earth-eater': '대지먹기',
@@ -1529,21 +1577,28 @@ function abilityNoteLabel(ability: string) {
     'huge-power': '천하장사',
     'hustle': '의욕',
     'ice-scales': '얼음인분',
+    'iron-fist': '철주먹',
     'levitate': '부유',
+    'liquid-voice': '촉촉보이스',
+    'mega-launcher': '메가런처',
     'lightning-rod': '피뢰침',
     'libero': '변환자재',
     'motor-drive': '전기엔진',
     'multiscale': '멀티스케일',
     'neuroforce': '브레인포스',
+    'pixilate': '페어리스킨',
     'prism-armor': '프리즘아머',
     'protean': '변환자재',
     'pure-power': '순수한힘',
+    'refrigerate': '프리즈스킨',
     'sand-force': '모래의힘',
     'sap-sipper': '초식',
+    'sharpness': '예리함',
     'shadow-shield': '팬텀가드',
     'sniper': '스나이퍼',
     'solar-power': '선파워',
     'solid-rock': '하드록',
+    'strong-jaw': '옹골찬턱',
     'steelworker': '강철술사',
     'steely-spirit': '강철정신',
     'storm-drain': '마중물',
@@ -1551,6 +1606,7 @@ function abilityNoteLabel(ability: string) {
     'technician': '테크니션',
     'thick-fat': '두꺼운지방',
     'tinted-lens': '색안경',
+    'tough-claws': '단단한발톱',
     'torrent': '급류',
     'transistor': '트랜지스터',
     'unaware': '천진',
@@ -1567,6 +1623,8 @@ function resolveDamageModifiers(params: {
   attackerItem: string
   defenderAbility: string
   defenderItem: string
+  moveName: string
+  baseMoveType: string | null
   moveType: string | null
   movePower: number | null
   mode: CalcMode
@@ -1582,7 +1640,7 @@ function resolveDamageModifiers(params: {
   auroraVeil: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, weather, terrain, reflect, lightScreen, auroraVeil, critical } = params
+  const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, weather, terrain, reflect, lightScreen, auroraVeil, critical } = params
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
   const effectiveAttackStage = defenderIgnoresAttackStage ? 0 : critical && attackStage < 0 ? 0 : attackStage
@@ -1648,6 +1706,36 @@ function resolveDamageModifiers(params: {
 
   if (moveType === 'water' && attackerAbility === 'water-bubble') {
     powerMultiplier *= 2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (baseMoveType === 'normal' && moveType && moveType !== 'normal' && ['aerilate', 'pixilate', 'refrigerate', 'dragonize'].includes(attackerAbility)) {
+    powerMultiplier *= 1.2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (attackerAbility === 'iron-fist' && moveMatchesTaggedSet(moveName, PUNCH_MOVE_NAMES)) {
+    powerMultiplier *= 1.2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (attackerAbility === 'strong-jaw' && moveMatchesTaggedSet(moveName, BITE_MOVE_NAMES)) {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (attackerAbility === 'mega-launcher' && moveMatchesTaggedSet(moveName, PULSE_MOVE_NAMES)) {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (attackerAbility === 'sharpness' && moveMatchesTaggedSet(moveName, SLICING_MOVE_NAMES)) {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (attackerAbility === 'tough-claws' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+    powerMultiplier *= 1.3
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
@@ -2429,13 +2517,20 @@ export default function App() {
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
+  const selectedAttackAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
+  const selectedDefenseAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
   const registeredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const activeDamageMove = registeredDamageMoves.find((move) => move === selectedDamageMove?.move && myMember.key === selectedDamageMove?.key) ?? registeredDamageMoves[0] ?? ''
   const activeDamageMoveBaseMeta = resolveMoveMeta(activeDamageMove, myMoveOptions, movePoolByKey)
   const activeDamageMoveHitOptions = multiHitOptions(activeDamageMove)
   const activeDamageMoveHitCount = activeDamageMoveHitOptions?.includes(calcHitCount) ? calcHitCount : (activeDamageMoveHitOptions?.[0] ?? null)
-  const activeDamageMoveMeta = resolveMultiHitMeta(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount)
+  const activeDamageMoveMeta = resolveAbilityAdjustedMoveMeta(
+    activeDamageMove,
+    resolveMultiHitMeta(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount),
+    selectedAttackAbility?.slug ?? myMember.ability,
+  )
   const activeDamageMoveHitSummary = multiHitSummary(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount)
+  const activeDamageMoveBaseType = activeDamageMoveBaseMeta?.type ?? null
   const activeDamageMoveType = activeDamageMoveMeta?.type ?? null
   const activeDamageMoveCategory = activeDamageMoveMeta?.category === 'physical' || activeDamageMoveMeta?.category === 'special' ? activeDamageMoveMeta.category : null
   const activeDamageMovePower = typeof activeDamageMoveMeta?.power === 'number' ? activeDamageMoveMeta.power : null
@@ -2451,9 +2546,6 @@ export default function App() {
     if (!activeDamageMoveHitOptions?.length) return
     setCalcHitCount((prev) => (activeDamageMoveHitOptions.includes(prev) ? prev : activeDamageMoveHitOptions[0]))
   }, [activeDamageMove, activeDamageMoveHitOptions])
-
-  const selectedAttackAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
-  const selectedDefenseAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
   const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, selectedAttackAbility?.slug ?? myMember.ability)
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
   const toggleConfirmedMove = (key: string, move: string) => {
@@ -2723,6 +2815,8 @@ export default function App() {
     attackerItem: myMember.item,
     defenderAbility: selectedDefenseAbility?.slug ?? oppMember.ability,
     defenderItem: oppMember.item,
+    moveName: activeDamageMove,
+    baseMoveType: activeDamageMoveBaseType,
     moveType: activeDamageMoveType,
     movePower: effectiveMovePower,
     mode: effectiveCalcMode,
