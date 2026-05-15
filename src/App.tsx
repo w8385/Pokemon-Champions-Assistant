@@ -1,7 +1,7 @@
 import React from 'react'
 import championsData from './pokemon_champions_verified_data.json'
 import championsLearnedMoveMeta from './championsLearnedMoveMeta.json'
-import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, type ChampionsItem } from './championsItems'
+import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
@@ -1299,7 +1299,8 @@ function filterSpeciesOptions(query: string, options?: { includeMega?: boolean }
 }
 
 function displayItemLabel(item: string, language: SiteLanguage) {
-  return translateText(language, item)
+  const localized = localizedChampionsItemLabel(item, language)
+  return localized !== item ? localized : translateText(language, item)
 }
 
 function filterItemOptions(query: string, language: SiteLanguage = 'ko') {

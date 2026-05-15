@@ -48,35 +48,50 @@ export const CHAMPIONS_ITEM_OPTIONS = [
 export type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]
 
 export const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {
-  "きあいのタスキ": ["기합의띠", "기띠", "띠", "focus sash"],
-  "こだわりスカーフ": ["구애스카프", "스카프", "choice scarf"],
-  "たべのこし": ["먹다남은음식", "먹밥", "남은음식", "leftovers"],
-  "オボンのみ": ["오본열매", "obon"],
-  "メタルコート": ["금속코트", "metal coat"],
-  "メンタルハーブ": ["멘탈허브", "mental herb"],
-  "ひかりのこな": ["반짝가루", "bright powder"],
+  "イトケのみ": ["이트케열매"],
+  "おうじゃのしるし": ["왕의징표석", "king's rock"],
   "オッカのみ": ["오카열매", "occa berry"],
-  "ヤチェのみ": ["유루열매", "야체열매", "yache berry"],
-  "ロゼルのみ": ["리샘열매", "로젤열매", "roseli berry"],
-  "しろいハーブ": ["하양허브", "white herb"],
-  "ピントレンズ": ["핀트렌즈", "scope lens"],
+  "オボンのみ": ["오본열매", "sitrus berry", "obon"],
+  "カゴのみ": ["카고열매", "chesto berry"],
+  "カシブのみ": ["카시브열매", "kasib berry", "colbur berry"],
+  "きあいのタスキ": ["기합의띠", "기띠", "띠", "focus sash"],
+  "きせきのタネ": ["기적의씨", "miracle seed"],
   "くろいメガネ": ["검은안경", "black glasses"],
   "くろおび": ["검은띠", "black belt"],
+  "こだわりスカーフ": ["구애스카프", "스카프", "choice scarf"],
   "じしゃく": ["자석", "magnet"],
-  "きせきのタネ": ["기적의씨", "miracle seed"],
+  "シュカのみ": ["슈카열매", "shuca berry"],
   "シルクのスカーフ": ["실크스카프", "silk scarf"],
+  "しろいハーブ": ["하양허브", "white herb"],
   "しんぴのしずく": ["신비의물방울", "mystic water"],
   "するどいくちばし": ["예리한부리", "sharp beak"],
   "せんせいのツメ": ["선제공격손톱", "quick claw"],
+  "ソクノのみ": ["속노열매", "wacan berry"],
+  "たべのこし": ["먹다남은음식", "먹밥", "남은음식", "leftovers"],
   "でんきだま": ["전기구슬", "light ball"],
   "どくバリ": ["독바늘", "poison barb"],
   "とけないこおり": ["녹지않는얼음", "never melt ice"],
+  "ナモのみ": ["나모열매", "babiri berry"],
   "のろいのおふだ": ["저주의부적", "spell tag"],
+  "バコウのみ": ["바코열매", "passho berry"],
+  "ハバンのみ": ["하반열매", "haban berry"],
+  "ビアーのみ": ["비아열매", "coba berry"],
+  "ひかりのこな": ["반짝가루", "bright powder"],
+  "ピントレンズ": ["핀트렌즈", "scope lens"],
   "まがったスプーン": ["휘어진스푼", "twisted spoon"],
+  "メタルコート": ["금속코트", "metal coat"],
+  "メンタルハーブ": ["멘탈허브", "mental herb"],
   "もくたん": ["목탄", "charcoal"],
+  "ヤチェのみ": ["유루열매", "야체열매", "yache berry"],
   "やわらかいすな": ["부드러운모래", "soft sand"],
   "ようせいのハネ": ["요정의깃털"],
+  "ヨプのみ": ["요프열매", "chople berry"],
+  "ヨロギのみ": ["요로기열매", "charti berry"],
+  "ラムのみ": ["람열매", "lum berry"],
   "りゅうのキバ": ["용의이빨", "dragon fang"],
+  "リリバのみ": ["리리바열매", "kebia berry"],
+  "リンドのみ": ["린드열매", "rindo berry"],
+  "ロゼルのみ": ["리샘열매", "로젤열매", "roseli berry"],
 }
 
 export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {
@@ -89,4 +104,11 @@ export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> =
   "オッカのみ": "occa-berry",
   "ヤチェのみ": "yache-berry",
   "ロゼルのみ": "roseli-berry",
+}
+
+export function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {
+  if (language === 'ja') return item
+  const aliases = CHAMPIONS_ITEM_ALIASES[item as ChampionsItem] ?? []
+  if (language === 'ko') return aliases[0] ?? item
+  return aliases[1] ?? aliases[0] ?? item
 }
