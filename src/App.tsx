@@ -1506,9 +1506,60 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
 function resolveStabMultiplier(attackerTypes: string[], moveType: string | null, ability: string) {
   if (!moveType) return 1
   const hasNativeStab = attackerTypes.includes(moveType)
-  if (ability === '변환자재') return hasNativeStab ? 1.5 : 1.5
-  if (ability === '적응력') return hasNativeStab ? 2 : 1
+  if (ability === 'libero' || ability === 'protean' || ability === '변환자재') return 1.5
+  if (ability === 'adaptability' || ability === '적응력') return hasNativeStab ? 2 : 1
   return hasNativeStab ? 1.5 : 1
+}
+
+function abilityNoteLabel(ability: string) {
+  const labels: Record<string, string> = {
+    'adaptability': '적응력',
+    'beads-of-ruin': '구슬의재앙',
+    'dark-aura': '다크오라',
+    'dragons-maw': '용의턱',
+    'dry-skin': '건조피부',
+    'earth-eater': '대지먹기',
+    'fairy-aura': '페어리오라',
+    'filter': '필터',
+    'flash-fire': '타오르는불꽃',
+    'fluffy': '복슬복슬',
+    'fur-coat': '퍼코트',
+    'guts': '근성',
+    'heatproof': '내열',
+    'huge-power': '천하장사',
+    'hustle': '의욕',
+    'ice-scales': '얼음인분',
+    'levitate': '부유',
+    'lightning-rod': '피뢰침',
+    'libero': '변환자재',
+    'motor-drive': '전기엔진',
+    'multiscale': '멀티스케일',
+    'neuroforce': '브레인포스',
+    'prism-armor': '프리즘아머',
+    'protean': '변환자재',
+    'pure-power': '순수한힘',
+    'sand-force': '모래의힘',
+    'sap-sipper': '초식',
+    'shadow-shield': '팬텀가드',
+    'sniper': '스나이퍼',
+    'solar-power': '선파워',
+    'solid-rock': '하드록',
+    'steelworker': '강철술사',
+    'steely-spirit': '강철정신',
+    'storm-drain': '마중물',
+    'sword-of-ruin': '재앙의검',
+    'technician': '테크니션',
+    'thick-fat': '두꺼운지방',
+    'tinted-lens': '색안경',
+    'torrent': '급류',
+    'transistor': '트랜지스터',
+    'unaware': '천진',
+    'vessel-of-ruin': '재앙의그릇',
+    'volt-absorb': '축전',
+    'water-absorb': '저수',
+    'water-bubble': '수포',
+  }
+  return labels[ability] ?? titleCaseSlug(ability)
 }
 
 function resolveDamageModifiers(params: {
@@ -1532,8 +1583,10 @@ function resolveDamageModifiers(params: {
   critical?: boolean
 }) {
   const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, weather, terrain, reflect, lightScreen, auroraVeil, critical } = params
-  const effectiveAttackStage = critical && attackStage < 0 ? 0 : attackStage
-  const effectiveDefenseStage = critical && defenseStage > 0 ? 0 : defenseStage
+  const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
+  const defenderIgnoresAttackStage = defenderAbility === 'unaware'
+  const effectiveAttackStage = defenderIgnoresAttackStage ? 0 : critical && attackStage < 0 ? 0 : attackStage
+  const effectiveDefenseStage = attackerIgnoresDefenseStage ? 0 : critical && defenseStage > 0 ? 0 : defenseStage
   let attackMultiplier = battleStageMultiplier(effectiveAttackStage)
   let defenseMultiplier = battleStageMultiplier(effectiveDefenseStage)
   let powerMultiplier = 1
@@ -1563,13 +1616,65 @@ function resolveDamageModifiers(params: {
 
   if (effectiveAttackStage) notes.push(`ATK ${effectiveAttackStage > 0 ? '+' : ''}${effectiveAttackStage}`)
   if (effectiveDefenseStage) notes.push(`DEF ${effectiveDefenseStage > 0 ? '+' : ''}${effectiveDefenseStage}`)
+  if (defenderIgnoresAttackStage && attackStage) notes.push(`${abilityNoteLabel(defenderAbility)}(공랭 무시)`)
+  if (attackerIgnoresDefenseStage && defenseStage) notes.push(`${abilityNoteLabel(attackerAbility)}(방랭 무시)`)
   if (critical && attackStage < 0) notes.push('급소(공깎 무시)')
   if (critical && defenseStage > 0) notes.push('급소(방증 무시)')
 
-  const burnApplies = burned && mode === 'physical' && attackerAbility !== '근성'
+  const burnApplies = burned && mode === 'physical' && attackerAbility !== 'guts' && attackerAbility !== '근성' && attackerAbility !== 'water-bubble'
   if (burnApplies) notes.push('화상')
 
   if (critical) notes.push('급소')
+
+  if (mode === 'physical' && (attackerAbility === 'huge-power' || attackerAbility === 'pure-power')) {
+    attackMultiplier *= 2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (mode === 'physical' && attackerAbility === 'hustle') {
+    attackMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (weather === 'sun' && mode === 'special' && attackerAbility === 'solar-power') {
+    attackMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (weather === 'sand' && moveType && ['rock', 'ground', 'steel'].includes(moveType) && attackerAbility === 'sand-force') {
+    powerMultiplier *= 1.3
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (moveType === 'water' && attackerAbility === 'water-bubble') {
+    powerMultiplier *= 2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (moveType === 'dragon' && attackerAbility === 'dragons-maw') {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (moveType === 'electric' && attackerAbility === 'transistor') {
+    powerMultiplier *= 1.3
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (moveType === 'steel' && (attackerAbility === 'steelworker' || attackerAbility === 'steely-spirit')) {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (moveType === 'fairy' && (attackerAbility === 'fairy-aura' || defenderAbility === 'fairy-aura')) {
+    powerMultiplier *= 4 / 3
+    notes.push(abilityNoteLabel('fairy-aura'))
+  }
+
+  if (moveType === 'dark' && (attackerAbility === 'dark-aura' || defenderAbility === 'dark-aura')) {
+    powerMultiplier *= 4 / 3
+    notes.push(abilityNoteLabel('dark-aura'))
+  }
 
   if (attackerItem && moveType && typeBoostItems[attackerItem] === moveType) {
     finalMultiplier *= 1.2
@@ -1618,12 +1723,56 @@ function resolveDamageModifiers(params: {
     notes.push('미스트필드')
   }
 
+  if (moveType === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel('levitate'))
+  }
+
+  if (moveType === 'water' && ['water-absorb', 'storm-drain', 'dry-skin'].includes(defenderAbility)) {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (moveType === 'fire' && defenderAbility === 'flash-fire') {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (moveType === 'electric' && ['volt-absorb', 'lightning-rod', 'motor-drive'].includes(defenderAbility)) {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (moveType === 'grass' && defenderAbility === 'sap-sipper') {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (moveType === 'ground' && defenderAbility === 'earth-eater') {
+    adjustedEffectiveness = 0
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
   if (moveType === 'ground' && defenderAbility === '부유') {
     adjustedEffectiveness = 0
     notes.push('부유')
   }
 
+  if (adjustedEffectiveness > 0 && (moveType === 'fire' || moveType === 'ice') && defenderAbility === 'thick-fat') {
+    finalMultiplier *= 0.5
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (adjustedEffectiveness > 0 && moveType === 'fire' && defenderAbility === 'heatproof') {
+    finalMultiplier *= 0.5
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
   if (adjustedEffectiveness > 1) {
+    if (['filter', 'solid-rock', 'prism-armor'].includes(defenderAbility)) {
+      finalMultiplier *= 0.75
+      notes.push(abilityNoteLabel(defenderAbility))
+    }
     if (defenderItem === 'オッカのみ' && moveType === 'fire') {
       finalMultiplier *= 0.5
       notes.push('オッカのみ')
@@ -1643,6 +1792,36 @@ function resolveDamageModifiers(params: {
     notes.push('싸라기눈')
   }
 
+  if (mode === 'physical' && defenderAbility === 'fur-coat') {
+    defenseMultiplier *= 2
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (mode === 'special' && defenderAbility === 'ice-scales') {
+    finalMultiplier *= 0.5
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (mode === 'physical' && defenderAbility === 'tablets-of-ruin') {
+    attackMultiplier *= 0.75
+    notes.push('패도의목간')
+  }
+
+  if (mode === 'special' && defenderAbility === 'vessel-of-ruin') {
+    attackMultiplier *= 0.75
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (mode === 'physical' && attackerAbility === 'sword-of-ruin') {
+    defenseMultiplier *= 0.75
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (mode === 'special' && attackerAbility === 'beads-of-ruin') {
+    defenseMultiplier *= 0.75
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
   const screenApplies = !critical && (auroraVeil || (mode === 'physical' ? reflect : lightScreen))
   if (screenApplies) {
     finalMultiplier *= 0.5
@@ -1653,6 +1832,26 @@ function resolveDamageModifiers(params: {
   if (attackerAbility === '테크니션' && typeof movePower === 'number' && movePower <= 60) {
     powerMultiplier *= 1.5
     notes.push('테크니션')
+  }
+  if (attackerAbility === 'technician' && typeof movePower === 'number' && movePower <= 60) {
+    powerMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+  if (attackerAbility === 'tinted-lens' && adjustedEffectiveness > 0 && adjustedEffectiveness < 1) {
+    finalMultiplier *= 2
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+  if (attackerAbility === 'neuroforce' && adjustedEffectiveness > 1) {
+    finalMultiplier *= 1.25
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+  if (attackerAbility === 'sniper' && critical) {
+    finalMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+  if (attackerAbility === 'guts' && burned && mode === 'physical') {
+    attackMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
   }
   return {
     attackMultiplier,
@@ -2246,7 +2445,9 @@ export default function App() {
     setCalcHitCount((prev) => (activeDamageMoveHitOptions.includes(prev) ? prev : activeDamageMoveHitOptions[0]))
   }, [activeDamageMove, activeDamageMoveHitOptions])
 
-  const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, myMember.ability)
+  const selectedAttackAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
+  const selectedDefenseAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
+  const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, selectedAttackAbility?.slug ?? myMember.ability)
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
   const toggleConfirmedMove = (key: string, move: string) => {
     setConfirmedMovesByKey((prev) => {
@@ -2511,9 +2712,9 @@ export default function App() {
   const effectiveCalcMode = activeDamageMoveCategory ?? calcMode
   const effectiveMovePower = activeDamageMovePower ?? movePower
   const damageModifiers = resolveDamageModifiers({
-    attackerAbility: myMember.ability,
+    attackerAbility: selectedAttackAbility?.slug ?? myMember.ability,
     attackerItem: myMember.item,
-    defenderAbility: oppMember.ability,
+    defenderAbility: selectedDefenseAbility?.slug ?? oppMember.ability,
     defenderItem: oppMember.item,
     moveType: activeDamageMoveType,
     movePower: effectiveMovePower,
