@@ -3507,7 +3507,7 @@ export default function App() {
                         return (
                           <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
                             {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
-                            <div className={`speed-plane-range-node ${rangeClass} ${labelSideClass}`} style={{ top: `${maxTop}%`, height: `${Math.max(44, minTop - maxTop)}%` }}>
+                            <div className={`speed-plane-range-node ${rangeClass} ${labelSideClass}`} style={{ top: `${maxTop}%`, height: `${Math.max(0.5, minTop - maxTop)}%` }}>
                               <div className={`speed-plane-range-marker ${band.scarf ? 'item' : band.abilityLabel ? 'ability' : 'base'}`}>
                                 {band.scarf ? <img src={itemSpriteSrc('', '구애스카프')} alt={lt('스카프')} className="speed-band-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /> : null}
                                 {!band.scarf && !band.abilityLabel ? <span className="speed-plane-range-marker-base-bars" aria-hidden="true"><i /><i /></span> : null}
