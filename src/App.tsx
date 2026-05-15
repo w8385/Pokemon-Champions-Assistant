@@ -3408,7 +3408,7 @@ export default function App() {
             </div>
             <div className="home-footer-card">
               <span className="home-route-eyebrow">{lt('저작권 및 안내')}</span>
-              <p className="muted home-footer-copy">{lt('포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+              <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지는 각 권리자 소유입니다. 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
             </div>
           </div>
         </section>
