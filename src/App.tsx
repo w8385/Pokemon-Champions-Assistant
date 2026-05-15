@@ -1959,6 +1959,18 @@ export default function App() {
     setTuningModalIndex(null)
   }
 
+  const clearPartySlot = (idx: number) => {
+    setParty((prev) => prev.map((member, memberIdx) => memberIdx === idx ? { ...emptyParty[idx], evs: { ...emptyParty[idx].evs }, config: { ...emptyParty[idx].config }, tuning: { ...emptyParty[idx].tuning } } : member))
+    setPartySearch((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
+    setPartyItemDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
+    setActivePartyMetaEditor((prev) => prev?.idx === idx ? null : prev)
+    setActiveMetaListField((prev) => prev && 'idx' in prev && prev.scope === 'party' && prev.idx === idx ? null : prev)
+    setActiveItemField((prev) => sameItemField(prev, 'party', idx) ? null : prev)
+    setActiveMoveField((prev) => prev?.scope === 'party' && prev.key === party[idx]?.key ? null : prev)
+    if (tuningModalIndex === idx) setTuningModalIndex(null)
+    if (selectedMy === idx) setSelectedMy(0)
+  }
+
   const resetAll = () => {
     setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
     setPartyItemDrafts(emptyParty.map(() => ''))
@@ -2365,6 +2377,7 @@ export default function App() {
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
                     <div className="entry-card-top">
+                      {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
                       {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
                       <div className="entry-card-head">
                         <div className="party-card-header">

@@ -1735,12 +1735,35 @@ header p { margin: 0 0 14px; color: #93a4b8; }
 }
 .entry-card {
   margin-bottom: 0;
+  position: relative;
 }
 .entry-card-top {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+}
+.entry-card-clear-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid #475569;
+  background: rgba(11, 18, 32, 0.92);
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.entry-card-clear-button:hover {
+  border-color: #f87171;
+  color: #fee2e2;
+  background: rgba(127, 29, 29, 0.55);
 }
 .entry-card-head {
   min-width: 0;
