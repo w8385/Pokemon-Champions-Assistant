@@ -1651,7 +1651,6 @@ export default function App() {
     const ratio = (clamped - speedAxisMin) / (speedAxisMax - speedAxisMin)
     return 100 - (ratio * 100)
   }
-  const speedBandTop = (speed: number) => Math.max(12, Math.min(86, speedAxisTop(speed)))
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
@@ -3482,56 +3481,58 @@ export default function App() {
                       <span className="speed-plane-axis-chip upper">{lt('최속')} {lt('상한')}</span>
                       <span className="speed-plane-axis-chip lower">{lt('준속')} {lt('하한')}</span>
                     </div>
-                    {speedAxisTicks.map((tick) => (
-                      <div key={`speed-tick-${tick}`} className="speed-plane-tick" style={{ top: `${speedAxisTop(tick)}%` }}>
-                        <span>{tick}</span>
-                      </div>
-                    ))}
-                    <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
-                    <div className="speed-plane-baseline-label" style={{ top: `${speedAxisTop(mySpeed)}%` }}>{lt('기준선')}</div>
-                    {mySpeedAbilityLine ? <>
-                      <div className="speed-plane-baseline alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }} />
-                      <div className="speed-plane-baseline-label alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }}>{mySpeedAbilityLine.label}</div>
-                    </> : null}
-                    {opponentSpeedBands.map((band, idx) => {
-                      const minScenario = band.minScenario!
-                      const maxScenario = band.maxScenario!
-                      const minTop = speedBandTop(minScenario.speedAtMax)
-                      const maxTop = speedBandTop(maxScenario.speedAtMax)
-                      const left = opponentSpeedBands.length === 1 ? 53 : 26 + ((54 / (opponentSpeedBands.length - 1)) * idx)
-                      const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
-                      const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
-                      const guideHeight = Math.max(0, guideBottom - guideTop)
-                      const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
-                      const labelSideClass = idx % 2 === 0 ? 'label-right' : 'label-left'
-                      return (
-                        <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
-                          {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
-                          <div className={`speed-plane-range-node ${rangeClass} ${labelSideClass}`} style={{ top: `${maxTop}%`, height: `${Math.max(44, minTop - maxTop)}%` }}>
-                            <div className={`speed-plane-range-marker ${band.scarf ? 'item' : band.abilityLabel ? 'ability' : 'base'}`}>
-                              {band.scarf ? <img src={itemSpriteSrc('', '구애스카프')} alt={lt('스카프')} className="speed-band-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /> : null}
-                              {!band.scarf && !band.abilityLabel ? <span className="speed-plane-range-marker-base-bars" aria-hidden="true"><i /><i /></span> : null}
-                              {band.abilityLabel ? <>
-                                <span className="speed-plane-range-marker-burst" aria-hidden="true">✦</span>
-                                <span>{band.abilityLabel}</span>
-                              </> : null}
-                            </div>
-                            <div className="speed-plane-range-line" aria-hidden="true">
-                              <i className="top-dot" />
-                              <i className="bottom-dot" />
-                            </div>
-                            <div className="speed-plane-range-node-head">
-                              <span>{lt('최속')} {lt('상한')}</span>
-                              <strong>{maxScenario.speedAtMax}</strong>
-                            </div>
-                            <div className="speed-plane-range-node-tail">
-                              <span>{lt('준속')} {lt('하한')}</span>
-                              <strong>{minScenario.speedAtMax}</strong>
+                    <div className="speed-plane-plot">
+                      {speedAxisTicks.map((tick) => (
+                        <div key={`speed-tick-${tick}`} className="speed-plane-tick" style={{ top: `${speedAxisTop(tick)}%` }}>
+                          <span>{tick}</span>
+                        </div>
+                      ))}
+                      <div className="speed-plane-baseline" style={{ top: `${speedAxisTop(mySpeed)}%` }} />
+                      <div className="speed-plane-baseline-label" style={{ top: `${speedAxisTop(mySpeed)}%` }}>{lt('기준선')}</div>
+                      {mySpeedAbilityLine ? <>
+                        <div className="speed-plane-baseline alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }} />
+                        <div className="speed-plane-baseline-label alt" style={{ top: `${speedAxisTop(mySpeedAbilityLine.speed)}%` }}>{mySpeedAbilityLine.label}</div>
+                      </> : null}
+                      {opponentSpeedBands.map((band, idx) => {
+                        const minScenario = band.minScenario!
+                        const maxScenario = band.maxScenario!
+                        const minTop = speedAxisTop(minScenario.speedAtMax)
+                        const maxTop = speedAxisTop(maxScenario.speedAtMax)
+                        const left = opponentSpeedBands.length === 1 ? 53 : 26 + ((54 / (opponentSpeedBands.length - 1)) * idx)
+                        const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
+                        const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
+                        const guideHeight = Math.max(0, guideBottom - guideTop)
+                        const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
+                        const labelSideClass = idx % 2 === 0 ? 'label-right' : 'label-left'
+                        return (
+                          <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
+                            {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
+                            <div className={`speed-plane-range-node ${rangeClass} ${labelSideClass}`} style={{ top: `${maxTop}%`, height: `${Math.max(44, minTop - maxTop)}%` }}>
+                              <div className={`speed-plane-range-marker ${band.scarf ? 'item' : band.abilityLabel ? 'ability' : 'base'}`}>
+                                {band.scarf ? <img src={itemSpriteSrc('', '구애스카프')} alt={lt('스카프')} className="speed-band-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /> : null}
+                                {!band.scarf && !band.abilityLabel ? <span className="speed-plane-range-marker-base-bars" aria-hidden="true"><i /><i /></span> : null}
+                                {band.abilityLabel ? <>
+                                  <span className="speed-plane-range-marker-burst" aria-hidden="true">✦</span>
+                                  <span>{band.abilityLabel}</span>
+                                </> : null}
+                              </div>
+                              <div className="speed-plane-range-line" aria-hidden="true">
+                                <i className="top-dot" />
+                                <i className="bottom-dot" />
+                              </div>
+                              <div className="speed-plane-range-node-head">
+                                <span>{lt('최속')} {lt('상한')}</span>
+                                <strong>{maxScenario.speedAtMax}</strong>
+                              </div>
+                              <div className="speed-plane-range-node-tail">
+                                <span>{lt('준속')} {lt('하한')}</span>
+                                <strong>{minScenario.speedAtMax}</strong>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
             </div>
