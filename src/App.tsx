@@ -467,7 +467,11 @@ function visibleChampionsItem(key: string, item: string) {
 function itemSpriteSrc(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
   const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
-  if (megaSlug) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
+  if (megaSlug) {
+    if (/^https?:\/\//.test(megaSlug)) return megaSlug
+    if (megaSlug.includes('/')) return `${import.meta.env.BASE_URL}${megaSlug.replace(/^\//, '')}`
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${megaSlug}.png`
+  }
   const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized]
   if (spriteSlug) {
     if (/^https?:\/\//.test(spriteSlug)) return spriteSlug
