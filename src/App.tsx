@@ -4175,7 +4175,7 @@ export default function App() {
               {activeDamageMoveCategory ? <span className="pick-badge">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</span> : null}
               {activeDamageMovePower !== null ? <span className="pick-badge">{activeDamageMovePower}</span> : null}
               {activeDamageMoveMeta?.variablePower ? <span className="pick-badge warn">{lt('가변 위력 기술이라 수동 입력이 필요함')}</span> : null}
-              <span className="pick-badge">STAB {activeDamageMoveType ? autoStab : stab}</span>
+              <span className="pick-badge">자속 {activeDamageMoveType ? autoStab : stab}</span>
               <span className="pick-badge">{lt('상성')} {damageModifiers.effectiveness}x</span>
               {damageModifiers.notes.map((note) => <span key={note} className="pick-badge">{note}</span>)}
             </div>
@@ -4195,10 +4195,6 @@ export default function App() {
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>
                 <div className="calc-grid damage-calc-grid compact">
-                  {activeDamageMovePower === null ? <label>
-                    {lt('수동 위력')}
-                    <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
-                  </label> : <div className="calc-lock-box">{activeDamageMovePower}</div>}
                   {activeDamageMoveCategory === null ? <label>
                     {lt('수동 분류')}
                     <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
@@ -4206,14 +4202,18 @@ export default function App() {
                       <option value="special">{lt('특수')}</option>
                     </select>
                   </label> : <div className="calc-lock-box">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
+                  {activeDamageMovePower === null ? <label>
+                    {lt('수동 위력')}
+                    <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
+                  </label> : <div className="calc-lock-box">{activeDamageMovePower}</div>}
                   {!activeDamageMoveType ? <label>
-                    STAB
+                    자속
                     <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
                       <option value={1}>{lt('없음')}</option>
                       <option value={1.5}>1.5</option>
                       <option value={2}>2.0</option>
                     </select>
-                  </label> : <div className="calc-lock-box">STAB {autoStab}</div>}
+                  </label> : <div className="calc-lock-box">자속 {autoStab}</div>}
                   {!activeDamageMoveType ? <label>
                     {lt('상성')}
                     <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
@@ -4233,43 +4233,6 @@ export default function App() {
                   <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
                     <span>{lt('화상')}</span>
-                  </label>
-                </div>
-              </div>
-              <div className="damage-control-group">
-                <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                <div className="calc-grid damage-calc-grid compact">
-                  <label>
-                    {lt('날씨')}
-                    <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
-                      <option value="none">{lt('없음')}</option>
-                      <option value="sun">{lt('쾌청')}</option>
-                      <option value="rain">{lt('비')}</option>
-                      <option value="sand">{lt('모래바람')}</option>
-                      <option value="snow">{lt('싸라기눈')}</option>
-                    </select>
-                  </label>
-                  <label>
-                    {lt('필드')}
-                    <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
-                      <option value="none">{lt('없음')}</option>
-                      <option value="electric">{lt('일렉트릭필드')}</option>
-                      <option value="grassy">{lt('그래스필드')}</option>
-                      <option value="psychic">{lt('사이코필드')}</option>
-                      <option value="misty">{lt('미스트필드')}</option>
-                    </select>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
-                    <span>{lt('리플렉터')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
-                    <span>{lt('빛의장막')}</span>
-                  </label>
-                  <label className="calc-toggle-box span-2">
-                    <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
-                    <span>{lt('오로라베일')}</span>
                   </label>
                 </div>
               </div>
@@ -4308,6 +4271,43 @@ export default function App() {
                     <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
                       {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
                     </select>
+                  </label>
+                </div>
+              </div>
+              <div className="damage-control-group">
+                <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                <div className="calc-grid damage-calc-grid compact">
+                  <label>
+                    {lt('날씨')}
+                    <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
+                      <option value="none">{lt('없음')}</option>
+                      <option value="sun">{lt('쾌청')}</option>
+                      <option value="rain">{lt('비')}</option>
+                      <option value="sand">{lt('모래바람')}</option>
+                      <option value="snow">{lt('싸라기눈')}</option>
+                    </select>
+                  </label>
+                  <label>
+                    {lt('필드')}
+                    <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
+                      <option value="none">{lt('없음')}</option>
+                      <option value="electric">{lt('일렉트릭필드')}</option>
+                      <option value="grassy">{lt('그래스필드')}</option>
+                      <option value="psychic">{lt('사이코필드')}</option>
+                      <option value="misty">{lt('미스트필드')}</option>
+                    </select>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
+                    <span>{lt('리플렉터')}</span>
+                  </label>
+                  <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
+                    <span>{lt('빛의장막')}</span>
+                  </label>
+                  <label className="calc-toggle-box span-2">
+                    <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
+                    <span>{lt('오로라베일')}</span>
                   </label>
                 </div>
               </div>
