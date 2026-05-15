@@ -1457,8 +1457,10 @@ function resolveDamageModifiers(params: {
   critical?: boolean
 }) {
   const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, weather, terrain, reflect, lightScreen, auroraVeil, critical } = params
-  let attackMultiplier = battleStageMultiplier(attackStage)
-  let defenseMultiplier = battleStageMultiplier(defenseStage)
+  const effectiveAttackStage = critical && attackStage < 0 ? 0 : attackStage
+  const effectiveDefenseStage = critical && defenseStage > 0 ? 0 : defenseStage
+  let attackMultiplier = battleStageMultiplier(effectiveAttackStage)
+  let defenseMultiplier = battleStageMultiplier(effectiveDefenseStage)
   let powerMultiplier = 1
   let finalMultiplier = 1
   let adjustedEffectiveness = effectiveness
@@ -1484,8 +1486,10 @@ function resolveDamageModifiers(params: {
     'りゅうのキバ': 'dragon',
   }
 
-  if (attackStage) notes.push(`ATK ${attackStage > 0 ? '+' : ''}${attackStage}`)
-  if (defenseStage) notes.push(`DEF ${defenseStage > 0 ? '+' : ''}${defenseStage}`)
+  if (effectiveAttackStage) notes.push(`ATK ${effectiveAttackStage > 0 ? '+' : ''}${effectiveAttackStage}`)
+  if (effectiveDefenseStage) notes.push(`DEF ${effectiveDefenseStage > 0 ? '+' : ''}${effectiveDefenseStage}`)
+  if (critical && attackStage < 0) notes.push('급소(공깎 무시)')
+  if (critical && defenseStage > 0) notes.push('급소(방증 무시)')
 
   const burnApplies = burned && mode === 'physical' && attackerAbility !== '근성'
   if (burnApplies) notes.push('화상')
@@ -1564,7 +1568,7 @@ function resolveDamageModifiers(params: {
     notes.push('싸라기눈')
   }
 
-  const screenApplies = auroraVeil || (mode === 'physical' ? reflect : lightScreen)
+  const screenApplies = !critical && (auroraVeil || (mode === 'physical' ? reflect : lightScreen))
   if (screenApplies) {
     finalMultiplier *= 0.5
     incomingScreenName = auroraVeil ? '오로라베일' : mode === 'physical' ? '리플렉터' : '빛의장막'
