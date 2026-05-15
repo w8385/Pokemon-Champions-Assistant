@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T10:06:25.942Z",
+  "generatedAt": "2026-05-15T13:37:32.230Z",
   "source": {
     "movePools": "src/championsMovePools.json",
     "moveNameOverrides": "src/championsMoveNameOverrides.json",
@@ -1862,6 +1862,12 @@
       "apiName": "eerie-spell",
       "ko": "섬뜩한주문",
       "en": "Eerie Spell"
+    },
+    {
+      "moveName": "성묘",
+      "apiName": "last-respects",
+      "ko": null,
+      "en": "Last Respects"
     },
     {
       "moveName": "성스러운칼",
@@ -3878,12 +3884,6 @@
       "apiName": "infernal-parade",
       "ko": null,
       "en": "Infernal Parade"
-    },
-    {
-      "moveName": "Last Respects",
-      "apiName": "last-respects",
-      "ko": null,
-      "en": "Last Respects"
     },
     {
       "moveName": "Lumina Crash",

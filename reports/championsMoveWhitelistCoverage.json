@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-15T11:38:38.651Z",
+  "generatedAt": "2026-05-15T13:37:31.448Z",
   "totals": {
-    "species": 258,
+    "species": 259,
     "seededFromBaseline": 237,
-    "seededFromApiAlias": 21,
+    "seededFromApiAlias": 22,
     "missing": 0,
-    "untranslatedMoveLabels": 38
+    "untranslatedMoveLabels": 37
   },
   "missingKeys": [],
   "seededFromApiAliasKeys": [
@@ -25,6 +25,7 @@
     "floette-eternal-flower",
     "gourgeist",
     "basculegion",
+    "basculegion-female",
     "mr.-rime",
     "aegislash",
     "stunfisk-galarian",
@@ -49,7 +50,6 @@
     "HP회복",
     "Ice Spinner",
     "Infernal Parade",
-    "Last Respects",
     "Lumina Crash",
     "Matcha Gotcha",
     "Mortal Spin",

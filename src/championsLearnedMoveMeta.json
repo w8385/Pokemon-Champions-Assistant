@@ -1874,6 +1874,12 @@
     "power": 80,
     "accuracy": 100
   },
+  "성묘": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100
+  },
   "성스러운칼": {
     "type": "fighting",
     "category": "physical",
@@ -3916,12 +3922,6 @@
     "type": "ghost",
     "category": "special",
     "power": 60,
-    "accuracy": 100
-  },
-  "Last Respects": {
-    "type": "ghost",
-    "category": "physical",
-    "power": 50,
     "accuracy": 100
   },
   "Lumina Crash": {
