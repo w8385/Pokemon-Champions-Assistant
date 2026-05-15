@@ -3112,7 +3112,6 @@ export default function App() {
                   <span className="flow-arrow" aria-hidden="true">→</span>
                   <div className="flow-branch-group">
                     <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                    <span className="flow-or">or</span>
                     <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('결정력 계산')}</button>
                   </div>
                 </div>
