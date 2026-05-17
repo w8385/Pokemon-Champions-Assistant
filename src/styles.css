@@ -1954,6 +1954,10 @@ header p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+.sample-overview-stack {
+  display: grid;
+  gap: 18px;
+}
 .sample-overview-card {
   display: grid;
   gap: 8px;

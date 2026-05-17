@@ -124,6 +124,7 @@ type PersistedState = {
   mainSection?: MainSection
   sampleForge?: PartyMember
   savedSamples?: SavedSample[]
+  sampleWorkbenchTab?: SampleWorkbenchTab
 }
 
 type ImportExportPayload = PersistedState & {
@@ -133,6 +134,7 @@ type ImportExportPayload = PersistedState & {
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type SampleCandidateFilter = 'all' | 'remaining' | 'locked'
 type MainSection = 'home' | 'single' | 'sample'
+type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
@@ -254,7 +256,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
-    '샘플 기술': 'Sample Moves', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 딜계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
@@ -283,7 +285,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
-    '샘플 기술': 'サンプル技', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 딜계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
@@ -2562,6 +2564,8 @@ export default function App() {
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
+  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => persisted?.sampleWorkbenchTab ?? 'builder')
+  const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
   const [sampleCandidateFilter, setSampleCandidateFilter] = React.useState<SampleCandidateFilter>('all')
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
@@ -2684,9 +2688,10 @@ export default function App() {
       mainSection,
       sampleForge,
       savedSamples,
+      sampleWorkbenchTab,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -2705,6 +2710,7 @@ export default function App() {
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
+  const sampleMagicCandidate = sampleRow ? findMagicNumberCandidate(sampleRow, sampleForge) : null
   const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaOn)
   const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaOn) : ''
   const myRow = indexByKey.get(calcMyKey) ?? rows[0]
@@ -3348,6 +3354,120 @@ export default function App() {
     .map((stat) => ({ key: stat.key, value: sampleForge.evs[stat.key], label: translateText(siteLanguage, stat.label) }))
     .sort((a, b) => b.value - a.value)[0]
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
+  const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleForge)
+  const sampleDamageMove = sampleConfirmedMoves[0] ?? ''
+  const sampleDamageMoveMetaBase = resolveMoveMeta(sampleDamageMove, sampleMoveOptions, movePoolByKey)
+  const sampleDamageMoveMeta = resolveAbilityAdjustedMoveMeta(sampleDamageMove, sampleDamageMoveMetaBase, sampleAbility)
+  const sampleDamageMoveType = sampleDamageMoveMeta?.type ?? null
+  const sampleDamageMoveCategory = sampleDamageMoveMeta?.category === 'physical' || sampleDamageMoveMeta?.category === 'special' ? sampleDamageMoveMeta.category : null
+  const sampleDamageMovePower = typeof sampleDamageMoveMeta?.power === 'number' ? sampleDamageMoveMeta.power : null
+  const sampleAttackerStats = buildPartyBattleStats(sampleRow, sampleForge)
+  const sampleSpeedTargets = pickedOpponents.map((member, idx) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    if (!row) return null
+    const rivalSpeed = speedValue(row, {
+      nature: member.natureBoost ? 'jolly' : 'hardy',
+      scarf: member.scarf || member.item.includes('스카프'),
+      speedStage: member.speedStage,
+    })
+    return { idx, row, rivalSpeed, result: sampleSpeedValueNow > rivalSpeed ? lt('내가 앞섬') : sampleSpeedValueNow < rivalSpeed ? lt('상대가 앞섬') : lt('동속') }
+  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+  const sampleDamageTargets = pickedOpponents.map((member, idx) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    if (!row || !sampleDamageMovePower || !sampleDamageMoveCategory || !sampleDamageMoveType) return null
+    const defenderStats = buildOpponentBattleStats(row, opponentBulkState)
+    const effectivenessValue = typeEffectiveness(sampleDamageMoveType, row.types)
+    const modifierPack = resolveDamageModifiers({
+      attackerAbility: sampleAbility,
+      attackerItem: sampleForge.item,
+      defenderAbility: member.ability,
+      defenderItem: member.item,
+      moveName: sampleDamageMove,
+      baseMoveType: sampleDamageMoveType,
+      moveType: sampleDamageMoveType,
+      movePower: sampleDamageMovePower,
+      mode: sampleDamageMoveCategory,
+      effectiveness: effectivenessValue,
+      attackStage: 0,
+      defenseStage: 0,
+      defenderTypes: row.types,
+      burned: false,
+      attackerLowHp: false,
+      targetPoisoned: false,
+      defenderFullHp: false,
+      movedAfterTarget: false,
+      faintedAllies: 0,
+      rivalryMode: 'neutral',
+      parentalBond: false,
+      defenderStatused: false,
+      electromorphosisCharged: false,
+      critical: false,
+      weather: 'none',
+      terrain: 'none',
+      reflect: false,
+      lightScreen: false,
+      auroraVeil: false,
+      friendGuard: false,
+    })
+    const damage = calcDamage(sampleAttackerStats, defenderStats, sampleDamageMovePower, sampleDamageMoveCategory, resolveStabMultiplier(sampleRow.types, sampleDamageMoveType, sampleAbility, true), modifierPack.effectiveness, sampleDamageMoveMeta, modifierPack)
+    return { idx, member, row, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
+  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+  const sampleDefenderStats = buildPartyBattleStats(sampleRow, sampleForge)
+  const sampleDefenseTargets = pickedOpponents.map((member, idx) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    const moveName = member.revealedMoves.find(Boolean) ?? ''
+    if (!row || !moveName) return null
+    const moveMetaBase = resolveMoveMeta(moveName, movePoolByKey[row.key]?.moves ?? [], movePoolByKey)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, moveMetaBase, member.ability)
+    const moveType = moveMeta?.type ?? null
+    const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
+    const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
+    if (!moveType || !moveCategory || !movePower) return null
+    const attackerStats = buildPartyBattleStats(row, {
+      key: row.key,
+      nickname: '',
+      ability: member.ability,
+      item: member.item,
+      config: { nature: member.natureBoost ? 'jolly' : 'hardy' },
+      evs: { ...defaultEvs },
+      tuning: { magicNumber: 11, maxValue: 0 },
+    })
+    const effectivenessValue = typeEffectiveness(moveType, sampleRow.types)
+    const modifierPack = resolveDamageModifiers({
+      attackerAbility: member.ability,
+      attackerItem: member.item,
+      defenderAbility: sampleAbility,
+      defenderItem: sampleForge.item,
+      moveName,
+      baseMoveType: moveType,
+      moveType,
+      movePower,
+      mode: moveCategory,
+      effectiveness: effectivenessValue,
+      attackStage: 0,
+      defenseStage: 0,
+      defenderTypes: sampleRow.types,
+      burned: false,
+      attackerLowHp: false,
+      targetPoisoned: false,
+      defenderFullHp: false,
+      movedAfterTarget: false,
+      faintedAllies: 0,
+      rivalryMode: 'neutral',
+      parentalBond: false,
+      defenderStatused: false,
+      electromorphosisCharged: false,
+      critical: false,
+      weather: 'none',
+      terrain: 'none',
+      reflect: false,
+      lightScreen: false,
+      auroraVeil: false,
+      friendGuard: false,
+    })
+    const damage = calcDamage(attackerStats, sampleDefenderStats, movePower, moveCategory, resolveStabMultiplier(row.types, moveType, member.ability, true), modifierPack.effectiveness, moveMeta, modifierPack)
+    return { idx, member, row, moveName, damage, verdict: resolveDamageVerdict(damage, sampleDefenderStats.hp, siteLanguage) }
+  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
 
   const scrollToSampleSection = (sectionId: string) => {
     if (typeof document === 'undefined') return
@@ -3404,6 +3524,14 @@ export default function App() {
     const next = [...party]
     next[slotIdx] = { ...next[slotIdx], evs: applyChampionsEffort(next[slotIdx].evs, stat, nextValue) }
     setParty(next)
+  }
+
+  const updateSampleEffortFromPointer = (stat: EffortStatKey, availableCap: number, clientX: number, element: HTMLDivElement) => {
+    const rect = element.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const nextValue = Math.round(ratio * availableCap)
+    setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat, nextValue) }))
   }
 
   const nextOpponentSlotIndex = (fromIdx: number) => {
@@ -3577,6 +3705,7 @@ export default function App() {
       mainSection,
       sampleForge,
       savedSamples,
+      sampleWorkbenchTab,
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
@@ -3626,6 +3755,7 @@ export default function App() {
       setCalcAuroraVeil(Boolean(parsed.calcAuroraVeil))
       setCalcFriendGuard(Boolean(parsed.calcFriendGuard))
       setCalcTypeChangeStab(parsed.calcTypeChangeStab !== false)
+      setSampleWorkbenchTab(parsed.sampleWorkbenchTab ?? 'builder')
       setCalcConditionalPowerValues((parsed.calcConditionalPowerValues && typeof parsed.calcConditionalPowerValues === 'object') ? parsed.calcConditionalPowerValues as Record<string, ConditionalPowerValue> : {})
       const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
       const nextBulkState = sanitizeOpponentBulkState({
@@ -3752,162 +3882,60 @@ export default function App() {
                 const magicPoints = magicEffortPoints(tuningRow, tuningMember, stat.key)
                 return (
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
-                    <div className="row-between">
-                      <strong>{lt(stat.label)}</strong>
-                      <span>{actualValue}</span>
-                    </div>
+                    <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-                      <div
-                        className={`effort-gauge-track ${statThemeClass(stat.key)}`}
-                        onPointerDown={(e) => {
-                          e.preventDefault()
-                          e.currentTarget.setPointerCapture(e.pointerId)
-                          updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget)
-                        }}
-                        onPointerMove={(e) => {
-                          if ((e.buttons & 1) !== 1) return
-                          updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget)
-                        }}
-                        onPointerUp={(e) => {
-                          if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId)
-                        }}
-                      >
-                        <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">
-                          {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
-                            const point = cellIdx + 1
-                            const reachable = point <= availableCap
-                            const filled = point <= currentEffort
-                            const magicPoint = magicPoints.includes(point)
-                            const currentPoint = point === currentEffort && currentEffort > 0
-                            const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32)
-                            const targetPoint = point === targetEffort
-                            return (
-                              <span
-                                key={`effort-cell-${stat.key}-${point}`}
-                                className={[
-                                  'effort-gauge-cell',
-                                  reachable ? 'reachable' : 'locked',
-                                  filled ? 'filled' : '',
-                                  magicPoint ? 'magic' : '',
-                                  currentPoint ? 'current' : '',
-                                  checkpointPoint ? 'checkpoint' : '',
-                                  targetPoint ? 'target' : '',
-                                ].filter(Boolean).join(' ')}
-                                title={`${lt(stat.label)} ${point}pt`}
-                              />
-                            )
-                          })}
-                        </div>
-                        <input
-                          type="range"
-                          className="effort-gauge-range"
-                          min={0}
-                          max={CHAMPIONS_EFFORT_PER_STAT_CAP}
-                          step={1}
-                          value={currentEffort}
-                          onChange={(e) => {
-                            const next = [...party]
-                            next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }
-                            setParty(next)
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-                              e.preventDefault()
-                              const next = [...party]
-                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.max(0, currentEffort - 1)) }
-                              setParty(next)
-                            }
-                            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-                              e.preventDefault()
-                              const next = [...party]
-                              next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.min(availableCap, currentEffort + 1)) }
-                              setParty(next)
-                            }
-                          }}
-                        />
-                        <div className="effort-gauge-hitboxes">
-                          {Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => {
-                            const point = cellIdx + 1
-                            const reachable = point <= availableCap
-                            return (
-                              <button
-                                key={`effort-hitbox-${stat.key}-${point}`}
-                                type="button"
-                                className="effort-gauge-hitbox"
-                                tabIndex={-1}
-                                aria-hidden="true"
-                                disabled={!reachable}
-                                onClick={() => {
-                                  const next = [...party]
-                                  next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, point) }
-                                  setParty(next)
-                                }}
-                                title={`${lt(stat.label)} ${point}pt`}
-                              />
-                            )
-                          })}
-                        </div>
+                      <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                        <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+                        <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onChange={(e) => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }; setParty(next) }} />
                       </div>
-                        <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>
-                        {EFFORT_CHECKPOINTS.map((checkpoint) => {
-                          const checkpointValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: checkpoint } }, stat.key)
-                          return (
-                            <div key={`effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item">
-                              <span>{checkpoint}pt</span>
-                              <small>{stat.key === magicCandidate?.stat ? checkpointValue : ''}</small>
-                            </div>
-                          )
-                        })}
-                      </div>
+                      <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => { const checkpointValue = partyStatValue(tuningRow, { ...tuningMember, evs: { ...tuningMember.evs, [stat.key]: checkpoint } }, stat.key); return <div key={`effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{stat.key === magicCandidate?.stat ? checkpointValue : ''}</small></div> })}</div>
                     </div>
-                    <div className="effort-cell-toolbar">
-                      <button
-                        type="button"
-                        className="mini-action"
-                        onClick={() => {
-                          const next = [...party]
-                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.max(0, currentEffort - 1)) }
-                          setParty(next)
-                        }}
-                        disabled={currentEffort <= 0}
-                      >-1</button>
-                      <button
-                        type="button"
-                        className="mini-action"
-                        onClick={() => {
-                          const next = [...party]
-                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, 0) }
-                          setParty(next)
-                        }}
-                        disabled={currentEffort <= 0}
-                      >{lt('최소')}</button>
-                      <button
-                        type="button"
-                        className="mini-action"
-                        onClick={() => {
-                          const next = [...party]
-                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, availableCap) }
-                          setParty(next)
-                        }}
-                        disabled={currentEffort >= availableCap}
-                      >{lt('최대')}</button>
-                      <button
-                        type="button"
-                        className="mini-action"
-                        onClick={() => {
-                          const next = [...party]
-                          next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.min(availableCap, currentEffort + 1)) }
-                          setParty(next)
-                        }}
-                        disabled={currentEffort >= availableCap}
-                      >+1</button>
-                    </div>
-                    <div className="row-between effort-cell-meta">
-                      <span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>
-                      {magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}
-                    </div>
+                    <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.max(0, currentEffort - 1)) }; setParty(next) }} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, 0) }; setParty(next) }} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, availableCap) }; setParty(next) }} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, Math.min(availableCap, currentEffort + 1)) }; setParty(next) }} disabled={currentEffort >= availableCap}>+1</button></div>
+                    <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>{magicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}</div>
                   </div>
                 )
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {sampleTuningModalOpen ? (
+        <div className="modal-backdrop" onClick={() => setSampleTuningModalOpen(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="row-between modal-header">
+              <h2>{lt('노력치 보정')}</h2>
+              <button type="button" className="action-button" onClick={() => setSampleTuningModalOpen(false)}>{lt('닫기')}</button>
+            </div>
+            <div className="modal-grid">
+              <label>
+                {lt('성격')}
+                <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
+                  {NATURES.map((nature) => <option key={`sample-modal-nature-${nature.id}`} value={nature.id}>{natureLabel(nature.id, siteLanguage)}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="drag-stat-list">
+              {EFFORT_STAT_OPTIONS.map((stat) => {
+                const currentEffort = sampleForge.evs[stat.key]
+                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(sampleForge.evs, stat.key))
+                const additionalAvailable = Math.max(0, availableCap - currentEffort)
+                const actualValue = partyStatValue(sampleRow, sampleForge, stat.key)
+                const isMagicStat = sampleMagicCandidate?.stat === stat.key && actualValue % 11 === 0
+                const targetEffort = sampleMagicCandidate?.stat === stat.key ? sampleMagicCandidate.nextEffort : null
+                const magicPoints = magicEffortPoints(sampleRow, sampleForge, stat.key)
+                return <div key={`sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
+                  <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
+                  <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
+                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+                      <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
+                    </div>
+                    <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => { const checkpointValue = partyStatValue(sampleRow, { ...sampleForge, evs: { ...sampleForge.evs, [stat.key]: checkpoint } }, stat.key); return <div key={`sample-effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{stat.key === sampleMagicCandidate?.stat ? checkpointValue : ''}</small></div> })}</div>
+                  </div>
+                  <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.max(0, currentEffort - 1)) }))} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, 0) }))} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, availableCap) }))} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.min(availableCap, currentEffort + 1)) }))} disabled={currentEffort >= availableCap}>+1</button></div>
+                  <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>{sampleMagicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}</div>
+                </div>
               })}
             </div>
           </div>
@@ -4645,7 +4673,16 @@ export default function App() {
             <h2>{lt('단일 샘플 빌더')}</h2>
             <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
           </div>
-          <div className="sample-builder-grid compact-sample-builder-grid">
+          <div className="tab-bar sample-filter-bar">
+            {([
+              ['builder', lt('샘플 빌드')],
+              ['speed', lt('샘플 스피드')],
+              ['damage', lt('샘플 딜계산')],
+            ] as const).map(([value, label]) => (
+              <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+            ))}
+          </div>
+          {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
                 <label className="species-picker sample-species-picker">
@@ -4697,15 +4734,6 @@ export default function App() {
                 </div>
               </div>
               </div>
-              <details className="sample-drawer sample-meta-drawer">
-                <summary className="sample-drawer-summary sample-meta-summary">
-                  <span className="sample-meta-summary-label">{lt('세부 편집')}</span>
-                  <div className="pick-summary-badges sample-tuning-badges sample-meta-summary-badges">
-                    <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
-                    <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                    <span className="pick-badge sample-meta-summary-item">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                  </div>
-                </summary>
               <div className="party-meta-grid sample-meta-grid">
                 <div className="party-meta-chip party-meta-chip-editor">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
@@ -4810,12 +4838,11 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              </details>
               <div className="stat-preview-list sample-stat-preview-list">
                 {([
                   ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
-                  <div key={field} className={`stat-preview-row sample-stat-preview-row ${statThemeClass(field)}`}>
+                  <button key={field} type="button" className={`stat-preview-row stat-preview-button sample-stat-preview-row ${statThemeClass(field)}`} onClick={() => setSampleTuningModalOpen(true)}>
                     <div className="stat-preview-topline sample-stat-topline">
                       <span>{lt(label)}</span>
                       <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
@@ -4824,7 +4851,7 @@ export default function App() {
                     <div className="stat-preview-meta">
                       <span className="stat-preview-ev sample-stat-ev">EV +{sampleForge.evs[field]}</span>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
               <details className="sample-drawer sample-tuning-drawer">
@@ -4851,7 +4878,7 @@ export default function App() {
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 기술')}</strong>
-                <button type="button" className="action-button sample-quick-button" onClick={() => sampleMoveSet?.core?.[0] && toggleConfirmedMove(sampleForge.key, sampleMoveSet.core[0])}>{lt('코어 1번 체크')}</button>
+                <span className="muted-inline">{lt('내 파티 관리처럼 직접 기술을 등록')}</span>
               </div>
               <div className="sample-save-box flat-sample-save-box">
                 <div className="sample-save-head">
@@ -4862,10 +4889,7 @@ export default function App() {
                     </div>
                     <span className="muted-inline sample-work-draft-label">{sampleLabelDraft.trim() || lt('샘플 이름')}</span>
                   </div>
-                  <button type="button" className="action-button sample-flow-button" onClick={() => {
-                    applySampleToPartySlot(selectedMy)
-                    setTuningModalIndex(selectedMy)
-                  }}>{lt('노력치 보정')}</button>
+                  <button type="button" className="action-button sample-flow-button" onClick={() => setSampleTuningModalOpen(true)}>{lt('노력치 보정')}</button>
                 </div>
                 <label className="sample-label-field">
                   <span className="sample-label-caption">{lt('샘플 이름')}</span>
@@ -4901,8 +4925,7 @@ export default function App() {
                   </div>
                 </details>
               </div>
-              {sampleMoveSet ? (
-                <>
+              <>
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-card sample-track-editor-card">
                       <div className="row-between sample-track-head">
@@ -4976,58 +4999,6 @@ export default function App() {
                         })}
                       </div>
                     </div>
-                    <div className="sample-core-strip">
-                      <span className="sample-core-strip-label">{lt('코어 라인')}</span>
-                      <div className="pick-summary-badges sample-core-strip-badges">
-                        {(sampleMoveSet.core ?? []).map((move) => (
-                          <span key={`sample-core-line-${move}`} className={`pick-badge sample-core-line-badge ${moveTypeThemeClass(sampleMoveType(move))} ${sampleConfirmedMoves.includes(move) ? 'confirmed' : ''}`}>{move}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="sample-explorer-cluster">
-                    <div className="tab-bar sample-filter-bar">
-                      {([
-                        ['all', lt('전체')],
-                        ['remaining', lt('미확정')],
-                        ['locked', lt('확정만')],
-                      ] as const).map(([value, label]) => (
-                        <button key={`sample-filter-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleCandidateFilter === value ? 'active' : ''}`} onClick={() => setSampleCandidateFilter(value)}>
-                          <span>{label}</span>
-                          <strong>{sampleFilterCounts[value]}</strong>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="sample-move-bucket-grid">
-                      {sampleMoveGroups.length ? sampleMoveGroups.map((group) => {
-                      const hasLocked = group.moves.some((move) => sampleConfirmedMoves.includes(move))
-                      const shouldOpen = group.key === 'core' || hasLocked || sampleCandidateFilter !== 'all'
-                      return (
-                        <details key={`sample-group-${group.key}`} className={`sample-move-bucket ${group.tone}`} open={shouldOpen}>
-                          <summary className="sample-move-bucket-head sample-move-bucket-summary">
-                            <span className={`sample-move-bucket-label ${group.tone}`}>{group.label}</span>
-                            <div className="pick-summary-badges sample-group-meta-badges">
-                              {group.key === 'core' ? <span className="pick-badge sample-group-meta-accent">HOT</span> : null}
-                              <span className="pick-badge sample-group-count-badge">{group.moves.length}</span>
-                              <span className="sample-group-open-indicator" aria-hidden="true">⌄</span>
-                            </div>
-                          </summary>
-                          <div className="move-chip-wrap compact sample-bucket-body">
-                            {group.moves.map((move) => {
-                              const isConfirmed = sampleConfirmedMoves.includes(move)
-                              return (
-                                <button key={`sample-${group.key}-${move}`} type="button" className={`move-chip sample-candidate-chip ${group.tone} ${moveTypeThemeClass(sampleMoveType(move))} ${isConfirmed ? 'confirmed' : 'open'} ${activeSampleMoveSlotIdx >= 0 ? 'slot-targeted' : ''}`} onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}>
-                                  <span className={`sample-candidate-status ${isConfirmed ? 'confirmed' : 'open'}`}>{isConfirmed ? '✓' : '○'}</span>
-                                  <span className="sample-candidate-name">{move}</span>
-                                  {activeSampleMoveSlotIdx >= 0 ? <span className="sample-candidate-target-slot">{activeSampleMoveSlotIdx + 1}</span> : null}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        </details>
-                      )
-                      }) : <div className="sample-empty-state">{lt('아직 없음')}</div>}
-                    </div>
                   </div>
                   <div className="pick-summary-badges sample-summary-badges compact">
                     <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
@@ -5035,22 +5006,75 @@ export default function App() {
                     <span className="pick-badge">{natureLabel(sampleForge.config.nature, siteLanguage)}</span>
                     {sampleForge.item ? <span className="pick-badge summary-item-badge">{displayItemLabel(sampleForge.item, siteLanguage)}</span> : null}
                   </div>
-                  {sampleMoveSet.notes?.length ? <details className="sample-drawer sample-notes-drawer">
-                    <summary className="sample-drawer-summary sample-notes-summary">
-                      <span>{lt('샘플 메모')}</span>
-                      <div className="pick-summary-badges sample-notes-summary-badges">
-                        <span className="pick-badge sample-notes-latest-badge">{sampleMoveSet.notes[0]}</span>
-                        <span className="pick-badge">{sampleMoveSet.notes.length}</span>
-                      </div>
-                    </summary>
-                    <div className="sample-notes-body">
-                      <p className="muted sample-notes-copy">{sampleMoveSet.notes.join(' · ')}</p>
-                    </div>
-                  </details> : null}
                 </>
-              ) : <p className="muted">{siteLanguage === 'en' ? 'No sample moves are registered for this Pokémon yet.' : siteLanguage === 'ja' ? 'このポケモンにはまだサンプル技が登録されていません。' : '이 포켓몬에 등록된 샘플 기술이 아직 없습니다.'}</p>}
             </div>
-          </div>
+          </div> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid">
+            <div className="sample-main-card flat-sample-main-card">
+              <div className="row-between sample-panel-header sample-panel-header-side">
+                <strong>{lt('샘플 스피드')}</strong>
+                <span className="muted-inline">{lt('선출 추정된 상대를 비교 대상으로 사용')}</span>
+              </div>
+              <div className="sample-move-bucket-grid">
+                {sampleSpeedTargets.length ? sampleSpeedTargets.map((entry) => (
+                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card">
+                    <strong>{displayName(entry.row, siteLanguage)}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
+                      <span className="pick-badge enemy">{entry.rivalSpeed}</span>
+                    </div>
+                    <div className="pick-summary-badges"><span className="pick-badge">{entry.result}</span></div>
+                  </div>
+                )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+              </div>
+            </div>
+          </div> : <div className="sample-builder-grid compact-sample-builder-grid">
+            <div className="sample-main-card flat-sample-main-card">
+              <div className="row-between sample-panel-header sample-panel-header-side">
+                <strong>{lt('샘플 딜계산')}</strong>
+                <span className="muted-inline">{sampleDamageMove || lt('등록 기술 없음')}</span>
+              </div>
+              <div className="sample-overview-stack">
+                <div>
+                  <div className="row-between sample-panel-header sample-panel-header-side">
+                    <strong>{lt('공격 비교')}</strong>
+                  </div>
+                  <div className="sample-move-bucket-grid">
+                    {sampleDamageTargets.length ? sampleDamageTargets.map((entry) => (
+                      <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card">
+                        <strong>{displayName(entry.row, siteLanguage)}</strong>
+                        <div className="pick-summary-badges">
+                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
+                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
+                        </div>
+                        <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
+                      </div>
+                    )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+                  </div>
+                </div>
+                <div>
+                  <div className="row-between sample-panel-header sample-panel-header-side">
+                    <strong>{lt('내구 비교')}</strong>
+                    <span className="muted-inline">{lt('상대 첫 공개 기술 기준')}</span>
+                  </div>
+                  <div className="sample-move-bucket-grid">
+                    {sampleDefenseTargets.length ? sampleDefenseTargets.map((entry) => (
+                      <div key={`sample-defense-target-${entry.idx}`} className="sample-overview-card">
+                        <strong>{displayName(entry.row, siteLanguage)}</strong>
+                        <div className="pick-summary-badges">
+                          <span className="pick-badge">{entry.moveName}</span>
+                        </div>
+                        <div className="pick-summary-badges">
+                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
+                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
+                        </div>
+                        <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
+                      </div>
+                    )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>}
         </section>
         <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
