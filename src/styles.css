@@ -2107,6 +2107,17 @@ header p {
   color: #93a4b8;
   line-height: 1.4;
 }
+.sample-inline-ev-editor {
+  display: grid;
+  gap: 6px;
+}
+.sample-inline-ev-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8ea3bb;
+}
 .sample-current-build-badges {
   align-items: flex-start;
 }

@@ -3444,10 +3444,12 @@ export default function App() {
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
+  const sampleCalcConfig = sampleFixedMegaStone ? { ...sampleForge.config, scarf: false } : sampleForge.config
+  const sampleCalcMember = sampleFixedMegaStone ? { ...sampleForge, config: sampleCalcConfig } : sampleForge
   const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
-  const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleForge)
-  const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleForge, siteLanguage) : null
+  const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleCalcMember)
+  const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleCalcMember, siteLanguage) : null
   const sampleSpeedSearchResults = filterSpeciesOptions(sampleSpeedSearch, { includeMega: true })
     .filter((option) => !sampleSpeedTargets.some((target) => target.key === option.key))
     .slice(0, 8)
@@ -3466,7 +3468,7 @@ export default function App() {
     }
     const cutoffs = scenarios.map((scenario) => ({
       ...scenario,
-      needs: mySpeedNeeds(sampleRow, sampleForge.config, scenario.speed),
+      needs: mySpeedNeeds(sampleRow, sampleCalcConfig, scenario.speed),
       result: sampleSpeedValueNow > scenario.speed ? lt('내가 앞섬') : sampleSpeedValueNow < scenario.speed ? lt('상대가 앞섬') : lt('동속'),
     }))
     return { idx, member, row, cutoffs }
@@ -3477,7 +3479,12 @@ export default function App() {
   const sampleDamageMoveType = sampleDamageMoveMeta?.type ?? null
   const sampleDamageMoveCategory = sampleDamageMoveMeta?.category === 'physical' || sampleDamageMoveMeta?.category === 'special' ? sampleDamageMoveMeta.category : null
   const sampleDamageMovePower = typeof sampleDamageMoveMeta?.power === 'number' ? sampleDamageMoveMeta.power : null
-  const sampleAttackerStats = buildPartyBattleStats(sampleRow, sampleForge)
+  const sampleAttackerStats = buildPartyBattleStats(sampleRow, sampleCalcMember)
+  React.useEffect(() => {
+    if (!sampleFixedMegaStone || !sampleForge.config.scarf) return
+    setSampleForge((prev) => prev.config.scarf ? { ...prev, config: { ...prev.config, scarf: false } } : prev)
+  }, [sampleFixedMegaStone, sampleForge.config.scarf])
+
   const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
     .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
     .slice(0, 8)
@@ -5119,9 +5126,16 @@ export default function App() {
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
                     <strong>{displayName(sampleRow, siteLanguage)}</strong>
                     <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                    <div className="sample-inline-ev-editor">
+                      <span className="sample-inline-ev-label">{lt('스피드 EV')}</span>
+                      <div className="sample-speed-ev-row">
+                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
+                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
+                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
+                      </div>
+                    </div>
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                      <span className="pick-badge">{lt('스피드 EV')} {sampleForge.evs.speed}</span>
                       <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
                       <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
