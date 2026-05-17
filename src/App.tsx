@@ -3689,6 +3689,13 @@ export default function App() {
 
   const scrollToSampleSection = (sectionId: string) => {
     if (typeof document === 'undefined') return
+    if (sampleWorkbenchTab !== 'builder') {
+      setSampleWorkbenchTab('builder')
+      window.setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 0)
+      return
+    }
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
