@@ -73,6 +73,14 @@ type OpponentState = {
   picked: boolean
 }
 
+type SampleDamageTarget = OpponentState & {
+  hpEv: number
+  defenseEv: number
+  spDefenseEv: number
+  defenseNature: number
+  spDefenseNature: number
+}
+
 type SavedSample = {
   id: string
   label: string
@@ -125,6 +133,7 @@ type PersistedState = {
   sampleForge?: PartyMember
   savedSamples?: SavedSample[]
   sampleWorkbenchTab?: SampleWorkbenchTab
+  sampleDamageTargets?: SampleDamageTarget[]
 }
 
 type ImportExportPayload = PersistedState & {
@@ -580,6 +589,18 @@ const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
   scarf: false,
   speedStage: 0,
   picked: false,
+}))
+const blankSampleDamageTarget = (): SampleDamageTarget => ({
+  ...blankOpponent(),
+  hpEv: 0,
+  defenseEv: 0,
+  spDefenseEv: 0,
+  defenseNature: 1,
+  spDefenseNature: 1,
+})
+const defaultSampleDamageTargets: SampleDamageTarget[] = ['garchomp', 'primarina', 'rotom'].filter((key) => indexByKey.has(key)).map((key) => ({
+  ...blankSampleDamageTarget(),
+  key,
 }))
 const emptyOpponents = Array.from({ length: MAX_OPPONENTS }, () => blankOpponent())
 
@@ -1132,6 +1153,36 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
     .slice(0, MAX_OPPONENTS)
 
   return cleaned.length ? cleaned : defaultOpponents
+}
+
+function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
+  if (!Array.isArray(input)) return defaultSampleDamageTargets
+  const cleaned = input
+    .map((target) => {
+      if (!target || typeof target !== 'object') return null
+      const raw = target as Partial<SampleDamageTarget>
+      if (typeof raw.key !== 'string') return null
+      if (raw.key && !indexByKey.has(raw.key)) return null
+      return {
+        key: raw.key,
+        item: typeof raw.item === 'string' ? raw.item : '',
+        ability: typeof raw.ability === 'string' ? raw.ability : '',
+        notes: typeof raw.notes === 'string' ? raw.notes : '',
+        revealedMoves: Array.isArray(raw.revealedMoves) ? raw.revealedMoves.filter((move): move is string => typeof move === 'string') : [],
+        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : true,
+        scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
+        speedStage: clampSpeedStage(raw.speedStage),
+        picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        hpEv: clampNonNegativeInt(raw.hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseEv: clampNonNegativeInt(raw.defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        spDefenseEv: clampNonNegativeInt(raw.spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseNature: raw.defenseNature === 1.1 ? 1.1 : 1,
+        spDefenseNature: raw.spDefenseNature === 1.1 ? 1.1 : 1,
+      }
+    })
+    .filter((target): target is SampleDamageTarget => Boolean(target))
+
+  return cleaned.length ? cleaned : defaultSampleDamageTargets
 }
 
 function sanitizeSavedSamples(input: unknown): SavedSample[] {
@@ -2565,6 +2616,10 @@ export default function App() {
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => persisted?.sampleWorkbenchTab ?? 'builder')
+  const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
+  const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
+  const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
+  const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
   const [sampleCandidateFilter, setSampleCandidateFilter] = React.useState<SampleCandidateFilter>('all')
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
@@ -2689,9 +2744,10 @@ export default function App() {
       sampleForge,
       savedSamples,
       sampleWorkbenchTab,
+      sampleDamageTargets,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleDamageTargets])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -3353,33 +3409,32 @@ export default function App() {
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
   const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleForge)
   const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleForge, siteLanguage) : null
-  const sampleSpeedBands = pickedOpponents.map((member, idx) => {
-    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    if (!row) return null
-    const doubleSpeedAbility = speedAbilityCandidate(row, siteLanguage)
-    const baseMin = opponentScenarioSpeed(row, 0, false, false, member.speedStage)
-    const baseMax = opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage)
-    const scarfMin = opponentScenarioSpeed(row, 0, false, true, member.speedStage)
-    const scarfMax = opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, member.speedStage)
-    const ranges = [
-      { id: 'base', label: lt('기본'), min: baseMin, max: baseMax, tone: 'base' as const },
-      { id: 'scarf', label: lt('스카프'), min: scarfMin, max: scarfMax, tone: 'scarf' as const },
-    ]
-    if (doubleSpeedAbility) {
-      ranges.push(
-        { id: 'ability', label: doubleSpeedAbility.label || lt('특성 발동'), min: baseMin * 2, max: baseMax * 2, tone: 'ability' as const },
-        { id: 'ability-scarf', label: `${doubleSpeedAbility.label || lt('특성 발동')} + ${lt('스카프')}`, min: scarfMin * 2, max: scarfMax * 2, tone: 'ability-scarf' as const },
-      )
-    }
-    const aheadCount = ranges.filter((range) => sampleSpeedValueNow > range.max).length
-    const threatenedCount = ranges.filter((range) => sampleSpeedValueNow < range.min).length
-    return { idx, member, row, ranges, aheadCount, threatenedCount }
-  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+  const sampleSpeedPool = rows
+    .filter((row) => !sampleSpeedSearch.trim() || searchDisplayLabel(row.key, siteLanguage).toLowerCase().includes(sampleSpeedSearch.trim().toLowerCase()) || row.name_ko.toLowerCase().includes(sampleSpeedSearch.trim().toLowerCase()))
+    .map((row) => {
+      const doubleSpeedAbility = speedAbilityCandidate(row, siteLanguage)
+      const ranges = [
+        { id: 'base', label: lt('기본'), min: opponentScenarioSpeed(row, 0, false, false, 0), max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, 0), tone: 'base' as const },
+        { id: 'scarf', label: lt('스카프'), min: opponentScenarioSpeed(row, 0, false, true, 0), max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, 0), tone: 'scarf' as const },
+      ]
+      if (doubleSpeedAbility) {
+        ranges.push(
+          { id: 'ability', label: doubleSpeedAbility.label || lt('특성 발동'), min: opponentScenarioSpeed(row, 0, false, false, 0) * 2, max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, 0) * 2, tone: 'ability' as const },
+          { id: 'ability-scarf', label: `${doubleSpeedAbility.label || lt('특성 발동')} + ${lt('스카프')}`, min: opponentScenarioSpeed(row, 0, false, true, 0) * 2, max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, 0) * 2, tone: 'ability-scarf' as const },
+        )
+      }
+      const closestGap = Math.min(...ranges.map((range) => {
+        if (sampleSpeedValueNow < range.min) return range.min - sampleSpeedValueNow
+        if (sampleSpeedValueNow > range.max) return sampleSpeedValueNow - range.max
+        return 0
+      }))
+      return { row, ranges, closestGap }
+    })
+    .sort((a, b) => a.closestGap - b.closestGap || a.ranges[0].min - b.ranges[0].min)
+    .slice(0, 80)
   const sampleSpeedBounds = (() => {
     const values = [sampleSpeedValueNow, sampleSpeedAbilityLine?.speed ?? sampleSpeedValueNow]
-    sampleSpeedBands.forEach((entry) => entry.ranges.forEach((range) => {
-      values.push(range.min, range.max)
-    }))
+    sampleSpeedPool.forEach((entry) => entry.ranges.forEach((range) => values.push(range.min, range.max)))
     const min = Math.max(40, Math.min(...values) - 8)
     const max = Math.max(min + 40, Math.max(...values) + 8)
     const roundedMin = Math.floor(min / 10) * 10
@@ -3399,10 +3454,19 @@ export default function App() {
   const sampleDamageMoveCategory = sampleDamageMoveMeta?.category === 'physical' || sampleDamageMoveMeta?.category === 'special' ? sampleDamageMoveMeta.category : null
   const sampleDamageMovePower = typeof sampleDamageMoveMeta?.power === 'number' ? sampleDamageMoveMeta.power : null
   const sampleAttackerStats = buildPartyBattleStats(sampleRow, sampleForge)
-  const sampleDamageTargets = pickedOpponents.map((member, idx) => {
+  const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
+    .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
+    .slice(0, 8)
+  const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
     if (!row || !sampleDamageMovePower || !sampleDamageMoveCategory || !sampleDamageMoveType) return null
-    const defenderStats = buildOpponentBattleStats(row, opponentBulkState)
+    const defenderStats = buildOpponentBattleStats(row, {
+      hpEv: member.hpEv,
+      defenseEv: member.defenseEv,
+      spDefenseEv: member.spDefenseEv,
+      defenseNature: member.defenseNature,
+      spDefenseNature: member.spDefenseNature,
+    })
     const effectivenessValue = typeEffectiveness(sampleDamageMoveType, row.types)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAbility,
@@ -3437,64 +3501,25 @@ export default function App() {
       friendGuard: false,
     })
     const damage = calcDamage(sampleAttackerStats, defenderStats, sampleDamageMovePower, sampleDamageMoveCategory, resolveStabMultiplier(sampleRow.types, sampleDamageMoveType, sampleAbility, true), modifierPack.effectiveness, sampleDamageMoveMeta, modifierPack)
-    return { idx, member, row, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
+    return { idx, member, row, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-  const sampleDefenderStats = buildPartyBattleStats(sampleRow, sampleForge)
-  const sampleDefenseTargets = pickedOpponents.map((member, idx) => {
-    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    const moveName = member.revealedMoves.find(Boolean) ?? ''
-    if (!row || !moveName) return null
-    const moveMetaBase = resolveMoveMeta(moveName, movePoolByKey[row.key]?.moves ?? [], movePoolByKey)
-    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, moveMetaBase, member.ability)
-    const moveType = moveMeta?.type ?? null
-    const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
-    const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
-    if (!moveType || !moveCategory || !movePower) return null
-    const attackerStats = buildPartyBattleStats(row, {
-      key: row.key,
-      nickname: '',
-      ability: member.ability,
-      item: member.item,
-      config: { nature: member.natureBoost ? 'jolly' : 'hardy' },
-      evs: { ...defaultEvs },
-      tuning: { magicNumber: 11, maxValue: 0 },
-    })
-    const effectivenessValue = typeEffectiveness(moveType, sampleRow.types)
-    const modifierPack = resolveDamageModifiers({
-      attackerAbility: member.ability,
-      attackerItem: member.item,
-      defenderAbility: sampleAbility,
-      defenderItem: sampleForge.item,
-      moveName,
-      baseMoveType: moveType,
-      moveType,
-      movePower,
-      mode: moveCategory,
-      effectiveness: effectivenessValue,
-      attackStage: 0,
-      defenseStage: 0,
-      defenderTypes: sampleRow.types,
-      burned: false,
-      attackerLowHp: false,
-      targetPoisoned: false,
-      defenderFullHp: false,
-      movedAfterTarget: false,
-      faintedAllies: 0,
-      rivalryMode: 'neutral',
-      parentalBond: false,
-      defenderStatused: false,
-      electromorphosisCharged: false,
-      critical: false,
-      weather: 'none',
-      terrain: 'none',
-      reflect: false,
-      lightScreen: false,
-      auroraVeil: false,
-      friendGuard: false,
-    })
-    const damage = calcDamage(attackerStats, sampleDefenderStats, movePower, moveCategory, resolveStabMultiplier(row.types, moveType, member.ability, true), modifierPack.effectiveness, moveMeta, modifierPack)
-    return { idx, member, row, moveName, damage, verdict: resolveDamageVerdict(damage, sampleDefenderStats.hp, siteLanguage) }
-  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+
+  const addSampleDamageTarget = (key: string) => {
+    setSampleDamageTargets((prev) => ([
+      ...prev,
+      { ...blankSampleDamageTarget(), key },
+    ]))
+    setSampleDamageSearch('')
+    setSampleDamageSearchOpen(false)
+  }
+
+  const updateSampleDamageTarget = (idx: number, patch: Partial<SampleDamageTarget>) => {
+    setSampleDamageTargets((prev) => prev.map((entry, entryIdx) => (entryIdx === idx ? { ...entry, ...patch } : entry)))
+  }
+
+  const removeSampleDamageTarget = (idx: number) => {
+    setSampleDamageTargets((prev) => prev.filter((_, entryIdx) => entryIdx !== idx))
+  }
 
   const scrollToSampleSection = (sectionId: string) => {
     if (typeof document === 'undefined') return
@@ -3686,6 +3711,9 @@ export default function App() {
     setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
+    setSampleDamageTargets(defaultSampleDamageTargets)
+    setSampleSpeedSearch('')
+    setSampleDamageSearch('')
     setSampleLabelDraft('')
     if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
   }
@@ -3733,6 +3761,7 @@ export default function App() {
       sampleForge,
       savedSamples,
       sampleWorkbenchTab,
+      sampleDamageTargets,
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
@@ -3783,6 +3812,7 @@ export default function App() {
       setCalcFriendGuard(Boolean(parsed.calcFriendGuard))
       setCalcTypeChangeStab(parsed.calcTypeChangeStab !== false)
       setSampleWorkbenchTab(parsed.sampleWorkbenchTab ?? 'builder')
+      setSampleDamageTargets(sanitizeSampleDamageTargets(parsed.sampleDamageTargets))
       setCalcConditionalPowerValues((parsed.calcConditionalPowerValues && typeof parsed.calcConditionalPowerValues === 'object') ? parsed.calcConditionalPowerValues as Record<string, ConditionalPowerValue> : {})
       const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
       const nextBulkState = sanitizeOpponentBulkState({
@@ -4984,18 +5014,21 @@ export default function App() {
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 스피드')}</strong>
-                <span className="muted-inline">{lt('선출 추정된 상대를 비교 대상으로 사용')}</span>
+                <span className="muted-inline">전체 포켓몬 풀 기준</span>
               </div>
               <div className="sample-speed-toolbar">
                 <div className="sample-speed-toolbar-head">
                   <div className="pick-summary-badges">
                     <span className="pick-badge">{lt('샘플 현재 속도선')} {sampleSpeedValueNow}</span>
                     <span className="pick-badge">{lt('스피드 EV')} {sampleForge.evs.speed}</span>
-                    <span className="pick-badge">{lt('실시간 조정')}</span>
                     {sampleSpeedAbilityLine ? <span className="pick-badge enemy">{sampleSpeedAbilityLine.label} {sampleSpeedAbilityLine.speed}</span> : null}
                   </div>
                 </div>
                 <div className="sample-speed-inline-controls">
+                  <label className="sample-speed-slider-field">
+                    <span>{lt('포켓몬 검색')}</span>
+                    <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onChange={(e) => setSampleSpeedSearch(e.target.value)} />
+                  </label>
                   <label className="sample-speed-slider-field">
                     <span>{lt('스피드 EV')}</span>
                     <input type="range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', e.target.value) }))} />
@@ -5004,33 +5037,28 @@ export default function App() {
                     <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
                     <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'jolly' } }))}>{lt('최속')}</button>
                     <button type="button" className={`pick-chip ${(sampleForge.config.scarf || sampleForge.item.includes('스카프')) ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, scarf: !prev.config.scarf } }))}>{lt('스카프')}</button>
-                    <button type="button" className="pick-chip" onClick={() => setSampleTuningModalOpen(true)}>{lt('스피드 조건')}</button>
+                    <button type="button" className="pick-chip" onClick={() => setSampleTuningModalOpen(true)}>{lt('실시간 조정')}</button>
                   </div>
                 </div>
               </div>
-              {sampleSpeedBands.length ? <div className="sample-speed-board">
+              {sampleSpeedPool.length ? <div className="sample-speed-board">
                 <div className="sample-speed-axis">
                   {sampleSpeedBounds.ticks.map((tick) => <span key={`sample-speed-tick-${tick}`} className="sample-speed-axis-tick" style={{ left: `${sampleSpeedPercent(tick)}%` }}>{tick}</span>)}
                 </div>
                 <div className="sample-speed-rows">
-                  {sampleSpeedBands.map((entry) => (
-                    <div key={`sample-speed-band-${entry.idx}`} className="sample-speed-row">
+                  {sampleSpeedPool.map((entry) => (
+                    <div key={`sample-speed-band-${entry.row.key}`} className="sample-speed-row">
                       <div className="sample-speed-row-label">
                         <strong>{displayName(entry.row, siteLanguage)}</strong>
                         <div className="pick-summary-badges">
                           <span className="pick-badge">{lt('속도 구간')} {entry.ranges[0]?.min}~{entry.ranges[entry.ranges.length - 1]?.max}</span>
-                          <span className="pick-badge">{entry.aheadCount > 0 ? `${lt('내가 앞섬')} ${entry.aheadCount}` : `${lt('상대가 앞섬')} ${entry.threatenedCount}`}</span>
                         </div>
                       </div>
                       <div className="sample-speed-row-track">
-                        <div className="sample-speed-sample-line" style={{ left: `${sampleSpeedPercent(sampleSpeedValueNow)}%` }}>
-                          <span>{sampleSpeedValueNow}</span>
-                        </div>
-                        {sampleSpeedAbilityLine ? <div className="sample-speed-sample-line alt" style={{ left: `${sampleSpeedPercent(sampleSpeedAbilityLine.speed)}%` }}>
-                          <span>{sampleSpeedAbilityLine.speed}</span>
-                        </div> : null}
+                        <div className="sample-speed-sample-line" style={{ left: `${sampleSpeedPercent(sampleSpeedValueNow)}%` }}><span>{sampleSpeedValueNow}</span></div>
+                        {sampleSpeedAbilityLine ? <div className="sample-speed-sample-line alt" style={{ left: `${sampleSpeedPercent(sampleSpeedAbilityLine.speed)}%` }}><span>{sampleSpeedAbilityLine.speed}</span></div> : null}
                         {entry.ranges.map((range) => (
-                          <div key={`sample-speed-range-${entry.idx}-${range.id}`} className={`sample-speed-range ${range.tone}`} style={{ left: `${sampleSpeedPercent(range.min)}%`, width: `${Math.max(1.5, sampleSpeedPercent(range.max) - sampleSpeedPercent(range.min))}%` }}>
+                          <div key={`sample-speed-range-${entry.row.key}-${range.id}`} className={`sample-speed-range ${range.tone}`} style={{ left: `${sampleSpeedPercent(range.min)}%`, width: `${Math.max(1.5, sampleSpeedPercent(range.max) - sampleSpeedPercent(range.min))}%` }}>
                             <span className="sample-speed-range-label">{range.label}</span>
                             <strong>{range.max}</strong>
                           </div>
@@ -5039,7 +5067,7 @@ export default function App() {
                     </div>
                   ))}
                 </div>
-              </div> : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+              </div> : <div className="sample-empty-state">검색 결과 없음</div>}
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid">
             <div className="sample-main-card flat-sample-main-card">
@@ -5047,45 +5075,56 @@ export default function App() {
                 <strong>{lt('샘플 딜계산')}</strong>
                 <span className="muted-inline">{sampleDamageMove || lt('등록 기술 없음')}</span>
               </div>
+              <div className="sample-damage-adder">
+                <label className="sample-speed-slider-field sample-damage-search-field">
+                  <span>대상 추가</span>
+                  <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleDamageSearchOpen(true)} onBlur={() => setTimeout(() => setSampleDamageSearchOpen(false), 120)} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true) }} />
+                  {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
+                    {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
+                  </div> : null}
+                </label>
+              </div>
               <div className="sample-overview-stack">
-                <div>
-                  <div className="row-between sample-panel-header sample-panel-header-side">
-                    <strong>{lt('공격 비교')}</strong>
+                {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
+                  <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card">
+                    <div className="row-between">
+                      <strong>{displayName(entry.row, siteLanguage)}</strong>
+                      <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
+                    </div>
+                    <div className="sample-damage-target-controls">
+                      <label>
+                        HP EV
+                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                      </label>
+                      <label>
+                        물방 EV
+                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                      </label>
+                      <label>
+                        특방 EV
+                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                      </label>
+                      <label>
+                        +방어
+                        <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                      </label>
+                      <label>
+                        +특방
+                        <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                      </label>
+                    </div>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">HP {entry.defenderStats.hp}</span>
+                      <span className="pick-badge">Def {entry.defenderStats.defense}</span>
+                      <span className="pick-badge">SpD {entry.defenderStats.spDefense}</span>
+                    </div>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
+                      <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
+                    </div>
+                    <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
                   </div>
-                  <div className="sample-move-bucket-grid">
-                    {sampleDamageTargets.length ? sampleDamageTargets.map((entry) => (
-                      <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card">
-                        <strong>{displayName(entry.row, siteLanguage)}</strong>
-                        <div className="pick-summary-badges">
-                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
-                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
-                        </div>
-                        <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
-                      </div>
-                    )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
-                  </div>
-                </div>
-                <div>
-                  <div className="row-between sample-panel-header sample-panel-header-side">
-                    <strong>{lt('내구 비교')}</strong>
-                    <span className="muted-inline">{lt('상대 첫 공개 기술 기준')}</span>
-                  </div>
-                  <div className="sample-move-bucket-grid">
-                    {sampleDefenseTargets.length ? sampleDefenseTargets.map((entry) => (
-                      <div key={`sample-defense-target-${entry.idx}`} className="sample-overview-card">
-                        <strong>{displayName(entry.row, siteLanguage)}</strong>
-                        <div className="pick-summary-badges">
-                          <span className="pick-badge">{entry.moveName}</span>
-                        </div>
-                        <div className="pick-summary-badges">
-                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
-                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
-                        </div>
-                        <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
-                      </div>
-                    )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
-                  </div>
-                </div>
+                )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
               </div>
             </div>
           </div>}

@@ -1978,7 +1978,7 @@ header p {
 }
 .sample-speed-inline-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 12px;
   align-items: end;
 }
@@ -1988,8 +1988,36 @@ header p {
   font-size: 12px;
   color: #93a4b8;
 }
+.sample-speed-slider-field input,
 .sample-speed-slider-field input[type="range"] {
   width: 100%;
+}
+.sample-damage-adder {
+  margin-bottom: 14px;
+}
+.sample-damage-search-field {
+  position: relative;
+}
+.sample-damage-search-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+.sample-damage-target-card {
+  gap: 12px;
+}
+.sample-damage-target-controls {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.sample-damage-target-controls label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #93a4b8;
 }
 .sample-speed-config-chips {
   justify-content: flex-end;
@@ -3803,6 +3831,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-speed-inline-controls { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
   .sample-speed-row { grid-template-columns: 1fr; }
+  .sample-damage-target-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }
