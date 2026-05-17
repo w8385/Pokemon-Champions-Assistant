@@ -945,6 +945,11 @@ function suggestedMoveGroupsForRow(
   }
 }
 
+function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>, limit = 10) {
+  if (!groups) return []
+  return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
+}
+
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
@@ -3121,6 +3126,8 @@ export default function App() {
   const oppMoveSet = sampleMoves.find((entry) => entry.key === oppMember.key)
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = oppMovePool?.moves?.length ? oppMovePool.moves : moveOptionsForEntry(oppMoveSet)
+  const oppSuggestedMoveSet = suggestedMoveGroupsForRow(oppRow, oppMoveOptions, movePoolByKey, oppMoveSet)
+  const oppTopSuggestedMoves = topSuggestedMoves(oppSuggestedMoveSet).filter((move) => !oppMember.revealedMoves.includes(move))
   const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
   const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
   const attackFromOpponent = calcSwapSides && Boolean(oppRow)
@@ -5112,6 +5119,28 @@ export default function App() {
                       )
                     }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
                     <div className="damage-opponent-move-adder opponent-entry-move-adder">
+                      {oppMember.key && oppTopSuggestedMoves.length ? <div className="sample-track-card opponent-top-moves-card">
+                        <div className="row-between sample-track-head compact-gap">
+                          <strong>{lt('사용률 상위 기술')}</strong>
+                          <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
+                        </div>
+                        <div className="move-chip-wrap">
+                          {oppTopSuggestedMoves.map((move) => {
+                            const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                            return (
+                              <button
+                                key={`opp-top-move-${oppMember.key}-${move}`}
+                                type="button"
+                                className={`move-chip core ${moveTypeThemeClass(moveType)}`}
+                                onClick={() => addOpponentRevealedMove(move)}
+                                disabled={oppMember.revealedMoves.length >= 4}
+                              >
+                                {move}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div> : null}
                       <label>
                         <span>{lt('상대 기술 추가')}</span>
                         <div className="damage-opponent-move-input-row">

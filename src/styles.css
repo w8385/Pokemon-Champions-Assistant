@@ -3718,6 +3718,13 @@ textarea { min-height: 72px; resize: vertical; }
   grid-column: 1 / -1;
   min-width: 0;
 }
+.opponent-top-moves-card {
+  padding: 12px;
+  gap: 10px;
+}
+.opponent-top-moves-card .move-chip-wrap {
+  margin-top: 0;
+}
 .opponent-revealed-moves-card {
   display: grid;
   gap: 8px;
