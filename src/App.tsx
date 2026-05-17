@@ -23,12 +23,14 @@ type Row = {
   speed: number
   fast: number
   neutral: number
+  uninvested?: number
   scarf_fast: number
   scarf_neutral: number
   types: string[]
   types_ko: string[]
   abilities: string[]
   abilities_ko: string[]
+  sprite?: string
 }
 
 type StatKey = 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
@@ -564,7 +566,7 @@ function itemSpriteSrc(key: string, item: string) {
   const normalized = normalizeItemForKey(key, item).trim()
   const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
   if (megaSlug) return localSpriteSrc(megaSlug)
-  const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized]
+  const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized as ChampionsItem]
   if (spriteSlug) return localSpriteSrc(spriteSlug)
   if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
   return `${import.meta.env.BASE_URL}item-generic.svg`
@@ -2523,7 +2525,7 @@ function sameItemField(a: ItemFieldTarget, scope: 'party' | 'sample' | 'opponent
 
 function sameMetaListField(a: MetaListField, scope: 'party' | 'sample', field: 'ability' | 'nature', idx = 0) {
   if (!a || a.scope !== scope || a.field !== field) return false
-  return scope === 'party' ? a.idx === idx : true
+  return scope === 'party' ? ('idx' in a && a.idx === idx) : true
 }
 
 function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
@@ -3542,6 +3544,7 @@ export default function App() {
     const attackStatLabel = moveCategory === 'physical' ? 'Atk' : 'SpA'
     const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
     const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(sampleRow.types, moveType, sampleAbility, true), modifierPack.effectiveness, moveMeta, modifierPack)
+    if (!damage) return null
     return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
 
@@ -4555,12 +4558,12 @@ export default function App() {
             </div>
             <div className="opponent-detail-panel">
               <div className="entry-card-top">
-                {oppMember.key && oppRow.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
+                {oppMember.key && oppRow?.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="entry-sprite large" /> : null}
                 <div className="entry-card-head">
                   <div className="row-between compact-gap">
-                    <strong>{oppMember.key ? displayName(oppRow, siteLanguage) : emptySlotLabel(selectedOpp, siteLanguage)}</strong>
+                    <strong>{oppMember.key && oppRow ? displayName(oppRow, siteLanguage) : emptySlotLabel(selectedOpp, siteLanguage)}</strong>
                   </div>
-                  {oppMember.key ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
+                  {oppMember.key && oppRow ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
                 </div>
               </div>
               <div className="opponent-detail-fields">
@@ -5197,7 +5200,7 @@ export default function App() {
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 딜계산')}</strong>
-                <span className="muted-inline">{sampleDamageMove || lt('등록 기술 없음')}</span>
+                <span className="muted-inline">{sampleDamageMoveChoices[0] || lt('등록 기술 없음')}</span>
               </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
