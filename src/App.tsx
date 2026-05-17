@@ -3507,6 +3507,20 @@ export default function App() {
     .slice(0, 8)
 
   React.useEffect(() => {
+    setSampleDamageTargets((prev) => {
+      let changed = false
+      const next = prev.map((entry) => {
+        const fallbackMove = sampleDamageMoveChoices[0] ?? ''
+        const nextMoveName = entry.moveName && sampleDamageMoveChoices.includes(entry.moveName) ? entry.moveName : fallbackMove
+        if (nextMoveName === entry.moveName) return entry
+        changed = true
+        return { ...entry, moveName: nextMoveName }
+      })
+      return changed ? next : prev
+    })
+  }, [sampleDamageMoveChoices])
+
+  React.useEffect(() => {
     const missingWeightTargets = sampleDamageTargets
       .map((member) => member.key ? (indexByKey.get(member.key) ?? null) : null)
       .filter((row): row is Row => Boolean(row && typeof row.id === 'number' && typeof row.key === 'string'))
