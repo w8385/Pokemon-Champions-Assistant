@@ -5274,13 +5274,6 @@ export default function App() {
                 <span className="muted-inline">추월컷 계산</span>
               </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
-                <div className="sample-speed-toolbar-head sample-workbench-toolbar-head">
-                  <div className="pick-summary-badges">
-                    <span className="pick-badge">{lt('샘플 현재 속도선')} {sampleSpeedValueNow}</span>
-                    <span className="pick-badge">{lt('스피드 EV')} {sampleForge.evs.speed}</span>
-                    {sampleSpeedAbilityLine ? <span className="pick-badge enemy">{sampleSpeedAbilityLine.label} {sampleSpeedAbilityLine.speed}</span> : null}
-                  </div>
-                </div>
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
