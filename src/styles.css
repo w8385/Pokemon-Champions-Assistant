@@ -940,7 +940,8 @@ header p {
 .move-autocomplete-item:first-child {
   border-top: 0;
 }
-.move-autocomplete-item:hover {
+.move-autocomplete-item:hover,
+.move-autocomplete-item.active {
   background: #172033;
 }
 .move-autocomplete-main {
@@ -1018,7 +1019,8 @@ header p {
   border-left: 3px solid var(--move-border);
   padding-left: 8px;
 }
-.move-autocomplete-item[class*="move-type-"]:hover {
+.move-autocomplete-item[class*="move-type-"]:hover,
+.move-autocomplete-item[class*="move-type-"].active {
   background: color-mix(in srgb, var(--move-bg) 52%, #111827);
 }
 .sample-save-box,
@@ -3162,18 +3164,28 @@ label {
   max-height: 240px;
   overflow-y: auto;
 }
+.unified-dropdown-menu {
+  border-color: #31425f;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 16, 28, 0.98) 100%);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.48);
+  scrollbar-color: #42597d rgba(15, 23, 42, 0.2);
+}
 .autocomplete-item {
   appearance: none;
-  border: 0;
+  border: 1px solid transparent;
   background: #111827;
   color: #eef2f7;
   text-align: left;
   padding: 9px 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
 }
-.autocomplete-item:hover {
+.autocomplete-item:hover,
+.autocomplete-item.active {
   background: #172554;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
 }
 input, select, textarea {
   width: 100%;

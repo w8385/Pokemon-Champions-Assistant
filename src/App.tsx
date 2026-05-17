@@ -159,6 +159,7 @@ type SiteLanguage = 'ko' | 'en' | 'ja'
 type MoveCategory = CalcMode | 'status'
 type MoveOption = { name: string; type: string | null }
 type ConditionalPowerValue = number | boolean
+type AutocompleteHighlight = { id: string; index: number } | null
 
 type MoveMeta = {
   type: string | null
@@ -2655,6 +2656,16 @@ function sameMetaListField(a: MetaListField, scope: 'party' | 'sample', field: '
   return scope === 'party' ? ('idx' in a && a.idx === idx) : true
 }
 
+function highlightedAutocompleteIndex(state: AutocompleteHighlight, id: string) {
+  return state?.id === id ? state.index : -1
+}
+
+function nextAutocompleteIndex(current: number, length: number, direction: -1 | 1) {
+  if (length <= 0) return -1
+  if (current < 0) return direction > 0 ? 0 : length - 1
+  return (current + direction + length) % length
+}
+
 function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
   switch (tab) {
     case 'party': return translateText(language, '내 파티 관리')
@@ -2779,6 +2790,7 @@ export default function App() {
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [activeItemField, setActiveItemField] = React.useState<ItemFieldTarget>(null)
+  const [autocompleteHighlight, setAutocompleteHighlight] = React.useState<AutocompleteHighlight>(null)
   const [activeOpponentAbilityField, setActiveOpponentAbilityField] = React.useState<number | null>(null)
   const [activeMetaListField, setActiveMetaListField] = React.useState<MetaListField>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
@@ -2815,6 +2827,15 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
+  const setAutocompleteMenuOpen = React.useCallback((id: string) => {
+    setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
+  }, [])
+  const moveAutocompleteMenuHighlight = React.useCallback((id: string, length: number, direction: -1 | 1) => {
+    setAutocompleteHighlight((prev) => ({ id, index: nextAutocompleteIndex(prev?.id === id ? prev.index : -1, length, direction) }))
+  }, [])
+  const closeAutocompleteMenu = React.useCallback((id?: string) => {
+    setAutocompleteHighlight((prev) => (!id || prev?.id === id ? null : prev))
+  }, [])
 
   React.useEffect(() => {
     if (typeof document === 'undefined') return
@@ -3534,6 +3555,10 @@ export default function App() {
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
   const sampleSuggestedMoveSet = suggestedMoveGroupsForRow(sampleRow, sampleMoveOptions, movePoolByKey, sampleMoveSet)
+  const sampleSpeciesMenuId = 'sample-species-0'
+  const sampleSpeciesOptions = filterSpeciesOptions(sampleSearch ?? '', { includeMega: true }).slice(0, 8)
+  const sampleItemMenuId = 'sample-item-0'
+  const sampleItemOptions = filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8)
   const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
   const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
@@ -4506,6 +4531,10 @@ export default function App() {
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const memberSuggestedMoveSet = suggestedMoveGroupsForRow(row, memberMoveOptions, movePoolByKey, memberMoveSet)
+                const partySpeciesMenuId = `party-species-${idx}`
+                const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
+                const partyItemMenuId = `party-item-${idx}`
+                const partyItemOptions = filterItemOptions(partyItemDrafts[idx] || '', siteLanguage).slice(0, 8)
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
@@ -4594,8 +4623,13 @@ export default function App() {
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'item' ? <div className="party-meta-popover">
                           <div className="meta-item-input-row">
-                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus value={fixedMegaStone ? displayItemLabel(fixedMegaStone, siteLanguage) : partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(fixedMegaStone)} onFocus={() => !fixedMegaStone && setActiveItemField({ scope: 'party', idx })} onBlur={() => {
+                          <input ref={(el) => { partyItemEditorRefs.current[idx] = el }} autoFocus value={fixedMegaStone ? displayItemLabel(fixedMegaStone, siteLanguage) : partyItemDrafts[idx] || ''} placeholder={fixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(fixedMegaStone)} onFocus={() => {
+                            if (fixedMegaStone) return
+                            setActiveItemField({ scope: 'party', idx })
+                            setAutocompleteMenuOpen(partyItemMenuId)
+                          }} onBlur={() => {
                             setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'party', idx) ? null : prev), 120)
+                            setTimeout(() => closeAutocompleteMenu(partyItemMenuId), 120)
                             const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '', siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, item: resolved }
@@ -4611,9 +4645,21 @@ export default function App() {
                             nextDrafts[idx] = e.target.value
                             setPartyItemDrafts(nextDrafts)
                             setActiveItemField({ scope: 'party', idx })
+                            setAutocompleteMenuOpen(partyItemMenuId)
                           }} onKeyDown={(e) => {
+                            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              moveAutocompleteMenuHighlight(partyItemMenuId, partyItemOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                              return
+                            }
                             if (e.key !== 'Enter') return
                             e.preventDefault()
+                            const highlightedItem = partyItemOptions[highlightedAutocompleteIndex(autocompleteHighlight, partyItemMenuId)]
+                            if (highlightedItem) {
+                              selectPartyItemOption(idx, member, highlightedItem)
+                              closeAutocompleteMenu(partyItemMenuId)
+                              return
+                            }
                             const resolved = resolveItemInput(member.key, partyItemDrafts[idx] || '', siteLanguage)
                             const next = [...party]
                             next[idx] = { ...member, item: resolved }
@@ -4624,6 +4670,7 @@ export default function App() {
                               return nextDrafts
                             })
                             setActiveItemField(null)
+                            closeAutocompleteMenu(partyItemMenuId)
                             setActivePartyMetaEditor(null)
                           }} />
                           {!fixedMegaStone && (partyItemDrafts[idx] || currentItem) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
@@ -4631,9 +4678,9 @@ export default function App() {
                             clearPartyItemInput(idx, member)
                           }}>×</button> : null}
                           </div>
-                          {!fixedMegaStone && sameItemField(activeItemField, 'party', idx) ? <div className="move-autocomplete-menu">
-                            {filterItemOptions(partyItemDrafts[idx] || '', siteLanguage).slice(0, 8).map((item) => (
-                              <button key={`party-item-suggest-${idx}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectPartyItemOption(idx, member, item)}>
+                          {!fixedMegaStone && sameItemField(activeItemField, 'party', idx) ? <div className="move-autocomplete-menu unified-dropdown-menu">
+                            {partyItemOptions.map((item, optionIdx) => (
+                              <button key={`party-item-suggest-${idx}-${item}`} type="button" className={`move-autocomplete-item item-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, partyItemMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectPartyItemOption(idx, member, item)}>
                                 <span className="move-autocomplete-main">
                                   <img src={itemSpriteSrc(member.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                                   <span className="item-autocomplete-copy">
@@ -4654,24 +4701,40 @@ export default function App() {
                         <input
                           value={partySearch[idx] ?? ''}
                           placeholder={lt('포켓몬 검색')}
-                          onFocus={() => setActiveSearchField({ side: 'party', idx })}
-                          onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)}
+                          onFocus={() => {
+                            setActiveSearchField({ side: 'party', idx })
+                            setAutocompleteMenuOpen(partySpeciesMenuId)
+                          }}
+                          onBlur={() => {
+                            setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)
+                            setTimeout(() => closeAutocompleteMenu(partySpeciesMenuId), 120)
+                          }}
                           onChange={(e) => {
                             const next = [...partySearch]
                             next[idx] = e.target.value
                             setPartySearch(next)
                             setActiveSearchField({ side: 'party', idx })
+                            setAutocompleteMenuOpen(partySpeciesMenuId)
                           }}
                           onKeyDown={(e) => {
+                            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              moveAutocompleteMenuHighlight(partySpeciesMenuId, partySpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                              return
+                            }
                             if (e.key !== 'Enter') return
-                            const committed = commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
-                            if (committed) e.preventDefault()
+                            const highlightedOption = partySpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId)]
+                            const committed = highlightedOption ? (selectSpecies('party', idx, highlightedOption.key), true) : commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
+                            if (committed) {
+                              e.preventDefault()
+                              closeAutocompleteMenu(partySpeciesMenuId)
+                            }
                           }}
                         />
                         {sameSearchTarget(activeSearchField, 'party', idx) ? (
-                          <div className="autocomplete-menu">
-                            {filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8).map((option) => (
-                              <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('party', idx, option.key)}>
+                          <div className="autocomplete-menu unified-dropdown-menu">
+                            {partySpeciesOptions.map((option, optionIdx) => (
+                              <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('party', idx, option.key)}>
                                 {searchDisplayLabel(option.key, siteLanguage)}
                               </button>
                             ))}
@@ -4715,25 +4778,40 @@ export default function App() {
                             <input
                               value={move}
                               placeholder={memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                              onFocus={() => setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })}
-                              onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)}
+                              onFocus={() => {
+                                setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
+                                setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
+                              }}
+                              onBlur={() => {
+                                setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)
+                                setTimeout(() => closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`), 120)
+                              }}
                               onChange={(e) => {
                                 setConfirmedMoveSlot(member.key, moveIdx, e.target.value)
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
+                                setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
                               }}
                               onKeyDown={(e) => {
+                                const moveSuggestions = filterMoveOptions(move, memberMoveOptions).slice(0, 8)
+                                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                  e.preventDefault()
+                                  moveAutocompleteMenuHighlight(`party-move-${member.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
+                                  return
+                                }
                                 if (e.key !== 'Enter') return
-                                const committed = commitTopMoveOption(member.key, moveIdx, move, memberMoveOptions)
+                                const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`)]
+                                const committed = highlightedMove ? (selectMoveOption(member.key, moveIdx, highlightedMove.name), true) : commitTopMoveOption(member.key, moveIdx, move, memberMoveOptions)
                                 if (committed) {
                                   e.preventDefault()
                                   setActiveMoveField(null)
+                                  closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`)
                                 }
                               }}
                             />
                             {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
-                              <div className="move-autocomplete-menu">
-                                {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option) => (
-                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
+                              <div className="move-autocomplete-menu unified-dropdown-menu">
+                                {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option, optionIdx) => (
+                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
                                     <span className="move-autocomplete-main">
                                       {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
                                       <span>{option.name}</span>
@@ -4792,23 +4870,38 @@ export default function App() {
                   ref={opponentQuickInputRef}
                   value={opponentQuickSearch}
                   placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
-                  onFocus={() => setActiveSearchField({ side: 'opponentQuick', idx: 0 })}
-                  onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)}
+                  onFocus={() => {
+                    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+                    setAutocompleteMenuOpen('opponent-quick-species-0')
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)
+                    setTimeout(() => closeAutocompleteMenu('opponent-quick-species-0'), 120)
+                  }}
                   onChange={(e) => {
                     setOpponentQuickSearch(e.target.value)
                     setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+                    setAutocompleteMenuOpen('opponent-quick-species-0')
                   }}
                   onKeyDown={(e) => {
+                    const options = filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8)
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      moveAutocompleteMenuHighlight('opponent-quick-species-0', options.length, e.key === 'ArrowDown' ? 1 : -1)
+                      return
+                    }
                     if (e.key === 'Enter') {
                       e.preventDefault()
-                      commitOpponentQuickSearch()
+                      const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0')]
+                      commitOpponentQuickSearch(highlightedOption?.key)
+                      closeAutocompleteMenu('opponent-quick-species-0')
                     }
                   }}
                 />
                 {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
-                  <div className="autocomplete-menu">
-                      {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option) => (
-                      <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => commitOpponentQuickSearch(option.key)}>
+                  <div className="autocomplete-menu unified-dropdown-menu">
+                      {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
+                      <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0') === optionIdx ? 'active' : ''}`} onMouseDown={() => commitOpponentQuickSearch(option.key)}>
                         {searchDisplayLabel(option.key, siteLanguage)}
                       </button>
                     ))}
@@ -4871,24 +4964,41 @@ export default function App() {
                     <input
                       value={opponentSearch[selectedOpp] ?? ''}
                       placeholder={lt('포켓몬 검색')}
-                      onFocus={() => setActiveSearchField({ side: 'opponent', idx: selectedOpp })}
-                      onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', selectedOpp) ? null : prev), 120)}
+                      onFocus={() => {
+                        setActiveSearchField({ side: 'opponent', idx: selectedOpp })
+                        setAutocompleteMenuOpen(`opponent-species-${selectedOpp}`)
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', selectedOpp) ? null : prev), 120)
+                        setTimeout(() => closeAutocompleteMenu(`opponent-species-${selectedOpp}`), 120)
+                      }}
                       onChange={(e) => {
                         const next = [...opponentSearch]
                         next[selectedOpp] = e.target.value
                         setOpponentSearch(next)
                         setActiveSearchField({ side: 'opponent', idx: selectedOpp })
+                        setAutocompleteMenuOpen(`opponent-species-${selectedOpp}`)
                       }}
                       onKeyDown={(e) => {
+                        const options = filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8)
+                        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                          e.preventDefault()
+                          moveAutocompleteMenuHighlight(`opponent-species-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                          return
+                        }
                         if (e.key !== 'Enter') return
-                        const committed = commitTopSpeciesOption('opponent', selectedOpp, opponentSearch[selectedOpp] ?? '')
-                        if (committed) e.preventDefault()
+                        const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, `opponent-species-${selectedOpp}`)]
+                        const committed = highlightedOption ? (selectSpecies('opponent', selectedOpp, highlightedOption.key), true) : commitTopSpeciesOption('opponent', selectedOpp, opponentSearch[selectedOpp] ?? '')
+                        if (committed) {
+                          e.preventDefault()
+                          closeAutocompleteMenu(`opponent-species-${selectedOpp}`)
+                        }
                       }}
                     />
                     {sameSearchTarget(activeSearchField, 'opponent', selectedOpp) ? (
-                      <div className="autocomplete-menu">
-                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8).map((option) => (
-                          <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('opponent', selectedOpp, option.key)}>
+                      <div className="autocomplete-menu unified-dropdown-menu">
+                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
+                          <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opponent-species-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('opponent', selectedOpp, option.key)}>
                             {searchDisplayLabel(option.key, siteLanguage)}
                           </button>
                         ))}
@@ -4905,9 +5015,14 @@ export default function App() {
                         value={opponentItemDrafts[selectedOpp] ?? ''}
                         placeholder={oppMember.key ? lt('사용 가능 도구 선택') : lt('포켓몬 먼저 선택')}
                         disabled={!oppMember.key}
-                        onFocus={() => oppMember.key && setActiveItemField({ scope: 'opponent', idx: selectedOpp })}
+                        onFocus={() => {
+                          if (!oppMember.key) return
+                          setActiveItemField({ scope: 'opponent', idx: selectedOpp })
+                          setAutocompleteMenuOpen(`opponent-item-${selectedOpp}`)
+                        }}
                         onBlur={() => {
                           setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'opponent', selectedOpp) ? null : prev), 120)
+                          setTimeout(() => closeAutocompleteMenu(`opponent-item-${selectedOpp}`), 120)
                           commitOpponentItemInput(selectedOpp)
                         }}
                         onChange={(e) => {
@@ -4915,12 +5030,26 @@ export default function App() {
                           nextDrafts[selectedOpp] = e.target.value
                           setOpponentItemDrafts(nextDrafts)
                           setActiveItemField({ scope: 'opponent', idx: selectedOpp })
+                          setAutocompleteMenuOpen(`opponent-item-${selectedOpp}`)
                         }}
                         onKeyDown={(e) => {
+                          const options = filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8)
+                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                            e.preventDefault()
+                            moveAutocompleteMenuHighlight(`opponent-item-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                            return
+                          }
                           if (e.key !== 'Enter') return
                           e.preventDefault()
+                          const highlightedItem = options[highlightedAutocompleteIndex(autocompleteHighlight, `opponent-item-${selectedOpp}`)]
+                          if (highlightedItem) {
+                            selectOpponentItemOption(selectedOpp, highlightedItem)
+                            closeAutocompleteMenu(`opponent-item-${selectedOpp}`)
+                            return
+                          }
                           commitOpponentItemInput(selectedOpp)
                           setActiveItemField(null)
+                          closeAutocompleteMenu(`opponent-item-${selectedOpp}`)
                         }}
                       />
                       {oppMember.key && (opponentItemDrafts[selectedOpp] || oppMember.item) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
@@ -4928,9 +5057,9 @@ export default function App() {
                         clearOpponentItemInput(selectedOpp)
                       }}>×</button> : null}
                     </div>
-                    {oppMember.key && sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu">
-                      {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item) => (
-                        <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
+                    {oppMember.key && sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu unified-dropdown-menu">
+                      {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item, optionIdx) => (
+                        <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className={`move-autocomplete-item item-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opponent-item-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
                           <span className="move-autocomplete-main">
                             <img src={itemSpriteSrc(oppMember.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                             <span className="item-autocomplete-copy">
@@ -4990,12 +5119,37 @@ export default function App() {
                             value={opponentMoveDraft}
                             placeholder={lt('사용 가능 기술 검색')}
                             disabled={!oppMember.key || oppMember.revealedMoves.length >= 4}
-                            onFocus={() => setOpponentMoveInputFocused(true)}
-                            onBlur={() => setTimeout(() => setOpponentMoveInputFocused(false), 120)}
-                            onChange={(e) => setOpponentMoveDraft(e.target.value)}
+                            onFocus={() => {
+                              setOpponentMoveInputFocused(true)
+                              setAutocompleteMenuOpen(`opp-entry-move-${selectedOpp}`)
+                            }}
+                            onBlur={() => {
+                              setTimeout(() => setOpponentMoveInputFocused(false), 120)
+                              setTimeout(() => closeAutocompleteMenu(`opp-entry-move-${selectedOpp}`), 120)
+                            }}
+                            onChange={(e) => {
+                              setOpponentMoveDraft(e.target.value)
+                              setAutocompleteMenuOpen(`opp-entry-move-${selectedOpp}`)
+                            }}
                             onKeyDown={(e) => {
+                              const options = filterMoveOptions(opponentMoveDraft, oppMoveOptions)
+                                .filter((option) => !oppMember.revealedMoves.includes(option.name))
+                                .slice(0, 8)
+                              if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                e.preventDefault()
+                                moveAutocompleteMenuHighlight(`opp-entry-move-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                                return
+                              }
                               if (e.key !== 'Enter') return
                               e.preventDefault()
+                              const highlightedMove = options[highlightedAutocompleteIndex(autocompleteHighlight, `opp-entry-move-${selectedOpp}`)]
+                              if (highlightedMove) {
+                                addOpponentRevealedMove(highlightedMove.name)
+                                setOpponentMoveDraft('')
+                                setOpponentMoveInputFocused(false)
+                                closeAutocompleteMenu(`opp-entry-move-${selectedOpp}`)
+                                return
+                              }
                               commitOpponentMoveDraft()
                             }}
                           />
@@ -5010,12 +5164,12 @@ export default function App() {
                           </button>
                         </div>
                       </label>
-                      {oppMember.key && opponentMoveInputFocused && opponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu damage-opponent-move-menu">
+                      {oppMember.key && opponentMoveInputFocused && opponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu unified-dropdown-menu damage-opponent-move-menu">
                         {filterMoveOptions(opponentMoveDraft, oppMoveOptions)
                           .filter((option) => !oppMember.revealedMoves.includes(option.name))
                           .slice(0, 8)
-                          .map((option) => (
-                            <button key={`opp-entry-move-suggest-${oppMember.key}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => {
+                          .map((option, optionIdx) => (
+                            <button key={`opp-entry-move-suggest-${oppMember.key}-${option.name}`} type="button" className={`move-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opp-entry-move-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => {
                               addOpponentRevealedMove(option.name)
                               setOpponentMoveDraft('')
                               setOpponentMoveInputFocused(false)
@@ -5168,22 +5322,38 @@ export default function App() {
                     className="sample-species-search-input"
                     value={sampleSearch}
                     placeholder={lt('포켓몬 검색')}
-                    onFocus={() => setActiveSearchField({ side: 'sample', idx: 0 })}
-                    onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)}
+                    onFocus={() => {
+                      setActiveSearchField({ side: 'sample', idx: 0 })
+                      setAutocompleteMenuOpen(sampleSpeciesMenuId)
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)
+                      setTimeout(() => closeAutocompleteMenu(sampleSpeciesMenuId), 120)
+                    }}
                     onChange={(e) => {
                       setSampleSearch(e.target.value)
                       setActiveSearchField({ side: 'sample', idx: 0 })
+                      setAutocompleteMenuOpen(sampleSpeciesMenuId)
                     }}
                     onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        moveAutocompleteMenuHighlight(sampleSpeciesMenuId, sampleSpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                        return
+                      }
                       if (e.key !== 'Enter') return
-                      const committed = commitTopSpeciesOption('sample', 0, sampleSearch)
-                      if (committed) e.preventDefault()
+                      const highlightedOption = sampleSpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId)]
+                      const committed = highlightedOption ? (selectSpecies('sample', 0, highlightedOption.key), true) : commitTopSpeciesOption('sample', 0, sampleSearch)
+                      if (committed) {
+                        e.preventDefault()
+                        closeAutocompleteMenu(sampleSpeciesMenuId)
+                      }
                     }}
                   />
                   {sameSearchTarget(activeSearchField, 'sample', 0) ? (
-                    <div className="autocomplete-menu">
-                      {filterSpeciesOptions(sampleSearch).slice(0, 8).map((option) => (
-                        <button key={option.key} type="button" className="autocomplete-item" onMouseDown={() => selectSpecies('sample', 0, option.key)}>
+                    <div className="autocomplete-menu unified-dropdown-menu">
+                      {sampleSpeciesOptions.map((option, optionIdx) => (
+                        <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('sample', 0, option.key)}>
                           {searchDisplayLabel(option.key, siteLanguage)}
                         </button>
                       ))}
@@ -5275,22 +5445,42 @@ export default function App() {
                   </button>
                   {activeSampleMetaEditor === 'item' ? <div className="party-meta-popover">
                     <div className="meta-item-input-row">
-                    <input ref={sampleItemEditorRef} autoFocus value={sampleFixedMegaStone ? displayItemLabel(sampleFixedMegaStone, siteLanguage) : sampleItemDraft} placeholder={sampleFixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(sampleFixedMegaStone)} onFocus={() => !sampleFixedMegaStone && setActiveItemField({ scope: 'sample', idx: 0 })} onChange={(e) => {
+                    <input ref={sampleItemEditorRef} autoFocus value={sampleFixedMegaStone ? displayItemLabel(sampleFixedMegaStone, siteLanguage) : sampleItemDraft} placeholder={sampleFixedMegaStone ? lt('메가스톤 고정') : lt('사용 가능 도구 선택')} disabled={Boolean(sampleFixedMegaStone)} onFocus={() => {
+                      if (sampleFixedMegaStone) return
+                      setActiveItemField({ scope: 'sample', idx: 0 })
+                      setAutocompleteMenuOpen(sampleItemMenuId)
+                    }} onChange={(e) => {
                       setSampleItemDraft(e.target.value)
-                      if (!sampleFixedMegaStone) setActiveItemField({ scope: 'sample', idx: 0 })
+                      if (!sampleFixedMegaStone) {
+                        setActiveItemField({ scope: 'sample', idx: 0 })
+                        setAutocompleteMenuOpen(sampleItemMenuId)
+                      }
                     }} onBlur={() => {
                       setTimeout(() => setActiveItemField((prev) => sameItemField(prev, 'sample', 0) ? null : prev), 120)
+                      setTimeout(() => closeAutocompleteMenu(sampleItemMenuId), 120)
                       const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
                       setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
                       setTimeout(() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : prev), 120)
                     }} onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        moveAutocompleteMenuHighlight(sampleItemMenuId, sampleItemOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                        return
+                      }
                       if (e.key !== 'Enter') return
                       e.preventDefault()
+                      const highlightedItem = sampleItemOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleItemMenuId)]
+                      if (highlightedItem) {
+                        selectSampleItemOption(highlightedItem)
+                        closeAutocompleteMenu(sampleItemMenuId)
+                        return
+                      }
                       const resolved = resolveItemInput(sampleForge.key, sampleItemDraft, siteLanguage)
                       setSampleForge((prev) => ({ ...prev, item: resolved }))
                       setSampleItemDraft(displayItemLabel(resolved, siteLanguage))
                       setActiveItemField(null)
+                      closeAutocompleteMenu(sampleItemMenuId)
                       setActiveSampleMetaEditor(null)
                     }} />
                     {!sampleFixedMegaStone && (sampleItemDraft || sampleCurrentItem) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
@@ -5298,9 +5488,9 @@ export default function App() {
                       clearSampleItemInput()
                     }}>×</button> : null}
                     </div>
-                    {!sampleFixedMegaStone && sameItemField(activeItemField, 'sample', 0) ? <div className="move-autocomplete-menu">
-                      {filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8).map((item) => (
-                        <button key={`sample-item-suggest-${item}`} type="button" className="move-autocomplete-item item-autocomplete-item" onMouseDown={() => selectSampleItemOption(item)}>
+                    {!sampleFixedMegaStone && sameItemField(activeItemField, 'sample', 0) ? <div className="move-autocomplete-menu unified-dropdown-menu">
+                      {sampleItemOptions.map((item, optionIdx) => (
+                        <button key={`sample-item-suggest-${item}`} type="button" className={`move-autocomplete-item item-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleItemMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleItemOption(item)}>
                           <span className="move-autocomplete-main">
                             <img src={itemSpriteSrc(sampleForge.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                             <span className="item-autocomplete-copy">
@@ -5355,24 +5545,39 @@ export default function App() {
                             <input
                               value={move}
                               placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                              onFocus={() => setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })}
-                              onBlur={() => setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)}
+                              onFocus={() => {
+                                setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
+                              }}
+                              onBlur={() => {
+                                setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)
+                                setTimeout(() => closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`), 120)
+                              }}
                               onChange={(e) => {
                                 setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)
                                 setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
                               }}
                               onKeyDown={(e) => {
+                                const moveSuggestions = filterMoveOptions(move, sampleMoveOptions).slice(0, 8)
+                                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                  e.preventDefault()
+                                  moveAutocompleteMenuHighlight(`sample-move-${sampleForge.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
+                                  return
+                                }
                                 if (e.key !== 'Enter') return
-                                const committed = commitSampleMoveOption(moveIdx, move)
+                                const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`)]
+                                const committed = highlightedMove ? (selectSampleMoveOption(moveIdx, highlightedMove.name), true) : commitSampleMoveOption(moveIdx, move)
                                 if (committed) {
                                   e.preventDefault()
+                                  closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`)
                                 }
                               }}
                             />
                             {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
-                              <div className="move-autocomplete-menu">
-                                {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option) => (
-                                  <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
+                              <div className="move-autocomplete-menu unified-dropdown-menu">
+                                {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
+                                  <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
                                     <span className="move-autocomplete-main">
                                       {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
                                       <span>{option.name}</span>
@@ -5440,9 +5645,22 @@ export default function App() {
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
-                    <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleSpeedSearchOpen(true)} onBlur={() => setTimeout(() => setSampleSpeedSearchOpen(false), 120)} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true) }} />
-                    {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
-                      {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
+                    <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onBlur={() => { setTimeout(() => setSampleSpeedSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-speed-add'), 120) }} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        moveAutocompleteMenuHighlight('sample-speed-add', sampleSpeedSearchResults.length, e.key === 'ArrowDown' ? 1 : -1)
+                        return
+                      }
+                      if (e.key !== 'Enter') return
+                      const highlightedOption = sampleSpeedSearchResults[highlightedAutocompleteIndex(autocompleteHighlight, 'sample-speed-add')]
+                      if (highlightedOption) {
+                        e.preventDefault()
+                        addSampleSpeedTarget(highlightedOption.key)
+                        closeAutocompleteMenu('sample-speed-add')
+                      }
+                    }} />
+                    {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
+                      {sampleSpeedSearchResults.map((option, optionIdx) => <button key={`sample-speed-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-speed-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
@@ -5517,9 +5735,22 @@ export default function App() {
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
-                    <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleDamageSearchOpen(true)} onBlur={() => setTimeout(() => setSampleDamageSearchOpen(false), 120)} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true) }} />
-                    {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
-                      {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
+                    <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onBlur={() => { setTimeout(() => setSampleDamageSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-damage-add'), 120) }} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        moveAutocompleteMenuHighlight('sample-damage-add', sampleDamageSearchResults.length, e.key === 'ArrowDown' ? 1 : -1)
+                        return
+                      }
+                      if (e.key !== 'Enter') return
+                      const highlightedOption = sampleDamageSearchResults[highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add')]
+                      if (highlightedOption) {
+                        e.preventDefault()
+                        addSampleDamageTarget(highlightedOption.key)
+                        closeAutocompleteMenu('sample-damage-add')
+                      }
+                    }} />
+                    {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
+                      {sampleDamageSearchResults.map((option, optionIdx) => <button key={`sample-damage-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
@@ -5937,12 +6168,37 @@ export default function App() {
                         value={calcOpponentMoveDraft}
                         placeholder={lt('사용 가능 기술 검색')}
                         disabled={!oppMember.key || opponentRegisteredDamageMoves.length >= 4}
-                        onFocus={() => setCalcOpponentMoveInputFocused(true)}
-                        onBlur={() => setTimeout(() => setCalcOpponentMoveInputFocused(false), 120)}
-                        onChange={(e) => setCalcOpponentMoveDraft(e.target.value)}
+                        onFocus={() => {
+                          setCalcOpponentMoveInputFocused(true)
+                          setAutocompleteMenuOpen(`calc-opp-move-${selectedOpp}`)
+                        }}
+                        onBlur={() => {
+                          setTimeout(() => setCalcOpponentMoveInputFocused(false), 120)
+                          setTimeout(() => closeAutocompleteMenu(`calc-opp-move-${selectedOpp}`), 120)
+                        }}
+                        onChange={(e) => {
+                          setCalcOpponentMoveDraft(e.target.value)
+                          setAutocompleteMenuOpen(`calc-opp-move-${selectedOpp}`)
+                        }}
                         onKeyDown={(e) => {
+                          const options = filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)
+                            .filter((option) => !opponentRegisteredDamageMoves.includes(option.name))
+                            .slice(0, 8)
+                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                            e.preventDefault()
+                            moveAutocompleteMenuHighlight(`calc-opp-move-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                            return
+                          }
                           if (e.key !== 'Enter') return
                           e.preventDefault()
+                          const highlightedMove = options[highlightedAutocompleteIndex(autocompleteHighlight, `calc-opp-move-${selectedOpp}`)]
+                          if (highlightedMove) {
+                            addOpponentRevealedMove(highlightedMove.name)
+                            setCalcOpponentMoveDraft('')
+                            setCalcOpponentMoveInputFocused(false)
+                            closeAutocompleteMenu(`calc-opp-move-${selectedOpp}`)
+                            return
+                          }
                           commitCalcOpponentMoveDraft()
                         }}
                       />
@@ -5957,12 +6213,12 @@ export default function App() {
                       </button>
                     </div>
                   </label>
-                  {oppMember.key && calcOpponentMoveInputFocused && calcOpponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu damage-opponent-move-menu">
+                  {oppMember.key && calcOpponentMoveInputFocused && calcOpponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu unified-dropdown-menu damage-opponent-move-menu">
                     {filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)
                       .filter((option) => !opponentRegisteredDamageMoves.includes(option.name))
                       .slice(0, 8)
-                      .map((option) => (
-                        <button key={`calc-opp-move-suggest-${oppMember.key}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => {
+                      .map((option, optionIdx) => (
+                        <button key={`calc-opp-move-suggest-${oppMember.key}-${option.name}`} type="button" className={`move-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `calc-opp-move-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => {
                           addOpponentRevealedMove(option.name)
                           setCalcOpponentMoveDraft('')
                           setCalcOpponentMoveInputFocused(false)
