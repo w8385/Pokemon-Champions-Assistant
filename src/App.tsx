@@ -1604,7 +1604,7 @@ async function fetchPokemonWeightKg(id: number) {
   return Number(data.weight) / 10
 }
 
-function variablePowerHint(moveName: string, lt: (key: string) => string, options?: { targetWeightKnown?: boolean, resolvedPower?: number | null }) {
+function variablePowerHint(moveName: string, lt: (key: string) => string, options?: { targetWeightKnown?: boolean, resolvedPower?: number | null, totalPower?: number | null }) {
   if (CONDITIONAL_MOVE_POWER_RULES[moveName]) return lt('특정 조건에 따라 위력이 자동 반영됨')
   switch (moveName) {
     case '로우킥':
@@ -1615,9 +1615,10 @@ function variablePowerHint(moveName: string, lt: (key: string) => string, option
         ? `${lt('위력')} ${options.resolvedPower}`
         : lt(options?.targetWeightKnown ? '상대 무게에 따라 위력이 자동 반영됨' : '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함')
     case '스케일샷':
-      return lt('명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함')
     case '트리플악셀':
-      return lt('연속타 누적 위력 기술이라 직접 입력이 필요함')
+      return typeof options?.totalPower === 'number'
+        ? `${lt('위력')} ${options.totalPower}`
+        : lt('수동 위력')
     default:
       return lt('수동 위력')
   }
@@ -5456,7 +5457,7 @@ export default function App() {
                               ? <><span>{lt(entry.moveRule.label)}</span><input type="number" min={entry.moveRule.min ?? 0} max={entry.moveRule.max ?? 999} value={Number(entry.moveConditionValue ?? entry.moveRule.defaultValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: Number(e.target.value) }))} /></>
                               : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
                           </label> : null}
-                          {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown, resolvedPower: entry.movePower })}</div> : null}
+                          {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown, resolvedPower: entry.movePower, totalPower: entry.moveHitSummary?.totalPower ?? null })}</div> : null}
                           <label className="sample-bulk-hp-row">
                             체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -5823,7 +5824,7 @@ export default function App() {
           </div>
           <div className="damage-surface-card damage-control-surface">
             {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
-              <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower })}</span>
+              <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
             </div> : null}
             {activeDamageMovePower === null ? <div className="preset-row damage-preset-row">
               {movePowerPresets.map((preset) => (
