@@ -286,7 +286,7 @@ header p {
   text-decoration: underline;
 }
 .home-link-icon-list {
-  grid-template-columns: repeat(2, minmax(0, max-content));
+  grid-template-columns: repeat(3, minmax(0, max-content));
   gap: 10px;
   align-items: stretch;
 }
@@ -307,6 +307,14 @@ header p {
   transform: translateY(-1px);
   border-color: rgba(96, 165, 250, 0.5);
   background: linear-gradient(180deg, rgba(21, 32, 59, 0.92), rgba(13, 20, 35, 0.86));
+}
+.home-link-pill-accent {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: linear-gradient(180deg, rgba(23, 37, 84, 0.88), rgba(11, 18, 32, 0.82));
+}
+.home-link-pill-accent:hover {
+  border-color: rgba(125, 211, 252, 0.6);
+  background: linear-gradient(180deg, rgba(29, 78, 216, 0.34), rgba(15, 23, 42, 0.9));
 }
 .home-link-pill-icon {
   display: inline-flex;
