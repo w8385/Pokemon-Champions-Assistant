@@ -5640,7 +5640,6 @@ export default function App() {
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 기술')}</strong>
-                <span className="muted-inline">{lt('내 파티 관리처럼 직접 기술을 등록')}</span>
               </div>
               <>
                   <div className="sample-tracking-cluster">
