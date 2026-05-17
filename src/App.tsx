@@ -4069,9 +4069,28 @@ export default function App() {
         <div className="home-footer-text-block">
           <div className="home-footer-text-row">
             <span className="home-footer-label">{lt('프로젝트 링크')}</span>
-            <div className="home-link-list text-only">
-              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">{lt('GitHub 저장소')}</a>
-              <a href="mailto:me@w8385.dev">{lt('연락 이메일')} · me@w8385.dev</a>
+            <div className="home-link-list home-link-icon-list">
+              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('GitHub 저장소')} title={lt('GitHub 저장소')}>
+                <span className="home-link-pill-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.2-3.37-1.2-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .08 1.53 1.05 1.53 1.05.9 1.58 2.35 1.12 2.92.86.09-.67.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.74 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.56 1.43.21 2.48.11 2.74.64.72 1.03 1.63 1.03 2.75 0 3.95-2.33 4.82-4.56 5.07.36.32.67.95.67 1.92 0 1.39-.01 2.5-.01 2.84 0 .28.18.61.69.5A10.24 10.24 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" fill="currentColor"/>
+                  </svg>
+                </span>
+                <span className="home-link-pill-copy">
+                  <strong>{lt('GitHub 저장소')}</strong>
+                </span>
+              </a>
+              <a href="mailto:me@w8385.dev" className="home-link-pill" aria-label={`${lt('연락 이메일')} me@w8385.dev`} title="me@w8385.dev">
+                <span className="home-link-pill-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="M3 5.75A2.75 2.75 0 0 1 5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75Zm2 .28v.22l7 5.34 7-5.34v-.22a.75.75 0 0 0-.75-.75H5.75a.75.75 0 0 0-.75.75Zm13 2.73-5.39 4.11a1 1 0 0 1-1.22 0L6 8.76v9.49c0 .41.34.75.75.75h10.5c.41 0 .75-.34.75-.75V8.76Z" fill="currentColor"/>
+                  </svg>
+                </span>
+                <span className="home-link-pill-copy">
+                  <strong>{lt('연락 이메일')}</strong>
+                  <span>me@w8385.dev</span>
+                </span>
+              </a>
             </div>
           </div>
           <div className="home-footer-text-row">
