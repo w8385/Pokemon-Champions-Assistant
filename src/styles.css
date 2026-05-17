@@ -2111,6 +2111,10 @@ header p {
   display: grid;
   gap: 6px;
 }
+.sample-inline-ev-editor-dual {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
 .sample-inline-ev-label {
   font-size: 11px;
   font-weight: 700;
@@ -4130,6 +4134,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-tuning-inline { grid-template-columns: 1fr; }
   .sample-speed-inline-controls,
   .sample-current-build-toolbar { grid-template-columns: 1fr; }
+  .sample-inline-ev-editor-dual { grid-template-columns: 1fr; }
   .sample-speed-ev-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }

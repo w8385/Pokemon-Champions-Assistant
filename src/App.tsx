@@ -81,6 +81,7 @@ type SampleDamageTarget = OpponentState & {
   spDefenseEv: number
   defenseNature: number
   spDefenseNature: number
+  moveName: string
 }
 
 type SavedSample = {
@@ -608,6 +609,7 @@ const blankSampleDamageTarget = (): SampleDamageTarget => ({
   spDefenseEv: 0,
   defenseNature: 1,
   spDefenseNature: 1,
+  moveName: '',
 })
 const defaultSampleDamageTargets: SampleDamageTarget[] = ['garchomp', 'primarina', 'rotom'].filter((key) => indexByKey.has(key)).map((key) => ({
   ...blankSampleDamageTarget(),
@@ -1214,6 +1216,7 @@ function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
         spDefenseEv: clampNonNegativeInt(raw.spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseNature: raw.defenseNature === 1.1 ? 1.1 : 1,
         spDefenseNature: raw.spDefenseNature === 1.1 ? 1.1 : 1,
+        moveName: typeof raw.moveName === 'string' ? raw.moveName : '',
       }
     })
     .filter((target): target is SampleDamageTarget => Boolean(target))
@@ -3473,17 +3476,7 @@ export default function App() {
     }))
     return { idx, member, row, cutoffs }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-  const sampleDamageMove = sampleConfirmedMoves[0] ?? ''
-  const sampleDamageMoveMetaBase = resolveMoveMeta(sampleDamageMove, sampleMoveOptions, movePoolByKey)
-  const sampleDamageMoveMeta = resolveAbilityAdjustedMoveMeta(sampleDamageMove, sampleDamageMoveMetaBase, sampleAbility)
-  const sampleDamageMoveType = sampleDamageMoveMeta?.type ?? null
-  const sampleDamageMoveCategory = sampleDamageMoveMeta?.category === 'physical' || sampleDamageMoveMeta?.category === 'special' ? sampleDamageMoveMeta.category : null
-  const sampleDamageMovePower = typeof sampleDamageMoveMeta?.power === 'number' ? sampleDamageMoveMeta.power : null
-  const sampleDamageEvStat = sampleDamageMoveCategory === 'physical'
-    ? { key: 'attack' as const, label: lt('공격 EV'), value: sampleForge.evs.attack }
-    : sampleDamageMoveCategory === 'special'
-      ? { key: 'spAttack' as const, label: lt('특공 EV'), value: sampleForge.evs.spAttack }
-      : null
+  const sampleDamageMoveChoices = Array.from(new Set(sampleRegisteredMoves.filter((move): move is string => Boolean(move.trim()))))
   const sampleAttackerStats = buildPartyBattleStats(sampleRow, sampleCalcMember)
   React.useEffect(() => {
     if (!sampleFixedMegaStone || !sampleForge.config.scarf) return
@@ -3495,7 +3488,13 @@ export default function App() {
     .slice(0, 8)
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    if (!row || !sampleDamageMovePower || !sampleDamageMoveCategory || !sampleDamageMoveType) return null
+    const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
+    const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, moveMetaBase, sampleAbility)
+    const moveType = moveMeta?.type ?? null
+    const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
+    const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
+    if (!row || !moveName || !movePower || !moveCategory || !moveType) return null
     const defenderStats = buildOpponentBattleStats(row, {
       hpEv: member.hpEv,
       defenseEv: member.defenseEv,
@@ -3503,17 +3502,17 @@ export default function App() {
       defenseNature: member.defenseNature,
       spDefenseNature: member.spDefenseNature,
     })
-    const effectivenessValue = typeEffectiveness(sampleDamageMoveType, row.types)
+    const effectivenessValue = typeEffectiveness(moveType, row.types)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAbility,
       attackerItem: sampleForge.item,
       defenderAbility: member.ability,
       defenderItem: member.item,
-      moveName: sampleDamageMove,
-      baseMoveType: sampleDamageMoveType,
-      moveType: sampleDamageMoveType,
-      movePower: sampleDamageMovePower,
-      mode: sampleDamageMoveCategory,
+      moveName,
+      baseMoveType: moveType,
+      moveType,
+      movePower,
+      mode: moveCategory,
       effectiveness: effectivenessValue,
       attackStage: 0,
       defenseStage: 0,
@@ -3536,8 +3535,10 @@ export default function App() {
       auroraVeil: false,
       friendGuard: false,
     })
-    const damage = calcDamage(sampleAttackerStats, defenderStats, sampleDamageMovePower, sampleDamageMoveCategory, resolveStabMultiplier(sampleRow.types, sampleDamageMoveType, sampleAbility, true), modifierPack.effectiveness, sampleDamageMoveMeta, modifierPack)
-    return { idx, member, row, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
+    const attackStatLabel = moveCategory === 'physical' ? 'Atk' : 'SpA'
+    const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
+    const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(sampleRow.types, moveType, sampleAbility, true), modifierPack.effectiveness, moveMeta, modifierPack)
+    return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
 
   const addSampleSpeedTarget = (key: string) => {
@@ -3560,7 +3561,7 @@ export default function App() {
   const addSampleDamageTarget = (key: string) => {
     setSampleDamageTargets((prev) => ([
       ...prev,
-      { ...blankSampleDamageTarget(), key },
+      { ...blankSampleDamageTarget(), key, moveName: sampleDamageMoveChoices[0] ?? '' },
     ]))
     setSampleDamageSearch('')
     setSampleDamageSearchOpen(false)
@@ -5207,20 +5208,30 @@ export default function App() {
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
                     <strong>{displayName(sampleRow, siteLanguage)}</strong>
                     <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
-                    {sampleDamageEvStat ? <div className="sample-inline-ev-editor">
-                      <span className="sample-inline-ev-label">{sampleDamageEvStat.label} · {lt('현재 기술 기준')}</span>
-                      <div className="sample-speed-ev-row">
-                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, sampleDamageEvStat.key, clampNonNegativeInt(prev.evs[sampleDamageEvStat.key] - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
-                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleDamageEvStat.value} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, sampleDamageEvStat.key, clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
-                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, sampleDamageEvStat.key, clampNonNegativeInt(prev.evs[sampleDamageEvStat.key] + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
+                    <div className="sample-inline-ev-editor sample-inline-ev-editor-dual">
+                      <div>
+                        <span className="sample-inline-ev-label">{lt('공격 EV')}</span>
+                        <div className="sample-speed-ev-row">
+                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(prev.evs.attack - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
+                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.attack} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
+                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(prev.evs.attack + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
+                        </div>
                       </div>
-                    </div> : null}
+                      <div>
+                        <span className="sample-inline-ev-label">{lt('특공 EV')}</span>
+                        <div className="sample-speed-ev-row">
+                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(prev.evs.spAttack - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
+                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.spAttack} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
+                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(prev.evs.spAttack + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
+                        </div>
+                      </div>
+                    </div>
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
                       <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                      <span className="pick-badge">{sampleDamageMove || lt('등록 기술 없음')}</span>
-                      {sampleDamageMoveCategory === 'physical' ? <span className="pick-badge">Atk {sampleAttackerStats.attack}</span> : sampleDamageMoveCategory === 'special' ? <span className="pick-badge">SpA {sampleAttackerStats.spAttack}</span> : null}
+                      <span className="pick-badge">Atk {sampleAttackerStats.attack}</span>
+                      <span className="pick-badge">SpA {sampleAttackerStats.spAttack}</span>
                     </div>
                   </div>
                 </div>
@@ -5235,6 +5246,13 @@ export default function App() {
                     <div className="sample-workbench-card-body sample-damage-card-body">
                       <div className="sample-workbench-sidepanel">
                         <div className="sample-damage-target-controls sample-damage-target-controls-wide">
+                          <label>
+                            {lt('기술 구성')}
+                            <select value={entry.member.moveName || ''} onChange={(e) => updateSampleDamageTarget(entry.idx, { moveName: e.target.value })}>
+                              {!sampleDamageMoveChoices.length ? <option value="">{lt('등록 기술 없음')}</option> : null}
+                              {sampleDamageMoveChoices.map((move) => <option key={`sample-damage-move-${entry.idx}-${move}`} value={move}>{move}</option>)}
+                            </select>
+                          </label>
                           <label>
                             HP EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -5259,6 +5277,8 @@ export default function App() {
                       </div>
                       <div className="sample-workbench-mainpanel">
                         <div className="pick-summary-badges sample-workbench-metric-badges">
+                          <span className="pick-badge">{entry.moveName}</span>
+                          <span className="pick-badge">{entry.attackStatLabel} {entry.attackStatValue}</span>
                           <span className="pick-badge">HP {entry.defenderStats.hp}</span>
                           <span className="pick-badge">Def {entry.defenderStats.defense}</span>
                           <span className="pick-badge">SpD {entry.defenderStats.spDefense}</span>
