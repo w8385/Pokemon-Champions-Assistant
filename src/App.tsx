@@ -4997,11 +4997,11 @@ export default function App() {
                     <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
                     <span>{lt('빛의장막')}</span>
                   </label>
-                  <label className="calc-toggle-box span-2">
+                  <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
                   </label>
-                  <label className="calc-toggle-box span-2">
+                  <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} />
                     <span>{lt('프렌드가드')}</span>
                   </label>
