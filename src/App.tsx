@@ -276,7 +276,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
-    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party',
+    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Read', '데미지': 'Damage', '비율': 'Percent', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 싱글 배틀 도우미': 'Pokémon Champions Singles Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 싱글 배틀 도구': 'A Pokémon Champions singles tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 싱글 배틀 도우미 대표 이미지': 'Pokémon Champions Singles Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.',
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
@@ -304,7 +304,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
-    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能',
+    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '데미지': 'ダメージ', '비율': '割合', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 싱글 배틀 도우미': 'ポケモンチャンピオンズ シングルバトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 싱글 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのシングルバトルツール。', '포켓몬 챔피언스 싱글 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ シングルバトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
   },
 }
@@ -320,6 +320,22 @@ function titleCaseSlug(value: string) {
 
 function emptySlotLabel(index: number, language: SiteLanguage) {
   return `${translateText(language, '빈 슬롯')} ${index + 1}`
+}
+
+function slotNumberLabel(index: number, language: SiteLanguage) {
+  return language === 'en' ? `Slot ${index + 1}` : language === 'ja' ? `${index + 1}番` : `${index + 1}번`
+}
+
+function applyToSlotLabel(index: number, language: SiteLanguage) {
+  return language === 'en' ? `Apply to Slot ${index + 1}` : language === 'ja' ? `${index + 1}番に適用` : `${index + 1}번 슬롯에 적용`
+}
+
+function searchSlotPlaceholder(index: number, language: SiteLanguage) {
+  return language === 'en' ? `Search slot ${index + 1} and press Enter` : language === 'ja' ? `${index + 1}番スロットを検索してEnter` : `${index + 1}번 슬롯 검색 후 엔터`
+}
+
+function savedSampleCountLabel(count: number, language: SiteLanguage) {
+  return language === 'en' ? String(count) : language === 'ja' ? `${count}件` : `${count}개`
 }
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
@@ -2773,6 +2789,28 @@ export default function App() {
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
 
   React.useEffect(() => {
+    if (typeof document === 'undefined') return
+    const siteTitle = lt('포켓몬 챔피언스 싱글 배틀 도우미')
+    const siteDescription = lt('파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 싱글 배틀 도구')
+    const siteImageAlt = lt('포켓몬 챔피언스 싱글 배틀 도우미 대표 이미지')
+    document.title = siteTitle
+    const setNamedMeta = (name: string, content: string) => {
+      const target = document.querySelector(`meta[name="${name}"]`)
+      if (target) target.setAttribute('content', content)
+    }
+    const setPropertyMeta = (property: string, content: string) => {
+      const target = document.querySelector(`meta[property="${property}"]`)
+      if (target) target.setAttribute('content', content)
+    }
+    setNamedMeta('description', siteDescription)
+    setNamedMeta('twitter:title', siteTitle)
+    setNamedMeta('twitter:description', siteDescription)
+    setPropertyMeta('og:title', siteTitle)
+    setPropertyMeta('og:description', siteDescription)
+    setPropertyMeta('og:image:alt', siteImageAlt)
+  }, [lt])
+
+  React.useEffect(() => {
     const safeSelectedMy = sanitizeSelectedIndex(selectedMy, party.length)
     const safeSelectedOpp = sanitizeSelectedIndex(selectedOpp, opponents.length)
     if (safeSelectedMy !== selectedMy) setSelectedMy(safeSelectedMy)
@@ -4133,7 +4171,7 @@ export default function App() {
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
       setSampleLabelDraft('')
     } catch {
-      if (typeof window !== 'undefined') window.alert(siteLanguage === 'en' ? 'Import failed: please check the JSON format.' : siteLanguage === 'ja' ? '読み込みに失敗しました。JSON形式を確認してください。' : '불러오기 실패: JSON 형식을 확인하세요.')
+      if (typeof window !== 'undefined') window.alert(lt('불러오기 실패: JSON 형식을 확인하세요.'))
     } finally {
       event.target.value = ''
     }
@@ -4146,7 +4184,7 @@ export default function App() {
           <div className="header-title-row">
             <div className="header-title-stack">
               <div>
-                <h1>Pokemon Champions Battle Assistant</h1>
+                <h1>{lt('포켓몬 챔피언스 싱글 배틀 도우미')}</h1>
                 <p>{mainSection === 'home' ? lt('포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
@@ -4158,19 +4196,19 @@ export default function App() {
           </div>
           <div className="header-utility-row">
             <div className="language-menu-wrap header-language-wrap">
-              <button type="button" className="icon-button" aria-label={siteLanguage === 'en' ? 'Choose language' : siteLanguage === 'ja' ? '言語選択' : '언어 선택'} title={siteLanguage === 'en' ? 'Language' : siteLanguage === 'ja' ? '言語' : '언어'} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
+              <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
                 <LanguageIcon />
               </button>
               {languageMenuOpen ? (
                 <div className="language-menu">
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'ko' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ko'); setLanguageMenuOpen(false) }}>한국어</button>
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'ja' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ja'); setLanguageMenuOpen(false) }}>日本語</button>
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'en' ? 'active' : ''}`} onClick={() => { setSiteLanguage('en'); setLanguageMenuOpen(false) }}>English</button>
+                  <button type="button" className={`language-menu-item ${siteLanguage === 'ko' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ko'); setLanguageMenuOpen(false) }}>{lt('한국어')}</button>
+                  <button type="button" className={`language-menu-item ${siteLanguage === 'ja' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ja'); setLanguageMenuOpen(false) }}>{lt('일본어')}</button>
+                  <button type="button" className={`language-menu-item ${siteLanguage === 'en' ? 'active' : ''}`} onClick={() => { setSiteLanguage('en'); setLanguageMenuOpen(false) }}>{lt('영어')}</button>
                 </div>
               ) : null}
             </div>
             <div className="settings-menu-wrap">
-              <button type="button" className="icon-button" aria-label={siteLanguage === 'en' ? 'Settings' : siteLanguage === 'ja' ? '設定' : '설정'} title={siteLanguage === 'en' ? 'Settings' : siteLanguage === 'ja' ? '設定' : '설정'} onClick={() => { setSettingsMenuOpen((prev) => !prev); setLanguageMenuOpen(false) }}>
+              <button type="button" className="icon-button" aria-label={lt('설정')} title={lt('설정')} onClick={() => { setSettingsMenuOpen((prev) => !prev); setLanguageMenuOpen(false) }}>
                 <SettingsIcon />
               </button>
               {settingsMenuOpen ? (
@@ -4725,7 +4763,7 @@ export default function App() {
                 <input
                   ref={opponentQuickInputRef}
                   value={opponentQuickSearch}
-                  placeholder={siteLanguage === 'en' ? `Search slot ${selectedOpp + 1} and press Enter` : siteLanguage === 'ja' ? `${selectedOpp + 1}番スロットを検索してEnter` : `${selectedOpp + 1}번 슬롯 검색 후 엔터`}
+                  placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
                   onFocus={() => setActiveSearchField({ side: 'opponentQuick', idx: 0 })}
                   onBlur={() => setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)}
                   onChange={(e) => {
@@ -4966,7 +5004,7 @@ export default function App() {
                 </div>
                 <label>
                   {lt('메모')}
-                  <textarea value={oppMember.notes} placeholder={siteLanguage === 'en' ? 'e.g. likely physical set' : siteLanguage === 'ja' ? '例: 物理型の可能性高め' : '예: 물리형 가능성 높음'} onChange={(e) => {
+                  <textarea value={oppMember.notes} placeholder={lt('상대 메모 예시')} onChange={(e) => {
                     const next = [...opponents]
                     next[selectedOpp] = { ...oppMember, notes: e.target.value }
                     setOpponents(next)
@@ -5009,7 +5047,7 @@ export default function App() {
           <h2>{lt('상대 엔트리 메모')}</h2>
           <textarea
             value={battleNote}
-            placeholder={siteLanguage === 'en' ? 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner' : siteLanguage === 'ja' ? '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り' : '예: 드래펄트 스카프 가능성 높음 / 로토무 볼체 공개 / 미믹큐는 막판 스윕용으로 보임'}
+            placeholder={lt('엔트리 메모 예시')}
             onChange={(e) => setBattleNote(e.target.value)}
           />
         </section>
@@ -5046,7 +5084,7 @@ export default function App() {
                 <span className="pick-badge sample-overview-badge sample-overview-badge-accent">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
               </div>
               <div className="sample-overview-inline-save">
-                <input className="sample-label-input" value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                <input className="sample-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
                 <button type="button" className="action-button sample-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
               </div>
             </div>
@@ -5066,14 +5104,14 @@ export default function App() {
                       className={`team-pill sample-overview-slot-pill ${selectedMy === idx ? 'active' : ''}`}
                       onClick={() => setSelectedMy(idx)}
                     >
-                      {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
+                      {slotNumberLabel(idx, siteLanguage)} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
                     </button>
                   )
                 })}
               </div>
               <div className="pick-row sample-overview-actions">
                 <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
-                <button type="button" className="pick-chip sample-overview-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{siteLanguage === 'en' ? `Apply to Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番に適用` : `${selectedMy + 1}번 슬롯에 적용`}</button>
+                <button type="button" className="pick-chip sample-overview-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
               </div>
             </div>
           </div>
@@ -5368,7 +5406,7 @@ export default function App() {
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 스피드')}</strong>
-                <span className="muted-inline">추월컷 계산</span>
+                <span className="muted-inline">{lt('추월컷 계산')}</span>
               </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
@@ -5425,7 +5463,7 @@ export default function App() {
                             <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className={`sample-speed-cut-card ${cutoff.result === lt('내가 앞섬') ? 'ahead' : cutoff.result === lt('동속') ? 'tie' : 'behind'}`}>
                               <strong>{cutoff.label}</strong>
                               <div className="pick-summary-badges">
-                                <span className="pick-badge">현재 {cutoff.speed}</span>
+                                <span className="pick-badge">{lt('현재 속도')} {cutoff.speed}</span>
                                 <span className="pick-badge enemy">{cutoff.result}</span>
                               </div>
                               <div className="pick-summary-badges">
@@ -5470,8 +5508,8 @@ export default function App() {
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
                       <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                      <span className="pick-badge">공격 {sampleAttackerStats.attack}</span>
-                      <span className="pick-badge">특수공격 {sampleAttackerStats.spAttack}</span>
+                      <span className="pick-badge">{lt('공격')} {sampleAttackerStats.attack}</span>
+                      <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
                     </div>
                   </div>
                 </div>
@@ -5549,27 +5587,27 @@ export default function App() {
                           </label> : null}
                           {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown, resolvedPower: entry.movePower, totalPower: entry.moveHitSummary?.totalPower ?? null })}</div> : null}
                           <label className="sample-bulk-hp-row">
-                            체력 EV
+                            {lt('체력 EV')}
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
                           <div className="sample-bulk-split-grid">
                             <div className="sample-bulk-pair-row">
                               <label>
-                                방어 EV
+                                {lt('방어 EV')}
                                 <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                               </label>
                               <label className="sample-bulk-check-label">
-                                <span>+방어</span>
+                                <span>{lt('+방어')}</span>
                                 <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
                               </label>
                             </div>
                             <div className="sample-bulk-pair-row">
                               <label>
-                                특수방어 EV
+                                {lt('특수방어 EV')}
                                 <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                               </label>
                               <label className="sample-bulk-check-label">
-                                <span>+특수방어</span>
+                                <span>{lt('+특수방어')}</span>
                                 <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                               </label>
                             </div>
@@ -5581,27 +5619,27 @@ export default function App() {
                           <span className="pick-badge">{entry.moveName || lt('등록 기술 없음')}</span>
                           <span className="pick-badge">{entry.attackStatLabel} {entry.attackStatValue}</span>
                           {entry.defenderStats ? <>
-                            <span className="pick-badge">체력 {entry.defenderStats.hp}</span>
-                            <span className="pick-badge">방어 {entry.defenderStats.defense}</span>
-                            <span className="pick-badge">특수방어 {entry.defenderStats.spDefense}</span>
+                            <span className="pick-badge">{lt('체력')} {entry.defenderStats.hp}</span>
+                            <span className="pick-badge">{lt('방어')} {entry.defenderStats.defense}</span>
+                            <span className="pick-badge">{lt('특수방어')} {entry.defenderStats.spDefense}</span>
                           </> : null}
                         </div>
                         {entry.damage ? <div className="sample-damage-metric-grid">
                           <div className="sample-damage-metric-box">
-                            <span className="sample-damage-metric-label">실대미지</span>
+                            <span className="sample-damage-metric-label">{lt('실대미지')}</span>
                             <strong>{entry.damage.min} ~ {entry.damage.max}</strong>
                           </div>
                           <div className="sample-damage-metric-box enemy">
-                            <span className="sample-damage-metric-label">체력비율</span>
+                            <span className="sample-damage-metric-label">{lt('체력비율')}</span>
                             <strong>{entry.damage.minPct}% ~ {entry.damage.maxPct}%</strong>
                           </div>
                           <div className="sample-damage-metric-box verdict">
-                            <span className="sample-damage-metric-label">확정 N타</span>
+                            <span className="sample-damage-metric-label">{lt('확정 N타')}</span>
                             <strong>{entry.verdict}</strong>
                           </div>
                         </div> : <div className="sample-damage-metric-grid">
                           <div className="sample-damage-metric-box verdict unavailable">
-                            <span className="sample-damage-metric-label">계산 상태</span>
+                            <span className="sample-damage-metric-label">{lt('계산 상태')}</span>
                             <strong>{entry.unavailableReason || entry.verdict}</strong>
                           </div>
                         </div>}
@@ -5619,7 +5657,7 @@ export default function App() {
               <span>{lt('저장한 샘플')}</span>
               <div className="pick-summary-badges saved-sample-summary-badges">
                 {savedSamples[0] ? <span className="pick-badge saved-sample-latest-badge">{savedSamples[0].label}</span> : null}
-                <span className="pick-badge">{savedSamples.length}{siteLanguage === 'en' ? '' : siteLanguage === 'ja' ? '件' : '개'}</span>
+                <span className="pick-badge">{savedSampleCountLabel(savedSamples.length, siteLanguage)}</span>
               </div>
             </summary>
             <div className="saved-sample-drawer-body">
@@ -5959,7 +5997,7 @@ export default function App() {
                     <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
                   </label> : <div className="calc-lock-box">{lt('위력')} {activeDamageMovePower}</div>}
                   {!activeDamageMoveType ? <label>
-                    자속
+                    {lt('자속')}
                     <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
                       <option value={1}>{lt('없음')}</option>
                       <option value={1.5}>1.5</option>
@@ -5968,7 +6006,7 @@ export default function App() {
                   </label> : usesTypeChangeStabAbility ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} />
                     <span>{lt('타입변환 자속')} {autoStab}</span>
-                  </label> : <div className="calc-lock-box">자속 {autoStab}</div>}
+                  </label> : <div className="calc-lock-box">{lt('자속')} {autoStab}</div>}
                   {!activeDamageMoveType ? <label>
                     {lt('상성')}
                     <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
@@ -6043,15 +6081,15 @@ export default function App() {
                       </select>
                     </label>
                     <label>
-                      상대 체력
+                      {lt('상대 체력')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label>
-                      상대 방어
+                      {lt('상대 방어')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentDefenseEv} onChange={(e) => updateOpponentBulkState({ defenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label>
-                      상대 특수방어
+                      {lt('상대 특수방어')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpDefenseEv} onChange={(e) => updateOpponentBulkState({ spDefenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label className="calc-toggle-box">
@@ -6060,7 +6098,7 @@ export default function App() {
                     </label>
                     <label className="calc-toggle-box">
                       <input type="checkbox" checked={calcOpponentSpDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                      <span>+특수방어 성격</span>
+                      <span>{lt('+특수방어 성격')}</span>
                     </label>
                   </>}
                   <label>
@@ -6124,15 +6162,15 @@ export default function App() {
             </div>
             <div className="damage-summary-grid">
               <div className="damage-summary-card verdict">
-                <span>{siteLanguage === 'en' ? 'Read' : siteLanguage === 'ja' ? '判定' : '판정'}</span>
+                <span>{lt('판정')}</span>
                 <strong>{damageVerdict}</strong>
               </div>
               <div className="damage-summary-card">
-                <span>{siteLanguage === 'en' ? 'Damage' : siteLanguage === 'ja' ? 'ダメージ' : '데미지'}</span>
+                <span>{lt('데미지')}</span>
                 <strong>{damage.min} ~ {damage.max}</strong>
               </div>
               <div className="damage-summary-card accent">
-                <span>{siteLanguage === 'en' ? 'Percent' : siteLanguage === 'ja' ? '割合' : '비율'}</span>
+                <span>{lt('비율')}</span>
                 <strong>{damage.minPct}% ~ {damage.maxPct}%</strong>
               </div>
             </div>
