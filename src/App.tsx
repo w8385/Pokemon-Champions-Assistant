@@ -4599,6 +4599,7 @@ export default function App() {
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const memberSuggestedMoveSet = suggestedMoveGroupsForRow(row, memberMoveOptions, movePoolByKey, memberMoveSet)
                 const memberTopSuggestedMoves = topSuggestedMoves(memberSuggestedMoveSet).filter((move) => !(confirmedMovesByKey[member.key] ?? []).includes(move))
+                const memberTopSuggestedMoveSet = new Set(memberTopSuggestedMoves)
                 const partySpeciesMenuId = `party-species-${idx}`
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const partyItemMenuId = `party-item-${idx}`
@@ -4904,13 +4905,13 @@ export default function App() {
                           </div>
                         </div> : null}
                         <div className="move-chip-wrap">
-                          {memberSuggestedMoveSet.core.map((move) => (
+                          {memberSuggestedMoveSet.core.filter((move) => !memberTopSuggestedMoveSet.has(move)).map((move) => (
                             <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
-                          {(memberSuggestedMoveSet.options ?? []).map((move) => (
+                          {(memberSuggestedMoveSet.options ?? []).filter((move) => !memberTopSuggestedMoveSet.has(move)).map((move) => (
                             <button key={`party-opt-${member.key}-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
-                          {(memberSuggestedMoveSet.utility ?? []).map((move) => (
+                          {(memberSuggestedMoveSet.utility ?? []).filter((move) => !memberTopSuggestedMoveSet.has(move)).map((move) => (
                             <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                         </div>
