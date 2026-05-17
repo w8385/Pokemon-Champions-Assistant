@@ -4981,14 +4981,28 @@ export default function App() {
             </div>
             <div className="sample-overview-card sample-workflow-card">
               <span className="muted">{lt('구성')}</span>
-              <strong>{lt('저장/적용')}</strong>
+              <strong>{lt('파티 슬롯에 적용')}</strong>
               <div className="pick-summary-badges">
-                <span className="pick-badge">{lt('파티 슬롯')} {selectedMy + 1}</span>
                 <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              </div>
+              <div className="team-strip sample-slot-strip sample-overview-slot-strip">
+                {party.map((member, idx) => {
+                  const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                  return (
+                    <button
+                      key={`overview-apply-slot-pill-${idx}`}
+                      type="button"
+                      className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
+                      onClick={() => setSelectedMy(idx)}
+                    >
+                      {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
+                    </button>
+                  )
+                })}
               </div>
               <div className="pick-row sample-overview-actions">
                 <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
-                <button type="button" className="pick-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{lt('파티 슬롯에 적용')}</button>
+                <button type="button" className="pick-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{siteLanguage === 'en' ? `Apply to Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番に適用` : `${selectedMy + 1}번 슬롯에 적용`}</button>
               </div>
             </div>
           </div>
@@ -5184,34 +5198,6 @@ export default function App() {
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 기술')}</strong>
                 <span className="muted-inline">{lt('내 파티 관리처럼 직접 기술을 등록')}</span>
-              </div>
-              <div className="sample-save-box flat-sample-save-box">
-                <details className="sample-drawer sample-apply-drawer sample-managed-drawer">
-                  <summary className="sample-drawer-summary sample-managed-summary">
-                    <span>{lt('파티 슬롯에 적용')}</span>
-                    <div className="pick-summary-badges sample-apply-summary-badges">
-                      <span className="pick-badge">{siteLanguage === 'en' ? `Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番` : `${selectedMy + 1}번`}</span>
-                      <span className="pick-badge sample-apply-current-badge">{displayName(sampleRow, siteLanguage)}</span>
-                    </div>
-                  </summary>
-                  <div className="sample-apply-strip">
-                    <div className="team-strip sample-slot-strip">
-                      {party.map((member, idx) => {
-                        const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                        return (
-                          <button
-                            key={`apply-slot-pill-${idx}`}
-                            type="button"
-                            className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
-                            onClick={() => applySampleToPartySlot(idx)}
-                          >
-                            {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </details>
               </div>
               <>
                   <div className="sample-tracking-cluster">
