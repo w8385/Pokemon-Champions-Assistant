@@ -6164,7 +6164,7 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              <div className="damage-side-moves">
+              <div className="damage-side-moves damage-side-moves-player">
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
                   const active = !attackFromOpponent && activeDamageMove === move
