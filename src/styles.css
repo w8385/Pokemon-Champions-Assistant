@@ -904,6 +904,11 @@ header p {
   max-width: min(420px, calc(100vw - 48px));
   border-radius: 0 0 12px 12px;
 }
+.sample-registered-move-grid > .sample-registered-move-slot:nth-child(n + 3) .move-autocomplete-menu {
+  top: auto;
+  bottom: calc(100% - 1px);
+  border-radius: 12px 12px 0 0;
+}
 .party-meta-popover .move-autocomplete-menu {
   position: static;
   top: auto;
