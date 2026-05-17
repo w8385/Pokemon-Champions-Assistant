@@ -916,6 +916,34 @@ function autoMoveGroupsForRow(row: Row | null | undefined, moveOptions: MoveOpti
   }
 }
 
+function mergeMoveGroupLists(...groups: (string[] | undefined)[]) {
+  const seen = new Set<string>()
+  const merged: string[] = []
+  for (const group of groups) {
+    for (const move of group ?? []) {
+      if (!move || seen.has(move)) continue
+      seen.add(move)
+      merged.push(move)
+    }
+  }
+  return merged
+}
+
+function suggestedMoveGroupsForRow(
+  row: Row | null | undefined,
+  moveOptions: MoveOption[],
+  movePools: Record<string, MovePoolState>,
+  curatedEntry?: typeof sampleMoves[number] | null,
+) {
+  const auto = autoMoveGroupsForRow(row, moveOptions, movePools)
+  if (!curatedEntry && !auto) return null
+  return {
+    core: mergeMoveGroupLists(curatedEntry?.core, auto?.core).slice(0, 10),
+    options: mergeMoveGroupLists(curatedEntry?.options, auto?.options, auto?.core).filter((move) => !mergeMoveGroupLists(curatedEntry?.core, auto?.core).includes(move)).slice(0, 16),
+    utility: mergeMoveGroupLists(curatedEntry?.utility, auto?.utility).filter((move) => !mergeMoveGroupLists(curatedEntry?.core, auto?.core, curatedEntry?.options, auto?.options).includes(move)).slice(0, 12),
+  }
+}
+
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
@@ -3505,7 +3533,7 @@ export default function App() {
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
-  const sampleSuggestedMoveSet = sampleMoveSet ?? autoMoveGroupsForRow(sampleRow, sampleMoveOptions, movePoolByKey)
+  const sampleSuggestedMoveSet = suggestedMoveGroupsForRow(sampleRow, sampleMoveOptions, movePoolByKey, sampleMoveSet)
   const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
   const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
@@ -4477,7 +4505,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
-                const memberSuggestedMoveSet = memberMoveSet ?? autoMoveGroupsForRow(row, memberMoveOptions, movePoolByKey)
+                const memberSuggestedMoveSet = suggestedMoveGroupsForRow(row, memberMoveOptions, movePoolByKey, memberMoveSet)
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
