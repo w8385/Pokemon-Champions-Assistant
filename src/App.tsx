@@ -5186,18 +5186,6 @@ export default function App() {
                 <span className="muted-inline">{lt('내 파티 관리처럼 직접 기술을 등록')}</span>
               </div>
               <div className="sample-save-box flat-sample-save-box">
-                <div className="sample-save-head">
-                  <div className="sample-save-head-topline">
-                    <span className="muted-inline sample-work-draft-label">{sampleLabelDraft.trim() || lt('샘플 이름')}</span>
-                  </div>
-                </div>
-                <label className="sample-label-field">
-                  <span className="sample-label-caption">{lt('샘플 이름')}</span>
-                  <input className="sample-label-input" value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
-                </label>
-                <div className="sample-action-row sample-save-action-row">
-                  <button type="button" className="action-button sample-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
-                </div>
                 <details className="sample-drawer sample-apply-drawer sample-managed-drawer">
                   <summary className="sample-drawer-summary sample-managed-summary">
                     <span>{lt('파티 슬롯에 적용')}</span>
