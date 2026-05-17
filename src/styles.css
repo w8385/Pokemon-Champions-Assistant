@@ -4740,6 +4740,9 @@ textarea { min-height: 72px; resize: vertical; }
     grid-template-columns: 1fr;
     gap: 6px;
   }
+  .opponent-revealed-moves-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .damage-side-moves-player > .damage-move-chip,
   .damage-side-moves > .damage-move-chip {
     width: 100%;
