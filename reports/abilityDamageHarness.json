@@ -1,12 +1,14 @@
 {
-  "generatedAt": "2026-05-15T13:21:41.325Z",
+  "generatedAt": "2026-05-17T10:08:40.548Z",
   "totalAbilities": 190,
-  "implementedCount": 27,
+  "implementedCount": 37,
   "categories": {
     "implemented": {
-      "count": 27,
+      "count": 37,
       "abilities": [
         "adaptability",
+        "aerilate",
+        "dragonize",
         "dry-skin",
         "earth-eater",
         "fairy-aura",
@@ -17,18 +19,26 @@
         "heatproof",
         "huge-power",
         "hustle",
+        "iron-fist",
         "levitate",
         "lightning-rod",
+        "liquid-voice",
+        "mega-launcher",
         "motor-drive",
+        "pixilate",
         "protean",
         "pure-power",
+        "refrigerate",
         "sand-force",
         "sap-sipper",
+        "sharpness",
         "sniper",
         "solar-power",
         "solid-rock",
+        "strong-jaw",
         "technician",
         "thick-fat",
+        "tough-claws",
         "unaware",
         "volt-absorb",
         "water-absorb",
@@ -36,20 +46,10 @@
       ]
     },
     "requiresMoveTags": {
-      "count": 12,
+      "count": 2,
       "abilities": [
-        "aerilate",
-        "dragonize",
-        "iron-fist",
-        "liquid-voice",
-        "mega-launcher",
         "mega-sol",
-        "piercing-drill",
-        "pixilate",
-        "refrigerate",
-        "sharpness",
-        "strong-jaw",
-        "tough-claws"
+        "piercing-drill"
       ]
     },
     "requiresHpOrStatusContext": {
@@ -233,14 +233,12 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 54,
+  "damageRelevantMissingCount": 44,
   "damageRelevantMissing": [
-    "aerilate",
     "analytic",
     "berserk",
     "blaze",
     "chlorophyll",
-    "dragonize",
     "drizzle",
     "drought",
     "electromorphosis",
@@ -248,11 +246,8 @@
     "gale-wings",
     "hydration",
     "ice-body",
-    "iron-fist",
     "leaf-guard",
-    "liquid-voice",
     "marvel-scale",
-    "mega-launcher",
     "mega-sol",
     "merciless",
     "mimicry",
@@ -261,34 +256,29 @@
     "overgrow",
     "parental-bond",
     "piercing-drill",
-    "pixilate",
     "plus",
     "poison-heal",
     "quick-draw",
     "quick-feet",
     "rain-dish",
     "reckless",
-    "refrigerate",
     "rivalry",
     "sand-rush",
     "sand-spit",
     "sand-stream",
     "sand-veil",
-    "sharpness",
     "sheer-force",
     "skill-link",
     "slush-rush",
     "snow-cloak",
     "snow-warning",
     "stance-change",
-    "strong-jaw",
     "super-luck",
     "supreme-overlord",
     "surge-surfer",
     "swarm",
     "swift-swim",
-    "torrent",
-    "tough-claws"
+    "torrent"
   ],
   "notableDefenderAbilities": [
     {
@@ -310,6 +300,10 @@
     {
       "ability": "flash-fire",
       "implemented": true
+    },
+    {
+      "ability": "friend-guard",
+      "implemented": false
     },
     {
       "ability": "fur-coat",
