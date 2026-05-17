@@ -586,6 +586,63 @@ function itemSpriteSrc(key: string, item: string) {
   return `${import.meta.env.BASE_URL}item-generic.svg`
 }
 
+const DEFAULT_NATURE_BY_KEY: Partial<Record<string, NatureId>> = {
+  'mega-lopunny': 'jolly',
+  'mega-delphox': 'timid',
+  'garchomp': 'jolly',
+  'toxapex': 'bold',
+  'corviknight': 'impish',
+  'kingambit': 'adamant',
+}
+
+function defaultNatureForKey(key: string): NatureId {
+  if (!key) return 'jolly'
+  const override = DEFAULT_NATURE_BY_KEY[key]
+  if (override) return override
+
+  const row = indexByKey.get(key) ?? null
+  const curatedEntry = sampleMoves.find((entry) => entry.key === key)
+  const moveOptions = moveOptionsForEntry(curatedEntry)
+  const suggested = suggestedMoveGroupsForRow(row, moveOptions, {}, curatedEntry)
+  const topMoves = topSuggestedMoves(suggested, 6)
+
+  let physicalCount = 0
+  let specialCount = 0
+  let statusCount = 0
+  for (const move of topMoves) {
+    const meta = resolveMoveMeta(move, moveOptions, {})
+    if (meta?.category === 'physical') physicalCount += 1
+    else if (meta?.category === 'special') specialCount += 1
+    else if (meta?.category === 'status') statusCount += 1
+  }
+
+  if (row) {
+    const attackLead = row.attack - row.spAttack
+    const specialLead = row.spAttack - row.attack
+    const bulky = row.hp + Math.max(row.defense, row.spDefense) >= 180
+
+    if (bulky && row.speed <= 80 && statusCount >= Math.max(2, physicalCount + specialCount)) {
+      if (row.defense >= row.spDefense + 10) return attackLead >= 0 ? 'impish' : 'bold'
+      if (row.spDefense >= row.defense + 10) return attackLead >= 0 ? 'careful' : 'calm'
+    }
+    if (physicalCount >= specialCount + 1 || attackLead >= 20) {
+      return row.speed >= 90 ? 'jolly' : 'adamant'
+    }
+    if (specialCount >= physicalCount + 1 || specialLead >= 20) {
+      return row.speed >= 90 ? 'timid' : 'modest'
+    }
+    if (bulky && row.speed <= 80) {
+      if (row.defense >= row.spDefense + 10) return 'impish'
+      if (row.spDefense >= row.defense + 10) return 'careful'
+    }
+    return row.speed >= 90
+      ? (row.attack >= row.spAttack ? 'jolly' : 'timid')
+      : (row.attack >= row.spAttack ? 'adamant' : 'modest')
+  }
+
+  return 'jolly'
+}
+
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
 const blankPartyMember = (): PartyMember => ({ key: '', config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: '' })
 const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: defaultNatureForKey(key), scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
@@ -947,63 +1004,6 @@ function suggestedMoveGroupsForRow(
 function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>, limit = 10) {
   if (!groups) return []
   return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
-}
-
-const DEFAULT_NATURE_BY_KEY: Partial<Record<string, NatureId>> = {
-  'mega-lopunny': 'jolly',
-  'mega-delphox': 'timid',
-  'garchomp': 'jolly',
-  'toxapex': 'bold',
-  'corviknight': 'impish',
-  'kingambit': 'adamant',
-}
-
-function defaultNatureForKey(key: string): NatureId {
-  if (!key) return 'jolly'
-  const override = DEFAULT_NATURE_BY_KEY[key]
-  if (override) return override
-
-  const row = indexByKey.get(key) ?? null
-  const curatedEntry = sampleMoves.find((entry) => entry.key === key)
-  const moveOptions = moveOptionsForEntry(curatedEntry)
-  const suggested = suggestedMoveGroupsForRow(row, moveOptions, {}, curatedEntry)
-  const topMoves = topSuggestedMoves(suggested, 6)
-
-  let physicalCount = 0
-  let specialCount = 0
-  let statusCount = 0
-  for (const move of topMoves) {
-    const meta = resolveMoveMeta(move, moveOptions, {})
-    if (meta?.category === 'physical') physicalCount += 1
-    else if (meta?.category === 'special') specialCount += 1
-    else if (meta?.category === 'status') statusCount += 1
-  }
-
-  if (row) {
-    const attackLead = row.attack - row.spAttack
-    const specialLead = row.spAttack - row.attack
-    const bulky = row.hp + Math.max(row.defense, row.spDefense) >= 180
-
-    if (bulky && row.speed <= 80 && statusCount >= Math.max(2, physicalCount + specialCount)) {
-      if (row.defense >= row.spDefense + 10) return attackLead >= 0 ? 'impish' : 'bold'
-      if (row.spDefense >= row.defense + 10) return attackLead >= 0 ? 'careful' : 'calm'
-    }
-    if (physicalCount >= specialCount + 1 || attackLead >= 20) {
-      return row.speed >= 90 ? 'jolly' : 'adamant'
-    }
-    if (specialCount >= physicalCount + 1 || specialLead >= 20) {
-      return row.speed >= 90 ? 'timid' : 'modest'
-    }
-    if (bulky && row.speed <= 80) {
-      if (row.defense >= row.spDefense + 10) return 'impish'
-      if (row.spDefense >= row.defense + 10) return 'careful'
-    }
-    return row.speed >= 90
-      ? (row.attack >= row.spAttack ? 'jolly' : 'timid')
-      : (row.attack >= row.spAttack ? 'adamant' : 'modest')
-  }
-
-  return 'jolly'
 }
 
 const MOVE_NAME_ALIASES: Record<string, string> = {
