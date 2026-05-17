@@ -4691,4 +4691,33 @@ textarea { min-height: 72px; resize: vertical; }
     font-size: 14px;
     line-height: 1.5;
   }
+  .speed-plane-board {
+    min-height: 520px;
+  }
+  .speed-plane-plot {
+    top: 78px;
+    right: 6px;
+    bottom: 92px;
+    left: 34px;
+  }
+  .speed-plane-range-node {
+    --speed-node-column-gap: 8px;
+    --speed-node-card-width: 86px;
+  }
+  .speed-plane-range-node-head,
+  .speed-plane-range-node-tail {
+    padding: 6px 7px;
+    border-radius: 9px;
+  }
+  .speed-plane-range-node strong {
+    font-size: 12px;
+  }
+  .speed-plane-range-node span,
+  .speed-plane-range-marker {
+    font-size: 9px;
+  }
+  .speed-plane-range-line i {
+    width: 8px;
+    height: 8px;
+  }
 }

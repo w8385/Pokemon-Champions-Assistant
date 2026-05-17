@@ -3183,6 +3183,12 @@ export default function App() {
     const ratio = (clamped - speedAxisMin) / (speedAxisMax - speedAxisMin)
     return 100 - (ratio * 100)
   }
+  const speedBandLabelSideClass = (idx: number, total: number, left: number) => {
+    if (total <= 2) return left > 70 ? 'label-left' : 'label-right'
+    if (idx === total - 1) return 'label-left'
+    if (idx % 2 === 1) return 'label-left'
+    return 'label-right'
+  }
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
@@ -6107,7 +6113,7 @@ export default function App() {
                         const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
                         const guideHeight = Math.max(0, guideBottom - guideTop)
                         const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
-                        const labelSideClass = left > 70 ? 'label-left' : 'label-right'
+                        const labelSideClass = speedBandLabelSideClass(idx, opponentSpeedBands.length, left)
                         return (
                           <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
                             {rangeClass !== 'cross' && guideHeight > 0 ? <div className="speed-plane-guide" style={{ top: `${guideTop}%`, height: `${guideHeight}%` }} /> : null}
