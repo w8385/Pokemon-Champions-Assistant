@@ -1041,6 +1041,12 @@ header p {
 .compact-sample-builder-grid {
   gap: 12px;
 }
+.sample-single-pane-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.sample-single-pane-grid .flat-sample-main-card {
+  padding: 14px;
+}
 .flat-sample-move-card {
   position: sticky;
   top: 24px;
@@ -2131,8 +2137,8 @@ header p {
 }
 .sample-workbench-card-body {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 18px;
   align-items: start;
 }
 .sample-workbench-sidepanel,

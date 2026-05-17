@@ -5093,7 +5093,7 @@ export default function App() {
                   </div>
                 </>
             </div>
-          </div> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid">
+          </div> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 스피드')}</strong>
@@ -5177,7 +5177,7 @@ export default function App() {
                 )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
               </div>
             </div>
-          </div> : <div className="sample-builder-grid compact-sample-builder-grid">
+          </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 딜계산')}</strong>
