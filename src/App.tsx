@@ -589,9 +589,9 @@ function itemSpriteSrc(key: string, item: string) {
 
 const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
 const blankPartyMember = (): PartyMember => ({ key: '', config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: '' })
-const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
+const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: defaultNatureForKey(key), scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
 const emptyParty: PartyMember[] = Array.from({ length: defaultParty.length }, () => blankPartyMember())
-const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(starterKeys[0], ''), ability: defaultAbilityForKey(starterKeys[0]) })
+const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: defaultNatureForKey(starterKeys[0]), scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(starterKeys[0], ''), ability: defaultAbilityForKey(starterKeys[0]) })
 const blankOpponent = (): OpponentState => ({
   key: '',
   item: '',
@@ -950,6 +950,63 @@ function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>,
   return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
 }
 
+const DEFAULT_NATURE_BY_KEY: Partial<Record<string, NatureId>> = {
+  'mega-lopunny': 'jolly',
+  'mega-delphox': 'timid',
+  'garchomp': 'jolly',
+  'toxapex': 'bold',
+  'corviknight': 'impish',
+  'kingambit': 'adamant',
+}
+
+function defaultNatureForKey(key: string): NatureId {
+  if (!key) return 'jolly'
+  const override = DEFAULT_NATURE_BY_KEY[key]
+  if (override) return override
+
+  const row = indexByKey.get(key) ?? null
+  const curatedEntry = sampleMoves.find((entry) => entry.key === key)
+  const moveOptions = moveOptionsForEntry(curatedEntry)
+  const suggested = suggestedMoveGroupsForRow(row, moveOptions, {}, curatedEntry)
+  const topMoves = topSuggestedMoves(suggested, 6)
+
+  let physicalCount = 0
+  let specialCount = 0
+  let statusCount = 0
+  for (const move of topMoves) {
+    const meta = resolveMoveMeta(move, moveOptions, {})
+    if (meta?.category === 'physical') physicalCount += 1
+    else if (meta?.category === 'special') specialCount += 1
+    else if (meta?.category === 'status') statusCount += 1
+  }
+
+  if (row) {
+    const attackLead = row.attack - row.spAttack
+    const specialLead = row.spAttack - row.attack
+    const bulky = row.hp + Math.max(row.defense, row.spDefense) >= 180
+
+    if (bulky && row.speed <= 80 && statusCount >= Math.max(2, physicalCount + specialCount)) {
+      if (row.defense >= row.spDefense + 10) return attackLead >= 0 ? 'impish' : 'bold'
+      if (row.spDefense >= row.defense + 10) return attackLead >= 0 ? 'careful' : 'calm'
+    }
+    if (physicalCount >= specialCount + 1 || attackLead >= 20) {
+      return row.speed >= 90 ? 'jolly' : 'adamant'
+    }
+    if (specialCount >= physicalCount + 1 || specialLead >= 20) {
+      return row.speed >= 90 ? 'timid' : 'modest'
+    }
+    if (bulky && row.speed <= 80) {
+      if (row.defense >= row.spDefense + 10) return 'impish'
+      if (row.spDefense >= row.defense + 10) return 'careful'
+    }
+    return row.speed >= 90
+      ? (row.attack >= row.spAttack ? 'jolly' : 'timid')
+      : (row.attack >= row.spAttack ? 'adamant' : 'modest')
+  }
+
+  return 'jolly'
+}
+
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
@@ -1182,11 +1239,12 @@ function boostedStatForNature(natureId: NatureId): StatKey | null {
   return natureById.get(natureId)?.up ?? null
 }
 
-function sanitizeMemberConfig(input: unknown): MemberConfig {
+function sanitizeMemberConfig(input: unknown, key = ''): MemberConfig {
   const config = input && typeof input === 'object' ? (input as Partial<MemberConfig>) : {}
   const rawNature = typeof (config as { nature?: unknown }).nature === 'string' ? (config as { nature: NatureId }).nature : null
+  const legacyNature = legacyNatureFromBoostStat((config as { natureBoostStat?: unknown }).natureBoostStat)
   return {
-    nature: rawNature && natureById.has(rawNature) ? rawNature : legacyNatureFromBoostStat((config as { natureBoostStat?: unknown }).natureBoostStat),
+    nature: rawNature && natureById.has(rawNature) ? rawNature : (legacyNature || defaultNatureForKey(key)),
     scarf: Boolean(config.scarf),
     speedStage: clampSpeedStage(config.speedStage),
   }
@@ -1252,7 +1310,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
       if (raw.key && !indexByKey.has(raw.key)) return null
       return {
         key: raw.key,
-        config: sanitizeMemberConfig(raw.config),
+        config: sanitizeMemberConfig(raw.config, raw.key),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
@@ -3449,7 +3507,7 @@ export default function App() {
       const member = party[idx]
       if (!member) return
       const next = [...party]
-      next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item) }
+      next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item), config: { ...member.config, nature: defaultNatureForKey(key) } }
       setParty(next)
       setPartyItemDrafts((prev) => {
         const nextDrafts = [...prev]
@@ -3481,7 +3539,7 @@ export default function App() {
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
     } else {
-      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item) }))
+      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
       setSampleItemDraft(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
       setActiveSampleMetaEditor(null)
