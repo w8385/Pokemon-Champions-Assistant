@@ -1,13 +1,14 @@
 {
-  "generatedAt": "2026-05-17T10:39:03.184Z",
+  "generatedAt": "2026-05-17T10:43:39.534Z",
   "totalAbilities": 190,
-  "implementedCount": 43,
+  "implementedCount": 47,
   "categories": {
     "implemented": {
-      "count": 43,
+      "count": 47,
       "abilities": [
         "adaptability",
         "aerilate",
+        "analytic",
         "blaze",
         "dragonize",
         "dry-skin",
@@ -32,14 +33,17 @@
         "pixilate",
         "protean",
         "pure-power",
+        "reckless",
         "refrigerate",
         "sand-force",
         "sap-sipper",
         "sharpness",
+        "sheer-force",
         "sniper",
         "solar-power",
         "solid-rock",
         "strong-jaw",
+        "supreme-overlord",
         "swarm",
         "technician",
         "thick-fat",
@@ -68,9 +72,8 @@
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 15,
+      "count": 11,
       "abilities": [
-        "analytic",
         "electromorphosis",
         "gale-wings",
         "minus",
@@ -78,13 +81,10 @@
         "parental-bond",
         "plus",
         "quick-draw",
-        "reckless",
         "rivalry",
-        "sheer-force",
         "skill-link",
         "stance-change",
-        "super-luck",
-        "supreme-overlord"
+        "super-luck"
       ]
     },
     "manualBattleState": {
@@ -233,9 +233,8 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 38,
+  "damageRelevantMissingCount": 34,
   "damageRelevantMissing": [
-    "analytic",
     "berserk",
     "chlorophyll",
     "drizzle",
@@ -257,20 +256,17 @@
     "quick-draw",
     "quick-feet",
     "rain-dish",
-    "reckless",
     "rivalry",
     "sand-rush",
     "sand-spit",
     "sand-stream",
     "sand-veil",
-    "sheer-force",
     "skill-link",
     "slush-rush",
     "snow-cloak",
     "snow-warning",
     "stance-change",
     "super-luck",
-    "supreme-overlord",
     "surge-surfer",
     "swift-swim"
   ],
