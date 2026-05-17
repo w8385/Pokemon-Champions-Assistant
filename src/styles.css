@@ -2653,6 +2653,15 @@ header p {
   margin-top: 2px;
   gap: 7px;
 }
+.sample-overview-card-summary {
+  gap: 12px;
+}
+.sample-overview-badges-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
 .sample-overview-badge {
   min-height: 32px;
   max-width: 100%;
@@ -2662,10 +2671,41 @@ header p {
   color: #dbe7f3;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
 }
+.sample-overview-badge-rich {
+  min-height: 58px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  display: grid;
+  justify-items: flex-start;
+  align-content: center;
+  gap: 4px;
+  white-space: normal;
+  text-align: left;
+}
+.sample-overview-badge-rich em {
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #8da2b8;
+}
+.sample-overview-badge-rich strong {
+  display: block;
+  max-width: 100%;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #f8fbff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .sample-overview-badge-accent {
   border-color: rgba(96, 165, 250, 0.3);
   background: linear-gradient(180deg, rgba(30, 64, 175, 0.22), rgba(15, 23, 42, 0.94));
   color: #eff6ff;
+}
+.sample-overview-badge-accent em {
+  color: #bfd7ff;
 }
 .sample-overview-actions {
   display: flex;
@@ -2673,9 +2713,13 @@ header p {
   flex-wrap: wrap;
   margin-top: 2px;
 }
+.sample-overview-actions-summary {
+  margin-top: 0;
+}
 .sample-overview-chip {
-  min-height: 34px;
-  padding-inline: 13px;
+  min-height: 38px;
+  padding-inline: 14px;
+  border-radius: 12px;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.92));
   border-color: rgba(71, 85, 105, 0.56);
 }
@@ -4486,6 +4530,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-bulk-split-grid { grid-template-columns: 1fr; }
   .sample-bulk-pair-row { grid-template-columns: 1fr; }
   .sample-overview-inline-save { grid-template-columns: 1fr; }
+  .sample-overview-badges-summary { grid-template-columns: 1fr; }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }

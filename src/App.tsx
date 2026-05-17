@@ -5273,26 +5273,44 @@ export default function App() {
             </div>
           </div>
           <div className="team-strip-grid sample-overview-grid">
-            <div className="sample-overview-card">
+            <div className="sample-overview-card sample-overview-card-summary">
               <span className="muted">{lt('현재 화면')}</span>
               <strong>{displayName(sampleRow, siteLanguage)}</strong>
-              <div className="pick-summary-badges sample-overview-badges">
-                <span className="pick-badge sample-overview-badge sample-overview-badge-accent">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                <span className="pick-badge sample-overview-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
-                <span className="pick-badge sample-overview-badge">{lt('노력치 합')} {sampleEvTotal}</span>
+              <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary">
+                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
+                  <em>{lt('성격')}</em>
+                  <strong>{natureChipLabel(sampleForge.config.nature, siteLanguage)}</strong>
+                </span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
+                  <em>{lt('실수치 스피드')}</em>
+                  <strong>{partySpeedValue(sampleRow, sampleForge)}</strong>
+                </span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
+                  <em>{lt('노력치 합')}</em>
+                  <strong>{sampleEvTotal}</strong>
+                </span>
               </div>
-              <div className="pick-row sample-overview-actions">
+              <div className="pick-row sample-overview-actions sample-overview-actions-summary">
                 <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
                 <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
               </div>
             </div>
-            <div className="sample-overview-card">
+            <div className="sample-overview-card sample-overview-card-summary">
               <span className="muted">{lt('샘플 빌더')}</span>
               <strong>{sampleLabelDraft.trim() || lt('샘플 이름')}</strong>
-              <div className="pick-summary-badges sample-overview-badges">
-                <span className="pick-badge sample-overview-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                <span className="pick-badge sample-overview-badge">{sampleAbility || lt('미선택')}</span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-accent">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
+              <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary">
+                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
+                  <em>{lt('도구')}</em>
+                  <strong>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</strong>
+                </span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
+                  <em>{lt('특성')}</em>
+                  <strong>{sampleAbility || lt('미선택')}</strong>
+                </span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
+                  <em>{lt('확정 기술')}</em>
+                  <strong>{sampleConfirmedMoves.length}/4</strong>
+                </span>
               </div>
               <div className="sample-overview-inline-save">
                 <input className="sample-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
