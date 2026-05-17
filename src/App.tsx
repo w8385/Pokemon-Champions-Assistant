@@ -3495,6 +3495,26 @@ export default function App() {
   const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
     .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
     .slice(0, 8)
+
+  React.useEffect(() => {
+    const missingWeightTargets = sampleDamageTargets
+      .map((member) => member.key ? (indexByKey.get(member.key) ?? null) : null)
+      .filter((row): row is Row => Boolean(row && typeof row.id === 'number' && typeof row.key === 'string'))
+      .filter((row) => typeof row.weightKg !== 'number' && typeof weightByKey[row.key] !== 'number')
+    if (!missingWeightTargets.length) return
+    let cancelled = false
+    Array.from(new Map(missingWeightTargets.map((row) => [row.key, row])).values()).forEach((row) => {
+      fetchPokemonWeightKg(row.id)
+        .then((weightKg) => {
+          if (cancelled) return
+          setWeightByKey((prev) => prev[row.key] === weightKg ? prev : { ...prev, [row.key]: weightKg })
+        })
+        .catch(() => undefined)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [sampleDamageTargets, weightByKey])
   const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sampleForge.ability) : sampleForge.ability
   const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
   const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
