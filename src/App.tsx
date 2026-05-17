@@ -3350,9 +3350,6 @@ export default function App() {
   const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
   const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
-  const sampleTuningFocus = [...EFFORT_STAT_OPTIONS]
-    .map((stat) => ({ key: stat.key, value: sampleForge.evs[stat.key], label: translateText(siteLanguage, stat.label) }))
-    .sort((a, b) => b.value - a.value)[0]
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
   const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleForge)
   const sampleDamageMove = sampleConfirmedMoves[0] ?? ''
@@ -4854,26 +4851,6 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <details className="sample-drawer sample-tuning-drawer">
-                <summary className="sample-drawer-summary sample-tuning-summary">
-                  <span className="sample-tuning-summary-label">{lt('노력치 보정')}</span>
-                  <div className="pick-summary-badges sample-tuning-badges sample-tuning-summary-badges">
-                    <span className="pick-badge">{lt('매직넘버')} {sampleForge.tuning.magicNumber}</span>
-                    <span className="pick-badge">{lt('최대치')} {sampleForge.tuning.maxValue}</span>
-                    <span className="pick-badge sample-tuning-summary-focus">{sampleTuningFocus.value > 0 ? `${sampleTuningFocus.label} +${sampleTuningFocus.value}` : lt('미지정')}</span>
-                  </div>
-                </summary>
-                <div className="inline-controls sample-tuning-inline sample-tuning-body">
-                  <label>
-                    {lt('매직넘버')}
-                    <input type="number" min={0} max={255} value={sampleForge.tuning.magicNumber} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, magicNumber: clampNonNegativeInt(e.target.value, 255) } }))} />
-                  </label>
-                  <label>
-                    {lt('최대치')}
-                    <input type="number" min={0} max={255} value={sampleForge.tuning.maxValue} onChange={(e) => setSampleForge((prev) => ({ ...prev, tuning: { ...prev.tuning, maxValue: clampNonNegativeInt(e.target.value, 255) } }))} />
-                  </label>
-                </div>
-              </details>
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
@@ -4883,13 +4860,8 @@ export default function App() {
               <div className="sample-save-box flat-sample-save-box">
                 <div className="sample-save-head">
                   <div className="sample-save-head-topline">
-                    <div className="pick-summary-badges sample-work-badges">
-                      <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
-                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                    </div>
                     <span className="muted-inline sample-work-draft-label">{sampleLabelDraft.trim() || lt('샘플 이름')}</span>
                   </div>
-                  <button type="button" className="action-button sample-flow-button" onClick={() => setSampleTuningModalOpen(true)}>{lt('노력치 보정')}</button>
                 </div>
                 <label className="sample-label-field">
                   <span className="sample-label-caption">{lt('샘플 이름')}</span>
@@ -4974,37 +4946,7 @@ export default function App() {
                         ))}
                       </div>
                       {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
-                      <div className="sample-confirmed-grid">
-                        {Array.from({ length: 4 }).map((_, idx) => {
-                          const move = sampleRegisteredMoves[idx]
-                          return (
-                            <div
-                              key={`sample-confirmed-slot-${idx}`}
-                              className={`sample-confirmed-slot ${move ? 'filled' : 'empty'} ${move ? moveTypeThemeClass(sampleMoveType(move)) : ''} ${activeSampleMoveSlotIdx === idx ? 'active-target' : ''}`}
-                            >
-                              <button
-                                type="button"
-                                className="sample-confirmed-slot-main"
-                                onClick={() => setActiveMoveField({ key: sampleForge.key, slotIdx: idx, scope: 'sample' })}
-                              >
-                                <span className="sample-confirmed-slot-index">{idx + 1}</span>
-                                <strong>{move || emptySlotLabel(idx, siteLanguage)}</strong>
-                              </button>
-                              <div className="sample-confirmed-slot-actions">
-                                <button type="button" className="sample-slot-shift-button" onClick={() => shiftConfirmedMoveSlot(sampleForge.key, idx, -1)} disabled={idx === 0}>←</button>
-                                <button type="button" className="sample-slot-shift-button" onClick={() => shiftConfirmedMoveSlot(sampleForge.key, idx, 1)} disabled={idx === 3}>→</button>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
                     </div>
-                  </div>
-                  <div className="pick-summary-badges sample-summary-badges compact">
-                    <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
-                    <span className="pick-badge sample-summary-inline-moves">{sampleConfirmedMoves.join(' · ') || lt('아직 없음')}</span>
-                    <span className="pick-badge">{natureLabel(sampleForge.config.nature, siteLanguage)}</span>
-                    {sampleForge.item ? <span className="pick-badge summary-item-badge">{displayItemLabel(sampleForge.item, siteLanguage)}</span> : null}
                   </div>
                 </>
             </div>
