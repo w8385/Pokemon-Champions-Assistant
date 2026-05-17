@@ -2188,7 +2188,7 @@ header p {
 }
 .sample-embedded-drag-stat-list-speed {
   grid-template-columns: minmax(0, 1fr) !important;
-  width: min(100%, 560px);
+  width: min(100%, 275px);
   max-width: 100%;
 }
 .sample-embedded-drag-stat-list-speed .drag-stat-card {
