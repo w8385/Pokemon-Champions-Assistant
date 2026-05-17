@@ -3782,6 +3782,18 @@ textarea { min-height: 72px; resize: vertical; }
   padding: 12px;
   gap: 10px;
 }
+.damage-top-move-strip {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0 2px;
+}
+.damage-top-move-strip-head {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.58);
+}
+.damage-top-move-strip-chips {
+  margin-top: 0;
+}
 .opponent-revealed-moves-card {
   display: grid;
   gap: 8px;

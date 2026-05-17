@@ -6200,18 +6200,6 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              {myMember.key && myTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card damage-top-move-chip-card">
-                <div className="row-between sample-track-head compact-gap">
-                  <strong>{lt('사용률 상위 기술')}</strong>
-                  <span className="muted-inline">Top {Math.min(10, myTopSuggestedMoves.length)}</span>
-                </div>
-                <div className="move-chip-wrap">
-                  {myTopSuggestedMoves.map((move) => {
-                    const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
-                    return <button key={`damage-top-my-${myMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(myMember.key, move)}>{move}</button>
-                  })}
-                </div>
-              </div> : null}
               <div className="damage-side-moves">
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
@@ -6292,19 +6280,19 @@ export default function App() {
                     </div>
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
-                {oppMember.key && oppTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card damage-top-move-chip-card opponent-top-moves-card">
-                  <div className="row-between sample-track-head compact-gap">
-                    <strong>{lt('사용률 상위 기술')}</strong>
-                    <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
-                  </div>
-                  <div className="move-chip-wrap">
-                    {oppTopSuggestedMoves.map((move) => {
-                      const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
-                      return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={opponentRegisteredDamageMoves.length >= 4}>{move}</button>
-                    })}
-                  </div>
-                </div> : null}
                 <div className="damage-opponent-move-adder">
+                  {oppMember.key && oppTopSuggestedMoves.length ? <div className="damage-top-move-strip">
+                    <div className="row-between compact-gap damage-top-move-strip-head">
+                      <strong>{lt('사용률 상위 기술')}</strong>
+                      <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
+                    </div>
+                    <div className="move-chip-wrap damage-top-move-strip-chips">
+                      {oppTopSuggestedMoves.map((move) => {
+                        const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={opponentRegisteredDamageMoves.length >= 4}>{move}</button>
+                      })}
+                    </div>
+                  </div> : null}
                   <label>
                     <span>{lt('상대 기술 추가')}</span>
                     <div className="damage-opponent-move-input-row">
