@@ -147,7 +147,6 @@ type ImportExportPayload = PersistedState & {
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
-type SampleCandidateFilter = 'all' | 'remaining' | 'locked'
 type MainSection = 'home' | 'single' | 'sample'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
@@ -2870,7 +2869,6 @@ export default function App() {
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
-  const [sampleCandidateFilter, setSampleCandidateFilter] = React.useState<SampleCandidateFilter>('all')
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
@@ -3669,25 +3667,7 @@ export default function App() {
     applyMoveToSlot(sampleForge.key, move, preferredSlotIdx)
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
-  const sampleBaseMoveGroups = sampleSuggestedMoveSet ? [
-    { key: 'core', label: lt('코어'), moves: sampleSuggestedMoveSet.core, tone: 'core' },
-    { key: 'options', label: lt('선택'), moves: sampleSuggestedMoveSet.options ?? [], tone: 'options' },
-    { key: 'utility', label: lt('유틸'), moves: sampleSuggestedMoveSet.utility ?? [], tone: 'utility' },
-  ] : []
-  const sampleFilterCounts = {
-    all: sampleBaseMoveGroups.reduce((sum, group) => sum + group.moves.length, 0),
-    remaining: sampleBaseMoveGroups.reduce((sum, group) => sum + group.moves.filter((move) => !sampleConfirmedMoves.includes(move)).length, 0),
-    locked: sampleConfirmedMoves.length,
-  }
-  const sampleMoveGroups = sampleBaseMoveGroups.map((group) => ({
-    ...group,
-    moves: group.moves.filter((move) => {
-      const locked = sampleConfirmedMoves.includes(move)
-      if (sampleCandidateFilter === 'remaining') return !locked
-      if (sampleCandidateFilter === 'locked') return locked
-      return true
-    }),
-  })).filter((group) => group.moves.length > 0)
+  const sampleTopSuggestedMoves = topSuggestedMoves(sampleSuggestedMoveSet)
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const activeSampleMoveSlotIdx = activeMoveField?.scope === 'sample' && activeMoveField.key === sampleForge.key
     ? activeMoveField.slotIdx
@@ -5711,45 +5691,25 @@ export default function App() {
                       </div>
                       {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div>
-                    {sampleMoveGroups.length ? <div className="sample-track-card">
-                      <div className="row-between sample-track-head">
-                        <strong>{lt('샘플 기술')}</strong>
-                        <div className="pick-summary-badges sample-summary-badges compact">
-                          <span className="pick-badge">{lt('전체')} {sampleFilterCounts.all}</span>
-                          <span className="pick-badge">{lt('확정')} {sampleFilterCounts.locked}</span>
-                          <span className="pick-badge">{lt('미확정')} {sampleFilterCounts.remaining}</span>
-                        </div>
+                    {sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                      <div className="row-between sample-track-head compact-gap">
+                        <strong>{lt('사용률 상위 기술')}</strong>
+                        <span className="muted-inline">Top {Math.min(10, sampleTopSuggestedMoves.length)}</span>
                       </div>
-                      <div className="sample-move-bucket-grid">
-                        {sampleMoveGroups.map((group) => (
-                          <details key={`sample-group-${group.key}`} className={`sample-move-bucket ${group.tone}`} open>
-                            <summary className="sample-move-bucket-summary">
-                              <div className="sample-move-bucket-head">
-                                <span className={`sample-move-bucket-label ${group.tone}`}>{group.label}</span>
-                              </div>
-                              <div className="pick-summary-badges sample-group-meta-badges">
-                                <span className="pick-badge sample-group-count-badge">{group.moves.length}</span>
-                                <span className="sample-group-open-indicator">⌄</span>
-                              </div>
-                            </summary>
-                            <div className="sample-bucket-body">
-                              {group.moves.map((move) => {
-                                const locked = sampleConfirmedMoves.includes(move)
-                                return (
-                                  <button
-                                    key={`sample-group-move-${group.key}-${move}`}
-                                    type="button"
-                                    className={`pick-chip sample-candidate-chip ${locked ? 'slot-targeted' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
-                                    onClick={() => applyMoveToSlot(sampleForge.key, move, activeSampleMoveSlotIdx)}
-                                  >
-                                    <span className={`sample-candidate-status ${locked ? 'confirmed' : 'open'}`}>{locked ? '✓' : '+'}</span>
-                                    <span>{move}</span>
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </details>
-                        ))}
+                      <div className="move-chip-wrap">
+                        {sampleTopSuggestedMoves.map((move) => {
+                          const locked = sampleConfirmedMoves.includes(move)
+                          return (
+                            <button
+                              key={`sample-top-move-${sampleForge.key}-${move}`}
+                              type="button"
+                              className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
+                              onClick={() => applyMoveToSlot(sampleForge.key, move, activeSampleMoveSlotIdx)}
+                            >
+                              {move}
+                            </button>
+                          )
+                        })}
                       </div>
                     </div> : sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
                   </div>
