@@ -1971,6 +1971,128 @@ header p {
   line-height: 1.2;
   color: #eef2f7;
 }
+.sample-speed-toolbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.sample-speed-inline-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+.sample-speed-slider-field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #93a4b8;
+}
+.sample-speed-slider-field input[type="range"] {
+  width: 100%;
+}
+.sample-speed-config-chips {
+  justify-content: flex-end;
+}
+.sample-speed-board {
+  display: grid;
+  gap: 12px;
+}
+.sample-speed-axis {
+  position: relative;
+  height: 22px;
+  margin: 0 0 4px 184px;
+}
+.sample-speed-axis-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #94a3b8;
+}
+.sample-speed-rows {
+  display: grid;
+  gap: 10px;
+}
+.sample-speed-row {
+  display: grid;
+  grid-template-columns: 172px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+.sample-speed-row-label {
+  display: grid;
+  gap: 6px;
+}
+.sample-speed-row-track {
+  position: relative;
+  min-height: 82px;
+  border-radius: 14px;
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px) 0 0/10% 100%,
+    linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(11, 18, 32, 0.82));
+  overflow: hidden;
+}
+.sample-speed-sample-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #f8fafc, #60a5fa);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.18);
+  z-index: 3;
+}
+.sample-speed-sample-line.alt {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+.sample-speed-sample-line span {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 11px;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+.sample-speed-range {
+  position: absolute;
+  height: 16px;
+  border-radius: 999px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 54px;
+  font-size: 11px;
+  color: #eff6ff;
+  border: 1px solid transparent;
+}
+.sample-speed-range.base {
+  top: 8px;
+  background: rgba(71, 85, 105, 0.64);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+.sample-speed-range.scarf {
+  top: 26px;
+  background: rgba(29, 78, 216, 0.5);
+  border-color: rgba(96, 165, 250, 0.35);
+}
+.sample-speed-range.ability {
+  top: 44px;
+  background: rgba(5, 150, 105, 0.5);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+.sample-speed-range.ability-scarf {
+  top: 62px;
+  background: rgba(126, 34, 206, 0.5);
+  border-color: rgba(196, 181, 253, 0.35);
+}
+.sample-speed-range-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .sample-overview-actions {
   display: flex;
   gap: 8px;
@@ -3678,6 +3800,9 @@ textarea { min-height: 72px; resize: vertical; }
     padding-right: 0;
   }
   .sample-tuning-inline { grid-template-columns: 1fr; }
+  .sample-speed-inline-controls { grid-template-columns: 1fr; }
+  .sample-speed-axis { margin-left: 0; }
+  .sample-speed-row { grid-template-columns: 1fr; }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }
