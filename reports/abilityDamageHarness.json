@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-17T10:43:39.534Z",
+  "generatedAt": "2026-05-17T10:47:37.050Z",
   "totalAbilities": 190,
-  "implementedCount": 47,
+  "implementedCount": 51,
   "categories": {
     "implemented": {
-      "count": 47,
+      "count": 51,
       "abilities": [
         "adaptability",
         "aerilate",
@@ -30,11 +30,14 @@
         "motor-drive",
         "multiscale",
         "overgrow",
+        "parental-bond",
         "pixilate",
         "protean",
         "pure-power",
+        "purifying-salt",
         "reckless",
         "refrigerate",
+        "rivalry",
         "sand-force",
         "sap-sipper",
         "sharpness",
@@ -42,6 +45,7 @@
         "sniper",
         "solar-power",
         "solid-rock",
+        "soundproof",
         "strong-jaw",
         "supreme-overlord",
         "swarm",
@@ -72,16 +76,14 @@
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 11,
+      "count": 9,
       "abilities": [
         "electromorphosis",
         "gale-wings",
         "minus",
         "opportunist",
-        "parental-bond",
         "plus",
         "quick-draw",
-        "rivalry",
         "skill-link",
         "stance-change",
         "super-luck"
@@ -126,7 +128,7 @@
       ]
     },
     "indirectOrNonDamage": {
-      "count": 98,
+      "count": 96,
       "abilities": [
         "aftermath",
         "anticipation",
@@ -190,7 +192,6 @@
         "poison-touch",
         "prankster",
         "pressure",
-        "purifying-salt",
         "queenly-majesty",
         "receiver",
         "regenerator",
@@ -203,7 +204,6 @@
         "shed-skin",
         "shell-armor",
         "shield-dust",
-        "soundproof",
         "spicy-spray",
         "stall",
         "stalwart",
@@ -233,7 +233,7 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 34,
+  "damageRelevantMissingCount": 32,
   "damageRelevantMissing": [
     "berserk",
     "chlorophyll",
@@ -249,14 +249,12 @@
     "mega-sol",
     "mimicry",
     "opportunist",
-    "parental-bond",
     "piercing-drill",
     "plus",
     "poison-heal",
     "quick-draw",
     "quick-feet",
     "rain-dish",
-    "rivalry",
     "sand-rush",
     "sand-spit",
     "sand-stream",
@@ -321,7 +319,7 @@
     },
     {
       "ability": "purifying-salt",
-      "implemented": false
+      "implemented": true
     },
     {
       "ability": "sap-sipper",
@@ -333,7 +331,7 @@
     },
     {
       "ability": "soundproof",
-      "implemented": false
+      "implemented": true
     },
     {
       "ability": "thick-fat",
