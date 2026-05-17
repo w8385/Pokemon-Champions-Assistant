@@ -2864,6 +2864,15 @@ export default function App() {
   const effectiveAttackerTypes = resolveAbilityAdjustedTypes(myRow.types, attackerAbilitySlug, calcWeather, calcTerrain)
   const effectiveDefenderTypes = oppRow ? resolveAbilityAdjustedTypes(oppRow.types, defenderAbilitySlug, calcWeather, calcTerrain) : []
   const usesTypeChangeStabAbility = ['libero', 'protean', '변환자재'].includes(attackerAbilitySlug)
+  const showAttackerLowHpToggle = ['blaze', 'torrent', 'overgrow', 'swarm'].includes(attackerAbilitySlug)
+  const showTargetPoisonedToggle = attackerAbilitySlug === 'merciless'
+  const showMovedAfterTargetToggle = attackerAbilitySlug === 'analytic'
+  const showFaintedAlliesInput = attackerAbilitySlug === 'supreme-overlord'
+  const showRivalryModeInput = attackerAbilitySlug === 'rivalry'
+  const showParentalBondToggle = attackerAbilitySlug === 'parental-bond'
+  const showElectromorphosisToggle = attackerAbilitySlug === 'electromorphosis'
+  const showDefenderStatusedToggle = defenderAbilitySlug === 'marvel-scale'
+  const showDefenderFullHpToggle = ['multiscale', 'shadow-shield'].includes(defenderAbilitySlug)
   const autoStab = resolveStabMultiplier(effectiveAttackerTypes, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
   const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, effectiveDefenderTypes) : 1
   const setActiveDamageMoveConditionValue = (value: ConditionalPowerValue) => {
@@ -5185,42 +5194,42 @@ export default function App() {
                     <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
                     <span>{lt('화상')}</span>
                   </label>
-                  <label className="calc-toggle-box">
+                  {showAttackerLowHpToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} />
                     <span>{lt('공격측 HP 1/3 이하')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
+                  </label> : null}
+                  {showTargetPoisonedToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} />
                     <span>{lt('상대 독/맹독')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
+                  </label> : null}
+                  {showMovedAfterTargetToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} />
                     <span>{lt('상대보다 늦게 행동')}</span>
-                  </label>
-                  <label>
+                  </label> : null}
+                  {showFaintedAlliesInput ? <label>
                     {lt('기절한 아군 수')}
                     <input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} />
-                  </label>
-                  <label>
+                  </label> : null}
+                  {showRivalryModeInput ? <label>
                     {lt('라이벌리 성별 관계')}
                     <select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}>
                       <option value="neutral">{lt('없음')}</option>
                       <option value="same">{lt('같은 성별')}</option>
                       <option value="opposite">{lt('다른 성별')}</option>
                     </select>
-                  </label>
-                  <label className="calc-toggle-box">
+                  </label> : null}
+                  {showParentalBondToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} />
                     <span>{lt('부자유친 발동')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
+                  </label> : null}
+                  {showDefenderStatusedToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} />
                     <span>{lt('상대 상태이상')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
+                  </label> : null}
+                  {showElectromorphosisToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} />
                     <span>{lt('일렉트릭 차지됨')}</span>
-                  </label>
+                  </label> : null}
                   <label>
                     {lt('내 화력 랭크')}
                     <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
@@ -5265,10 +5274,10 @@ export default function App() {
                       {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
                     </select>
                   </label>
-                  <label className="calc-toggle-box">
+                  {showDefenderFullHpToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
                     <span>{lt('상대 HP 만땅')}</span>
-                  </label>
+                  </label> : null}
                 </div>
               </div>
               <div className="damage-control-group">
