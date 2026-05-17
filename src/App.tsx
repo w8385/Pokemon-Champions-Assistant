@@ -3457,6 +3457,7 @@ export default function App() {
     const scenarios = [
       { id: 'base', label: lt('준속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, false, false, member.speedStage) },
       { id: 'fast', label: lt('최속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage) },
+      { id: 'neutral-scarf', label: `${lt('준속')} ${lt('스카프')}`, speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, false, true, member.speedStage) },
       { id: 'scarf', label: `${lt('최속')} ${lt('스카프')}`, speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, member.speedStage) },
     ]
     const doubleSpeedAbility = speedAbilityCandidate(row, siteLanguage)
