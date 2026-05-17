@@ -3718,6 +3718,11 @@ export default function App() {
     }))
   }
 
+  const focusEffortRange = (element: HTMLDivElement) => {
+    const range = element.querySelector<HTMLInputElement>('.effort-gauge-range')
+    range?.focus()
+  }
+
   const renderSampleForgeEffortGrid = (scope: 'speed' | 'damage') => {
     if (!sampleRow) return null
     const visibleStats = scope === 'speed'
@@ -3735,7 +3740,7 @@ export default function App() {
         return <div key={`${scope}-sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
           <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
           <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-            <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+            <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
               <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`${scope}-sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
               <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
             </div>
@@ -4106,7 +4111,7 @@ export default function App() {
                   <div key={`drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
                     <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
                     <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-                      <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                      <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateTuningEffortFromPointer(tuningModalIndex, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
                         <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
                         <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeTuningEffort(tuningModalIndex, stat.key, 1, availableCap) } }} onChange={(e) => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, stat.key, e.target.value) }; setParty(next) }} />
                       </div>
@@ -4149,7 +4154,7 @@ export default function App() {
                 return <div key={`sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
                   <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
                   <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
                       <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
                       <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
                     </div>
@@ -5238,8 +5243,13 @@ export default function App() {
                   </label>
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
-                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
-                    <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                    <div className="sample-compare-hero">
+                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
+                      <div>
+                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                      </div>
+                    </div>
                     {renderSampleForgeEffortGrid('speed')}
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
@@ -5253,8 +5263,11 @@ export default function App() {
               <div className="sample-overview-stack">
                 {sampleSpeedCalcs.length ? sampleSpeedCalcs.map((entry) => (
                   <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
-                    <div className="row-between">
-                      <strong>{displayName(entry.row, siteLanguage)}</strong>
+                    <div className="row-between sample-compare-card-head">
+                      <div className="sample-compare-hero sample-compare-hero-compact">
+                        {entry.row.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
+                        <strong>{displayName(entry.row, siteLanguage)}</strong>
+                      </div>
                       <button type="button" className="pick-chip" onClick={() => removeSampleSpeedTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
                     <div className="sample-workbench-card-body sample-speed-card-body">
@@ -5307,8 +5320,13 @@ export default function App() {
                   </label>
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
-                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
-                    <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                    <div className="sample-compare-hero">
+                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
+                      <div>
+                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                      </div>
+                    </div>
                     {renderSampleForgeEffortGrid('damage')}
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
@@ -5355,8 +5373,11 @@ export default function App() {
               <div className="sample-overview-stack">
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
-                    <div className="row-between">
-                      <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
+                    <div className="row-between sample-compare-card-head">
+                      <div className="sample-compare-hero sample-compare-hero-compact">
+                        {entry.row?.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
+                        <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
+                      </div>
                       <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
                     <div className="sample-workbench-card-body sample-damage-card-body">
@@ -5393,22 +5414,26 @@ export default function App() {
                             체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
-                          <label>
-                            방어 EV
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <label>
-                            특수방어 EV
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <label>
-                            +방어
-                            <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
-                          </label>
-                          <label>
-                            +특수방어
-                            <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                          </label>
+                          <div className="sample-bulk-pair-row">
+                            <label>
+                              방어 EV
+                              <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                            </label>
+                            <label className="sample-bulk-check-label">
+                              <span>+방어</span>
+                              <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                            </label>
+                          </div>
+                          <div className="sample-bulk-pair-row">
+                            <label>
+                              특수방어 EV
+                              <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                            </label>
+                            <label className="sample-bulk-check-label">
+                              <span>+특수방어</span>
+                              <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                            </label>
+                          </div>
                         </div>
                       </div>
                       <div className="sample-workbench-mainpanel">
