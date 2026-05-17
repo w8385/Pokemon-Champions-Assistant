@@ -1,6 +1,7 @@
 import React from 'react'
 import championsData from './pokemon_champions_verified_data.json'
 import championsLearnedMoveMeta from './championsLearnedMoveMeta.json'
+import championsUsageTopMoves from './championsUsageTopMoves.json'
 import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
@@ -1004,6 +1005,12 @@ function suggestedMoveGroupsForRow(
 function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>, limit = 10) {
   if (!groups) return []
   return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
+}
+
+const USAGE_TOP_MOVES_BY_KEY = championsUsageTopMoves as Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }>
+
+function usageTopMovesForKey(key: string, limit = 10) {
+  return (USAGE_TOP_MOVES_BY_KEY[key]?.moves ?? []).slice(0, limit)
 }
 
 const MOVE_NAME_ALIASES: Record<string, string> = {
@@ -3179,12 +3186,10 @@ export default function App() {
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
-  const mySuggestedMoveSet = suggestedMoveGroupsForRow(myRow, myMoveOptions, movePoolByKey, myMoveSet)
   const oppMoveSet = sampleMoves.find((entry) => entry.key === oppMember.key)
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = oppMovePool?.moves?.length ? oppMovePool.moves : moveOptionsForEntry(oppMoveSet)
-  const oppSuggestedMoveSet = suggestedMoveGroupsForRow(oppRow, oppMoveOptions, movePoolByKey, oppMoveSet)
-  const oppTopSuggestedMoves = topSuggestedMoves(oppSuggestedMoveSet).filter((move) => !oppMember.revealedMoves.includes(move))
+  const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key).filter((move) => !oppMember.revealedMoves.includes(move))
   const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
   const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
   const attackFromOpponent = calcSwapSides && Boolean(oppRow)
@@ -3198,7 +3203,7 @@ export default function App() {
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null) : myBattleStats
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
   const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
-  const myTopSuggestedMoves = topSuggestedMoves(mySuggestedMoveSet).filter((move) => !myRegisteredDamageMoves.includes(move))
+  const myTopSuggestedMoves = usageTopMovesForKey(myMember.key).filter((move) => !myRegisteredDamageMoves.includes(move))
   const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
   const registeredDamageMoves = (attackFromOpponent ? opponentRegisteredDamageMoves : myRegisteredDamageMoves).filter(Boolean)
   const attackerMoveOptions = attackFromOpponent ? oppMoveOptions : myMoveOptions
@@ -3619,7 +3624,6 @@ export default function App() {
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
-  const sampleSuggestedMoveSet = suggestedMoveGroupsForRow(sampleRow, sampleMoveOptions, movePoolByKey, sampleMoveSet)
   const sampleSpeciesMenuId = 'sample-species-0'
   const sampleSpeciesOptions = filterSpeciesOptions(sampleSearch ?? '', { includeMega: true }).slice(0, 8)
   const sampleItemMenuId = 'sample-item-0'
@@ -3667,7 +3671,7 @@ export default function App() {
     applyMoveToSlot(sampleForge.key, move, preferredSlotIdx)
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
-  const sampleTopSuggestedMoves = topSuggestedMoves(sampleSuggestedMoveSet)
+  const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const activeSampleMoveSlotIdx = activeMoveField?.scope === 'sample' && activeMoveField.key === sampleForge.key
     ? activeMoveField.slotIdx
@@ -4577,8 +4581,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
-                const memberSuggestedMoveSet = suggestedMoveGroupsForRow(row, memberMoveOptions, movePoolByKey, memberMoveSet)
-                const memberTopSuggestedMoves = topSuggestedMoves(memberSuggestedMoveSet).filter((move) => !(confirmedMovesByKey[member.key] ?? []).includes(move))
+                const memberTopSuggestedMoves = usageTopMovesForKey(member.key).filter((move) => !(confirmedMovesByKey[member.key] ?? []).includes(move))
                 const partySpeciesMenuId = `party-species-${idx}`
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const partyItemMenuId = `party-item-${idx}`
@@ -4871,19 +4874,17 @@ export default function App() {
                           </label>
                         ))}
                       </div>
-                      {memberSuggestedMoveSet ? <>
-                        {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
-                          <div className="row-between sample-track-head compact-gap">
-                            <strong>{lt('사용률 상위 기술')}</strong>
-                            <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
-                          </div>
-                          <div className="move-chip-wrap">
-                            {memberTopSuggestedMoves.map((move) => (
-                              <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
-                            ))}
-                          </div>
-                        </div> : null}
-                      </> : <p className="muted">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</p>}
+                      {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                        <div className="row-between sample-track-head compact-gap">
+                          <strong>{lt('사용률 상위 기술')}</strong>
+                          <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
+                        </div>
+                        <div className="move-chip-wrap">
+                          {memberTopSuggestedMoves.map((move) => (
+                            <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                          ))}
+                        </div>
+                      </div> : null}
                     </div> : null}
                   </div>
                 )

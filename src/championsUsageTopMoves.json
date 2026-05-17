@@ -1,0 +1,4098 @@
+{
+  "mega-alakazam": {
+    "moves": [
+      "섀도볼",
+      "기합구슬",
+      "명상",
+      "사이코쇼크",
+      "사이코키네시스",
+      "방어",
+      "은혜갚기",
+      "HP회복"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Alakazam-Mega",
+    "fallback": false
+  },
+  "mega-aerodactyl": {
+    "moves": [
+      "지진",
+      "더블윙",
+      "날개쉬기",
+      "도발",
+      "스톤샤워",
+      "깨물어부수기",
+      "스톤에지",
+      "얼음엄니",
+      "날려버리기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Aerodactyl-Mega",
+    "fallback": false
+  },
+  "mega-beedrill": {
+    "moves": [
+      "독찌르기",
+      "마지막일침",
+      "시저크로스",
+      "애크러뱃",
+      "드릴라이너",
+      "탁쳐서떨구기",
+      "칼춤",
+      "유턴"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Beedrill-Mega",
+    "fallback": false
+  },
+  "mega-greninja": {
+    "moves": [
+      "파도타기",
+      "물수리검",
+      "흑안개",
+      "연막",
+      "냉동빔",
+      "악의파동",
+      "풀묶기",
+      "하이드로펌프",
+      "신통력",
+      "더스트슈트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Greninja",
+    "fallback": true
+  },
+  "dragapult": {
+    "moves": [
+      "드래곤애로",
+      "고스트다이브",
+      "용의춤",
+      "기습",
+      "유턴",
+      "바톤터치",
+      "도깨비불",
+      "섀도볼",
+      "테라버스트",
+      "고속이동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Dragapult",
+    "fallback": false
+  },
+  "mega-manectric": {
+    "moves": [
+      "볼트체인지",
+      "화염방사",
+      "방어",
+      "울부짖기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Manectric-Mega",
+    "fallback": false
+  },
+  "mega-lopunny": {
+    "moves": [
+      "속이다",
+      "트리플악셀",
+      "드레인펀치",
+      "유턴",
+      "인파이트",
+      "전광석화",
+      "은혜갚기",
+      "뒀다쓰기",
+      "냉동펀치",
+      "치근거리기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Lopunny-Mega",
+    "fallback": false
+  },
+  "mega-delphox": {
+    "moves": [
+      "사이코키네시스",
+      "매지컬샤인",
+      "화염방사",
+      "불대문자",
+      "매지컬플레임",
+      "사이코쇼크",
+      "나쁜음모",
+      "섀도볼",
+      "명상",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Delphox",
+    "fallback": true
+  },
+  "jolteon": {
+    "moves": [
+      "볼트체인지",
+      "섀도볼",
+      "10만볼트",
+      "번개",
+      "명상",
+      "매혹의보이스",
+      "테라버스트",
+      "치료방울",
+      "전기자석파",
+      "웨더볼"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Jolteon",
+    "fallback": false
+  },
+  "aerodactyl": {
+    "moves": [
+      "스텔스록",
+      "도발",
+      "안개제거",
+      "암석봉인",
+      "순풍",
+      "지진",
+      "이판사판태클",
+      "스톤에지",
+      "더블윙",
+      "스톤샤워"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Aerodactyl",
+    "fallback": false
+  },
+  "mega-gengar": {
+    "moves": [
+      "앵콜",
+      "나쁜음모",
+      "섀도볼",
+      "대타출동",
+      "오물웨이브",
+      "악의파동",
+      "사슬묶기",
+      "멸망의노래",
+      "그림자분신",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gengar-Mega",
+    "fallback": false
+  },
+  "talonflame": {
+    "moves": [
+      "안개제거",
+      "에어슬래시",
+      "화염방사",
+      "테라버스트",
+      "플레어드라이브",
+      "날개쉬기",
+      "브레이브버드",
+      "애크러뱃",
+      "잠자기",
+      "니트로차지"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Talonflame",
+    "fallback": false
+  },
+  "weavile": {
+    "moves": [
+      "얼음뭉치",
+      "집단구타",
+      "칼춤",
+      "트리플악셀",
+      "조수"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Weavile",
+    "fallback": false
+  },
+  "mega-meowstic": {
+    "moves": [
+      "리플렉터",
+      "빛의장막",
+      "전기자석파",
+      "매혹의보이스",
+      "사이코키네시스",
+      "하품",
+      "사이코노이즈",
+      "섀도볼",
+      "트릭",
+      "와이드포스"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Meowstic",
+    "fallback": true
+  },
+  "noivern": {
+    "moves": [
+      "화염방사",
+      "용의파동",
+      "악의파동",
+      "에어슬래시",
+      "폭음파",
+      "애크러뱃",
+      "드래곤크루",
+      "초음파",
+      "사이코키네시스",
+      "용성군"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Noivern",
+    "fallback": false
+  },
+  "meowscarada": {
+    "moves": [
+      "트릭플라워",
+      "유턴",
+      "치근거리기",
+      "깜짝베기",
+      "탁쳐서떨구기",
+      "기습",
+      "깨트리다",
+      "번개펀치",
+      "파동탄",
+      "악의파동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Meowscarada",
+    "fallback": false
+  },
+  "greninja": {
+    "moves": [
+      "파도타기",
+      "물수리검",
+      "흑안개",
+      "연막",
+      "냉동빔",
+      "악의파동",
+      "풀묶기",
+      "하이드로펌프",
+      "신통력",
+      "더스트슈트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Greninja",
+    "fallback": false
+  },
+  "mega-pidgeot": {
+    "moves": [
+      "열풍",
+      "폭풍",
+      "유턴",
+      "파괴광선",
+      "날개쉬기",
+      "안개제거",
+      "브레이브버드",
+      "순풍",
+      "방어",
+      "날려버리기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Pidgeot-Mega",
+    "fallback": false
+  },
+  "alakazam": {
+    "moves": [
+      "기합구슬",
+      "사이코키네시스",
+      "사이코쇼크",
+      "속임수",
+      "중력",
+      "매지컬샤인",
+      "섀도볼",
+      "나쁜음모",
+      "에너지볼"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Alakazam",
+    "fallback": false
+  },
+  "mega-starmie": {
+    "moves": [
+      "냉동빔",
+      "고속스핀",
+      "하이드로펌프",
+      "10만볼트",
+      "사이코키네시스",
+      "열탕",
+      "HP회복",
+      "메테오빔",
+      "파도타기",
+      "사이코쇼크"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Starmie",
+    "fallback": true
+  },
+  "mega-froslass": {
+    "moves": [
+      "섀도볼",
+      "냉동빔",
+      "길동무",
+      "눈보라",
+      "얼음뭉치",
+      "10만볼트",
+      "트릭",
+      "아픔나누기",
+      "대타출동",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Froslass",
+    "fallback": true
+  },
+  "sneasler": {
+    "moves": [
+      "페이탈클로",
+      "인파이트",
+      "칼춤",
+      "애크러뱃",
+      "속이다",
+      "기사회생",
+      "지옥찌르기",
+      "유턴",
+      "안다리걸기",
+      "섀도크루"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Sneasler",
+    "fallback": false
+  },
+  "hawlucha": {
+    "moves": [
+      "플라잉프레스",
+      "무릎차기",
+      "태권당수",
+      "시저크로스",
+      "칼춤",
+      "개척하기",
+      "사념의박치기",
+      "벌크업",
+      "아이언헤드",
+      "불꽃펀치"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Hawlucha",
+    "fallback": false
+  },
+  "mega-hawlucha": {
+    "moves": [
+      "플라잉프레스",
+      "무릎차기",
+      "태권당수",
+      "시저크로스",
+      "칼춤",
+      "개척하기",
+      "사념의박치기",
+      "벌크업",
+      "아이언헤드",
+      "불꽃펀치"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Hawlucha",
+    "fallback": true
+  },
+  "salazzle": {
+    "moves": [
+      "맹독",
+      "화염방사",
+      "대타출동",
+      "방어",
+      "오물폭탄",
+      "불대문자",
+      "용의파동",
+      "사슬묶기",
+      "죽기살기",
+      "독압정"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Salazzle",
+    "fallback": false
+  },
+  "whimsicott": {
+    "moves": [
+      "씨뿌리기",
+      "방어",
+      "유턴",
+      "안개제거",
+      "코튼가드",
+      "대타출동",
+      "죽기살기",
+      "맹독",
+      "도발",
+      "앵콜"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Whimsicott",
+    "fallback": false
+  },
+  "starmie": {
+    "moves": [
+      "냉동빔",
+      "고속스핀",
+      "하이드로펌프",
+      "10만볼트",
+      "사이코키네시스",
+      "열탕",
+      "HP회복",
+      "메테오빔",
+      "파도타기",
+      "사이코쇼크"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Starmie",
+    "fallback": false
+  },
+  "mega-houndoom": {
+    "moves": [
+      "악의파동",
+      "나쁜음모",
+      "화염방사",
+      "개척하기",
+      "불대문자",
+      "오물폭탄"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Houndoom-Mega",
+    "fallback": false
+  },
+  "mega-absol": {
+    "moves": [
+      "인파이트",
+      "치근거리기",
+      "기습",
+      "메가폰",
+      "사이코커터",
+      "싸라기눈",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Absol-Mega",
+    "fallback": false
+  },
+  "serperior": {
+    "moves": [
+      "리프스톰",
+      "대타출동",
+      "씨뿌리기",
+      "아쿠아테일",
+      "맹독",
+      "안개제거",
+      "신비의부적",
+      "드래곤테일",
+      "용의파동",
+      "기가드레인"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Serperior",
+    "fallback": false
+  },
+  "lycanroc": {
+    "moves": [
+      "인파이트",
+      "액셀록",
+      "스톤에지",
+      "스텔스록",
+      "아이언헤드",
+      "드릴라이너",
+      "죽기살기",
+      "불꽃엄니",
+      "락블레스트",
+      "치근거리기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Lycanroc",
+    "fallback": false
+  },
+  "mega-lucario": {
+    "moves": [
+      "신속",
+      "파동탄",
+      "인파이트",
+      "칼춤",
+      "불릿펀치",
+      "섀도볼",
+      "독찌르기",
+      "지진",
+      "러스터캐논",
+      "철제광선"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Lucario-Mega",
+    "fallback": false
+  },
+  "maushold": {
+    "moves": [
+      "찍찍베기",
+      "정리정돈",
+      "도발",
+      "분노의앞니",
+      "깨물어부수기",
+      "앵콜",
+      "집단구타",
+      "방어",
+      "치근거리기",
+      "유턴"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Maushold",
+    "fallback": false
+  },
+  "raichu": {
+    "moves": [
+      "속이다",
+      "볼트태클",
+      "신속",
+      "볼부비부비",
+      "10만볼트",
+      "나쁜음모",
+      "파도타기",
+      "매혹의보이스",
+      "볼트체인지",
+      "이판사판태클"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Raichu",
+    "fallback": false
+  },
+  "raichu-alolan": {
+    "moves": [
+      "사이코키네시스",
+      "라이징볼트",
+      "10만볼트",
+      "파도타기",
+      "볼트체인지",
+      "사이코쇼크",
+      "나쁜음모",
+      "기합구슬",
+      "풀묶기",
+      "매혹의보이스"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Raichu-Alola",
+    "fallback": false
+  },
+  "gengar": {
+    "moves": [
+      "섀도볼",
+      "오물폭탄",
+      "기가드레인",
+      "사이코키네시스",
+      "얼다바람",
+      "매지컬샤인",
+      "오물웨이브",
+      "기합구슬",
+      "나쁜음모",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gengar",
+    "fallback": false
+  },
+  "tauros": {
+    "moves": [
+      "누르기",
+      "아이언헤드",
+      "인파이트",
+      "스톤샤워",
+      "지진",
+      "사념의박치기",
+      "눈보라",
+      "불대문자",
+      "분발",
+      "지옥찌르기"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Tauros",
+    "fallback": false
+  },
+  "espeon": {
+    "moves": [
+      "명상",
+      "사이코키네시스",
+      "아침햇살",
+      "바톤터치",
+      "어시스트파워",
+      "대타출동",
+      "매지컬샤인",
+      "섀도볼",
+      "사이코쇼크",
+      "풀묶기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Espeon",
+    "fallback": false
+  },
+  "mega-skarmory": {
+    "moves": [
+      "날개쉬기",
+      "안개제거",
+      "바디프레스",
+      "날려버리기",
+      "철벽",
+      "압정뿌리기",
+      "맹독",
+      "모래바람",
+      "브레이브버드",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Skarmory",
+    "fallback": true
+  },
+  "froslass": {
+    "moves": [
+      "섀도볼",
+      "냉동빔",
+      "길동무",
+      "눈보라",
+      "얼음뭉치",
+      "10만볼트",
+      "트릭",
+      "아픔나누기",
+      "대타출동",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Froslass",
+    "fallback": false
+  },
+  "zoroark-hisui": {
+    "moves": [
+      "나쁜음모",
+      "섀도볼",
+      "하이퍼보이스",
+      "화염방사",
+      "천추지한",
+      "대타출동",
+      "파괴광선",
+      "앙갚음",
+      "저주",
+      "기합구슬"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Zoroark-Hisui",
+    "fallback": false
+  },
+  "mega-gallade": {
+    "moves": [
+      "사이코커터",
+      "탁쳐서떨구기",
+      "성스러운칼",
+      "드레인펀치",
+      "칼춤",
+      "야습",
+      "인파이트",
+      "암석봉인",
+      "냉동펀치",
+      "벌크업"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Gallade-Mega",
+    "fallback": false
+  },
+  "ninetales-alolan": {
+    "moves": [
+      "문포스",
+      "오로라베일",
+      "앵콜",
+      "냉동빔",
+      "눈보라",
+      "프리즈드라이",
+      "악의파동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Ninetales-Alola",
+    "fallback": false
+  },
+  "heliolisk": {
+    "moves": [
+      "하이퍼보이스",
+      "볼트체인지",
+      "10만볼트",
+      "파도타기",
+      "뱀눈초리",
+      "기합구슬",
+      "번개",
+      "전기자석파",
+      "웨더볼",
+      "풀묶기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Heliolisk",
+    "fallback": false
+  },
+  "infernape": {
+    "moves": [
+      "번개펀치",
+      "지진",
+      "마하펀치",
+      "오버히트",
+      "불꽃펀치",
+      "인파이트",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Infernape",
+    "fallback": false
+  },
+  "liepard": {
+    "moves": [
+      "조수",
+      "도둑질",
+      "흉내쟁이",
+      "버티기",
+      "방어",
+      "가로챔",
+      "바위깨기",
+      "도발",
+      "분풀이",
+      "맹독"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Liepard",
+    "fallback": false
+  },
+  "manectric": {
+    "moves": [
+      "볼트체인지",
+      "바꿔치기",
+      "라이징볼트",
+      "오버히트",
+      "화염방사",
+      "얼음엄니",
+      "10만볼트",
+      "깨물어부수기",
+      "번개",
+      "고속이동"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Manectric",
+    "fallback": false
+  },
+  "zoroark": {
+    "moves": [
+      "악의파동",
+      "기합구슬",
+      "명상",
+      "탁쳐서떨구기",
+      "나이트버스트",
+      "그림자분신",
+      "맹독",
+      "화염방사",
+      "섀도볼",
+      "신통력"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Zoroark",
+    "fallback": false
+  },
+  "espathra": {
+    "moves": [
+      "명상",
+      "어시스트파워",
+      "대타출동",
+      "매지컬샤인",
+      "바톤터치",
+      "루미나콜리전",
+      "잠자기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Espathra",
+    "fallback": false
+  },
+  "mega-pinsir": {
+    "moves": [
+      "전광석화",
+      "칼춤",
+      "지진",
+      "이판사판태클",
+      "은혜갚기",
+      "인파이트",
+      "시저크로스",
+      "벌크업",
+      "화풀이",
+      "스톤에지"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Pinsir-Mega",
+    "fallback": false
+  },
+  "mega-sharpedo": {
+    "moves": [
+      "깨물어부수기",
+      "방어",
+      "폭포오르기",
+      "아쿠아제트",
+      "사이코팽",
+      "아쿠아브레이크"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Sharpedo-Mega",
+    "fallback": false
+  },
+  "delphox": {
+    "moves": [
+      "사이코키네시스",
+      "매지컬샤인",
+      "화염방사",
+      "불대문자",
+      "매지컬플레임",
+      "사이코쇼크",
+      "나쁜음모",
+      "섀도볼",
+      "명상",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Delphox",
+    "fallback": false
+  },
+  "meowstic": {
+    "moves": [
+      "리플렉터",
+      "빛의장막",
+      "전기자석파",
+      "매혹의보이스",
+      "사이코키네시스",
+      "하품",
+      "사이코노이즈",
+      "섀도볼",
+      "트릭",
+      "와이드포스"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Meowstic",
+    "fallback": false
+  },
+  "mega-excadrill": {
+    "moves": [
+      "고속스핀",
+      "지진",
+      "스텔스록",
+      "맹독",
+      "아이언헤드",
+      "섀도크루",
+      "칼춤",
+      "드릴라이너",
+      "암석봉인",
+      "스마트호른"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Excadrill",
+    "fallback": true
+  },
+  "garchomp": {
+    "moves": [
+      "지진",
+      "스텔스록",
+      "울부짖기",
+      "맹독",
+      "불꽃엄니",
+      "칼춤",
+      "드래곤크루",
+      "깨물어부수기",
+      "역린",
+      "스케일샷"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Garchomp",
+    "fallback": false
+  },
+  "furfrou": {
+    "moves": [
+      "잠자기",
+      "전기자석파",
+      "맹독",
+      "유턴",
+      "화풀이",
+      "코튼가드",
+      "객기",
+      "분발"
+    ],
+    "sourceFormat": "gen9nationaldexru",
+    "sourcePokemon": "Furfrou",
+    "fallback": false
+  },
+  "simipour": {
+    "moves": [
+      "풀묶기",
+      "냉동빔",
+      "나쁜음모",
+      "열탕",
+      "하이드로펌프"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Simipour",
+    "fallback": false
+  },
+  "dedenne": {
+    "moves": [
+      "풀묶기",
+      "볼부비부비",
+      "파라볼라차지",
+      "유턴",
+      "10만볼트",
+      "매지컬샤인",
+      "버티기",
+      "개척하기",
+      "드레인키스",
+      "볼트체인지"
+    ],
+    "sourceFormat": "gen9pu",
+    "sourcePokemon": "Dedenne",
+    "fallback": false
+  },
+  "mega-glimmora": {
+    "moves": [
+      "킬러스핀",
+      "스텔스록",
+      "대지의힘",
+      "압정뿌리기",
+      "파워젬",
+      "매지컬샤인",
+      "이상한빛",
+      "니들가드",
+      "오물폭탄",
+      "녹기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Glimmora",
+    "fallback": true
+  },
+  "charizard": {
+    "moves": [
+      "에어슬래시",
+      "배북",
+      "불대문자",
+      "용의파동",
+      "니트로차지",
+      "지진",
+      "화염방사",
+      "애크러뱃",
+      "솔라빔",
+      "열사의대지"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Charizard",
+    "fallback": false
+  },
+  "ninetales": {
+    "moves": [
+      "도깨비불",
+      "웨더볼",
+      "치유소원",
+      "앵콜",
+      "맹독",
+      "방어",
+      "솔라빔",
+      "화염방사",
+      "최면술",
+      "불대문자"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Ninetales",
+    "fallback": false
+  },
+  "tauros-paldean": {
+    "moves": [
+      "누르기",
+      "아이언헤드",
+      "인파이트",
+      "스톤샤워",
+      "지진",
+      "사념의박치기",
+      "눈보라",
+      "불대문자",
+      "분발",
+      "지옥찌르기"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Tauros",
+    "fallback": true
+  },
+  "mega-dragonite": {
+    "moves": [
+      "용의춤",
+      "신속",
+      "아이스스피너",
+      "역린",
+      "테라버스트",
+      "맹독",
+      "용성군",
+      "지진",
+      "더블윙",
+      "날개쉬기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Dragonite",
+    "fallback": true
+  },
+  "typhlosion": {
+    "moves": [
+      "분화",
+      "맹독",
+      "열사의대지",
+      "대타출동",
+      "불사르기",
+      "화염방사",
+      "섀도볼",
+      "기합구슬",
+      "불대문자",
+      "신통력"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Typhlosion",
+    "fallback": false
+  },
+  "volcarona": {
+    "moves": [
+      "나비춤",
+      "불꽃춤",
+      "사이코키네시스",
+      "폭풍",
+      "날개쉬기",
+      "도깨비불",
+      "벌레의야단법석",
+      "기가드레인",
+      "테라버스트",
+      "화염방사"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Volcarona",
+    "fallback": false
+  },
+  "palafin": {
+    "moves": [
+      "제트펀치",
+      "냉동펀치",
+      "퀵턴",
+      "드레인펀치",
+      "인파이트",
+      "사념의박치기",
+      "아이언헤드",
+      "벌크업",
+      "역린",
+      "웨이브태클"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Palafin",
+    "fallback": false
+  },
+  "mega-charizard-x": {
+    "moves": [
+      "플레어드라이브",
+      "드래곤크루",
+      "용의춤",
+      "제비반환",
+      "지진",
+      "블러스트번",
+      "드래곤다이브",
+      "폭풍",
+      "번개펀치",
+      "역린"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Charizard-Mega-X",
+    "fallback": false
+  },
+  "mega-charizard-y": {
+    "moves": [
+      "열사의대지",
+      "화염방사",
+      "용의파동",
+      "에어컷터",
+      "솔라빔",
+      "에어슬래시",
+      "원시의힘",
+      "용의춤",
+      "지진",
+      "카운터"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Charizard-Mega-Y",
+    "fallback": false
+  },
+  "mega-kangaskhan": {
+    "moves": [
+      "속이다",
+      "그로우펀치",
+      "은혜갚기",
+      "지진",
+      "기습",
+      "지구던지기",
+      "누르기",
+      "드레인펀치",
+      "배대뒤치기",
+      "저주"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Kangaskhan-Mega",
+    "fallback": false
+  },
+  "mega-gardevoir": {
+    "moves": [
+      "하이퍼보이스",
+      "사이코쇼크",
+      "사이코키네시스",
+      "명상",
+      "매지컬플레임",
+      "문포스",
+      "섀도볼",
+      "방어",
+      "진공파",
+      "트릭룸"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Gardevoir-Mega",
+    "fallback": false
+  },
+  "mega-medicham": {
+    "moves": [
+      "속이다",
+      "사이코커터",
+      "냉동펀치",
+      "발꿈치찍기",
+      "무릎차기",
+      "불릿펀치",
+      "그로우펀치",
+      "사념의박치기",
+      "인파이트",
+      "사이코키네시스"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Medicham-Mega",
+    "fallback": false
+  },
+  "mega-glalie": {
+    "moves": [
+      "대폭발",
+      "얼음뭉치",
+      "이판사판태클",
+      "지진",
+      "프리즈드라이",
+      "은혜갚기",
+      "누르기",
+      "방어",
+      "깨물어부수기",
+      "압정뿌리기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Glalie-Mega",
+    "fallback": false
+  },
+  "hydreigon": {
+    "moves": [
+      "악의파동",
+      "용성군",
+      "러스터캐논",
+      "용의춤",
+      "기충전",
+      "용의파동",
+      "대지의힘",
+      "화염방사",
+      "순풍"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Hydreigon",
+    "fallback": false
+  },
+  "morpeko": {
+    "moves": [
+      "오라휠",
+      "막말내뱉기",
+      "탁쳐서떨구기",
+      "고속스핀",
+      "죽기살기",
+      "속이다",
+      "방어",
+      "씨폭탄",
+      "사이코팽",
+      "충전"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Morpeko",
+    "fallback": false
+  },
+  "mimikyu": {
+    "moves": [
+      "치근거리기",
+      "야습",
+      "칼춤",
+      "도깨비불",
+      "섀도크루",
+      "트릭룸",
+      "드레인펀치",
+      "길동무",
+      "저주",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Mimikyu",
+    "fallback": false
+  },
+  "arcanine": {
+    "moves": [
+      "신속",
+      "플레어드라이브",
+      "와일드볼트",
+      "니트로차지",
+      "인파이트",
+      "불대문자",
+      "맹독",
+      "깨물어부수기",
+      "아침햇살",
+      "화염방사"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Arcanine",
+    "fallback": false
+  },
+  "typhlosion-hisui": {
+    "moves": [
+      "분화",
+      "섀도볼",
+      "신통력",
+      "기합구슬",
+      "화염방사",
+      "백귀야행",
+      "불대문자",
+      "오버히트",
+      "불사르기",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Typhlosion-Hisui",
+    "fallback": false
+  },
+  "houndoom": {
+    "moves": [
+      "악의파동",
+      "나쁜음모",
+      "불대문자",
+      "오물폭탄",
+      "화염방사",
+      "섀도볼",
+      "기습",
+      "길동무",
+      "오버히트",
+      "도발"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Houndoom",
+    "fallback": false
+  },
+  "sharpedo": {
+    "moves": [
+      "방어",
+      "길동무",
+      "인파이트",
+      "퀵턴",
+      "깨물어부수기",
+      "폭포오르기",
+      "파도타기",
+      "악의파동",
+      "아쿠아브레이크",
+      "울부짖기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Sharpedo",
+    "fallback": false
+  },
+  "leafeon": {
+    "moves": [
+      "칼춤",
+      "탁쳐서떨구기",
+      "솔라블레이드",
+      "리프블레이드",
+      "광합성",
+      "씨뿌리기",
+      "방어",
+      "구멍파기",
+      "희망사항",
+      "이판사판태클"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Leafeon",
+    "fallback": false
+  },
+  "gliscor": {
+    "moves": [
+      "지진",
+      "안개제거",
+      "칼춤",
+      "객기",
+      "날개쉬기",
+      "스텔스록",
+      "바톤터치",
+      "대타출동",
+      "유턴",
+      "손톱갈기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gliscor",
+    "fallback": false
+  },
+  "tinkaton": {
+    "moves": [
+      "기가톤해머",
+      "치근거리기",
+      "아이스해머",
+      "탁쳐서떨구기",
+      "속이다",
+      "방어",
+      "스톤에지",
+      "깨트리다",
+      "속임수",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Tinkaton",
+    "fallback": false
+  },
+  "krookodile": {
+    "moves": [
+      "지진",
+      "탁쳐서떨구기",
+      "인파이트",
+      "스톤에지",
+      "기어오르기",
+      "깨물어부수기",
+      "스톤샤워",
+      "가로챔",
+      "따라가때리기",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Krookodile",
+    "fallback": false
+  },
+  "mega-garchomp": {
+    "moves": [
+      "칼춤",
+      "드래곤크루",
+      "아이언헤드",
+      "지진",
+      "역린",
+      "용성군",
+      "드래곤다이브",
+      "깨트리다",
+      "스텔스록",
+      "스톤에지"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Garchomp-Mega",
+    "fallback": false
+  },
+  "rotom": {
+    "moves": [
+      "볼트체인지",
+      "도깨비불",
+      "섀도볼",
+      "안개제거",
+      "병상첨병",
+      "방어",
+      "10만볼트",
+      "나쁜음모",
+      "대타출동",
+      "전기자석파"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Rotom",
+    "fallback": false
+  },
+  "pikachu": {
+    "moves": [
+      "속이다",
+      "신속",
+      "볼트태클",
+      "화풀이",
+      "은혜갚기",
+      "아이언테일",
+      "10만볼트",
+      "전광석화",
+      "일렉트릭볼",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Pikachu",
+    "fallback": false
+  },
+  "arcanine-hisui": {
+    "moves": [
+      "플레어드라이브",
+      "양날박치기",
+      "신속",
+      "와일드볼트",
+      "인파이트",
+      "스텔스록",
+      "역린",
+      "스톤에지",
+      "이판사판태클",
+      "사이코팽"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Arcanine-Hisui",
+    "fallback": false
+  },
+  "roserade": {
+    "moves": [
+      "오물폭탄",
+      "기가드레인",
+      "씨뿌리기",
+      "맹독",
+      "압정뿌리기",
+      "아로마테라피",
+      "수면가루",
+      "섀도볼",
+      "리프스톰",
+      "매지컬샤인"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Roserade",
+    "fallback": false
+  },
+  "lucario": {
+    "moves": [
+      "지진",
+      "칼춤",
+      "불릿펀치",
+      "크로스촙",
+      "냉동펀치",
+      "인파이트",
+      "코멧펀치",
+      "신속",
+      "드레인펀치"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Lucario",
+    "fallback": false
+  },
+  "mega-chandelure": {
+    "moves": [
+      "에너지볼",
+      "불대문자",
+      "맹독",
+      "병상첨병",
+      "섀도볼",
+      "사이코키네시스",
+      "화염방사",
+      "명상",
+      "아픔나누기",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Chandelure",
+    "fallback": true
+  },
+  "vivillon": {
+    "moves": [
+      "폭풍",
+      "나비춤",
+      "수면가루",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Vivillon",
+    "fallback": false
+  },
+  "excadrill": {
+    "moves": [
+      "고속스핀",
+      "지진",
+      "스텔스록",
+      "맹독",
+      "아이언헤드",
+      "섀도크루",
+      "칼춤",
+      "드릴라이너",
+      "암석봉인",
+      "스마트호른"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Excadrill",
+    "fallback": false
+  },
+  "glimmora": {
+    "moves": [
+      "킬러스핀",
+      "스텔스록",
+      "대지의힘",
+      "압정뿌리기",
+      "파워젬",
+      "매지컬샤인",
+      "이상한빛",
+      "니들가드",
+      "오물폭탄",
+      "녹기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Glimmora",
+    "fallback": false
+  },
+  "pinsir": {
+    "moves": [
+      "시저크로스",
+      "인파이트",
+      "선취",
+      "스톤에지",
+      "칼춤",
+      "기가임팩트",
+      "업어후리기",
+      "전광석화",
+      "실뿜기"
+    ],
+    "sourceFormat": "gen9nationaldexru",
+    "sourcePokemon": "Pinsir",
+    "fallback": false
+  },
+  "heracross": {
+    "moves": [
+      "인파이트",
+      "객기",
+      "메가폰",
+      "지진",
+      "칼춤",
+      "탁쳐서떨구기",
+      "스톤에지",
+      "카운터",
+      "덤벼들기",
+      "개척하기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Heracross",
+    "fallback": false
+  },
+  "toxicroak": {
+    "moves": [
+      "칼춤",
+      "기습",
+      "깨트리다",
+      "속이다",
+      "드레인펀치",
+      "더스트슈트",
+      "맹독"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Toxicroak",
+    "fallback": false
+  },
+  "samurott-hisui": {
+    "moves": [
+      "비검천중파",
+      "셸블레이드",
+      "성스러운칼",
+      "퀵턴",
+      "기습",
+      "아쿠아제트",
+      "칼춤",
+      "아쿠아커터",
+      "탁쳐서떨구기",
+      "도발"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Samurott-Hisui",
+    "fallback": false
+  },
+  "kommo-o": {
+    "moves": [
+      "스케일노이즈",
+      "파동탄",
+      "화염방사",
+      "폭음파",
+      "인파이트",
+      "지진",
+      "스케일샷",
+      "아이언헤드",
+      "드레인펀치",
+      "아쿠아테일"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Kommo-o",
+    "fallback": false
+  },
+  "kleavor": {
+    "moves": [
+      "암석액스",
+      "유턴",
+      "인파이트",
+      "탁쳐서떨구기",
+      "시저크로스",
+      "깜짝베기",
+      "사이코커터",
+      "칼춤",
+      "날개쉬기",
+      "개척하기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Kleavor",
+    "fallback": false
+  },
+  "quaquaval": {
+    "moves": [
+      "아쿠아스텝",
+      "아이스스피너",
+      "인파이트",
+      "웨이브태클",
+      "테라버스트",
+      "칼춤",
+      "깨트리다",
+      "아쿠아제트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Quaquaval",
+    "fallback": false
+  },
+  "ceruledge": {
+    "moves": [
+      "원념의칼",
+      "야습",
+      "인파이트",
+      "칼춤",
+      "깨트리다",
+      "깜짝베기",
+      "길동무",
+      "빛의장막",
+      "드래곤크루",
+      "고스트다이브"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Ceruledge",
+    "fallback": false
+  },
+  "archaludon": {
+    "moves": [
+      "바디프레스",
+      "스텔스록",
+      "전기자석파",
+      "울부짖기",
+      "러스터캐논",
+      "일렉트로빔",
+      "용성군",
+      "용의파동",
+      "파동탄",
+      "드래곤테일"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Archaludon",
+    "fallback": false
+  },
+  "gourgeist": {
+    "moves": [
+      "파워휩",
+      "도깨비불",
+      "광합성",
+      "씨뿌리기",
+      "폴터가이스트",
+      "야습",
+      "스톤샤워",
+      "씨폭탄",
+      "대폭발",
+      "저주"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Gourgeist-Super",
+    "fallback": true
+  },
+  "gyarados": {
+    "moves": [
+      "폭포오르기",
+      "용의춤",
+      "파워휩",
+      "지진",
+      "눈보라",
+      "용의파동",
+      "방어",
+      "물의파동",
+      "테라버스트",
+      "불대문자"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gyarados",
+    "fallback": false
+  },
+  "milotic": {
+    "moves": [
+      "HP회복",
+      "열탕",
+      "냉동빔",
+      "흑안개",
+      "맹독",
+      "퀵턴",
+      "드래곤테일",
+      "미러코트",
+      "파도타기",
+      "똬리틀기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Milotic",
+    "fallback": false
+  },
+  "mega-gyarados": {
+    "moves": [
+      "깨물어부수기",
+      "용의춤",
+      "폭포오르기",
+      "지진",
+      "화염방사",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gyarados-Mega",
+    "fallback": false
+  },
+  "venusaur": {
+    "moves": [
+      "기가드레인",
+      "성장",
+      "씨뿌리기",
+      "수면가루",
+      "대지의힘",
+      "웨더볼",
+      "솔라빔",
+      "오물폭탄",
+      "광합성",
+      "쾌청"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Venusaur",
+    "fallback": false
+  },
+  "arbok": {
+    "moves": [
+      "더스트슈트",
+      "기습",
+      "똬리틀기",
+      "씨폭탄",
+      "지진",
+      "뱀눈초리",
+      "바꿔치기",
+      "독압정",
+      "탁쳐서떨구기",
+      "스케일샷"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Arbok",
+    "fallback": false
+  },
+  "dragonite": {
+    "moves": [
+      "용의춤",
+      "신속",
+      "아이스스피너",
+      "역린",
+      "테라버스트",
+      "맹독",
+      "용성군",
+      "지진",
+      "더블윙",
+      "날개쉬기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Dragonite",
+    "fallback": false
+  },
+  "meganium": {
+    "moves": [
+      "기가드레인",
+      "씨뿌리기",
+      "광합성",
+      "아로마테라피",
+      "지진",
+      "탁쳐서떨구기",
+      "누르기",
+      "씨폭탄",
+      "칼춤",
+      "드래곤테일"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Meganium",
+    "fallback": false
+  },
+  "mega-meganium": {
+    "moves": [
+      "기가드레인",
+      "씨뿌리기",
+      "광합성",
+      "아로마테라피",
+      "지진",
+      "탁쳐서떨구기",
+      "누르기",
+      "씨폭탄",
+      "칼춤",
+      "드래곤테일"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Meganium",
+    "fallback": true
+  },
+  "gardevoir": {
+    "moves": [
+      "명상",
+      "어시스트파워",
+      "매지컬샤인",
+      "치료방울",
+      "문포스",
+      "전기자석파",
+      "에너지볼",
+      "섀도볼",
+      "드레인키스",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Gardevoir",
+    "fallback": false
+  },
+  "medicham": {
+    "moves": [
+      "불릿펀치",
+      "냉동펀치",
+      "사이코커터",
+      "무릎차기",
+      "인파이트",
+      "사념의박치기",
+      "속이다",
+      "번개펀치",
+      "벌크업",
+      "독찌르기"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Medicham",
+    "fallback": false
+  },
+  "altaria": {
+    "moves": [
+      "날개쉬기",
+      "안개제거",
+      "방어",
+      "맹독",
+      "멸망의노래",
+      "회오리불꽃",
+      "지진",
+      "브레이브버드",
+      "흑안개",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Altaria",
+    "fallback": false
+  },
+  "glalie": {
+    "moves": [
+      "압정뿌리기",
+      "사슬묶기",
+      "도발",
+      "지진",
+      "얼음뭉치",
+      "고드름떨구기",
+      "프리즈드라이",
+      "냉동빔"
+    ],
+    "sourceFormat": "gen9pu",
+    "sourcePokemon": "Glalie",
+    "fallback": false
+  },
+  "mamoswine": {
+    "moves": [
+      "지진",
+      "얼음뭉치",
+      "탁쳐서떨구기",
+      "스텔스록",
+      "고드름떨구기",
+      "스톤샤워"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Mamoswine",
+    "fallback": false
+  },
+  "gallade": {
+    "moves": [
+      "사이코커터",
+      "성스러운칼",
+      "리프블레이드",
+      "아쿠아커터",
+      "깜짝베기",
+      "고속이동",
+      "드레인펀치",
+      "칼춤",
+      "트리플악셀",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Gallade",
+    "fallback": false
+  },
+  "chandelure": {
+    "moves": [
+      "에너지볼",
+      "불대문자",
+      "맹독",
+      "병상첨병",
+      "섀도볼",
+      "사이코키네시스",
+      "화염방사",
+      "명상",
+      "아픔나누기",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Chandelure",
+    "fallback": false
+  },
+  "goodra": {
+    "moves": [
+      "용성군",
+      "오물웨이브",
+      "불대문자",
+      "기합구슬",
+      "냉동빔",
+      "용의파동",
+      "참기",
+      "비바라기",
+      "번개",
+      "웨더볼"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Goodra",
+    "fallback": false
+  },
+  "passimian": {
+    "moves": [
+      "탁쳐서떨구기",
+      "인파이트",
+      "유턴",
+      "더스트슈트",
+      "벌크업",
+      "드레인펀치",
+      "개척하기",
+      "스톤샤워",
+      "이판사판태클",
+      "지진"
+    ],
+    "sourceFormat": "gen9ru",
+    "sourcePokemon": "Passimian",
+    "fallback": false
+  },
+  "mega-venusaur": {
+    "moves": [
+      "기가드레인",
+      "오물폭탄",
+      "대지의힘",
+      "수면가루",
+      "성장",
+      "웨더볼",
+      "솔라빔",
+      "광합성",
+      "씨뿌리기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Venusaur-Mega",
+    "fallback": false
+  },
+  "mega-altaria": {
+    "moves": [
+      "날개쉬기",
+      "용의춤",
+      "지진",
+      "은혜갚기",
+      "코튼가드",
+      "하이퍼보이스",
+      "문포스",
+      "방어",
+      "용의파동",
+      "멸망의노래"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Altaria-Mega",
+    "fallback": false
+  },
+  "vanilluxe": {
+    "moves": [
+      "오로라베일",
+      "눈보라",
+      "프리즈드라이",
+      "미러코트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Vanilluxe",
+    "fallback": false
+  },
+  "blastoise": {
+    "moves": [
+      "껍질깨기",
+      "파도타기",
+      "악의파동",
+      "파동탄",
+      "냉동빔",
+      "고속스핀",
+      "열탕",
+      "하이드로펌프",
+      "비바라기",
+      "속이다"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Blastoise",
+    "fallback": false
+  },
+  "mega-feraligatr": {
+    "moves": [
+      "아쿠아브레이크",
+      "용의춤",
+      "냉동펀치",
+      "지진",
+      "깨물어부수기",
+      "얼음엄니",
+      "역린",
+      "사이코팽",
+      "아쿠아제트",
+      "칼춤"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Feraligatr",
+    "fallback": true
+  },
+  "feraligatr": {
+    "moves": [
+      "아쿠아브레이크",
+      "용의춤",
+      "냉동펀치",
+      "지진",
+      "깨물어부수기",
+      "얼음엄니",
+      "역린",
+      "사이코팽",
+      "아쿠아제트",
+      "칼춤"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Feraligatr",
+    "fallback": false
+  },
+  "diggersby": {
+    "moves": [
+      "지진",
+      "은혜갚기",
+      "유턴",
+      "암해머",
+      "칼춤",
+      "전광석화",
+      "번개펀치",
+      "불꽃펀치",
+      "냉동펀치",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Diggersby",
+    "fallback": false
+  },
+  "basculegion": {
+    "moves": [
+      "성묘",
+      "웨이브태클",
+      "아쿠아제트",
+      "퀵턴",
+      "아쿠아브레이크",
+      "고속이동",
+      "얼음엄니",
+      "양날박치기",
+      "방어",
+      "사이코팽"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Basculegion",
+    "fallback": true
+  },
+  "basculegion-female": {
+    "moves": [
+      "퀵턴",
+      "성묘",
+      "아쿠아제트",
+      "웨이브태클",
+      "파도타기",
+      "냉동빔",
+      "섀도볼",
+      "고속이동",
+      "사이코팽",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Basculegion-F",
+    "fallback": false
+  },
+  "mega-blastoise": {
+    "moves": [
+      "악의파동",
+      "물의파동",
+      "파동탄",
+      "껍질깨기",
+      "고속스핀",
+      "냉동빔",
+      "용의파동",
+      "지진",
+      "해수스파우팅",
+      "러스터캐논"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Blastoise-Mega",
+    "fallback": false
+  },
+  "watchog": {
+    "moves": [
+      "탁쳐서떨구기",
+      "은혜갚기",
+      "분함의발구르기",
+      "더스트슈트",
+      "따라가때리기",
+      "화염방사",
+      "기가임팩트",
+      "냉동펀치",
+      "불꽃펀치",
+      "기합구슬"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Watchog",
+    "fallback": false
+  },
+  "beedrill": {
+    "moves": [
+      "독찌르기",
+      "드릴라이너",
+      "칼춤",
+      "마지막일침",
+      "유턴",
+      "시저크로스",
+      "날개쉬기",
+      "독압정",
+      "순풍",
+      "안개제거"
+    ],
+    "sourceFormat": "gen9nationaldexru",
+    "sourcePokemon": "Beedrill",
+    "fallback": false
+  },
+  "absol": {
+    "moves": [
+      "깜짝베기",
+      "기습",
+      "사이코커터",
+      "스톤에지",
+      "칼춤",
+      "베어가르기",
+      "바톤터치",
+      "방어",
+      "모래바람"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Absol",
+    "fallback": false
+  },
+  "mega-emboar": {
+    "moves": [
+      "플레어드라이브",
+      "인파이트",
+      "기습",
+      "양날박치기",
+      "드레인펀치",
+      "벌크업",
+      "와일드볼트",
+      "지진",
+      "엄청난힘",
+      "번개펀치"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Emboar",
+    "fallback": true
+  },
+  "garbodor": {
+    "moves": [
+      "더스트슈트",
+      "압정뿌리기",
+      "락블레스트",
+      "씨폭탄",
+      "아픔나누기",
+      "분함의발구르기"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Garbodor",
+    "fallback": false
+  },
+  "florges": {
+    "moves": [
+      "드레인키스",
+      "맹독",
+      "광합성",
+      "명상",
+      "에너지볼",
+      "문포스",
+      "희망사항",
+      "기가드레인",
+      "사이코노이즈",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Florges",
+    "fallback": false
+  },
+  "klefki": {
+    "moves": [
+      "전기자석파",
+      "압정뿌리기",
+      "빛의장막",
+      "리플렉터",
+      "치근거리기",
+      "맹독",
+      "전자부유",
+      "드레인키스",
+      "러스터캐논"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Klefki",
+    "fallback": false
+  },
+  "armarouge": {
+    "moves": [
+      "아머캐논",
+      "에너지볼",
+      "파동탄",
+      "클리어스모그",
+      "사이코쇼크",
+      "트릭",
+      "화염방사",
+      "방어",
+      "사이코키네시스",
+      "테라버스트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Armarouge",
+    "fallback": false
+  },
+  "mega-scovillain": {
+    "moves": [
+      "방어",
+      "대타출동",
+      "에너지볼",
+      "도깨비불",
+      "화염방사",
+      "씨뿌리기",
+      "개척하기",
+      "고민씨",
+      "기가드레인",
+      "분함의발구르기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Scovillain",
+    "fallback": true
+  },
+  "scovillain": {
+    "moves": [
+      "방어",
+      "대타출동",
+      "에너지볼",
+      "도깨비불",
+      "화염방사",
+      "씨뿌리기",
+      "개척하기",
+      "고민씨",
+      "기가드레인",
+      "분함의발구르기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Scovillain",
+    "fallback": false
+  },
+  "mega-scizor": {
+    "moves": [
+      "불릿펀치",
+      "칼춤",
+      "날개쉬기",
+      "벌레먹음",
+      "유턴",
+      "탁쳐서떨구기",
+      "제비반환",
+      "사이코커터",
+      "엄청난힘",
+      "더블윙"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Scizor-Mega",
+    "fallback": false
+  },
+  "mega-heracross": {
+    "moves": [
+      "락블레스트",
+      "바늘미사일",
+      "인파이트",
+      "기관총",
+      "칼춤",
+      "개척하기",
+      "손바닥치기",
+      "메가폰",
+      "깨트리다",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Heracross-Mega",
+    "fallback": false
+  },
+  "mega-banette": {
+    "moves": [
+      "길동무",
+      "이판사판태클",
+      "야습",
+      "도발",
+      "나이트헤드",
+      "대타출동",
+      "맹독",
+      "탁쳐서떨구기",
+      "섀도크루",
+      "더스트슈트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Banette-Mega",
+    "fallback": false
+  },
+  "slurpuff": {
+    "moves": [
+      "끈적끈적네트",
+      "하품",
+      "죽기살기",
+      "화염방사",
+      "드레인펀치",
+      "치근거리기",
+      "배북",
+      "은혜갚기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Slurpuff",
+    "fallback": false
+  },
+  "tsareena": {
+    "moves": [
+      "파워휩",
+      "고속스핀",
+      "유턴",
+      "트리플악셀",
+      "탁쳐서떨구기",
+      "무릎차기",
+      "아로마테라피",
+      "트로피컬킥",
+      "치근거리기",
+      "꽃보라"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Tsareena",
+    "fallback": false
+  },
+  "tyrantrum": {
+    "moves": [
+      "양날박치기",
+      "지진",
+      "역린",
+      "인파이트",
+      "드래곤크루",
+      "아이언헤드",
+      "엄청난힘",
+      "용의춤",
+      "깨물어부수기",
+      "얼음엄니"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Tyrantrum",
+    "fallback": false
+  },
+  "sandaconda": {
+    "moves": [
+      "지진",
+      "스텔스록",
+      "뱀눈초리",
+      "잠자기",
+      "스톤에지",
+      "아이언헤드",
+      "바디프레스",
+      "똬리틀기",
+      "스케일샷",
+      "김밥말이"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Sandaconda",
+    "fallback": false
+  },
+  "mega-tyranitar": {
+    "moves": [
+      "따라가때리기",
+      "락블레스트",
+      "냉동펀치",
+      "울부짖기",
+      "스텔스록",
+      "맹독",
+      "잠자기",
+      "암석봉인",
+      "잠꼬대",
+      "깨물어부수기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Tyranitar-Mega",
+    "fallback": false
+  },
+  "mega-clefable": {
+    "moves": [
+      "코스믹파워",
+      "작아지기",
+      "알낳기",
+      "바톤터치",
+      "문포스",
+      "어시스트파워",
+      "명상",
+      "희망사항",
+      "방어",
+      "달의불빛"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Clefable",
+    "fallback": true
+  },
+  "mega-victreebel": {
+    "moves": [
+      "기가드레인",
+      "성장",
+      "오물웨이브",
+      "웨더볼",
+      "탁쳐서떨구기",
+      "파워휩",
+      "저리가루",
+      "기습"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Victreebel",
+    "fallback": true
+  },
+  "victreebel": {
+    "moves": [
+      "기가드레인",
+      "성장",
+      "오물웨이브",
+      "웨더볼",
+      "탁쳐서떨구기",
+      "파워휩",
+      "저리가루",
+      "기습"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Victreebel",
+    "fallback": false
+  },
+  "politoed": {
+    "moves": [
+      "열탕",
+      "방어",
+      "앵콜",
+      "냉동빔",
+      "멸망의노래",
+      "파도타기",
+      "웨더볼",
+      "맹독",
+      "대지의힘",
+      "테라버스트"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Politoed",
+    "fallback": false
+  },
+  "skarmory": {
+    "moves": [
+      "날개쉬기",
+      "안개제거",
+      "바디프레스",
+      "날려버리기",
+      "철벽",
+      "압정뿌리기",
+      "맹독",
+      "모래바람",
+      "브레이브버드",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Skarmory",
+    "fallback": false
+  },
+  "castform": {
+    "moves": [
+      "눈보라",
+      "화염방사",
+      "섀도볼",
+      "10만볼트"
+    ],
+    "sourceFormat": "gen9nationaldexru",
+    "sourcePokemon": "Castform",
+    "fallback": false
+  },
+  "luxray": {
+    "moves": [
+      "객기",
+      "썬더다이브",
+      "개척하기",
+      "와일드볼트",
+      "얼음엄니",
+      "볼트체인지",
+      "치근거리기",
+      "깨물어부수기",
+      "엄청난힘",
+      "10만볼트"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Luxray",
+    "fallback": false
+  },
+  "samurott": {
+    "moves": [
+      "냉동빔",
+      "아쿠아제트",
+      "하이드로펌프",
+      "퀵턴",
+      "파도타기",
+      "진공파",
+      "메가폰",
+      "풀묶기",
+      "아쿠아브레이크",
+      "칼춤"
+    ],
+    "sourceFormat": "gen9nu",
+    "sourcePokemon": "Samurott",
+    "fallback": false
+  },
+  "decidueye": {
+    "moves": [
+      "리프블레이드",
+      "그림자꿰매기",
+      "브레이브버드",
+      "기습",
+      "야습",
+      "안개제거"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Decidueye",
+    "fallback": false
+  },
+  "flapple": {
+    "moves": [
+      "G의힘",
+      "드래곤다이브",
+      "유턴",
+      "더블윙",
+      "테라버스트",
+      "역린",
+      "용의춤",
+      "기습",
+      "애크러뱃",
+      "용의숨결"
+    ],
+    "sourceFormat": "gen9ru",
+    "sourcePokemon": "Flapple",
+    "fallback": false
+  },
+  "polteageist": {
+    "moves": [
+      "껍질깨기",
+      "섀도볼",
+      "어시스트파워",
+      "기가드레인",
+      "테라버스트",
+      "악의파동",
+      "힘흡수",
+      "아로마테라피",
+      "기습",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Polteageist",
+    "fallback": false
+  },
+  "mr.-rime": {
+    "moves": [
+      "프리즈드라이",
+      "고속스핀",
+      "태만함",
+      "기합구슬",
+      "맹독",
+      "트릭룸",
+      "에너지볼",
+      "냉동빔",
+      "사이코키네시스",
+      "전기자석파"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Mr. Rime",
+    "fallback": false
+  },
+  "sinistcha": {
+    "moves": [
+      "휘적휘적포",
+      "섀도볼",
+      "힘흡수",
+      "명상",
+      "병상첨병",
+      "방어",
+      "열탕",
+      "분노가루",
+      "트릭룸",
+      "생명의물방울"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Sinistcha",
+    "fallback": false
+  },
+  "corviknight": {
+    "moves": [
+      "바디프레스",
+      "안개제거",
+      "철벽",
+      "날개쉬기",
+      "유턴",
+      "벌크업",
+      "기어오르기",
+      "브레이브버드",
+      "방어",
+      "철제광선"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Corviknight",
+    "fallback": false
+  },
+  "skeledirge": {
+    "moves": [
+      "태만함",
+      "도깨비불",
+      "병상첨병",
+      "플레어송",
+      "하품",
+      "화염방사",
+      "섀도볼",
+      "울부짖기",
+      "대지의힘",
+      "하이퍼보이스"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Skeledirge",
+    "fallback": false
+  },
+  "vaporeon": {
+    "moves": [
+      "열탕",
+      "희망사항",
+      "방어",
+      "치료방울",
+      "퀵턴",
+      "냉동빔",
+      "흑안개",
+      "맹독",
+      "섀도볼",
+      "명상"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Vaporeon",
+    "fallback": false
+  },
+  "flareon": {
+    "moves": [
+      "매혹의보이스",
+      "불대문자",
+      "니트로차지",
+      "열사의대지",
+      "플레어드라이브",
+      "객기",
+      "개척하기",
+      "맹독",
+      "쾌청",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Flareon",
+    "fallback": false
+  },
+  "umbreon": {
+    "moves": [
+      "희망사항",
+      "방어",
+      "속임수",
+      "맹독",
+      "치료방울",
+      "악의파동",
+      "달의불빛",
+      "전기자석파",
+      "원한",
+      "하품"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Umbreon",
+    "fallback": false
+  },
+  "scizor": {
+    "moves": [
+      "불릿펀치",
+      "칼춤",
+      "더블윙",
+      "개척하기",
+      "유턴",
+      "인파이트",
+      "안개제거",
+      "날개쉬기",
+      "벌레먹음",
+      "테라버스트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Scizor",
+    "fallback": false
+  },
+  "pelipper": {
+    "moves": [
+      "폭풍",
+      "유턴",
+      "하이드로펌프",
+      "방어",
+      "냉동빔",
+      "날개쉬기",
+      "열탕",
+      "파도타기",
+      "테라버스트",
+      "웨더볼"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Pelipper",
+    "fallback": false
+  },
+  "banette": {
+    "moves": [
+      "야습",
+      "칼춤",
+      "폴터가이스트",
+      "탁쳐서떨구기",
+      "도깨비불",
+      "기습",
+      "더스트슈트",
+      "아픔나누기",
+      "길동무",
+      "트릭룸"
+    ],
+    "sourceFormat": "gen9pu",
+    "sourcePokemon": "Banette",
+    "fallback": false
+  },
+  "mega-chimecho": {
+    "moves": [
+      "치료방울",
+      "희망사항",
+      "명상",
+      "사이코노이즈",
+      "미래예지",
+      "드레인키스",
+      "치유소원",
+      "탁쳐서떨구기",
+      "코스믹파워",
+      "HP회복"
+    ],
+    "sourceFormat": "gen9uu",
+    "sourcePokemon": "Chimecho",
+    "fallback": true
+  },
+  "chimecho": {
+    "moves": [
+      "치료방울",
+      "희망사항",
+      "명상",
+      "사이코노이즈",
+      "미래예지",
+      "드레인키스",
+      "치유소원",
+      "탁쳐서떨구기",
+      "코스믹파워",
+      "HP회복"
+    ],
+    "sourceFormat": "gen9uu",
+    "sourcePokemon": "Chimecho",
+    "fallback": false
+  },
+  "glaceon": {
+    "moves": [
+      "프리즈드라이",
+      "눈보라",
+      "찬물끼얹기",
+      "명상",
+      "냉동빔",
+      "섀도볼",
+      "배리어",
+      "어시스트파워",
+      "머드숏",
+      "희망사항"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Glaceon",
+    "fallback": false
+  },
+  "emboar": {
+    "moves": [
+      "플레어드라이브",
+      "인파이트",
+      "기습",
+      "양날박치기",
+      "드레인펀치",
+      "벌크업",
+      "와일드볼트",
+      "지진",
+      "엄청난힘",
+      "번개펀치"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Emboar",
+    "fallback": false
+  },
+  "wyrdeer": {
+    "moves": [
+      "배리어러시",
+      "에너지볼",
+      "덤벼들기",
+      "점프킥",
+      "기습",
+      "전기자석파",
+      "누르기",
+      "트릭룸"
+    ],
+    "sourceFormat": "gen9nationaldexru",
+    "sourcePokemon": "Wyrdeer",
+    "fallback": false
+  },
+  "orthworm": {
+    "moves": [
+      "꼬리자르기",
+      "바디프레스",
+      "똬리틀기",
+      "철벽",
+      "스텔스록",
+      "아이언헤드",
+      "압정뿌리기",
+      "지진",
+      "러스터캐논",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Orthworm",
+    "fallback": false
+  },
+  "chesnaught": {
+    "moves": [
+      "씨뿌리기",
+      "니들가드",
+      "바디프레스",
+      "철벽",
+      "드레인펀치",
+      "광합성",
+      "압정뿌리기",
+      "우드해머",
+      "씨폭탄",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Chesnaught",
+    "fallback": false
+  },
+  "alcremie": {
+    "moves": [
+      "명상",
+      "어시스트파워",
+      "드레인키스",
+      "녹기",
+      "매지컬플레임",
+      "매혹의보이스",
+      "HP회복",
+      "기가드레인",
+      "매지컬샤인",
+      "빛의장막"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Alcremie",
+    "fallback": false
+  },
+  "tyranitar": {
+    "moves": [
+      "따라가때리기",
+      "스텔스록",
+      "지진",
+      "깨물어부수기",
+      "속임수",
+      "스톤샤워",
+      "바크아웃",
+      "스톤에지",
+      "잠자기",
+      "전기자석파"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Tyranitar",
+    "fallback": false
+  },
+  "clefable": {
+    "moves": [
+      "코스믹파워",
+      "작아지기",
+      "알낳기",
+      "바톤터치",
+      "문포스",
+      "어시스트파워",
+      "명상",
+      "희망사항",
+      "방어",
+      "달의불빛"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Clefable",
+    "fallback": false
+  },
+  "empoleon": {
+    "moves": [
+      "안개제거",
+      "울부짖기",
+      "열탕",
+      "스텔스록",
+      "러스터캐논",
+      "탁쳐서떨구기",
+      "파도타기",
+      "맹독"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Empoleon",
+    "fallback": false
+  },
+  "abomasnow": {
+    "moves": [
+      "눈보라",
+      "오로라베일",
+      "대지의힘",
+      "기가드레인",
+      "우드해머",
+      "얼음뭉치",
+      "지진",
+      "방어",
+      "씨뿌리기",
+      "냉동펀치"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Abomasnow",
+    "fallback": false
+  },
+  "aegislash": {
+    "moves": [
+      "야습",
+      "아이언헤드",
+      "칼춤",
+      "성스러운칼",
+      "맹독",
+      "러스터캐논",
+      "인파이트",
+      "바디퍼지",
+      "깨트리다",
+      "사이코커터"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Aegislash",
+    "fallback": false
+  },
+  "sylveon": {
+    "moves": [
+      "치료방울",
+      "하이퍼보이스",
+      "방어",
+      "희망사항"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Sylveon",
+    "fallback": false
+  },
+  "goodra-hisui": {
+    "moves": [
+      "화염방사",
+      "용성군",
+      "러스터캐논",
+      "헤비봄버",
+      "애시드봄",
+      "탁쳐서떨구기",
+      "녹기",
+      "드래곤테일",
+      "냉동빔",
+      "용의파동"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Goodra-Hisui",
+    "fallback": false
+  },
+  "decidueye-hisui": {
+    "moves": [
+      "3연화살",
+      "날개쉬기",
+      "유턴",
+      "리프블레이드",
+      "칼춤",
+      "안개제거",
+      "기습",
+      "흑안개",
+      "개척하기",
+      "벌크업"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Decidueye-Hisui",
+    "fallback": false
+  },
+  "incineroar": {
+    "moves": [
+      "플레어드라이브",
+      "탁쳐서떨구기",
+      "막말내뱉기",
+      "속이다",
+      "도깨비불",
+      "유턴",
+      "DD래리어트",
+      "칼춤",
+      "죽기살기",
+      "드레인펀치"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Incineroar",
+    "fallback": false
+  },
+  "primarina": {
+    "moves": [
+      "문포스",
+      "물거품아리아",
+      "냉동빔",
+      "에너지볼",
+      "퀵턴",
+      "사이코노이즈",
+      "드레인키스",
+      "하이퍼보이스",
+      "열탕",
+      "명상"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Primarina",
+    "fallback": false
+  },
+  "toucannon": {
+    "moves": [
+      "부리캐논",
+      "기관총",
+      "락블레스트",
+      "탁쳐서떨구기",
+      "더스트슈트",
+      "강철날개",
+      "브레이브버드",
+      "칼춤",
+      "폭음파",
+      "열풍"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Toucannon",
+    "fallback": false
+  },
+  "oranguru": {
+    "moves": [
+      "기합구슬",
+      "나쁜음모",
+      "사이코쇼크",
+      "하이퍼보이스",
+      "10만볼트",
+      "사이코키네시스",
+      "미래예지",
+      "아픔나누기"
+    ],
+    "sourceFormat": "gen9zu",
+    "sourcePokemon": "Oranguru",
+    "fallback": false
+  },
+  "farigiraf": {
+    "moves": [
+      "매지컬샤인",
+      "바톤터치",
+      "방어",
+      "희망사항",
+      "트릭",
+      "사이코쇼크",
+      "대타출동",
+      "10만볼트",
+      "미래예지",
+      "파괴광선"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Farigiraf",
+    "fallback": false
+  },
+  "clawitzer": {
+    "moves": [
+      "물의파동",
+      "악의파동",
+      "용의파동",
+      "파동탄",
+      "냉동빔",
+      "오물폭탄"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Clawitzer",
+    "fallback": false
+  },
+  "rampardos": {
+    "moves": [
+      "깨물어부수기",
+      "지진",
+      "양날박치기",
+      "록커트"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Rampardos",
+    "fallback": false
+  },
+  "pangoro": {
+    "moves": [
+      "불릿펀치",
+      "드레인펀치",
+      "탁쳐서떨구기",
+      "냉동펀치",
+      "번개펀치",
+      "막말내뱉기",
+      "불꽃펀치",
+      "그로우펀치",
+      "죽기살기",
+      "받아던지기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Pangoro",
+    "fallback": false
+  },
+  "aurorus": {
+    "moves": [
+      "원시의힘",
+      "누르기",
+      "빛의장막",
+      "리플렉터",
+      "오로라베일",
+      "눈보라",
+      "방전"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Aurorus",
+    "fallback": false
+  },
+  "torterra": {
+    "moves": [
+      "껍질깨기",
+      "들이받기",
+      "우드해머",
+      "스톤에지",
+      "지진",
+      "기관총",
+      "락블레스트",
+      "씨폭탄",
+      "씨뿌리기",
+      "저주"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Torterra",
+    "fallback": false
+  },
+  "trevenant": {
+    "moves": [
+      "우드호른",
+      "섀도크루",
+      "지진",
+      "도깨비불",
+      "폴터가이스트",
+      "기습",
+      "시저크로스",
+      "드레인펀치",
+      "씨뿌리기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Trevenant",
+    "fallback": false
+  },
+  "machamp": {
+    "moves": [
+      "땅가르기",
+      "불릿펀치",
+      "스톤에지",
+      "맹독",
+      "폭발펀치",
+      "탁쳐서떨구기",
+      "냉동펀치",
+      "떨어뜨리기",
+      "인파이트",
+      "암석봉인"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Machamp",
+    "fallback": false
+  },
+  "ampharos": {
+    "moves": [
+      "코튼가드",
+      "방전",
+      "잠자기",
+      "10만볼트",
+      "전기자석파",
+      "용의파동",
+      "볼트체인지",
+      "매지컬샤인",
+      "기합구슬",
+      "빛의장막"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Ampharos",
+    "fallback": false
+  },
+  "golurk": {
+    "moves": [
+      "지진",
+      "폴터가이스트",
+      "폭발펀치",
+      "드레인펀치",
+      "록커트",
+      "섀도펀치",
+      "자이로볼",
+      "스톤에지",
+      "냉동펀치",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Golurk",
+    "fallback": false
+  },
+  "mega-golurk": {
+    "moves": [
+      "지진",
+      "폴터가이스트",
+      "폭발펀치",
+      "드레인펀치",
+      "록커트",
+      "섀도펀치",
+      "자이로볼",
+      "스톤에지",
+      "냉동펀치",
+      "스텔스록"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Golurk",
+    "fallback": true
+  },
+  "azumarill": {
+    "moves": [
+      "치근거리기",
+      "배북",
+      "아쿠아제트",
+      "폭포오르기",
+      "개척하기",
+      "대타출동",
+      "아이스스피너",
+      "아쿠아브레이크",
+      "누르기",
+      "객기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Azumarill",
+    "fallback": false
+  },
+  "sableye": {
+    "moves": [
+      "도깨비불",
+      "앵콜",
+      "메탈버스트",
+      "매직코트",
+      "야습",
+      "맹독",
+      "탁쳐서떨구기",
+      "검은눈빛",
+      "HP회복",
+      "병상첨병"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Sableye",
+    "fallback": false
+  },
+  "aggron": {
+    "moves": [
+      "메탈버스트",
+      "죽기살기",
+      "양날박치기",
+      "스텔스록",
+      "스톤샤워",
+      "버티기",
+      "헤비봄버",
+      "바디프레스",
+      "지진",
+      "아이언테일"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Aggron",
+    "fallback": false
+  },
+  "audino": {
+    "moves": [
+      "희망사항",
+      "치료방울",
+      "앵콜",
+      "매직코트",
+      "치유소원",
+      "탁쳐서떨구기",
+      "하품",
+      "트릭룸",
+      "맹독",
+      "방어"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Audino",
+    "fallback": false
+  },
+  "beartic": {
+    "moves": [
+      "인파이트",
+      "고드름떨구기",
+      "칼춤",
+      "지진",
+      "아쿠아브레이크",
+      "아쿠아제트",
+      "고드름침",
+      "치근거리기",
+      "눈사태",
+      "깨트리다"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Beartic",
+    "fallback": false
+  },
+  "kingambit": {
+    "moves": [
+      "아이언헤드",
+      "기습",
+      "도각참",
+      "깨트리다",
+      "칼춤",
+      "탁쳐서떨구기",
+      "메탈버스트",
+      "섀도크루",
+      "그로우펀치",
+      "속임수"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Kingambit",
+    "fallback": false
+  },
+  "mega-aggron": {
+    "moves": [
+      "철벽",
+      "잠자기",
+      "바디프레스",
+      "메탈버스트",
+      "불꽃펀치",
+      "메탈크로우",
+      "스텔스록",
+      "파도타기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Aggron-Mega",
+    "fallback": false
+  },
+  "mega-audino": {
+    "moves": [
+      "희망사항",
+      "방어",
+      "맹독",
+      "매지컬샤인",
+      "치료방울",
+      "전기자석파",
+      "탁쳐서떨구기",
+      "명상",
+      "드레인키스",
+      "하이퍼보이스"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Audino-Mega",
+    "fallback": false
+  },
+  "ditto": {
+    "moves": [
+      "변신"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Ditto",
+    "fallback": false
+  },
+  "hippowdon": {
+    "moves": [
+      "태만함",
+      "지진",
+      "스텔스록",
+      "날려버리기",
+      "맹독",
+      "울부짖기",
+      "하품",
+      "저주",
+      "바디프레스",
+      "객기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Hippowdon",
+    "fallback": false
+  },
+  "conkeldurr": {
+    "moves": [
+      "탁쳐서떨구기",
+      "마하펀치",
+      "인파이트",
+      "객기",
+      "드레인펀치",
+      "냉동펀치",
+      "독찌르기"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Conkeldurr",
+    "fallback": false
+  },
+  "bellibolt": {
+    "moves": [
+      "태만함",
+      "탁류",
+      "볼트체인지",
+      "방전",
+      "파라볼라차지",
+      "10만볼트",
+      "맹독",
+      "물붓기",
+      "방어",
+      "찬물끼얹기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Bellibolt",
+    "fallback": false
+  },
+  "mega-ampharos": {
+    "moves": [
+      "용의파동",
+      "볼트체인지",
+      "10만볼트",
+      "파워젬",
+      "매지컬샤인",
+      "방전",
+      "코튼가드",
+      "잠자기",
+      "치료방울",
+      "차지빔"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Ampharos-Mega",
+    "fallback": false
+  },
+  "mega-chesnaught": {
+    "moves": [
+      "씨뿌리기",
+      "니들가드",
+      "바디프레스",
+      "철벽",
+      "드레인펀치",
+      "광합성",
+      "압정뿌리기",
+      "우드해머",
+      "씨폭탄",
+      "탁쳐서떨구기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Chesnaught",
+    "fallback": true
+  },
+  "hydrapple": {
+    "moves": [
+      "변덕레이저",
+      "나쁜음모",
+      "엉겨붙기",
+      "테라버스트",
+      "대지의힘",
+      "기가드레인",
+      "용성군",
+      "HP회복",
+      "리프스톰",
+      "하이드로펌프"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Hydrapple",
+    "fallback": false
+  },
+  "crabominable": {
+    "moves": [
+      "아이스해머",
+      "번개펀치",
+      "인파이트",
+      "지진",
+      "찝게햄머",
+      "드레인펀치",
+      "탁쳐서떨구기",
+      "냉동펀치",
+      "힘껏펀치",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Crabominable",
+    "fallback": false
+  },
+  "araquanid": {
+    "moves": [
+      "아쿠아브레이크",
+      "끈적끈적네트",
+      "흡혈",
+      "맹독",
+      "미러코트",
+      "매직코트",
+      "죽기살기",
+      "방어",
+      "버티기",
+      "덤벼들기"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Araquanid",
+    "fallback": false
+  },
+  "ariados": {
+    "moves": [
+      "끈적끈적네트",
+      "흡혈",
+      "맹독",
+      "크로스포이즌",
+      "독압정",
+      "독실",
+      "독찌르기",
+      "기습",
+      "야습",
+      "칼춤"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Ariados",
+    "fallback": false
+  },
+  "forretress": {
+    "moves": [
+      "압정뿌리기",
+      "고속스핀",
+      "자이로볼",
+      "볼트체인지",
+      "독압정",
+      "스텔스록",
+      "대폭발",
+      "보복",
+      "모래바람",
+      "지진"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Forretress",
+    "fallback": false
+  },
+  "camerupt": {
+    "moves": [
+      "대지의힘",
+      "오버히트",
+      "잠자기",
+      "잠꼬대",
+      "스텔스록",
+      "불대문자",
+      "울부짖기",
+      "도깨비불",
+      "분연",
+      "화염방사"
+    ],
+    "sourceFormat": "gen9uu",
+    "sourcePokemon": "Camerupt",
+    "fallback": false
+  },
+  "rhyperior": {
+    "moves": [
+      "지진",
+      "스톤에지",
+      "암해머",
+      "스텔스록",
+      "울부짖기",
+      "스톤샤워",
+      "히트스탬프",
+      "썬더다이브",
+      "록커트",
+      "메가폰"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Rhyperior",
+    "fallback": false
+  },
+  "avalugg-hisui": {
+    "moves": [
+      "스텔스록",
+      "빙산바람",
+      "고속스핀",
+      "락블레스트",
+      "바디프레스",
+      "HP회복",
+      "눈사태",
+      "자이로볼",
+      "10만마력",
+      "스톤샤워"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Avalugg-Hisui",
+    "fallback": false
+  },
+  "mega-drampa": {
+    "moves": [
+      "용성군",
+      "10만볼트",
+      "파도타기",
+      "뱀눈초리",
+      "하이퍼보이스",
+      "화염방사",
+      "용의파동",
+      "섀도볼",
+      "에너지볼",
+      "번개"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Drampa",
+    "fallback": true
+  },
+  "drampa": {
+    "moves": [
+      "용성군",
+      "10만볼트",
+      "파도타기",
+      "뱀눈초리",
+      "하이퍼보이스",
+      "화염방사",
+      "용의파동",
+      "섀도볼",
+      "에너지볼",
+      "번개"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Drampa",
+    "fallback": false
+  },
+  "spiritomb": {
+    "moves": [
+      "도깨비불",
+      "아픔나누기",
+      "병상첨병",
+      "기습",
+      "속임수",
+      "길동무",
+      "버티기",
+      "섀도볼",
+      "악의파동",
+      "최면술"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Spiritomb",
+    "fallback": false
+  },
+  "toxapex": {
+    "moves": [
+      "HP회복",
+      "흑안개",
+      "독압정",
+      "탁쳐서떨구기",
+      "열탕",
+      "맹독",
+      "토치카",
+      "찬물끼얹기",
+      "소금물",
+      "얼음숨결"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Toxapex",
+    "fallback": false
+  },
+  "mudsdale": {
+    "moves": [
+      "바디프레스",
+      "잠자기",
+      "잠꼬대",
+      "울부짖기",
+      "지진",
+      "스텔스록",
+      "보복",
+      "철벽",
+      "헤비봄버",
+      "10만마력"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Mudsdale",
+    "fallback": false
+  },
+  "garganacl": {
+    "moves": [
+      "소금절이",
+      "스텔스록",
+      "HP회복",
+      "방어",
+      "바디프레스",
+      "스톤에지",
+      "철벽",
+      "눈사태",
+      "저주",
+      "지진"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Garganacl",
+    "fallback": false
+  },
+  "mega-crabominable": {
+    "moves": [
+      "아이스해머",
+      "번개펀치",
+      "인파이트",
+      "지진",
+      "찝게햄머",
+      "드레인펀치",
+      "탁쳐서떨구기",
+      "냉동펀치",
+      "힘껏펀치",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Crabominable",
+    "fallback": true
+  },
+  "stunfisk-galarian": {
+    "moves": [
+      "대지의힘",
+      "방전",
+      "스텔스록",
+      "전기자석파",
+      "열탕",
+      "참기",
+      "오물폭탄",
+      "번개",
+      "잠자기",
+      "잠꼬대"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Stunfisk",
+    "fallback": true
+  },
+  "stunfisk": {
+    "moves": [
+      "대지의힘",
+      "방전",
+      "스텔스록",
+      "전기자석파",
+      "열탕",
+      "참기",
+      "오물폭탄",
+      "번개",
+      "잠자기",
+      "잠꼬대"
+    ],
+    "sourceFormat": "gen9nationaldex",
+    "sourcePokemon": "Stunfisk",
+    "fallback": false
+  },
+  "slowbro-galarian": {
+    "moves": [
+      "셸암즈",
+      "배북",
+      "지진",
+      "아쿠아브레이크",
+      "명상",
+      "냉동빔",
+      "사이코키네시스"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Slowbro-Galar",
+    "fallback": false
+  },
+  "slowbro": {
+    "moves": [
+      "태만함",
+      "블록",
+      "치유파동",
+      "리사이클",
+      "미래예지",
+      "방어",
+      "순간이동",
+      "열탕",
+      "사이코쇼크",
+      "명상"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Slowbro",
+    "fallback": false
+  },
+  "snorlax": {
+    "moves": [
+      "지진",
+      "저주",
+      "리사이클",
+      "스톤샤워",
+      "누르기",
+      "깨물어부수기",
+      "잠자기",
+      "잠꼬대",
+      "DD래리어트",
+      "히트스탬프"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Snorlax",
+    "fallback": false
+  },
+  "slowking-galarian": {
+    "moves": [
+      "썰렁개그",
+      "오물폭탄",
+      "미래예지",
+      "전기자석파",
+      "화염방사",
+      "태만함",
+      "트릭룸",
+      "섬뜩한주문",
+      "냉동빔",
+      "맹독"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Slowking-Galar",
+    "fallback": false
+  },
+  "slowking": {
+    "moves": [
+      "태만함",
+      "블록",
+      "치유파동",
+      "리사이클",
+      "섀도볼",
+      "맹독",
+      "트릭룸",
+      "사이코키네시스",
+      "순간이동",
+      "하품"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Slowking",
+    "fallback": false
+  },
+  "steelix": {
+    "moves": [
+      "지진",
+      "저주",
+      "자이로볼",
+      "스텔스록",
+      "바디프레스",
+      "드래곤테일",
+      "대폭발"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Steelix",
+    "fallback": false
+  },
+  "bastiodon": {
+    "moves": [
+      "바디프레스",
+      "스텔스록",
+      "철벽",
+      "메탈버스트",
+      "아이언헤드",
+      "울부짖기",
+      "매직코트",
+      "스톤샤워",
+      "헤비봄버",
+      "속임수"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Bastiodon",
+    "fallback": false
+  },
+  "cofagrigus": {
+    "moves": [
+      "도깨비불",
+      "길동무",
+      "병상첨병",
+      "추억의선물"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Cofagrigus",
+    "fallback": false
+  },
+  "reuniclus": {
+    "moves": [
+      "트릭룸",
+      "대폭발",
+      "중력",
+      "매직코트",
+      "방어",
+      "기합구슬",
+      "러스터캐논",
+      "사이코키네시스",
+      "섀도볼",
+      "사이코쇼크"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Reuniclus",
+    "fallback": false
+  },
+  "appletun": {
+    "moves": [
+      "HP회복",
+      "사과산",
+      "씨뿌리기",
+      "철벽",
+      "바디프레스",
+      "저주",
+      "씨폭탄",
+      "용의파동",
+      "드래곤테일",
+      "용성군"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Appletun",
+    "fallback": false
+  },
+  "runerigus": {
+    "moves": [
+      "폴터가이스트",
+      "길동무",
+      "스텔스록",
+      "지진",
+      "저주",
+      "사슬묶기",
+      "바디프레스",
+      "독압정",
+      "트릭룸",
+      "도깨비불"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Runerigus",
+    "fallback": false
+  },
+  "mega-abomasnow": {
+    "moves": [
+      "눈보라",
+      "오로라베일",
+      "지진",
+      "우드해머",
+      "찬물끼얹기",
+      "광합성",
+      "웨더볼"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Abomasnow-Mega",
+    "fallback": false
+  },
+  "mega-slowbro": {
+    "moves": [
+      "태만함",
+      "맹독",
+      "열탕",
+      "철벽",
+      "순간이동",
+      "트릭룸",
+      "바디프레스",
+      "미래예지",
+      "명상",
+      "망각술"
+    ],
+    "sourceFormat": "gen9nationaldexubers",
+    "sourcePokemon": "Slowbro-Mega",
+    "fallback": false
+  },
+  "mega-steelix": {
+    "moves": [
+      "지진",
+      "이판사판태클",
+      "양날박치기",
+      "아이언헤드",
+      "대지의힘",
+      "철제광선",
+      "아이언롤러"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Steelix-Mega",
+    "fallback": false
+  },
+  "aromatisse": {
+    "moves": [
+      "문포스",
+      "방어",
+      "희망사항",
+      "아로마테라피",
+      "치료방울"
+    ],
+    "sourceFormat": "gen9nationaldexuu",
+    "sourcePokemon": "Aromatisse",
+    "fallback": false
+  },
+  "hatterene": {
+    "moves": [
+      "트릭룸",
+      "매지컬플레임",
+      "사이코키네시스",
+      "치유소원",
+      "매지컬샤인",
+      "스킬스웹",
+      "명상",
+      "바톤터치",
+      "어시스트파워",
+      "대타출동"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Hatterene",
+    "fallback": false
+  },
+  "avalugg": {
+    "moves": [
+      "바디프레스",
+      "눈사태",
+      "철벽",
+      "싸라기눈",
+      "HP회복",
+      "아이언헤드"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Avalugg",
+    "fallback": false
+  },
+  "mega-sableye": {
+    "moves": [
+      "HP회복",
+      "속임수",
+      "맹독",
+      "방어",
+      "속이다",
+      "도깨비불",
+      "탁쳐서떨구기",
+      "앵콜",
+      "도발",
+      "파워젬"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Sableye-Mega",
+    "fallback": false
+  },
+  "torkoal": {
+    "moves": [
+      "고속스핀",
+      "스텔스록",
+      "분연",
+      "하품",
+      "도깨비불",
+      "맹독"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Torkoal",
+    "fallback": false
+  },
+  "mega-camerupt": {
+    "moves": [
+      "원시의힘",
+      "대지의힘",
+      "분화",
+      "불대문자",
+      "화염방사",
+      "테라버스트",
+      "러스터캐논"
+    ],
+    "sourceFormat": "gen9nationaldexag",
+    "sourcePokemon": "Camerupt-Mega",
+    "fallback": false
+  }
+}

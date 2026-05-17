@@ -11,6 +11,7 @@
     "build:champions-whitelist": "node scripts/build-champions-move-whitelist.mjs",
     "build:champions-learned-whitelist": "node scripts/build-champions-learned-move-whitelist.mjs",
     "build:champions-move-meta": "node scripts/build-champions-move-meta.mjs",
+    "build:champions-usage-top-moves": "node scripts/build-champions-usage-top-moves.mjs",
     "check:type-effectiveness": "node scripts/check-type-effectiveness-harness.mjs",
     "check:damage-parity": "node scripts/check-damage-parity.mjs",
     "check:ability-damage": "node scripts/check-ability-damage-harness.mjs",
