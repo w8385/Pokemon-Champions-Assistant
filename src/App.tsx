@@ -5114,7 +5114,7 @@ export default function App() {
                     </div>
                     <div className="sample-speed-cut-grid">
                       {entry.cutoffs.map((cutoff) => (
-                        <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className="sample-speed-cut-card">
+                        <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className={`sample-speed-cut-card ${cutoff.result === lt('내가 앞섬') ? 'ahead' : cutoff.result === lt('동속') ? 'tie' : 'behind'}`}>
                           <strong>{cutoff.label}</strong>
                           <div className="pick-summary-badges">
                             <span className="pick-badge">현재 {cutoff.speed}</span>
