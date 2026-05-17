@@ -1570,6 +1570,12 @@ function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (normalizedTypeChart[attackKey]?.[defendType.toLowerCase()] ?? 1), 1)
 }
 
+function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes: string[], defenderAbility: string) {
+  const baseEffectiveness = typeEffectiveness(attackType, defendTypes)
+  if (attackType.toLowerCase() === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) return 0
+  return baseEffectiveness
+}
+
 function weightBasedMovePower(weightKg: number) {
   if (weightKg < 10) return 20
   if (weightKg < 25) return 40
@@ -3030,7 +3036,7 @@ export default function App() {
   const showDefenderStatusedToggle = defenderAbilitySlug === 'marvel-scale'
   const showDefenderFullHpToggle = ['multiscale', 'shadow-shield'].includes(defenderAbilitySlug)
   const autoStab = resolveStabMultiplier(effectiveAttackerTypes, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
-  const autoEffectiveness = activeDamageMoveType && defenderRow ? typeEffectiveness(activeDamageMoveType, effectiveDefenderTypes) : 1
+  const autoEffectiveness = activeDamageMoveType && defenderRow ? abilityAdjustedTypeEffectiveness(activeDamageMoveType, effectiveDefenderTypes, defenderAbilitySlug) : 1
   const setActiveDamageMoveConditionValue = (value: ConditionalPowerValue) => {
     if (!activeDamageMoveRule || !activeDamageMove) return
     const normalized = normalizeConditionalPowerValue(activeDamageMoveRule, value)
@@ -3581,7 +3587,7 @@ export default function App() {
     if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
       return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
-    const effectivenessValue = typeEffectiveness(moveType, effectiveDefenderTypes)
+    const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
       attackerItem: sampleForge.item,
