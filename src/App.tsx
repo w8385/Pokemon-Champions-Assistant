@@ -252,7 +252,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions singles in one place.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '버그 제보': 'Report a Bug', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions singles in one place.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '버그 제보': 'Report a Bug', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -281,7 +281,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'ポケモンチャンピオンズのシングルバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '버그 제보': 'バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'ポケモンチャンピオンズのシングルバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '버그 제보': 'バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -5107,7 +5107,7 @@ export default function App() {
                     {sampleSpeedAbilityLine ? <span className="pick-badge enemy">{sampleSpeedAbilityLine.label} {sampleSpeedAbilityLine.speed}</span> : null}
                   </div>
                 </div>
-                <div className="sample-speed-inline-controls">
+                <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
                     <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleSpeedSearchOpen(true)} onBlur={() => setTimeout(() => setSampleSpeedSearchOpen(false), 120)} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true) }} />
@@ -5115,31 +5115,16 @@ export default function App() {
                       {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <label className="sample-speed-slider-field sample-speed-ev-field sample-speed-control-card">
-                    <span>{lt('스피드 EV')}</span>
-                    <div className="sample-speed-ev-row">
-                      <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed - 4, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-4</button>
-                      <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={4} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
-                      <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed + 4, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+4</button>
-                    </div>
-                    <div className="pick-summary-badges sample-speed-ev-presets">
-                      <button type="button" className={`pick-chip ${sampleForge.evs.speed === 0 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', 0) }))}>0</button>
-                      <button type="button" className={`pick-chip ${sampleForge.evs.speed === CHAMPIONS_EFFORT_PER_STAT_CAP ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', CHAMPIONS_EFFORT_PER_STAT_CAP) }))}>{lt('최대치')}</button>
-                    </div>
-                  </label>
-                  <div className="sample-speed-config-panel sample-speed-control-card">
-                    <div className="sample-speed-config-group">
-                      <span>{lt('성격')}</span>
-                      <div className="pick-summary-badges sample-speed-config-chips">
-                        <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
-                        <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'jolly' } }))}>{lt('최속')}</button>
-                      </div>
-                    </div>
-                    <div className="sample-speed-config-group">
-                      <span>{lt('도구')}</span>
-                      <div className="pick-summary-badges sample-speed-config-chips">
-                        <button type="button" className={`pick-chip ${(sampleForge.config.scarf || sampleForge.item.includes('스카프')) ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, scarf: !prev.config.scarf } }))}>{lt('스카프')}</button>
-                      </div>
+                  <div className="sample-speed-control-card sample-current-build-card">
+                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
+                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                    <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                    <div className="pick-summary-badges sample-current-build-badges">
+                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                      <span className="pick-badge">{lt('스피드 EV')} {sampleForge.evs.speed}</span>
+                      <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
+                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
+                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                     </div>
                   </div>
                 </div>
@@ -5191,13 +5176,26 @@ export default function App() {
                 <span className="muted-inline">{sampleDamageMove || lt('등록 기술 없음')}</span>
               </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
-                <label className="sample-speed-slider-field sample-damage-search-field">
-                  <span>{lt('추가')}</span>
-                  <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleDamageSearchOpen(true)} onBlur={() => setTimeout(() => setSampleDamageSearchOpen(false), 120)} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true) }} />
-                  {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
-                    {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
-                  </div> : null}
-                </label>
+                <div className="sample-speed-inline-controls sample-current-build-toolbar">
+                  <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
+                    <span>{lt('추가')}</span>
+                    <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleDamageSearchOpen(true)} onBlur={() => setTimeout(() => setSampleDamageSearchOpen(false), 120)} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true) }} />
+                    {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
+                      {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
+                    </div> : null}
+                  </label>
+                  <div className="sample-speed-control-card sample-current-build-card">
+                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
+                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                    <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                    <div className="pick-summary-badges sample-current-build-badges">
+                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
+                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                      <span className="pick-badge">{sampleDamageMove || lt('등록 기술 없음')}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="sample-overview-stack">
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
