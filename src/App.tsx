@@ -3492,15 +3492,50 @@ export default function App() {
   const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
     .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
     .slice(0, 8)
+  const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sampleForge.ability) : sampleForge.ability
+  const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
+  const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    return row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? member.ability) : member.ability
+  })
+  const sampleShowAttackerLowHpToggle = ['blaze', 'torrent', 'overgrow', 'swarm'].includes(sampleAttackerAbilityValue)
+  const sampleShowTargetPoisonedToggle = sampleAttackerAbilityValue === 'merciless'
+  const sampleShowMovedAfterTargetToggle = sampleAttackerAbilityValue === 'analytic'
+  const sampleShowFaintedAlliesInput = sampleAttackerAbilityValue === 'supreme-overlord'
+  const sampleShowRivalryModeInput = sampleAttackerAbilityValue === 'rivalry'
+  const sampleShowParentalBondToggle = sampleAttackerAbilityValue === 'parental-bond'
+  const sampleShowElectromorphosisToggle = sampleAttackerAbilityValue === 'electromorphosis'
+  const sampleShowDefenderStatusedToggle = sampleDamageDefenderAbilitySlugs.includes('marvel-scale')
+  const sampleShowDefenderFullHpToggle = sampleDamageDefenderAbilitySlugs.some((ability) => ability === 'multiscale' || ability === 'shadow-shield')
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? member.ability) : member.ability
     const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
-    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, moveMetaBase, sampleAbility)
+    const moveHitOptions = multiHitOptions(moveName)
+    const moveHitCount = moveHitOptions?.includes(calcHitCount) ? calcHitCount : (moveHitOptions?.[0] ?? null)
+    const moveRule = moveName ? CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null : null
+    const moveConditionValue = moveRule ? normalizeConditionalPowerValue(moveRule, calcConditionalPowerValues[moveName] ?? moveRule.defaultValue) : null
+    const targetWeightKg = row ? (typeof row.weightKg === 'number' ? row.weightKg : weightByKey[row.key] ?? null) : null
+    const moveMeta = applyConditionalMovePower(
+      moveName,
+      applyTargetWeightMovePower(
+        moveName,
+        resolveAbilityAdjustedMoveMeta(
+          moveName,
+          resolveMultiHitMeta(moveName, moveMetaBase, moveHitCount, sampleAttackerAbilityValue),
+          sampleAttackerAbilityValue,
+        ),
+        targetWeightKg,
+      ),
+      moveConditionValue,
+    )
     const moveType = moveMeta?.type ?? null
     const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
     const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
     if (!row || !moveName || !movePower || !moveCategory || !moveType) return null
+    const effectiveAttackerTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain)
+    const effectiveDefenderTypes = resolveAbilityAdjustedTypes(row.types, defenderAbilityValue, calcWeather, calcTerrain)
     const defenderStats = buildOpponentBattleStats(row, {
       hpEv: member.hpEv,
       defenseEv: member.defenseEv,
@@ -3508,44 +3543,44 @@ export default function App() {
       defenseNature: member.defenseNature,
       spDefenseNature: member.spDefenseNature,
     })
-    const effectivenessValue = typeEffectiveness(moveType, row.types)
+    const effectivenessValue = typeEffectiveness(moveType, effectiveDefenderTypes)
     const modifierPack = resolveDamageModifiers({
-      attackerAbility: sampleAbility,
+      attackerAbility: sampleAttackerAbilityValue,
       attackerItem: sampleForge.item,
-      defenderAbility: member.ability,
+      defenderAbility: defenderAbilityValue,
       defenderItem: member.item,
       moveName,
-      baseMoveType: moveType,
+      baseMoveType: moveMetaBase?.type ?? moveType,
       moveType,
       movePower,
       mode: moveCategory,
       effectiveness: effectivenessValue,
-      attackStage: 0,
-      defenseStage: 0,
-      defenderTypes: row.types,
-      burned: false,
-      attackerLowHp: false,
-      targetPoisoned: false,
-      defenderFullHp: false,
-      movedAfterTarget: false,
-      faintedAllies: 0,
-      rivalryMode: 'neutral',
-      parentalBond: false,
-      defenderStatused: false,
-      electromorphosisCharged: false,
-      critical: false,
-      weather: 'none',
-      terrain: 'none',
-      reflect: false,
-      lightScreen: false,
-      auroraVeil: false,
-      friendGuard: false,
+      attackStage: calcAttackStage,
+      defenseStage: calcDefenseStage,
+      defenderTypes: effectiveDefenderTypes,
+      burned: calcBurned,
+      attackerLowHp: calcAttackerLowHp,
+      targetPoisoned: calcTargetPoisoned,
+      defenderFullHp: calcDefenderFullHp,
+      movedAfterTarget: calcMovedAfterTarget,
+      faintedAllies: calcFaintedAllies,
+      rivalryMode: calcRivalryMode,
+      parentalBond: calcParentalBond,
+      defenderStatused: calcDefenderStatused,
+      electromorphosisCharged: calcElectromorphosisCharged,
+      critical: calcCritical,
+      weather: calcWeather,
+      terrain: calcTerrain,
+      reflect: calcReflect,
+      lightScreen: calcLightScreen,
+      auroraVeil: calcAuroraVeil,
+      friendGuard: calcFriendGuard,
     })
     const attackStatLabel = moveCategory === 'physical' ? '공격' : '특수공격'
     const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
-    const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(sampleRow.types, moveType, sampleAbility, true), modifierPack.effectiveness, moveMeta, modifierPack)
+    const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
     if (!damage) return null
-    return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
+    return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number' }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
 
   const addSampleSpeedTarget = (key: string) => {
@@ -3576,6 +3611,18 @@ export default function App() {
 
   const updateSampleDamageTarget = (idx: number, patch: Partial<SampleDamageTarget>) => {
     setSampleDamageTargets((prev) => prev.map((entry, entryIdx) => (entryIdx === idx ? { ...entry, ...patch } : entry)))
+  }
+
+  const applySampleDamageBulkPresetSelection = (idx: number, preset: OpponentBulkPreset) => {
+    if (preset === 'custom') return
+    const next = opponentBulkStateFromPreset(preset)
+    updateSampleDamageTarget(idx, {
+      hpEv: next.hpEv,
+      defenseEv: next.defenseEv,
+      spDefenseEv: next.spDefenseEv,
+      defenseNature: next.defenseNature,
+      spDefenseNature: next.spDefenseNature,
+    })
   }
 
   const removeSampleDamageTarget = (idx: number) => {
@@ -5249,6 +5296,38 @@ export default function App() {
                   </div>
                 </div>
               </div>
+              <div className="sample-damage-shared-controls sample-workbench-wide-card">
+                <div className="damage-control-group">
+                  <div className="damage-control-group-title">{lt('화력 조건')}</div>
+                  <div className="calc-grid damage-calc-grid compact offense-grid">
+                    {sampleUsesTypeChangeStabAbility ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} /><span>{lt('타입변환 자속')}</span></label> : null}
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} /><span>{lt('급소')}</span></label>
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} /><span>{lt('화상')}</span></label>
+                    {sampleShowAttackerLowHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} /><span>{lt('공격측 HP 1/3 이하')}</span></label> : null}
+                    {sampleShowTargetPoisonedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} /><span>{lt('상대 독/맹독')}</span></label> : null}
+                    {sampleShowMovedAfterTargetToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} /><span>{lt('상대보다 늦게 행동')}</span></label> : null}
+                    {sampleShowFaintedAlliesInput ? <label>{lt('기절한 아군 수')}<input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} /></label> : null}
+                    {sampleShowRivalryModeInput ? <label>{lt('라이벌리 성별 관계')}<select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}><option value="neutral">{lt('없음')}</option><option value="same">{lt('같은 성별')}</option><option value="opposite">{lt('다른 성별')}</option></select></label> : null}
+                    {sampleShowParentalBondToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} /><span>{lt('부자유친 발동')}</span></label> : null}
+                    {sampleShowDefenderStatusedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} /><span>{lt('상대 상태이상')}</span></label> : null}
+                    {sampleShowElectromorphosisToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} /><span>{lt('일렉트릭 차지됨')}</span></label> : null}
+                    <label>{lt('공격측 화력 랭크')}<select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
+                    <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
+                    {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 만땅')}</span></label> : null}
+                  </div>
+                </div>
+                <div className="damage-control-group">
+                  <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                  <div className="calc-grid damage-calc-grid compact field-grid">
+                    <label>{lt('날씨')}<select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}><option value="none">{lt('없음')}</option><option value="sun">{lt('쾌청')}</option><option value="rain">{lt('비')}</option><option value="sand">{lt('모래바람')}</option><option value="snow">{lt('싸라기눈')}</option></select></label>
+                    <label>{lt('필드')}<select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}><option value="none">{lt('없음')}</option><option value="electric">{lt('일렉트릭필드')}</option><option value="grassy">{lt('그래스필드')}</option><option value="psychic">{lt('사이코필드')}</option><option value="misty">{lt('미스트필드')}</option></select></label>
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} /><span>{lt('리플렉터')}</span></label>
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} /><span>{lt('빛의장막')}</span></label>
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} /><span>{lt('오로라베일')}</span></label>
+                    <label className="calc-toggle-box"><input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} /><span>{lt('프렌드가드')}</span></label>
+                  </div>
+                </div>
+              </div>
               <div className="sample-overview-stack">
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
@@ -5266,6 +5345,26 @@ export default function App() {
                               {sampleDamageMoveChoices.map((move) => <option key={`sample-damage-move-${entry.idx}-${move}`} value={move}>{move}</option>)}
                             </select>
                           </label>
+                          <label>
+                            {lt('상대 내구 프리셋')}
+                            <select value={detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })} onChange={(e) => applySampleDamageBulkPresetSelection(entry.idx, e.target.value as OpponentBulkPreset)}>
+                              {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={`sample-damage-bulk-preset-${entry.idx}-${key}`} value={key}>{preset.label}</option>)}
+                              <option value="custom">{lt('직접 조절')}</option>
+                            </select>
+                          </label>
+                          {entry.moveHitOptions?.length ? <label>
+                            {lt('타수')}
+                            <select value={entry.moveHitCount ?? entry.moveHitOptions[0]} onChange={(e) => setCalcHitCount(Math.max(1, Math.trunc(Number(e.target.value))))} disabled={entry.moveHitOptions.length === 1}>
+                              {entry.moveHitOptions.map((hit) => <option key={`sample-damage-hit-${entry.idx}-${hit}`} value={hit}>{`${hit} ${lt('타수')}`}</option>)}
+                            </select>
+                            {entry.moveHitSummary ? <small>{lt('총위력')} {entry.moveHitSummary.totalPower}</small> : null}
+                          </label> : entry.moveRule ? <label>
+                            {lt('위력 조건')}
+                            {entry.moveRule.kind === 'count'
+                              ? <><span>{lt(entry.moveRule.label)}</span><input type="number" min={entry.moveRule.min ?? 0} max={entry.moveRule.max ?? 999} value={Number(entry.moveConditionValue ?? entry.moveRule.defaultValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: Number(e.target.value) }))} /></>
+                              : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
+                          </label> : null}
+                          {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown })}</div> : null}
                           <label>
                             체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
