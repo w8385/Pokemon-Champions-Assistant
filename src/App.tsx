@@ -3533,16 +3533,27 @@ export default function App() {
     const moveType = moveMeta?.type ?? null
     const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
     const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
-    if (!row || !moveName || !movePower || !moveCategory || !moveType) return null
-    const effectiveAttackerTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain)
-    const effectiveDefenderTypes = resolveAbilityAdjustedTypes(row.types, defenderAbilityValue, calcWeather, calcTerrain)
-    const defenderStats = buildOpponentBattleStats(row, {
+    const unavailableReason = !row
+      ? lt('비교 대상 없음')
+      : !moveName
+        ? lt('등록 기술 없음')
+        : moveMeta?.category === 'status'
+          ? lt('변화기는 데미지 계산 대상이 아님')
+          : (!movePower || !moveCategory || !moveType)
+            ? lt('수동 위력')
+            : null
+    const effectiveAttackerTypes = row ? resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain) : sampleRow.types
+    const effectiveDefenderTypes = row ? resolveAbilityAdjustedTypes(row.types, defenderAbilityValue, calcWeather, calcTerrain) : []
+    const defenderStats = row ? buildOpponentBattleStats(row, {
       hpEv: member.hpEv,
       defenseEv: member.defenseEv,
       spDefenseEv: member.spDefenseEv,
       defenseNature: member.defenseNature,
       spDefenseNature: member.spDefenseNature,
-    })
+    }) : null
+    if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
+      return { idx, member, row, moveName, moveCategory, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
+    }
     const effectivenessValue = typeEffectiveness(moveType, effectiveDefenderTypes)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
@@ -3579,9 +3590,8 @@ export default function App() {
     const attackStatLabel = moveCategory === 'physical' ? '공격' : '특수공격'
     const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
     const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
-    if (!damage) return null
-    return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number' }
-  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+    return { idx, member, row, moveName, moveCategory, attackStatLabel, attackStatValue, defenderStats, damage, verdict: damage ? resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) : lt('데미지 계산 불가'), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason: damage ? null : lt('데미지 계산 불가') }
+  })
 
   const addSampleSpeedTarget = (key: string) => {
     setSampleSpeedTargets((prev) => ([
@@ -5346,7 +5356,7 @@ export default function App() {
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
                     <div className="row-between">
-                      <strong>{displayName(entry.row, siteLanguage)}</strong>
+                      <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
                       <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
                     <div className="sample-workbench-card-body sample-damage-card-body">
@@ -5403,17 +5413,19 @@ export default function App() {
                       </div>
                       <div className="sample-workbench-mainpanel">
                         <div className="pick-summary-badges sample-workbench-metric-badges">
-                          <span className="pick-badge">{entry.moveName}</span>
+                          <span className="pick-badge">{entry.moveName || lt('등록 기술 없음')}</span>
                           <span className="pick-badge">{entry.attackStatLabel} {entry.attackStatValue}</span>
-                          <span className="pick-badge">체력 {entry.defenderStats.hp}</span>
-                          <span className="pick-badge">방어 {entry.defenderStats.defense}</span>
-                          <span className="pick-badge">특수방어 {entry.defenderStats.spDefense}</span>
+                          {entry.defenderStats ? <>
+                            <span className="pick-badge">체력 {entry.defenderStats.hp}</span>
+                            <span className="pick-badge">방어 {entry.defenderStats.defense}</span>
+                            <span className="pick-badge">특수방어 {entry.defenderStats.spDefense}</span>
+                          </> : null}
                         </div>
-                        <div className="pick-summary-badges sample-workbench-metric-badges">
+                        {entry.damage ? <div className="pick-summary-badges sample-workbench-metric-badges">
                           <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
                           <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
-                        </div>
-                        <div className="pick-summary-badges sample-workbench-metric-badges"><span className="pick-badge">{entry.verdict}</span></div>
+                        </div> : null}
+                        <div className="pick-summary-badges sample-workbench-metric-badges"><span className="pick-badge">{entry.unavailableReason || entry.verdict}</span></div>
                       </div>
                     </div>
                   </div>
