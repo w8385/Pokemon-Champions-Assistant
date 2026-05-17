@@ -5060,8 +5060,8 @@ export default function App() {
                 <strong>{lt('샘플 스피드')}</strong>
                 <span className="muted-inline">추월컷 계산</span>
               </div>
-              <div className="sample-speed-toolbar">
-                <div className="sample-speed-toolbar-head">
+              <div className="sample-speed-toolbar sample-workbench-toolbar">
+                <div className="sample-speed-toolbar-head sample-workbench-toolbar-head">
                   <div className="pick-summary-badges">
                     <span className="pick-badge">{lt('샘플 현재 속도선')} {sampleSpeedValueNow}</span>
                     <span className="pick-badge">{lt('스피드 EV')} {sampleForge.evs.speed}</span>
@@ -5070,7 +5070,7 @@ export default function App() {
                 </div>
                 <div className="sample-speed-inline-controls">
                   <label className="sample-speed-slider-field sample-damage-search-field">
-                    <span>대상 추가</span>
+                    <span>{lt('추가')}</span>
                     <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleSpeedSearchOpen(true)} onBlur={() => setTimeout(() => setSampleSpeedSearchOpen(false), 120)} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true) }} />
                     {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
                       {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
@@ -5096,18 +5096,18 @@ export default function App() {
                     </div>
                     <div className="sample-damage-target-controls sample-speed-target-controls">
                       <label>
-                        성격
+                        {lt('성격')}
                         <select value={entry.member.natureBoost ? 'fast' : 'neutral'} onChange={(e) => updateSampleSpeedTarget(entry.idx, { natureBoost: e.target.value === 'fast' })}>
                           <option value="neutral">{lt('준속')}</option>
                           <option value="fast">{lt('최속')}</option>
                         </select>
                       </label>
                       <label>
-                        스카프
+                        {lt('스카프')}
                         <input type="checkbox" checked={entry.member.scarf} onChange={(e) => updateSampleSpeedTarget(entry.idx, { scarf: e.target.checked })} />
                       </label>
                       <label>
-                        랭크
+                        {lt('랭크')}
                         <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
                           {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage >= 0 ? `+${stage}` : stage}</option>)}
                         </select>
@@ -5138,9 +5138,9 @@ export default function App() {
                 <strong>{lt('샘플 딜계산')}</strong>
                 <span className="muted-inline">{sampleDamageMove || lt('등록 기술 없음')}</span>
               </div>
-              <div className="sample-damage-adder">
+              <div className="sample-damage-adder sample-workbench-toolbar">
                 <label className="sample-speed-slider-field sample-damage-search-field">
-                  <span>대상 추가</span>
+                  <span>{lt('추가')}</span>
                   <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleDamageSearchOpen(true)} onBlur={() => setTimeout(() => setSampleDamageSearchOpen(false), 120)} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true) }} />
                   {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
                     {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
