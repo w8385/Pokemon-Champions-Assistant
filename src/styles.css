@@ -3567,20 +3567,40 @@ textarea { min-height: 72px; resize: vertical; }
   font-size: 12px;
 }
 .damage-move-chip-wrap {
+  position: relative;
   display: inline-flex;
   align-items: stretch;
-  gap: 4px;
   min-width: 0;
 }
 .damage-move-remove-button {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
   appearance: none;
-  min-width: 28px;
-  border: 1px solid rgba(127, 29, 29, 0.75);
-  border-radius: 10px;
-  background: rgba(69, 10, 10, 0.45);
-  color: #fecaca;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(127, 29, 29, 0.82);
+  color: #fee2e2;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
   cursor: pointer;
+  z-index: 1;
+}
+.damage-move-remove-button:hover {
+  background: rgba(153, 27, 27, 0.96);
+  color: #fff1f2;
+}
+.damage-move-remove-button:focus-visible {
+  outline: 2px solid rgba(248, 113, 113, 0.9);
+  outline-offset: 1px;
 }
 .damage-opponent-move-adder {
   position: relative;
@@ -3654,6 +3674,7 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-move-chip-wrap .damage-move-chip {
   flex: 1 1 auto;
   min-width: 0;
+  padding-right: 34px;
 }
 .damage-control-surface {
   margin-top: 10px;
