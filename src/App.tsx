@@ -5137,20 +5137,9 @@ export default function App() {
                       <div className="sample-workbench-sidepanel">
                         <div className="sample-damage-target-controls sample-speed-target-controls">
                           <label>
-                            {lt('성격')}
-                            <select value={entry.member.natureBoost ? 'fast' : 'neutral'} onChange={(e) => updateSampleSpeedTarget(entry.idx, { natureBoost: e.target.value === 'fast' })}>
-                              <option value="neutral">{lt('준속')}</option>
-                              <option value="fast">{lt('최속')}</option>
-                            </select>
-                          </label>
-                          <label>
-                            {lt('스카프')}
-                            <input type="checkbox" checked={entry.member.scarf} onChange={(e) => updateSampleSpeedTarget(entry.idx, { scarf: e.target.checked })} />
-                          </label>
-                          <label>
                             {lt('랭크')}
                             <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
-                              {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage >= 0 ? `+${stage}` : stage}</option>)}
+                              {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
                             </select>
                           </label>
                         </div>
