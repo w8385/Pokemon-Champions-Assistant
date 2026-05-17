@@ -5327,8 +5327,10 @@ export default function App() {
           </div>
           <div className="team-strip-grid sample-overview-grid">
             <div className="sample-overview-card sample-overview-card-summary">
-              <span className="muted">{lt('현재 화면')}</span>
-              <strong>{displayName(sampleRow, siteLanguage)}</strong>
+              <div className="sample-overview-card-head">
+                <span className="muted sample-overview-eyebrow">{lt('현재 화면')}</span>
+                <strong className="sample-overview-title">{displayName(sampleRow, siteLanguage)}</strong>
+              </div>
               <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary">
                 <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
                   <em>{lt('성격')}</em>
@@ -5343,14 +5345,19 @@ export default function App() {
                   <strong>{sampleEvTotal}</strong>
                 </span>
               </div>
-              <div className="pick-row sample-overview-actions sample-overview-actions-summary">
-                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
-                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
+              <div className="sample-overview-quick-links">
+                <span className="muted sample-overview-section-label">{lt('구성')}</span>
+                <div className="pick-row sample-overview-actions sample-overview-actions-summary sample-overview-action-grid">
+                  <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
+                  <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
+                </div>
               </div>
             </div>
             <div className="sample-overview-card sample-overview-card-summary">
-              <span className="muted">{lt('샘플 빌더')}</span>
-              <strong>{sampleLabelDraft.trim() || lt('샘플 이름')}</strong>
+              <div className="sample-overview-card-head">
+                <span className="muted sample-overview-eyebrow">{lt('샘플 빌더')}</span>
+                <strong className="sample-overview-title">{sampleLabelDraft.trim() || lt('샘플 이름')}</strong>
+              </div>
               <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary">
                 <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
                   <em>{lt('도구')}</em>
@@ -5371,10 +5378,19 @@ export default function App() {
               </div>
             </div>
             <div className="sample-overview-card sample-workflow-card">
-              <span className="muted">{lt('구성')}</span>
-              <strong>{lt('파티 슬롯에 적용')}</strong>
-              <div className="pick-summary-badges sample-overview-badges">
-                <span className="pick-badge sample-overview-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              <div className="sample-overview-card-head">
+                <span className="muted sample-overview-eyebrow">{lt('구성')}</span>
+                <strong className="sample-overview-title">{lt('파티 슬롯에 적용')}</strong>
+              </div>
+              <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary sample-overview-badges-compact">
+                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
+                  <em>{lt('저장 샘플 수')}</em>
+                  <strong>{savedSamples.length}</strong>
+                </span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
+                  <em>{lt('파티 슬롯')}</em>
+                  <strong>{slotNumberLabel(selectedMy, siteLanguage)}</strong>
+                </span>
               </div>
               <div className="team-strip sample-slot-strip sample-overview-slot-strip">
                 {party.map((member, idx) => {

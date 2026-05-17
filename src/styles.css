@@ -2089,16 +2089,32 @@ header p {
 }
 .sample-overview-card {
   display: grid;
-  gap: 8px;
-  padding: 14px;
-  border-radius: 14px;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 16px;
   border: 1px solid rgba(51, 65, 85, 0.76);
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(11, 18, 32, 0.76));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 .sample-overview-card strong {
   font-size: 18px;
   line-height: 1.2;
   color: #eef2f7;
+}
+.sample-overview-card-head {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 2px;
+}
+.sample-overview-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8ea3bb;
+}
+.sample-overview-title {
+  display: block;
 }
 .sample-speed-toolbar {
   display: grid;
@@ -2663,6 +2679,9 @@ header p {
   gap: 10px;
   align-items: stretch;
 }
+.sample-overview-badges-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .sample-overview-badge {
   min-height: 32px;
   max-width: 100%;
@@ -2673,19 +2692,19 @@ header p {
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
 }
 .sample-overview-badge-rich {
-  min-height: 58px;
-  padding: 10px 12px;
-  border-radius: 14px;
+  min-height: 54px;
+  padding: 9px 11px;
+  border-radius: 13px;
   display: grid;
   justify-items: flex-start;
   align-content: center;
-  gap: 4px;
+  gap: 3px;
   white-space: normal;
   text-align: left;
 }
 .sample-overview-badge-rich em {
   font-style: normal;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.1;
   font-weight: 700;
   color: #8da2b8;
@@ -2693,7 +2712,7 @@ header p {
 .sample-overview-badge-rich strong {
   display: block;
   max-width: 100%;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.2;
   color: #f8fbff;
   overflow: hidden;
@@ -2717,11 +2736,27 @@ header p {
 .sample-overview-actions-summary {
   margin-top: 0;
 }
+.sample-overview-quick-links {
+  display: grid;
+  gap: 8px;
+  padding-top: 2px;
+  border-top: 1px solid rgba(51, 65, 85, 0.46);
+}
+.sample-overview-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8ea3bb;
+}
+.sample-overview-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
 .sample-overview-chip {
-  min-height: 38px;
-  padding-inline: 14px;
+  min-height: 34px;
+  padding-inline: 12px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.2;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.92));
   border-color: rgba(71, 85, 105, 0.56);
@@ -2742,12 +2777,12 @@ header p {
 }
 .sample-overview-slot-strip .team-pill {
   text-align: left;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.2;
 }
 .sample-overview-slot-pill {
-  min-height: 36px;
-  padding: 7px 12px;
+  min-height: 34px;
+  padding: 7px 11px;
   border-color: rgba(71, 85, 105, 0.56);
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.9));
 }
@@ -4555,7 +4590,8 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-bulk-split-grid { grid-template-columns: 1fr; }
   .sample-bulk-pair-row { grid-template-columns: 1fr; }
   .sample-overview-inline-save { grid-template-columns: 1fr; }
-  .sample-overview-badges-summary { grid-template-columns: 1fr; }
+  .sample-overview-badges-summary,
+  .sample-overview-action-grid { grid-template-columns: 1fr; }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }
