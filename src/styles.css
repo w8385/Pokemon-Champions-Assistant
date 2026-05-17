@@ -1464,6 +1464,7 @@ header p {
 .sample-track-editor-card {
   display: grid;
   gap: 10px;
+  z-index: 5;
 }
 .sample-track-head {
   margin-bottom: 10px;
@@ -1616,7 +1617,7 @@ header p {
 }
 .sample-confirmed-slot.active-target,
 .sample-registered-move-slot.active-target {
-  z-index: 6;
+  z-index: 12;
   border-color: #60a5fa;
   box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35), 0 8px 18px rgba(37, 99, 235, 0.16);
 }
