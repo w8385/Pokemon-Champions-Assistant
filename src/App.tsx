@@ -252,7 +252,7 @@ type ViewState = {
 
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
-    '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
+    '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
     '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions singles in one place.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '버그 제보': 'Report a Bug', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
@@ -281,7 +281,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
-    '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
+    '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
     '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·결정력을 한 번에 정리합니다.': 'ポケモンチャンピオンズのシングルバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '버그 제보': 'バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
@@ -379,9 +379,9 @@ const TYPE_KO_BY_KEY: Record<string, string> = {
 
 const OPPONENT_BULK_PRESETS: Record<Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig> = {
   'neutral-0': { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: '무보정 0EV' },
-  'hp-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: 'HP 32' },
-  'phys-32': { hpEv: 32, defenseEv: 32, spDefenseEv: 0, defenseNature: 1.1, spDefenseNature: 1, label: 'HB 32/32 +' },
-  'spdef-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 32, defenseNature: 1, spDefenseNature: 1.1, label: 'HD 32/32 +' },
+  'hp-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: '체력 32' },
+  'phys-32': { hpEv: 32, defenseEv: 32, spDefenseEv: 0, defenseNature: 1.1, spDefenseNature: 1, label: '체력/방어 32/32 +' },
+  'spdef-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 32, defenseNature: 1, spDefenseNature: 1.1, label: '체력/특수방어 32/32 +' },
 }
 
 function sanitizeOpponentBulkPreset(value: unknown): OpponentBulkPreset {
@@ -433,10 +433,10 @@ function detectOpponentBulkPreset(state: OpponentBulkState): OpponentBulkPreset 
 function opponentBulkLabel(state: OpponentBulkState, preset: OpponentBulkPreset) {
   if (preset !== 'custom') return OPPONENT_BULK_PRESETS[preset].label
   const natureBits = [
-    state.defenseNature > 1 ? '+Def' : null,
-    state.spDefenseNature > 1 ? '+SpD' : null,
+    state.defenseNature > 1 ? '+방어' : null,
+    state.spDefenseNature > 1 ? '+특수방어' : null,
   ].filter(Boolean)
-  return `HP ${state.hpEv} · B ${state.defenseEv} · D ${state.spDefenseEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
+  return `체력 ${state.hpEv} · 방어 ${state.defenseEv} · 특수방어 ${state.spDefenseEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
 }
 
 function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
@@ -680,12 +680,12 @@ const CONDITIONAL_MOVE_POWER_RULES: Record<string, ConditionalMovePowerRule> = {
 }
 
 const EFFORT_STAT_OPTIONS: { key: EffortStatKey; short: string; label: string }[] = [
-  { key: 'hp', short: 'HP', label: 'HP' },
-  { key: 'attack', short: 'Atk', label: '공격' },
-  { key: 'defense', short: 'Def', label: '방어' },
-  { key: 'spAttack', short: 'SpA', label: '특수공격' },
-  { key: 'spDefense', short: 'SpD', label: '특수방어' },
-  { key: 'speed', short: 'Spe', label: '스피드' },
+  { key: 'hp', short: '체력', label: '체력' },
+  { key: 'attack', short: '공격', label: '공격' },
+  { key: 'defense', short: '방어', label: '방어' },
+  { key: 'spAttack', short: '특수공격', label: '특수공격' },
+  { key: 'spDefense', short: '특수방어', label: '특수방어' },
+  { key: 'speed', short: '스피드', label: '스피드' },
 ]
 
 const typeChart: Record<string, Partial<Record<string, number>>> = {
@@ -781,8 +781,8 @@ function statLabel(stat: StatKey, language: SiteLanguage = 'ko') {
   switch (stat) {
     case 'attack': return translateText(language, '공격')
     case 'defense': return translateText(language, '방어')
-    case 'spAttack': return translateText(language, '특공')
-    case 'spDefense': return translateText(language, '특방')
+    case 'spAttack': return translateText(language, '특수공격')
+    case 'spDefense': return translateText(language, '특수방어')
     case 'speed': return translateText(language, '스피드')
   }
 }
@@ -1938,8 +1938,8 @@ function resolveDamageModifiers(params: {
     'りゅうのキバ': 'dragon',
   }
 
-  if (effectiveAttackStage) notes.push(`ATK ${effectiveAttackStage > 0 ? '+' : ''}${effectiveAttackStage}`)
-  if (effectiveDefenseStage) notes.push(`DEF ${effectiveDefenseStage > 0 ? '+' : ''}${effectiveDefenseStage}`)
+  if (effectiveAttackStage) notes.push(`공격 ${effectiveAttackStage > 0 ? '+' : ''}${effectiveAttackStage}`)
+  if (effectiveDefenseStage) notes.push(`방어 ${effectiveDefenseStage > 0 ? '+' : ''}${effectiveDefenseStage}`)
   if (defenderIgnoresAttackStage && attackStage) notes.push(`${abilityNoteLabel(defenderAbility)}(공랭 무시)`)
   if (attackerIgnoresDefenseStage && defenseStage) notes.push(`${abilityNoteLabel(attackerAbility)}(방랭 무시)`)
   if (effectiveCritical && attackStage < 0) notes.push('급소(공깎 무시)')
@@ -3541,7 +3541,7 @@ export default function App() {
       auroraVeil: false,
       friendGuard: false,
     })
-    const attackStatLabel = moveCategory === 'physical' ? 'Atk' : 'SpA'
+    const attackStatLabel = moveCategory === 'physical' ? '공격' : '특수공격'
     const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
     const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(sampleRow.types, moveType, sampleAbility, true), modifierPack.effectiveness, moveMeta, modifierPack)
     if (!damage) return null
@@ -4383,7 +4383,7 @@ export default function App() {
                     </label>
                     {row ? <div className="stat-preview-list">
                       {([
-                        ['hp', 'HP'],
+                        ['hp', '체력'],
                         ['attack', '공격'],
                         ['defense', '방어'],
                         ['spAttack', '특수공격'],
@@ -5000,7 +5000,7 @@ export default function App() {
               </div>
               <div className="stat-preview-list sample-stat-preview-list">
                 {([
-                  ['hp', 'HP'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
+                  ['hp', '체력'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
                 ] as const).map(([field, label]) => (
                   <button key={field} type="button" className={`stat-preview-row stat-preview-button sample-stat-preview-row ${statThemeClass(field)}`} onClick={() => setSampleTuningModalOpen(true)}>
                     <div className="stat-preview-topline sample-stat-topline">
@@ -5225,7 +5225,7 @@ export default function App() {
                         </div>
                       </div>
                       <div>
-                        <span className="sample-inline-ev-label">{lt('특공 EV')}</span>
+                        <span className="sample-inline-ev-label">특수공격 EV</span>
                         <div className="sample-speed-ev-row">
                           <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(prev.evs.spAttack - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
                           <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.spAttack} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
@@ -5237,8 +5237,8 @@ export default function App() {
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
                       <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                      <span className="pick-badge">Atk {sampleAttackerStats.attack}</span>
-                      <span className="pick-badge">SpA {sampleAttackerStats.spAttack}</span>
+                      <span className="pick-badge">공격 {sampleAttackerStats.attack}</span>
+                      <span className="pick-badge">특수공격 {sampleAttackerStats.spAttack}</span>
                     </div>
                   </div>
                 </div>
@@ -5261,15 +5261,15 @@ export default function App() {
                             </select>
                           </label>
                           <label>
-                            HP EV
+                            체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
                           <label>
-                            물방 EV
+                            방어 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
                           <label>
-                            특방 EV
+                            특수방어 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
                           <label>
@@ -5277,7 +5277,7 @@ export default function App() {
                             <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
                           </label>
                           <label>
-                            +특방
+                            +특수방어
                             <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                           </label>
                         </div>
@@ -5286,9 +5286,9 @@ export default function App() {
                         <div className="pick-summary-badges sample-workbench-metric-badges">
                           <span className="pick-badge">{entry.moveName}</span>
                           <span className="pick-badge">{entry.attackStatLabel} {entry.attackStatValue}</span>
-                          <span className="pick-badge">HP {entry.defenderStats.hp}</span>
-                          <span className="pick-badge">Def {entry.defenderStats.defense}</span>
-                          <span className="pick-badge">SpD {entry.defenderStats.spDefense}</span>
+                          <span className="pick-badge">체력 {entry.defenderStats.hp}</span>
+                          <span className="pick-badge">방어 {entry.defenderStats.defense}</span>
+                          <span className="pick-badge">특수방어 {entry.defenderStats.spDefense}</span>
                         </div>
                         <div className="pick-summary-badges sample-workbench-metric-badges">
                           <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
@@ -5733,15 +5733,15 @@ export default function App() {
                       </select>
                     </label>
                     <label>
-                      {lt('상대 HP')}
+                      상대 체력
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label>
-                      {lt('상대 물방')}
+                      상대 방어
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentDefenseEv} onChange={(e) => updateOpponentBulkState({ defenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label>
-                      {lt('상대 특방')}
+                      상대 특수방어
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpDefenseEv} onChange={(e) => updateOpponentBulkState({ spDefenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
                     <label className="calc-toggle-box">
@@ -5750,7 +5750,7 @@ export default function App() {
                     </label>
                     <label className="calc-toggle-box">
                       <input type="checkbox" checked={calcOpponentSpDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                      <span>{lt('+특방 성격')}</span>
+                      <span>+특수방어 성격</span>
                     </label>
                   </>}
                   <label>
