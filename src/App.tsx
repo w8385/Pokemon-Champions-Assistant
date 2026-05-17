@@ -3432,9 +3432,22 @@ export default function App() {
     })
     .sort((a, b) => a.closestGap - b.closestGap || a.ranges[0].min - b.ranges[0].min)
     .slice(0, 80)
+  const sampleSpeedGroups = sampleSpeedPool.reduce<Array<{ min: number, max: number, entries: typeof sampleSpeedPool }>>((groups, entry) => {
+    const entryMin = Math.min(...entry.ranges.map((range) => range.min))
+    const entryMax = Math.max(...entry.ranges.map((range) => range.max))
+    const overlapped = groups.find((group) => !(entryMax < group.min || entryMin > group.max))
+    if (overlapped) {
+      overlapped.min = Math.min(overlapped.min, entryMin)
+      overlapped.max = Math.max(overlapped.max, entryMax)
+      overlapped.entries.push(entry)
+      return groups
+    }
+    groups.push({ min: entryMin, max: entryMax, entries: [entry] })
+    return groups
+  }, []).sort((a, b) => a.min - b.min)
   const sampleSpeedBounds = (() => {
     const values = [sampleSpeedValueNow, sampleSpeedAbilityLine?.speed ?? sampleSpeedValueNow]
-    sampleSpeedPool.forEach((entry) => entry.ranges.forEach((range) => values.push(range.min, range.max)))
+    sampleSpeedGroups.forEach((group) => values.push(group.min, group.max))
     const min = Math.max(40, Math.min(...values) - 8)
     const max = Math.max(min + 40, Math.max(...values) + 8)
     const roundedMin = Math.floor(min / 10) * 10
@@ -5045,26 +5058,34 @@ export default function App() {
                 <div className="sample-speed-axis">
                   {sampleSpeedBounds.ticks.map((tick) => <span key={`sample-speed-tick-${tick}`} className="sample-speed-axis-tick" style={{ left: `${sampleSpeedPercent(tick)}%` }}>{tick}</span>)}
                 </div>
-                <div className="sample-speed-rows">
-                  {sampleSpeedPool.map((entry) => (
-                    <div key={`sample-speed-band-${entry.row.key}`} className="sample-speed-row">
-                      <div className="sample-speed-row-label">
-                        <strong>{displayName(entry.row, siteLanguage)}</strong>
-                        <div className="pick-summary-badges">
-                          <span className="pick-badge">{lt('속도 구간')} {entry.ranges[0]?.min}~{entry.ranges[entry.ranges.length - 1]?.max}</span>
+                <div className="sample-speed-groups">
+                  {sampleSpeedGroups.map((group, groupIdx) => (
+                    <details key={`sample-speed-group-${groupIdx}`} className="sample-speed-group" open={groupIdx < 3}>
+                      <summary className="sample-speed-group-summary">
+                        <div className="sample-speed-group-track">
+                          <div className="sample-speed-sample-line" style={{ left: `${sampleSpeedPercent(sampleSpeedValueNow)}%` }}><span>{sampleSpeedValueNow}</span></div>
+                          {sampleSpeedAbilityLine ? <div className="sample-speed-sample-line alt" style={{ left: `${sampleSpeedPercent(sampleSpeedAbilityLine.speed)}%` }}><span>{sampleSpeedAbilityLine.speed}</span></div> : null}
+                          <div className="sample-speed-group-band" style={{ left: `${sampleSpeedPercent(group.min)}%`, width: `${Math.max(2, sampleSpeedPercent(group.max) - sampleSpeedPercent(group.min))}%` }}>
+                            <span>{group.entries.length}마리</span>
+                            <strong>{group.min}~{group.max}</strong>
+                          </div>
                         </div>
-                      </div>
-                      <div className="sample-speed-row-track">
-                        <div className="sample-speed-sample-line" style={{ left: `${sampleSpeedPercent(sampleSpeedValueNow)}%` }}><span>{sampleSpeedValueNow}</span></div>
-                        {sampleSpeedAbilityLine ? <div className="sample-speed-sample-line alt" style={{ left: `${sampleSpeedPercent(sampleSpeedAbilityLine.speed)}%` }}><span>{sampleSpeedAbilityLine.speed}</span></div> : null}
-                        {entry.ranges.map((range) => (
-                          <div key={`sample-speed-range-${entry.row.key}-${range.id}`} className={`sample-speed-range ${range.tone}`} style={{ left: `${sampleSpeedPercent(range.min)}%`, width: `${Math.max(1.5, sampleSpeedPercent(range.max) - sampleSpeedPercent(range.min))}%` }}>
-                            <span className="sample-speed-range-label">{range.label}</span>
-                            <strong>{range.max}</strong>
+                        <div className="sample-speed-group-meta">
+                          <strong>{group.entries[0] ? displayName(group.entries[0].row, siteLanguage) : ''}{group.entries.length > 1 ? ` 외 ${group.entries.length - 1}` : ''}</strong>
+                          <span className="muted-inline">{lt('속도 구간')} {group.min}~{group.max}</span>
+                        </div>
+                      </summary>
+                      <div className="sample-speed-group-body">
+                        {group.entries.map((entry) => (
+                          <div key={`sample-speed-entry-${entry.row.key}`} className="sample-speed-entry-row">
+                            <strong>{displayName(entry.row, siteLanguage)}</strong>
+                            <div className="pick-summary-badges">
+                              {entry.ranges.map((range) => <span key={`sample-speed-entry-${entry.row.key}-${range.id}`} className="pick-badge">{range.label} {range.min}~{range.max}</span>)}
+                            </div>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </details>
                   ))}
                 </div>
               </div> : <div className="sample-empty-state">검색 결과 없음</div>}
