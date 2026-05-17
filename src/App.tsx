@@ -5984,6 +5984,10 @@ export default function App() {
                           </> : null}
                         </div>
                         {entry.damage ? <div className="sample-damage-metric-grid">
+                          <div className="sample-damage-metric-box verdict">
+                            <span className="sample-damage-metric-label">{lt('확정 N타')}</span>
+                            <strong>{entry.verdict}</strong>
+                          </div>
                           <div className="sample-damage-metric-box">
                             <span className="sample-damage-metric-label">{lt('실대미지')}</span>
                             <strong>{isNoEffectDamage(entry.damage) ? lt('무효') : `${entry.damage.min} ~ ${entry.damage.max}`}</strong>
@@ -5991,10 +5995,6 @@ export default function App() {
                           <div className="sample-damage-metric-box enemy">
                             <span className="sample-damage-metric-label">{lt('체력비율')}</span>
                             <strong>{isNoEffectDamage(entry.damage) ? lt('무효') : `${entry.damage.minPct}% ~ ${entry.damage.maxPct}%`}</strong>
-                          </div>
-                          <div className="sample-damage-metric-box verdict">
-                            <span className="sample-damage-metric-label">{lt('확정 N타')}</span>
-                            <strong>{entry.verdict}</strong>
                           </div>
                         </div> : <div className="sample-damage-metric-grid">
                           <div className="sample-damage-metric-box verdict unavailable">

@@ -2449,7 +2449,7 @@ header p {
 }
 .sample-damage-metric-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 .sample-damage-metric-box {
@@ -2465,6 +2465,7 @@ header p {
   background: linear-gradient(180deg, rgba(30, 41, 59, 0.88), rgba(11, 18, 32, 0.76));
 }
 .sample-damage-metric-box.verdict {
+  grid-column: 1 / -1;
   border-color: rgba(250, 204, 21, 0.38);
   background: linear-gradient(180deg, rgba(66, 32, 6, 0.45), rgba(11, 18, 32, 0.76));
 }
@@ -4146,7 +4147,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-summary-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 .damage-summary-card {
@@ -4156,6 +4157,9 @@ textarea { min-height: 72px; resize: vertical; }
   background: rgba(11, 18, 32, 0.78);
   display: grid;
   gap: 6px;
+}
+.damage-summary-card.verdict {
+  grid-column: 1 / -1;
 }
 .damage-summary-card span {
   color: #93a4b8;
