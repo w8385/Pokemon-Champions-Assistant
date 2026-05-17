@@ -829,6 +829,77 @@ function moveOptionsForEntry(entry?: typeof sampleMoves[number] | null) {
   return Array.from(new Set([...(entry.core ?? []), ...(entry.options ?? []), ...(entry.utility ?? [])])).map((name) => ({ name, type: null }))
 }
 
+function resolvedMovePower(meta: MoveMeta | null) {
+  if (!meta) return 0
+  if (meta.hitPowers?.length) return meta.hitPowers.reduce((sum, value) => sum + value, 0)
+  if (meta.power != null && meta.hits) return meta.power * meta.hits
+  if (meta.power != null) return meta.power
+  if (meta.variablePower) return 70
+  return 0
+}
+
+function autoMoveGroupsForRow(row: Row | null | undefined, moveOptions: MoveOption[], movePools: Record<string, MovePoolState>) {
+  const uniqueOptions = Array.from(new Map(moveOptions.map((option) => [option.name, option])).values())
+  if (!uniqueOptions.length) return null
+
+  const preferredCategory = !row ? 'mixed'
+    : row.attack >= row.spAttack + 15 ? 'physical'
+      : row.spAttack >= row.attack + 15 ? 'special'
+        : 'mixed'
+
+  const evaluated = uniqueOptions.map((option) => {
+    const meta = resolveMoveMeta(option.name, uniqueOptions, movePools)
+    const category = meta?.category ?? null
+    const type = meta?.type ?? option.type ?? null
+    const power = resolvedMovePower(meta)
+    const accuracy = meta?.accuracy ?? 100
+    const priority = meta?.priority ?? 0
+    const stab = !!(row && type && row.types.includes(type))
+    return {
+      name: option.name,
+      category,
+      type,
+      power,
+      accuracy,
+      priority,
+      stab,
+      score: power
+        + (stab ? 34 : 0)
+        + (priority > 0 ? 18 + priority * 6 : 0)
+        + ((accuracy ?? 100) / 10)
+        + (preferredCategory === category ? 12 : preferredCategory !== 'mixed' && category && preferredCategory !== category ? -8 : 0),
+      utilityScore: (priority > 0 ? 18 + priority * 5 : 0)
+        + (stab ? 8 : 0)
+        + ((accuracy ?? 100) / 10),
+    }
+  })
+
+  const offense = evaluated
+    .filter((move) => (move.category === 'physical' || move.category === 'special') && move.power > 0)
+    .sort((a, b) => b.score - a.score || b.power - a.power || a.name.localeCompare(b.name, 'ko'))
+  const utility = evaluated
+    .filter((move) => move.category === 'status')
+    .sort((a, b) => b.utilityScore - a.utilityScore || a.name.localeCompare(b.name, 'ko'))
+
+  const core = offense
+    .filter((move) => move.stab || move.priority > 0 || move.category === preferredCategory || preferredCategory === 'mixed')
+    .slice(0, 8)
+    .map((move) => move.name)
+  const coreSet = new Set(core)
+  const options = offense
+    .filter((move) => !coreSet.has(move.name))
+    .slice(0, 14)
+    .map((move) => move.name)
+  const utilityMoves = utility.slice(0, 10).map((move) => move.name)
+
+  if (!core.length && !options.length && !utilityMoves.length) return null
+  return {
+    core,
+    options,
+    utility: utilityMoves,
+  }
+}
+
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
@@ -3396,6 +3467,7 @@ export default function App() {
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
+  const sampleSuggestedMoveSet = sampleMoveSet ?? autoMoveGroupsForRow(sampleRow, sampleMoveOptions, movePoolByKey)
   const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
   const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
@@ -3439,10 +3511,10 @@ export default function App() {
     applyMoveToSlot(sampleForge.key, move, preferredSlotIdx)
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
-  const sampleBaseMoveGroups = sampleMoveSet ? [
-    { key: 'core', label: lt('코어'), moves: sampleMoveSet.core, tone: 'core' },
-    { key: 'options', label: lt('선택'), moves: sampleMoveSet.options ?? [], tone: 'options' },
-    { key: 'utility', label: lt('유틸'), moves: sampleMoveSet.utility ?? [], tone: 'utility' },
+  const sampleBaseMoveGroups = sampleSuggestedMoveSet ? [
+    { key: 'core', label: lt('코어'), moves: sampleSuggestedMoveSet.core, tone: 'core' },
+    { key: 'options', label: lt('선택'), moves: sampleSuggestedMoveSet.options ?? [], tone: 'options' },
+    { key: 'utility', label: lt('유틸'), moves: sampleSuggestedMoveSet.utility ?? [], tone: 'utility' },
   ] : []
   const sampleFilterCounts = {
     all: sampleBaseMoveGroups.reduce((sum, group) => sum + group.moves.length, 0),
@@ -4367,6 +4439,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
+                const memberSuggestedMoveSet = memberMoveSet ?? autoMoveGroupsForRow(row, memberMoveOptions, movePoolByKey)
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
@@ -4606,15 +4679,15 @@ export default function App() {
                           </label>
                         ))}
                       </div>
-                      {memberMoveSet ? <>
+                      {memberSuggestedMoveSet ? <>
                         <div className="move-chip-wrap">
-                          {memberMoveSet.core.map((move) => (
+                          {memberSuggestedMoveSet.core.map((move) => (
                             <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
-                          {(memberMoveSet.options ?? []).map((move) => (
+                          {(memberSuggestedMoveSet.options ?? []).map((move) => (
                             <button key={`party-opt-${member.key}-${move}`} type="button" className={`move-chip options ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
-                          {(memberMoveSet.utility ?? []).map((move) => (
+                          {(memberSuggestedMoveSet.utility ?? []).map((move) => (
                             <button key={`party-util-${member.key}-${move}`} type="button" className={`move-chip utility ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           ))}
                         </div>
@@ -5247,6 +5320,47 @@ export default function App() {
                       </div>
                       {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div>
+                    {sampleMoveGroups.length ? <div className="sample-track-card">
+                      <div className="row-between sample-track-head">
+                        <strong>{lt('샘플 기술')}</strong>
+                        <div className="pick-summary-badges sample-summary-badges compact">
+                          <span className="pick-badge">{lt('전체')} {sampleFilterCounts.all}</span>
+                          <span className="pick-badge">{lt('확정')} {sampleFilterCounts.locked}</span>
+                          <span className="pick-badge">{lt('미확정')} {sampleFilterCounts.remaining}</span>
+                        </div>
+                      </div>
+                      <div className="sample-move-bucket-grid">
+                        {sampleMoveGroups.map((group) => (
+                          <details key={`sample-group-${group.key}`} className={`sample-move-bucket ${group.tone}`} open>
+                            <summary className="sample-move-bucket-summary">
+                              <div className="sample-move-bucket-head">
+                                <span className={`sample-move-bucket-label ${group.tone}`}>{group.label}</span>
+                              </div>
+                              <div className="pick-summary-badges sample-group-meta-badges">
+                                <span className="pick-badge sample-group-count-badge">{group.moves.length}</span>
+                                <span className="sample-group-open-indicator">⌄</span>
+                              </div>
+                            </summary>
+                            <div className="sample-bucket-body">
+                              {group.moves.map((move) => {
+                                const locked = sampleConfirmedMoves.includes(move)
+                                return (
+                                  <button
+                                    key={`sample-group-move-${group.key}-${move}`}
+                                    type="button"
+                                    className={`pick-chip sample-candidate-chip ${locked ? 'slot-targeted' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
+                                    onClick={() => applyMoveToSlot(sampleForge.key, move, activeSampleMoveSlotIdx)}
+                                  >
+                                    <span className={`sample-candidate-status ${locked ? 'confirmed' : 'open'}`}>{locked ? '✓' : '+'}</span>
+                                    <span>{move}</span>
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </details>
+                        ))}
+                      </div>
+                    </div> : sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
                   </div>
                 </>
             </div>
