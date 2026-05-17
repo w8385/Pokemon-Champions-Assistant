@@ -2113,6 +2113,7 @@ header p {
   display: grid;
   gap: 8px;
   align-content: start;
+  justify-items: start;
 }
 .sample-current-build-label {
   font-size: 11px;
@@ -2156,6 +2157,22 @@ header p {
 }
 .sample-embedded-drag-stat-list-speed {
   grid-template-columns: minmax(0, 1fr) !important;
+  max-width: 460px;
+}
+.sample-embedded-drag-stat-list-speed .drag-stat-card {
+  padding: 9px 10px;
+}
+.sample-embedded-drag-stat-list-speed .effort-gauge-wrap {
+  margin: 8px 0 6px;
+}
+.sample-embedded-drag-stat-list-speed .effort-cell-toolbar {
+  gap: 5px;
+}
+.sample-embedded-drag-stat-list-speed .mini-action {
+  padding-inline: 8px;
+}
+.sample-embedded-drag-stat-list-speed .effort-cell-meta {
+  font-size: 11px;
 }
 .sample-embedded-drag-stat-list-damage {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -4221,7 +4238,7 @@ textarea { min-height: 72px; resize: vertical; }
   .stat-preview-list { grid-template-columns: 1fr; }
   .sample-stat-preview-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .sample-embedded-drag-stat-list-speed { grid-template-columns: minmax(0, 1fr) !important; }
+  .sample-embedded-drag-stat-list-speed { grid-template-columns: minmax(0, 1fr) !important; max-width: none; }
   .sample-embedded-drag-stat-list-damage { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .sample-confirmed-grid { grid-template-columns: 1fr; }
   .battle-flow-diagram {
