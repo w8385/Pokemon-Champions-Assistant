@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-17T10:47:37.050Z",
+  "generatedAt": "2026-05-17T10:51:44.127Z",
   "totalAbilities": 190,
-  "implementedCount": 51,
+  "implementedCount": 53,
   "categories": {
     "implemented": {
-      "count": 51,
+      "count": 53,
       "abilities": [
         "adaptability",
         "aerilate",
@@ -13,6 +13,7 @@
         "dragonize",
         "dry-skin",
         "earth-eater",
+        "electromorphosis",
         "fairy-aura",
         "filter",
         "flash-fire",
@@ -25,6 +26,7 @@
         "levitate",
         "lightning-rod",
         "liquid-voice",
+        "marvel-scale",
         "mega-launcher",
         "merciless",
         "motor-drive",
@@ -67,18 +69,16 @@
       ]
     },
     "requiresHpOrStatusContext": {
-      "count": 4,
+      "count": 3,
       "abilities": [
         "berserk",
-        "marvel-scale",
         "poison-heal",
         "quick-feet"
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 9,
+      "count": 8,
       "abilities": [
-        "electromorphosis",
         "gale-wings",
         "minus",
         "opportunist",
@@ -233,19 +233,17 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 32,
+  "damageRelevantMissingCount": 30,
   "damageRelevantMissing": [
     "berserk",
     "chlorophyll",
     "drizzle",
     "drought",
-    "electromorphosis",
     "forecast",
     "gale-wings",
     "hydration",
     "ice-body",
     "leaf-guard",
-    "marvel-scale",
     "mega-sol",
     "mimicry",
     "opportunist",
