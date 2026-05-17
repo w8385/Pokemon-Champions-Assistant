@@ -682,6 +682,10 @@ header p {
   cursor: ew-resize;
   touch-action: none;
 }
+.effort-gauge-track:focus-visible {
+  outline: 2px solid rgba(148, 197, 255, 0.95);
+  outline-offset: 2px;
+}
 .effort-gauge-cells {
   position: absolute;
   inset: 0;
