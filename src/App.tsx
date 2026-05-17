@@ -4974,6 +4974,10 @@ export default function App() {
                 <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
                 <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
               </div>
+              <div className="sample-overview-inline-save">
+                <input className="sample-label-input" value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                <button type="button" className="action-button sample-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
+              </div>
             </div>
             <div className="sample-overview-card sample-workflow-card">
               <span className="muted">{lt('구성')}</span>

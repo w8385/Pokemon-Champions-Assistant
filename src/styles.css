@@ -2617,6 +2617,16 @@ header p {
   flex-wrap: wrap;
   margin-top: 2px;
 }
+.sample-overview-inline-save {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+.sample-overview-inline-save .sample-label-input {
+  min-width: 0;
+}
 .sample-workflow-card .pick-chip.active {
   border-color: #60a5fa;
   background: linear-gradient(180deg, rgba(30, 64, 175, 0.28), rgba(15, 23, 42, 0.92));
@@ -4356,6 +4366,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-damage-metric-grid { grid-template-columns: 1fr; }
   .sample-bulk-split-grid { grid-template-columns: 1fr; }
   .sample-bulk-pair-row { grid-template-columns: 1fr; }
+  .sample-overview-inline-save { grid-template-columns: 1fr; }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }
