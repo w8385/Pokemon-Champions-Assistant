@@ -3649,8 +3649,11 @@ export default function App() {
 
   const renderSampleForgeEffortGrid = (scope: 'speed' | 'damage') => {
     if (!sampleRow) return null
-    return <div className="drag-stat-list sample-embedded-drag-stat-list">
-      {EFFORT_STAT_OPTIONS.map((stat) => {
+    const visibleStats = scope === 'speed'
+      ? EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'speed')
+      : EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'attack' || stat.key === 'spAttack')
+    return <div className={`drag-stat-list sample-embedded-drag-stat-list sample-embedded-drag-stat-list-${scope}`}>
+      {visibleStats.map((stat) => {
         const currentEffort = sampleForge.evs[stat.key]
         const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(sampleForge.evs, stat.key))
         const additionalAvailable = Math.max(0, availableCap - currentEffort)

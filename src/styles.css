@@ -2150,6 +2150,12 @@ header p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 12px;
 }
+.sample-embedded-drag-stat-list-speed {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.sample-embedded-drag-stat-list-damage {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
 .sample-current-build-card-embedded .drag-stat-card {
   padding: 10px;
 }
@@ -4177,6 +4183,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-current-build-toolbar { grid-template-columns: 1fr; }
   .sample-inline-ev-editor-dual { grid-template-columns: 1fr; }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: 1fr; }
+  .sample-embedded-drag-stat-list-damage { grid-template-columns: 1fr !important; }
   .sample-speed-ev-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
@@ -4210,6 +4217,8 @@ textarea { min-height: 72px; resize: vertical; }
   .stat-preview-list { grid-template-columns: 1fr; }
   .sample-stat-preview-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sample-embedded-drag-stat-list-speed { grid-template-columns: minmax(0, 1fr) !important; }
+  .sample-embedded-drag-stat-list-damage { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .sample-confirmed-grid { grid-template-columns: 1fr; }
   .battle-flow-diagram {
     align-items: stretch;
