@@ -2905,13 +2905,20 @@ textarea { min-height: 72px; resize: vertical; }
   box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.28), 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 .damage-side-moves {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   padding-top: 10px;
   border-top: 1px solid rgba(51, 65, 85, 0.8);
 }
+.damage-side-moves > .damage-move-chip,
+.damage-side-moves > .damage-side-empty,
+.damage-side-moves > .damage-opponent-move-adder,
+.damage-side-moves > .damage-move-chip-wrap {
+  min-width: 0;
+}
 .damage-side-empty {
+  grid-column: 1 / -1;
   color: #93a4b8;
   font-size: 12px;
 }
@@ -2919,6 +2926,7 @@ textarea { min-height: 72px; resize: vertical; }
   display: inline-flex;
   align-items: stretch;
   gap: 4px;
+  min-width: 0;
 }
 .damage-move-remove-button {
   appearance: none;
@@ -2934,8 +2942,8 @@ textarea { min-height: 72px; resize: vertical; }
   position: relative;
   display: grid;
   gap: 6px;
-  min-width: min(100%, 260px);
-  flex: 1 1 220px;
+  grid-column: 1 / -1;
+  min-width: 0;
 }
 .damage-opponent-move-adder label {
   display: grid;
@@ -2950,6 +2958,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-opponent-move-input-row input {
   width: 100%;
+  min-width: 0;
 }
 .damage-opponent-move-menu {
   width: 100%;
@@ -2977,6 +2986,14 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-swap-button:disabled {
   opacity: 0.45;
   cursor: default;
+}
+.damage-side-moves .damage-move-chip {
+  width: 100%;
+  justify-content: flex-start;
+}
+.damage-move-chip-wrap .damage-move-chip {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .damage-control-surface {
   margin-top: 10px;
@@ -3615,6 +3632,8 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-target-panel { grid-template-columns: 1fr; }
   .damage-compare-panel { grid-template-columns: 1fr; }
   .damage-swap-rail { order: 2; padding: 2px 0; }
+  .damage-side-moves { grid-template-columns: 1fr; }
+  .damage-opponent-move-adder { grid-column: 1 / -1; }
   .speed-plane-board { min-height: 460px; }
   .speed-plane-plot { top: 74px; right: 8px; bottom: 82px; left: 42px; }
   .speed-compare-head-grid { grid-template-columns: 1fr; }
