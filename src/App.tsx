@@ -5108,14 +5108,14 @@ export default function App() {
                   </div>
                 </div>
                 <div className="sample-speed-inline-controls">
-                  <label className="sample-speed-slider-field sample-damage-search-field">
+                  <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
                     <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleSpeedSearchOpen(true)} onBlur={() => setTimeout(() => setSampleSpeedSearchOpen(false), 120)} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true) }} />
                     {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
                       {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <label className="sample-speed-slider-field sample-speed-ev-field">
+                  <label className="sample-speed-slider-field sample-speed-ev-field sample-speed-control-card">
                     <span>{lt('스피드 EV')}</span>
                     <div className="sample-speed-ev-row">
                       <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed - 4, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-4</button>
@@ -5127,10 +5127,20 @@ export default function App() {
                       <button type="button" className={`pick-chip ${sampleForge.evs.speed === CHAMPIONS_EFFORT_PER_STAT_CAP ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', CHAMPIONS_EFFORT_PER_STAT_CAP) }))}>{lt('최대치')}</button>
                     </div>
                   </label>
-                  <div className="pick-summary-badges sample-speed-config-chips">
-                    <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
-                    <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'jolly' } }))}>{lt('최속')}</button>
-                    <button type="button" className={`pick-chip ${(sampleForge.config.scarf || sampleForge.item.includes('스카프')) ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, scarf: !prev.config.scarf } }))}>{lt('스카프')}</button>
+                  <div className="sample-speed-config-panel sample-speed-control-card">
+                    <div className="sample-speed-config-group">
+                      <span>{lt('성격')}</span>
+                      <div className="pick-summary-badges sample-speed-config-chips">
+                        <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
+                        <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'jolly' } }))}>{lt('최속')}</button>
+                      </div>
+                    </div>
+                    <div className="sample-speed-config-group">
+                      <span>{lt('도구')}</span>
+                      <div className="pick-summary-badges sample-speed-config-chips">
+                        <button type="button" className={`pick-chip ${(sampleForge.config.scarf || sampleForge.item.includes('스카프')) ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, scarf: !prev.config.scarf } }))}>{lt('스카프')}</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

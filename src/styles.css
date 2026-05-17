@@ -2065,15 +2065,21 @@ header p {
 }
 .sample-speed-inline-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 320px) minmax(220px, 280px);
   gap: 12px;
-  align-items: end;
+  align-items: stretch;
 }
 .sample-speed-slider-field {
   display: grid;
   gap: 6px;
   font-size: 12px;
   color: #93a4b8;
+}
+.sample-speed-control-card {
+  padding: 10px 12px;
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.28);
 }
 .sample-speed-slider-field > span {
   font-size: 11px;
@@ -2220,8 +2226,28 @@ header p {
   border-color: rgba(239, 68, 68, 0.5);
   background: linear-gradient(180deg, rgba(127, 29, 29, 0.38), rgba(2, 6, 23, 0.45));
 }
+.sample-speed-config-panel {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.sample-speed-config-group {
+  display: grid;
+  gap: 6px;
+}
+.sample-speed-config-group > span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8ea3bb;
+}
 .sample-speed-config-chips {
-  justify-content: flex-end;
+  justify-content: flex-start;
+}
+.sample-speed-config-chips .pick-chip {
+  min-width: 58px;
+  justify-content: center;
 }
 .sample-speed-board {
   display: grid;
