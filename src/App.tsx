@@ -73,6 +73,8 @@ type OpponentState = {
   picked: boolean
 }
 
+type SampleSpeedTarget = OpponentState
+
 type SampleDamageTarget = OpponentState & {
   hpEv: number
   defenseEv: number
@@ -133,6 +135,7 @@ type PersistedState = {
   sampleForge?: PartyMember
   savedSamples?: SavedSample[]
   sampleWorkbenchTab?: SampleWorkbenchTab
+  sampleSpeedTargets?: SampleSpeedTarget[]
   sampleDamageTargets?: SampleDamageTarget[]
 }
 
@@ -589,6 +592,14 @@ const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
   scarf: false,
   speedStage: 0,
   picked: false,
+}))
+const blankSampleSpeedTarget = (): SampleSpeedTarget => ({
+  ...blankOpponent(),
+  natureBoost: true,
+})
+const defaultSampleSpeedTargets: SampleSpeedTarget[] = ['garchomp', 'dragapult', 'meowscarada'].filter((key) => indexByKey.has(key)).map((key) => ({
+  ...blankSampleSpeedTarget(),
+  key,
 }))
 const blankSampleDamageTarget = (): SampleDamageTarget => ({
   ...blankOpponent(),
@@ -1153,6 +1164,31 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
     .slice(0, MAX_OPPONENTS)
 
   return cleaned.length ? cleaned : defaultOpponents
+}
+
+function sanitizeSampleSpeedTargets(input: unknown): SampleSpeedTarget[] {
+  if (!Array.isArray(input)) return defaultSampleSpeedTargets
+  const cleaned = input
+    .map((target) => {
+      if (!target || typeof target !== 'object') return null
+      const raw = target as Partial<SampleSpeedTarget>
+      if (typeof raw.key !== 'string') return null
+      if (raw.key && !indexByKey.has(raw.key)) return null
+      return {
+        key: raw.key,
+        item: typeof raw.item === 'string' ? raw.item : '',
+        ability: typeof raw.ability === 'string' ? raw.ability : '',
+        notes: typeof raw.notes === 'string' ? raw.notes : '',
+        revealedMoves: Array.isArray(raw.revealedMoves) ? raw.revealedMoves.filter((move): move is string => typeof move === 'string') : [],
+        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : true,
+        scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
+        speedStage: clampSpeedStage(raw.speedStage),
+        picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+      }
+    })
+    .filter((target): target is SampleSpeedTarget => Boolean(target))
+
+  return cleaned.length ? cleaned : defaultSampleSpeedTargets
 }
 
 function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
@@ -2616,8 +2652,10 @@ export default function App() {
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => persisted?.sampleWorkbenchTab ?? 'builder')
+  const [sampleSpeedTargets, setSampleSpeedTargets] = React.useState<SampleSpeedTarget[]>(() => sanitizeSampleSpeedTargets(persisted?.sampleSpeedTargets))
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
+  const [sampleSpeedSearchOpen, setSampleSpeedSearchOpen] = React.useState(false)
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
@@ -2744,10 +2782,11 @@ export default function App() {
       sampleForge,
       savedSamples,
       sampleWorkbenchTab,
+      sampleSpeedTargets,
       sampleDamageTargets,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleDamageTargets])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -3409,57 +3448,28 @@ export default function App() {
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
   const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleForge)
   const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleForge, siteLanguage) : null
-  const sampleSpeedPool = rows
-    .filter((row) => !sampleSpeedSearch.trim() || searchDisplayLabel(row.key, siteLanguage).toLowerCase().includes(sampleSpeedSearch.trim().toLowerCase()) || row.name_ko.toLowerCase().includes(sampleSpeedSearch.trim().toLowerCase()))
-    .map((row) => {
-      const doubleSpeedAbility = speedAbilityCandidate(row, siteLanguage)
-      const ranges = [
-        { id: 'base', label: lt('기본'), min: opponentScenarioSpeed(row, 0, false, false, 0), max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, 0), tone: 'base' as const },
-        { id: 'scarf', label: lt('스카프'), min: opponentScenarioSpeed(row, 0, false, true, 0), max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, 0), tone: 'scarf' as const },
-      ]
-      if (doubleSpeedAbility) {
-        ranges.push(
-          { id: 'ability', label: doubleSpeedAbility.label || lt('특성 발동'), min: opponentScenarioSpeed(row, 0, false, false, 0) * 2, max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, 0) * 2, tone: 'ability' as const },
-          { id: 'ability-scarf', label: `${doubleSpeedAbility.label || lt('특성 발동')} + ${lt('스카프')}`, min: opponentScenarioSpeed(row, 0, false, true, 0) * 2, max: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, 0) * 2, tone: 'ability-scarf' as const },
-        )
-      }
-      const closestGap = Math.min(...ranges.map((range) => {
-        if (sampleSpeedValueNow < range.min) return range.min - sampleSpeedValueNow
-        if (sampleSpeedValueNow > range.max) return sampleSpeedValueNow - range.max
-        return 0
-      }))
-      return { row, ranges, closestGap }
-    })
-    .sort((a, b) => a.closestGap - b.closestGap || a.ranges[0].min - b.ranges[0].min)
-    .slice(0, 80)
-  const sampleSpeedGroups = sampleSpeedPool.reduce<Array<{ min: number, max: number, entries: typeof sampleSpeedPool }>>((groups, entry) => {
-    const entryMin = Math.min(...entry.ranges.map((range) => range.min))
-    const entryMax = Math.max(...entry.ranges.map((range) => range.max))
-    const overlapped = groups.find((group) => !(entryMax < group.min || entryMin > group.max))
-    if (overlapped) {
-      overlapped.min = Math.min(overlapped.min, entryMin)
-      overlapped.max = Math.max(overlapped.max, entryMax)
-      overlapped.entries.push(entry)
-      return groups
+  const sampleSpeedSearchResults = filterSpeciesOptions(sampleSpeedSearch, { includeMega: true })
+    .filter((option) => !sampleSpeedTargets.some((target) => target.key === option.key))
+    .slice(0, 8)
+  const sampleSpeedCalcs = sampleSpeedTargets.map((member, idx) => {
+    const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    if (!row) return null
+    const scenarios = [
+      { id: 'base', label: lt('준속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, false, false, member.speedStage) },
+      { id: 'fast', label: lt('최속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage) },
+      { id: 'scarf', label: `${lt('최속')} ${lt('스카프')}`, speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, true, member.speedStage) },
+    ]
+    const doubleSpeedAbility = speedAbilityCandidate(row, siteLanguage)
+    if (doubleSpeedAbility) {
+      scenarios.push({ id: 'ability', label: doubleSpeedAbility.label, speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage) * 2 })
     }
-    groups.push({ min: entryMin, max: entryMax, entries: [entry] })
-    return groups
-  }, []).sort((a, b) => a.min - b.min)
-  const sampleSpeedBounds = (() => {
-    const values = [sampleSpeedValueNow, sampleSpeedAbilityLine?.speed ?? sampleSpeedValueNow]
-    sampleSpeedGroups.forEach((group) => values.push(group.min, group.max))
-    const min = Math.max(40, Math.min(...values) - 8)
-    const max = Math.max(min + 40, Math.max(...values) + 8)
-    const roundedMin = Math.floor(min / 10) * 10
-    const roundedMax = Math.ceil(max / 10) * 10
-    const step = Math.max(10, Math.ceil((roundedMax - roundedMin) / 5 / 10) * 10)
-    const ticks = Array.from({ length: Math.max(2, Math.floor((roundedMax - roundedMin) / step) + 1) }, (_, idx) => roundedMin + step * idx)
-    return { min: roundedMin, max: roundedMax, ticks }
-  })()
-  const sampleSpeedPercent = (speed: number) => {
-    const clamped = Math.max(sampleSpeedBounds.min, Math.min(sampleSpeedBounds.max, speed))
-    return ((clamped - sampleSpeedBounds.min) / Math.max(1, sampleSpeedBounds.max - sampleSpeedBounds.min)) * 100
-  }
+    const cutoffs = scenarios.map((scenario) => ({
+      ...scenario,
+      needs: mySpeedNeeds(sampleRow, sampleForge.config, scenario.speed),
+      result: sampleSpeedValueNow > scenario.speed ? lt('내가 앞섬') : sampleSpeedValueNow < scenario.speed ? lt('상대가 앞섬') : lt('동속'),
+    }))
+    return { idx, member, row, cutoffs }
+  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
   const sampleDamageMove = sampleConfirmedMoves[0] ?? ''
   const sampleDamageMoveMetaBase = resolveMoveMeta(sampleDamageMove, sampleMoveOptions, movePoolByKey)
   const sampleDamageMoveMeta = resolveAbilityAdjustedMoveMeta(sampleDamageMove, sampleDamageMoveMetaBase, sampleAbility)
@@ -3516,6 +3526,23 @@ export default function App() {
     const damage = calcDamage(sampleAttackerStats, defenderStats, sampleDamageMovePower, sampleDamageMoveCategory, resolveStabMultiplier(sampleRow.types, sampleDamageMoveType, sampleAbility, true), modifierPack.effectiveness, sampleDamageMoveMeta, modifierPack)
     return { idx, member, row, defenderStats, damage, verdict: resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) }
   }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+
+  const addSampleSpeedTarget = (key: string) => {
+    setSampleSpeedTargets((prev) => ([
+      ...prev,
+      { ...blankSampleSpeedTarget(), key },
+    ]))
+    setSampleSpeedSearch('')
+    setSampleSpeedSearchOpen(false)
+  }
+
+  const updateSampleSpeedTarget = (idx: number, patch: Partial<SampleSpeedTarget>) => {
+    setSampleSpeedTargets((prev) => prev.map((entry, entryIdx) => (entryIdx === idx ? { ...entry, ...patch } : entry)))
+  }
+
+  const removeSampleSpeedTarget = (idx: number) => {
+    setSampleSpeedTargets((prev) => prev.filter((_, entryIdx) => entryIdx !== idx))
+  }
 
   const addSampleDamageTarget = (key: string) => {
     setSampleDamageTargets((prev) => ([
@@ -3724,6 +3751,7 @@ export default function App() {
     setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
+    setSampleSpeedTargets(defaultSampleSpeedTargets)
     setSampleDamageTargets(defaultSampleDamageTargets)
     setSampleSpeedSearch('')
     setSampleDamageSearch('')
@@ -3774,6 +3802,7 @@ export default function App() {
       sampleForge,
       savedSamples,
       sampleWorkbenchTab,
+      sampleSpeedTargets,
       sampleDamageTargets,
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
@@ -3825,6 +3854,7 @@ export default function App() {
       setCalcFriendGuard(Boolean(parsed.calcFriendGuard))
       setCalcTypeChangeStab(parsed.calcTypeChangeStab !== false)
       setSampleWorkbenchTab(parsed.sampleWorkbenchTab ?? 'builder')
+      setSampleSpeedTargets(sanitizeSampleSpeedTargets(parsed.sampleSpeedTargets))
       setSampleDamageTargets(sanitizeSampleDamageTargets(parsed.sampleDamageTargets))
       setCalcConditionalPowerValues((parsed.calcConditionalPowerValues && typeof parsed.calcConditionalPowerValues === 'object') ? parsed.calcConditionalPowerValues as Record<string, ConditionalPowerValue> : {})
       const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
@@ -5027,7 +5057,7 @@ export default function App() {
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
                 <strong>{lt('샘플 스피드')}</strong>
-                <span className="muted-inline">전체 포켓몬 풀 기준</span>
+                <span className="muted-inline">추월컷 계산</span>
               </div>
               <div className="sample-speed-toolbar">
                 <div className="sample-speed-toolbar-head">
@@ -5038,9 +5068,12 @@ export default function App() {
                   </div>
                 </div>
                 <div className="sample-speed-inline-controls">
-                  <label className="sample-speed-slider-field">
-                    <span>{lt('포켓몬 검색')}</span>
-                    <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onChange={(e) => setSampleSpeedSearch(e.target.value)} />
+                  <label className="sample-speed-slider-field sample-damage-search-field">
+                    <span>대상 추가</span>
+                    <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => setSampleSpeedSearchOpen(true)} onBlur={() => setTimeout(() => setSampleSpeedSearchOpen(false), 120)} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true) }} />
+                    {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu sample-damage-search-menu">
+                      {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
+                    </div> : null}
                   </label>
                   <label className="sample-speed-slider-field">
                     <span>{lt('스피드 EV')}</span>
@@ -5050,45 +5083,53 @@ export default function App() {
                     <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
                     <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'jolly' } }))}>{lt('최속')}</button>
                     <button type="button" className={`pick-chip ${(sampleForge.config.scarf || sampleForge.item.includes('스카프')) ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, scarf: !prev.config.scarf } }))}>{lt('스카프')}</button>
-                    <button type="button" className="pick-chip" onClick={() => setSampleTuningModalOpen(true)}>{lt('실시간 조정')}</button>
                   </div>
                 </div>
               </div>
-              {sampleSpeedPool.length ? <div className="sample-speed-board">
-                <div className="sample-speed-axis">
-                  {sampleSpeedBounds.ticks.map((tick) => <span key={`sample-speed-tick-${tick}`} className="sample-speed-axis-tick" style={{ left: `${sampleSpeedPercent(tick)}%` }}>{tick}</span>)}
-                </div>
-                <div className="sample-speed-groups">
-                  {sampleSpeedGroups.map((group, groupIdx) => (
-                    <details key={`sample-speed-group-${groupIdx}`} className="sample-speed-group" open={groupIdx < 3}>
-                      <summary className="sample-speed-group-summary">
-                        <div className="sample-speed-group-track">
-                          <div className="sample-speed-sample-line" style={{ left: `${sampleSpeedPercent(sampleSpeedValueNow)}%` }}><span>{sampleSpeedValueNow}</span></div>
-                          {sampleSpeedAbilityLine ? <div className="sample-speed-sample-line alt" style={{ left: `${sampleSpeedPercent(sampleSpeedAbilityLine.speed)}%` }}><span>{sampleSpeedAbilityLine.speed}</span></div> : null}
-                          <div className="sample-speed-group-band" style={{ left: `${sampleSpeedPercent(group.min)}%`, width: `${Math.max(2, sampleSpeedPercent(group.max) - sampleSpeedPercent(group.min))}%` }}>
-                            <span>{group.entries.length}마리</span>
-                            <strong>{group.min}~{group.max}</strong>
+              <div className="sample-overview-stack">
+                {sampleSpeedCalcs.length ? sampleSpeedCalcs.map((entry) => (
+                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card">
+                    <div className="row-between">
+                      <strong>{displayName(entry.row, siteLanguage)}</strong>
+                      <button type="button" className="pick-chip" onClick={() => removeSampleSpeedTarget(entry.idx)}>{lt('삭제')}</button>
+                    </div>
+                    <div className="sample-damage-target-controls sample-speed-target-controls">
+                      <label>
+                        성격
+                        <select value={entry.member.natureBoost ? 'fast' : 'neutral'} onChange={(e) => updateSampleSpeedTarget(entry.idx, { natureBoost: e.target.value === 'fast' })}>
+                          <option value="neutral">{lt('준속')}</option>
+                          <option value="fast">{lt('최속')}</option>
+                        </select>
+                      </label>
+                      <label>
+                        스카프
+                        <input type="checkbox" checked={entry.member.scarf} onChange={(e) => updateSampleSpeedTarget(entry.idx, { scarf: e.target.checked })} />
+                      </label>
+                      <label>
+                        랭크
+                        <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
+                          {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage >= 0 ? `+${stage}` : stage}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="sample-speed-cut-grid">
+                      {entry.cutoffs.map((cutoff) => (
+                        <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className="sample-speed-cut-card">
+                          <strong>{cutoff.label}</strong>
+                          <div className="pick-summary-badges">
+                            <span className="pick-badge">현재 {cutoff.speed}</span>
+                            <span className="pick-badge enemy">{cutoff.result}</span>
+                          </div>
+                          <div className="pick-summary-badges">
+                            <span className="pick-badge">{lt('동속컷')} {cutoff.needs.tieEffort ?? '-'}</span>
+                            <span className="pick-badge">{lt('추월컷')} {cutoff.needs.passEffort ?? '-'}</span>
                           </div>
                         </div>
-                        <div className="sample-speed-group-meta">
-                          <strong>{group.entries[0] ? displayName(group.entries[0].row, siteLanguage) : ''}{group.entries.length > 1 ? ` 외 ${group.entries.length - 1}` : ''}</strong>
-                          <span className="muted-inline">{lt('속도 구간')} {group.min}~{group.max}</span>
-                        </div>
-                      </summary>
-                      <div className="sample-speed-group-body">
-                        {group.entries.map((entry) => (
-                          <div key={`sample-speed-entry-${entry.row.key}`} className="sample-speed-entry-row">
-                            <strong>{displayName(entry.row, siteLanguage)}</strong>
-                            <div className="pick-summary-badges">
-                              {entry.ranges.map((range) => <span key={`sample-speed-entry-${entry.row.key}-${range.id}`} className="pick-badge">{range.label} {range.min}~{range.max}</span>)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                  ))}
-                </div>
-              </div> : <div className="sample-empty-state">검색 결과 없음</div>}
+                      ))}
+                    </div>
+                  </div>
+                )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+              </div>
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid">
             <div className="sample-main-card flat-sample-main-card">
