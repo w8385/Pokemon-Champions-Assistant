@@ -892,6 +892,14 @@ header p {
   max-height: 220px;
   overflow-y: auto;
 }
+.sample-registered-move-slot .move-autocomplete-menu {
+  left: 0;
+  right: auto;
+  min-width: max(100%, 220px);
+  width: max-content;
+  max-width: min(420px, calc(100vw - 48px));
+  border-radius: 0 0 12px 12px;
+}
 .party-meta-popover .move-autocomplete-menu {
   position: static;
   top: auto;
@@ -928,6 +936,13 @@ header p {
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+.sample-registered-move-slot .move-autocomplete-main {
+  width: 100%;
+}
+.sample-registered-move-slot .move-autocomplete-main > span:last-child {
+  white-space: normal;
+  word-break: keep-all;
 }
 .item-autocomplete-item {
   justify-content: flex-start;
@@ -1061,6 +1076,9 @@ header p {
   background: var(--sample-surface-bg);
   padding: 12px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+.flat-sample-main-card {
+  overflow: visible;
 }
 .flat-sample-save-box,
 .flat-saved-sample-list {
