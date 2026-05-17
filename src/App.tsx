@@ -2547,6 +2547,8 @@ export default function App() {
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => visibleChampionsItem(member.key, member.item)))
   const [opponentAbilityDrafts, setOpponentAbilityDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => member.ability ?? ''))
+  const [opponentMoveDraft, setOpponentMoveDraft] = React.useState('')
+  const [opponentMoveInputFocused, setOpponentMoveInputFocused] = React.useState(false)
   const [calcOpponentMoveDraft, setCalcOpponentMoveDraft] = React.useState('')
   const [calcOpponentMoveInputFocused, setCalcOpponentMoveInputFocused] = React.useState(false)
   const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
@@ -2763,6 +2765,8 @@ export default function App() {
   }, [calcSwapSides, confirmedMovesByKey, myMember.key, oppMember.key, oppMember.revealedMoves, selectedDamageMove])
 
   React.useEffect(() => {
+    setOpponentMoveDraft('')
+    setOpponentMoveInputFocused(false)
     setCalcOpponentMoveDraft('')
     setCalcOpponentMoveInputFocused(false)
   }, [selectedOpp, oppMember.key])
@@ -2939,6 +2943,16 @@ export default function App() {
     next[selectedOpp] = { ...oppMember, revealedMoves: [...nextMoves, trimmed] }
     setOpponents(next)
     return true
+  }
+  const commitOpponentMoveDraft = () => {
+    const top = filterMoveOptions(opponentMoveDraft, oppMoveOptions)[0]
+    if (!top) return false
+    const added = addOpponentRevealedMove(top.name)
+    if (added) {
+      setOpponentMoveDraft('')
+      setOpponentMoveInputFocused(false)
+    }
+    return added
   }
   const commitCalcOpponentMoveDraft = () => {
     const top = filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)[0]
@@ -4461,14 +4475,75 @@ export default function App() {
                     ))}
                   </select>
                 </label>
-                <label>
-                  {lt('공개 기술')}
-                  <input value={oppMember.revealedMoves.join(', ')} placeholder={siteLanguage === 'en' ? 'e.g. U-turn, Will-O-Wisp' : siteLanguage === 'ja' ? '例: とんぼがえり, おにび' : '예: 유턴, 도깨비불'} onChange={(e) => {
-                    const next = [...opponents]
-                    next[selectedOpp] = { ...oppMember, revealedMoves: e.target.value.split(',').map((entry) => entry.trim()).filter(Boolean) }
-                    setOpponents(next)
-                  }} />
-                </label>
+                <div className="opponent-revealed-moves-card">
+                  <div className="opponent-revealed-moves-head">{lt('공개 기술')}</div>
+                  <div className="damage-side-moves opponent-revealed-moves-grid">
+                    {oppMember.revealedMoves.length ? oppMember.revealedMoves.map((move) => {
+                      const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                      return (
+                        <div key={`opp-entry-move-${selectedOpp}-${move}`} className="damage-move-chip-wrap">
+                          <button type="button" className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)}`} onClick={() => {
+                            setCalcSwapSides(true)
+                            setSelectedDamageMove({ key: oppMember.key, move })
+                            setActiveTab('power')
+                          }}>
+                            {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                            <span>{move}</span>
+                          </button>
+                          <button type="button" className="damage-move-remove-button" onClick={() => removeOpponentRevealedMove(move)} aria-label={`${move} remove`}>
+                            ×
+                          </button>
+                        </div>
+                      )
+                    }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
+                    <div className="damage-opponent-move-adder opponent-entry-move-adder">
+                      <label>
+                        <span>{lt('상대 기술 추가')}</span>
+                        <div className="damage-opponent-move-input-row">
+                          <input
+                            value={opponentMoveDraft}
+                            placeholder={lt('사용 가능 기술 검색')}
+                            disabled={!oppMember.key || oppMember.revealedMoves.length >= 4}
+                            onFocus={() => setOpponentMoveInputFocused(true)}
+                            onBlur={() => setTimeout(() => setOpponentMoveInputFocused(false), 120)}
+                            onChange={(e) => setOpponentMoveDraft(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key !== 'Enter') return
+                              e.preventDefault()
+                              commitOpponentMoveDraft()
+                            }}
+                          />
+                          <button
+                            type="button"
+                            className="pick-chip"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => commitOpponentMoveDraft()}
+                            disabled={!oppMember.key || oppMember.revealedMoves.length >= 4}
+                          >
+                            {lt('추가')}
+                          </button>
+                        </div>
+                      </label>
+                      {oppMember.key && opponentMoveInputFocused && opponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu damage-opponent-move-menu">
+                        {filterMoveOptions(opponentMoveDraft, oppMoveOptions)
+                          .filter((option) => !oppMember.revealedMoves.includes(option.name))
+                          .slice(0, 8)
+                          .map((option) => (
+                            <button key={`opp-entry-move-suggest-${oppMember.key}-${option.name}`} type="button" className="move-autocomplete-item" onMouseDown={() => {
+                              addOpponentRevealedMove(option.name)
+                              setOpponentMoveDraft('')
+                              setOpponentMoveInputFocused(false)
+                            }}>
+                              <span className="move-autocomplete-main">
+                                <strong>{option.name}</strong>
+                                {option.type ? <span className="move-autocomplete-meta">{option.type}</span> : null}
+                              </span>
+                            </button>
+                          ))}
+                      </div> : null}
+                    </div>
+                  </div>
+                </div>
                 <label>
                   {lt('메모')}
                   <textarea value={oppMember.notes} placeholder={siteLanguage === 'en' ? 'e.g. likely physical set' : siteLanguage === 'ja' ? '例: 物理型の可能性高め' : '예: 물리형 가능성 높음'} onChange={(e) => {

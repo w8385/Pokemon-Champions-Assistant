@@ -2945,6 +2945,22 @@ textarea { min-height: 72px; resize: vertical; }
   grid-column: 1 / -1;
   min-width: 0;
 }
+.opponent-revealed-moves-card {
+  display: grid;
+  gap: 8px;
+}
+.opponent-revealed-moves-head {
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+}
+.opponent-revealed-moves-grid {
+  padding-top: 0;
+  border-top: 0;
+}
+.opponent-entry-move-adder {
+  margin-top: 2px;
+}
 .damage-opponent-move-adder label {
   display: grid;
   gap: 6px;
