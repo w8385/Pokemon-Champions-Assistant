@@ -5464,7 +5464,7 @@ export default function App() {
                               <strong>{cutoff.label}</strong>
                               <div className="pick-summary-badges">
                                 <span className="pick-badge">{lt('현재 속도')} {cutoff.speed}</span>
-                                <span className="pick-badge enemy">{cutoff.result}</span>
+                                <span className={`pick-badge sample-speed-state-badge ${cutoff.result === lt('내가 앞섬') ? 'ahead' : cutoff.result === lt('동속') ? 'tie' : 'behind'}`}>{cutoff.result}</span>
                               </div>
                               <div className="pick-summary-badges">
                                 <span className="pick-badge">{lt('동속컷')} {cutoff.needs.tieEffort ?? '-'}</span>
