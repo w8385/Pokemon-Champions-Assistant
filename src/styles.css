@@ -2199,6 +2199,23 @@ header p {
 }
 .sample-embedded-drag-stat-list-damage {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: min(100%, 560px);
+  max-width: 100%;
+}
+.sample-embedded-drag-stat-list-damage .drag-stat-card {
+  padding: 10px 12px;
+}
+.sample-embedded-drag-stat-list-damage .effort-gauge-wrap {
+  margin: 8px 0 6px;
+}
+.sample-embedded-drag-stat-list-damage .effort-cell-toolbar {
+  gap: 5px;
+}
+.sample-embedded-drag-stat-list-damage .mini-action {
+  padding-inline: 8px;
+}
+.sample-embedded-drag-stat-list-damage .effort-cell-meta {
+  font-size: 11px;
 }
 .sample-current-build-card-embedded .drag-stat-card {
   padding: 10px;
@@ -4250,7 +4267,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-current-build-toolbar { grid-template-columns: 1fr; }
   .sample-inline-ev-editor-dual { grid-template-columns: 1fr; }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: 1fr; }
-  .sample-embedded-drag-stat-list-damage { grid-template-columns: 1fr !important; }
+  .sample-embedded-drag-stat-list-damage { grid-template-columns: 1fr !important; width: 100%; max-width: none; }
   .sample-speed-ev-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
@@ -4286,7 +4303,7 @@ textarea { min-height: 72px; resize: vertical; }
   .sample-stat-preview-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-embedded-drag-stat-list-speed { grid-template-columns: minmax(0, 1fr) !important; width: 100%; max-width: none; }
-  .sample-embedded-drag-stat-list-damage { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .sample-embedded-drag-stat-list-damage { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; width: 100%; max-width: none; }
   .sample-confirmed-grid { grid-template-columns: 1fr; }
   .battle-flow-diagram {
     align-items: stretch;
