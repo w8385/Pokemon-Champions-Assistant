@@ -4720,4 +4720,69 @@ textarea { min-height: 72px; resize: vertical; }
     width: 8px;
     height: 8px;
   }
+  .damage-surface-card,
+  .damage-box {
+    padding: 10px;
+  }
+  .damage-box-head {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .damage-side-card {
+    gap: 10px;
+  }
+  .damage-side-moves,
+  .damage-side-moves-player {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .damage-side-moves-player > .damage-move-chip,
+  .damage-side-moves > .damage-move-chip {
+    width: 100%;
+    max-width: none;
+  }
+  .damage-top-move-strip {
+    gap: 6px;
+    padding-top: 8px;
+  }
+  .damage-top-move-strip-chips,
+  .top-move-chip-card .move-chip-wrap,
+  .opponent-top-moves-card .move-chip-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .damage-top-move-strip-chips .move-chip,
+  .top-move-chip-card .move-chip-wrap .move-chip,
+  .opponent-top-moves-card .move-chip-wrap .move-chip {
+    width: 100%;
+    justify-content: center;
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .damage-opponent-move-input-row {
+    grid-template-columns: 1fr;
+  }
+  .damage-opponent-move-input-row .pick-chip {
+    width: 100%;
+    min-height: 36px;
+  }
+  .calc-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .damage-calc-grid.compact.offense-grid,
+  .damage-calc-grid.compact.defender-grid,
+  .damage-calc-grid.compact.field-grid {
+    grid-template-columns: 1fr;
+  }
+  .calc-grid > label,
+  .calc-lock-box {
+    min-height: 64px;
+    padding: 9px 10px;
+  }
+  .calc-toggle-box {
+    min-height: 56px;
+  }
 }
