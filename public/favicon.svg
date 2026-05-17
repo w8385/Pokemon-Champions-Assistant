@@ -1,23 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
   <title>포켓몬 챔피언스 싱글 배틀 도우미</title>
-  <desc>배틀 계산기를 상징하는 포켓볼 스타일 사이트 아이콘</desc>
+  <desc>배틀 계산과 전술 보조를 상징하는 배틀툴 스타일 사이트 아이콘</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1e293b" />
-      <stop offset="100%" stop-color="#0f172a" />
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#111827" />
     </linearGradient>
-    <clipPath id="clip">
-      <rect x="6" y="6" width="52" height="52" rx="14" ry="14" />
-    </clipPath>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+    <linearGradient id="bars" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </linearGradient>
   </defs>
+
   <rect x="6" y="6" width="52" height="52" rx="14" ry="14" fill="url(#bg)" />
-  <g clip-path="url(#clip)">
-    <circle cx="32" cy="30" r="17" fill="#ef4444" />
-    <path d="M15 30a17 17 0 0 0 34 0Z" fill="#f8fafc" />
-    <rect x="15" y="28.5" width="34" height="3" fill="#0f172a" />
-    <circle cx="32" cy="30" r="6.5" fill="#f8fafc" stroke="#0f172a" stroke-width="3" />
-    <circle cx="32" cy="30" r="2.25" fill="#94a3b8" />
-  </g>
-  <path d="M46 16h4v4" fill="none" stroke="#38bdf8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
-  <path d="M14 48h4v-4" fill="none" stroke="#38bdf8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+  <rect x="6.75" y="6.75" width="50.5" height="50.5" rx="13.25" ry="13.25" fill="none" stroke="rgba(148,163,184,0.22)" />
+
+  <path d="M18 18h7v3h-4v4h-3z" fill="#38bdf8" opacity="0.95" />
+  <path d="M46 18v3h-4v4h-3v-7z" fill="#38bdf8" opacity="0.95" />
+  <path d="M18 46h3v-4h4v-3h-7z" fill="#38bdf8" opacity="0.95" />
+  <path d="M46 46h-7v-3h4v-4h3z" fill="#38bdf8" opacity="0.95" />
+
+  <circle cx="32" cy="28" r="12" fill="none" stroke="url(#ring)" stroke-width="3.5" />
+  <circle cx="32" cy="28" r="4.5" fill="#e2e8f0" stroke="#0f172a" stroke-width="2" />
+  <path d="M32 15v7M32 34v7M19 28h7M38 28h7" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round" />
+
+  <rect x="20" y="41" width="5" height="7" rx="1.5" fill="url(#bars)" />
+  <rect x="29.5" y="37" width="5" height="11" rx="1.5" fill="url(#bars)" />
+  <rect x="39" y="33" width="5" height="15" rx="1.5" fill="url(#bars)" />
 </svg>
