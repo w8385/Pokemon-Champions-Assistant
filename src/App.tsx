@@ -1733,11 +1733,14 @@ function getBaseDamage(level: number, basePower: number, attack: number, defense
 }
 
 function getFinalDamageRoll(baseAmount: number, roll: number, effectiveness: number, isBurned: boolean, stabMod: number, finalMod: number) {
+  if (effectiveness <= 0) return 0
   let damageAmount = Math.floor((baseAmount * roll) / 100)
   if (stabMod !== DAMAGE_MOD_SCALE) damageAmount = Math.floor((damageAmount * stabMod) / DAMAGE_MOD_SCALE)
   damageAmount = Math.floor(pokeRound(damageAmount) * effectiveness)
+  if (damageAmount <= 0) return 0
   if (isBurned) damageAmount = Math.floor(damageAmount / 2)
-  return Math.max(1, pokeRound((damageAmount * finalMod) / DAMAGE_MOD_SCALE))
+  const finalDamage = pokeRound((damageAmount * finalMod) / DAMAGE_MOD_SCALE)
+  return finalDamage <= 0 ? 0 : Math.max(1, finalDamage)
 }
 
 function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePower: number, mode: CalcMode, stab = 1.5, effectiveness = 1, moveMeta?: MoveMeta | null, modifiers?: DamageCalcModifiers) {
