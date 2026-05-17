@@ -3123,6 +3123,7 @@ export default function App() {
   const myMoveSet = sampleMoves.find((entry) => entry.key === myMember.key)
   const myMovePool = movePoolByKey[myMember.key]
   const myMoveOptions = myMovePool?.moves?.length ? myMovePool.moves : moveOptionsForEntry(myMoveSet)
+  const mySuggestedMoveSet = suggestedMoveGroupsForRow(myRow, myMoveOptions, movePoolByKey, myMoveSet)
   const oppMoveSet = sampleMoves.find((entry) => entry.key === oppMember.key)
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = oppMovePool?.moves?.length ? oppMovePool.moves : moveOptionsForEntry(oppMoveSet)
@@ -3141,6 +3142,7 @@ export default function App() {
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null) : myBattleStats
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
   const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
+  const myTopSuggestedMoves = topSuggestedMoves(mySuggestedMoveSet).filter((move) => !myRegisteredDamageMoves.includes(move))
   const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
   const registeredDamageMoves = (attackFromOpponent ? opponentRegisteredDamageMoves : myRegisteredDamageMoves).filter(Boolean)
   const attackerMoveOptions = attackFromOpponent ? oppMoveOptions : myMoveOptions
@@ -4538,6 +4540,7 @@ export default function App() {
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const memberSuggestedMoveSet = suggestedMoveGroupsForRow(row, memberMoveOptions, movePoolByKey, memberMoveSet)
+                const memberTopSuggestedMoves = topSuggestedMoves(memberSuggestedMoveSet).filter((move) => !(confirmedMovesByKey[member.key] ?? []).includes(move))
                 const partySpeciesMenuId = `party-species-${idx}`
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const partyItemMenuId = `party-item-${idx}`
@@ -4831,6 +4834,17 @@ export default function App() {
                         ))}
                       </div>
                       {memberSuggestedMoveSet ? <>
+                        {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                          <div className="row-between sample-track-head compact-gap">
+                            <strong>{lt('사용률 상위 기술')}</strong>
+                            <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
+                          </div>
+                          <div className="move-chip-wrap">
+                            {memberTopSuggestedMoves.map((move) => (
+                              <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            ))}
+                          </div>
+                        </div> : null}
                         <div className="move-chip-wrap">
                           {memberSuggestedMoveSet.core.map((move) => (
                             <button key={`party-core-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))} ${(confirmedMovesByKey[member.key] ?? []).includes(move) ? 'confirmed' : ''}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
@@ -6127,6 +6141,18 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
+              {myMember.key && myTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card damage-top-move-chip-card">
+                <div className="row-between sample-track-head compact-gap">
+                  <strong>{lt('사용률 상위 기술')}</strong>
+                  <span className="muted-inline">Top {Math.min(10, myTopSuggestedMoves.length)}</span>
+                </div>
+                <div className="move-chip-wrap">
+                  {myTopSuggestedMoves.map((move) => {
+                    const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
+                    return <button key={`damage-top-my-${myMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(myMember.key, move)}>{move}</button>
+                  })}
+                </div>
+              </div> : null}
               <div className="damage-side-moves">
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
@@ -6207,6 +6233,18 @@ export default function App() {
                     </div>
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
+                {oppMember.key && oppTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card damage-top-move-chip-card opponent-top-moves-card">
+                  <div className="row-between sample-track-head compact-gap">
+                    <strong>{lt('사용률 상위 기술')}</strong>
+                    <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
+                  </div>
+                  <div className="move-chip-wrap">
+                    {oppTopSuggestedMoves.map((move) => {
+                      const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                      return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={opponentRegisteredDamageMoves.length >= 4}>{move}</button>
+                    })}
+                  </div>
+                </div> : null}
                 <div className="damage-opponent-move-adder">
                   <label>
                     <span>{lt('상대 기술 추가')}</span>
