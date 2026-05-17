@@ -2088,7 +2088,7 @@ header p {
   align-items: stretch;
 }
 .sample-current-build-toolbar {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 1.1fr);
+  grid-template-columns: 1fr;
 }
 .sample-speed-slider-field {
   display: grid;
@@ -2101,6 +2101,9 @@ header p {
   border: 1px solid rgba(51, 65, 85, 0.72);
   border-radius: 14px;
   background: rgba(2, 6, 23, 0.28);
+}
+.sample-damage-search-field.sample-speed-control-card {
+  width: 100%;
 }
 .sample-current-build-card {
   display: grid;

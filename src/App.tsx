@@ -551,6 +551,10 @@ function visibleChampionsItem(key: string, item: string) {
   return isAllowedChampionsItem(key, normalized) ? normalized : ''
 }
 
+function isChoiceScarfItem(item: string) {
+  return canonicalChampionsItemName(item).trim() === '구애스카프'
+}
+
 function itemSpriteSrc(key: string, item: string) {
   const localSpriteSrc = (ref: string) => {
     const cleaned = ref.split('?')[0]?.split('#')[0] ?? ref
@@ -1319,7 +1323,7 @@ function partySpeedValue(row: Row, member: PartyMember) {
   let value = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
   else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
-  if (member.config.scarf || member.item.includes('스카프')) value = Math.floor(value * 1.5)
+  if (member.config.scarf || isChoiceScarfItem(member.item)) value = Math.floor(value * 1.5)
   return value
 }
 
@@ -1453,7 +1457,7 @@ function mySpeedAbilityMarker(row: Row, member: PartyMember, language: SiteLangu
   const baseSpeed = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   const totalStage = effect.type === 'stage' ? member.config.speedStage + effect.value : member.config.speedStage
   let speed = applySpeedStage(baseSpeed, totalStage)
-  if (member.config.scarf || member.item.includes('스카프')) speed = Math.floor(speed * 1.5)
+  if (member.config.scarf || isChoiceScarfItem(member.item)) speed = Math.floor(speed * 1.5)
   if (effect.type === 'multiplier') speed = Math.floor(speed * effect.value)
   return {
     label: ability.label,
@@ -2879,7 +2883,7 @@ export default function App() {
   const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage) : null
   const oppSpeed = oppRow ? speedValue(oppRow, {
     nature: oppMember.natureBoost ? 'jolly' : 'hardy',
-    scarf: oppMember.scarf || oppMember.item.includes('스카프'),
+    scarf: oppMember.scarf || isChoiceScarfItem(oppMember.item),
     speedStage: oppMember.speedStage,
   }) : null
   const pickedParty = party.filter((member) => member.picked)
@@ -5350,7 +5354,7 @@ export default function App() {
                       <div className="pick-summary-badges">
                         <span className="pick-badge">{lt('내 포켓몬')}</span>
                         <span className="pick-badge">{lt('실수치 스피드')} {mySpeed}</span>
-                        {myMember.item.includes('스카프') ? <span className="pick-badge icon-badge"><img src={itemSpriteSrc(myMember.key, '구애스카프')} alt={lt('스카프')} className="pick-badge-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /></span> : null}
+                        {isChoiceScarfItem(myMember.item) ? <span className="pick-badge icon-badge"><img src={itemSpriteSrc(myMember.key, '구애스카프')} alt={lt('스카프')} className="pick-badge-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /></span> : null}
                         {mySpeedAbilityLine ? <span className="pick-badge subtle">{mySpeedAbilityLine.label} {mySpeedAbilityLine.speed}</span> : null}
                       </div>
                       {myMegaCandidates.length ? <div className="calc-toggle-row">
