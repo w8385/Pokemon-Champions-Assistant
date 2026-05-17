@@ -2892,6 +2892,51 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-move-surface {
   margin-top: 12px;
 }
+.damage-compare-panel {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+}
+.damage-side-card {
+  display: grid;
+  gap: 12px;
+}
+.damage-side-card.active-side {
+  border-color: rgba(96, 165, 250, 0.9);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.28), 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.damage-side-moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(51, 65, 85, 0.8);
+}
+.damage-side-empty {
+  color: #93a4b8;
+  font-size: 12px;
+}
+.damage-swap-rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.damage-swap-button {
+  appearance: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.72);
+  background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.32), rgba(30, 41, 59, 0.98));
+  color: #e0f2fe;
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.35);
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.damage-swap-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
 .damage-control-surface {
   margin-top: 10px;
 }
@@ -3527,6 +3572,8 @@ textarea { min-height: 72px; resize: vertical; }
   .calc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-target-panel { grid-template-columns: 1fr; }
+  .damage-compare-panel { grid-template-columns: 1fr; }
+  .damage-swap-rail { order: 2; padding: 2px 0; }
   .speed-plane-board { min-height: 460px; }
   .speed-plane-plot { top: 74px; right: 8px; bottom: 82px; left: 42px; }
   .speed-compare-head-grid { grid-template-columns: 1fr; }

@@ -2842,7 +2842,9 @@ export default function App() {
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null) : myBattleStats
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
-  const registeredDamageMoves = (attackFromOpponent ? oppMember.revealedMoves : (confirmedMovesByKey[myMember.key] ?? [])).filter(Boolean)
+  const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
+  const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
+  const registeredDamageMoves = (attackFromOpponent ? opponentRegisteredDamageMoves : myRegisteredDamageMoves).filter(Boolean)
   const attackerMoveOptions = attackFromOpponent ? oppMoveOptions : myMoveOptions
   const defenderWeightKg = attackFromOpponent
     ? (typeof myRow.weightKg === 'number' ? myRow.weightKg : weightByKey[myRow.key] ?? null)
@@ -5099,7 +5101,7 @@ export default function App() {
             </div>
           </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
-            <div className="speed-target-card">
+            <div className={`speed-target-card damage-side-card ${!attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
                 {myRow.sprite ? <img src={myRow.sprite} alt={displayName(myRow, siteLanguage)} className="pick-slot-sprite" /> : null}
                 <div>
@@ -5113,8 +5115,40 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
+              <div className="damage-side-moves">
+                {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
+                  const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
+                  const active = !attackFromOpponent && activeDamageMove === move
+                  return (
+                    <button
+                      key={`damage-move-my-${myMember.key}-${move}`}
+                      type="button"
+                      className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
+                      onClick={() => {
+                        setCalcSwapSides(false)
+                        setSelectedDamageMove({ key: myMember.key, move })
+                      }}
+                    >
+                      {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                      <span>{move}</span>
+                    </button>
+                  )
+                }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
+              </div>
             </div>
-            <div className="speed-target-card enemy">
+            <div className="damage-swap-rail">
+              <button
+                type="button"
+                className="damage-swap-button"
+                onClick={() => setCalcSwapSides((prev) => !prev)}
+                disabled={!oppRow}
+                aria-label={lt('공수전환')}
+                title={lt('공수전환')}
+              >
+                <span aria-hidden="true">⇄</span>
+              </button>
+            </div>
+            <div className={`speed-target-card enemy damage-side-card ${attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
                 {oppRow?.sprite ? <img src={oppRow.sprite} alt={displayName(oppRow, siteLanguage)} className="pick-slot-sprite" /> : null}
                 <div>
@@ -5122,34 +5156,34 @@ export default function App() {
                   <div className="pick-summary-badges">
                     <span className="pick-badge enemy">{attackFromOpponent ? lt('공격측') : lt('방어측')}</span>
                   </div>
-                  <div className="calc-toggle-row">
-                    <button type="button" className={`pick-chip ${!calcSwapSides ? 'active' : ''}`} onClick={() => setCalcSwapSides(false)}>{lt('내 포켓몬')} → {lt('상대 포켓몬')}</button>
-                    <button type="button" className={`pick-chip ${calcSwapSides ? 'active' : ''}`} onClick={() => setCalcSwapSides(true)} disabled={!oppRow}>{lt('상대 포켓몬')} → {lt('내 포켓몬')}</button>
-                  </div>
                   {oppMegaCandidates.length ? <div className="calc-toggle-row">
                     <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
                     <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
                   </div> : null}
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="damage-surface-card damage-move-surface">
-            <div className="damage-move-panel">
-              {registeredDamageMoves.length ? registeredDamageMoves.map((move) => {
-                const moveType = resolveMoveType(move, attackerMoveOptions, movePoolByKey)
-                return (
-                  <button
-                    key={`damage-move-${attackerMemberKey}-${move}`}
-                    type="button"
-                    className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${activeDamageMove === move ? 'confirmed' : ''}`}
-                    onClick={() => setSelectedDamageMove({ key: attackerMemberKey, move })}
-                  >
-                    {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
-                    <span>{move}</span>
-                  </button>
-                )
-              }) : <div className="speed-empty-box">{lt('등록 기술 없음')}</div>}
+              <div className="damage-side-moves">
+                {opponentRegisteredDamageMoves.length ? opponentRegisteredDamageMoves.map((move) => {
+                  const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                  const active = attackFromOpponent && activeDamageMove === move
+                  return (
+                    <button
+                      key={`damage-move-opp-${oppMember.key}-${move}`}
+                      type="button"
+                      className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
+                      onClick={() => {
+                        if (!oppRow) return
+                        setCalcSwapSides(true)
+                        setSelectedDamageMove({ key: oppMember.key, move })
+                      }}
+                      disabled={!oppRow}
+                    >
+                      {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                      <span>{move}</span>
+                    </button>
+                  )
+                }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
+              </div>
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface">
