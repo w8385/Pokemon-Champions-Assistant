@@ -2721,6 +2721,8 @@ header p {
   min-height: 38px;
   padding-inline: 14px;
   border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.2;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.92));
   border-color: rgba(71, 85, 105, 0.56);
 }
@@ -2740,6 +2742,8 @@ header p {
 }
 .sample-overview-slot-strip .team-pill {
   text-align: left;
+  font-size: 12px;
+  line-height: 1.2;
 }
 .sample-overview-slot-pill {
   min-height: 36px;
