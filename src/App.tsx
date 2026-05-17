@@ -1581,7 +1581,8 @@ function weightBasedMovePower(weightKg: number) {
 
 function applyTargetWeightMovePower(moveName: string, moveMeta: MoveMeta | null, targetWeightKg: number | null) {
   if (!moveMeta) return moveMeta
-  if ((moveName !== '로우킥' && moveName !== '풀묶기') || typeof targetWeightKg !== 'number' || !Number.isFinite(targetWeightKg)) return moveMeta
+  const isWeightMove = moveName === '로우킥' || moveName === '풀묶기' || moveName === '안다리걸기' || moveName === '안다리 걸기'
+  if (!isWeightMove || typeof targetWeightKg !== 'number' || !Number.isFinite(targetWeightKg)) return moveMeta
   return {
     ...moveMeta,
     power: weightBasedMovePower(targetWeightKg),
@@ -1601,6 +1602,8 @@ function variablePowerHint(moveName: string, lt: (key: string) => string, option
   if (CONDITIONAL_MOVE_POWER_RULES[moveName]) return lt('특정 조건에 따라 위력이 자동 반영됨')
   switch (moveName) {
     case '로우킥':
+    case '안다리걸기':
+    case '안다리 걸기':
       return lt(options?.targetWeightKnown ? '상대 무게에 따라 위력이 자동 반영됨' : '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함')
     case '스케일샷':
       return lt('명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함')
@@ -5409,7 +5412,7 @@ export default function App() {
                               ? <><span>{lt(entry.moveRule.label)}</span><input type="number" min={entry.moveRule.min ?? 0} max={entry.moveRule.max ?? 999} value={Number(entry.moveConditionValue ?? entry.moveRule.defaultValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: Number(e.target.value) }))} /></>
                               : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
                           </label> : null}
-                          {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown })}</div> : null}
+                          {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown })}</div> : null}
                           <label>
                             체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -5446,11 +5449,25 @@ export default function App() {
                             <span className="pick-badge">특수방어 {entry.defenderStats.spDefense}</span>
                           </> : null}
                         </div>
-                        {entry.damage ? <div className="pick-summary-badges sample-workbench-metric-badges">
-                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
-                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
-                        </div> : null}
-                        <div className="pick-summary-badges sample-workbench-metric-badges"><span className="pick-badge">{entry.unavailableReason || entry.verdict}</span></div>
+                        {entry.damage ? <div className="sample-damage-metric-grid">
+                          <div className="sample-damage-metric-box">
+                            <span className="sample-damage-metric-label">실대미지</span>
+                            <strong>{entry.damage.min} ~ {entry.damage.max}</strong>
+                          </div>
+                          <div className="sample-damage-metric-box enemy">
+                            <span className="sample-damage-metric-label">체력비율</span>
+                            <strong>{entry.damage.minPct}% ~ {entry.damage.maxPct}%</strong>
+                          </div>
+                          <div className="sample-damage-metric-box verdict">
+                            <span className="sample-damage-metric-label">확정 N타</span>
+                            <strong>{entry.verdict}</strong>
+                          </div>
+                        </div> : <div className="sample-damage-metric-grid">
+                          <div className="sample-damage-metric-box verdict unavailable">
+                            <span className="sample-damage-metric-label">계산 상태</span>
+                            <strong>{entry.unavailableReason || entry.verdict}</strong>
+                          </div>
+                        </div>}
                       </div>
                     </div>
                   </div>
