@@ -2087,6 +2087,22 @@ header p {
 .sample-speed-slider-field input[type="range"] {
   width: 100%;
 }
+.sample-speed-ev-field {
+  gap: 8px;
+}
+.sample-speed-ev-row {
+  display: grid;
+  grid-template-columns: auto minmax(88px, 112px) auto;
+  gap: 8px;
+  align-items: center;
+}
+.sample-speed-ev-row .pick-chip {
+  justify-content: center;
+  min-width: 52px;
+}
+.sample-speed-ev-presets {
+  gap: 6px;
+}
 .sample-speed-slider-field input:not([type="range"]),
 .sample-speed-slider-field select,
 .sample-damage-target-controls input[type="number"],
@@ -4047,6 +4063,7 @@ textarea { min-height: 72px; resize: vertical; }
   }
   .sample-tuning-inline { grid-template-columns: 1fr; }
   .sample-speed-inline-controls { grid-template-columns: 1fr; }
+  .sample-speed-ev-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
   .sample-speed-row { grid-template-columns: 1fr; }

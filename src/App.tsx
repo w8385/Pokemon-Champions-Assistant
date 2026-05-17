@@ -5115,9 +5115,17 @@ export default function App() {
                       {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <label className="sample-speed-slider-field">
+                  <label className="sample-speed-slider-field sample-speed-ev-field">
                     <span>{lt('스피드 EV')}</span>
-                    <input type="range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', e.target.value) }))} />
+                    <div className="sample-speed-ev-row">
+                      <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed - 4, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-4</button>
+                      <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={4} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
+                      <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed + 4, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+4</button>
+                    </div>
+                    <div className="pick-summary-badges sample-speed-ev-presets">
+                      <button type="button" className={`pick-chip ${sampleForge.evs.speed === 0 ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', 0) }))}>0</button>
+                      <button type="button" className={`pick-chip ${sampleForge.evs.speed === CHAMPIONS_EFFORT_PER_STAT_CAP ? 'active' : ''}`} onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', CHAMPIONS_EFFORT_PER_STAT_CAP) }))}>{lt('최대치')}</button>
+                    </div>
                   </label>
                   <div className="pick-summary-badges sample-speed-config-chips">
                     <button type="button" className={`pick-chip ${natureMultiplier(sampleForge.config.nature, 'speed') > 1 ? '' : 'active'}`} onClick={() => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: 'hardy' } }))}>{lt('준속')}</button>
