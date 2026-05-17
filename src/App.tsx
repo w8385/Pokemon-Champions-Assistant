@@ -5005,7 +5005,7 @@ export default function App() {
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-card sample-track-editor-card">
                       <div className="row-between sample-track-head">
-                        <strong>{lt('확정 기술')}</strong>
+                        <strong>{lt('기술 배치')}</strong>
                         <div className="pick-summary-badges sample-slot-target-badges">
                           {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
                           <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
