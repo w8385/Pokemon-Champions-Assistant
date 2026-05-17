@@ -252,7 +252,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '결정력 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '포켓몬 챔피언스 싱글 배틀용 파티·선출·스피드·결정력 워크벤치.': 'A workbench for Pokémon Champions singles party, picks, speed, and damage.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '작업 관리': 'Workspace', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '버그 제보': 'Report a Bug', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀 워크벤치': 'Singles Workbench', '샘플 빌더 워크벤치': 'Sample Builder Workbench', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'Manage party, opponent entry, speed, and damage in one flow.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Shape one Pokémon sample into a saveable working unit.', '포켓몬 챔피언스 싱글 배틀용 파티·선출·스피드·결정력 워크벤치.': 'A workbench for Pokémon Champions singles party, picks, speed, and damage.', '들어가기': 'Open', '현재 작업': 'Current Work', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '샘플 작업대': 'Sample Workbench', '작업 흐름': 'Workflow', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '작업 관리': 'Workspace', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '버그 제보': 'Report a Bug', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -281,7 +281,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '결정력 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '포켓몬 챔피언스 싱글 배틀용 파티·선출·스피드·결정력 워크벤치.': 'ポケモンチャンピオンズのシングルバトル向けパーティ・選出・素早さ・火力ワークベンチ。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '작업 관리': '作業管理', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '버그 제보': 'バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀 워크벤치': 'シングルバトル作業台', '샘플 빌더 워크벤치': 'サンプルビルダー作業台', '파티·상대 엔트리·스피드·결정력까지 한 흐름으로 관리합니다.': 'パーティ・相手エントリー・素早さ・火力まで一つの流れで管理します。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを保存可能な作業単位に整理します。', '포켓몬 챔피언스 싱글 배틀용 파티·선출·스피드·결정력 워크벤치.': 'ポケモンチャンピオンズのシングルバトル向けパーティ・選出・素早さ・火力ワークベンチ。', '들어가기': '開く', '현재 작업': '現在の作業', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '샘플 작업대': 'サンプル作業台', '작업 흐름': '作業フロー', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '작업 관리': '作業管理', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '버그 제보': 'バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 데미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -4070,14 +4070,15 @@ export default function App() {
           <div className="home-footer-text-row">
             <span className="home-footer-label">{lt('프로젝트 링크')}</span>
             <div className="home-link-list home-link-icon-list">
-              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('GitHub 저장소')} title={lt('GitHub 저장소')}>
+              <a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('버그 제보')} title={lt('버그 제보')}>
                 <span className="home-link-pill-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" role="img" focusable="false">
-                    <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.2-3.37-1.2-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .08 1.53 1.05 1.53 1.05.9 1.58 2.35 1.12 2.92.86.09-.67.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.74 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.56 1.43.21 2.48.11 2.74.64.72 1.03 1.63 1.03 2.75 0 3.95-2.33 4.82-4.56 5.07.36.32.67.95.67 1.92 0 1.39-.01 2.5-.01 2.84 0 .28.18.61.69.5A10.24 10.24 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" fill="currentColor"/>
+                    <path d="M14 3H6.75A2.75 2.75 0 0 0 4 5.75v12.5A2.75 2.75 0 0 0 6.75 21h10.5A2.75 2.75 0 0 0 20 18.25V9Zm0 1.5 4.5 4.5h-3A1.5 1.5 0 0 1 14 7.5Zm-5 7a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 11.5Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 15Zm0 3.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5A.75.75 0 0 1 9 18.5Z" fill="currentColor"/>
                   </svg>
                 </span>
                 <span className="home-link-pill-copy">
-                  <strong>{lt('GitHub 저장소')}</strong>
+                  <strong>{lt('버그 제보')}</strong>
+                  <span>{lt('폼으로 제보하기')}</span>
                 </span>
               </a>
               <a href="mailto:me@w8385.dev" className="home-link-pill" aria-label={`${lt('연락 이메일')} me@w8385.dev`} title="me@w8385.dev">
@@ -4091,15 +4092,14 @@ export default function App() {
                   <span>me@w8385.dev</span>
                 </span>
               </a>
-              <a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noreferrer" className="home-link-pill home-link-pill-accent" aria-label={lt('버그 제보')} title={lt('버그 제보')}>
+              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('GitHub 저장소')} title={lt('GitHub 저장소')}>
                 <span className="home-link-pill-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" role="img" focusable="false">
-                    <path d="M14 3H6.75A2.75 2.75 0 0 0 4 5.75v12.5A2.75 2.75 0 0 0 6.75 21h10.5A2.75 2.75 0 0 0 20 18.25V9Zm0 1.5 4.5 4.5h-3A1.5 1.5 0 0 1 14 7.5Zm-5 7a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 11.5Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 15Zm0 3.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5A.75.75 0 0 1 9 18.5Z" fill="currentColor"/>
+                    <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.2-3.37-1.2-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .08 1.53 1.05 1.53 1.05.9 1.58 2.35 1.12 2.92.86.09-.67.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.74 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.56 1.43.21 2.48.11 2.74.64.72 1.03 1.63 1.03 2.75 0 3.95-2.33 4.82-4.56 5.07.36.32.67.95.67 1.92 0 1.39-.01 2.5-.01 2.84 0 .28.18.61.69.5A10.24 10.24 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" fill="currentColor"/>
                   </svg>
                 </span>
                 <span className="home-link-pill-copy">
-                  <strong>{lt('버그 제보')}</strong>
-                  <span>{lt('폼으로 제보하기')}</span>
+                  <strong>{lt('GitHub 저장소')}</strong>
                 </span>
               </a>
             </div>
@@ -4107,6 +4107,15 @@ export default function App() {
           <div className="home-footer-text-row">
             <span className="home-footer-label">{lt('저작권 및 안내')}</span>
             <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+            <div className="home-reference-list-wrap">
+              <span className="home-reference-label">{lt('참고 데이터베이스')}</span>
+              <div className="home-reference-list">
+                <span className="pick-badge">PokéAPI</span>
+                <span className="pick-badge">PokemonDB</span>
+                <span className="pick-badge">Serebii</span>
+                <span className="pick-badge">champs.pokedb.tokyo</span>
+              </div>
+            </div>
           </div>
         </div>
         ) : null}

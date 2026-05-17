@@ -308,14 +308,6 @@ header p {
   border-color: rgba(96, 165, 250, 0.5);
   background: linear-gradient(180deg, rgba(21, 32, 59, 0.92), rgba(13, 20, 35, 0.86));
 }
-.home-link-pill-accent {
-  border-color: rgba(59, 130, 246, 0.4);
-  background: linear-gradient(180deg, rgba(23, 37, 84, 0.88), rgba(11, 18, 32, 0.82));
-}
-.home-link-pill-accent:hover {
-  border-color: rgba(125, 211, 252, 0.6);
-  background: linear-gradient(180deg, rgba(29, 78, 216, 0.34), rgba(15, 23, 42, 0.9));
-}
 .home-link-pill-icon {
   display: inline-flex;
   align-items: center;
@@ -345,6 +337,20 @@ header p {
   color: #93a4b8;
   font-size: 12px;
   line-height: 1.2;
+}
+.home-reference-list-wrap {
+  display: grid;
+  gap: 8px;
+}
+.home-reference-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #93a4b8;
+}
+.home-reference-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .home-footer-copy {
   margin: 0;
