@@ -5413,29 +5413,31 @@ export default function App() {
                               : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
                           </label> : null}
                           {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown })}</div> : null}
-                          <label>
+                          <label className="sample-bulk-hp-row">
                             체력 EV
                             <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                           </label>
-                          <div className="sample-bulk-pair-row">
-                            <label>
-                              방어 EV
-                              <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                            </label>
-                            <label className="sample-bulk-check-label">
-                              <span>+방어</span>
-                              <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
-                            </label>
-                          </div>
-                          <div className="sample-bulk-pair-row">
-                            <label>
-                              특수방어 EV
-                              <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                            </label>
-                            <label className="sample-bulk-check-label">
-                              <span>+특수방어</span>
-                              <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                            </label>
+                          <div className="sample-bulk-split-grid">
+                            <div className="sample-bulk-pair-row">
+                              <label>
+                                방어 EV
+                                <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                              </label>
+                              <label className="sample-bulk-check-label">
+                                <span>+방어</span>
+                                <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                              </label>
+                            </div>
+                            <div className="sample-bulk-pair-row">
+                              <label>
+                                특수방어 EV
+                                <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                              </label>
+                              <label className="sample-bulk-check-label">
+                                <span>+특수방어</span>
+                                <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
