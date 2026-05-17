@@ -2632,11 +2632,35 @@ header p {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.sample-overview-badges {
+  margin-top: 2px;
+  gap: 7px;
+}
+.sample-overview-badge {
+  min-height: 32px;
+  max-width: 100%;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.9));
+  border-color: rgba(71, 85, 105, 0.52);
+  color: #dbe7f3;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.sample-overview-badge-accent {
+  border-color: rgba(96, 165, 250, 0.3);
+  background: linear-gradient(180deg, rgba(30, 64, 175, 0.22), rgba(15, 23, 42, 0.94));
+  color: #eff6ff;
+}
 .sample-overview-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 2px;
+}
+.sample-overview-chip {
+  min-height: 34px;
+  padding-inline: 13px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.92));
+  border-color: rgba(71, 85, 105, 0.56);
 }
 .sample-overview-inline-save {
   display: grid;
@@ -2654,6 +2678,18 @@ header p {
 }
 .sample-overview-slot-strip .team-pill {
   text-align: left;
+}
+.sample-overview-slot-pill {
+  min-height: 36px;
+  padding: 7px 12px;
+  border-color: rgba(71, 85, 105, 0.56);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.9));
+}
+.sample-overview-slot-pill.active {
+  border-color: #60a5fa;
+  background: linear-gradient(180deg, rgba(30, 64, 175, 0.26), rgba(15, 23, 42, 0.94));
+  color: #eff6ff;
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.14);
 }
 .sample-workflow-card .pick-chip.active {
   border-color: #60a5fa;

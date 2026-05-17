@@ -5027,23 +5027,23 @@ export default function App() {
             <div className="sample-overview-card">
               <span className="muted">{lt('현재 화면')}</span>
               <strong>{displayName(sampleRow, siteLanguage)}</strong>
-              <div className="pick-summary-badges">
-                <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                <span className="pick-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
-                <span className="pick-badge">{lt('노력치 합')} {sampleEvTotal}</span>
+              <div className="pick-summary-badges sample-overview-badges">
+                <span className="pick-badge sample-overview-badge sample-overview-badge-accent">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                <span className="pick-badge sample-overview-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
+                <span className="pick-badge sample-overview-badge">{lt('노력치 합')} {sampleEvTotal}</span>
               </div>
               <div className="pick-row sample-overview-actions">
-                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
-                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
+                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
+                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
               </div>
             </div>
             <div className="sample-overview-card">
               <span className="muted">{lt('샘플 빌더')}</span>
               <strong>{sampleLabelDraft.trim() || lt('샘플 이름')}</strong>
-              <div className="pick-summary-badges">
-                <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                <span className="pick-badge">{sampleAbility || lt('미선택')}</span>
-                <span className="pick-badge">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
+              <div className="pick-summary-badges sample-overview-badges">
+                <span className="pick-badge sample-overview-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                <span className="pick-badge sample-overview-badge">{sampleAbility || lt('미선택')}</span>
+                <span className="pick-badge sample-overview-badge sample-overview-badge-accent">{lt('확정')} {sampleConfirmedMoves.length}/4</span>
               </div>
               <div className="sample-overview-inline-save">
                 <input className="sample-label-input" value={sampleLabelDraft} placeholder={siteLanguage === 'en' ? 'e.g. Jolly Scarf draft' : siteLanguage === 'ja' ? '例: ようきスカーフ案' : '예: 명랑 스카프 정리안'} onChange={(e) => setSampleLabelDraft(e.target.value)} />
@@ -5053,8 +5053,8 @@ export default function App() {
             <div className="sample-overview-card sample-workflow-card">
               <span className="muted">{lt('구성')}</span>
               <strong>{lt('파티 슬롯에 적용')}</strong>
-              <div className="pick-summary-badges">
-                <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              <div className="pick-summary-badges sample-overview-badges">
+                <span className="pick-badge sample-overview-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
               </div>
               <div className="team-strip sample-slot-strip sample-overview-slot-strip">
                 {party.map((member, idx) => {
@@ -5063,7 +5063,7 @@ export default function App() {
                     <button
                       key={`overview-apply-slot-pill-${idx}`}
                       type="button"
-                      className={`team-pill ${selectedMy === idx ? 'active' : ''}`}
+                      className={`team-pill sample-overview-slot-pill ${selectedMy === idx ? 'active' : ''}`}
                       onClick={() => setSelectedMy(idx)}
                     >
                       {siteLanguage === 'en' ? `Slot ${idx + 1}` : siteLanguage === 'ja' ? `${idx + 1}番` : `${idx + 1}번`} · {row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}
@@ -5072,8 +5072,8 @@ export default function App() {
                 })}
               </div>
               <div className="pick-row sample-overview-actions">
-                <button type="button" className="pick-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
-                <button type="button" className="pick-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{siteLanguage === 'en' ? `Apply to Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番に適用` : `${selectedMy + 1}번 슬롯에 적용`}</button>
+                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
+                <button type="button" className="pick-chip sample-overview-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{siteLanguage === 'en' ? `Apply to Slot ${selectedMy + 1}` : siteLanguage === 'ja' ? `${selectedMy + 1}番に適用` : `${selectedMy + 1}번 슬롯에 적용`}</button>
               </div>
             </div>
           </div>
