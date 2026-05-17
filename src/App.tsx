@@ -97,6 +97,7 @@ type CalcMode = 'physical' | 'special'
 type DamageWeather = 'none' | 'sun' | 'rain' | 'sand' | 'snow'
 type DamageTerrain = 'none' | 'electric' | 'grassy' | 'psychic' | 'misty'
 type OpponentBulkPreset = 'neutral-0' | 'hp-32' | 'phys-32' | 'spdef-32' | 'custom'
+type OpponentOffensePreset = 'neutral-0' | 'atk-32' | 'spa-32' | 'atk-32-plus' | 'spa-32-plus' | 'custom'
 type RivalryMode = 'neutral' | 'same' | 'opposite'
 
 type PersistedState = {
@@ -131,6 +132,11 @@ type PersistedState = {
   calcOpponentHpEv?: number
   calcOpponentDefenseEv?: number
   calcOpponentSpDefenseEv?: number
+  calcOpponentOffensePreset?: OpponentOffensePreset
+  calcOpponentAttackEv?: number
+  calcOpponentSpAttackEv?: number
+  calcOpponentAttackNature?: number
+  calcOpponentSpAttackNature?: number
   calcOpponentDefenseNature?: number
   calcOpponentSpDefenseNature?: number
   battleNote?: string
@@ -235,12 +241,27 @@ type OpponentBulkConfig = {
   label: string
 }
 
+type OpponentOffenseConfig = {
+  attackEv: number
+  spAttackEv: number
+  attackNature: number
+  spAttackNature: number
+  label: string
+}
+
 type OpponentBulkState = {
   hpEv: number
   defenseEv: number
   spDefenseEv: number
   defenseNature: number
   spDefenseNature: number
+}
+
+type OpponentOffenseState = {
+  attackEv: number
+  spAttackEv: number
+  attackNature: number
+  spAttackNature: number
 }
 type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: MoveOption[] }
 type DamageMoveSelection = { key: string; move: string }
@@ -273,7 +294,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 딜계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
+    '간단 데미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 데미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -301,7 +322,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 딜계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
+    '간단 데미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 데미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -399,8 +420,22 @@ const OPPONENT_BULK_PRESETS: Record<Exclude<OpponentBulkPreset, 'custom'>, Oppon
   'spdef-32': { hpEv: 32, defenseEv: 0, spDefenseEv: 32, defenseNature: 1, spDefenseNature: 1.1, label: '체력/특수방어 32/32 +' },
 }
 
+const OPPONENT_OFFENSE_PRESETS: Record<Exclude<OpponentOffensePreset, 'custom'>, OpponentOffenseConfig> = {
+  'neutral-0': { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1, label: '무보정 0EV' },
+  'atk-32': { attackEv: 32, spAttackEv: 0, attackNature: 1, spAttackNature: 1, label: '공격 32' },
+  'spa-32': { attackEv: 0, spAttackEv: 32, attackNature: 1, spAttackNature: 1, label: '특수공격 32' },
+  'atk-32-plus': { attackEv: 32, spAttackEv: 0, attackNature: 1.1, spAttackNature: 1, label: '공격 32 +' },
+  'spa-32-plus': { attackEv: 0, spAttackEv: 32, attackNature: 1, spAttackNature: 1.1, label: '특수공격 32 +' },
+}
+
 function sanitizeOpponentBulkPreset(value: unknown): OpponentBulkPreset {
   return value === 'neutral-0' || value === 'hp-32' || value === 'phys-32' || value === 'spdef-32' || value === 'custom'
+    ? value
+    : 'neutral-0'
+}
+
+function sanitizeOpponentOffensePreset(value: unknown): OpponentOffensePreset {
+  return value === 'neutral-0' || value === 'atk-32' || value === 'spa-32' || value === 'atk-32-plus' || value === 'spa-32-plus' || value === 'custom'
     ? value
     : 'neutral-0'
 }
@@ -432,6 +467,27 @@ function sanitizeOpponentBulkState(raw?: Partial<OpponentBulkState> | null, pres
   }
 }
 
+function opponentOffenseStateFromPreset(preset: OpponentOffensePreset): OpponentOffenseState {
+  const resolved = sanitizeOpponentOffensePreset(preset)
+  const config = resolved === 'custom' ? OPPONENT_OFFENSE_PRESETS['neutral-0'] : OPPONENT_OFFENSE_PRESETS[resolved]
+  return {
+    attackEv: config.attackEv,
+    spAttackEv: config.spAttackEv,
+    attackNature: config.attackNature,
+    spAttackNature: config.spAttackNature,
+  }
+}
+
+function sanitizeOpponentOffenseState(raw?: Partial<OpponentOffenseState> | null, preset: OpponentOffensePreset = 'neutral-0'): OpponentOffenseState {
+  const base = opponentOffenseStateFromPreset(preset)
+  return {
+    attackEv: clampEv(raw?.attackEv ?? base.attackEv, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    spAttackEv: clampEv(raw?.spAttackEv ?? base.spAttackEv, CHAMPIONS_EFFORT_PER_STAT_CAP),
+    attackNature: sanitizeOpponentNatureMultiplier(raw?.attackNature ?? base.attackNature),
+    spAttackNature: sanitizeOpponentNatureMultiplier(raw?.spAttackNature ?? base.spAttackNature),
+  }
+}
+
 function detectOpponentBulkPreset(state: OpponentBulkState): OpponentBulkPreset {
   for (const [preset, config] of Object.entries(OPPONENT_BULK_PRESETS) as [Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig][]) {
     if (
@@ -445,6 +501,18 @@ function detectOpponentBulkPreset(state: OpponentBulkState): OpponentBulkPreset 
   return 'custom'
 }
 
+function detectOpponentOffensePreset(state: OpponentOffenseState): OpponentOffensePreset {
+  for (const [preset, config] of Object.entries(OPPONENT_OFFENSE_PRESETS) as [Exclude<OpponentOffensePreset, 'custom'>, OpponentOffenseConfig][]) {
+    if (
+      state.attackEv === config.attackEv &&
+      state.spAttackEv === config.spAttackEv &&
+      state.attackNature === config.attackNature &&
+      state.spAttackNature === config.spAttackNature
+    ) return preset
+  }
+  return 'custom'
+}
+
 function opponentBulkLabel(state: OpponentBulkState, preset: OpponentBulkPreset) {
   if (preset !== 'custom') return OPPONENT_BULK_PRESETS[preset].label
   const natureBits = [
@@ -452,6 +520,15 @@ function opponentBulkLabel(state: OpponentBulkState, preset: OpponentBulkPreset)
     state.spDefenseNature > 1 ? '+특수방어' : null,
   ].filter(Boolean)
   return `체력 ${state.hpEv} · 방어 ${state.defenseEv} · 특수방어 ${state.spDefenseEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
+}
+
+function opponentOffenseLabel(state: OpponentOffenseState, preset: OpponentOffensePreset) {
+  if (preset !== 'custom') return OPPONENT_OFFENSE_PRESETS[preset].label
+  const natureBits = [
+    state.attackNature > 1 ? '+공격' : null,
+    state.spAttackNature > 1 ? '+특수공격' : null,
+  ].filter(Boolean)
+  return `공격 ${state.attackEv} · 특수공격 ${state.spAttackEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
 }
 
 function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
@@ -1528,13 +1605,13 @@ function buildPartyBattleStats(row: Row, member: PartyMember): BattleStatBlock {
   }
 }
 
-function buildOpponentBattleStats(row: Row, config: OpponentBulkState): BattleStatBlock {
+function buildOpponentBattleStats(row: Row, bulkConfig: OpponentBulkState, offenseConfig?: OpponentOffenseState): BattleStatBlock {
   return {
-    hp: actualStat(row.hp, config.hpEv, 1, true),
-    attack: actualStat(row.attack, 0, 1),
-    defense: actualStat(row.defense, config.defenseEv, config.defenseNature),
-    spAttack: actualStat(row.spAttack, 0, 1),
-    spDefense: actualStat(row.spDefense, config.spDefenseEv, config.spDefenseNature),
+    hp: actualStat(row.hp, bulkConfig.hpEv, 1, true),
+    attack: actualStat(row.attack, offenseConfig?.attackEv ?? 0, offenseConfig?.attackNature ?? 1),
+    defense: actualStat(row.defense, bulkConfig.defenseEv, bulkConfig.defenseNature),
+    spAttack: actualStat(row.spAttack, offenseConfig?.spAttackEv ?? 0, offenseConfig?.spAttackNature ?? 1),
+    spDefense: actualStat(row.spDefense, bulkConfig.spDefenseEv, bulkConfig.spDefenseNature),
   }
 }
 
@@ -2838,12 +2915,24 @@ export default function App() {
   const [calcTypeChangeStab, setCalcTypeChangeStab] = React.useState(() => persisted?.calcTypeChangeStab !== false)
   const [calcConditionalPowerValues, setCalcConditionalPowerValues] = React.useState<Record<string, ConditionalPowerValue>>(() => (persisted?.calcConditionalPowerValues && typeof persisted.calcConditionalPowerValues === 'object') ? persisted.calcConditionalPowerValues : {})
   const [weightByKey, setWeightByKey] = React.useState<Record<string, number>>({})
+  const initialOpponentOffensePreset = React.useMemo(() => sanitizeOpponentOffensePreset(persisted?.calcOpponentOffensePreset), [persisted])
+  const initialOpponentOffenseState = React.useMemo(() => sanitizeOpponentOffenseState({
+    attackEv: persisted?.calcOpponentAttackEv,
+    spAttackEv: persisted?.calcOpponentSpAttackEv,
+    attackNature: persisted?.calcOpponentAttackNature,
+    spAttackNature: persisted?.calcOpponentSpAttackNature,
+  }, initialOpponentOffensePreset), [initialOpponentOffensePreset, persisted])
   const [calcOpponentBulkPreset, setCalcOpponentBulkPreset] = React.useState<OpponentBulkPreset>(initialOpponentBulkPreset)
   const [calcOpponentHpEv, setCalcOpponentHpEv] = React.useState(initialOpponentBulkState.hpEv)
   const [calcOpponentDefenseEv, setCalcOpponentDefenseEv] = React.useState(initialOpponentBulkState.defenseEv)
   const [calcOpponentSpDefenseEv, setCalcOpponentSpDefenseEv] = React.useState(initialOpponentBulkState.spDefenseEv)
   const [calcOpponentDefenseNature, setCalcOpponentDefenseNature] = React.useState(initialOpponentBulkState.defenseNature)
   const [calcOpponentSpDefenseNature, setCalcOpponentSpDefenseNature] = React.useState(initialOpponentBulkState.spDefenseNature)
+  const [calcOpponentOffensePreset, setCalcOpponentOffensePreset] = React.useState<OpponentOffensePreset>(initialOpponentOffensePreset)
+  const [calcOpponentAttackEv, setCalcOpponentAttackEv] = React.useState(initialOpponentOffenseState.attackEv)
+  const [calcOpponentSpAttackEv, setCalcOpponentSpAttackEv] = React.useState(initialOpponentOffenseState.spAttackEv)
+  const [calcOpponentAttackNature, setCalcOpponentAttackNature] = React.useState(initialOpponentOffenseState.attackNature)
+  const [calcOpponentSpAttackNature, setCalcOpponentSpAttackNature] = React.useState(initialOpponentOffenseState.spAttackNature)
   const [stab, setStab] = React.useState(1.5)
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
@@ -3032,6 +3121,11 @@ export default function App() {
       calcOpponentSpDefenseEv,
       calcOpponentDefenseNature,
       calcOpponentSpDefenseNature,
+      calcOpponentOffensePreset,
+      calcOpponentAttackEv,
+      calcOpponentSpAttackEv,
+      calcOpponentAttackNature,
+      calcOpponentSpAttackNature,
       battleNote,
       confirmedMovesByKey,
       mainSection,
@@ -3042,7 +3136,7 @@ export default function App() {
       sampleDamageTargets,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -3074,8 +3168,14 @@ export default function App() {
     defenseNature: calcOpponentDefenseNature,
     spDefenseNature: calcOpponentSpDefenseNature,
   }), [calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature])
+  const opponentOffenseState = React.useMemo<OpponentOffenseState>(() => ({
+    attackEv: calcOpponentAttackEv,
+    spAttackEv: calcOpponentSpAttackEv,
+    attackNature: calcOpponentAttackNature,
+    spAttackNature: calcOpponentSpAttackNature,
+  }), [calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature])
   const myBattleStats = buildPartyBattleStats(myRow, myMember)
-  const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null
+  const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null
   const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
   const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
 
@@ -3215,7 +3315,7 @@ export default function App() {
   const defenderAbilityValue = attackFromOpponent ? (selectedMyAbility?.slug ?? myMember.ability) : (selectedOppAbility?.slug ?? oppMember.ability)
   const selectedAttackAbility = attackFromOpponent ? selectedOppAbility : selectedMyAbility
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
-  const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null) : myBattleStats
+  const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null) : myBattleStats
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
   const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
@@ -3635,6 +3735,23 @@ export default function App() {
     setCalcOpponentDefenseNature(nextState.defenseNature)
     setCalcOpponentSpDefenseNature(nextState.spDefenseNature)
     setCalcOpponentBulkPreset(detectOpponentBulkPreset(nextState))
+  }
+  const applyOpponentOffensePresetSelection = (preset: OpponentOffensePreset) => {
+    setCalcOpponentOffensePreset(preset)
+    if (preset === 'custom') return
+    const next = opponentOffenseStateFromPreset(preset)
+    setCalcOpponentAttackEv(next.attackEv)
+    setCalcOpponentSpAttackEv(next.spAttackEv)
+    setCalcOpponentAttackNature(next.attackNature)
+    setCalcOpponentSpAttackNature(next.spAttackNature)
+  }
+  const updateOpponentOffenseState = (patch: Partial<OpponentOffenseState>) => {
+    const nextState = sanitizeOpponentOffenseState({ ...opponentOffenseState, ...patch }, 'custom')
+    setCalcOpponentAttackEv(nextState.attackEv)
+    setCalcOpponentSpAttackEv(nextState.spAttackEv)
+    setCalcOpponentAttackNature(nextState.attackNature)
+    setCalcOpponentSpAttackNature(nextState.spAttackNature)
+    setCalcOpponentOffensePreset(detectOpponentOffensePreset(nextState))
   }
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
@@ -4205,6 +4322,11 @@ export default function App() {
       calcOpponentSpDefenseEv,
       calcOpponentDefenseNature,
       calcOpponentSpDefenseNature,
+      calcOpponentOffensePreset,
+      calcOpponentAttackEv,
+      calcOpponentSpAttackEv,
+      calcOpponentAttackNature,
+      calcOpponentSpAttackNature,
       battleNote,
       confirmedMovesByKey,
       mainSection,
@@ -4280,6 +4402,18 @@ export default function App() {
       setCalcOpponentSpDefenseEv(nextBulkState.spDefenseEv)
       setCalcOpponentDefenseNature(nextBulkState.defenseNature)
       setCalcOpponentSpDefenseNature(nextBulkState.spDefenseNature)
+      const nextOffensePreset = sanitizeOpponentOffensePreset(parsed.calcOpponentOffensePreset)
+      const nextOffenseState = sanitizeOpponentOffenseState({
+        attackEv: parsed.calcOpponentAttackEv,
+        spAttackEv: parsed.calcOpponentSpAttackEv,
+        attackNature: parsed.calcOpponentAttackNature,
+        spAttackNature: parsed.calcOpponentSpAttackNature,
+      }, nextOffensePreset)
+      setCalcOpponentOffensePreset(nextOffensePreset)
+      setCalcOpponentAttackEv(nextOffenseState.attackEv)
+      setCalcOpponentSpAttackEv(nextOffenseState.spAttackEv)
+      setCalcOpponentAttackNature(nextOffenseState.attackNature)
+      setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
       setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
       setMainSection(parsed.mainSection ?? 'home')
@@ -6425,6 +6559,31 @@ export default function App() {
                     <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
                     <span>{lt('화상')}</span>
                   </label>
+                  {attackFromOpponent ? <>
+                    <label>
+                      {lt('상대 화력 프리셋')}
+                      <select value={calcOpponentOffensePreset} onChange={(e) => applyOpponentOffensePresetSelection(e.target.value as OpponentOffensePreset)}>
+                        {Object.entries(OPPONENT_OFFENSE_PRESETS).map(([key, preset]) => <option key={`opp-offense-preset-${key}`} value={key}>{preset.label}</option>)}
+                        <option value="custom">{lt('직접 조절')}</option>
+                      </select>
+                    </label>
+                    <label>
+                      {lt('상대 공격')}
+                      <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentAttackEv} onChange={(e) => updateOpponentOffenseState({ attackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                    </label>
+                    <label>
+                      {lt('상대 특수공격')}
+                      <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpAttackEv} onChange={(e) => updateOpponentOffenseState({ spAttackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                    </label>
+                    <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcOpponentAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ attackNature: e.target.checked ? 1.1 : 1 })} />
+                      <span>{lt('+공격 성격')}</span>
+                    </label>
+                    <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcOpponentSpAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ spAttackNature: e.target.checked ? 1.1 : 1 })} />
+                      <span>{lt('+특수공격 성격')}</span>
+                    </label>
+                  </> : null}
                   {showAttackerLowHpToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} />
                     <span>{lt('공격측 HP 1/3 이하')}</span>
