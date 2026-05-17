@@ -3189,7 +3189,7 @@ export default function App() {
   const oppMoveSet = sampleMoves.find((entry) => entry.key === oppMember.key)
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = oppMovePool?.moves?.length ? oppMovePool.moves : moveOptionsForEntry(oppMoveSet)
-  const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key).filter((move) => !oppMember.revealedMoves.includes(move))
+  const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
   const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
   const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
   const attackFromOpponent = calcSwapSides && Boolean(oppRow)
@@ -3203,7 +3203,6 @@ export default function App() {
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState) : null) : myBattleStats
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
   const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
-  const myTopSuggestedMoves = usageTopMovesForKey(myMember.key).filter((move) => !myRegisteredDamageMoves.includes(move))
   const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
   const registeredDamageMoves = (attackFromOpponent ? opponentRegisteredDamageMoves : myRegisteredDamageMoves).filter(Boolean)
   const attackerMoveOptions = attackFromOpponent ? oppMoveOptions : myMoveOptions
@@ -4581,7 +4580,7 @@ export default function App() {
                 const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
-                const memberTopSuggestedMoves = usageTopMovesForKey(member.key).filter((move) => !(confirmedMovesByKey[member.key] ?? []).includes(move))
+                const memberTopSuggestedMoves = usageTopMovesForKey(member.key)
                 const partySpeciesMenuId = `party-species-${idx}`
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const partyItemMenuId = `party-item-${idx}`
@@ -4880,9 +4879,10 @@ export default function App() {
                           <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
                         </div>
                         <div className="move-chip-wrap">
-                          {memberTopSuggestedMoves.map((move) => (
-                            <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
-                          ))}
+                          {memberTopSuggestedMoves.map((move) => {
+                            const locked = registeredMoves.includes(move)
+                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                          })}
                         </div>
                       </div> : null}
                     </div> : null}
@@ -5169,13 +5169,14 @@ export default function App() {
                         <div className="move-chip-wrap">
                           {oppTopSuggestedMoves.map((move) => {
                             const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
+                            const locked = oppMember.revealedMoves.includes(move)
                             return (
                               <button
                                 key={`opp-top-move-${oppMember.key}-${move}`}
                                 type="button"
-                                className={`move-chip core ${moveTypeThemeClass(moveType)}`}
+                                className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`}
                                 onClick={() => addOpponentRevealedMove(move)}
-                                disabled={oppMember.revealedMoves.length >= 4}
+                                disabled={locked || oppMember.revealedMoves.length >= 4}
                               >
                                 {move}
                               </button>
@@ -6253,7 +6254,8 @@ export default function App() {
                     <div className="move-chip-wrap damage-top-move-strip-chips">
                       {oppTopSuggestedMoves.map((move) => {
                         const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
-                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={opponentRegisteredDamageMoves.length >= 4}>{move}</button>
+                        const locked = opponentRegisteredDamageMoves.includes(move)
+                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4}>{move}</button>
                       })}
                     </div>
                   </div> : null}
