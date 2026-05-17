@@ -1,13 +1,14 @@
 {
-  "generatedAt": "2026-05-17T10:08:40.548Z",
+  "generatedAt": "2026-05-17T10:39:03.184Z",
   "totalAbilities": 190,
-  "implementedCount": 37,
+  "implementedCount": 43,
   "categories": {
     "implemented": {
-      "count": 37,
+      "count": 43,
       "abilities": [
         "adaptability",
         "aerilate",
+        "blaze",
         "dragonize",
         "dry-skin",
         "earth-eater",
@@ -24,7 +25,10 @@
         "lightning-rod",
         "liquid-voice",
         "mega-launcher",
+        "merciless",
         "motor-drive",
+        "multiscale",
+        "overgrow",
         "pixilate",
         "protean",
         "pure-power",
@@ -36,8 +40,10 @@
         "solar-power",
         "solid-rock",
         "strong-jaw",
+        "swarm",
         "technician",
         "thick-fat",
+        "torrent",
         "tough-claws",
         "unaware",
         "volt-absorb",
@@ -53,18 +59,12 @@
       ]
     },
     "requiresHpOrStatusContext": {
-      "count": 10,
+      "count": 4,
       "abilities": [
         "berserk",
-        "blaze",
         "marvel-scale",
-        "merciless",
-        "multiscale",
-        "overgrow",
         "poison-heal",
-        "quick-feet",
-        "swarm",
-        "torrent"
+        "quick-feet"
       ]
     },
     "requiresTurnOrFieldContext": {
@@ -233,11 +233,10 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 44,
+  "damageRelevantMissingCount": 38,
   "damageRelevantMissing": [
     "analytic",
     "berserk",
-    "blaze",
     "chlorophyll",
     "drizzle",
     "drought",
@@ -249,11 +248,8 @@
     "leaf-guard",
     "marvel-scale",
     "mega-sol",
-    "merciless",
     "mimicry",
-    "multiscale",
     "opportunist",
-    "overgrow",
     "parental-bond",
     "piercing-drill",
     "plus",
@@ -276,9 +272,7 @@
     "super-luck",
     "supreme-overlord",
     "surge-surfer",
-    "swarm",
-    "swift-swim",
-    "torrent"
+    "swift-swim"
   ],
   "notableDefenderAbilities": [
     {
@@ -327,7 +321,7 @@
     },
     {
       "ability": "multiscale",
-      "implemented": false
+      "implemented": true
     },
     {
       "ability": "purifying-salt",
