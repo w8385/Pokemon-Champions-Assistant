@@ -1649,19 +1649,26 @@ header p {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 34px;
+  padding: 7px 12px;
   border-color: rgba(71, 85, 105, 0.52);
   background: rgba(15, 23, 42, 0.56);
-  color: #a8b6c8;
+  color: #c6d2df;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 .sample-filter-chip strong {
-  min-width: 20px;
-  padding: 1px 6px;
+  min-width: 22px;
+  padding: 2px 7px;
   border-radius: 999px;
   background: rgba(255,255,255,0.08);
   color: #dbe7f3;
   font-size: 11px;
-  line-height: 1.4;
+  font-weight: 700;
+  line-height: 1.2;
   text-align: center;
   transition: background 140ms ease, color 140ms ease;
 }
@@ -2645,12 +2652,20 @@ header p {
 }
 .team-pill {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
   border: 1px solid #334155;
   background: #0b1220;
-  color: #eef2f7;
+  color: #e2e8f0;
   border-radius: 999px;
-  padding: 7px 11px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 .team-pill.enemy {
   border-color: #7c2d12;
@@ -3981,18 +3996,27 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .pick-chip {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
   border: 1px solid #475569;
   background: #0b1220;
-  color: #cbd5e1;
+  color: #d5deea;
   border-radius: 999px;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 .pick-chip.active {
   border-color: #60a5fa;
-  background: #132034;
+  background: linear-gradient(180deg, rgba(23, 37, 84, 0.96), rgba(19, 32, 52, 0.94));
   color: #eff6ff;
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.14);
 }
 .preset-row {
   display: flex;
@@ -4091,12 +4115,16 @@ textarea { min-height: 72px; resize: vertical; }
 .pick-badge {
   display: inline-flex;
   align-items: center;
+  min-height: 32px;
   border: 1px solid #334155;
   border-radius: 999px;
   padding: 6px 10px;
   background: #0b1220;
-  color: #e2e8f0;
+  color: #dbe5f1;
   font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 .pick-badge.subtle {
   border-color: rgba(250, 204, 21, 0.35);
