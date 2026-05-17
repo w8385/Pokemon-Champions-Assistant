@@ -5089,44 +5089,50 @@ export default function App() {
               </div>
               <div className="sample-overview-stack">
                 {sampleSpeedCalcs.length ? sampleSpeedCalcs.map((entry) => (
-                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card">
+                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
                     <div className="row-between">
                       <strong>{displayName(entry.row, siteLanguage)}</strong>
                       <button type="button" className="pick-chip" onClick={() => removeSampleSpeedTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
-                    <div className="sample-damage-target-controls sample-speed-target-controls">
-                      <label>
-                        {lt('성격')}
-                        <select value={entry.member.natureBoost ? 'fast' : 'neutral'} onChange={(e) => updateSampleSpeedTarget(entry.idx, { natureBoost: e.target.value === 'fast' })}>
-                          <option value="neutral">{lt('준속')}</option>
-                          <option value="fast">{lt('최속')}</option>
-                        </select>
-                      </label>
-                      <label>
-                        {lt('스카프')}
-                        <input type="checkbox" checked={entry.member.scarf} onChange={(e) => updateSampleSpeedTarget(entry.idx, { scarf: e.target.checked })} />
-                      </label>
-                      <label>
-                        {lt('랭크')}
-                        <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
-                          {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage >= 0 ? `+${stage}` : stage}</option>)}
-                        </select>
-                      </label>
-                    </div>
-                    <div className="sample-speed-cut-grid">
-                      {entry.cutoffs.map((cutoff) => (
-                        <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className={`sample-speed-cut-card ${cutoff.result === lt('내가 앞섬') ? 'ahead' : cutoff.result === lt('동속') ? 'tie' : 'behind'}`}>
-                          <strong>{cutoff.label}</strong>
-                          <div className="pick-summary-badges">
-                            <span className="pick-badge">현재 {cutoff.speed}</span>
-                            <span className="pick-badge enemy">{cutoff.result}</span>
-                          </div>
-                          <div className="pick-summary-badges">
-                            <span className="pick-badge">{lt('동속컷')} {cutoff.needs.tieEffort ?? '-'}</span>
-                            <span className="pick-badge">{lt('추월컷')} {cutoff.needs.passEffort ?? '-'}</span>
-                          </div>
+                    <div className="sample-workbench-card-body sample-speed-card-body">
+                      <div className="sample-workbench-sidepanel">
+                        <div className="sample-damage-target-controls sample-speed-target-controls">
+                          <label>
+                            {lt('성격')}
+                            <select value={entry.member.natureBoost ? 'fast' : 'neutral'} onChange={(e) => updateSampleSpeedTarget(entry.idx, { natureBoost: e.target.value === 'fast' })}>
+                              <option value="neutral">{lt('준속')}</option>
+                              <option value="fast">{lt('최속')}</option>
+                            </select>
+                          </label>
+                          <label>
+                            {lt('스카프')}
+                            <input type="checkbox" checked={entry.member.scarf} onChange={(e) => updateSampleSpeedTarget(entry.idx, { scarf: e.target.checked })} />
+                          </label>
+                          <label>
+                            {lt('랭크')}
+                            <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
+                              {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage >= 0 ? `+${stage}` : stage}</option>)}
+                            </select>
+                          </label>
                         </div>
-                      ))}
+                      </div>
+                      <div className="sample-workbench-mainpanel">
+                        <div className="sample-speed-cut-grid sample-speed-cut-grid-wide">
+                          {entry.cutoffs.map((cutoff) => (
+                            <div key={`sample-speed-cutoff-${entry.idx}-${cutoff.id}`} className={`sample-speed-cut-card ${cutoff.result === lt('내가 앞섬') ? 'ahead' : cutoff.result === lt('동속') ? 'tie' : 'behind'}`}>
+                              <strong>{cutoff.label}</strong>
+                              <div className="pick-summary-badges">
+                                <span className="pick-badge">현재 {cutoff.speed}</span>
+                                <span className="pick-badge enemy">{cutoff.result}</span>
+                              </div>
+                              <div className="pick-summary-badges">
+                                <span className="pick-badge">{lt('동속컷')} {cutoff.needs.tieEffort ?? '-'}</span>
+                                <span className="pick-badge">{lt('추월컷')} {cutoff.needs.passEffort ?? '-'}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
@@ -5149,43 +5155,49 @@ export default function App() {
               </div>
               <div className="sample-overview-stack">
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
-                  <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card">
+                  <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
                     <div className="row-between">
                       <strong>{displayName(entry.row, siteLanguage)}</strong>
                       <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
-                    <div className="sample-damage-target-controls">
-                      <label>
-                        HP EV
-                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                      </label>
-                      <label>
-                        물방 EV
-                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                      </label>
-                      <label>
-                        특방 EV
-                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                      </label>
-                      <label>
-                        +방어
-                        <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
-                      </label>
-                      <label>
-                        +특방
-                        <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                      </label>
+                    <div className="sample-workbench-card-body sample-damage-card-body">
+                      <div className="sample-workbench-sidepanel">
+                        <div className="sample-damage-target-controls sample-damage-target-controls-wide">
+                          <label>
+                            HP EV
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label>
+                            물방 EV
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label>
+                            특방 EV
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label>
+                            +방어
+                            <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                          </label>
+                          <label>
+                            +특방
+                            <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                          </label>
+                        </div>
+                      </div>
+                      <div className="sample-workbench-mainpanel">
+                        <div className="pick-summary-badges sample-workbench-metric-badges">
+                          <span className="pick-badge">HP {entry.defenderStats.hp}</span>
+                          <span className="pick-badge">Def {entry.defenderStats.defense}</span>
+                          <span className="pick-badge">SpD {entry.defenderStats.spDefense}</span>
+                        </div>
+                        <div className="pick-summary-badges sample-workbench-metric-badges">
+                          <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
+                          <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
+                        </div>
+                        <div className="pick-summary-badges sample-workbench-metric-badges"><span className="pick-badge">{entry.verdict}</span></div>
+                      </div>
                     </div>
-                    <div className="pick-summary-badges">
-                      <span className="pick-badge">HP {entry.defenderStats.hp}</span>
-                      <span className="pick-badge">Def {entry.defenderStats.defense}</span>
-                      <span className="pick-badge">SpD {entry.defenderStats.spDefense}</span>
-                    </div>
-                    <div className="pick-summary-badges">
-                      <span className="pick-badge">{entry.damage.min} ~ {entry.damage.max}</span>
-                      <span className="pick-badge enemy">{entry.damage.minPct}% ~ {entry.damage.maxPct}%</span>
-                    </div>
-                    <div className="pick-summary-badges"><span className="pick-badge">{entry.verdict}</span></div>
                   </div>
                 )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
               </div>

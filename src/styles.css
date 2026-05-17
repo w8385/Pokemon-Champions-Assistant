@@ -2059,6 +2059,20 @@ header p {
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(11, 18, 32, 0.78));
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
+.sample-workbench-wide-card {
+  padding: 18px;
+}
+.sample-workbench-card-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.sample-workbench-sidepanel,
+.sample-workbench-mainpanel {
+  display: grid;
+  gap: 12px;
+}
 .sample-damage-target-controls {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -2077,12 +2091,18 @@ header p {
   justify-self: start;
 }
 .sample-speed-target-controls {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
+}
+.sample-damage-target-controls-wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .sample-speed-cut-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+.sample-speed-cut-grid-wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .sample-speed-cut-card {
   display: grid;
@@ -2095,6 +2115,9 @@ header p {
 .sample-speed-cut-card strong {
   font-size: 14px;
   line-height: 1.2;
+}
+.sample-workbench-metric-badges {
+  align-items: flex-start;
 }
 .sample-speed-cut-card.ahead {
   border-color: rgba(34, 197, 94, 0.5);
@@ -3950,9 +3973,13 @@ textarea { min-height: 72px; resize: vertical; }
   }
   .sample-tuning-inline { grid-template-columns: 1fr; }
   .sample-speed-inline-controls { grid-template-columns: 1fr; }
+  .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
   .sample-speed-row { grid-template-columns: 1fr; }
-  .sample-damage-target-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sample-damage-target-controls,
+  .sample-damage-target-controls-wide,
+  .sample-speed-cut-grid,
+  .sample-speed-cut-grid-wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-action-row { display: grid; grid-template-columns: 1fr 1fr; }
   .sample-action-row .action-button { width: 100%; }
   .home-route-card-meta { align-items: flex-start; flex-direction: column; }
