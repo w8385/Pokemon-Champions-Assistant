@@ -6165,6 +6165,7 @@ export default function App() {
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('공격측')} · {attackFromOpponent ? lt('상대 포켓몬') : lt('내 포켓몬')}</span>
               <span className="pick-badge enemy">{defenderRow ? `${lt('방어측')} · ${displayName(defenderRow, siteLanguage)}` : lt('선택한 상대 없음')}</span>
+              {damageVerdict ? <span className="pick-badge">{lt('판정')} · {damageVerdict}</span> : null}
             </div>
           </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
