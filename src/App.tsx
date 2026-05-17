@@ -6121,7 +6121,7 @@ export default function App() {
                         </div>
                         {entry.damage ? <div className="sample-damage-metric-grid">
                           <div className="sample-damage-metric-box verdict">
-                            <span className="sample-damage-metric-label">{lt('확정 N타')}</span>
+                            <span className="sample-damage-metric-label">{lt('판정')}</span>
                             <strong>{entry.verdict}</strong>
                           </div>
                           <div className="sample-damage-metric-box">
