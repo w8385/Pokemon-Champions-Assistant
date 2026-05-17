@@ -3647,6 +3647,33 @@ export default function App() {
     setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat, nextValue) }))
   }
 
+  const renderSampleForgeEffortGrid = (scope: 'speed' | 'damage') => {
+    if (!sampleRow) return null
+    return <div className="drag-stat-list sample-embedded-drag-stat-list">
+      {EFFORT_STAT_OPTIONS.map((stat) => {
+        const currentEffort = sampleForge.evs[stat.key]
+        const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(sampleForge.evs, stat.key))
+        const additionalAvailable = Math.max(0, availableCap - currentEffort)
+        const actualValue = partyStatValue(sampleRow, sampleForge, stat.key)
+        const isMagicStat = sampleMagicCandidate?.stat === stat.key && actualValue % 11 === 0
+        const targetEffort = sampleMagicCandidate?.stat === stat.key ? sampleMagicCandidate.nextEffort : null
+        const magicPoints = magicEffortPoints(sampleRow, sampleForge, stat.key)
+        return <div key={`${scope}-sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
+          <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
+          <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
+            <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+              <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`${scope}-sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+              <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
+            </div>
+            <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => { const checkpointValue = partyStatValue(sampleRow, { ...sampleForge, evs: { ...sampleForge.evs, [stat.key]: checkpoint } }, stat.key); return <div key={`${scope}-sample-effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{stat.key === sampleMagicCandidate?.stat ? checkpointValue : ''}</small></div> })}</div>
+          </div>
+          <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.max(0, currentEffort - 1)) }))} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, 0) }))} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, availableCap) }))} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.min(availableCap, currentEffort + 1)) }))} disabled={currentEffort >= availableCap}>+1</button></div>
+          <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>{sampleMagicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}</div>
+        </div>
+      })}
+    </div>
+  }
+
   const nextOpponentSlotIndex = (fromIdx: number) => {
     const emptyAfter = opponents.findIndex((member, idx) => idx > fromIdx && !member.key)
     if (emptyAfter >= 0) return emptyAfter
@@ -5135,18 +5162,11 @@ export default function App() {
                       {sampleSpeedSearchResults.map((option) => <button key={`sample-speed-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <div className="sample-speed-control-card sample-current-build-card">
+                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
                     <strong>{displayName(sampleRow, siteLanguage)}</strong>
                     <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
-                    <div className="sample-inline-ev-editor">
-                      <span className="sample-inline-ev-label">{lt('스피드 EV')}</span>
-                      <div className="sample-speed-ev-row">
-                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
-                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.speed} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
-                        <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'speed', clampNonNegativeInt(prev.evs.speed + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
-                      </div>
-                    </div>
+                    {renderSampleForgeEffortGrid('speed')}
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
@@ -5211,28 +5231,11 @@ export default function App() {
                       {sampleDamageSearchResults.map((option) => <button key={`sample-damage-add-${option.key}`} type="button" className="autocomplete-item" onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <div className="sample-speed-control-card sample-current-build-card">
+                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
                     <span className="sample-current-build-label">{lt('기준 빌드')}</span>
                     <strong>{displayName(sampleRow, siteLanguage)}</strong>
                     <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
-                    <div className="sample-inline-ev-editor sample-inline-ev-editor-dual">
-                      <div>
-                        <span className="sample-inline-ev-label">{lt('공격 EV')}</span>
-                        <div className="sample-speed-ev-row">
-                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(prev.evs.attack - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
-                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.attack} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
-                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'attack', clampNonNegativeInt(prev.evs.attack + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
-                        </div>
-                      </div>
-                      <div>
-                        <span className="sample-inline-ev-label">특수공격 EV</span>
-                        <div className="sample-speed-ev-row">
-                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(prev.evs.spAttack - 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>-1</button>
-                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={sampleForge.evs.spAttack} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))} />
-                          <button type="button" className="pick-chip" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, 'spAttack', clampNonNegativeInt(prev.evs.spAttack + 1, CHAMPIONS_EFFORT_PER_STAT_CAP)) }))}>+1</button>
-                        </div>
-                      </div>
-                    </div>
+                    {renderSampleForgeEffortGrid('damage')}
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
