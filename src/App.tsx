@@ -1672,6 +1672,21 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
   }
 }
 
+function resolveAbilityAdjustedTypes(baseTypes: string[], ability: string, weather: DamageWeather, terrain: DamageTerrain) {
+  if (ability === 'forecast') {
+    if (weather === 'sun') return ['fire']
+    if (weather === 'rain') return ['water']
+    if (weather === 'snow') return ['ice']
+  }
+  if (ability === 'mimicry') {
+    if (terrain === 'electric') return ['electric']
+    if (terrain === 'grassy') return ['grass']
+    if (terrain === 'psychic') return ['psychic']
+    if (terrain === 'misty') return ['fairy']
+  }
+  return baseTypes
+}
+
 function resolveStabMultiplier(attackerTypes: string[], moveType: string | null, ability: string, typeChangeStab = true) {
   if (!moveType) return 1
   const hasNativeStab = attackerTypes.includes(moveType)
@@ -1687,6 +1702,7 @@ function abilityNoteLabel(ability: string) {
     'analytic': '애널라이즈',
     'blaze': '맹화',
     'electromorphosis': '전기로바꾸기',
+    'forecast': '기분파',
     'beads-of-ruin': '구슬의재앙',
     'dark-aura': '다크오라',
     'dragonize': '드래고나이즈',
@@ -1710,6 +1726,7 @@ function abilityNoteLabel(ability: string) {
     'merciless': '무도한행동',
     'mega-launcher': '메가런처',
     'marvel-scale': '이상한비늘',
+    'mimicry': '의태',
     'lightning-rod': '피뢰침',
     'libero': '변환자재',
     'motor-drive': '전기엔진',
@@ -1915,6 +1932,10 @@ function resolveDamageModifiers(params: {
   if (attackerAbility === 'supreme-overlord' && faintedAllies > 0) {
     finalMultiplier *= 1 + Math.min(5, Math.max(0, faintedAllies)) * 0.1
     notes.push(`${abilityNoteLabel(attackerAbility)} x${Math.min(5, Math.max(0, faintedAllies))}`)
+  }
+
+  if (attackerAbility === 'skill-link' && ['드래곤애로', '스케일샷', '트리플악셀'].includes(moveName)) {
+    notes.push(abilityNoteLabel(attackerAbility))
   }
 
   if (attackerAbility === 'rivalry') {
@@ -2839,9 +2860,12 @@ export default function App() {
     setCalcHitCount((prev) => (activeDamageMoveHitOptions.includes(prev) ? prev : activeDamageMoveHitOptions[0]))
   }, [activeDamageMove, activeDamageMoveHitOptions])
   const attackerAbilitySlug = selectedAttackAbility?.slug ?? myMember.ability
+  const defenderAbilitySlug = selectedDefenseAbility?.slug ?? oppMember.ability
+  const effectiveAttackerTypes = resolveAbilityAdjustedTypes(myRow.types, attackerAbilitySlug, calcWeather, calcTerrain)
+  const effectiveDefenderTypes = oppRow ? resolveAbilityAdjustedTypes(oppRow.types, defenderAbilitySlug, calcWeather, calcTerrain) : []
   const usesTypeChangeStabAbility = ['libero', 'protean', '변환자재'].includes(attackerAbilitySlug)
-  const autoStab = resolveStabMultiplier(myRow.types, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
-  const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, oppRow.types) : 1
+  const autoStab = resolveStabMultiplier(effectiveAttackerTypes, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
+  const autoEffectiveness = activeDamageMoveType && oppRow ? typeEffectiveness(activeDamageMoveType, effectiveDefenderTypes) : 1
   const setActiveDamageMoveConditionValue = (value: ConditionalPowerValue) => {
     if (!activeDamageMoveRule || !activeDamageMove) return
     const normalized = normalizeConditionalPowerValue(activeDamageMoveRule, value)
@@ -3112,7 +3136,7 @@ export default function App() {
   const damageModifiers = resolveDamageModifiers({
     attackerAbility: attackerAbilitySlug,
     attackerItem: myMember.item,
-    defenderAbility: selectedDefenseAbility?.slug ?? oppMember.ability,
+    defenderAbility: defenderAbilitySlug,
     defenderItem: oppMember.item,
     moveName: activeDamageMove,
     baseMoveType: activeDamageMoveBaseType,
@@ -3122,7 +3146,7 @@ export default function App() {
     effectiveness: activeDamageMoveType ? autoEffectiveness : effectiveness,
     attackStage: calcAttackStage,
     defenseStage: calcDefenseStage,
-    defenderTypes: oppRow?.types ?? [],
+    defenderTypes: effectiveDefenderTypes,
     burned: calcBurned,
     attackerLowHp: calcAttackerLowHp,
     targetPoisoned: calcTargetPoisoned,

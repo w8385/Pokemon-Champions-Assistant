@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-17T10:51:44.127Z",
+  "generatedAt": "2026-05-17T10:54:05.909Z",
   "totalAbilities": 190,
-  "implementedCount": 53,
+  "implementedCount": 54,
   "categories": {
     "implemented": {
-      "count": 53,
+      "count": 54,
       "abilities": [
         "adaptability",
         "aerilate",
@@ -44,6 +44,7 @@
         "sap-sipper",
         "sharpness",
         "sheer-force",
+        "skill-link",
         "sniper",
         "solar-power",
         "solid-rock",
@@ -77,14 +78,13 @@
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 8,
+      "count": 7,
       "abilities": [
         "gale-wings",
         "minus",
         "opportunist",
         "plus",
         "quick-draw",
-        "skill-link",
         "stance-change",
         "super-luck"
       ]
@@ -233,7 +233,7 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 30,
+  "damageRelevantMissingCount": 29,
   "damageRelevantMissing": [
     "berserk",
     "chlorophyll",
@@ -257,7 +257,6 @@
     "sand-spit",
     "sand-stream",
     "sand-veil",
-    "skill-link",
     "slush-rush",
     "snow-cloak",
     "snow-warning",
