@@ -159,6 +159,9 @@ type PersistedState = {
   doubleFriendGuardOpp?: boolean
   doubleWideGuardMy?: boolean
   doubleWideGuardOpp?: boolean
+  doubleAttackerSlot?: DoubleBoardSlot
+  doubleDefenderSlot?: DoubleBoardSlot
+  doubleSpreadMove?: boolean
 }
 
 type ImportExportPayload = PersistedState & {
@@ -2927,6 +2930,9 @@ export default function App() {
   const [doubleFriendGuardOpp, setDoubleFriendGuardOpp] = React.useState(() => Boolean(persisted?.doubleFriendGuardOpp))
   const [doubleWideGuardMy, setDoubleWideGuardMy] = React.useState(() => Boolean(persisted?.doubleWideGuardMy))
   const [doubleWideGuardOpp, setDoubleWideGuardOpp] = React.useState(() => Boolean(persisted?.doubleWideGuardOpp))
+  const [doubleAttackerSlot, setDoubleAttackerSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleAttackerSlot === 'myLeft' || persisted?.doubleAttackerSlot === 'myRight' || persisted?.doubleAttackerSlot === 'oppLeft' || persisted?.doubleAttackerSlot === 'oppRight' ? persisted.doubleAttackerSlot : 'myLeft')
+  const [doubleDefenderSlot, setDoubleDefenderSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleDefenderSlot === 'myLeft' || persisted?.doubleDefenderSlot === 'myRight' || persisted?.doubleDefenderSlot === 'oppLeft' || persisted?.doubleDefenderSlot === 'oppRight' ? persisted.doubleDefenderSlot : 'oppLeft')
+  const [doubleSpreadMove, setDoubleSpreadMove] = React.useState(() => Boolean(persisted?.doubleSpreadMove))
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3050,6 +3056,14 @@ export default function App() {
     oppLeft: doubleOpponentOptions[doubleOppLeft] ?? null,
     oppRight: doubleOpponentOptions[doubleOppRight] ?? null,
   }), [doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleOpponentOptions, doublePartyOptions])
+  const doubleSlotMeta = React.useMemo(() => ({
+    myLeft: { label: lt('내 좌측'), option: doubleBoardSlots.myLeft, side: 'my' as const },
+    myRight: { label: lt('내 우측'), option: doubleBoardSlots.myRight, side: 'my' as const },
+    oppLeft: { label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, side: 'opp' as const },
+    oppRight: { label: lt('상대 우측'), option: doubleBoardSlots.oppRight, side: 'opp' as const },
+  }), [doubleBoardSlots, lt])
+  const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
+  const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
   const doubleSpeedOrder = React.useMemo(() => {
     const entries = ([
       { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
@@ -3223,9 +3237,12 @@ export default function App() {
       doubleFriendGuardOpp,
       doubleWideGuardMy,
       doubleWideGuardOpp,
+      doubleAttackerSlot,
+      doubleDefenderSlot,
+      doubleSpreadMove,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4923,13 +4940,29 @@ export default function App() {
                 <strong>{lt('대미지 계산')}</strong>
                 <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
               </div>
-              <p className="muted">{lt('지금 입력한 보드 상태를 바탕으로 다음 단계에서 광역기 감쇠, 프렌드가드, 와이드가드 반영을 연결합니다.')}</p>
-              <div className="sample-note-list">
-                <span className="pick-badge">{lt('광역기 감쇠')}</span>
-                <span className="pick-badge">{lt('프렌드가드')}</span>
-                <span className="pick-badge">{lt('와이드가드')}</span>
-                <span className="pick-badge">{lt('방어')}</span>
+              <div className="double-board-control-grid">
+                <label>
+                  {lt('공격자 슬롯')}
+                  <select value={doubleAttackerSlot} onChange={(e) => setDoubleAttackerSlot(e.target.value as DoubleBoardSlot)}>
+                    {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-attacker-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  {lt('대상 슬롯')}
+                  <select value={doubleDefenderSlot} onChange={(e) => setDoubleDefenderSlot(e.target.value as DoubleBoardSlot)}>
+                    {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-defender-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
+                  </select>
+                </label>
               </div>
+              <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
+              <div className="sample-note-list">
+                <span className="pick-badge">{lt('공격측')} · {doubleDamageAttackerMeta.option?.row ? displayName(doubleDamageAttackerMeta.option.row, siteLanguage) : lt('미선택')}</span>
+                <span className="pick-badge enemy">{lt('방어측')} · {doubleDamageDefenderMeta.option?.row ? displayName(doubleDamageDefenderMeta.option.row, siteLanguage) : lt('미선택')}</span>
+                {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
+                {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
+                {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
+              </div>
+              <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>
             </article>
           </div>
 
