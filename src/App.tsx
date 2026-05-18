@@ -3185,10 +3185,9 @@ export default function App() {
   const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null
   const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
   const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
-  const damageSwapSides = false
 
-  const calcTargetWeightRow = damageSwapSides ? myRow : oppRow
-  const calcTargetWeightKg = damageSwapSides
+  const calcTargetWeightRow = calcSwapSides ? myRow : oppRow
+  const calcTargetWeightKg = calcSwapSides
     ? (typeof myRow.weightKg === 'number' ? myRow.weightKg : weightByKey[myRow.key] ?? null)
     : oppWeightKg
 
@@ -3218,8 +3217,8 @@ export default function App() {
   }, [oppMember.key])
 
   React.useEffect(() => {
-    const moves = (damageSwapSides ? oppMember.revealedMoves : (confirmedMovesByKey[myMember.key] ?? [])).filter(Boolean)
-    const activeKey = damageSwapSides ? oppMember.key : myMember.key
+    const moves = (calcSwapSides ? oppMember.revealedMoves : (confirmedMovesByKey[myMember.key] ?? [])).filter(Boolean)
+    const activeKey = calcSwapSides ? oppMember.key : myMember.key
     if (!moves.length) {
       if (selectedDamageMove !== null) setSelectedDamageMove(null)
       return
@@ -3227,7 +3226,7 @@ export default function App() {
     if (!selectedDamageMove || selectedDamageMove.key !== activeKey || !moves.includes(selectedDamageMove.move)) {
       setSelectedDamageMove({ key: activeKey, move: moves[0] })
     }
-  }, [damageSwapSides, confirmedMovesByKey, myMember.key, oppMember.key, oppMember.revealedMoves, selectedDamageMove])
+  }, [calcSwapSides, confirmedMovesByKey, myMember.key, oppMember.key, oppMember.revealedMoves, selectedDamageMove])
 
   React.useEffect(() => {
     setOpponentMoveDraft('')
@@ -3315,7 +3314,7 @@ export default function App() {
   const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
   const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
   const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
-  const attackFromOpponent = damageSwapSides && Boolean(oppRow)
+  const attackFromOpponent = calcSwapSides && Boolean(oppRow)
   const attackerRow = attackFromOpponent ? oppRow : myRow
   const defenderRow = attackFromOpponent ? myRow : oppRow
   const attackerMemberKey = attackFromOpponent ? oppMember.key : myMember.key
