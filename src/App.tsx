@@ -3185,9 +3185,10 @@ export default function App() {
   const oppBattleStats = oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null
   const myMegaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
   const oppMegaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
+  const damageSwapSides = false
 
-  const calcTargetWeightRow = calcSwapSides ? myRow : oppRow
-  const calcTargetWeightKg = calcSwapSides
+  const calcTargetWeightRow = damageSwapSides ? myRow : oppRow
+  const calcTargetWeightKg = damageSwapSides
     ? (typeof myRow.weightKg === 'number' ? myRow.weightKg : weightByKey[myRow.key] ?? null)
     : oppWeightKg
 
@@ -3217,8 +3218,8 @@ export default function App() {
   }, [oppMember.key])
 
   React.useEffect(() => {
-    const moves = (calcSwapSides ? oppMember.revealedMoves : (confirmedMovesByKey[myMember.key] ?? [])).filter(Boolean)
-    const activeKey = calcSwapSides ? oppMember.key : myMember.key
+    const moves = (damageSwapSides ? oppMember.revealedMoves : (confirmedMovesByKey[myMember.key] ?? [])).filter(Boolean)
+    const activeKey = damageSwapSides ? oppMember.key : myMember.key
     if (!moves.length) {
       if (selectedDamageMove !== null) setSelectedDamageMove(null)
       return
@@ -3226,7 +3227,7 @@ export default function App() {
     if (!selectedDamageMove || selectedDamageMove.key !== activeKey || !moves.includes(selectedDamageMove.move)) {
       setSelectedDamageMove({ key: activeKey, move: moves[0] })
     }
-  }, [calcSwapSides, confirmedMovesByKey, myMember.key, oppMember.key, oppMember.revealedMoves, selectedDamageMove])
+  }, [damageSwapSides, confirmedMovesByKey, myMember.key, oppMember.key, oppMember.revealedMoves, selectedDamageMove])
 
   React.useEffect(() => {
     setOpponentMoveDraft('')
@@ -3314,7 +3315,7 @@ export default function App() {
   const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
   const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
   const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
-  const attackFromOpponent = calcSwapSides && Boolean(oppRow)
+  const attackFromOpponent = damageSwapSides && Boolean(oppRow)
   const attackerRow = attackFromOpponent ? oppRow : myRow
   const defenderRow = attackFromOpponent ? myRow : oppRow
   const attackerMemberKey = attackFromOpponent ? oppMember.key : myMember.key
@@ -6306,7 +6307,7 @@ export default function App() {
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('공격측')} · {attackFromOpponent ? lt('상대 포켓몬') : lt('내 포켓몬')}</span>
               <span className="pick-badge enemy">{defenderRow ? `${lt('방어측')} · ${displayName(defenderRow, siteLanguage)}` : lt('선택한 상대 없음')}</span>
-              {damageVerdict ? <span className="pick-badge">{lt('판정')} · {damageVerdict}</span> : null}
+              {damageVerdict ? <span className="pick-badge verdict-badge">{lt('판정')} · {damageVerdict}</span> : null}
             </div>
           </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
@@ -6344,18 +6345,6 @@ export default function App() {
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
               </div>
-            </div>
-            <div className="damage-swap-rail">
-              <button
-                type="button"
-                className="damage-swap-button"
-                onClick={() => setCalcSwapSides((prev) => !prev)}
-                disabled={!oppRow}
-                aria-label={lt('공수전환')}
-                title={lt('공수전환')}
-              >
-                <span aria-hidden="true">⇄</span>
-              </button>
             </div>
             <div className={`speed-target-card enemy damage-side-card ${attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
@@ -6723,7 +6712,7 @@ export default function App() {
               <strong>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong> → <strong>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
             </div>
             <div className="damage-summary-grid">
-              <div className="damage-summary-card verdict">
+              <div className="damage-summary-card verdict verdict-card">
                 <span>{lt('판정')}</span>
                 <strong>{damageVerdict}</strong>
               </div>

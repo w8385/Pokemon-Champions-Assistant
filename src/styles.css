@@ -3866,28 +3866,6 @@ textarea { min-height: 72px; resize: vertical; }
   max-height: 260px;
   overflow: auto;
 }
-.damage-swap-rail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.damage-swap-button {
-  appearance: none;
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  border: 1px solid rgba(96, 165, 250, 0.72);
-  background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.32), rgba(30, 41, 59, 0.98));
-  color: #e0f2fe;
-  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.35);
-  font-size: 24px;
-  font-weight: 800;
-  cursor: pointer;
-}
-.damage-swap-button:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
 .damage-side-moves .damage-move-chip {
   width: 100%;
   justify-content: flex-start;
@@ -4178,8 +4156,16 @@ textarea { min-height: 72px; resize: vertical; }
   border-color: rgba(250, 204, 21, 0.34);
   background: linear-gradient(180deg, rgba(66, 32, 6, 0.28), rgba(11, 18, 32, 0.86));
 }
+.damage-summary-card.verdict-card {
+  border: 2px solid rgba(250, 204, 21, 0.72);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.2), 0 14px 30px rgba(250, 204, 21, 0.14);
+  background: linear-gradient(180deg, rgba(120, 53, 15, 0.34), rgba(15, 23, 42, 0.94));
+}
 .damage-summary-card.verdict strong {
   font-size: 15px;
+}
+.damage-summary-card.verdict-card strong {
+  color: #fef08a;
 }
 .pick-badge.warn {
   border-color: rgba(250, 204, 21, 0.34);
@@ -4342,6 +4328,12 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .pick-badge.enemy {
   border-color: #7c2d12;
+}
+.pick-badge.verdict-badge {
+  border-color: rgba(250, 204, 21, 0.78);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.18), 0 10px 24px rgba(250, 204, 21, 0.14);
+  background: linear-gradient(180deg, rgba(71, 56, 11, 0.96), rgba(31, 24, 10, 0.98));
+  color: #fde68a;
 }
 .opponent-overview-row {
   margin-top: 14px;
@@ -4560,7 +4552,6 @@ textarea { min-height: 72px; resize: vertical; }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-target-panel { grid-template-columns: 1fr; }
   .damage-compare-panel { grid-template-columns: 1fr; }
-  .damage-swap-rail { order: 2; padding: 2px 0; }
   .damage-side-moves { grid-template-columns: 1fr; }
   .damage-opponent-move-adder { grid-column: 1 / -1; }
   .speed-plane-board { min-height: 460px; }
