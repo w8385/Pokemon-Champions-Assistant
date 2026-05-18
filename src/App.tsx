@@ -162,6 +162,7 @@ type PersistedState = {
   doubleAttackerSlot?: DoubleBoardSlot
   doubleDefenderSlot?: DoubleBoardSlot
   doubleSpreadMove?: boolean
+  doubleMoveName?: string
 }
 
 type ImportExportPayload = PersistedState & {
@@ -2933,6 +2934,7 @@ export default function App() {
   const [doubleAttackerSlot, setDoubleAttackerSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleAttackerSlot === 'myLeft' || persisted?.doubleAttackerSlot === 'myRight' || persisted?.doubleAttackerSlot === 'oppLeft' || persisted?.doubleAttackerSlot === 'oppRight' ? persisted.doubleAttackerSlot : 'myLeft')
   const [doubleDefenderSlot, setDoubleDefenderSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleDefenderSlot === 'myLeft' || persisted?.doubleDefenderSlot === 'myRight' || persisted?.doubleDefenderSlot === 'oppLeft' || persisted?.doubleDefenderSlot === 'oppRight' ? persisted.doubleDefenderSlot : 'oppLeft')
   const [doubleSpreadMove, setDoubleSpreadMove] = React.useState(() => Boolean(persisted?.doubleSpreadMove))
+  const [doubleMoveName, setDoubleMoveName] = React.useState(() => typeof persisted?.doubleMoveName === 'string' ? persisted.doubleMoveName : '')
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3064,6 +3066,72 @@ export default function App() {
   }), [doubleBoardSlots, lt])
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
+  const doubleAttackerMoves = React.useMemo(() => {
+    if (!doubleDamageAttackerMeta.option) return [] as string[]
+    return (doubleDamageAttackerMeta.side === 'my'
+      ? (confirmedMovesByKey[doubleDamageAttackerMeta.option.member.key] ?? [])
+      : doubleDamageAttackerMeta.option.entry.revealedMoves
+    ).filter(Boolean)
+  }, [confirmedMovesByKey, doubleDamageAttackerMeta])
+  const doubleDamageContext = React.useMemo(() => {
+    const attackerMeta = doubleDamageAttackerMeta
+    const defenderMeta = doubleDamageDefenderMeta
+    if (!attackerMeta.option?.row || !defenderMeta.option?.row || !doubleMoveName) return null
+    const attackerRow = attackerMeta.option.row
+    const defenderRow = defenderMeta.option.row
+    const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
+    const defenderAbility = defenderMeta.side === 'my' ? (defenderMeta.option.member.ability || defaultAbilityForKey(defenderMeta.option.member.key)) : defenderMeta.option.entry.ability
+    const attackerStats = attackerMeta.side === 'my'
+      ? buildPartyBattleStats(attackerRow, attackerMeta.option.member)
+      : buildOpponentBattleStats(attackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+    const defenderStats = defenderMeta.side === 'my'
+      ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
+      : buildOpponentBattleStats(defenderRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+    const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
+    const moveMeta = resolveAbilityAdjustedMoveMeta(doubleMoveName, moveMetaForName(doubleMoveName), attackerAbility)
+    const moveType = resolveMoveType(doubleMoveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
+    const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
+    const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
+    const effectiveness = moveType ? typeEffectiveness(moveType, effectiveTypes) : 1
+    const guardedByWide = doubleSpreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
+    const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
+    const modifiers = guardedByWide ? null : resolveDamageModifiers({
+      attackerAbility,
+      attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
+      defenderAbility,
+      defenderItem: defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item,
+      moveName: doubleMoveName,
+      baseMoveType: moveMeta?.type ?? moveType,
+      moveType,
+      movePower: moveMeta?.power ?? 0,
+      mode,
+      effectiveness,
+      attackStage: 0,
+      defenseStage: 0,
+      defenderTypes: effectiveTypes,
+      burned: false,
+      attackerLowHp: false,
+      targetPoisoned: false,
+      defenderFullHp: true,
+      movedAfterTarget: false,
+      faintedAllies: 0,
+      rivalryMode: 'neutral',
+      parentalBond: false,
+      defenderStatused: false,
+      electromorphosisCharged: false,
+      weather: 'none',
+      terrain: 'none',
+      reflect: false,
+      lightScreen: false,
+      auroraVeil: false,
+      friendGuard,
+      critical: false,
+    })
+    if (modifiers && doubleSpreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
+    const damage = guardedByWide ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
+    const reason = guardedByWide ? lt('와이드가드로 차단됨') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
+    return { attackerRow, defenderRow, moveType, moveMeta, damage, reason, guardedByWide, friendGuard, effectiveness }
+  }, [doubleDamageAttackerMeta, doubleDamageDefenderMeta, doubleMoveName, movePoolByKey, doubleSpreadMove, doubleWideGuardMy, doubleWideGuardOpp, doubleFriendGuardMy, doubleFriendGuardOpp, lt])
   const doubleSpeedOrder = React.useMemo(() => {
     const entries = ([
       { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
@@ -3094,6 +3162,14 @@ export default function App() {
   const closeAutocompleteMenu = React.useCallback((id?: string) => {
     setAutocompleteHighlight((prev) => (!id || prev?.id === id ? null : prev))
   }, [])
+
+  React.useEffect(() => {
+    if (!doubleAttackerMoves.length) {
+      if (doubleMoveName) setDoubleMoveName('')
+      return
+    }
+    if (!doubleAttackerMoves.includes(doubleMoveName)) setDoubleMoveName(doubleAttackerMoves[0])
+  }, [doubleAttackerMoves, doubleMoveName])
 
   React.useEffect(() => {
     if (typeof document === 'undefined') return
@@ -3240,9 +3316,10 @@ export default function App() {
       doubleAttackerSlot,
       doubleDefenderSlot,
       doubleSpreadMove,
+      doubleMoveName,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4953,6 +5030,12 @@ export default function App() {
                     {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-defender-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
                   </select>
                 </label>
+                <label>
+                  {lt('기술')}
+                  <select value={doubleMoveName} onChange={(e) => setDoubleMoveName(e.target.value)}>
+                    {doubleAttackerMoves.length ? doubleAttackerMoves.map((move) => <option key={`double-move-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
+                  </select>
+                </label>
               </div>
               <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
               <div className="sample-note-list">
@@ -4962,7 +5045,22 @@ export default function App() {
                 {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
                 {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
               </div>
-              <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>
+              {doubleDamageContext?.reason ? <div className="damage-box empty compact"><p>{doubleDamageContext.reason}</p></div> : doubleDamageContext?.damage ? <div className="damage-box compact">
+                <div className="damage-summary-grid">
+                  <div className="damage-summary-card verdict verdict-card">
+                    <span>{lt('대미지')}</span>
+                    <strong>{doubleDamageContext.damage.min} ~ {doubleDamageContext.damage.max}</strong>
+                  </div>
+                  <div className="damage-summary-card">
+                    <span>{lt('비율')}</span>
+                    <strong>{doubleDamageContext.damage.minPct}% ~ {doubleDamageContext.damage.maxPct}%</strong>
+                  </div>
+                  <div className="damage-summary-card accent">
+                    <span>{lt('효과')}</span>
+                    <strong>x{doubleDamageContext.effectiveness}</strong>
+                  </div>
+                </div>
+              </div> : <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>}
             </article>
           </div>
 
