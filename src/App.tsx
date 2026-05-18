@@ -99,6 +99,7 @@ type DamageTerrain = 'none' | 'electric' | 'grassy' | 'psychic' | 'misty'
 type OpponentBulkPreset = 'neutral-0' | 'hp-32' | 'phys-32' | 'spdef-32' | 'custom'
 type OpponentOffensePreset = 'neutral-0' | 'atk-32' | 'spa-32' | 'atk-32-plus' | 'spa-32-plus' | 'custom'
 type RivalryMode = 'neutral' | 'same' | 'opposite'
+type DoubleBoardSlot = 'myLeft' | 'myRight' | 'oppLeft' | 'oppRight'
 
 type PersistedState = {
   party?: PartyMember[]
@@ -147,6 +148,17 @@ type PersistedState = {
   sampleWorkbenchTab?: SampleWorkbenchTab
   sampleSpeedTargets?: SampleSpeedTarget[]
   sampleDamageTargets?: SampleDamageTarget[]
+  doubleMyLeft?: number
+  doubleMyRight?: number
+  doubleOppLeft?: number
+  doubleOppRight?: number
+  doubleTrickRoom?: boolean
+  doubleTailwindMy?: boolean
+  doubleTailwindOpp?: boolean
+  doubleFriendGuardMy?: boolean
+  doubleFriendGuardOpp?: boolean
+  doubleWideGuardMy?: boolean
+  doubleWideGuardOpp?: boolean
 }
 
 type ImportExportPayload = PersistedState & {
@@ -772,6 +784,17 @@ const defaultSampleDamageTargets: SampleDamageTarget[] = ['garchomp', 'primarina
   key,
 }))
 const emptyOpponents = Array.from({ length: MAX_OPPONENTS }, () => blankOpponent())
+
+function firstFilledIndex<T extends { key: string }>(entries: T[], fallback = 0) {
+  const idx = entries.findIndex((entry) => Boolean(entry.key))
+  return idx >= 0 ? idx : fallback
+}
+
+function sanitizeBoardSlotIndex(value: unknown, entries: { key: string }[], fallback = 0) {
+  const index = typeof value === 'number' && Number.isFinite(value) ? Math.trunc(value) : fallback
+  if (index < 0 || index >= entries.length) return fallback
+  return index
+}
 
 const movePowerPresets = [
   { label: '40 선공기', value: 40 },
@@ -2887,6 +2910,23 @@ export default function App() {
   const [opponents, setOpponents] = React.useState<OpponentState[]>(() => sanitizeOpponents(persisted?.opponents))
   const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, sanitizeParty(persisted?.party).length))
   const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedOpp ?? persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
+  const initialDoubleParty = React.useMemo(() => sanitizeParty(persisted?.party), [persisted])
+  const initialDoubleOpponents = React.useMemo(() => sanitizeOpponents(persisted?.opponents), [persisted])
+  const defaultDoubleMyLeft = React.useMemo(() => firstFilledIndex(initialDoubleParty, 0), [initialDoubleParty])
+  const defaultDoubleMyRight = React.useMemo(() => initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) >= 0 ? initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) : Math.min(defaultDoubleMyLeft + 1, initialDoubleParty.length - 1), [defaultDoubleMyLeft, initialDoubleParty])
+  const defaultDoubleOppLeft = React.useMemo(() => firstFilledIndex(initialDoubleOpponents, 0), [initialDoubleOpponents])
+  const defaultDoubleOppRight = React.useMemo(() => initialDoubleOpponents.findIndex((entry, idx) => idx !== defaultDoubleOppLeft && Boolean(entry.key)) >= 0 ? initialDoubleOpponents.findIndex((entry, idx) => idx !== defaultDoubleOppLeft && Boolean(entry.key)) : Math.min(defaultDoubleOppLeft + 1, initialDoubleOpponents.length - 1), [defaultDoubleOppLeft, initialDoubleOpponents])
+  const [doubleMyLeft, setDoubleMyLeft] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleMyLeft, initialDoubleParty, defaultDoubleMyLeft))
+  const [doubleMyRight, setDoubleMyRight] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleMyRight, initialDoubleParty, defaultDoubleMyRight))
+  const [doubleOppLeft, setDoubleOppLeft] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleOppLeft, initialDoubleOpponents, defaultDoubleOppLeft))
+  const [doubleOppRight, setDoubleOppRight] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleOppRight, initialDoubleOpponents, defaultDoubleOppRight))
+  const [doubleTrickRoom, setDoubleTrickRoom] = React.useState(() => Boolean(persisted?.doubleTrickRoom))
+  const [doubleTailwindMy, setDoubleTailwindMy] = React.useState(() => Boolean(persisted?.doubleTailwindMy))
+  const [doubleTailwindOpp, setDoubleTailwindOpp] = React.useState(() => Boolean(persisted?.doubleTailwindOpp))
+  const [doubleFriendGuardMy, setDoubleFriendGuardMy] = React.useState(() => Boolean(persisted?.doubleFriendGuardMy))
+  const [doubleFriendGuardOpp, setDoubleFriendGuardOpp] = React.useState(() => Boolean(persisted?.doubleFriendGuardOpp))
+  const [doubleWideGuardMy, setDoubleWideGuardMy] = React.useState(() => Boolean(persisted?.doubleWideGuardMy))
+  const [doubleWideGuardOpp, setDoubleWideGuardOpp] = React.useState(() => Boolean(persisted?.doubleWideGuardOpp))
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3002,6 +3042,35 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
+  const doublePartyOptions = React.useMemo(() => party.map((member, idx) => ({ idx, member, row: member.key ? (indexByKey.get(member.key) ?? rows[0]) : null })), [party])
+  const doubleOpponentOptions = React.useMemo(() => opponents.map((entry, idx) => ({ idx, entry, row: entry.key ? (indexByKey.get(entry.key) ?? rows[0]) : null })), [opponents])
+  const doubleBoardSlots = React.useMemo(() => ({
+    myLeft: doublePartyOptions[doubleMyLeft] ?? null,
+    myRight: doublePartyOptions[doubleMyRight] ?? null,
+    oppLeft: doubleOpponentOptions[doubleOppLeft] ?? null,
+    oppRight: doubleOpponentOptions[doubleOppRight] ?? null,
+  }), [doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleOpponentOptions, doublePartyOptions])
+  const doubleSpeedOrder = React.useMemo(() => {
+    const entries = ([
+      { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
+      { slot: 'myRight' as const, side: 'my' as const, label: lt('내 우측'), option: doubleBoardSlots.myRight, tailwind: doubleTailwindMy },
+      { slot: 'oppLeft' as const, side: 'opp' as const, label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, tailwind: doubleTailwindOpp },
+      { slot: 'oppRight' as const, side: 'opp' as const, label: lt('상대 우측'), option: doubleBoardSlots.oppRight, tailwind: doubleTailwindOpp },
+    ]).map((entry, idx) => {
+      if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null }
+      const speed = entry.side === 'my'
+        ? partySpeedValue(entry.option.row, entry.option.member)
+        : speedValue(entry.option.row, { nature: entry.option.entry.natureBoost ? 'jolly' : 'hardy', scarf: entry.option.entry.scarf, speedStage: entry.option.entry.speedStage })
+      const effectiveSpeed = entry.tailwind ? speed * 2 : speed
+      return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed, effectiveSpeed }
+    })
+    return entries.slice().sort((a, b) => {
+      const aSpeed = a.effectiveSpeed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      const bSpeed = b.effectiveSpeed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      if (aSpeed === bSpeed) return a.idx - b.idx
+      return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
+    })
+  }, [doubleBoardSlots, doubleTailwindMy, doubleTailwindOpp, doubleTrickRoom, lt, siteLanguage])
   const setAutocompleteMenuOpen = React.useCallback((id: string) => {
     setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
   }, [])
@@ -3143,9 +3212,20 @@ export default function App() {
       sampleWorkbenchTab,
       sampleSpeedTargets,
       sampleDamageTargets,
+      doubleMyLeft,
+      doubleMyRight,
+      doubleOppLeft,
+      doubleOppRight,
+      doubleTrickRoom,
+      doubleTailwindMy,
+      doubleTailwindOpp,
+      doubleFriendGuardMy,
+      doubleFriendGuardOpp,
+      doubleWideGuardMy,
+      doubleWideGuardOpp,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4733,11 +4813,11 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{lt('더블 계산 작업 보드')}</h2>
-              <p className="muted">{lt('레이아웃부터 먼저 고정하고, 다음 단계에서 2대2 보드 상태와 더블 전용 보정을 연결합니다.')}</p>
+              <p className="muted">{lt('2대2 보드 상태 입력까지 붙였습니다. 다음 단계에서 4마리 행동순과 더블 대미지 계산을 연결합니다.')}</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('feature/double-battle')}</span>
-              <span className="pick-badge subtle">{lt('1단계 레이아웃')}</span>
+              <span className="pick-badge subtle">{lt('2단계 보드 입력')}</span>
             </div>
           </div>
 
@@ -4745,22 +4825,34 @@ export default function App() {
             <div className="double-board-side">
               <span className="double-board-side-label">{lt('내 보드')}</span>
               <div className="double-slot-pair">
-                <div className="double-slot-card"><strong>{lt('좌측 슬롯')}</strong><span>{lt('미선택')}</span></div>
-                <div className="double-slot-card"><strong>{lt('우측 슬롯')}</strong><span>{lt('미선택')}</span></div>
+                <div className="double-slot-card">
+                  <strong>{lt('좌측 슬롯')}</strong>
+                  <span>{doubleBoardSlots.myLeft?.row ? displayName(doubleBoardSlots.myLeft.row, siteLanguage) : lt('미선택')}</span>
+                </div>
+                <div className="double-slot-card">
+                  <strong>{lt('우측 슬롯')}</strong>
+                  <span>{doubleBoardSlots.myRight?.row ? displayName(doubleBoardSlots.myRight.row, siteLanguage) : lt('미선택')}</span>
+                </div>
               </div>
             </div>
             <div className="double-board-center-badges">
-              <span className="pick-badge">{lt('트릭룸')}</span>
-              <span className="pick-badge">{lt('아군 순풍')}</span>
-              <span className="pick-badge enemy">{lt('상대 순풍')}</span>
-              <span className="pick-badge">{lt('프렌드가드')}</span>
-              <span className="pick-badge">{lt('와이드가드')}</span>
+              <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{lt('트릭룸')}</span>
+              <span className={`pick-badge ${doubleTailwindMy ? 'subtle' : ''}`}>{lt('아군 순풍')}</span>
+              <span className={`pick-badge enemy ${doubleTailwindOpp ? 'subtle' : ''}`}>{lt('상대 순풍')}</span>
+              <span className={`pick-badge ${doubleFriendGuardMy || doubleFriendGuardOpp ? 'subtle' : ''}`}>{lt('프렌드가드')}</span>
+              <span className={`pick-badge ${doubleWideGuardMy || doubleWideGuardOpp ? 'subtle' : ''}`}>{lt('와이드가드')}</span>
             </div>
             <div className="double-board-side enemy">
               <span className="double-board-side-label">{lt('상대 보드')}</span>
               <div className="double-slot-pair">
-                <div className="double-slot-card"><strong>{lt('좌측 슬롯')}</strong><span>{lt('미선택')}</span></div>
-                <div className="double-slot-card"><strong>{lt('우측 슬롯')}</strong><span>{lt('미선택')}</span></div>
+                <div className="double-slot-card">
+                  <strong>{lt('좌측 슬롯')}</strong>
+                  <span>{doubleBoardSlots.oppLeft?.row ? displayName(doubleBoardSlots.oppLeft.row, siteLanguage) : lt('미선택')}</span>
+                </div>
+                <div className="double-slot-card">
+                  <strong>{lt('우측 슬롯')}</strong>
+                  <span>{doubleBoardSlots.oppRight?.row ? displayName(doubleBoardSlots.oppRight.row, siteLanguage) : lt('미선택')}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4769,27 +4861,60 @@ export default function App() {
             <article className="double-layout-card">
               <div className="double-layout-card-head">
                 <strong>{lt('현재 보드')}</strong>
-                <span className="pick-badge">{lt('다음 단계')}</span>
+                <span className="pick-badge verdict-badge">{lt('입력 가능')}</span>
               </div>
-              <p className="muted">{lt('2대2 배치, 방어, 순풍, 날씨, 필드 같은 전장 상태를 한 번에 조절하는 영역으로 확장할 예정입니다.')}</p>
-              <ul className="double-check-list">
-                <li>{lt('아군 좌 / 우 선택')}</li>
-                <li>{lt('상대 좌 / 우 선택')}</li>
-                <li>{lt('방어 / 와이드가드 / 프렌드가드')}</li>
-              </ul>
+              <div className="double-board-control-grid">
+                <label>
+                  {lt('내 좌측')}
+                  <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
+                    {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                  </select>
+                </label>
+                <label>
+                  {lt('내 우측')}
+                  <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
+                    {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                  </select>
+                </label>
+                <label>
+                  {lt('상대 좌측')}
+                  <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
+                    {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                  </select>
+                </label>
+                <label>
+                  {lt('상대 우측')}
+                  <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
+                    {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="double-toggle-grid">
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
+              </div>
             </article>
 
             <article className="double-layout-card">
               <div className="double-layout-card-head">
                 <strong>{lt('스피드 계산')}</strong>
-                <span className="pick-badge">{lt('4마리 기준')}</span>
+                <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
               </div>
-              <p className="muted">{lt('행동순 패널 자리만 먼저 고정했습니다. 이후 트릭룸, 순풍, 스카프, 특성 발동을 합쳐 정렬합니다.')}</p>
+              <p className="muted">{lt('현재 보드에서 고른 4마리를 기준으로 첫 번째 행동순 미리보기를 붙였습니다. 순풍은 반영되고, 이후 더블 전용 세부 보정을 추가합니다.')}</p>
               <div className="double-speed-preview-list">
-                <div className="double-speed-preview-item"><span>{lt('1순위')}</span><strong>—</strong></div>
-                <div className="double-speed-preview-item"><span>{lt('2순위')}</span><strong>—</strong></div>
-                <div className="double-speed-preview-item"><span>{lt('3순위')}</span><strong>—</strong></div>
-                <div className="double-speed-preview-item"><span>{lt('4순위')}</span><strong>—</strong></div>
+                {doubleSpeedOrder.map((entry, idx) => <div key={`double-speed-${entry.slot}`} className="double-speed-preview-item">
+                  <span>{idx + 1}{lt('순위')} · {entry.label}</span>
+                  <strong>{entry.name}</strong>
+                  <div className="pick-summary-badges">
+                    <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.effectiveSpeed ?? '—'}</span>
+                    {entry.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+                  </div>
+                </div>)}
               </div>
             </article>
 
@@ -4798,7 +4923,7 @@ export default function App() {
                 <strong>{lt('대미지 계산')}</strong>
                 <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
               </div>
-              <p className="muted">{lt('공격자 슬롯, 대상 슬롯, 광역기 여부를 묶어서 보는 구조로 잡았습니다. 다음 단계에서 광역기 감쇠와 프렌드가드를 연결합니다.')}</p>
+              <p className="muted">{lt('지금 입력한 보드 상태를 바탕으로 다음 단계에서 광역기 감쇠, 프렌드가드, 와이드가드 반영을 연결합니다.')}</p>
               <div className="sample-note-list">
                 <span className="pick-badge">{lt('광역기 감쇠')}</span>
                 <span className="pick-badge">{lt('프렌드가드')}</span>
