@@ -23,6 +23,7 @@ ROUTES = [
     {'id': 'single-pick', 'hash': '#/single?tab=pick', 'expectedPrimary': '싱글배틀 메뉴', 'expectedSecondary': '상대 엔트리'},
     {'id': 'single-speed', 'hash': '#/single?tab=speed', 'expectedPrimary': '싱글배틀 메뉴', 'expectedSecondary': '스피드 계산'},
     {'id': 'single-power', 'hash': '#/single?tab=power', 'expectedPrimary': '싱글배틀 메뉴', 'expectedSecondary': '대미지 계산'},
+    {'id': 'double-board', 'hash': '#/double', 'expectedPrimary': '더블배틀 메뉴', 'expectedSubtitle': '더블배틀 메뉴', 'expectedText': '더블 계산 작업 보드'},
     {'id': 'sample-builder', 'hash': '#/sample-builder?sampleTab=builder', 'expectedPrimary': '포켓몬 샘플 깎기', 'expectedSecondary': '샘플 빌드'},
     {'id': 'sample-speed', 'hash': '#/sample-builder?sampleTab=speed', 'expectedPrimary': '포켓몬 샘플 깎기', 'expectedSecondary': '샘플 스피드'},
     {'id': 'sample-damage', 'hash': '#/sample-builder?sampleTab=damage', 'expectedPrimary': '포켓몬 샘플 깎기', 'expectedSecondary': '샘플 대미지 계산'},
@@ -112,6 +113,10 @@ try:
         ]
         if 'expectedSecondary' in route:
             checks.append(('secondary tab', route_result['activeSecondary'] == route['expectedSecondary'], f"expected {route['expectedSecondary']}, got {route_result['activeSecondary'] or 'none'}"))
+        if 'expectedSubtitle' in route:
+            checks.append(('subtitle', route_result['subtitle'] == route['expectedSubtitle'], f"expected {route['expectedSubtitle']}, got {route_result['subtitle'] or 'none'}"))
+        if 'expectedText' in route:
+            checks.append(('route content', route['expectedText'] in html, f"missing text: {route['expectedText']}"))
         for name, passed, detail in checks:
             route_result['checks'].append({'name': name, 'pass': passed, 'detail': 'ok' if passed else detail})
             if not passed:
