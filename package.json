@@ -16,7 +16,8 @@
     "check:damage-parity": "node scripts/check-damage-parity.mjs",
     "check:ability-damage": "node scripts/check-ability-damage-harness.mjs",
     "build:champions-item-whitelist": "node scripts/build-champions-item-whitelist.mjs",
-    "sync:item-sprites": "node scripts/sync-item-sprites.mjs"
+    "sync:item-sprites": "node scripts/sync-item-sprites.mjs",
+    "check:ui-consistency": "python3 scripts/check-ui-consistency-harness.py"
   },
   "dependencies": {
     "react": "^19.1.0",

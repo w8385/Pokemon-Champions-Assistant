@@ -268,6 +268,7 @@ type DamageMoveSelection = { key: string; move: string }
 type ViewState = {
   mainSection?: MainSection
   activeTab?: MainTab
+  sampleWorkbenchTab?: SampleWorkbenchTab
   selectedMy?: number
   selectedOpp?: number
 }
@@ -1542,9 +1543,13 @@ function parseViewStateFromUrl(): ViewState | null {
     const activeTab = activeTabParam === 'party' || activeTabParam === 'pick' || activeTabParam === 'speed' || activeTabParam === 'power'
       ? activeTabParam
       : undefined
+    const sampleTabParam = routeUrl.searchParams.get('sampleTab')
+    const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage'
+      ? sampleTabParam
+      : undefined
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
-    return { mainSection, activeTab, selectedMy, selectedOpp }
+    return { mainSection, activeTab, sampleWorkbenchTab, selectedMy, selectedOpp }
   } catch {
     return null
   }
@@ -1555,6 +1560,7 @@ function syncViewStateToUrl(viewState: ViewState) {
   const params = new URLSearchParams()
   const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : '/'
   if (viewState.mainSection === 'single' && viewState.activeTab) params.set('tab', viewState.activeTab)
+  if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
   const nextHash = `${routePath}${params.toString() ? `?${params.toString()}` : ''}`
@@ -2965,7 +2971,7 @@ export default function App() {
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
-  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => persisted?.sampleWorkbenchTab ?? 'builder')
+  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? persisted?.sampleWorkbenchTab ?? 'builder')
   const [sampleSpeedTargets, setSampleSpeedTargets] = React.useState<SampleSpeedTarget[]>(() => sanitizeSampleSpeedTargets(persisted?.sampleSpeedTargets))
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
@@ -3142,15 +3148,16 @@ export default function App() {
     syncViewStateToUrl({
       mainSection,
       activeTab: mainSection === 'single' ? activeTab : undefined,
+      sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
       selectedMy,
       selectedOpp,
     })
-  }, [mainSection, activeTab, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, selectedMy, selectedOpp])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }, [mainSection, activeTab])
+  }, [mainSection, activeTab, sampleWorkbenchTab])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]

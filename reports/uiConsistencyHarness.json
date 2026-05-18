@@ -1,0 +1,414 @@
+{
+  "generatedAt": "2026-05-18T05:24:00Z",
+  "source": "Chromium headless DOM/screenshot harness",
+  "routes": [
+    {
+      "id": "home",
+      "url": "http://127.0.0.1:40105/#/",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "포켓몬 챔피언스 싱글 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.",
+      "activePrimary": [
+        "홈"
+      ],
+      "activeSecondary": null,
+      "panelCount": 1,
+      "sectionHeadCount": 1,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/home-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/home-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "single-party",
+      "url": "http://127.0.0.1:40105/#/single?tab=party",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "내 파티 관리",
+      "activePrimary": [
+        "싱글배틀 메뉴"
+      ],
+      "activeSecondary": "내 파티 관리",
+      "panelCount": 2,
+      "sectionHeadCount": 2,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/single-party-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/single-party-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "single-pick",
+      "url": "http://127.0.0.1:40105/#/single?tab=pick",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "상대 엔트리",
+      "activePrimary": [
+        "싱글배틀 메뉴"
+      ],
+      "activeSecondary": "상대 엔트리",
+      "panelCount": 5,
+      "sectionHeadCount": 2,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/single-pick-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/single-pick-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "single-speed",
+      "url": "http://127.0.0.1:40105/#/single?tab=speed",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "스피드 계산",
+      "activePrimary": [
+        "싱글배틀 메뉴"
+      ],
+      "activeSecondary": "스피드 계산",
+      "panelCount": 3,
+      "sectionHeadCount": 2,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/single-speed-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/single-speed-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "single-power",
+      "url": "http://127.0.0.1:40105/#/single?tab=power",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "대미지 계산",
+      "activePrimary": [
+        "싱글배틀 메뉴"
+      ],
+      "activeSecondary": "대미지 계산",
+      "panelCount": 4,
+      "sectionHeadCount": 2,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/single-power-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/single-power-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "sample-builder",
+      "url": "http://127.0.0.1:40105/#/sample-builder?sampleTab=builder",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "포켓몬 샘플 깎기",
+      "activePrimary": [
+        "포켓몬 샘플 깎기"
+      ],
+      "activeSecondary": "샘플 빌드",
+      "panelCount": 6,
+      "sectionHeadCount": 3,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/sample-builder-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/sample-builder-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "sample-speed",
+      "url": "http://127.0.0.1:40105/#/sample-builder?sampleTab=speed",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "포켓몬 샘플 깎기",
+      "activePrimary": [
+        "포켓몬 샘플 깎기"
+      ],
+      "activeSecondary": "샘플 스피드",
+      "panelCount": 11,
+      "sectionHeadCount": 3,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/sample-speed-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/sample-speed-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "id": "sample-damage",
+      "url": "http://127.0.0.1:40105/#/sample-builder?sampleTab=damage",
+      "title": "포켓몬 챔피언스 싱글 배틀 도우미",
+      "subtitle": "포켓몬 샘플 깎기",
+      "activePrimary": [
+        "포켓몬 샘플 깎기"
+      ],
+      "activeSecondary": "샘플 대미지 계산",
+      "panelCount": 11,
+      "sectionHeadCount": 3,
+      "utilityButtonCount": 2,
+      "screenshots": [
+        {
+          "viewport": "desktop",
+          "path": "reports/ui-consistency/sample-damage-desktop.png"
+        },
+        {
+          "viewport": "mobile",
+          "path": "reports/ui-consistency/sample-damage-mobile.png"
+        }
+      ],
+      "checks": [
+        {
+          "name": "primary tab",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "utility buttons",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "page title",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "panel presence",
+          "pass": true,
+          "detail": "ok"
+        },
+        {
+          "name": "secondary tab",
+          "pass": true,
+          "detail": "ok"
+        }
+      ],
+      "ok": true
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "warnings": 0
+  }
+}
