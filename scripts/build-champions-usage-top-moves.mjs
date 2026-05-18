@@ -125,9 +125,13 @@ function japaneseNameCandidates(row, jaNameByKey) {
   exact.push(mapped)
 
   if (row.key === 'floette-eternal-flower') {
-    exact.unshift('フラエッテ (えいえんのはな)', 'フラエッテ(えいえんのはな)')
+    exact.unshift('フラエッテ:永遠', 'フラエッテ (えいえんのはな)', 'フラエッテ(えいえんのはな)')
     exact.push('フラエッテ')
-    fallback.push('フラエッテ')
+    fallback.push('フラエッテ', 'フラエッテ:永遠')
+  }
+
+  if (row.key === 'mega-floette') {
+    fallback.push('フラエッテ:永遠')
   }
 
   return {

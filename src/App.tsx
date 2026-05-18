@@ -3717,7 +3717,7 @@ export default function App() {
     reflect: calcReflect,
     lightScreen: calcLightScreen,
     auroraVeil: calcAuroraVeil,
-    friendGuard: calcFriendGuard,
+    friendGuard: false,
   })
   const damage = attackerBattleStats && defenderBattleStats && defenderRow && !activeDamageMoveIsStatus
     ? calcDamage(attackerBattleStats, defenderBattleStats, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
@@ -6713,10 +6713,6 @@ export default function App() {
                   <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} />
-                    <span>{lt('프렌드가드')}</span>
                   </label>
                 </div>
               </div>
