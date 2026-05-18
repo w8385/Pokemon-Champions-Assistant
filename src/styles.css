@@ -3732,7 +3732,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-compare-panel {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
+  align-items: start;
 }
 .damage-side-card {
   display: grid;
