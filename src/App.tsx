@@ -2233,7 +2233,7 @@ function resolveDamageModifiers(params: {
   if (effectiveCritical && attackStage < 0) notes.push('급소(공깎 무시)')
   if (effectiveCritical && defenseStage > 0) notes.push('급소(방증 무시)')
 
-  const burnApplies = burned && mode === 'physical' && attackerAbility !== 'guts' && attackerAbility !== '근성' && attackerAbility !== 'water-bubble'
+  const burnApplies = burned && mode === 'physical' && moveName !== '객기' && attackerAbility !== 'guts' && attackerAbility !== '근성' && attackerAbility !== 'water-bubble'
   if (burnApplies) notes.push('화상')
 
   if (effectiveCritical) notes.push(attackerAbility === 'merciless' && targetPoisoned && !critical ? `${abilityNoteLabel(attackerAbility)}(급소)` : '급소')
@@ -3337,7 +3337,12 @@ export default function App() {
   const activeDamageMoveHitCount = activeDamageMoveHitOptions?.includes(calcHitCount) ? calcHitCount : (activeDamageMoveHitOptions?.[0] ?? null)
   const activeDamageMoveRule = activeDamageMove ? CONDITIONAL_MOVE_POWER_RULES[activeDamageMove] ?? null : null
   const activeDamageMoveConditionValue = activeDamageMoveRule
-    ? normalizeConditionalPowerValue(activeDamageMoveRule, calcConditionalPowerValues[activeDamageMove] ?? activeDamageMoveRule.defaultValue)
+    ? normalizeConditionalPowerValue(
+        activeDamageMoveRule,
+        activeDamageMove === '객기' && calcBurned
+          ? true
+          : (calcConditionalPowerValues[activeDamageMove] ?? activeDamageMoveRule.defaultValue),
+      )
     : null
   const activeDamageMoveMeta = applyConditionalMovePower(
     activeDamageMove,
