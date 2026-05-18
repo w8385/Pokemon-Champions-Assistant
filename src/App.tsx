@@ -4732,30 +4732,90 @@ export default function App() {
         {mainSection === 'double' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{lt('더블배틀 작업 보드')}</h2>
-              <p className="muted">{lt('feature/double-battle 브랜치에서 더블 전용 흐름을 단계적으로 붙이는 중입니다.')}</p>
+              <h2>{lt('더블 계산 작업 보드')}</h2>
+              <p className="muted">{lt('레이아웃부터 먼저 고정하고, 다음 단계에서 2대2 보드 상태와 더블 전용 보정을 연결합니다.')}</p>
+            </div>
+            <div className="pick-summary-badges">
+              <span className="pick-badge">{lt('feature/double-battle')}</span>
+              <span className="pick-badge subtle">{lt('1단계 레이아웃')}</span>
             </div>
           </div>
-          <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
-            <div className="sample-builder-card">
-              <strong>{lt('이번 브랜치 목표')}</strong>
-              <div className="sample-note-list">
-                <span className="pick-badge">{lt('더블 계산 레이아웃')}</span>
-                <span className="pick-badge">{lt('2대2 보드 상태')}</span>
-                <span className="pick-badge">{lt('광역기 보정')}</span>
-                <span className="pick-badge">{lt('프렌드가드')}</span>
-                <span className="pick-badge">{lt('와이드가드')}</span>
+
+          <div className="double-board-overview">
+            <div className="double-board-side">
+              <span className="double-board-side-label">{lt('내 보드')}</span>
+              <div className="double-slot-pair">
+                <div className="double-slot-card"><strong>{lt('좌측 슬롯')}</strong><span>{lt('미선택')}</span></div>
+                <div className="double-slot-card"><strong>{lt('우측 슬롯')}</strong><span>{lt('미선택')}</span></div>
               </div>
             </div>
-            <div className="sample-builder-card">
-              <strong>{lt('구현 순서')}</strong>
-              <ol className="sample-note-list ordered">
-                <li>{lt('더블 전용 라우팅과 상태 저장 분리')}</li>
-                <li>{lt('현재 2대2 보드 입력 UI 추가')}</li>
-                <li>{lt('4마리 행동순 계산 추가')}</li>
-                <li>{lt('더블 대미지 계산과 보정 반영')}</li>
-              </ol>
+            <div className="double-board-center-badges">
+              <span className="pick-badge">{lt('트릭룸')}</span>
+              <span className="pick-badge">{lt('아군 순풍')}</span>
+              <span className="pick-badge enemy">{lt('상대 순풍')}</span>
+              <span className="pick-badge">{lt('프렌드가드')}</span>
+              <span className="pick-badge">{lt('와이드가드')}</span>
             </div>
+            <div className="double-board-side enemy">
+              <span className="double-board-side-label">{lt('상대 보드')}</span>
+              <div className="double-slot-pair">
+                <div className="double-slot-card"><strong>{lt('좌측 슬롯')}</strong><span>{lt('미선택')}</span></div>
+                <div className="double-slot-card"><strong>{lt('우측 슬롯')}</strong><span>{lt('미선택')}</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="double-layout-grid">
+            <article className="double-layout-card">
+              <div className="double-layout-card-head">
+                <strong>{lt('현재 보드')}</strong>
+                <span className="pick-badge">{lt('다음 단계')}</span>
+              </div>
+              <p className="muted">{lt('2대2 배치, 방어, 순풍, 날씨, 필드 같은 전장 상태를 한 번에 조절하는 영역으로 확장할 예정입니다.')}</p>
+              <ul className="double-check-list">
+                <li>{lt('아군 좌 / 우 선택')}</li>
+                <li>{lt('상대 좌 / 우 선택')}</li>
+                <li>{lt('방어 / 와이드가드 / 프렌드가드')}</li>
+              </ul>
+            </article>
+
+            <article className="double-layout-card">
+              <div className="double-layout-card-head">
+                <strong>{lt('스피드 계산')}</strong>
+                <span className="pick-badge">{lt('4마리 기준')}</span>
+              </div>
+              <p className="muted">{lt('행동순 패널 자리만 먼저 고정했습니다. 이후 트릭룸, 순풍, 스카프, 특성 발동을 합쳐 정렬합니다.')}</p>
+              <div className="double-speed-preview-list">
+                <div className="double-speed-preview-item"><span>{lt('1순위')}</span><strong>—</strong></div>
+                <div className="double-speed-preview-item"><span>{lt('2순위')}</span><strong>—</strong></div>
+                <div className="double-speed-preview-item"><span>{lt('3순위')}</span><strong>—</strong></div>
+                <div className="double-speed-preview-item"><span>{lt('4순위')}</span><strong>—</strong></div>
+              </div>
+            </article>
+
+            <article className="double-layout-card accent">
+              <div className="double-layout-card-head">
+                <strong>{lt('대미지 계산')}</strong>
+                <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
+              </div>
+              <p className="muted">{lt('공격자 슬롯, 대상 슬롯, 광역기 여부를 묶어서 보는 구조로 잡았습니다. 다음 단계에서 광역기 감쇠와 프렌드가드를 연결합니다.')}</p>
+              <div className="sample-note-list">
+                <span className="pick-badge">{lt('광역기 감쇠')}</span>
+                <span className="pick-badge">{lt('프렌드가드')}</span>
+                <span className="pick-badge">{lt('와이드가드')}</span>
+                <span className="pick-badge">{lt('방어')}</span>
+              </div>
+            </article>
+          </div>
+
+          <div className="double-progress-card">
+            <strong>{lt('구현 순서')}</strong>
+            <ol className="double-check-list ordered">
+              <li>{lt('더블 계산 레이아웃 고정')}</li>
+              <li>{lt('현재 2대2 보드 상태 입력 UI 추가')}</li>
+              <li>{lt('4마리 행동순 계산 추가')}</li>
+              <li>{lt('광역기 / 프렌드가드 / 와이드가드 반영')}</li>
+            </ol>
           </div>
         </section> : null}
 
