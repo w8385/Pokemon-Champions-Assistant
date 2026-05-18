@@ -154,7 +154,7 @@ type ImportExportPayload = PersistedState & {
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
-type MainSection = 'home' | 'single' | 'sample'
+type MainSection = 'home' | 'single' | 'double' | 'sample'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
@@ -1536,7 +1536,9 @@ function parseViewStateFromUrl(): ViewState | null {
       ? 'single'
       : routePath === '/sample-builder'
         ? 'sample'
-        : routePath === '/'
+        : routePath === '/double'
+          ? 'double'
+          : routePath === '/'
           ? 'home'
           : undefined
     const activeTabParam = routeUrl.searchParams.get('tab')
@@ -1558,7 +1560,7 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : '/'
+  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : '/'
   if (viewState.mainSection === 'single' && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
@@ -2838,6 +2840,7 @@ function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
 function menuLabelForSection(section: MainSection, activeTab: MainTab, language: SiteLanguage = 'ko') {
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
+  if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
 }
 
@@ -4450,6 +4453,7 @@ export default function App() {
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => setMainSection('double')}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
               </div>
             </div>
@@ -4604,6 +4608,13 @@ export default function App() {
                 <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
               </div>
             </button>
+            <button type="button" className="home-route-card accent" onClick={() => setMainSection('double')}>
+              <div className="home-route-card-copy">
+                <span className="home-route-eyebrow">{lt('더블배틀 메뉴')}</span>
+                <strong>{lt('더블배틀')}</strong>
+                <p>{lt('현재 2대2 보드 기준으로 스피드와 대미지, 전장 보정을 함께 확인할 수 있게 준비 중입니다.')}</p>
+              </div>
+            </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('포켓몬 샘플 깎기')}</span>
@@ -4671,8 +4682,8 @@ export default function App() {
         {mainSection !== 'home' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
-              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
+              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
+              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('현재 2대2 보드 기준으로 스피드와 대미지, 전장 보정을 함께 확인할 수 있게 준비 중입니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
             </div>
             {mainSection === 'single' ? (
               <div className="battle-flow-nav">
@@ -4717,6 +4728,36 @@ export default function App() {
             </div>
           </section>
         ) : null}
+
+        {mainSection === 'double' ? <section className="panel wide">
+          <div className="row-between section-head">
+            <div>
+              <h2>{lt('더블배틀 작업 보드')}</h2>
+              <p className="muted">{lt('feature/double-battle 브랜치에서 더블 전용 흐름을 단계적으로 붙이는 중입니다.')}</p>
+            </div>
+          </div>
+          <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
+            <div className="sample-builder-card">
+              <strong>{lt('이번 브랜치 목표')}</strong>
+              <div className="sample-note-list">
+                <span className="pick-badge">{lt('더블 계산 레이아웃')}</span>
+                <span className="pick-badge">{lt('2대2 보드 상태')}</span>
+                <span className="pick-badge">{lt('광역기 보정')}</span>
+                <span className="pick-badge">{lt('프렌드가드')}</span>
+                <span className="pick-badge">{lt('와이드가드')}</span>
+              </div>
+            </div>
+            <div className="sample-builder-card">
+              <strong>{lt('구현 순서')}</strong>
+              <ol className="sample-note-list ordered">
+                <li>{lt('더블 전용 라우팅과 상태 저장 분리')}</li>
+                <li>{lt('현재 2대2 보드 입력 UI 추가')}</li>
+                <li>{lt('4마리 행동순 계산 추가')}</li>
+                <li>{lt('더블 대미지 계산과 보정 반영')}</li>
+              </ol>
+            </div>
+          </div>
+        </section> : null}
 
         {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
