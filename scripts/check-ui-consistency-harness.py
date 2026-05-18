@@ -107,7 +107,7 @@ try:
         checks = [
             ('primary tab', len(active_primary) == 1 and active_primary[0] == route['expectedPrimary'], f"expected {route['expectedPrimary']}, got {', '.join(active_primary) or 'none'}"),
             ('utility buttons', route_result['utilityButtonCount'] == 2, f"expected 2, got {route_result['utilityButtonCount']}"),
-            ('page title', route_result['title'] == '포켓몬 챔피언스 싱글 배틀 도우미', f"unexpected title: {route_result['title']}"),
+            ('page title', route_result['title'] == '포켓몬 챔피언스 배틀 도우미', f"unexpected title: {route_result['title']}"),
             ('panel presence', route_result['panelCount'] >= 1, f"expected at least 1 panel, got {route_result['panelCount']}"),
         ]
         if 'expectedSecondary' in route:
