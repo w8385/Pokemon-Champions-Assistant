@@ -163,6 +163,10 @@ type PersistedState = {
   doubleDefenderSlot?: DoubleBoardSlot
   doubleSpreadMove?: boolean
   doubleMoveName?: string
+  doubleProtectMyLeft?: boolean
+  doubleProtectMyRight?: boolean
+  doubleProtectOppLeft?: boolean
+  doubleProtectOppRight?: boolean
 }
 
 type ImportExportPayload = PersistedState & {
@@ -230,6 +234,10 @@ const RECKLESS_MOVE_NAMES = new Set([
 const SHEER_FORCE_MOVE_NAMES = new Set([
   '10만볼트', '냉동빔', '화염방사', '문포스', '대지의힘', '러스터캐논', '에어슬래시', '오물폭탄', '아쿠아브레이크', '사이코키네시스',
   '섀도볼', '번개', '불대문자', '폭포오르기', '아이언헤드', '스톤에지', '깨물어부수기', '열탕',
+].map(normalizeSearchText))
+
+const DOUBLE_SPREAD_MOVE_NAMES = new Set([
+  '방전', '열풍', '탁류', '눈보라', '파도타기', '지진', '스톤샤워', '매지컬샤인', '오물웨이브', '하이퍼보이스', '폭음파', '흙탕물', '분연', '이붕',
 ].map(normalizeSearchText))
 type DamageCalcModifiers = {
   attackMultiplier?: number
@@ -2935,6 +2943,10 @@ export default function App() {
   const [doubleDefenderSlot, setDoubleDefenderSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleDefenderSlot === 'myLeft' || persisted?.doubleDefenderSlot === 'myRight' || persisted?.doubleDefenderSlot === 'oppLeft' || persisted?.doubleDefenderSlot === 'oppRight' ? persisted.doubleDefenderSlot : 'oppLeft')
   const [doubleSpreadMove, setDoubleSpreadMove] = React.useState(() => Boolean(persisted?.doubleSpreadMove))
   const [doubleMoveName, setDoubleMoveName] = React.useState(() => typeof persisted?.doubleMoveName === 'string' ? persisted.doubleMoveName : '')
+  const [doubleProtectMyLeft, setDoubleProtectMyLeft] = React.useState(() => Boolean(persisted?.doubleProtectMyLeft))
+  const [doubleProtectMyRight, setDoubleProtectMyRight] = React.useState(() => Boolean(persisted?.doubleProtectMyRight))
+  const [doubleProtectOppLeft, setDoubleProtectOppLeft] = React.useState(() => Boolean(persisted?.doubleProtectOppLeft))
+  const [doubleProtectOppRight, setDoubleProtectOppRight] = React.useState(() => Boolean(persisted?.doubleProtectOppRight))
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3066,6 +3078,7 @@ export default function App() {
   }), [doubleBoardSlots, lt])
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
+  const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
   const doubleAttackerMoves = React.useMemo(() => {
     if (!doubleDamageAttackerMeta.option) return [] as string[]
     return (doubleDamageAttackerMeta.side === 'my'
@@ -3094,8 +3107,9 @@ export default function App() {
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
     const effectiveness = moveType ? typeEffectiveness(moveType, effectiveTypes) : 1
     const guardedByWide = doubleSpreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
+    const protectedTarget = doubleProtectBySlot[doubleDefenderSlot]
     const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
-    const modifiers = guardedByWide ? null : resolveDamageModifiers({
+    const modifiers = guardedByWide || protectedTarget ? null : resolveDamageModifiers({
       attackerAbility,
       attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
       defenderAbility,
@@ -3128,10 +3142,10 @@ export default function App() {
       critical: false,
     })
     if (modifiers && doubleSpreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
-    const damage = guardedByWide ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
-    const reason = guardedByWide ? lt('와이드가드로 차단됨') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
-    return { attackerRow, defenderRow, moveType, moveMeta, damage, reason, guardedByWide, friendGuard, effectiveness }
-  }, [doubleDamageAttackerMeta, doubleDamageDefenderMeta, doubleMoveName, movePoolByKey, doubleSpreadMove, doubleWideGuardMy, doubleWideGuardOpp, doubleFriendGuardMy, doubleFriendGuardOpp, lt])
+    const damage = guardedByWide || protectedTarget ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
+    const reason = guardedByWide ? lt('와이드가드로 차단됨') : protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
+    return { attackerRow, defenderRow, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
+  }, [doubleDamageAttackerMeta, doubleDamageDefenderMeta, doubleMoveName, movePoolByKey, doubleSpreadMove, doubleWideGuardMy, doubleWideGuardOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleDefenderSlot, lt])
   const doubleSpeedOrder = React.useMemo(() => {
     const entries = ([
       { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
@@ -3170,6 +3184,11 @@ export default function App() {
     }
     if (!doubleAttackerMoves.includes(doubleMoveName)) setDoubleMoveName(doubleAttackerMoves[0])
   }, [doubleAttackerMoves, doubleMoveName])
+
+  React.useEffect(() => {
+    if (!doubleMoveName) return
+    setDoubleSpreadMove(DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(doubleMoveName)))
+  }, [doubleMoveName])
 
   React.useEffect(() => {
     if (typeof document === 'undefined') return
@@ -3317,9 +3336,13 @@ export default function App() {
       doubleDefenderSlot,
       doubleSpreadMove,
       doubleMoveName,
+      doubleProtectMyLeft,
+      doubleProtectMyRight,
+      doubleProtectOppLeft,
+      doubleProtectOppRight,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4991,6 +5014,10 @@ export default function App() {
                 <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
                 <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
                 <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyLeft} onChange={(e) => setDoubleProtectMyLeft(e.target.checked)} /><span>{lt('내 좌측 방어')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyRight} onChange={(e) => setDoubleProtectMyRight(e.target.checked)} /><span>{lt('내 우측 방어')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppLeft} onChange={(e) => setDoubleProtectOppLeft(e.target.checked)} /><span>{lt('상대 좌측 방어')}</span></label>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppRight} onChange={(e) => setDoubleProtectOppRight(e.target.checked)} /><span>{lt('상대 우측 방어')}</span></label>
               </div>
             </article>
 
@@ -5044,6 +5071,7 @@ export default function App() {
                 {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
                 {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
                 {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
+                {doubleProtectBySlot[doubleDefenderSlot] ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
               </div>
               {doubleDamageContext?.reason ? <div className="damage-box empty compact"><p>{doubleDamageContext.reason}</p></div> : doubleDamageContext?.damage ? <div className="damage-box compact">
                 <div className="damage-summary-grid">
