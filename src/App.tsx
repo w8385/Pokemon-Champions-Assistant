@@ -3291,12 +3291,12 @@ export default function App() {
       { slot: 'oppLeft' as const, side: 'opp' as const, label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, tailwind: doubleTailwindOpp },
       { slot: 'oppRight' as const, side: 'opp' as const, label: lt('상대 우측'), option: doubleBoardSlots.oppRight, tailwind: doubleTailwindOpp },
     ]).map((entry, idx) => {
-      if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null }
+      if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null, sprite: null as string | null }
       const speed = entry.side === 'my'
         ? partySpeedValue(entry.option.row, entry.option.member)
         : opponentSpeedValue(entry.option.row, entry.option.entry)
       const effectiveSpeed = entry.tailwind ? speed * 2 : speed
-      return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed, effectiveSpeed }
+      return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed, effectiveSpeed, sprite: entry.option.row.sprite ?? null }
     })
     return entries.slice().sort((a, b) => {
       const aSpeed = a.effectiveSpeed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
@@ -5505,7 +5505,8 @@ export default function App() {
                   <div className="double-speed-preview-list">
                     {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
                       <span>{idx + 1}{lt('순위')} · {entry.label}</span>
-                      <div className="double-order-main">
+                      <div className="double-order-main with-sprite">
+                        {entry.sprite ? <img src={entry.sprite} alt={entry.name} className="double-order-sprite" /> : null}
                         <strong>{entry.name}</strong>
                       </div>
                       <div className="pick-summary-badges">

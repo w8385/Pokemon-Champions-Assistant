@@ -1841,6 +1841,18 @@ header p {
   gap: 2px;
   min-width: 0;
 }
+.double-order-main.with-sprite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.double-order-sprite {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 auto;
+}
 .double-order-main small {
   color: #93a4b8;
 }
