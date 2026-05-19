@@ -1304,6 +1304,24 @@ header p {
   font-size: 12px;
   text-align: left;
 }
+.double-action-chip {
+  display: grid;
+  gap: 4px;
+}
+.double-action-chip-main {
+  font-weight: 600;
+}
+.double-action-chip-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #93a4b8;
+  font-size: 11px;
+}
+.double-action-chip-meta .move-autocomplete-type-icon {
+  width: 18px;
+  height: 18px;
+}
 .double-action-chip.active,
 .double-target-chip.active {
   border-color: rgba(96, 165, 250, 0.95);
@@ -1311,6 +1329,18 @@ header p {
 }
 .double-target-chip.enemy.active {
   border-color: rgba(251, 146, 60, 0.95);
+}
+.double-target-groups {
+  display: grid;
+  gap: 8px;
+}
+.double-target-group {
+  display: grid;
+  gap: 4px;
+}
+.double-target-group-label {
+  color: #93a4b8;
+  font-size: 11px;
 }
 .double-target-chip-row {
   display: flex;
@@ -1324,6 +1354,13 @@ header p {
 .double-action-card-preview {
   color: #93a4b8;
   font-size: 12px;
+}
+.double-action-card-damage-preview {
+  border-top: 1px solid rgba(51, 65, 85, 0.56);
+  padding-top: 8px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
 }
 .double-inline-subcard {
   border: 1px solid rgba(51, 65, 85, 0.56);

@@ -3117,10 +3117,10 @@ export default function App() {
       : doubleDamageAttackerMeta.option.entry.revealedMoves
     ).filter(Boolean)
   }, [confirmedMovesByKey, doubleDamageAttackerMeta])
-  const doubleDamageContext = React.useMemo(() => {
-    const attackerMeta = doubleDamageAttackerMeta
-    const defenderMeta = doubleDamageDefenderMeta
-    if (!attackerMeta.option?.row || !defenderMeta.option?.row || !doubleMoveName) return null
+  const buildDoubleDamageContext = React.useCallback((attackerSlot: DoubleBoardSlot, defenderSlot: DoubleBoardSlot, moveName: string, spreadMove: boolean) => {
+    const attackerMeta = doubleSlotMeta[attackerSlot]
+    const defenderMeta = doubleSlotMeta[defenderSlot]
+    if (!attackerMeta.option?.row || !defenderMeta.option?.row || !moveName) return null
     const attackerRow = attackerMeta.option.row
     const defenderRow = defenderMeta.option.row
     const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
@@ -3132,21 +3132,21 @@ export default function App() {
       ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
       : buildOpponentBattleStats(defenderRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
-    const baseMoveMeta = resolveMoveMeta(doubleMoveName, moveOptions, movePoolByKey)
-    const moveMeta = resolveAbilityAdjustedMoveMeta(doubleMoveName, baseMoveMeta, attackerAbility)
-    const moveType = resolveMoveType(doubleMoveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
+    const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
+    const moveType = resolveMoveType(moveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
     const effectiveness = moveType ? typeEffectiveness(moveType, effectiveTypes) : 1
-    const guardedByWide = doubleSpreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
-    const protectedTarget = doubleProtectBySlot[doubleDefenderSlot]
+    const guardedByWide = spreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
+    const protectedTarget = doubleProtectBySlot[defenderSlot]
     const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
     const modifiers = guardedByWide || protectedTarget ? null : resolveDamageModifiers({
       attackerAbility,
       attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
       defenderAbility,
       defenderItem: defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item,
-      moveName: doubleMoveName,
+      moveName,
       baseMoveType: moveMeta?.type ?? moveType,
       moveType,
       movePower: moveMeta?.power ?? 0,
@@ -3173,11 +3173,12 @@ export default function App() {
       friendGuard,
       critical: false,
     })
-    if (modifiers && doubleSpreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
+    if (modifiers && spreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
     const damage = guardedByWide || protectedTarget ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
     const reason = guardedByWide ? lt('와이드가드로 차단됨') : protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
     return { attackerRow, defenderRow, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
-  }, [doubleDamageAttackerMeta, doubleDamageDefenderMeta, doubleMoveName, movePoolByKey, doubleSpreadMove, doubleWideGuardMy, doubleWideGuardOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleDefenderSlot, lt])
+  }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey])
+  const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
   const doubleSpeedOrder = React.useMemo(() => {
     const entries = ([
       { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
@@ -3281,6 +3282,37 @@ export default function App() {
     targetName: doubleFocusedTargetMeta.option?.row ? displayName(doubleFocusedTargetMeta.option.row, siteLanguage) : lt('미선택'),
     moveName: doubleFocusedActionMove || lt('등록 기술 없음'),
   }), [doubleFocusedActionMeta, doubleFocusedTargetMeta, doubleFocusedActionMove, lt, siteLanguage])
+  const doubleActionCards = React.useMemo(() => {
+    return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot) => {
+      const meta = doubleSlotMeta[slot]
+      const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
+      const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
+      const selectedMove = doubleActionMoveBySlot[slot] || ''
+      const moveDetails = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
+        const lookup = lookupMoveMeta(move)
+        const priority = lookup?.priority ?? 0
+        return { move, type: lookup?.type ?? null, priority }
+      })
+      const targetGroups = [
+        { label: meta.side === 'my' ? lt('상대 포켓몬') : lt('내 포켓몬'), items: targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side !== meta.side) },
+        { label: meta.side === 'my' ? lt('내 포켓몬') : lt('상대 포켓몬'), items: targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side === meta.side) },
+      ].filter((group) => group.items.length)
+      const preview = selectedMove ? buildDoubleDamageContext(slot, doubleActionTargetBySlot[slot], selectedMove, DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(selectedMove))) : null
+      const previewText = preview?.reason
+        ? preview.reason
+        : preview?.damage
+          ? `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`
+          : lt('대상 선택 대기')
+      return {
+        slot,
+        meta,
+        card,
+        moveDetails,
+        targetGroups,
+        previewText,
+      }
+    })
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
   React.useEffect(() => {
     ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
       const options = doubleActionOptionsBySlot[slot] ?? []
@@ -5230,57 +5262,63 @@ export default function App() {
                 </div>
                 <p className="muted">{lt('각 슬롯이 이번 턴에 누를 기술과 대상을 먼저 정하고, 클릭한 행동을 우측 상세 패널에서 바로 검토합니다.')}</p>
                 <div className="double-action-card-grid">
-                  {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => {
-                    const meta = doubleSlotMeta[slot]
-                    const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
-                    const options = doubleActionOptionsBySlot[slot] ?? []
-                    const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
-                    return <div
-                      key={`double-action-card-${slot}`}
-                      className={`double-action-card ${doubleActionFocusSlot === slot ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
-                      onClick={() => setDoubleActionFocusSlot(slot)}
-                    >
-                      <div className="double-action-card-head">
-                        <strong>{meta.label}</strong>
-                        <div className="pick-summary-badges">
-                          <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                          {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
-                        </div>
+                  {doubleActionCards.map(({ slot, meta, card, moveDetails, targetGroups, previewText }) => <div
+                    key={`double-action-card-${slot}`}
+                    className={`double-action-card ${doubleActionFocusSlot === slot ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
+                    onClick={() => setDoubleActionFocusSlot(slot)}
+                  >
+                    <div className="double-action-card-head">
+                      <strong>{meta.label}</strong>
+                      <div className="pick-summary-badges">
+                        <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
+                        {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
                       </div>
-                      <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
-                      <div className="double-action-card-section">
-                        <span className="double-action-card-label">{lt('기술')}</span>
-                        <div className="double-action-chip-grid">
-                          {options.length ? options.map((move) => <button
-                            key={`double-action-option-${slot}-${move}`}
-                            type="button"
-                            className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setDoubleActionFocusSlot(slot)
-                              setDoubleActionMoveBySlot[slot](move)
-                            }}
-                          >{move}</button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
-                        </div>
-                      </div>
-                      <div className="double-action-card-section">
-                        <span className="double-action-card-label">{lt('대상')}</span>
-                        <div className="double-target-chip-row">
-                          {targetOptions.map((targetSlot) => <button
-                            key={`double-action-target-${slot}-${targetSlot}`}
-                            type="button"
-                            className={`double-target-chip ${doubleActionTargetBySlot[slot] === targetSlot ? 'active' : ''} ${doubleSlotMeta[targetSlot].side === 'opp' ? 'enemy' : ''}`}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setDoubleActionFocusSlot(slot)
-                              setDoubleActionTargetBySlot[slot](targetSlot)
-                            }}
-                          >{doubleSlotMeta[targetSlot].label}</button>)}
-                        </div>
-                      </div>
-                      <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
                     </div>
-                  })}
+                    <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
+                    <div className="double-action-card-section">
+                      <span className="double-action-card-label">{lt('기술')}</span>
+                      <div className="double-action-chip-grid">
+                        {moveDetails.length ? moveDetails.map(({ move, type, priority }) => <button
+                          key={`double-action-option-${slot}-${move}`}
+                          type="button"
+                          className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionMoveBySlot[slot](move)
+                          }}
+                        >
+                          <span className="double-action-chip-main">{move}</span>
+                          <span className="double-action-chip-meta">
+                            {type ? <SmallTypeBadgeImage type={type} /> : null}
+                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                          </span>
+                        </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
+                      </div>
+                    </div>
+                    <div className="double-action-card-section">
+                      <span className="double-action-card-label">{lt('대상')}</span>
+                      <div className="double-target-groups">
+                        {targetGroups.map((group) => <div key={`double-target-group-${slot}-${group.label}`} className="double-target-group">
+                          <span className="double-target-group-label">{group.label}</span>
+                          <div className="double-target-chip-row">
+                            {group.items.map((targetSlot) => <button
+                              key={`double-action-target-${slot}-${targetSlot}`}
+                              type="button"
+                              className={`double-target-chip ${doubleActionTargetBySlot[slot] === targetSlot ? 'active' : ''} ${doubleSlotMeta[targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setDoubleActionFocusSlot(slot)
+                                setDoubleActionTargetBySlot[slot](targetSlot)
+                              }}
+                            >{doubleSlotMeta[targetSlot].label}</button>)}
+                          </div>
+                        </div>)}
+                      </div>
+                    </div>
+                    <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
+                    <div className="double-action-card-damage-preview">{previewText}</div>
+                  </div>)}
                 </div>
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
