@@ -5345,11 +5345,9 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{lt('더블 계산 작업 보드')}</h2>
-              <p className="muted">{lt('현재 보드 요약, 이번 턴 행동 플래너, 선택 행동 딜계산을 한 화면에서 이어서 보도록 정리했습니다.')}</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('feature/double-battle')}</span>
-              <span className="pick-badge subtle">{lt('2단계 보드 입력')}</span>
             </div>
           </div>
 
@@ -5376,7 +5374,6 @@ export default function App() {
                 <div className="double-inline-subcard double-damage-summary-card">
                   <div className="double-layout-card-head compact">
                     <strong>{lt('상대별 총 기대 대미지')}</strong>
-                    <span className="pick-badge subtle">{lt('내 두 포켓몬 선택 기술 합산')}</span>
                   </div>
                   <div className="double-combined-damage-grid">
                     {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
@@ -5412,19 +5409,6 @@ export default function App() {
                         >
                           {lt('노력치 보정')}
                         </button>
-                        {doubleSlotMeta[entry.defenderSlot].option?.entry ? <span className="muted-inline">{opponentBulkLabel({
-                          hpEv: doubleSlotMeta[entry.defenderSlot].option.entry.hpEv,
-                          defenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv,
-                          spDefenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv,
-                          defenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature,
-                          spDefenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature,
-                        }, detectOpponentBulkPreset({
-                          hpEv: doubleSlotMeta[entry.defenderSlot].option.entry.hpEv,
-                          defenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv,
-                          spDefenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv,
-                          defenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature,
-                          spDefenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature,
-                        }))}</span> : null}
                       </div>
                       {entry.blocked.length ? <div className="double-combined-damage-notes">
                         {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
@@ -5445,7 +5429,6 @@ export default function App() {
                       </div>
                       <div className="pick-summary-badges">
                         <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                        {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
                       </div>
                     </div>
                     <div className="double-focus-editor-section">
@@ -5501,7 +5484,6 @@ export default function App() {
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
                     <strong>{lt('4마리 행동순')}</strong>
-                    <span className="pick-badge subtle">{lt('실속도 기준')}</span>
                   </div>
                   <div className="double-speed-preview-list">
                     {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
