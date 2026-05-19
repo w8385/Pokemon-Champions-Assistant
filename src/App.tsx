@@ -3177,6 +3177,38 @@ export default function App() {
       return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
     })
   }, [doubleBoardSlots, doubleTailwindMy, doubleTailwindOpp, doubleTrickRoom, lt, siteLanguage])
+  const doubleSpeedBySlot = React.useMemo(() => Object.fromEntries(doubleSpeedOrder.map((entry) => [entry.slot, entry.effectiveSpeed])) as Partial<Record<DoubleBoardSlot, number | null>>, [doubleSpeedOrder])
+  const doubleBoardStateCards = React.useMemo(() => {
+    const slotOrder: DoubleBoardSlot[] = ['myLeft', 'myRight', 'oppLeft', 'oppRight']
+    return slotOrder.map((slot) => {
+      const meta = doubleSlotMeta[slot]
+      const option = meta.option
+      const row = option?.row ?? null
+      const isMySide = meta.side === 'my'
+      const key = isMySide ? option?.member.key ?? '' : option?.entry.key ?? ''
+      const item = isMySide
+        ? displayItemLabel(visibleChampionsItem(key, option?.member.item ?? ''), siteLanguage)
+        : displayItemLabel(visibleChampionsItem(key, option?.entry.item ?? ''), siteLanguage)
+      const ability = isMySide
+        ? (option?.member.ability || defaultAbilityForKey(key) || '')
+        : (option?.entry.ability || '')
+      const moves = isMySide
+        ? (confirmedMovesByKey[key] ?? []).filter(Boolean)
+        : (option?.entry.revealedMoves ?? []).filter(Boolean)
+      return {
+        slot,
+        side: meta.side,
+        label: meta.label,
+        name: row ? displayName(row, siteLanguage) : lt('미선택'),
+        item,
+        ability,
+        moves,
+        speed: doubleSpeedBySlot[slot],
+        protected: doubleProtectBySlot[slot],
+        tailwind: meta.side === 'my' ? doubleTailwindMy : doubleTailwindOpp,
+      }
+    })
+  }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
   const setAutocompleteMenuOpen = React.useCallback((id: string) => {
     setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
   }, [])
@@ -5021,6 +5053,39 @@ export default function App() {
                       {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
                     </select>
                   </label>
+                </div>
+                <div className="double-slot-state-grid">
+                  {doubleBoardStateCards.map((card) => <div key={`double-state-${card.slot}`} className={`double-slot-state-card ${card.side === 'opp' ? 'enemy' : ''}`}>
+                    <div className="double-slot-state-head">
+                      <strong>{card.label}</strong>
+                      <div className="pick-summary-badges">
+                        <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
+                        {card.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+                        {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
+                      </div>
+                    </div>
+                    <div className="double-slot-state-name">{card.name}</div>
+                    <div className="double-slot-state-meta">
+                      <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
+                      <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
+                    </div>
+                    <label className="calc-toggle-box double-slot-protect-toggle">
+                      <input
+                        type="checkbox"
+                        checked={card.protected}
+                        onChange={(e) => {
+                          if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
+                          else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
+                          else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
+                          else setDoubleProtectOppRight(e.target.checked)
+                        }}
+                      />
+                      <span>{card.label} {lt('방어')}</span>
+                    </label>
+                    <div className="double-slot-state-moves">
+                      {(card.moves.length ? card.moves.slice(0, 3) : [lt('등록 기술 없음')]).map((move) => <span key={`double-state-move-${card.slot}-${move}`} className="pick-badge subtle">{move}</span>)}
+                    </div>
+                  </div>)}
                 </div>
                 <div className="double-state-sections">
                   <div className="double-state-card">

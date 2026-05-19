@@ -1168,6 +1168,47 @@ header p {
 .double-control-span-2 {
   grid-column: 1 / -1;
 }
+.double-slot-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.double-slot-state-card {
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.42);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+.double-slot-state-card.enemy {
+  border-color: rgba(124, 45, 18, 0.72);
+}
+.double-slot-state-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.double-slot-state-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+.double-slot-state-meta {
+  display: grid;
+  gap: 4px;
+  color: #93a4b8;
+  font-size: 12px;
+}
+.double-slot-protect-toggle {
+  justify-content: flex-start;
+}
+.double-slot-state-moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .double-board-control-grid label,
 .double-layout-card label {
   display: grid;
@@ -4762,6 +4803,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-layout-main,
   .double-layout-side,
   .double-board-control-grid,
+  .double-slot-state-grid,
   .double-toggle-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
