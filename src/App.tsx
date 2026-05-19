@@ -5043,39 +5043,39 @@ export default function App() {
         const modalEvs = opponentEffortValues(modalEntry)
         const visibleStats = EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'hp' || stat.key === 'defense' || stat.key === 'spDefense' || stat.key === 'speed')
         return <div className="modal-backdrop" onClick={() => setDoubleBulkEditorSlot(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="row-between modal-header">
+          <div className="modal-card double-opponent-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="row-between modal-header double-opponent-modal-header">
               <h2>{modalName} · {lt('노력치 보정')}</h2>
-              <button type="button" className="action-button" onClick={() => setDoubleBulkEditorSlot(null)}>{lt('닫기')}</button>
+              <button type="button" className="action-button double-opponent-modal-close" onClick={() => setDoubleBulkEditorSlot(null)}>{lt('닫기')}</button>
             </div>
-            <div className="modal-grid">
-              <label>
-                {lt('최속 가정')}
+            <div className="modal-grid double-opponent-modal-grid">
+              <label className="double-opponent-modal-control double-opponent-modal-control-check">
+                <span>{lt('최속 가정')}</span>
                 <input type="checkbox" checked={modalEntry.natureBoost} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { natureBoost: e.target.checked })} />
               </label>
-              <label>
-                {lt('스카프')}
+              <label className="double-opponent-modal-control double-opponent-modal-control-check">
+                <span>{lt('스카프')}</span>
                 <input type="checkbox" checked={modalEntry.scarf} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { scarf: e.target.checked })} />
               </label>
-              <label>
-                {lt('랭크')}
+              <label className="double-opponent-modal-control">
+                <span>{lt('랭크')}</span>
                 <select value={modalEntry.speedStage} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { speedStage: clampSpeedStage(e.target.value) })}>
                   {SPEED_STAGE_OPTIONS.map((n) => <option key={`double-bulk-modal-stage-${modalSlot}-${n}`} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
                 </select>
               </label>
             </div>
-            <div className="inline-controls double-opponent-nature-row">
-              <label className="calc-toggle-box">
+            <div className="pick-summary-badges double-opponent-modal-chips">
+              <label className="pick-badge double-opponent-modal-chip-check">
                 <input type="checkbox" checked={modalEntry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
                 <span>{lt('+방어 성격')}</span>
               </label>
-              <label className="calc-toggle-box">
+              <label className="pick-badge double-opponent-modal-chip-check">
                 <input type="checkbox" checked={modalEntry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                 <span>{lt('+특방 성격')}</span>
               </label>
-              <span className="pick-badge">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
+              <span className="pick-badge double-opponent-modal-total-chip">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
             </div>
-            <div className="drag-stat-list">
+            <div className="drag-stat-list double-opponent-drag-stat-list">
               {visibleStats.map((stat) => {
                 const currentEffort = modalEvs[stat.key]
                 const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(modalEvs, stat.key))
