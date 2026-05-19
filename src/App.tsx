@@ -5329,7 +5329,6 @@ export default function App() {
                       <span>{idx + 1}{lt('순위')} · {entry.label}</span>
                       <div className="double-order-main">
                         <strong>{entry.name}</strong>
-                        <small>{entry.selectedMove || lt('등록 기술 없음')}</small>
                       </div>
                       <div className="pick-summary-badges">
                         <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.speed ?? '—'}</span>
