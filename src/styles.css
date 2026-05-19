@@ -1534,14 +1534,27 @@ header p {
   font-weight: 700;
 }
 .double-combined-damage-raw-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 24px;
   color: #e2e8f0;
   font-size: 15px;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 .double-combined-damage-total {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 30px;
   font-size: 22px;
   font-weight: 800;
   color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 .double-combined-damage-actions {
   display: flex;
