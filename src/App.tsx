@@ -77,6 +77,7 @@ type OpponentState = {
   hpEv: number
   defenseEv: number
   spDefenseEv: number
+  speedEv: number
   defenseNature: number
   spDefenseNature: number
 }
@@ -779,6 +780,7 @@ const blankOpponent = (): OpponentState => ({
   hpEv: 0,
   defenseEv: 0,
   spDefenseEv: 0,
+  speedEv: CHAMPIONS_EFFORT_PER_STAT_CAP,
   defenseNature: 1,
   spDefenseNature: 1,
 })
@@ -1485,6 +1487,7 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
         hpEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         spDefenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseNature: (raw as Partial<SampleDamageTarget>).defenseNature === 1.1 ? 1.1 : 1,
         spDefenseNature: (raw as Partial<SampleDamageTarget>).spDefenseNature === 1.1 ? 1.1 : 1,
       }
@@ -1522,6 +1525,7 @@ function sanitizeSampleSpeedTargets(input: unknown): SampleSpeedTarget[] {
         scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
         speedStage: clampSpeedStage(raw.speedStage),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
       }
     })
     .filter((target): target is SampleSpeedTarget => Boolean(target))
@@ -1550,6 +1554,7 @@ function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
         hpEv: clampNonNegativeInt(raw.hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseEv: clampNonNegativeInt(raw.defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         spDefenseEv: clampNonNegativeInt(raw.spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseNature: raw.defenseNature === 1.1 ? 1.1 : 1,
         spDefenseNature: raw.spDefenseNature === 1.1 ? 1.1 : 1,
         moveName: typeof raw.moveName === 'string' ? raw.moveName : '',
@@ -1655,6 +1660,13 @@ function speedValue(row: Row, config: MemberConfig) {
     value = Math.floor(value * (2 / (2 + Math.abs(config.speedStage))))
   }
   if (config.scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'item'>) {
+  let value = actualStat(row.speed, entry.speedEv, entry.natureBoost ? natureMultiplier('jolly', 'speed') : 1)
+  value = applySpeedStage(value, entry.speedStage)
+  if (entry.scarf || isChoiceScarfItem(entry.item)) value = Math.floor(value * 1.5)
   return value
 }
 
@@ -3127,7 +3139,7 @@ export default function App() {
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
   const doubleOpponentIndexBySlot: Partial<Record<DoubleBoardSlot, number>> = { oppLeft: doubleOppLeft, oppRight: doubleOppRight }
-  const updateDoubleOpponentBulk = React.useCallback((slot: DoubleBoardSlot, patch: Partial<Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'defenseNature' | 'spDefenseNature'>>) => {
+  const updateDoubleOpponentBulk = React.useCallback((slot: DoubleBoardSlot, patch: Partial<Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'defenseNature' | 'spDefenseNature'>>) => {
     const idx = doubleOpponentIndexBySlot[slot]
     if (idx === undefined) return
     setOpponents((prev) => prev.map((entry, entryIdx) => entryIdx === idx ? { ...entry, ...patch } : entry))
@@ -3222,7 +3234,7 @@ export default function App() {
       if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null }
       const speed = entry.side === 'my'
         ? partySpeedValue(entry.option.row, entry.option.member)
-        : speedValue(entry.option.row, { nature: entry.option.entry.natureBoost ? 'jolly' : 'hardy', scarf: entry.option.entry.scarf, speedStage: entry.option.entry.speedStage })
+        : opponentSpeedValue(entry.option.row, entry.option.entry)
       const effectiveSpeed = entry.tailwind ? speed * 2 : speed
       return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed, effectiveSpeed }
     })
@@ -3707,11 +3719,7 @@ export default function App() {
 
   const mySpeed = partySpeedValue(myRow, myMember)
   const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage) : null
-  const oppSpeed = oppRow ? speedValue(oppRow, {
-    nature: oppMember.natureBoost ? 'jolly' : 'hardy',
-    scarf: oppMember.scarf || isChoiceScarfItem(oppMember.item),
-    speedStage: oppMember.speedStage,
-  }) : null
+  const oppSpeed = oppRow ? opponentSpeedValue(oppRow, oppMember) : null
   const pickedParty = party.filter((member) => member.picked)
   const pickedOpponents = opponents.filter((member) => member.picked)
   const opponentSpeedScenarios = oppRow ? [
@@ -5312,6 +5320,26 @@ export default function App() {
                             <span>{lt('+특방 성격')}</span>
                           </label>
                         </div>
+                        <div className="inline-controls">
+                          <label>
+                            {lt('스피드 EV')}
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.speedEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { speedEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label>
+                            {lt('최속 가정')}
+                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.natureBoost} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { natureBoost: e.target.checked })} />
+                          </label>
+                          <label>
+                            {lt('스카프')}
+                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.scarf} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { scarf: e.target.checked })} />
+                          </label>
+                          <label>
+                            {lt('랭크')}
+                            <select value={doubleSlotMeta[entry.defenderSlot].option.entry.speedStage} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { speedStage: clampSpeedStage(e.target.value) })}>
+                              {SPEED_STAGE_OPTIONS.map((n) => <option key={`double-bulk-stage-${entry.defenderSlot}-${n}`} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
+                            </select>
+                          </label>
+                        </div>
                       </div> : null}
                       <div className="double-combined-damage-lines">
                         {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
@@ -6123,6 +6151,14 @@ export default function App() {
                   }} />
                 </label>
                 <div className="inline-controls">
+                  <label>
+                    {lt('스피드 EV')}
+                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={oppMember.speedEv} onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, speedEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) }
+                      setOpponents(next)
+                    }} />
+                  </label>
                   <label>
                     {lt('최속 가정')}
                     <input type="checkbox" checked={oppMember.natureBoost} onChange={(e) => {
