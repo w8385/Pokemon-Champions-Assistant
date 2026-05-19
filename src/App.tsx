@@ -5917,25 +5917,18 @@ export default function App() {
                       </div>
                     </label>
                     {row ? <div className="stat-preview-list">
-                      {([
-                        ['hp', '체력'],
-                        ['attack', '공격'],
-                        ['defense', '방어'],
-                        ['spAttack', '특수공격'],
-                        ['spDefense', '특수방어'],
-                        ['speed', '스피드'],
-                      ] as const).map(([field, label]) => (
-                        <button key={field} type="button" className={`stat-preview-row stat-preview-button ${statThemeClass(field)}`} onClick={(e) => {
+                      {EFFORT_STAT_OPTIONS.map((stat) => (
+                        <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button ${statThemeClass(stat.key)}`} onClick={(e) => {
                           e.stopPropagation()
                           setTuningModalIndex(idx)
                         }}>
                           <div className="stat-preview-topline">
-                            <span>{lt(label)}</span>
-                            <strong>{partyStatValue(row, member, field)}</strong>
+                            <span>{lt(stat.label)}</span>
+                            <strong>{partyStatValue(row, member, stat.key)}</strong>
                           </div>
-                          <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, field)) }} /></div>
+                          <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, stat.key)) }} /></div>
                           <div className="stat-preview-meta">
-                            <span className="stat-preview-ev">EV +{member.evs[field]}</span>
+                            <span className="stat-preview-ev">EV +{member.evs[stat.key]}</span>
                           </div>
                         </button>
                       ))}
@@ -6744,17 +6737,15 @@ export default function App() {
                 </div>
               </div>
               <div className="stat-preview-list sample-stat-preview-list">
-                {([
-                  ['hp', '체력'], ['attack', '공격'], ['defense', '방어'], ['spAttack', '특수공격'], ['spDefense', '특수방어'], ['speed', '스피드'],
-                ] as const).map(([field, label]) => (
-                  <button key={field} type="button" className={`stat-preview-row stat-preview-button sample-stat-preview-row ${statThemeClass(field)}`} onClick={() => setSampleTuningModalOpen(true)}>
+                {EFFORT_STAT_OPTIONS.map((stat) => (
+                  <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button sample-stat-preview-row ${statThemeClass(stat.key)}`} onClick={() => setSampleTuningModalOpen(true)}>
                     <div className="stat-preview-topline sample-stat-topline">
-                      <span>{lt(label)}</span>
-                      <strong>{partyStatValue(sampleRow, sampleForge, field)}</strong>
+                      <span>{lt(stat.label)}</span>
+                      <strong>{partyStatValue(sampleRow, sampleForge, stat.key)}</strong>
                     </div>
-                    <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, field)) }} /></div>
+                    <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, stat.key)) }} /></div>
                     <div className="stat-preview-meta">
-                      <span className="stat-preview-ev sample-stat-ev">EV +{sampleForge.evs[field]}</span>
+                      <span className="stat-preview-ev sample-stat-ev">EV +{sampleForge.evs[stat.key]}</span>
                     </div>
                   </button>
                 ))}
