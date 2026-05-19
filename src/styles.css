@@ -569,7 +569,7 @@ header p {
 }
 .double-opponent-modal-title-copy {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 .double-opponent-modal-title-copy h2 {
@@ -1801,6 +1801,14 @@ header p {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+.double-speed-preview-item.my {
+  border-color: rgba(59, 130, 246, 0.42);
+  background: linear-gradient(180deg, rgba(9, 19, 38, 0.92), rgba(2, 6, 23, 0.7));
+}
+.double-speed-preview-item.opp {
+  border-color: rgba(239, 68, 68, 0.32);
+  background: linear-gradient(180deg, rgba(40, 11, 20, 0.82), rgba(15, 23, 42, 0.5));
 }
 .double-order-main {
   display: grid;

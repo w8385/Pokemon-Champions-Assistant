@@ -5048,7 +5048,6 @@ export default function App() {
               <div className="double-opponent-modal-title-wrap">
                 {modalRow.sprite ? <img src={modalRow.sprite} alt={modalName} className="double-opponent-modal-sprite" /> : null}
                 <div className="double-opponent-modal-title-copy">
-                  <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
                   <h2>{modalName} · {lt('노력치 보정')}</h2>
                 </div>
               </div>
@@ -5382,7 +5381,6 @@ export default function App() {
                           {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
                           <div className="double-combined-damage-defender-copy">
                             <label className="double-side-select enemy compact">
-                              <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
                               <select className="double-side-select-input enemy" value={entry.defenderSlot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
                                 {doubleOpponentOptions.map((option) => <option key={`double-damage-target-${entry.defenderSlot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
                               </select>
@@ -5436,7 +5434,6 @@ export default function App() {
                       <div className="double-focus-editor-identity">
                         {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
                         <label className="double-side-select compact">
-                          <span className="pick-badge">{lt('내 포켓몬')}</span>
                           <select className="double-side-select-input" value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
                             {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
                           </select>
@@ -5503,7 +5500,7 @@ export default function App() {
                     <span className="pick-badge subtle">{lt('실속도 기준')}</span>
                   </div>
                   <div className="double-speed-preview-list">
-                    {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className="double-speed-preview-item">
+                    {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
                       <span>{idx + 1}{lt('순위')} · {entry.label}</span>
                       <div className="double-order-main">
                         <strong>{entry.name}</strong>
