@@ -7265,11 +7265,6 @@ export default function App() {
         {(mainSection === 'single' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('간단 대미지 계산')}</h2>
-            <div className="pick-summary-badges">
-              <span className="pick-badge">{lt('공격측')} · {attackFromOpponent ? lt('상대 포켓몬') : lt('내 포켓몬')}</span>
-              <span className="pick-badge enemy">{defenderRow ? `${lt('방어측')} · ${displayName(defenderRow, siteLanguage)}` : lt('선택한 상대 없음')}</span>
-              {damageVerdict ? <span className="pick-badge verdict-badge">{lt('판정')} · {damageVerdict}</span> : null}
-            </div>
           </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
             <div className={`speed-target-card damage-side-card ${!attackFromOpponent ? 'active-side' : ''}`}>
@@ -7444,7 +7439,10 @@ export default function App() {
           <div className="damage-surface-card damage-result-surface">
             {defenderRow && damage ? <div className="damage-box compact-top">
               <div className="damage-box-head">
-                <strong>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong> → <strong>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
+                <strong className={`damage-box-side-name ${attackFromOpponent ? 'enemy' : 'ally'}`}>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong>
+                <span className="damage-box-arrow">→</span>
+                <strong className={`damage-box-side-name ${attackFromOpponent ? 'ally' : 'enemy'}`}>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>
+                {activeDamageMove ? <span className="damage-box-move-name">· {activeDamageMove}</span> : null}
               </div>
               <div className="damage-summary-grid">
                 <div className="damage-summary-card verdict verdict-card">

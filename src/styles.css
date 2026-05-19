@@ -4970,6 +4970,27 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-box-head {
   margin-bottom: 10px;
   color: #e5eef7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.damage-box-side-name {
+  font-weight: 800;
+}
+.damage-box-side-name.ally {
+  color: #93c5fd;
+}
+.damage-box-side-name.enemy {
+  color: #fca5a5;
+}
+.damage-box-arrow {
+  color: #94a3b8;
+  font-weight: 700;
+}
+.damage-box-move-name {
+  color: #cbd5e1;
+  font-weight: 600;
 }
 .damage-summary-grid {
   display: grid;
