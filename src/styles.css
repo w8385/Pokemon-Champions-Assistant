@@ -1248,9 +1248,15 @@ header p {
 .double-slot-protect-toggle {
   justify-content: flex-start;
 }
+.double-slot-protect-toggle.compact {
+  margin: 0;
+}
 .double-slot-state-select {
   display: grid;
   gap: 6px;
+}
+.double-slot-state-select.compact {
+  gap: 4px;
 }
 .double-slot-state-select span {
   color: #93a4b8;
@@ -1352,6 +1358,11 @@ header p {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+.double-combined-damage-defender-copy {
+  display: grid;
+  gap: 4px;
   min-width: 0;
 }
 .double-combined-damage-sprite {

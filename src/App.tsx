@@ -5197,58 +5197,6 @@ export default function App() {
                     <strong>{lt('현재 보드')}</strong>
                     <span className="pick-badge subtle">{lt('행동 전 컨텍스트')}</span>
                   </div>
-                  <div className="double-board-slot-grid">
-                    {(['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[]).map((slot) => {
-                      const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
-                      if (!card) return null
-                      const options = card.side === 'opp' ? doubleOpponentOptions : doublePartyOptions
-                      const value = slot === 'oppLeft' ? doubleOppLeft : slot === 'oppRight' ? doubleOppRight : slot === 'myLeft' ? doubleMyLeft : doubleMyRight
-                      const onChange = (nextValue: number) => {
-                        if (slot === 'oppLeft') setDoubleOppLeft(nextValue)
-                        else if (slot === 'oppRight') setDoubleOppRight(nextValue)
-                        else if (slot === 'myLeft') setDoubleMyLeft(nextValue)
-                        else setDoubleMyRight(nextValue)
-                      }
-                      return <div key={`double-board-slot-${slot}`} className={`double-slot-state-card merged ${card.side === 'opp' ? 'enemy' : ''}`}>
-                        <div className="double-slot-state-head">
-                          <strong>{card.label}</strong>
-                          <div className="pick-summary-badges">
-                            <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
-                            {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
-                          </div>
-                        </div>
-                        <div className="double-slot-state-identity">
-                          {card.row?.sprite ? <img src={card.row.sprite} alt={card.name} className="double-slot-state-sprite" /> : null}
-                          <div className="double-slot-state-identity-copy">
-                            <div className="double-slot-state-name">{card.name}</div>
-                            <div className="double-slot-state-meta">
-                              <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
-                              <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <label className="double-slot-state-select">
-                          <span>{card.side === 'opp' ? lt('상대 포켓몬 선택') : lt('내 포켓몬 선택')}</span>
-                          <select value={value} onChange={(e) => onChange(Number(e.target.value))}>
-                            {options.map((option) => <option key={`double-slot-option-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${card.side === 'opp' ? lt('엔트리') : lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                          </select>
-                        </label>
-                        <label className="calc-toggle-box double-slot-protect-toggle">
-                          <input
-                            type="checkbox"
-                            checked={card.protected}
-                            onChange={(e) => {
-                              if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
-                              else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
-                              else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
-                              else setDoubleProtectOppRight(e.target.checked)
-                            }}
-                          />
-                          <span>{card.label} {lt('방어')}</span>
-                        </label>
-                      </div>
-                    })}
-                  </div>
                   <div className="double-state-sections compact single">
                     <div className="double-state-card">
                       <strong>{lt('속도/전장')}</strong>
@@ -5261,6 +5209,50 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+                <div className="double-inline-subcard double-damage-summary-card">
+                  <div className="double-layout-card-head compact">
+                    <strong>{lt('상대별 총 기대 대미지')}</strong>
+                    <span className="pick-badge subtle">{lt('내 두 포켓몬 선택 기술 합산')}</span>
+                  </div>
+                  <div className="double-combined-damage-grid">
+                    {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
+                      <div className="double-combined-damage-head">
+                        <div className="double-combined-damage-defender">
+                          {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
+                          <div className="double-combined-damage-defender-copy">
+                            <strong>{entry.defenderLabel}</strong>
+                            <label className="double-slot-state-select compact">
+                              <span>{lt('상대 포켓몬 선택')}</span>
+                              <select value={entry.defenderSlot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
+                                {doubleOpponentOptions.map((option) => <option key={`double-damage-target-${entry.defenderSlot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                              </select>
+                            </label>
+                          </div>
+                        </div>
+                        <div className="pick-summary-badges">
+                          <span>{entry.totalPctText}</span>
+                          <label className="calc-toggle-box double-slot-protect-toggle compact">
+                            <input
+                              type="checkbox"
+                              checked={entry.defenderSlot === 'oppLeft' ? doubleProtectOppLeft : doubleProtectOppRight}
+                              onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleProtectOppLeft(e.target.checked) : setDoubleProtectOppRight(e.target.checked)}
+                            />
+                            <span>{lt('방어')}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div className="double-combined-damage-total">{entry.totalText}</div>
+                      <div className="double-combined-damage-lines">
+                        {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
+                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotDisplayName(part.selectedTarget)}`) : ''}
+                        </span>)}
+                      </div>
+                      {entry.blocked.length ? <div className="double-combined-damage-notes">
+                        {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
+                      </div> : null}
+                    </div>)}
+                  </div>
+                </div>
                 <div className="double-attack-grid">
                   {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
                     <div className="double-focus-editor-head">
@@ -5269,6 +5261,12 @@ export default function App() {
                         <div>
                           <strong>{meta.label}</strong>
                           <div className="double-focus-editor-name">{card?.name || lt('미선택')}</div>
+                          <label className="double-slot-state-select compact">
+                            <span>{lt('내 포켓몬 선택')}</span>
+                            <select value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
+                              {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                            </select>
+                          </label>
                         </div>
                       </div>
                       <div className="pick-summary-badges">
@@ -5325,32 +5323,6 @@ export default function App() {
                     </div> : null}
                     {spreadMove ? <div className="double-spread-note">{lt('광역기 감쇠가 자동 적용됩니다.')}</div> : null}
                   </div>)}
-                </div>
-                <div className="double-inline-subcard double-damage-summary-card">
-                  <div className="double-layout-card-head compact">
-                    <strong>{lt('상대별 총 기대 대미지')}</strong>
-                    <span className="pick-badge subtle">{lt('내 두 포켓몬 선택 기술 합산')}</span>
-                  </div>
-                  <div className="double-combined-damage-grid">
-                    {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
-                      <div className="double-combined-damage-head">
-                        <div className="double-combined-damage-defender">
-                          {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
-                          <strong>{entry.defenderLabel}</strong>
-                        </div>
-                        <span>{entry.totalPctText}</span>
-                      </div>
-                      <div className="double-combined-damage-total">{entry.totalText}</div>
-                      <div className="double-combined-damage-lines">
-                        {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
-                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotDisplayName(part.selectedTarget)}`) : ''}
-                        </span>)}
-                      </div>
-                      {entry.blocked.length ? <div className="double-combined-damage-notes">
-                        {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
-                      </div> : null}
-                    </div>)}
-                  </div>
                 </div>
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
