@@ -7457,6 +7457,25 @@ export default function App() {
                 </button>
               ))}
             </div> : null}
+            {defenderRow && damage ? <div className="damage-box">
+              <div className="damage-box-head">
+                <strong>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong> → <strong>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
+              </div>
+              <div className="damage-summary-grid">
+                <div className="damage-summary-card verdict verdict-card">
+                  <span>{lt('판정')}</span>
+                  <strong>{damageVerdict}</strong>
+                </div>
+                <div className="damage-summary-card">
+                  <span>{lt('대미지')}</span>
+                  <strong>{damageNoEffect ? lt('무효') : `${damage.min} ~ ${damage.max}`}</strong>
+                </div>
+                <div className="damage-summary-card accent">
+                  <span>{lt('비율')}</span>
+                  <strong>{damageNoEffect ? lt('무효') : `${damage.minPct}% ~ ${damage.maxPct}%`}</strong>
+                </div>
+              </div>
+            </div> : <div className="damage-box empty"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
             <div className="damage-control-groups">
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>
@@ -7668,25 +7687,6 @@ export default function App() {
               </div>
             </div>
           </div>
-          {defenderRow && damage ? <div className="damage-box">
-            <div className="damage-box-head">
-              <strong>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong> → <strong>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
-            </div>
-            <div className="damage-summary-grid">
-              <div className="damage-summary-card verdict verdict-card">
-                <span>{lt('판정')}</span>
-                <strong>{damageVerdict}</strong>
-              </div>
-              <div className="damage-summary-card">
-                <span>{lt('대미지')}</span>
-                <strong>{damageNoEffect ? lt('무효') : `${damage.min} ~ ${damage.max}`}</strong>
-              </div>
-              <div className="damage-summary-card accent">
-                <span>{lt('비율')}</span>
-                <strong>{damageNoEffect ? lt('무효') : `${damage.minPct}% ~ ${damage.maxPct}%`}</strong>
-              </div>
-            </div>
-          </div> : <div className="damage-box empty"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
         </section> : null}
         </>}
       </main>
