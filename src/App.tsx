@@ -5049,7 +5049,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {((mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) || (mainSection === 'double' && activeTab === 'power')) ? (
+        {(mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) ? (
           <section className="panel wide">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
@@ -5316,7 +5316,7 @@ export default function App() {
                       <strong>x{doubleDamageContext.effectiveness}</strong>
                     </div>
                   </div>
-                </div> : <p className="muted">{lt('기술과 대상이 잡히면 여기서 더블 전용 딜체크를 이어서 보게 됩니다.')}</p>}
+                </div> : <p className="muted">{lt('행동 플래너에서 기술과 대상을 고르면 여기서 결과를 바로 확인합니다.')}</p>}
               </article>
             </div>
           </div>
