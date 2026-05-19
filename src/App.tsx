@@ -3457,10 +3457,13 @@ export default function App() {
       const defenderHp = contributions.find((entry) => entry.preview?.defenderHp)?.preview?.defenderHp ?? null
       const minPct = defenderHp ? Math.round((min / defenderHp) * 1000) / 10 : null
       const maxPct = defenderHp ? Math.round((max / defenderHp) * 1000) / 10 : null
-      const blocked = contributions.filter((entry) => entry.moveName && entry.hitsDefender && !entry.preview?.damage).map((entry) => ({
-        attackerLabel: entry.attackerLabel,
-        reason: entry.preview?.reason ?? lt('계산 대기'),
-      }))
+      const blocked = contributions
+        .filter((entry) => entry.moveName && entry.hitsDefender && !entry.preview?.damage)
+        .map((entry) => ({
+          attackerLabel: entry.attackerLabel,
+          reason: entry.preview?.reason ?? lt('계산 대기'),
+        }))
+        .filter((entry) => entry.reason !== lt('변화기는 대미지 계산 대상이 아님'))
       return {
         defenderSlot,
         defenderLabel: doubleSlotDisplayName(defenderSlot),
