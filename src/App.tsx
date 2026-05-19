@@ -103,6 +103,7 @@ type SavedPartyPreset = {
   id: string
   label: string
   party: PartyMember[]
+  lockedMovesBySlot: string[][]
 }
 
 type CalcMode = 'physical' | 'special'
@@ -419,6 +420,16 @@ function clonePartyMember(member: PartyMember): PartyMember {
 
 function clonePartyList(party: PartyMember[]): PartyMember[] {
   return party.map(clonePartyMember)
+}
+
+function sanitizeLockedMoveSlots(input: unknown, slotCount: number): string[][] {
+  if (!Array.isArray(input)) return Array.from({ length: slotCount }, () => [])
+  return Array.from({ length: slotCount }, (_, idx) => {
+    const value = input[idx]
+    return Array.isArray(value)
+      ? value.filter((move): move is string => typeof move === 'string' && move.trim().length > 0).slice(0, 4)
+      : []
+  })
 }
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
@@ -1609,10 +1620,12 @@ function sanitizeSavedPartyPresets(input: unknown): SavedPartyPreset[] {
     .map((entry, idx) => {
       if (!entry || typeof entry !== 'object') return null
       const raw = entry as Partial<SavedPartyPreset>
+      const party = sanitizeParty(raw.party)
       return {
         id: typeof raw.id === 'string' ? raw.id : `party-${idx}`,
         label: typeof raw.label === 'string' && raw.label.trim() ? raw.label : `Party ${idx + 1}`,
-        party: sanitizeParty(raw.party),
+        party,
+        lockedMovesBySlot: sanitizeLockedMoveSlots(raw.lockedMovesBySlot, party.length),
       }
     })
     .filter((entry): entry is SavedPartyPreset => Boolean(entry))
@@ -4664,9 +4677,16 @@ export default function App() {
     setActiveTab('party')
   }
 
-  const applyPartyPreset = (presetParty: PartyMember[], presetId?: string | null) => {
+  const applyPartyPreset = (presetParty: PartyMember[], presetLockedMovesBySlot: string[][], presetId?: string | null) => {
     const nextParty = clonePartyList(sanitizeParty(presetParty))
+    const nextLockedMovesBySlot = sanitizeLockedMoveSlots(presetLockedMovesBySlot, nextParty.length)
+    const nextConfirmedMovesByKey = Object.fromEntries(
+      nextParty
+        .map((member, idx) => [member.key, nextLockedMovesBySlot[idx] ?? []] as const)
+        .filter(([key]) => Boolean(key))
+    )
     setParty(nextParty)
+    setConfirmedMovesByKey(nextConfirmedMovesByKey)
     setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setSelectedMy(0)
@@ -4678,12 +4698,18 @@ export default function App() {
     setActivePartyPresetId(presetId ?? null)
   }
 
+  const buildPartyPresetLockedMoves = () => party.map((member) => {
+    if (!member.key) return []
+    return (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4)
+  })
+
   const saveNewPartyPreset = () => {
     const label = partyPresetLabelDraft.trim() || `${lt('파티 이름')} ${savedPartyPresets.length + 1}`
     const nextPreset: SavedPartyPreset = {
       id: `party-${Date.now()}`,
       label,
       party: clonePartyList(party),
+      lockedMovesBySlot: buildPartyPresetLockedMoves(),
     }
     setSavedPartyPresets((prev) => [nextPreset, ...prev])
     setActivePartyPresetId(nextPreset.id)
@@ -4699,6 +4725,7 @@ export default function App() {
       ...entry,
       label: partyPresetLabelDraft.trim() || entry.label,
       party: clonePartyList(party),
+      lockedMovesBySlot: buildPartyPresetLockedMoves(),
     } : entry))
     setPartyPresetLabelDraft('')
   }
@@ -5622,7 +5649,7 @@ export default function App() {
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
                   const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
                   return <div key={preset.id} className={`party-preset-card ${activePartyPresetId === preset.id ? 'active' : ''}`}>
-                    <button type="button" className="party-preset-card-main" onClick={() => applyPartyPreset(preset.party, preset.id)}>
+                    <button type="button" className="party-preset-card-main" onClick={() => applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)}>
                       <div className="party-preset-sprite-row">
                         {leadMembers.length ? leadMembers.map((member, idx) => {
                           const row = indexByKey.get(member.key) ?? rows[0]
@@ -5633,7 +5660,7 @@ export default function App() {
                       <span className="muted-inline">{leadMembers.length}/6</span>
                     </button>
                     <div className="party-preset-card-actions">
-                      <button type="button" className="pick-chip" onClick={() => applyPartyPreset(preset.party, preset.id)}>{lt('파티 적용')}</button>
+                      <button type="button" className="pick-chip" onClick={() => applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)}>{lt('파티 적용')}</button>
                       <button type="button" className="pick-chip" onClick={() => renamePartyPreset(preset)}>{lt('이름 변경')}</button>
                       <button type="button" className="pick-chip" onClick={() => {
                         setSavedPartyPresets((prev) => prev.filter((entry) => entry.id !== preset.id))
