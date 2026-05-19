@@ -5168,98 +5168,91 @@ export default function App() {
 
           <div className="double-layout-grid">
             <div className="double-layout-main">
-              <article className="double-layout-card double-board-setup-card">
-                <div className="double-layout-card-head">
-                  <strong>{lt('A. 현재 보드')}</strong>
-                  <span className="pick-badge verdict-badge">{lt('입력 가능')}</span>
-                </div>
-                <p className="muted">{lt('공용 파티·상대 엔트리에서 정리한 6마리 중 실제 2대2 보드에 올라온 슬롯과 전장 상태를 먼저 고정합니다.')}</p>
-                <div className="double-board-control-grid">
-                  <label>
-                    {lt('내 좌측')}
-                    <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
-                      {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                    </select>
-                  </label>
-                  <label>
-                    {lt('내 우측')}
-                    <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
-                      {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                    </select>
-                  </label>
-                  <label>
-                    {lt('상대 좌측')}
-                    <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
-                      {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                    </select>
-                  </label>
-                  <label>
-                    {lt('상대 우측')}
-                    <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
-                      {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                    </select>
-                  </label>
-                </div>
-                <div className="double-slot-state-grid">
-                  {doubleBoardStateCards.map((card) => <div key={`double-state-${card.slot}`} className={`double-slot-state-card ${card.side === 'opp' ? 'enemy' : ''}`}>
-                    <div className="double-slot-state-head">
-                      <strong>{card.label}</strong>
-                      <div className="pick-summary-badges">
-                        <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
-                        {card.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
-                        {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
-                      </div>
-                    </div>
-                    <div className="double-slot-state-name">{card.name}</div>
-                    <div className="double-slot-state-meta">
-                      <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
-                      <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
-                    </div>
-                    <label className="calc-toggle-box double-slot-protect-toggle">
-                      <input
-                        type="checkbox"
-                        checked={card.protected}
-                        onChange={(e) => {
-                          if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
-                          else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
-                          else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
-                          else setDoubleProtectOppRight(e.target.checked)
-                        }}
-                      />
-                      <span>{card.label} {lt('방어')}</span>
-                    </label>
-                    <div className="double-slot-state-moves">
-                      {(card.moves.length ? card.moves.slice(0, 3) : [lt('등록 기술 없음')]).map((move) => <span key={`double-state-move-${card.slot}-${move}`} className="pick-badge subtle">{move}</span>)}
-                    </div>
-                  </div>)}
-                </div>
-                <div className="double-state-sections">
-                  <div className="double-state-card">
-                    <strong>{lt('속도/전장')}</strong>
-                    <div className="double-toggle-grid">
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
-                    </div>
-                  </div>
-                  <div className="double-state-card">
-                    <strong>{lt('방어 보정')}</strong>
-                    <div className="double-toggle-grid">
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <div className="double-layout-side">
-              <article className="double-layout-card">
+              <article className="double-layout-card double-planner-main-card">
                 <div className="double-layout-card-head">
                   <strong>{lt('B. 턴 행동 플래너')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
+                </div>
+                <div className="double-planner-context">
+                  <div className="double-planner-context-head">
+                    <strong>{lt('현재 보드')}</strong>
+                    <span className="pick-badge subtle">{lt('행동 전 컨텍스트')}</span>
+                  </div>
+                  <div className="double-board-control-grid">
+                    <label>
+                      {lt('내 좌측')}
+                      <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
+                        {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      {lt('내 우측')}
+                      <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
+                        {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      {lt('상대 좌측')}
+                      <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
+                        {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      {lt('상대 우측')}
+                      <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
+                        {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                  <div className="double-slot-state-grid compact">
+                    {doubleBoardStateCards.map((card) => <div key={`double-state-${card.slot}`} className={`double-slot-state-card ${card.side === 'opp' ? 'enemy' : ''}`}>
+                      <div className="double-slot-state-head">
+                        <strong>{card.label}</strong>
+                        <div className="pick-summary-badges">
+                          <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
+                          {card.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+                          {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
+                        </div>
+                      </div>
+                      <div className="double-slot-state-name">{card.name}</div>
+                      <div className="double-slot-state-meta">
+                        <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
+                        <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
+                      </div>
+                      <label className="calc-toggle-box double-slot-protect-toggle">
+                        <input
+                          type="checkbox"
+                          checked={card.protected}
+                          onChange={(e) => {
+                            if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
+                            else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
+                            else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
+                            else setDoubleProtectOppRight(e.target.checked)
+                          }}
+                        />
+                        <span>{card.label} {lt('방어')}</span>
+                      </label>
+                    </div>)}
+                  </div>
+                  <div className="double-state-sections compact">
+                    <div className="double-state-card">
+                      <strong>{lt('속도/전장')}</strong>
+                      <div className="double-toggle-grid">
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
+                      </div>
+                    </div>
+                    <div className="double-state-card">
+                      <strong>{lt('방어 보정')}</strong>
+                      <div className="double-toggle-grid">
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="double-planner-layout">
                   <div className="double-slot-summary-list">
@@ -5362,7 +5355,9 @@ export default function App() {
                   </div>
                 </div>
               </article>
+            </div>
 
+            <div className="double-layout-side">
               <article className="double-layout-card accent">
                 <div className="double-layout-card-head">
                   <strong>{lt('C. 기대 대미지 상세')}</strong>

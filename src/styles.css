@@ -1139,7 +1139,7 @@ header p {
 }
 .double-layout-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.72fr);
   gap: 12px;
   align-items: start;
 }
@@ -1157,8 +1157,23 @@ header p {
   display: grid;
   gap: 12px;
 }
-.double-board-setup-card {
-  min-height: 100%;
+.double-planner-main-card {
+  gap: 14px;
+}
+.double-planner-context {
+  border: 1px solid rgba(51, 65, 85, 0.56);
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.24);
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+.double-planner-context-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .double-board-control-grid {
   display: grid;
@@ -1172,6 +1187,9 @@ header p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+.double-slot-state-grid.compact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .double-slot-state-card {
   border: 1px solid rgba(51, 65, 85, 0.72);
@@ -1222,6 +1240,9 @@ header p {
 .double-state-sections {
   display: grid;
   gap: 10px;
+}
+.double-state-sections.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .double-state-card {
   border: 1px solid rgba(51, 65, 85, 0.72);
@@ -4988,6 +5009,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-planner-layout,
   .double-board-control-grid,
   .double-slot-state-grid,
+  .double-slot-state-grid.compact,
+  .double-state-sections.compact,
   .double-toggle-grid,
   .double-action-chip-grid,
   .double-target-summary-row { grid-template-columns: 1fr; }
