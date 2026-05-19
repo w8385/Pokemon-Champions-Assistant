@@ -1866,6 +1866,43 @@ function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues
   }
 }
 
+function opponentEffortValues(entry: Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv'>): EffortValues {
+  return {
+    hp: entry.hpEv,
+    attack: 0,
+    defense: entry.defenseEv,
+    spAttack: 0,
+    spDefense: entry.spDefenseEv,
+    speed: entry.speedEv,
+  }
+}
+
+function opponentPatchFromEffortValues(evs: EffortValues): Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv'> {
+  return {
+    hpEv: evs.hp,
+    defenseEv: evs.defense,
+    spDefenseEv: evs.spDefense,
+    speedEv: evs.speed,
+  }
+}
+
+function opponentStatValue(row: Row, entry: Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv' | 'natureBoost' | 'defenseNature' | 'spDefenseNature'>, field: keyof EffortValues) {
+  switch (field) {
+    case 'hp':
+      return actualStat(row.hp, entry.hpEv, 1, true)
+    case 'attack':
+      return actualStat(row.attack, 0, 1)
+    case 'defense':
+      return actualStat(row.defense, entry.defenseEv, entry.defenseNature)
+    case 'spAttack':
+      return actualStat(row.spAttack, 0, 1)
+    case 'spDefense':
+      return actualStat(row.spDefense, entry.spDefenseEv, entry.spDefenseNature)
+    case 'speed':
+      return actualStat(row.speed, entry.speedEv, entry.natureBoost ? natureMultiplier('jolly', 'speed') : 1)
+  }
+}
+
 function findMagicNumberCandidate(row: Row, member: PartyMember) {
   const boostedStat = boostedStatForNature(member.config.nature)
   if (!boostedStat) return null
@@ -3143,6 +3180,29 @@ export default function App() {
     const idx = doubleOpponentIndexBySlot[slot]
     if (idx === undefined) return
     setOpponents((prev) => prev.map((entry, entryIdx) => entryIdx === idx ? { ...entry, ...patch } : entry))
+  }, [doubleOpponentIndexBySlot, setOpponents])
+  const updateDoubleOpponentEffortFromPointer = React.useCallback((slot: DoubleBoardSlot, stat: Extract<EffortStatKey, 'hp' | 'defense' | 'spDefense' | 'speed'>, availableCap: number, clientX: number, element: HTMLDivElement) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    const rect = element.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const nextValue = Math.round(ratio * availableCap)
+    setOpponents((prev) => prev.map((entry, entryIdx) => {
+      if (entryIdx !== idx) return entry
+      const evs = applyChampionsEffort(opponentEffortValues(entry), stat, nextValue)
+      return { ...entry, ...opponentPatchFromEffortValues(evs) }
+    }))
+  }, [doubleOpponentIndexBySlot, setOpponents])
+  const nudgeDoubleOpponentEffort = React.useCallback((slot: DoubleBoardSlot, stat: Extract<EffortStatKey, 'hp' | 'defense' | 'spDefense' | 'speed'>, delta: number, availableCap: number) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    setOpponents((prev) => prev.map((entry, entryIdx) => {
+      if (entryIdx !== idx) return entry
+      const current = opponentEffortValues(entry)[stat]
+      const evs = applyChampionsEffort(opponentEffortValues(entry), stat, Math.max(0, Math.min(availableCap, current + delta)))
+      return { ...entry, ...opponentPatchFromEffortValues(evs) }
+    }))
   }, [doubleOpponentIndexBySlot, setOpponents])
   const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
   const doubleActionMoveBySlot: Record<DoubleBoardSlot, string> = { myLeft: doubleActionMoveMyLeft, myRight: doubleActionMoveMyRight, oppLeft: doubleActionMoveOppLeft, oppRight: doubleActionMoveOppRight }
@@ -4975,6 +5035,70 @@ export default function App() {
         <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
       </header>
 
+      {doubleBulkEditorSlot !== null && doubleSlotMeta[doubleBulkEditorSlot].option?.entry && doubleSlotMeta[doubleBulkEditorSlot].option?.row ? (() => {
+        const modalSlot = doubleBulkEditorSlot
+        const modalEntry = doubleSlotMeta[modalSlot].option.entry
+        const modalRow = doubleSlotMeta[modalSlot].option.row
+        const modalName = displayName(modalRow, siteLanguage)
+        const modalEvs = opponentEffortValues(modalEntry)
+        const visibleStats = EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'hp' || stat.key === 'defense' || stat.key === 'spDefense' || stat.key === 'speed')
+        return <div className="modal-backdrop" onClick={() => setDoubleBulkEditorSlot(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="row-between modal-header">
+              <h2>{modalName} · {lt('노력치 보정')}</h2>
+              <button type="button" className="action-button" onClick={() => setDoubleBulkEditorSlot(null)}>{lt('닫기')}</button>
+            </div>
+            <div className="modal-grid">
+              <label>
+                {lt('최속 가정')}
+                <input type="checkbox" checked={modalEntry.natureBoost} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { natureBoost: e.target.checked })} />
+              </label>
+              <label>
+                {lt('스카프')}
+                <input type="checkbox" checked={modalEntry.scarf} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { scarf: e.target.checked })} />
+              </label>
+              <label>
+                {lt('랭크')}
+                <select value={modalEntry.speedStage} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { speedStage: clampSpeedStage(e.target.value) })}>
+                  {SPEED_STAGE_OPTIONS.map((n) => <option key={`double-bulk-modal-stage-${modalSlot}-${n}`} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="inline-controls double-opponent-nature-row">
+              <label className="calc-toggle-box">
+                <input type="checkbox" checked={modalEntry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                <span>{lt('+방어 성격')}</span>
+              </label>
+              <label className="calc-toggle-box">
+                <input type="checkbox" checked={modalEntry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                <span>{lt('+특방 성격')}</span>
+              </label>
+              <span className="pick-badge">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
+            </div>
+            <div className="drag-stat-list">
+              {visibleStats.map((stat) => {
+                const currentEffort = modalEvs[stat.key]
+                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(modalEvs, stat.key))
+                const additionalAvailable = Math.max(0, availableCap - currentEffort)
+                const actualValue = opponentStatValue(modalRow, modalEntry, stat.key)
+                return <div key={`double-opponent-effort-${modalSlot}-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)}`}>
+                  <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
+                  <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
+                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); return <span key={`double-opponent-effort-cell-${modalSlot}-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+                      <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onChange={(e) => { const evs = applyChampionsEffort(modalEvs, stat.key, e.target.value); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} />
+                    </div>
+                    <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => <div key={`double-opponent-effort-scale-${modalSlot}-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{opponentStatValue(modalRow, { ...modalEntry, ...opponentPatchFromEffortValues({ ...modalEvs, [stat.key]: checkpoint }) }, stat.key)}</small></div>)}</div>
+                  </div>
+                  <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap)} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => { const evs = applyChampionsEffort(modalEvs, stat.key, 0); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => { const evs = applyChampionsEffort(modalEvs, stat.key, availableCap); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap)} disabled={currentEffort >= availableCap}>+1</button></div>
+                  <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span></div>
+                </div>
+              })}
+            </div>
+          </div>
+        </div>
+      })() : null}
+
       {tuningModalIndex !== null && tuningMember && tuningRow ? (
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -5277,7 +5401,7 @@ export default function App() {
                         <button
                           type="button"
                           className={`pick-chip ${doubleBulkEditorSlot === entry.defenderSlot ? 'active' : ''}`}
-                          onClick={() => setDoubleBulkEditorSlot((prev) => prev === entry.defenderSlot ? null : entry.defenderSlot)}
+                          onClick={() => setDoubleBulkEditorSlot(entry.defenderSlot)}
                         >
                           {lt('노력치 보정')}
                         </button>
@@ -5295,52 +5419,6 @@ export default function App() {
                           spDefenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature,
                         }))}</span> : null}
                       </div>
-                      {doubleBulkEditorSlot === entry.defenderSlot && doubleSlotMeta[entry.defenderSlot].option?.entry ? <div className="double-bulk-editor">
-                        <label>
-                          {lt('상대 HP')}
-                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.hpEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                        </label>
-                        <div className="double-bulk-editor-row">
-                          <label>
-                            {lt('상대 물방')}
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <label className="calc-toggle-box">
-                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
-                            <span>{lt('+방어 성격')}</span>
-                          </label>
-                        </div>
-                        <div className="double-bulk-editor-row">
-                          <label>
-                            {lt('상대 특방')}
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <label className="calc-toggle-box">
-                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                            <span>{lt('+특방 성격')}</span>
-                          </label>
-                        </div>
-                        <div className="inline-controls">
-                          <label>
-                            {lt('스피드 EV')}
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.speedEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { speedEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <label>
-                            {lt('최속 가정')}
-                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.natureBoost} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { natureBoost: e.target.checked })} />
-                          </label>
-                          <label>
-                            {lt('스카프')}
-                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.scarf} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { scarf: e.target.checked })} />
-                          </label>
-                          <label>
-                            {lt('랭크')}
-                            <select value={doubleSlotMeta[entry.defenderSlot].option.entry.speedStage} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { speedStage: clampSpeedStage(e.target.value) })}>
-                              {SPEED_STAGE_OPTIONS.map((n) => <option key={`double-bulk-stage-${entry.defenderSlot}-${n}`} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
-                            </select>
-                          </label>
-                        </div>
-                      </div> : null}
                       {entry.blocked.length ? <div className="double-combined-damage-notes">
                         {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
                       </div> : null}
