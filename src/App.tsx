@@ -74,6 +74,12 @@ type OpponentState = {
   scarf: boolean
   speedStage: number
   picked: boolean
+  hpEv: number
+  defenseEv: number
+  spDefenseEv: number
+  speedEv: number
+  defenseNature: number
+  spDefenseNature: number
 }
 
 type SampleSpeedTarget = OpponentState
@@ -99,6 +105,7 @@ type DamageTerrain = 'none' | 'electric' | 'grassy' | 'psychic' | 'misty'
 type OpponentBulkPreset = 'neutral-0' | 'hp-32' | 'phys-32' | 'spdef-32' | 'custom'
 type OpponentOffensePreset = 'neutral-0' | 'atk-32' | 'spa-32' | 'atk-32-plus' | 'spa-32-plus' | 'custom'
 type RivalryMode = 'neutral' | 'same' | 'opposite'
+type DoubleBoardSlot = 'myLeft' | 'myRight' | 'oppLeft' | 'oppRight'
 
 type PersistedState = {
   party?: PartyMember[]
@@ -142,11 +149,40 @@ type PersistedState = {
   battleNote?: string
   confirmedMovesByKey?: Record<string, string[]>
   mainSection?: MainSection
+  activeTab?: MainTab
   sampleForge?: PartyMember
   savedSamples?: SavedSample[]
   sampleWorkbenchTab?: SampleWorkbenchTab
   sampleSpeedTargets?: SampleSpeedTarget[]
   sampleDamageTargets?: SampleDamageTarget[]
+  doubleMyLeft?: number
+  doubleMyRight?: number
+  doubleOppLeft?: number
+  doubleOppRight?: number
+  doubleTrickRoom?: boolean
+  doubleTailwindMy?: boolean
+  doubleTailwindOpp?: boolean
+  doubleFriendGuardMy?: boolean
+  doubleFriendGuardOpp?: boolean
+  doubleWideGuardMy?: boolean
+  doubleWideGuardOpp?: boolean
+  doubleAttackerSlot?: DoubleBoardSlot
+  doubleDefenderSlot?: DoubleBoardSlot
+  doubleSpreadMove?: boolean
+  doubleMoveName?: string
+  doubleProtectMyLeft?: boolean
+  doubleProtectMyRight?: boolean
+  doubleProtectOppLeft?: boolean
+  doubleProtectOppRight?: boolean
+  doubleActionMoveMyLeft?: string
+  doubleActionMoveMyRight?: string
+  doubleActionMoveOppLeft?: string
+  doubleActionMoveOppRight?: string
+  doubleActionTargetMyLeft?: DoubleBoardSlot
+  doubleActionTargetMyRight?: DoubleBoardSlot
+  doubleActionTargetOppLeft?: DoubleBoardSlot
+  doubleActionTargetOppRight?: DoubleBoardSlot
+  doubleActionFocusSlot?: DoubleBoardSlot
 }
 
 type ImportExportPayload = PersistedState & {
@@ -154,7 +190,7 @@ type ImportExportPayload = PersistedState & {
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
-type MainSection = 'home' | 'single' | 'sample'
+type MainSection = 'home' | 'single' | 'double' | 'sample'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
@@ -214,6 +250,10 @@ const RECKLESS_MOVE_NAMES = new Set([
 const SHEER_FORCE_MOVE_NAMES = new Set([
   '10만볼트', '냉동빔', '화염방사', '문포스', '대지의힘', '러스터캐논', '에어슬래시', '오물폭탄', '아쿠아브레이크', '사이코키네시스',
   '섀도볼', '번개', '불대문자', '폭포오르기', '아이언헤드', '스톤에지', '깨물어부수기', '열탕',
+].map(normalizeSearchText))
+
+const DOUBLE_SPREAD_MOVE_NAMES = new Set([
+  '방전', '열풍', '탁류', '눈보라', '파도타기', '지진', '스톤샤워', '매지컬샤인', '오물웨이브', '하이퍼보이스', '폭음파', '흙탕물', '분연', '이붕',
 ].map(normalizeSearchText))
 type DamageCalcModifiers = {
   attackMultiplier?: number
@@ -278,7 +318,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '대미지 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': 'Manage your party and calculate speed and damage based on opponent entries.', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': 'Adjust one Pokémon’s nature, effort values, and moves, then save it as a sample.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions battles in one place.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '기능제안/버그제보': 'Feature Requests / Bug Reports', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
+    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': 'Manage your party and calculate speed and damage based on opponent entries.', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': 'Adjust one Pokémon’s nature, effort values, and moves, then save it as a sample.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions battles in one place.', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'Quickly check doubles turn order and expected damage.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '기능제안/버그제보': 'Feature Requests / Bug Reports', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
@@ -292,10 +332,10 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
-    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '포켓몬 선택': 'Choose Pokémon', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
+    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain',
+    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -306,7 +346,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '대미지 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': '自分のパーティを管理し、相手エントリーに応じて素早さと火力を計算できます。', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': '1匹を基準に性格・努力値・技を調整し、サンプルとして保存できます。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'ポケモンチャンピオンズのバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '기능제안/버그제보': '機能提案 / バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
+    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': '自分のパーティを管理し、相手エントリーに応じて素早さと火力を計算できます。', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': '1匹を基準に性格・努力値・技を調整し、サンプルとして保存できます。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'ポケモンチャンピオンズのバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'ダブルバトルの行動順と想定ダメージをすばやく確認できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '기능제안/버그제보': '機能提案 / バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
@@ -320,10 +360,10 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
-    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '포켓몬 선택': 'ポケモン選択', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
+    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド',
+    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -733,10 +773,16 @@ const blankOpponent = (): OpponentState => ({
   ability: '',
   notes: '',
   revealedMoves: [],
-  natureBoost: true,
+  natureBoost: false,
   scarf: false,
   speedStage: 0,
   picked: false,
+  hpEv: 0,
+  defenseEv: 0,
+  spDefenseEv: 0,
+  speedEv: CHAMPIONS_EFFORT_PER_STAT_CAP,
+  defenseNature: 1,
+  spDefenseNature: 1,
 })
 const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
 const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
@@ -772,6 +818,17 @@ const defaultSampleDamageTargets: SampleDamageTarget[] = ['garchomp', 'primarina
   key,
 }))
 const emptyOpponents = Array.from({ length: MAX_OPPONENTS }, () => blankOpponent())
+
+function firstFilledIndex<T extends { key: string }>(entries: T[], fallback = 0) {
+  const idx = entries.findIndex((entry) => Boolean(entry.key))
+  return idx >= 0 ? idx : fallback
+}
+
+function sanitizeBoardSlotIndex(value: unknown, entries: { key: string }[], fallback = 0) {
+  const index = typeof value === 'number' && Number.isFinite(value) ? Math.trunc(value) : fallback
+  if (index < 0 || index >= entries.length) return fallback
+  return index
+}
 
 const movePowerPresets = [
   { label: '40 선공기', value: 40 },
@@ -1423,16 +1480,31 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
         revealedMoves: Array.isArray(raw.revealedMoves)
           ? raw.revealedMoves.filter((move): move is string => typeof move === 'string')
           : [],
-        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : true,
+        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : false,
         scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
         speedStage: clampSpeedStage(raw.speedStage),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        hpEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        spDefenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseNature: (raw as Partial<SampleDamageTarget>).defenseNature === 1.1 ? 1.1 : 1,
+        spDefenseNature: (raw as Partial<SampleDamageTarget>).spDefenseNature === 1.1 ? 1.1 : 1,
       }
     })
     .filter((opponent): opponent is OpponentState => Boolean(opponent))
     .slice(0, MAX_OPPONENTS)
 
   return cleaned.length ? cleaned : defaultOpponents
+}
+
+function sanitizeConfirmedMovesByKey(input: unknown): Record<string, string[]> {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {}
+  return Object.fromEntries(
+    Object.entries(input)
+      .filter(([key]) => typeof key === 'string')
+      .map(([key, value]) => [key, Array.isArray(value) ? value.filter((move): move is string => typeof move === 'string' && move.trim().length > 0) : []])
+  )
 }
 
 function sanitizeSampleSpeedTargets(input: unknown): SampleSpeedTarget[] {
@@ -1453,6 +1525,7 @@ function sanitizeSampleSpeedTargets(input: unknown): SampleSpeedTarget[] {
         scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
         speedStage: clampSpeedStage(raw.speedStage),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
       }
     })
     .filter((target): target is SampleSpeedTarget => Boolean(target))
@@ -1481,6 +1554,7 @@ function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
         hpEv: clampNonNegativeInt(raw.hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseEv: clampNonNegativeInt(raw.defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         spDefenseEv: clampNonNegativeInt(raw.spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseNature: raw.defenseNature === 1.1 ? 1.1 : 1,
         spDefenseNature: raw.spDefenseNature === 1.1 ? 1.1 : 1,
         moveName: typeof raw.moveName === 'string' ? raw.moveName : '',
@@ -1536,7 +1610,9 @@ function parseViewStateFromUrl(): ViewState | null {
       ? 'single'
       : routePath === '/sample-builder'
         ? 'sample'
-        : routePath === '/'
+        : routePath === '/double'
+          ? 'double'
+          : routePath === '/'
           ? 'home'
           : undefined
     const activeTabParam = routeUrl.searchParams.get('tab')
@@ -1558,8 +1634,8 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : '/'
-  if (viewState.mainSection === 'single' && viewState.activeTab) params.set('tab', viewState.activeTab)
+  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : '/'
+  if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
@@ -1584,6 +1660,13 @@ function speedValue(row: Row, config: MemberConfig) {
     value = Math.floor(value * (2 / (2 + Math.abs(config.speedStage))))
   }
   if (config.scarf) value = Math.floor(value * 1.5)
+  return value
+}
+
+function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'item'>) {
+  let value = actualStat(row.speed, entry.speedEv, entry.natureBoost ? natureMultiplier('jolly', 'speed') : 1)
+  value = applySpeedStage(value, entry.speedStage)
+  if (entry.scarf || isChoiceScarfItem(entry.item)) value = Math.floor(value * 1.5)
   return value
 }
 
@@ -1780,6 +1863,43 @@ function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues
       return actualStat(row.spDefense, member.evs.spDefense, natureMultiplier(member.config.nature, 'spDefense'))
     case 'speed':
       return actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
+  }
+}
+
+function opponentEffortValues(entry: Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv'>): EffortValues {
+  return {
+    hp: entry.hpEv,
+    attack: 0,
+    defense: entry.defenseEv,
+    spAttack: 0,
+    spDefense: entry.spDefenseEv,
+    speed: entry.speedEv,
+  }
+}
+
+function opponentPatchFromEffortValues(evs: EffortValues): Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv'> {
+  return {
+    hpEv: evs.hp,
+    defenseEv: evs.defense,
+    spDefenseEv: evs.spDefense,
+    speedEv: evs.speed,
+  }
+}
+
+function opponentStatValue(row: Row, entry: Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv' | 'natureBoost' | 'defenseNature' | 'spDefenseNature'>, field: keyof EffortValues) {
+  switch (field) {
+    case 'hp':
+      return actualStat(row.hp, entry.hpEv, 1, true)
+    case 'attack':
+      return actualStat(row.attack, 0, 1)
+    case 'defense':
+      return actualStat(row.defense, entry.defenseEv, entry.defenseNature)
+    case 'spAttack':
+      return actualStat(row.spAttack, 0, 1)
+    case 'spDefense':
+      return actualStat(row.spDefense, entry.spDefenseEv, entry.spDefenseNature)
+    case 'speed':
+      return actualStat(row.speed, entry.speedEv, entry.natureBoost ? natureMultiplier('jolly', 'speed') : 1)
   }
 }
 
@@ -2838,6 +2958,7 @@ function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
 function menuLabelForSection(section: MainSection, activeTab: MainTab, language: SiteLanguage = 'ko') {
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
+  if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
 }
 
@@ -2884,6 +3005,41 @@ export default function App() {
   const [opponents, setOpponents] = React.useState<OpponentState[]>(() => sanitizeOpponents(persisted?.opponents))
   const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, sanitizeParty(persisted?.party).length))
   const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedOpp ?? persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
+  const initialDoubleParty = React.useMemo(() => sanitizeParty(persisted?.party), [persisted])
+  const initialDoubleOpponents = React.useMemo(() => sanitizeOpponents(persisted?.opponents), [persisted])
+  const defaultDoubleMyLeft = React.useMemo(() => firstFilledIndex(initialDoubleParty, 0), [initialDoubleParty])
+  const defaultDoubleMyRight = React.useMemo(() => initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) >= 0 ? initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) : Math.min(defaultDoubleMyLeft + 1, initialDoubleParty.length - 1), [defaultDoubleMyLeft, initialDoubleParty])
+  const defaultDoubleOppLeft = React.useMemo(() => firstFilledIndex(initialDoubleOpponents, 0), [initialDoubleOpponents])
+  const defaultDoubleOppRight = React.useMemo(() => initialDoubleOpponents.findIndex((entry, idx) => idx !== defaultDoubleOppLeft && Boolean(entry.key)) >= 0 ? initialDoubleOpponents.findIndex((entry, idx) => idx !== defaultDoubleOppLeft && Boolean(entry.key)) : Math.min(defaultDoubleOppLeft + 1, initialDoubleOpponents.length - 1), [defaultDoubleOppLeft, initialDoubleOpponents])
+  const [doubleMyLeft, setDoubleMyLeft] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleMyLeft, initialDoubleParty, defaultDoubleMyLeft))
+  const [doubleMyRight, setDoubleMyRight] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleMyRight, initialDoubleParty, defaultDoubleMyRight))
+  const [doubleOppLeft, setDoubleOppLeft] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleOppLeft, initialDoubleOpponents, defaultDoubleOppLeft))
+  const [doubleOppRight, setDoubleOppRight] = React.useState(() => sanitizeBoardSlotIndex(persisted?.doubleOppRight, initialDoubleOpponents, defaultDoubleOppRight))
+  const [doubleTrickRoom, setDoubleTrickRoom] = React.useState(() => Boolean(persisted?.doubleTrickRoom))
+  const [doubleTailwindMy, setDoubleTailwindMy] = React.useState(() => Boolean(persisted?.doubleTailwindMy))
+  const [doubleTailwindOpp, setDoubleTailwindOpp] = React.useState(() => Boolean(persisted?.doubleTailwindOpp))
+  const [doubleFriendGuardMy, setDoubleFriendGuardMy] = React.useState(() => Boolean(persisted?.doubleFriendGuardMy))
+  const [doubleFriendGuardOpp, setDoubleFriendGuardOpp] = React.useState(() => Boolean(persisted?.doubleFriendGuardOpp))
+  const [doubleWideGuardMy, setDoubleWideGuardMy] = React.useState(() => Boolean(persisted?.doubleWideGuardMy))
+  const [doubleWideGuardOpp, setDoubleWideGuardOpp] = React.useState(() => Boolean(persisted?.doubleWideGuardOpp))
+  const [doubleAttackerSlot, setDoubleAttackerSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleAttackerSlot === 'myLeft' || persisted?.doubleAttackerSlot === 'myRight' || persisted?.doubleAttackerSlot === 'oppLeft' || persisted?.doubleAttackerSlot === 'oppRight' ? persisted.doubleAttackerSlot : 'myLeft')
+  const [doubleDefenderSlot, setDoubleDefenderSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleDefenderSlot === 'myLeft' || persisted?.doubleDefenderSlot === 'myRight' || persisted?.doubleDefenderSlot === 'oppLeft' || persisted?.doubleDefenderSlot === 'oppRight' ? persisted.doubleDefenderSlot : 'oppLeft')
+  const [doubleSpreadMove, setDoubleSpreadMove] = React.useState(() => Boolean(persisted?.doubleSpreadMove))
+  const [doubleMoveName, setDoubleMoveName] = React.useState(() => typeof persisted?.doubleMoveName === 'string' ? persisted.doubleMoveName : '')
+  const [doubleProtectMyLeft, setDoubleProtectMyLeft] = React.useState(() => Boolean(persisted?.doubleProtectMyLeft))
+  const [doubleProtectMyRight, setDoubleProtectMyRight] = React.useState(() => Boolean(persisted?.doubleProtectMyRight))
+  const [doubleProtectOppLeft, setDoubleProtectOppLeft] = React.useState(() => Boolean(persisted?.doubleProtectOppLeft))
+  const [doubleProtectOppRight, setDoubleProtectOppRight] = React.useState(() => Boolean(persisted?.doubleProtectOppRight))
+  const [doubleActionMoveMyLeft, setDoubleActionMoveMyLeft] = React.useState(() => typeof persisted?.doubleActionMoveMyLeft === 'string' ? persisted.doubleActionMoveMyLeft : '')
+  const [doubleActionMoveMyRight, setDoubleActionMoveMyRight] = React.useState(() => typeof persisted?.doubleActionMoveMyRight === 'string' ? persisted.doubleActionMoveMyRight : '')
+  const [doubleActionMoveOppLeft, setDoubleActionMoveOppLeft] = React.useState(() => typeof persisted?.doubleActionMoveOppLeft === 'string' ? persisted.doubleActionMoveOppLeft : '')
+  const [doubleActionMoveOppRight, setDoubleActionMoveOppRight] = React.useState(() => typeof persisted?.doubleActionMoveOppRight === 'string' ? persisted.doubleActionMoveOppRight : '')
+  const [doubleActionTargetMyLeft, setDoubleActionTargetMyLeft] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetMyLeft === 'myLeft' || persisted?.doubleActionTargetMyLeft === 'myRight' || persisted?.doubleActionTargetMyLeft === 'oppLeft' || persisted?.doubleActionTargetMyLeft === 'oppRight' ? persisted.doubleActionTargetMyLeft : 'oppLeft')
+  const [doubleActionTargetMyRight, setDoubleActionTargetMyRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetMyRight === 'myLeft' || persisted?.doubleActionTargetMyRight === 'myRight' || persisted?.doubleActionTargetMyRight === 'oppLeft' || persisted?.doubleActionTargetMyRight === 'oppRight' ? persisted.doubleActionTargetMyRight : 'oppRight')
+  const [doubleActionTargetOppLeft, setDoubleActionTargetOppLeft] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppLeft === 'myLeft' || persisted?.doubleActionTargetOppLeft === 'myRight' || persisted?.doubleActionTargetOppLeft === 'oppLeft' || persisted?.doubleActionTargetOppLeft === 'oppRight' ? persisted.doubleActionTargetOppLeft : 'myLeft')
+  const [doubleActionTargetOppRight, setDoubleActionTargetOppRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppRight === 'myLeft' || persisted?.doubleActionTargetOppRight === 'myRight' || persisted?.doubleActionTargetOppRight === 'oppLeft' || persisted?.doubleActionTargetOppRight === 'oppRight' ? persisted.doubleActionTargetOppRight : 'myRight')
+  const [doubleActionFocusSlot, setDoubleActionFocusSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionFocusSlot === 'myLeft' || persisted?.doubleActionFocusSlot === 'myRight' || persisted?.doubleActionFocusSlot === 'oppLeft' || persisted?.doubleActionFocusSlot === 'oppRight' ? persisted.doubleActionFocusSlot : 'myLeft')
+  const [doubleBulkEditorSlot, setDoubleBulkEditorSlot] = React.useState<DoubleBoardSlot | null>(null)
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -2943,14 +3099,14 @@ export default function App() {
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
   const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
-  const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? 'party')
+  const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? persisted?.activeTab ?? 'party')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [calcMyMegaOn, setCalcMyMegaOn] = React.useState(false)
   const [calcOppMegaOn, setCalcOppMegaOn] = React.useState(false)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
-  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => persisted?.confirmedMovesByKey ?? {})
+  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey))
   const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
@@ -2999,6 +3155,354 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
+  const doublePartyOptions = React.useMemo(() => party.map((member, idx) => ({ idx, member, row: member.key ? (indexByKey.get(member.key) ?? rows[0]) : null })), [party])
+  const doubleOpponentOptions = React.useMemo(() => opponents.map((entry, idx) => ({ idx, entry, row: entry.key ? (indexByKey.get(entry.key) ?? rows[0]) : null })), [opponents])
+  const doubleBoardSlots = React.useMemo(() => ({
+    myLeft: doublePartyOptions[doubleMyLeft] ?? null,
+    myRight: doublePartyOptions[doubleMyRight] ?? null,
+    oppLeft: doubleOpponentOptions[doubleOppLeft] ?? null,
+    oppRight: doubleOpponentOptions[doubleOppRight] ?? null,
+  }), [doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleOpponentOptions, doublePartyOptions])
+  const doubleSlotMeta = React.useMemo(() => ({
+    myLeft: { label: lt('내 좌측'), option: doubleBoardSlots.myLeft, side: 'my' as const },
+    myRight: { label: lt('내 우측'), option: doubleBoardSlots.myRight, side: 'my' as const },
+    oppLeft: { label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, side: 'opp' as const },
+    oppRight: { label: lt('상대 우측'), option: doubleBoardSlots.oppRight, side: 'opp' as const },
+  }), [doubleBoardSlots, lt])
+  const doubleSlotDisplayName = React.useCallback((slot: DoubleBoardSlot) => {
+    const meta = doubleSlotMeta[slot]
+    return meta.option?.row ? displayName(meta.option.row, siteLanguage) : meta.label
+  }, [doubleSlotMeta, siteLanguage])
+  const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
+  const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
+  const doubleOpponentIndexBySlot: Partial<Record<DoubleBoardSlot, number>> = { oppLeft: doubleOppLeft, oppRight: doubleOppRight }
+  const updateDoubleOpponentBulk = React.useCallback((slot: DoubleBoardSlot, patch: Partial<Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'defenseNature' | 'spDefenseNature'>>) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    setOpponents((prev) => prev.map((entry, entryIdx) => entryIdx === idx ? { ...entry, ...patch } : entry))
+  }, [doubleOpponentIndexBySlot, setOpponents])
+  const updateDoubleOpponentEffortFromPointer = React.useCallback((slot: DoubleBoardSlot, stat: Extract<EffortStatKey, 'hp' | 'defense' | 'spDefense' | 'speed'>, availableCap: number, clientX: number, element: HTMLDivElement) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    const rect = element.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const nextValue = Math.round(ratio * availableCap)
+    setOpponents((prev) => prev.map((entry, entryIdx) => {
+      if (entryIdx !== idx) return entry
+      const evs = applyChampionsEffort(opponentEffortValues(entry), stat, nextValue)
+      return { ...entry, ...opponentPatchFromEffortValues(evs) }
+    }))
+  }, [doubleOpponentIndexBySlot, setOpponents])
+  const nudgeDoubleOpponentEffort = React.useCallback((slot: DoubleBoardSlot, stat: Extract<EffortStatKey, 'hp' | 'defense' | 'spDefense' | 'speed'>, delta: number, availableCap: number) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    setOpponents((prev) => prev.map((entry, entryIdx) => {
+      if (entryIdx !== idx) return entry
+      const current = opponentEffortValues(entry)[stat]
+      const evs = applyChampionsEffort(opponentEffortValues(entry), stat, Math.max(0, Math.min(availableCap, current + delta)))
+      return { ...entry, ...opponentPatchFromEffortValues(evs) }
+    }))
+  }, [doubleOpponentIndexBySlot, setOpponents])
+  const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
+  const doubleActionMoveBySlot: Record<DoubleBoardSlot, string> = { myLeft: doubleActionMoveMyLeft, myRight: doubleActionMoveMyRight, oppLeft: doubleActionMoveOppLeft, oppRight: doubleActionMoveOppRight }
+  const setDoubleActionMoveBySlot: Record<DoubleBoardSlot, (value: string) => void> = { myLeft: setDoubleActionMoveMyLeft, myRight: setDoubleActionMoveMyRight, oppLeft: setDoubleActionMoveOppLeft, oppRight: setDoubleActionMoveOppRight }
+  const doubleActionTargetBySlot: Record<DoubleBoardSlot, DoubleBoardSlot> = { myLeft: doubleActionTargetMyLeft, myRight: doubleActionTargetMyRight, oppLeft: doubleActionTargetOppLeft, oppRight: doubleActionTargetOppRight }
+  const setDoubleActionTargetBySlot: Record<DoubleBoardSlot, (value: DoubleBoardSlot) => void> = { myLeft: setDoubleActionTargetMyLeft, myRight: setDoubleActionTargetMyRight, oppLeft: setDoubleActionTargetOppLeft, oppRight: setDoubleActionTargetOppRight }
+  const doubleAttackerMoves = React.useMemo(() => {
+    if (!doubleDamageAttackerMeta.option) return [] as string[]
+    return (doubleDamageAttackerMeta.side === 'my'
+      ? (confirmedMovesByKey[doubleDamageAttackerMeta.option.member.key] ?? [])
+      : doubleDamageAttackerMeta.option.entry.revealedMoves
+    ).filter(Boolean)
+  }, [confirmedMovesByKey, doubleDamageAttackerMeta])
+  const buildDoubleDamageContext = React.useCallback((attackerSlot: DoubleBoardSlot, defenderSlot: DoubleBoardSlot, moveName: string, spreadMove: boolean) => {
+    const attackerMeta = doubleSlotMeta[attackerSlot]
+    const defenderMeta = doubleSlotMeta[defenderSlot]
+    if (!attackerMeta.option?.row || !defenderMeta.option?.row || !moveName) return null
+    const attackerRow = attackerMeta.option.row
+    const defenderRow = defenderMeta.option.row
+    const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
+    const defenderAbility = defenderMeta.side === 'my' ? (defenderMeta.option.member.ability || defaultAbilityForKey(defenderMeta.option.member.key)) : defenderMeta.option.entry.ability
+    const attackerStats = attackerMeta.side === 'my'
+      ? buildPartyBattleStats(attackerRow, attackerMeta.option.member)
+      : buildOpponentBattleStats(attackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+    const defenderStats = defenderMeta.side === 'my'
+      ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
+      : buildOpponentBattleStats(defenderRow, {
+        hpEv: defenderMeta.option.entry.hpEv,
+        defenseEv: defenderMeta.option.entry.defenseEv,
+        spDefenseEv: defenderMeta.option.entry.spDefenseEv,
+        defenseNature: defenderMeta.option.entry.defenseNature,
+        spDefenseNature: defenderMeta.option.entry.spDefenseNature,
+      }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+    const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
+    const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
+    const moveType = resolveMoveType(moveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
+    const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
+    const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
+    const effectiveness = moveType ? typeEffectiveness(moveType, effectiveTypes) : 1
+    const guardedByWide = spreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
+    const protectedTarget = doubleProtectBySlot[defenderSlot]
+    const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
+    const modifiers = guardedByWide || protectedTarget ? null : resolveDamageModifiers({
+      attackerAbility,
+      attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
+      defenderAbility,
+      defenderItem: defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item,
+      moveName,
+      baseMoveType: moveMeta?.type ?? moveType,
+      moveType,
+      movePower: moveMeta?.power ?? 0,
+      mode,
+      effectiveness,
+      attackStage: 0,
+      defenseStage: 0,
+      defenderTypes: effectiveTypes,
+      burned: false,
+      attackerLowHp: false,
+      targetPoisoned: false,
+      defenderFullHp: true,
+      movedAfterTarget: false,
+      faintedAllies: 0,
+      rivalryMode: 'neutral',
+      parentalBond: false,
+      defenderStatused: false,
+      electromorphosisCharged: false,
+      weather: 'none',
+      terrain: 'none',
+      reflect: false,
+      lightScreen: false,
+      auroraVeil: false,
+      friendGuard,
+      critical: false,
+    })
+    if (modifiers && spreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
+    const damage = guardedByWide || protectedTarget ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
+    const reason = guardedByWide ? lt('와이드가드로 차단됨') : protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
+    return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
+  }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey])
+  const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
+  const doubleSpeedOrder = React.useMemo(() => {
+    const entries = ([
+      { slot: 'myLeft' as const, side: 'my' as const, label: lt('내 좌측'), option: doubleBoardSlots.myLeft, tailwind: doubleTailwindMy },
+      { slot: 'myRight' as const, side: 'my' as const, label: lt('내 우측'), option: doubleBoardSlots.myRight, tailwind: doubleTailwindMy },
+      { slot: 'oppLeft' as const, side: 'opp' as const, label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, tailwind: doubleTailwindOpp },
+      { slot: 'oppRight' as const, side: 'opp' as const, label: lt('상대 우측'), option: doubleBoardSlots.oppRight, tailwind: doubleTailwindOpp },
+    ]).map((entry, idx) => {
+      if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null, sprite: null as string | null }
+      const speed = entry.side === 'my'
+        ? partySpeedValue(entry.option.row, entry.option.member)
+        : opponentSpeedValue(entry.option.row, entry.option.entry)
+      const effectiveSpeed = entry.tailwind ? speed * 2 : speed
+      return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed, effectiveSpeed, sprite: entry.option.row.sprite ?? null }
+    })
+    return entries.slice().sort((a, b) => {
+      const aSpeed = a.effectiveSpeed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      const bSpeed = b.effectiveSpeed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      if (aSpeed === bSpeed) return a.idx - b.idx
+      return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
+    })
+  }, [doubleBoardSlots, doubleTailwindMy, doubleTailwindOpp, doubleTrickRoom, lt, siteLanguage])
+  const doubleSpeedBySlot = React.useMemo(() => Object.fromEntries(doubleSpeedOrder.map((entry) => [entry.slot, entry.effectiveSpeed])) as Partial<Record<DoubleBoardSlot, number | null>>, [doubleSpeedOrder])
+  const doubleBoardStateCards = React.useMemo(() => {
+    const slotOrder: DoubleBoardSlot[] = ['myLeft', 'myRight', 'oppLeft', 'oppRight']
+    return slotOrder.map((slot) => {
+      const meta = doubleSlotMeta[slot]
+      const option = meta.option
+      const row = option?.row ?? null
+      const isMySide = meta.side === 'my'
+      const key = isMySide ? option?.member.key ?? '' : option?.entry.key ?? ''
+      const item = isMySide
+        ? displayItemLabel(visibleChampionsItem(key, option?.member.item ?? ''), siteLanguage)
+        : displayItemLabel(visibleChampionsItem(key, option?.entry.item ?? ''), siteLanguage)
+      const ability = isMySide
+        ? (option?.member.ability || defaultAbilityForKey(key) || '')
+        : (option?.entry.ability || '')
+      const moves = isMySide
+        ? (confirmedMovesByKey[key] ?? []).filter(Boolean)
+        : (option?.entry.revealedMoves ?? []).filter(Boolean)
+      return {
+        slot,
+        side: meta.side,
+        label: meta.label,
+        row,
+        name: row ? displayName(row, siteLanguage) : lt('미선택'),
+        item,
+        ability,
+        moves,
+        speed: doubleSpeedBySlot[slot],
+        protected: doubleProtectBySlot[slot],
+        tailwind: meta.side === 'my' ? doubleTailwindMy : doubleTailwindOpp,
+      }
+    })
+  }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
+  const FRIEND_GUARD_NAMES = new Set(['프렌드가드', 'Friend Guard', 'フレンドガード'])
+  const doubleFriendGuardAvailableOpp = React.useMemo(() => doubleBoardStateCards.some((card) => card.side === 'opp' && FRIEND_GUARD_NAMES.has(card.ability || '')), [doubleBoardStateCards])
+  const doubleActionOptionsBySlot = React.useMemo(() => {
+    return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
+  }, [doubleBoardStateCards])
+  const doubleTargetOptionsBySlot = React.useMemo(() => ({
+    myLeft: ['oppLeft', 'oppRight', 'myRight', 'myLeft'] as DoubleBoardSlot[],
+    myRight: ['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[],
+    oppLeft: ['myLeft', 'myRight', 'oppRight', 'oppLeft'] as DoubleBoardSlot[],
+    oppRight: ['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[],
+  }), [])
+  const doubleActionOrder = React.useMemo(() => {
+    return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
+      const meta = doubleSlotMeta[slot]
+      const option = meta.option
+      const row = option?.row ?? null
+      const moves = doubleActionOptionsBySlot[slot] ?? []
+      const selectedMove = doubleActionMoveBySlot[slot] && moves.includes(doubleActionMoveBySlot[slot]) ? doubleActionMoveBySlot[slot] : ''
+      const key = meta.side === 'my' ? option?.member.key ?? '' : option?.entry.key ?? ''
+      const moveOptions = meta.side === 'my'
+        ? ((movePoolByKey[key]?.moves?.length ? movePoolByKey[key].moves : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))))
+        : moves.map((name) => ({ name, type: lookupMoveMeta(name)?.type ?? null }))
+      const moveMeta = selectedMove ? resolveMoveMeta(selectedMove, moveOptions, movePoolByKey) : null
+      return {
+        slot,
+        idx,
+        label: meta.label,
+        side: meta.side,
+        name: row ? displayName(row, siteLanguage) : lt('미선택'),
+        sprite: row?.sprite ?? null,
+        selectedMove,
+        priority: moveMeta?.priority ?? 0,
+        speed: doubleSpeedBySlot[slot] ?? null,
+      }
+    }).sort((a, b) => {
+      const aSpeed = a.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      const bSpeed = b.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      if (aSpeed !== bSpeed) return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
+      return a.idx - b.idx
+    })
+  }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTrickRoom, lt, movePoolByKey, siteLanguage])
+  const doubleFocusedActionTarget = doubleActionTargetBySlot[doubleActionFocusSlot]
+  const doubleFocusedActionMeta = doubleSlotMeta[doubleActionFocusSlot]
+  const doubleFocusedTargetMeta = doubleSlotMeta[doubleFocusedActionTarget]
+  const doubleFocusedActionMove = doubleActionMoveBySlot[doubleActionFocusSlot] || ''
+  const doubleActionCards = React.useMemo(() => {
+    return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot) => {
+      const meta = doubleSlotMeta[slot]
+      const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
+      const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
+      const selectedMove = doubleActionMoveBySlot[slot] || ''
+      const selectedSpreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(selectedMove))
+      const enemyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side !== meta.side)
+      const allyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side === meta.side)
+      const moveRows = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
+        const lookup = lookupMoveMeta(move)
+        const priority = lookup?.priority ?? 0
+        const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(move))
+        const targetPreview = (targetSlot: DoubleBoardSlot) => {
+          const preview = buildDoubleDamageContext(slot, targetSlot, move, spreadMove)
+          const previewText = preview?.reason
+            ? preview.reason
+            : preview?.damage
+              ? `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`
+              : lt('계산 대기')
+          return {
+            targetSlot,
+            label: doubleSlotDisplayName(targetSlot),
+            selected: selectedMove === move && doubleActionTargetBySlot[slot] === targetSlot,
+            previewText,
+          }
+        }
+        return {
+          move,
+          type: lookup?.type ?? null,
+          priority,
+          selected: selectedMove === move,
+          spreadMove,
+          enemyTargets: enemyTargets.map(targetPreview),
+          allyTargets: allyTargets.map(targetPreview),
+        }
+      })
+      const selectedRow = moveRows.find((entry) => entry.selected) ?? moveRows[0] ?? null
+      return {
+        slot,
+        meta,
+        card,
+        moveRows,
+        enemyTargets: selectedRow?.enemyTargets ?? [],
+        allyTargets: selectedRow?.allyTargets ?? [],
+        spreadMove: selectedRow?.spreadMove ?? selectedSpreadMove,
+      }
+    })
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotDisplayName, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
+  const doubleCombinedDamageSummary = React.useMemo(() => {
+    const attackers: DoubleBoardSlot[] = ['myLeft', 'myRight']
+    const defenders: DoubleBoardSlot[] = ['oppLeft', 'oppRight']
+    return defenders.map((defenderSlot) => {
+      const contributions = attackers.map((attackerSlot) => {
+        const moveName = doubleActionMoveBySlot[attackerSlot] || ''
+        const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(moveName))
+        const selectedTarget = doubleActionTargetBySlot[attackerSlot]
+        const hitsDefender = spreadMove ? true : selectedTarget === defenderSlot
+        const preview = moveName && hitsDefender ? buildDoubleDamageContext(attackerSlot, defenderSlot, moveName, spreadMove) : null
+        return {
+          attackerSlot,
+          attackerLabel: doubleSlotDisplayName(attackerSlot),
+          moveName,
+          spreadMove,
+          selectedTarget,
+          hitsDefender,
+          preview,
+        }
+      })
+      const damageEntries = contributions.filter((entry) => entry.preview?.damage)
+      const min = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.min ?? 0), 0)
+      const max = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.max ?? 0), 0)
+      const defenderHp = contributions.find((entry) => entry.preview?.defenderHp)?.preview?.defenderHp ?? null
+      const minPct = defenderHp ? Math.round((min / defenderHp) * 1000) / 10 : null
+      const maxPct = defenderHp ? Math.round((max / defenderHp) * 1000) / 10 : null
+      const blocked = contributions
+        .filter((entry) => entry.moveName && entry.hitsDefender && !entry.preview?.damage)
+        .map((entry) => ({
+          attackerLabel: entry.attackerLabel,
+          reason: entry.preview?.reason ?? lt('계산 대기'),
+        }))
+        .filter((entry) => entry.reason !== lt('변화기는 대미지 계산 대상이 아님'))
+      return {
+        defenderSlot,
+        defenderLabel: doubleSlotDisplayName(defenderSlot),
+        defenderSprite: doubleSlotMeta[defenderSlot].option?.row?.sprite ?? null,
+        contributions,
+        hasDamage: damageEntries.length > 0,
+        totalText: damageEntries.length ? `${min} ~ ${max}` : '—',
+        totalPctText: damageEntries.length && minPct !== null && maxPct !== null ? `${minPct}% ~ ${maxPct}%` : '—',
+        blocked,
+      }
+    })
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleSlotDisplayName, doubleSlotMeta, lt])
+  React.useEffect(() => {
+    if (!doubleFriendGuardAvailableOpp && doubleFriendGuardOpp) setDoubleFriendGuardOpp(false)
+  }, [doubleFriendGuardAvailableOpp, doubleFriendGuardOpp])
+  React.useEffect(() => {
+    ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
+      const options = doubleActionOptionsBySlot[slot] ?? []
+      const current = doubleActionMoveBySlot[slot]
+      if (!options.length) {
+        if (current) setDoubleActionMoveBySlot[slot]('')
+        return
+      }
+      if (!current || !options.includes(current)) setDoubleActionMoveBySlot[slot](options[0])
+    })
+  }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, setDoubleActionMoveBySlot])
+  React.useEffect(() => {
+    ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
+      const options = doubleTargetOptionsBySlot[slot] ?? []
+      const current = doubleActionTargetBySlot[slot]
+      if (!options.includes(current)) setDoubleActionTargetBySlot[slot](options[0])
+    })
+  }, [doubleActionTargetBySlot, doubleTargetOptionsBySlot, setDoubleActionTargetBySlot])
+  React.useEffect(() => {
+    if (doubleAttackerSlot !== doubleActionFocusSlot) setDoubleAttackerSlot(doubleActionFocusSlot)
+    if (doubleDefenderSlot !== doubleFocusedActionTarget) setDoubleDefenderSlot(doubleFocusedActionTarget)
+    if (doubleMoveName !== doubleFocusedActionMove) setDoubleMoveName(doubleFocusedActionMove)
+  }, [doubleActionFocusSlot, doubleAttackerSlot, doubleDefenderSlot, doubleFocusedActionMove, doubleFocusedActionTarget, doubleMoveName])
   const setAutocompleteMenuOpen = React.useCallback((id: string) => {
     setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
   }, [])
@@ -3008,6 +3512,19 @@ export default function App() {
   const closeAutocompleteMenu = React.useCallback((id?: string) => {
     setAutocompleteHighlight((prev) => (!id || prev?.id === id ? null : prev))
   }, [])
+
+  React.useEffect(() => {
+    if (!doubleAttackerMoves.length) {
+      if (doubleMoveName) setDoubleMoveName('')
+      return
+    }
+    if (!doubleAttackerMoves.includes(doubleMoveName)) setDoubleMoveName(doubleAttackerMoves[0])
+  }, [doubleAttackerMoves, doubleMoveName])
+
+  React.useEffect(() => {
+    if (!doubleMoveName) return
+    setDoubleSpreadMove(DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(doubleMoveName)))
+  }, [doubleMoveName])
 
   React.useEffect(() => {
     if (typeof document === 'undefined') return
@@ -3135,19 +3652,48 @@ export default function App() {
       battleNote,
       confirmedMovesByKey,
       mainSection,
+      activeTab,
       sampleForge,
       savedSamples,
       sampleWorkbenchTab,
       sampleSpeedTargets,
       sampleDamageTargets,
+      doubleMyLeft,
+      doubleMyRight,
+      doubleOppLeft,
+      doubleOppRight,
+      doubleTrickRoom,
+      doubleTailwindMy,
+      doubleTailwindOpp,
+      doubleFriendGuardMy,
+      doubleFriendGuardOpp,
+      doubleWideGuardMy,
+      doubleWideGuardOpp,
+      doubleAttackerSlot,
+      doubleDefenderSlot,
+      doubleSpreadMove,
+      doubleMoveName,
+      doubleProtectMyLeft,
+      doubleProtectMyRight,
+      doubleProtectOppLeft,
+      doubleProtectOppRight,
+      doubleActionMoveMyLeft,
+      doubleActionMoveMyRight,
+      doubleActionMoveOppLeft,
+      doubleActionMoveOppRight,
+      doubleActionTargetMyLeft,
+      doubleActionTargetMyRight,
+      doubleActionTargetOppLeft,
+      doubleActionTargetOppRight,
+      doubleActionFocusSlot,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
 
   React.useEffect(() => {
     syncViewStateToUrl({
       mainSection,
-      activeTab: mainSection === 'single' ? activeTab : undefined,
+      activeTab: mainSection === 'single' || mainSection === 'double' ? activeTab : undefined,
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
       selectedMy,
       selectedOpp,
@@ -3237,11 +3783,7 @@ export default function App() {
 
   const mySpeed = partySpeedValue(myRow, myMember)
   const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage) : null
-  const oppSpeed = oppRow ? speedValue(oppRow, {
-    nature: oppMember.natureBoost ? 'jolly' : 'hardy',
-    scarf: oppMember.scarf || isChoiceScarfItem(oppMember.item),
-    speedStage: oppMember.speedStage,
-  }) : null
+  const oppSpeed = oppRow ? opponentSpeedValue(oppRow, oppMember) : null
   const pickedParty = party.filter((member) => member.picked)
   const pickedOpponents = opponents.filter((member) => member.picked)
   const opponentSpeedScenarios = oppRow ? [
@@ -4427,7 +4969,7 @@ export default function App() {
       setCalcOpponentAttackNature(nextOffenseState.attackNature)
       setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
-      setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
+      setConfirmedMovesByKey(sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey))
       setMainSection(parsed.mainSection ?? 'home')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
@@ -4454,7 +4996,8 @@ export default function App() {
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
               </div>
             </div>
@@ -4500,6 +5043,75 @@ export default function App() {
         </div>
         <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
       </header>
+
+      {doubleBulkEditorSlot !== null && doubleSlotMeta[doubleBulkEditorSlot].option?.entry && doubleSlotMeta[doubleBulkEditorSlot].option?.row ? (() => {
+        const modalSlot = doubleBulkEditorSlot
+        const modalEntry = doubleSlotMeta[modalSlot].option.entry
+        const modalRow = doubleSlotMeta[modalSlot].option.row
+        const modalName = displayName(modalRow, siteLanguage)
+        const modalEvs = opponentEffortValues(modalEntry)
+        const visibleStats = EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'hp' || stat.key === 'defense' || stat.key === 'spDefense' || stat.key === 'speed')
+        return <div className="modal-backdrop" onClick={() => setDoubleBulkEditorSlot(null)}>
+          <div className="modal-card double-opponent-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="row-between modal-header double-opponent-modal-header">
+              <div className="double-opponent-modal-title-wrap">
+                {modalRow.sprite ? <img src={modalRow.sprite} alt={modalName} className="double-opponent-modal-sprite" /> : null}
+                <div className="double-opponent-modal-title-copy">
+                  <h2>{modalName} · {lt('노력치 보정')}</h2>
+                </div>
+              </div>
+              <button type="button" className="action-button double-opponent-modal-close" onClick={() => setDoubleBulkEditorSlot(null)}>{lt('닫기')}</button>
+            </div>
+            <div className="modal-grid double-opponent-modal-grid">
+              <label className="double-opponent-modal-control double-opponent-modal-control-check">
+                <span>{lt('최속 가정')}</span>
+                <input type="checkbox" checked={modalEntry.natureBoost} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { natureBoost: e.target.checked })} />
+              </label>
+              <label className="double-opponent-modal-control double-opponent-modal-control-check">
+                <span>{lt('스카프')}</span>
+                <input type="checkbox" checked={modalEntry.scarf} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { scarf: e.target.checked })} />
+              </label>
+              <label className="double-opponent-modal-control">
+                <span>{lt('랭크')}</span>
+                <select value={modalEntry.speedStage} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { speedStage: clampSpeedStage(e.target.value) })}>
+                  {SPEED_STAGE_OPTIONS.map((n) => <option key={`double-bulk-modal-stage-${modalSlot}-${n}`} value={n}>{n >= 0 ? `+${n}` : n}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="pick-summary-badges double-opponent-modal-chips">
+              <label className={`double-opponent-modal-toggle-chip ${modalEntry.defenseNature === 1.1 ? 'active' : ''}`}>
+                <input type="checkbox" checked={modalEntry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                <span>{lt('+방어 성격')}</span>
+              </label>
+              <label className={`double-opponent-modal-toggle-chip ${modalEntry.spDefenseNature === 1.1 ? 'active' : ''}`}>
+                <input type="checkbox" checked={modalEntry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                <span>{lt('+특방 성격')}</span>
+              </label>
+              <span className="double-opponent-modal-total-meta">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
+            </div>
+            <div className="drag-stat-list double-opponent-drag-stat-list">
+              {visibleStats.map((stat) => {
+                const currentEffort = modalEvs[stat.key]
+                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(modalEvs, stat.key))
+                const additionalAvailable = Math.max(0, availableCap - currentEffort)
+                const actualValue = opponentStatValue(modalRow, modalEntry, stat.key)
+                return <div key={`double-opponent-effort-${modalSlot}-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)}`}>
+                  <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
+                  <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
+                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
+                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); return <span key={`double-opponent-effort-cell-${modalSlot}-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+                      <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onChange={(e) => { const evs = applyChampionsEffort(modalEvs, stat.key, e.target.value); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} />
+                    </div>
+                    <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => <div key={`double-opponent-effort-scale-${modalSlot}-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{opponentStatValue(modalRow, { ...modalEntry, ...opponentPatchFromEffortValues({ ...modalEvs, [stat.key]: checkpoint }) }, stat.key)}</small></div>)}</div>
+                  </div>
+                  <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap)} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => { const evs = applyChampionsEffort(modalEvs, stat.key, 0); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => { const evs = applyChampionsEffort(modalEvs, stat.key, availableCap); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap)} disabled={currentEffort >= availableCap}>+1</button></div>
+                  <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span></div>
+                </div>
+              })}
+            </div>
+          </div>
+        </div>
+      })() : null}
 
       {tuningModalIndex !== null && tuningMember && tuningRow ? (
         <div className="modal-backdrop" onClick={() => setTuningModalIndex(null)}>
@@ -4602,11 +5214,18 @@ export default function App() {
         <section className="panel wide home-hero-panel">
           <div className="row-between section-head home-hero-head" />
           <div className="home-route-grid">
-            <button type="button" className="home-route-card accent" onClick={() => setMainSection('single')}>
+            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('싱글배틀 메뉴')}</span>
                 <strong>{lt('싱글배틀')}</strong>
                 <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
+              </div>
+            </button>
+            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
+              <div className="home-route-card-copy">
+                <span className="home-route-eyebrow">{lt('더블배틀 메뉴')}</span>
+                <strong>{lt('더블배틀')}</strong>
+                <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
@@ -4676,27 +5295,31 @@ export default function App() {
         {mainSection !== 'home' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
-              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
+              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
+              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
             </div>
-            {mainSection === 'single' ? (
+            {mainSection === 'single' || mainSection === 'double' ? (
               <div className="battle-flow-nav">
                 <div className="battle-flow-diagram">
                   <button type="button" className={`flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
                   <span className="flow-arrow" aria-hidden="true">→</span>
                   <button type="button" className={`flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
                   <span className="flow-arrow" aria-hidden="true">→</span>
-                  <div className="flow-branch-group">
-                    <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
-                  </div>
+                  {mainSection === 'single' ? (
+                    <div className="flow-branch-group">
+                      <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                      <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
+                    </div>
+                  ) : (
+                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
+                  )}
                 </div>
               </div>
             ) : null}
           </div>
         </section> : null}
 
-        {mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power') ? (
+        {(mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) ? (
           <section className="panel wide">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
@@ -4723,7 +5346,164 @@ export default function App() {
           </section>
         ) : null}
 
-        {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
+        {(mainSection === 'double' && activeTab === 'power') ? <section className="panel wide">
+          <div className="row-between section-head">
+            <div>
+              <h2>{lt('더블 배틀 플래너')}</h2>
+            </div>
+          </div>
+
+          <div className="double-layout-grid">
+            <div className="double-layout-main">
+              <article className="double-layout-card double-planner-main-card">
+                <div className="double-layout-card-head">
+                  <strong>{lt('턴 플랜')}</strong>
+                  <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
+                </div>
+                <div className="double-planner-context">
+                  <div className="double-state-sections compact single">
+                    <div className="double-state-card">
+                      <strong>{lt('속도/전장')}</strong>
+                      <div className="double-toggle-grid double-toggle-grid-field">
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
+                        {doubleFriendGuardAvailableOpp ? <label className="calc-toggle-box double-toggle-grid-field-extra"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label> : null}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="double-inline-subcard double-damage-summary-card">
+                  <div className="double-layout-card-head compact">
+                    <strong>{lt('상대별 총 기대 대미지')}</strong>
+                  </div>
+                  <div className="double-combined-damage-grid">
+                    {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
+                      <div className="double-combined-damage-head">
+                        <div className="double-combined-damage-defender">
+                          {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
+                          <div className="double-combined-damage-defender-copy">
+                            <label className="double-side-select enemy compact">
+                              <select className="double-side-select-input enemy" value={entry.defenderSlot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
+                                {doubleOpponentOptions.map((option) => <option key={`double-damage-target-${entry.defenderSlot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                              </select>
+                            </label>
+                          </div>
+                        </div>
+                        <div className="double-combined-damage-head-meta">
+                          <span className="double-combined-damage-raw-inline">{entry.totalText}</span>
+                          <label className="calc-toggle-box double-slot-protect-toggle compact">
+                            <input
+                              type="checkbox"
+                              checked={entry.defenderSlot === 'oppLeft' ? doubleProtectOppLeft : doubleProtectOppRight}
+                              onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleProtectOppLeft(e.target.checked) : setDoubleProtectOppRight(e.target.checked)}
+                            />
+                            <span>{lt('방어')}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div className="double-combined-damage-total">{entry.totalPctText}</div>
+                      <div className="double-combined-damage-actions">
+                        <button
+                          type="button"
+                          className={`pick-chip ${doubleBulkEditorSlot === entry.defenderSlot ? 'active' : ''}`}
+                          onClick={() => setDoubleBulkEditorSlot(entry.defenderSlot)}
+                        >
+                          {lt('노력치 보정')}
+                        </button>
+                      </div>
+                      {entry.blocked.length ? <div className="double-combined-damage-notes">
+                        {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
+                      </div> : null}
+                    </div>)}
+                  </div>
+                </div>
+                <div className="double-attack-grid">
+                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
+                    <div className="double-focus-editor-head">
+                      <div className="double-focus-editor-identity">
+                        {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
+                        <label className="double-side-select compact">
+                          <select className="double-side-select-input" value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
+                            {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                          </select>
+                        </label>
+                      </div>
+                      <div className="double-speed-value-inline">{card?.speed ?? '—'}</div>
+                    </div>
+                    <div className="double-focus-editor-section">
+                      <div className="double-move-grid-2x2">
+                        {moveRows.length ? moveRows.map(({ move, type, priority, selected }) => <button
+                          key={`double-move-cell-${slot}-${move}`}
+                          type="button"
+                          className={`double-move-cell ${selected ? 'active' : ''}`}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionMoveBySlot[slot](move)
+                          }}
+                        >
+                          <span className="double-move-row-title">{move}</span>
+                          <span className="double-move-row-meta">
+                            {type ? <SmallTypeBadgeImage type={type} /> : null}
+                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                          </span>
+                        </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
+                      </div>
+                    </div>
+                    {!spreadMove && enemyTargets.length ? <div className="double-focus-editor-section">
+                      <span className="double-action-card-label">{lt('상대 대상')}</span>
+                      <div className="double-target-chip-row">
+                        {enemyTargets.map((entry) => <button
+                          key={`double-action-enemy-target-${slot}-${entry.targetSlot}`}
+                          type="button"
+                          className={`double-target-chip ${entry.selected ? 'active enemy' : ''}`}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionTargetBySlot[slot](entry.targetSlot)
+                          }}
+                        >{entry.label}</button>)}
+                      </div>
+                    </div> : null}
+                    {allyTargets.length ? <div className="double-focus-editor-section">
+                      <span className="double-action-card-label">{lt('보조/자기 대상')}</span>
+                      <div className="double-target-chip-row">
+                        {allyTargets.map((entry) => <button
+                          key={`double-action-target-${slot}-${entry.targetSlot}`}
+                          type="button"
+                          className={`double-target-chip ${entry.selected ? 'active' : ''} ${doubleSlotMeta[entry.targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionTargetBySlot[slot](entry.targetSlot)
+                          }}
+                        >{entry.label}</button>)}
+                      </div>
+                    </div> : null}
+                    {spreadMove ? <div className="double-spread-note">{lt('광역기 감쇠가 자동 적용됩니다.')}</div> : null}
+                  </div>)}
+                </div>
+                <div className="double-inline-subcard">
+                  <div className="double-layout-card-head compact">
+                    <strong>{lt('4마리 행동순')}</strong>
+                  </div>
+                  <div className="double-speed-preview-list">
+                    {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
+                      <span>{idx + 1}{lt('순위')} · {entry.label}</span>
+                      <div className="double-order-main with-sprite">
+                        {entry.sprite ? <img src={entry.sprite} alt={entry.name} className="double-order-sprite" /> : null}
+                        <strong>{entry.name}</strong>
+                      </div>
+                      <div className="double-speed-value-inline">{entry.speed ?? '—'}</div>
+                    </div>)}
+                  </div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+
+        </section> : null}
+
+        {((mainSection === 'single' && activeTab === 'party') || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between">
               <h2>{lt('내 파티 관리')}</h2>
@@ -5055,7 +5835,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {mainSection === 'home' ? null : mainSection === 'single' && activeTab === 'pick' ? <>
+        {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || (mainSection === 'double' && activeTab === 'pick')) ? <>
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
@@ -5427,6 +6207,14 @@ export default function App() {
                   }} />
                 </label>
                 <div className="inline-controls">
+                  <label>
+                    {lt('스피드 EV')}
+                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={oppMember.speedEv} onChange={(e) => {
+                      const next = [...opponents]
+                      next[selectedOpp] = { ...oppMember, speedEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) }
+                      setOpponents(next)
+                    }} />
+                  </label>
                   <label>
                     {lt('최속 가정')}
                     <input type="checkbox" checked={oppMember.natureBoost} onChange={(e) => {
@@ -6197,7 +6985,7 @@ export default function App() {
           </details>
         </section>
         </> : <>
-        {activeTab === 'speed' ? <section className="panel wide">
+        {(mainSection === 'single' && activeTab === 'speed') ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('내 파티 추월컷')}</h2>
           </div>
@@ -6305,7 +7093,7 @@ export default function App() {
           </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
         </section> : null}
 
-        {activeTab === 'power' ? <section className="panel wide">
+        {(mainSection === 'single' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('간단 대미지 계산')}</h2>
             <div className="pick-summary-badges">
