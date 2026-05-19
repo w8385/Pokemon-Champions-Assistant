@@ -1244,6 +1244,9 @@ header p {
 .double-state-sections.compact {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+.double-state-sections.compact.single {
+  grid-template-columns: minmax(0, 1fr);
+}
 .double-state-card {
   border: 1px solid rgba(51, 65, 85, 0.72);
   border-radius: 14px;

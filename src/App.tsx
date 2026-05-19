@@ -3238,6 +3238,8 @@ export default function App() {
       }
     })
   }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
+  const FRIEND_GUARD_NAMES = new Set(['프렌드가드', 'Friend Guard', 'フレンドガード'])
+  const doubleFriendGuardAvailableOpp = React.useMemo(() => doubleBoardStateCards.some((card) => card.side === 'opp' && FRIEND_GUARD_NAMES.has(card.ability || '')), [doubleBoardStateCards])
   const doubleActionOptionsBySlot = React.useMemo(() => {
     return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
   }, [doubleBoardStateCards])
@@ -3372,6 +3374,9 @@ export default function App() {
       }
     })
   }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleSlotDisplayName, doubleSlotMeta, lt])
+  React.useEffect(() => {
+    if (!doubleFriendGuardAvailableOpp && doubleFriendGuardOpp) setDoubleFriendGuardOpp(false)
+  }, [doubleFriendGuardAvailableOpp, doubleFriendGuardOpp])
   React.useEffect(() => {
     ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
       const options = doubleActionOptionsBySlot[slot] ?? []
@@ -5180,42 +5185,6 @@ export default function App() {
             </div>
           </div>
 
-          <div className="double-board-overview">
-            <div className="double-board-side">
-              <span className="double-board-side-label">{lt('내 보드')}</span>
-              <div className="double-slot-pair">
-                <div className="double-slot-card">
-                  <strong>{lt('좌측 슬롯')}</strong>
-                  <span>{doubleBoardSlots.myLeft?.row ? displayName(doubleBoardSlots.myLeft.row, siteLanguage) : lt('미선택')}</span>
-                </div>
-                <div className="double-slot-card">
-                  <strong>{lt('우측 슬롯')}</strong>
-                  <span>{doubleBoardSlots.myRight?.row ? displayName(doubleBoardSlots.myRight.row, siteLanguage) : lt('미선택')}</span>
-                </div>
-              </div>
-            </div>
-            <div className="double-board-center-badges">
-              <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{lt('트릭룸')}</span>
-              <span className={`pick-badge ${doubleTailwindMy ? 'subtle' : ''}`}>{lt('아군 순풍')}</span>
-              <span className={`pick-badge enemy ${doubleTailwindOpp ? 'subtle' : ''}`}>{lt('상대 순풍')}</span>
-              <span className={`pick-badge ${doubleFriendGuardMy || doubleFriendGuardOpp ? 'subtle' : ''}`}>{lt('프렌드가드')}</span>
-              <span className={`pick-badge ${doubleWideGuardMy || doubleWideGuardOpp ? 'subtle' : ''}`}>{lt('와이드가드')}</span>
-            </div>
-            <div className="double-board-side enemy">
-              <span className="double-board-side-label">{lt('상대 보드')}</span>
-              <div className="double-slot-pair">
-                <div className="double-slot-card">
-                  <strong>{lt('좌측 슬롯')}</strong>
-                  <span>{doubleBoardSlots.oppLeft?.row ? displayName(doubleBoardSlots.oppLeft.row, siteLanguage) : lt('미선택')}</span>
-                </div>
-                <div className="double-slot-card">
-                  <strong>{lt('우측 슬롯')}</strong>
-                  <span>{doubleBoardSlots.oppRight?.row ? displayName(doubleBoardSlots.oppRight.row, siteLanguage) : lt('미선택')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="double-layout-grid">
             <div className="double-layout-main">
               <article className="double-layout-card double-planner-main-card">
@@ -5254,52 +5223,14 @@ export default function App() {
                       </select>
                     </label>
                   </div>
-                  <div className="double-slot-state-grid compact">
-                    {doubleBoardStateCards.map((card) => <div key={`double-state-${card.slot}`} className={`double-slot-state-card ${card.side === 'opp' ? 'enemy' : ''}`}>
-                      <div className="double-slot-state-head">
-                        <strong>{card.label}</strong>
-                        <div className="pick-summary-badges">
-                          <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
-                          {card.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
-                          {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
-                        </div>
-                      </div>
-                      <div className="double-slot-state-name">{card.name}</div>
-                      <div className="double-slot-state-meta">
-                        <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
-                        <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
-                      </div>
-                      <label className="calc-toggle-box double-slot-protect-toggle">
-                        <input
-                          type="checkbox"
-                          checked={card.protected}
-                          onChange={(e) => {
-                            if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
-                            else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
-                            else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
-                            else setDoubleProtectOppRight(e.target.checked)
-                          }}
-                        />
-                        <span>{card.label} {lt('방어')}</span>
-                      </label>
-                    </div>)}
-                  </div>
-                  <div className="double-state-sections compact">
+                  <div className="double-state-sections compact single">
                     <div className="double-state-card">
                       <strong>{lt('속도/전장')}</strong>
                       <div className="double-toggle-grid">
                         <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
                         <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
                         <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
-                      </div>
-                    </div>
-                    <div className="double-state-card">
-                      <strong>{lt('방어 보정')}</strong>
-                      <div className="double-toggle-grid">
-                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
+                        {doubleFriendGuardAvailableOpp ? <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label> : null}
                       </div>
                     </div>
                   </div>
