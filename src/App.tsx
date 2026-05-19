@@ -5003,7 +5003,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {((mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) || mainSection === 'double') ? (
+        {((mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) || (mainSection === 'double' && activeTab === 'power')) ? (
           <section className="panel wide">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
@@ -5030,7 +5030,7 @@ export default function App() {
           </section>
         ) : null}
 
-        {mainSection === 'double' ? <section className="panel wide">
+        {(mainSection === 'double' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
               <h2>{lt('더블 계산 작업 보드')}</h2>
@@ -5275,7 +5275,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {((mainSection === 'single' && activeTab === 'party') || mainSection === 'double') ? <section className="panel wide">
+        {((mainSection === 'single' && activeTab === 'party') || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between">
               <h2>{lt('내 파티 관리')}</h2>
@@ -5607,7 +5607,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || mainSection === 'double') ? <>
+        {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || (mainSection === 'double' && activeTab === 'pick')) ? <>
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
