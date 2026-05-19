@@ -5346,9 +5346,6 @@ export default function App() {
             <div>
               <h2>{lt('더블 배틀 플래너')}</h2>
             </div>
-            <div className="pick-summary-badges">
-              <span className="pick-badge">{lt('feature/double-battle')}</span>
-            </div>
           </div>
 
           <div className="double-layout-grid">
