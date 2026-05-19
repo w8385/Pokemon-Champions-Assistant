@@ -5264,29 +5264,8 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className="double-planner-layout">
-                  <div className="double-slot-summary-list">
-                    {doubleActionCards.map(({ slot, meta, card, summaryTargets }) => {
-                      const active = doubleActionFocusSlot === slot
-                      return <button
-                        key={`double-slot-summary-${slot}`}
-                        type="button"
-                        className={`double-slot-summary-item ${active ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
-                        onClick={() => setDoubleActionFocusSlot(slot)}
-                      >
-                        <div className="double-slot-summary-head">
-                          <strong>{meta.label}</strong>
-                          <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                        </div>
-                        <div className="double-slot-summary-name">{card?.name || lt('미선택')}</div>
-                        <div className="double-slot-summary-move">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')}</div>
-                        <div className="double-slot-summary-targets">
-                          {summaryTargets.map((entry) => <span key={`double-slot-summary-target-${slot}-${entry.targetSlot}`}>{entry.label} {entry.previewText}</span>)}
-                        </div>
-                      </button>
-                    })}
-                  </div>
-                  {doubleActionCards.filter((entry) => entry.slot === doubleActionFocusSlot).map(({ slot, meta, card, moveRows, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-focus-editor">
+                <div className="double-attack-grid">
+                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
                     <div className="double-focus-editor-head">
                       <div>
                         <strong>{meta.label}</strong>
@@ -5294,20 +5273,23 @@ export default function App() {
                       </div>
                       <div className="pick-summary-badges">
                         <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                        <span className="pick-badge subtle">{lt('현재 선택')}</span>
+                        {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
                       </div>
                     </div>
                     <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{lt('기술 선택 + 대상 기대값')}</span>
-                      <div className="double-move-matrix">
+                      <span className="double-action-card-label">{lt('기술 2x2 + 상대 좌/우 기대값')}</span>
+                      <div className="double-move-grid-2x2">
                         {moveRows.length ? moveRows.map(({ move, type, priority, selected, enemyTargets: rowTargets }) => <div
-                          key={`double-move-row-${slot}-${move}`}
-                          className={`double-move-row ${selected ? 'active' : ''}`}
+                          key={`double-move-cell-${slot}-${move}`}
+                          className={`double-move-cell ${selected ? 'active' : ''}`}
                         >
                           <button
                             type="button"
-                            className="double-move-row-main"
-                            onClick={() => setDoubleActionMoveBySlot[slot](move)}
+                            className="double-move-cell-main"
+                            onClick={() => {
+                              setDoubleActionFocusSlot(slot)
+                              setDoubleActionMoveBySlot[slot](move)
+                            }}
                           >
                             <span className="double-move-row-title">{move}</span>
                             <span className="double-move-row-meta">
@@ -5315,12 +5297,13 @@ export default function App() {
                               <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
                             </span>
                           </button>
-                          <div className="double-move-row-targets">
+                          <div className="double-move-cell-targets">
                             {rowTargets.map((entry) => <button
                               key={`double-target-summary-${slot}-${move}-${entry.targetSlot}`}
                               type="button"
                               className={`double-move-target-cell ${entry.selected ? 'active' : ''}`}
                               onClick={() => {
+                                setDoubleActionFocusSlot(slot)
                                 setDoubleActionMoveBySlot[slot](move)
                                 setDoubleActionTargetBySlot[slot](entry.targetSlot)
                               }}
@@ -5339,7 +5322,10 @@ export default function App() {
                           key={`double-action-target-${slot}-${entry.targetSlot}`}
                           type="button"
                           className={`double-target-chip ${entry.selected ? 'active' : ''} ${doubleSlotMeta[entry.targetSlot].side === 'opp' ? 'enemy' : ''}`}
-                          onClick={() => setDoubleActionTargetBySlot[slot](entry.targetSlot)}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionTargetBySlot[slot](entry.targetSlot)
+                          }}
                         >{entry.label}</button>)}
                       </div>
                     </div> : null}
@@ -5371,36 +5357,6 @@ export default function App() {
               </article>
             </div>
 
-            <div className="double-layout-side">
-              <article className="double-layout-card accent">
-                <div className="double-layout-card-head">
-                  <strong>{lt('C. 기대 대미지 상세')}</strong>
-                  <span className="pick-badge verdict-badge">{lt('현재 선택 행동')}</span>
-                </div>
-                <div className="sample-note-list">
-                  {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
-                  {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
-                  {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
-                  {doubleProtectBySlot[doubleDefenderSlot] ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
-                </div>
-                {doubleDamageContext?.reason ? <div className="damage-box empty compact"><p>{doubleDamageContext.reason}</p></div> : doubleDamageContext?.damage ? <div className="damage-box compact">
-                  <div className="damage-summary-grid">
-                    <div className="damage-summary-card verdict verdict-card">
-                      <span>{lt('대미지')}</span>
-                      <strong>{doubleDamageContext.damage.min} ~ {doubleDamageContext.damage.max}</strong>
-                    </div>
-                    <div className="damage-summary-card">
-                      <span>{lt('비율')}</span>
-                      <strong>{doubleDamageContext.damage.minPct}% ~ {doubleDamageContext.damage.maxPct}%</strong>
-                    </div>
-                    <div className="damage-summary-card accent">
-                      <span>{lt('효과')}</span>
-                      <strong>x{doubleDamageContext.effectiveness}</strong>
-                    </div>
-                  </div>
-                </div> : <p className="muted">{lt('행동 플래너에서 기술과 대상을 고르면 여기서 결과를 바로 확인합니다.')}</p>}
-              </article>
-            </div>
           </div>
 
         </section> : null}

@@ -1139,7 +1139,7 @@ header p {
 }
 .double-layout-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.72fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   align-items: start;
 }
@@ -1268,59 +1268,12 @@ header p {
 .double-layout-card-head.compact {
   margin-bottom: 0;
 }
-.double-planner-layout {
+.double-attack-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  align-items: start;
 }
-.double-slot-summary-list {
-  display: grid;
-  gap: 8px;
-}
-.double-slot-summary-item {
-  width: 100%;
-  border: 1px solid rgba(51, 65, 85, 0.72);
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.42);
-  padding: 12px;
-  display: grid;
-  gap: 6px;
-  text-align: left;
-  color: inherit;
-}
-.double-slot-summary-item.enemy {
-  border-color: rgba(124, 45, 18, 0.72);
-}
-.double-slot-summary-item.active {
-  border-color: rgba(96, 165, 250, 0.95);
-  background: rgba(15, 23, 42, 0.78);
-  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.28);
-}
-.double-slot-summary-head,
-.double-focus-editor-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.double-slot-summary-name,
-.double-focus-editor-name {
-  font-size: 15px;
-  font-weight: 700;
-}
-.double-slot-summary-move {
-  color: #e2e8f0;
-  font-size: 12px;
-  font-weight: 600;
-}
-.double-slot-summary-targets {
-  display: grid;
-  gap: 4px;
-  color: #93a4b8;
-  font-size: 12px;
-}
-.double-focus-editor {
+.double-attacker-card {
   border: 1px solid rgba(51, 65, 85, 0.72);
   border-radius: 16px;
   background: rgba(2, 6, 23, 0.28);
@@ -1328,28 +1281,38 @@ header p {
   display: grid;
   gap: 12px;
 }
+.double-focus-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.double-focus-editor-name {
+  font-size: 15px;
+  font-weight: 700;
+}
 .double-focus-editor-section {
   display: grid;
   gap: 6px;
 }
-.double-move-matrix {
+.double-move-grid-2x2 {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
-.double-move-row {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.1fr);
-  gap: 8px;
-  padding: 8px;
+.double-move-cell {
   border: 1px solid rgba(51, 65, 85, 0.56);
   border-radius: 14px;
   background: rgba(15, 23, 42, 0.26);
+  padding: 8px;
+  display: grid;
+  gap: 8px;
 }
-.double-move-row.active {
+.double-move-cell.active {
   border-color: rgba(96, 165, 250, 0.95);
   background: rgba(15, 23, 42, 0.52);
 }
-.double-move-row-main {
+.double-move-cell-main {
   border: 1px solid rgba(71, 85, 105, 0.8);
   border-radius: 12px;
   background: rgba(15, 23, 42, 0.9);
@@ -1373,9 +1336,8 @@ header p {
   width: 18px;
   height: 18px;
 }
-.double-move-row-targets {
+.double-move-cell-targets {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 .double-move-target-cell {
@@ -5074,7 +5036,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-layout-grid,
   .double-layout-main,
   .double-layout-side,
-  .double-planner-layout,
+  .double-attack-grid,
   .double-board-control-grid,
   .double-slot-state-grid,
   .double-slot-state-grid.compact,
@@ -5082,8 +5044,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-toggle-grid,
   .double-action-chip-grid,
   .double-target-summary-row,
-  .double-move-row,
-  .double-move-row-targets { grid-template-columns: 1fr; }
+  .double-move-grid-2x2 { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }
