@@ -1545,6 +1545,12 @@ header p {
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
+.double-combined-damage-raw-inline.verdict-guaranteed {
+  color: #fca5a5;
+}
+.double-combined-damage-raw-inline.verdict-possible {
+  color: #fde68a;
+}
 .double-combined-damage-total {
   display: flex;
   align-items: center;
@@ -1555,6 +1561,12 @@ header p {
   color: #f8fafc;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+}
+.double-combined-damage-total.verdict-guaranteed {
+  color: #f87171;
+}
+.double-combined-damage-total.verdict-possible {
+  color: #facc15;
 }
 .double-combined-damage-notes {
   min-height: 16px;

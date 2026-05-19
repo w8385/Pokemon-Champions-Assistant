@@ -1805,6 +1805,14 @@ function resolveDamageVerdict(damage: { min: number, max: number, rolls: number[
   return language === 'en' ? 'Needs long game' : language === 'ja' ? '長期戦' : '장기전'
 }
 
+function resolveDamageVerdictTone(damage: { min: number, max: number, rolls: number[] } | null | undefined, hp: number | null | undefined) {
+  if (!damage || !hp || isNoEffectDamage(damage)) return 'neutral'
+  const verdict = resolveDamageVerdict(damage, hp, 'en')
+  if (verdict.startsWith('Guaranteed')) return 'guaranteed'
+  if (verdict.startsWith('Roll')) return 'possible'
+  return 'neutral'
+}
+
 function battleStageMultiplier(stage: number) {
   if (stage > 0) return (2 + stage) / 2
   if (stage < 0) return 2 / (2 + Math.abs(stage))
@@ -3523,6 +3531,8 @@ export default function App() {
           reason: entry.preview?.reason ?? lt('계산 대기'),
         }))
         .filter((entry) => entry.reason !== lt('변화기는 대미지 계산 대상이 아님'))
+      const combinedDamage = damageEntries.length ? { min, max, rolls: [min, max] } : null
+      const verdictTone = resolveDamageVerdictTone(combinedDamage, defenderHp)
       return {
         defenderSlot,
         defenderLabel: doubleSlotDisplayName(defenderSlot),
@@ -3531,6 +3541,7 @@ export default function App() {
         hasDamage: damageEntries.length > 0,
         totalText: damageEntries.length ? `${min} ~ ${max}` : '—',
         totalPctText: damageEntries.length && minPct !== null && maxPct !== null ? `${minPct}% ~ ${maxPct}%` : '—',
+        verdictTone,
         blocked,
       }
     })
@@ -5520,7 +5531,7 @@ export default function App() {
                           </div>
                         </div>
                         <div className="double-combined-damage-head-meta">
-                          <span className="double-combined-damage-raw-inline">{entry.totalText}</span>
+                          <span className={`double-combined-damage-raw-inline verdict-${entry.verdictTone}`}>{entry.totalText}</span>
                           <label className="calc-toggle-box double-slot-protect-toggle compact">
                             <input
                               type="checkbox"
@@ -5531,7 +5542,7 @@ export default function App() {
                           </label>
                         </div>
                       </div>
-                      <div className="double-combined-damage-total">{entry.totalPctText}</div>
+                      <div className={`double-combined-damage-total verdict-${entry.verdictTone}`}>{entry.totalPctText}</div>
                       <div className="double-combined-damage-actions">
                         <button
                           type="button"
