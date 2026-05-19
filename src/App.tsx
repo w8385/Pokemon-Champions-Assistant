@@ -3311,10 +3311,6 @@ export default function App() {
           previewText,
         }
       })
-      const summaryTargets = previewEntries.filter((entry) => doubleSlotMeta[entry.targetSlot].side !== meta.side).slice(0, 2)
-      const summaryText = summaryTargets.length
-        ? summaryTargets.map((entry) => `${entry.label} ${entry.previewText}`).join(' / ')
-        : lt('대상 선택 대기')
       return {
         slot,
         meta,
@@ -3322,7 +3318,6 @@ export default function App() {
         moveDetails,
         enemyTargets: previewEntries.filter((entry) => enemyTargets.includes(entry.targetSlot)),
         allyTargets: previewEntries.filter((entry) => allyTargets.includes(entry.targetSlot)),
-        summaryText,
         spreadMove,
       }
     })
@@ -5267,7 +5262,7 @@ export default function App() {
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
                 <div className="double-action-card-grid">
-                  {doubleActionCards.map(({ slot, meta, card, moveDetails, enemyTargets, allyTargets, summaryText, spreadMove }) => {
+                  {doubleActionCards.map(({ slot, meta, card, moveDetails, enemyTargets, allyTargets, spreadMove }) => {
                     const expanded = doubleActionFocusSlot === slot
                     return <div
                       key={`double-action-card-${slot}`}
@@ -5304,12 +5299,12 @@ export default function App() {
                         </div>
                       </div>
                       <div className="double-action-card-section">
-                        <span className="double-action-card-label">{meta.side === 'my' ? lt('상대 두 자리 기대값') : lt('내 두 자리 기대값')}</span>
-                        <div className="double-target-preview-grid">
+                        <span className="double-action-card-label">{meta.side === 'my' ? lt('상대 좌/우 기대값') : lt('내 좌/우 기대값')}</span>
+                        <div className={`double-target-summary-row ${expanded ? 'active' : ''}`}>
                           {enemyTargets.map((entry) => <button
-                            key={`double-target-preview-${slot}-${entry.targetSlot}`}
+                            key={`double-target-summary-${slot}-${entry.targetSlot}`}
                             type="button"
-                            className={`double-target-preview-card ${entry.selected ? 'active' : ''} ${doubleSlotMeta[entry.targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                            className={`double-target-summary-chip ${entry.selected ? 'active' : ''}`}
                             onClick={(e) => {
                               e.stopPropagation()
                               setDoubleActionFocusSlot(slot)
@@ -5336,11 +5331,11 @@ export default function App() {
                             >{entry.label}</button>)}
                           </div>
                         </div> : null}
-                        <label className="calc-toggle-box double-inline-toggle" onClick={(e) => e.stopPropagation()}>
+                        {spreadMove ? <label className="calc-toggle-box double-inline-toggle" onClick={(e) => e.stopPropagation()}>
                           <input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} />
                           <span>{lt('광역기 감쇠 적용')}</span>
-                        </label>
-                      </> : <div className="double-action-card-damage-preview">{summaryText}</div>}
+                        </label> : null}
+                      </> : null}
                     </div>
                   })}
                 </div>

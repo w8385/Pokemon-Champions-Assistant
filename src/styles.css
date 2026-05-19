@@ -1331,35 +1331,32 @@ header p {
 .double-target-chip.enemy.active {
   border-color: rgba(251, 146, 60, 0.95);
 }
-.double-target-preview-grid {
+.double-target-summary-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-.double-target-preview-card {
+.double-target-summary-chip {
   border: 1px solid rgba(71, 85, 105, 0.8);
   border-radius: 12px;
   background: rgba(15, 23, 42, 0.9);
-  padding: 10px;
+  padding: 10px 12px;
   display: grid;
   gap: 4px;
   text-align: left;
   color: #e2e8f0;
 }
-.double-target-preview-card.active {
-  border-color: rgba(96, 165, 250, 0.95);
+.double-target-summary-chip.active {
+  border-color: rgba(251, 146, 60, 0.95);
   background: rgba(30, 41, 59, 0.98);
 }
-.double-target-preview-card.enemy.active {
-  border-color: rgba(251, 146, 60, 0.95);
-}
-.double-target-preview-card strong {
+.double-target-summary-chip strong {
   font-size: 12px;
 }
-.double-target-preview-card span {
-  color: #cbd5e1;
-  font-size: 12px;
-  font-weight: 600;
+.double-target-summary-chip span {
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
 }
 .double-target-chip-row {
   display: flex;
@@ -4964,7 +4961,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-toggle-grid,
   .double-action-card-grid,
   .double-action-chip-grid,
-  .double-target-preview-grid { grid-template-columns: 1fr; }
+  .double-target-summary-row { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }
