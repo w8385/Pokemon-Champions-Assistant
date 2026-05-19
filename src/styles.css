@@ -3680,10 +3680,10 @@ header p {
   box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.22) inset;
 }
 .party-overview-panel {
-  padding-top: 0;
+  padding-top: 16px;
 }
 .party-overview-panel h2 {
-  margin-top: 0;
+  margin: 0 0 10px;
 }
 .party-overview {
   position: sticky;
