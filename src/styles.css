@@ -1320,6 +1320,11 @@ header p {
   color: #93a4b8;
   font-size: 12px;
 }
+.double-spread-note {
+  color: #93c5fd;
+  font-size: 12px;
+  font-weight: 600;
+}
 .double-focus-editor-head {
   display: flex;
   align-items: center;

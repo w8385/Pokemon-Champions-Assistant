@@ -3319,7 +3319,7 @@ export default function App() {
         meta,
         card,
         moveRows,
-        summaryTargets: selectedRow?.enemyTargets ?? [],
+        enemyTargets: selectedRow?.enemyTargets ?? [],
         allyTargets: selectedRow?.allyTargets ?? [],
         spreadMove: selectedRow?.spreadMove ?? selectedSpreadMove,
       }
@@ -3332,11 +3332,16 @@ export default function App() {
       const contributions = attackers.map((attackerSlot) => {
         const moveName = doubleActionMoveBySlot[attackerSlot] || ''
         const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(moveName))
-        const preview = moveName ? buildDoubleDamageContext(attackerSlot, defenderSlot, moveName, spreadMove) : null
+        const selectedTarget = doubleActionTargetBySlot[attackerSlot]
+        const hitsDefender = spreadMove ? true : selectedTarget === defenderSlot
+        const preview = moveName && hitsDefender ? buildDoubleDamageContext(attackerSlot, defenderSlot, moveName, spreadMove) : null
         return {
           attackerSlot,
           attackerLabel: doubleSlotMeta[attackerSlot].label,
           moveName,
+          spreadMove,
+          selectedTarget,
+          hitsDefender,
           preview,
         }
       })
@@ -3346,7 +3351,7 @@ export default function App() {
       const defenderHp = contributions.find((entry) => entry.preview?.defenderHp)?.preview?.defenderHp ?? null
       const minPct = defenderHp ? Math.round((min / defenderHp) * 1000) / 10 : null
       const maxPct = defenderHp ? Math.round((max / defenderHp) * 1000) / 10 : null
-      const blocked = contributions.filter((entry) => entry.moveName && !entry.preview?.damage).map((entry) => ({
+      const blocked = contributions.filter((entry) => entry.moveName && entry.hitsDefender && !entry.preview?.damage).map((entry) => ({
         attackerLabel: entry.attackerLabel,
         reason: entry.preview?.reason ?? lt('계산 대기'),
       }))
@@ -5294,7 +5299,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="double-attack-grid">
-                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
+                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
                     <div className="double-focus-editor-head">
                       <div>
                         <strong>{meta.label}</strong>
@@ -5325,6 +5330,20 @@ export default function App() {
                         </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
                       </div>
                     </div>
+                    {!spreadMove && enemyTargets.length ? <div className="double-focus-editor-section">
+                      <span className="double-action-card-label">{lt('상대 대상')}</span>
+                      <div className="double-target-chip-row">
+                        {enemyTargets.map((entry) => <button
+                          key={`double-action-enemy-target-${slot}-${entry.targetSlot}`}
+                          type="button"
+                          className={`double-target-chip ${entry.selected ? 'active enemy' : ''}`}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionTargetBySlot[slot](entry.targetSlot)
+                          }}
+                        >{entry.label}</button>)}
+                      </div>
+                    </div> : null}
                     {allyTargets.length ? <div className="double-focus-editor-section">
                       <span className="double-action-card-label">{lt('보조/자기 대상')}</span>
                       <div className="double-target-chip-row">
@@ -5339,10 +5358,7 @@ export default function App() {
                         >{entry.label}</button>)}
                       </div>
                     </div> : null}
-                    {spreadMove ? <label className="calc-toggle-box double-inline-toggle">
-                      <input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} />
-                      <span>{lt('광역기 감쇠 적용')}</span>
-                    </label> : null}
+                    {spreadMove ? <div className="double-spread-note">{lt('광역기 감쇠가 자동 적용됩니다.')}</div> : null}
                   </div>)}
                 </div>
                 <div className="double-inline-subcard double-damage-summary-card">
@@ -5359,7 +5375,7 @@ export default function App() {
                       <div className="double-combined-damage-total">{entry.totalText}</div>
                       <div className="double-combined-damage-lines">
                         {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
-                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}
+                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotMeta[part.selectedTarget].label}`) : ''}
                         </span>)}
                       </div>
                       {entry.blocked.length ? <div className="double-combined-damage-notes">
