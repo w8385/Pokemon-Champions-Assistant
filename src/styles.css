@@ -1262,6 +1262,7 @@ header p {
   gap: 10px;
   text-align: left;
   color: inherit;
+  cursor: pointer;
 }
 .double-action-card.enemy {
   border-color: rgba(124, 45, 18, 0.72);
@@ -1361,6 +1362,17 @@ header p {
   color: #cbd5e1;
   font-size: 12px;
   font-weight: 600;
+}
+.double-detail-summary {
+  display: grid;
+  gap: 4px;
+}
+.double-detail-summary strong {
+  font-size: 15px;
+}
+.double-detail-summary span {
+  color: #93a4b8;
+  font-size: 12px;
 }
 .double-inline-subcard {
   border: 1px solid rgba(51, 65, 85, 0.56);

@@ -5241,15 +5241,6 @@ export default function App() {
                       <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
                     </div>
                   </div>
-                  <div className="double-state-card">
-                    <strong>{lt('개별 방어')}</strong>
-                    <div className="double-toggle-grid">
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyLeft} onChange={(e) => setDoubleProtectMyLeft(e.target.checked)} /><span>{lt('내 좌측 방어')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyRight} onChange={(e) => setDoubleProtectMyRight(e.target.checked)} /><span>{lt('내 우측 방어')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppLeft} onChange={(e) => setDoubleProtectOppLeft(e.target.checked)} /><span>{lt('상대 좌측 방어')}</span></label>
-                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppRight} onChange={(e) => setDoubleProtectOppRight(e.target.checked)} /><span>{lt('상대 우측 방어')}</span></label>
-                    </div>
-                  </div>
                 </div>
               </article>
             </div>
@@ -5260,65 +5251,68 @@ export default function App() {
                   <strong>{lt('B. 턴 행동 플래너')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
-                <p className="muted">{lt('각 슬롯이 이번 턴에 누를 기술과 대상을 먼저 정하고, 클릭한 행동을 우측 상세 패널에서 바로 검토합니다.')}</p>
+                <p className="muted">{lt('카드는 한 번에 하나만 펼치고, 나머지는 요약만 보여서 중복 입력을 줄였습니다.')}</p>
                 <div className="double-action-card-grid">
-                  {doubleActionCards.map(({ slot, meta, card, moveDetails, targetGroups, previewText }) => <div
-                    key={`double-action-card-${slot}`}
-                    className={`double-action-card ${doubleActionFocusSlot === slot ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
-                    onClick={() => setDoubleActionFocusSlot(slot)}
-                  >
-                    <div className="double-action-card-head">
-                      <strong>{meta.label}</strong>
-                      <div className="pick-summary-badges">
-                        <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                        {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
+                  {doubleActionCards.map(({ slot, meta, card, moveDetails, targetGroups, previewText }) => {
+                    const expanded = doubleActionFocusSlot === slot
+                    return <div
+                      key={`double-action-card-${slot}`}
+                      className={`double-action-card ${expanded ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
+                      onClick={() => setDoubleActionFocusSlot(slot)}
+                    >
+                      <div className="double-action-card-head">
+                        <strong>{meta.label}</strong>
+                        <div className="pick-summary-badges">
+                          <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
+                          {expanded ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
+                        </div>
                       </div>
-                    </div>
-                    <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
-                    <div className="double-action-card-section">
-                      <span className="double-action-card-label">{lt('기술')}</span>
-                      <div className="double-action-chip-grid">
-                        {moveDetails.length ? moveDetails.map(({ move, type, priority }) => <button
-                          key={`double-action-option-${slot}-${move}`}
-                          type="button"
-                          className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setDoubleActionFocusSlot(slot)
-                            setDoubleActionMoveBySlot[slot](move)
-                          }}
-                        >
-                          <span className="double-action-chip-main">{move}</span>
-                          <span className="double-action-chip-meta">
-                            {type ? <SmallTypeBadgeImage type={type} /> : null}
-                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
-                          </span>
-                        </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
-                      </div>
-                    </div>
-                    <div className="double-action-card-section">
-                      <span className="double-action-card-label">{lt('대상')}</span>
-                      <div className="double-target-groups">
-                        {targetGroups.map((group) => <div key={`double-target-group-${slot}-${group.label}`} className="double-target-group">
-                          <span className="double-target-group-label">{group.label}</span>
-                          <div className="double-target-chip-row">
-                            {group.items.map((targetSlot) => <button
-                              key={`double-action-target-${slot}-${targetSlot}`}
+                      <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
+                      <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
+                      <div className="double-action-card-damage-preview">{previewText}</div>
+                      {expanded ? <>
+                        <div className="double-action-card-section">
+                          <span className="double-action-card-label">{lt('기술')}</span>
+                          <div className="double-action-chip-grid">
+                            {moveDetails.length ? moveDetails.map(({ move, type, priority }) => <button
+                              key={`double-action-option-${slot}-${move}`}
                               type="button"
-                              className={`double-target-chip ${doubleActionTargetBySlot[slot] === targetSlot ? 'active' : ''} ${doubleSlotMeta[targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                              className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation()
-                                setDoubleActionFocusSlot(slot)
-                                setDoubleActionTargetBySlot[slot](targetSlot)
+                                setDoubleActionMoveBySlot[slot](move)
                               }}
-                            >{doubleSlotMeta[targetSlot].label}</button>)}
+                            >
+                              <span className="double-action-chip-main">{move}</span>
+                              <span className="double-action-chip-meta">
+                                {type ? <SmallTypeBadgeImage type={type} /> : null}
+                                <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                              </span>
+                            </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
                           </div>
-                        </div>)}
-                      </div>
+                        </div>
+                        <div className="double-action-card-section">
+                          <span className="double-action-card-label">{lt('대상')}</span>
+                          <div className="double-target-groups">
+                            {targetGroups.map((group) => <div key={`double-target-group-${slot}-${group.label}`} className="double-target-group">
+                              <span className="double-target-group-label">{group.label}</span>
+                              <div className="double-target-chip-row">
+                                {group.items.map((targetSlot) => <button
+                                  key={`double-action-target-${slot}-${targetSlot}`}
+                                  type="button"
+                                  className={`double-target-chip ${doubleActionTargetBySlot[slot] === targetSlot ? 'active' : ''} ${doubleSlotMeta[targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setDoubleActionTargetBySlot[slot](targetSlot)
+                                  }}
+                                >{doubleSlotMeta[targetSlot].label}</button>)}
+                              </div>
+                            </div>)}
+                          </div>
+                        </div>
+                      </> : null}
                     </div>
-                    <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
-                    <div className="double-action-card-damage-preview">{previewText}</div>
-                  </div>)}
+                  })}
                 </div>
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
@@ -5347,10 +5341,9 @@ export default function App() {
                   <span className="pick-badge verdict-badge">{lt('현재 선택 행동 기준')}</span>
                 </div>
                 <p className="muted">{lt('행동 플래너에서 클릭한 슬롯의 기술/대상을 기준으로 더블 보정까지 묶어서 바로 확인합니다.')}</p>
-                <div className="sample-note-list">
-                  <span className="pick-badge">{doubleFocusedActionSummary.attackerLabel} · {doubleFocusedActionSummary.attackerName}</span>
-                  <span className="pick-badge subtle">{doubleFocusedActionSummary.moveName}</span>
-                  <span className="pick-badge enemy">{doubleFocusedActionSummary.targetLabel} · {doubleFocusedActionSummary.targetName}</span>
+                <div className="double-detail-summary">
+                  <strong>{doubleFocusedActionSummary.moveName}</strong>
+                  <span>{doubleFocusedActionSummary.attackerLabel} · {doubleFocusedActionSummary.attackerName} → {doubleFocusedActionSummary.targetLabel} · {doubleFocusedActionSummary.targetName}</span>
                 </div>
                 <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
                 <div className="sample-note-list">
@@ -5379,15 +5372,6 @@ export default function App() {
             </div>
           </div>
 
-          <div className="double-progress-card">
-            <strong>{lt('구현 순서')}</strong>
-            <ol className="double-check-list ordered">
-              <li>{lt('더블 계산 레이아웃 고정')}</li>
-              <li>{lt('현재 2대2 보드 상태 입력 UI 추가')}</li>
-              <li>{lt('4마리 행동순 계산 추가')}</li>
-              <li>{lt('턴 행동 플래너 + 선택 행동 딜패널 정리')}</li>
-            </ol>
-          </div>
         </section> : null}
 
         {((mainSection === 'single' && activeTab === 'party') || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
