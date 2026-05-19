@@ -3697,8 +3697,8 @@ header p {
   gap: 20px;
 }
 .party-manage-columns {
-  width: calc(100% - 16px);
-  max-width: 1200px;
+  width: 100%;
+  max-width: none;
   margin: 0;
 }
 .entry-grid {
