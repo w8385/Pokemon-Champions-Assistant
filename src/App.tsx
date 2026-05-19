@@ -5341,11 +5341,6 @@ export default function App() {
                           </label>
                         </div>
                       </div> : null}
-                      <div className="double-combined-damage-lines">
-                        {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
-                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotDisplayName(part.selectedTarget)}`) : ''}
-                        </span>)}
-                      </div>
                       {entry.blocked.length ? <div className="double-combined-damage-notes">
                         {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
                       </div> : null}
