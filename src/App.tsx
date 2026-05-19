@@ -3367,6 +3367,7 @@ export default function App() {
         label: meta.label,
         side: meta.side,
         name: row ? displayName(row, siteLanguage) : lt('미선택'),
+        sprite: row?.sprite ?? null,
         selectedMove,
         priority: moveMeta?.priority ?? 0,
         speed: doubleSpeedBySlot[slot] ?? null,
