@@ -5381,13 +5381,9 @@ export default function App() {
                         <div className="double-combined-damage-defender">
                           {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
                           <div className="double-combined-damage-defender-copy">
-                            <div className="pick-summary-badges">
+                            <label className="double-side-select enemy compact">
                               <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
-                            </div>
-                            <strong>{entry.defenderLabel}</strong>
-                            <label className="double-slot-state-select compact">
-                              <span>{lt('상대 포켓몬 선택')}</span>
-                              <select value={entry.defenderSlot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
+                              <select className="double-side-select-input enemy" value={entry.defenderSlot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => entry.defenderSlot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
                                 {doubleOpponentOptions.map((option) => <option key={`double-damage-target-${entry.defenderSlot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
                               </select>
                             </label>
@@ -5439,19 +5435,12 @@ export default function App() {
                     <div className="double-focus-editor-head">
                       <div className="double-focus-editor-identity">
                         {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
-                        <div>
-                          <div className="pick-summary-badges">
-                            <span className="pick-badge">{lt('내 포켓몬')}</span>
-                          </div>
-                          <strong>{meta.label}</strong>
-                          <div className="double-focus-editor-name">{card?.name || lt('미선택')}</div>
-                          <label className="double-slot-state-select compact">
-                            <span>{lt('내 포켓몬 선택')}</span>
-                            <select value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
-                              {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                            </select>
-                          </label>
-                        </div>
+                        <label className="double-side-select compact">
+                          <span className="pick-badge">{lt('내 포켓몬')}</span>
+                          <select className="double-side-select-input" value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
+                            {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                          </select>
+                        </label>
                       </div>
                       <div className="pick-summary-badges">
                         <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
