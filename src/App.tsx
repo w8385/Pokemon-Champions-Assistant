@@ -5449,7 +5449,7 @@ export default function App() {
         </section> : null}
 
         {(mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) ? (
-          <section className="panel wide">
+          <section className="panel wide party-overview-panel">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
               <div className="team-strip-group ally">
