@@ -1237,6 +1237,13 @@ header p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
+.double-toggle-grid.double-toggle-grid-field {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+.double-toggle-grid-field-extra {
+  grid-column: 1 / -1;
+}
 .double-state-sections {
   display: grid;
   gap: 10px;
@@ -5107,6 +5114,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-slot-state-grid.compact,
   .double-state-sections.compact,
   .double-toggle-grid,
+  .double-toggle-grid.double-toggle-grid-field,
   .double-action-chip-grid,
   .double-target-summary-row,
   .double-move-grid-2x2,

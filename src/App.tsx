@@ -5226,11 +5226,11 @@ export default function App() {
                   <div className="double-state-sections compact single">
                     <div className="double-state-card">
                       <strong>{lt('속도/전장')}</strong>
-                      <div className="double-toggle-grid">
-                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
+                      <div className="double-toggle-grid double-toggle-grid-field">
                         <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
+                        <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
                         <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
-                        {doubleFriendGuardAvailableOpp ? <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label> : null}
+                        {doubleFriendGuardAvailableOpp ? <label className="calc-toggle-box double-toggle-grid-field-extra"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label> : null}
                       </div>
                     </div>
                   </div>
