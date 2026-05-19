@@ -1382,6 +1382,30 @@ header p {
   font-weight: 800;
   color: #f8fafc;
 }
+.double-combined-damage-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.double-bulk-editor {
+  border: 1px solid rgba(51, 65, 85, 0.56);
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.24);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+.double-bulk-editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+.double-bulk-editor label {
+  display: grid;
+  gap: 6px;
+}
 .double-combined-damage-lines,
 .double-combined-damage-notes {
   display: grid;
@@ -5165,7 +5189,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-action-chip-grid,
   .double-target-summary-row,
   .double-move-grid-2x2,
-  .double-combined-damage-grid { grid-template-columns: 1fr; }
+  .double-combined-damage-grid,
+  .double-bulk-editor-row { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }

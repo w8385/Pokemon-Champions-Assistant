@@ -74,6 +74,11 @@ type OpponentState = {
   scarf: boolean
   speedStage: number
   picked: boolean
+  hpEv: number
+  defenseEv: number
+  spDefenseEv: number
+  defenseNature: number
+  spDefenseNature: number
 }
 
 type SampleSpeedTarget = OpponentState
@@ -771,6 +776,11 @@ const blankOpponent = (): OpponentState => ({
   scarf: false,
   speedStage: 0,
   picked: false,
+  hpEv: 0,
+  defenseEv: 0,
+  spDefenseEv: 0,
+  defenseNature: 1,
+  spDefenseNature: 1,
 })
 const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
 const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
@@ -1472,6 +1482,11 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
         scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
         speedStage: clampSpeedStage(raw.speedStage),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
+        hpEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        spDefenseEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget>).spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        defenseNature: (raw as Partial<SampleDamageTarget>).defenseNature === 1.1 ? 1.1 : 1,
+        spDefenseNature: (raw as Partial<SampleDamageTarget>).spDefenseNature === 1.1 ? 1.1 : 1,
       }
     })
     .filter((opponent): opponent is OpponentState => Boolean(opponent))
@@ -2975,6 +2990,7 @@ export default function App() {
   const [doubleActionTargetOppLeft, setDoubleActionTargetOppLeft] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppLeft === 'myLeft' || persisted?.doubleActionTargetOppLeft === 'myRight' || persisted?.doubleActionTargetOppLeft === 'oppLeft' || persisted?.doubleActionTargetOppLeft === 'oppRight' ? persisted.doubleActionTargetOppLeft : 'myLeft')
   const [doubleActionTargetOppRight, setDoubleActionTargetOppRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppRight === 'myLeft' || persisted?.doubleActionTargetOppRight === 'myRight' || persisted?.doubleActionTargetOppRight === 'oppLeft' || persisted?.doubleActionTargetOppRight === 'oppRight' ? persisted.doubleActionTargetOppRight : 'myRight')
   const [doubleActionFocusSlot, setDoubleActionFocusSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionFocusSlot === 'myLeft' || persisted?.doubleActionFocusSlot === 'myRight' || persisted?.doubleActionFocusSlot === 'oppLeft' || persisted?.doubleActionFocusSlot === 'oppRight' ? persisted.doubleActionFocusSlot : 'myLeft')
+  const [doubleBulkEditorSlot, setDoubleBulkEditorSlot] = React.useState<DoubleBoardSlot | null>(null)
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3110,6 +3126,12 @@ export default function App() {
   }, [doubleSlotMeta, siteLanguage])
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
+  const doubleOpponentIndexBySlot: Partial<Record<DoubleBoardSlot, number>> = { oppLeft: doubleOppLeft, oppRight: doubleOppRight }
+  const updateDoubleOpponentBulk = React.useCallback((slot: DoubleBoardSlot, patch: Partial<Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'defenseNature' | 'spDefenseNature'>>) => {
+    const idx = doubleOpponentIndexBySlot[slot]
+    if (idx === undefined) return
+    setOpponents((prev) => prev.map((entry, entryIdx) => entryIdx === idx ? { ...entry, ...patch } : entry))
+  }, [doubleOpponentIndexBySlot, setOpponents])
   const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
   const doubleActionMoveBySlot: Record<DoubleBoardSlot, string> = { myLeft: doubleActionMoveMyLeft, myRight: doubleActionMoveMyRight, oppLeft: doubleActionMoveOppLeft, oppRight: doubleActionMoveOppRight }
   const setDoubleActionMoveBySlot: Record<DoubleBoardSlot, (value: string) => void> = { myLeft: setDoubleActionMoveMyLeft, myRight: setDoubleActionMoveMyRight, oppLeft: setDoubleActionMoveOppLeft, oppRight: setDoubleActionMoveOppRight }
@@ -3135,7 +3157,13 @@ export default function App() {
       : buildOpponentBattleStats(attackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const defenderStats = defenderMeta.side === 'my'
       ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
-      : buildOpponentBattleStats(defenderRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+      : buildOpponentBattleStats(defenderRow, {
+        hpEv: defenderMeta.option.entry.hpEv,
+        defenseEv: defenderMeta.option.entry.defenseEv,
+        spDefenseEv: defenderMeta.option.entry.spDefenseEv,
+        defenseNature: defenderMeta.option.entry.defenseNature,
+        spDefenseNature: defenderMeta.option.entry.spDefenseNature,
+      }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
     const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
     const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
@@ -5237,6 +5265,54 @@ export default function App() {
                         </div>
                       </div>
                       <div className="double-combined-damage-total">{entry.totalText}</div>
+                      <div className="double-combined-damage-actions">
+                        <button
+                          type="button"
+                          className={`pick-chip ${doubleBulkEditorSlot === entry.defenderSlot ? 'active' : ''}`}
+                          onClick={() => setDoubleBulkEditorSlot((prev) => prev === entry.defenderSlot ? null : entry.defenderSlot)}
+                        >
+                          {lt('노력치 보정')}
+                        </button>
+                        {doubleSlotMeta[entry.defenderSlot].option?.entry ? <span className="muted-inline">{opponentBulkLabel({
+                          hpEv: doubleSlotMeta[entry.defenderSlot].option.entry.hpEv,
+                          defenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv,
+                          spDefenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv,
+                          defenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature,
+                          spDefenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature,
+                        }, detectOpponentBulkPreset({
+                          hpEv: doubleSlotMeta[entry.defenderSlot].option.entry.hpEv,
+                          defenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv,
+                          spDefenseEv: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv,
+                          defenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature,
+                          spDefenseNature: doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature,
+                        }))}</span> : null}
+                      </div>
+                      {doubleBulkEditorSlot === entry.defenderSlot && doubleSlotMeta[entry.defenderSlot].option?.entry ? <div className="double-bulk-editor">
+                        <label>
+                          {lt('상대 HP')}
+                          <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.hpEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                        </label>
+                        <div className="double-bulk-editor-row">
+                          <label>
+                            {lt('상대 물방')}
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.defenseEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label className="calc-toggle-box">
+                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                            <span>{lt('+방어 성격')}</span>
+                          </label>
+                        </div>
+                        <div className="double-bulk-editor-row">
+                          <label>
+                            {lt('상대 특방')}
+                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseEv} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          </label>
+                          <label className="calc-toggle-box">
+                            <input type="checkbox" checked={doubleSlotMeta[entry.defenderSlot].option.entry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(entry.defenderSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                            <span>{lt('+특방 성격')}</span>
+                          </label>
+                        </div>
+                      </div> : null}
                       <div className="double-combined-damage-lines">
                         {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
                           {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotDisplayName(part.selectedTarget)}`) : ''}
