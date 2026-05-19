@@ -1244,6 +1244,15 @@ header p {
   gap: 12px;
   flex-wrap: wrap;
 }
+.double-action-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.double-action-picker-grid label {
+  display: grid;
+  gap: 6px;
+}
 .double-speed-preview-list,
 .double-check-list {
   display: grid;
@@ -1263,6 +1272,14 @@ header p {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+.double-order-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.double-order-main small {
+  color: #93a4b8;
 }
 .double-speed-preview-item span {
   color: #93a4b8;
@@ -4804,7 +4821,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-layout-side,
   .double-board-control-grid,
   .double-slot-state-grid,
-  .double-toggle-grid { grid-template-columns: 1fr; }
+  .double-toggle-grid,
+  .double-action-picker-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }

@@ -167,6 +167,10 @@ type PersistedState = {
   doubleProtectMyRight?: boolean
   doubleProtectOppLeft?: boolean
   doubleProtectOppRight?: boolean
+  doubleActionMoveMyLeft?: string
+  doubleActionMoveMyRight?: string
+  doubleActionMoveOppLeft?: string
+  doubleActionMoveOppRight?: string
 }
 
 type ImportExportPayload = PersistedState & {
@@ -2956,6 +2960,10 @@ export default function App() {
   const [doubleProtectMyRight, setDoubleProtectMyRight] = React.useState(() => Boolean(persisted?.doubleProtectMyRight))
   const [doubleProtectOppLeft, setDoubleProtectOppLeft] = React.useState(() => Boolean(persisted?.doubleProtectOppLeft))
   const [doubleProtectOppRight, setDoubleProtectOppRight] = React.useState(() => Boolean(persisted?.doubleProtectOppRight))
+  const [doubleActionMoveMyLeft, setDoubleActionMoveMyLeft] = React.useState(() => typeof persisted?.doubleActionMoveMyLeft === 'string' ? persisted.doubleActionMoveMyLeft : '')
+  const [doubleActionMoveMyRight, setDoubleActionMoveMyRight] = React.useState(() => typeof persisted?.doubleActionMoveMyRight === 'string' ? persisted.doubleActionMoveMyRight : '')
+  const [doubleActionMoveOppLeft, setDoubleActionMoveOppLeft] = React.useState(() => typeof persisted?.doubleActionMoveOppLeft === 'string' ? persisted.doubleActionMoveOppLeft : '')
+  const [doubleActionMoveOppRight, setDoubleActionMoveOppRight] = React.useState(() => typeof persisted?.doubleActionMoveOppRight === 'string' ? persisted.doubleActionMoveOppRight : '')
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3088,6 +3096,8 @@ export default function App() {
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
   const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
+  const doubleActionMoveBySlot: Record<DoubleBoardSlot, string> = { myLeft: doubleActionMoveMyLeft, myRight: doubleActionMoveMyRight, oppLeft: doubleActionMoveOppLeft, oppRight: doubleActionMoveOppRight }
+  const setDoubleActionMoveBySlot: Record<DoubleBoardSlot, (value: string) => void> = { myLeft: setDoubleActionMoveMyLeft, myRight: setDoubleActionMoveMyRight, oppLeft: setDoubleActionMoveOppLeft, oppRight: setDoubleActionMoveOppRight }
   const doubleAttackerMoves = React.useMemo(() => {
     if (!doubleDamageAttackerMeta.option) return [] as string[]
     return (doubleDamageAttackerMeta.side === 'my'
@@ -3209,6 +3219,50 @@ export default function App() {
       }
     })
   }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
+  const doubleActionOptionsBySlot = React.useMemo(() => {
+    return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
+  }, [doubleBoardStateCards])
+  const doubleActionOrder = React.useMemo(() => {
+    return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
+      const meta = doubleSlotMeta[slot]
+      const option = meta.option
+      const row = option?.row ?? null
+      const moves = doubleActionOptionsBySlot[slot] ?? []
+      const selectedMove = doubleActionMoveBySlot[slot] && moves.includes(doubleActionMoveBySlot[slot]) ? doubleActionMoveBySlot[slot] : ''
+      const key = meta.side === 'my' ? option?.member.key ?? '' : option?.entry.key ?? ''
+      const moveOptions = meta.side === 'my'
+        ? ((movePoolByKey[key]?.moves?.length ? movePoolByKey[key].moves : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))))
+        : moves.map((name) => ({ name, type: lookupMoveMeta(name)?.type ?? null }))
+      const moveMeta = selectedMove ? resolveMoveMeta(selectedMove, moveOptions, movePoolByKey) : null
+      return {
+        slot,
+        idx,
+        label: meta.label,
+        side: meta.side,
+        name: row ? displayName(row, siteLanguage) : lt('미선택'),
+        selectedMove,
+        priority: moveMeta?.priority ?? 0,
+        speed: doubleSpeedBySlot[slot] ?? null,
+      }
+    }).sort((a, b) => {
+      if (a.priority !== b.priority) return b.priority - a.priority
+      const aSpeed = a.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      const bSpeed = b.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
+      if (aSpeed !== bSpeed) return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
+      return a.idx - b.idx
+    })
+  }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTrickRoom, lt, movePoolByKey, siteLanguage])
+  React.useEffect(() => {
+    ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
+      const options = doubleActionOptionsBySlot[slot] ?? []
+      const current = doubleActionMoveBySlot[slot]
+      if (!options.length) {
+        if (current) setDoubleActionMoveBySlot[slot]('')
+        return
+      }
+      if (!current || !options.includes(current)) setDoubleActionMoveBySlot[slot](options[0])
+    })
+  }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, setDoubleActionMoveBySlot])
   const setAutocompleteMenuOpen = React.useCallback((id: string) => {
     setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
   }, [])
@@ -3382,9 +3436,13 @@ export default function App() {
       doubleProtectMyRight,
       doubleProtectOppLeft,
       doubleProtectOppRight,
+      doubleActionMoveMyLeft,
+      doubleActionMoveMyRight,
+      doubleActionMoveOppLeft,
+      doubleActionMoveOppRight,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -5121,17 +5179,32 @@ export default function App() {
             <div className="double-layout-side">
               <article className="double-layout-card">
                 <div className="double-layout-card-head">
-                  <strong>{lt('스피드 계산')}</strong>
+                  <strong>{lt('4마리 행동순 계산')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
-                <p className="muted">{lt('현재 보드에서 고른 4마리를 기준으로 첫 번째 행동순 미리보기를 붙였습니다. 순풍은 반영되고, 이후 더블 전용 세부 보정을 추가합니다.')}</p>
+                <p className="muted">{lt('각 슬롯이 이번 턴에 누를 기술을 고르면 우선도와 스피드를 함께 반영해서 4마리 행동순을 정렬합니다.')}</p>
+                <div className="double-action-picker-grid">
+                  {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => {
+                    const meta = doubleSlotMeta[slot]
+                    const options = doubleActionOptionsBySlot[slot] ?? []
+                    return <label key={`double-action-picker-${slot}`}>
+                      {meta.label}
+                      <select value={doubleActionMoveBySlot[slot]} onChange={(e) => setDoubleActionMoveBySlot[slot](e.target.value)}>
+                        {options.length ? options.map((move) => <option key={`double-action-option-${slot}-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
+                      </select>
+                    </label>
+                  })}
+                </div>
                 <div className="double-speed-preview-list">
-                  {doubleSpeedOrder.map((entry, idx) => <div key={`double-speed-${entry.slot}`} className="double-speed-preview-item">
+                  {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className="double-speed-preview-item">
                     <span>{idx + 1}{lt('순위')} · {entry.label}</span>
-                    <strong>{entry.name}</strong>
+                    <div className="double-order-main">
+                      <strong>{entry.name}</strong>
+                      <small>{entry.selectedMove || lt('등록 기술 없음')}</small>
+                    </div>
                     <div className="pick-summary-badges">
-                      <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.effectiveSpeed ?? '—'}</span>
-                      {entry.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+                      <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.speed ?? '—'}</span>
+                      <span className="pick-badge subtle">{lt('우선도')} {entry.priority >= 0 ? `+${entry.priority}` : entry.priority}</span>
                     </div>
                   </div>)}
                 </div>
