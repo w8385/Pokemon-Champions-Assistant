@@ -5452,7 +5452,7 @@ export default function App() {
           <section className="panel wide">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
-              <div>
+              <div className="team-strip-group ally">
                 <p className="muted">{lt('내 파티')}</p>
                 <div className="team-strip">
                   {party.map((member, idx) => {
@@ -5461,7 +5461,7 @@ export default function App() {
                   })}
                 </div>
               </div>
-              <div>
+              <div className="team-strip-group enemy">
                 <p className="muted">{lt('상대 파티')}</p>
                 <div className="team-strip">
                   {opponents.map((member, idx) => {
