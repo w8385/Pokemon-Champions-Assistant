@@ -3227,6 +3227,7 @@ export default function App() {
         slot,
         side: meta.side,
         label: meta.label,
+        row,
         name: row ? displayName(row, siteLanguage) : lt('미선택'),
         item,
         ability,
