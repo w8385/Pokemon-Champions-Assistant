@@ -773,7 +773,7 @@ const blankOpponent = (): OpponentState => ({
   ability: '',
   notes: '',
   revealedMoves: [],
-  natureBoost: true,
+  natureBoost: false,
   scarf: false,
   speedStage: 0,
   picked: false,
@@ -1480,7 +1480,7 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
         revealedMoves: Array.isArray(raw.revealedMoves)
           ? raw.revealedMoves.filter((move): move is string => typeof move === 'string')
           : [],
-        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : true,
+        natureBoost: typeof raw.natureBoost === 'boolean' ? raw.natureBoost : false,
         scarf: typeof raw.scarf === 'boolean' ? raw.scarf : false,
         speedStage: clampSpeedStage(raw.speedStage),
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
