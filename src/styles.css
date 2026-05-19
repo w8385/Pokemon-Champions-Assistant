@@ -1244,14 +1244,57 @@ header p {
   gap: 12px;
   flex-wrap: wrap;
 }
-.double-action-picker-grid {
+.double-layout-card-head.compact {
+  margin-bottom: 0;
+}
+.double-action-card-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-.double-action-picker-grid label {
+.double-action-card {
+  width: 100%;
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.52);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  color: inherit;
+}
+.double-action-card.enemy {
+  border-color: rgba(124, 45, 18, 0.72);
+}
+.double-action-card.active {
+  border-color: rgba(96, 165, 250, 0.95);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35);
+}
+.double-action-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.double-action-card-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+.double-action-card label {
   display: grid;
   gap: 6px;
+}
+.double-action-card-preview {
+  color: #93a4b8;
+  font-size: 12px;
+}
+.double-inline-subcard {
+  border: 1px solid rgba(51, 65, 85, 0.56);
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.32);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
 }
 .double-speed-preview-list,
 .double-check-list {
@@ -4822,7 +4865,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-board-control-grid,
   .double-slot-state-grid,
   .double-toggle-grid,
-  .double-action-picker-grid { grid-template-columns: 1fr; }
+  .double-action-card-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }

@@ -171,6 +171,11 @@ type PersistedState = {
   doubleActionMoveMyRight?: string
   doubleActionMoveOppLeft?: string
   doubleActionMoveOppRight?: string
+  doubleActionTargetMyLeft?: DoubleBoardSlot
+  doubleActionTargetMyRight?: DoubleBoardSlot
+  doubleActionTargetOppLeft?: DoubleBoardSlot
+  doubleActionTargetOppRight?: DoubleBoardSlot
+  doubleActionFocusSlot?: DoubleBoardSlot
 }
 
 type ImportExportPayload = PersistedState & {
@@ -2964,6 +2969,11 @@ export default function App() {
   const [doubleActionMoveMyRight, setDoubleActionMoveMyRight] = React.useState(() => typeof persisted?.doubleActionMoveMyRight === 'string' ? persisted.doubleActionMoveMyRight : '')
   const [doubleActionMoveOppLeft, setDoubleActionMoveOppLeft] = React.useState(() => typeof persisted?.doubleActionMoveOppLeft === 'string' ? persisted.doubleActionMoveOppLeft : '')
   const [doubleActionMoveOppRight, setDoubleActionMoveOppRight] = React.useState(() => typeof persisted?.doubleActionMoveOppRight === 'string' ? persisted.doubleActionMoveOppRight : '')
+  const [doubleActionTargetMyLeft, setDoubleActionTargetMyLeft] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetMyLeft === 'myLeft' || persisted?.doubleActionTargetMyLeft === 'myRight' || persisted?.doubleActionTargetMyLeft === 'oppLeft' || persisted?.doubleActionTargetMyLeft === 'oppRight' ? persisted.doubleActionTargetMyLeft : 'oppLeft')
+  const [doubleActionTargetMyRight, setDoubleActionTargetMyRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetMyRight === 'myLeft' || persisted?.doubleActionTargetMyRight === 'myRight' || persisted?.doubleActionTargetMyRight === 'oppLeft' || persisted?.doubleActionTargetMyRight === 'oppRight' ? persisted.doubleActionTargetMyRight : 'oppRight')
+  const [doubleActionTargetOppLeft, setDoubleActionTargetOppLeft] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppLeft === 'myLeft' || persisted?.doubleActionTargetOppLeft === 'myRight' || persisted?.doubleActionTargetOppLeft === 'oppLeft' || persisted?.doubleActionTargetOppLeft === 'oppRight' ? persisted.doubleActionTargetOppLeft : 'myLeft')
+  const [doubleActionTargetOppRight, setDoubleActionTargetOppRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppRight === 'myLeft' || persisted?.doubleActionTargetOppRight === 'myRight' || persisted?.doubleActionTargetOppRight === 'oppLeft' || persisted?.doubleActionTargetOppRight === 'oppRight' ? persisted.doubleActionTargetOppRight : 'myRight')
+  const [doubleActionFocusSlot, setDoubleActionFocusSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionFocusSlot === 'myLeft' || persisted?.doubleActionFocusSlot === 'myRight' || persisted?.doubleActionFocusSlot === 'oppLeft' || persisted?.doubleActionFocusSlot === 'oppRight' ? persisted.doubleActionFocusSlot : 'myLeft')
   const [movePower, setMovePower] = React.useState(90)
   const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
@@ -3098,6 +3108,8 @@ export default function App() {
   const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
   const doubleActionMoveBySlot: Record<DoubleBoardSlot, string> = { myLeft: doubleActionMoveMyLeft, myRight: doubleActionMoveMyRight, oppLeft: doubleActionMoveOppLeft, oppRight: doubleActionMoveOppRight }
   const setDoubleActionMoveBySlot: Record<DoubleBoardSlot, (value: string) => void> = { myLeft: setDoubleActionMoveMyLeft, myRight: setDoubleActionMoveMyRight, oppLeft: setDoubleActionMoveOppLeft, oppRight: setDoubleActionMoveOppRight }
+  const doubleActionTargetBySlot: Record<DoubleBoardSlot, DoubleBoardSlot> = { myLeft: doubleActionTargetMyLeft, myRight: doubleActionTargetMyRight, oppLeft: doubleActionTargetOppLeft, oppRight: doubleActionTargetOppRight }
+  const setDoubleActionTargetBySlot: Record<DoubleBoardSlot, (value: DoubleBoardSlot) => void> = { myLeft: setDoubleActionTargetMyLeft, myRight: setDoubleActionTargetMyRight, oppLeft: setDoubleActionTargetOppLeft, oppRight: setDoubleActionTargetOppRight }
   const doubleAttackerMoves = React.useMemo(() => {
     if (!doubleDamageAttackerMeta.option) return [] as string[]
     return (doubleDamageAttackerMeta.side === 'my'
@@ -3222,6 +3234,12 @@ export default function App() {
   const doubleActionOptionsBySlot = React.useMemo(() => {
     return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
   }, [doubleBoardStateCards])
+  const doubleTargetOptionsBySlot = React.useMemo(() => ({
+    myLeft: ['oppLeft', 'oppRight', 'myRight', 'myLeft'] as DoubleBoardSlot[],
+    myRight: ['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[],
+    oppLeft: ['myLeft', 'myRight', 'oppRight', 'oppLeft'] as DoubleBoardSlot[],
+    oppRight: ['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[],
+  }), [])
   const doubleActionOrder = React.useMemo(() => {
     return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
       const meta = doubleSlotMeta[slot]
@@ -3252,6 +3270,17 @@ export default function App() {
       return a.idx - b.idx
     })
   }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTrickRoom, lt, movePoolByKey, siteLanguage])
+  const doubleFocusedActionTarget = doubleActionTargetBySlot[doubleActionFocusSlot]
+  const doubleFocusedActionMeta = doubleSlotMeta[doubleActionFocusSlot]
+  const doubleFocusedTargetMeta = doubleSlotMeta[doubleFocusedActionTarget]
+  const doubleFocusedActionMove = doubleActionMoveBySlot[doubleActionFocusSlot] || ''
+  const doubleFocusedActionSummary = React.useMemo(() => ({
+    attackerLabel: doubleFocusedActionMeta.label,
+    attackerName: doubleFocusedActionMeta.option?.row ? displayName(doubleFocusedActionMeta.option.row, siteLanguage) : lt('미선택'),
+    targetLabel: doubleFocusedTargetMeta.label,
+    targetName: doubleFocusedTargetMeta.option?.row ? displayName(doubleFocusedTargetMeta.option.row, siteLanguage) : lt('미선택'),
+    moveName: doubleFocusedActionMove || lt('등록 기술 없음'),
+  }), [doubleFocusedActionMeta, doubleFocusedTargetMeta, doubleFocusedActionMove, lt, siteLanguage])
   React.useEffect(() => {
     ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
       const options = doubleActionOptionsBySlot[slot] ?? []
@@ -3263,6 +3292,18 @@ export default function App() {
       if (!current || !options.includes(current)) setDoubleActionMoveBySlot[slot](options[0])
     })
   }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, setDoubleActionMoveBySlot])
+  React.useEffect(() => {
+    ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
+      const options = doubleTargetOptionsBySlot[slot] ?? []
+      const current = doubleActionTargetBySlot[slot]
+      if (!options.includes(current)) setDoubleActionTargetBySlot[slot](options[0])
+    })
+  }, [doubleActionTargetBySlot, doubleTargetOptionsBySlot, setDoubleActionTargetBySlot])
+  React.useEffect(() => {
+    if (doubleAttackerSlot !== doubleActionFocusSlot) setDoubleAttackerSlot(doubleActionFocusSlot)
+    if (doubleDefenderSlot !== doubleFocusedActionTarget) setDoubleDefenderSlot(doubleFocusedActionTarget)
+    if (doubleMoveName !== doubleFocusedActionMove) setDoubleMoveName(doubleFocusedActionMove)
+  }, [doubleActionFocusSlot, doubleAttackerSlot, doubleDefenderSlot, doubleFocusedActionMove, doubleFocusedActionTarget, doubleMoveName])
   const setAutocompleteMenuOpen = React.useCallback((id: string) => {
     setAutocompleteHighlight((prev) => (prev?.id === id ? prev : { id, index: 0 }))
   }, [])
@@ -3440,9 +3481,14 @@ export default function App() {
       doubleActionMoveMyRight,
       doubleActionMoveOppLeft,
       doubleActionMoveOppRight,
+      doubleActionTargetMyLeft,
+      doubleActionTargetMyRight,
+      doubleActionTargetOppLeft,
+      doubleActionTargetOppRight,
+      doubleActionFocusSlot,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -5034,7 +5080,7 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{lt('더블 계산 작업 보드')}</h2>
-              <p className="muted">{lt('2대2 보드 상태 입력까지 붙였습니다. 다음 단계에서 4마리 행동순과 더블 대미지 계산을 연결합니다.')}</p>
+              <p className="muted">{lt('현재 보드 요약, 이번 턴 행동 플래너, 선택 행동 딜계산을 한 화면에서 이어서 보도록 정리했습니다.')}</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('feature/double-battle')}</span>
@@ -5082,10 +5128,10 @@ export default function App() {
             <div className="double-layout-main">
               <article className="double-layout-card double-board-setup-card">
                 <div className="double-layout-card-head">
-                  <strong>{lt('현재 보드')}</strong>
+                  <strong>{lt('A. 현재 보드')}</strong>
                   <span className="pick-badge verdict-badge">{lt('입력 가능')}</span>
                 </div>
-                <p className="muted">{lt('공용 파티·상대 엔트리에서 정리한 6마리 중 실제 2대2 보드에 올라온 슬롯만 여기서 고릅니다.')}</p>
+                <p className="muted">{lt('공용 파티·상대 엔트리에서 정리한 6마리 중 실제 2대2 보드에 올라온 슬롯과 전장 상태를 먼저 고정합니다.')}</p>
                 <div className="double-board-control-grid">
                   <label>
                     {lt('내 좌측')}
@@ -5179,66 +5225,77 @@ export default function App() {
             <div className="double-layout-side">
               <article className="double-layout-card">
                 <div className="double-layout-card-head">
-                  <strong>{lt('4마리 행동순 계산')}</strong>
+                  <strong>{lt('B. 턴 행동 플래너')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
-                <p className="muted">{lt('각 슬롯이 이번 턴에 누를 기술을 고르면 우선도와 스피드를 함께 반영해서 4마리 행동순을 정렬합니다.')}</p>
-                <div className="double-action-picker-grid">
+                <p className="muted">{lt('각 슬롯이 이번 턴에 누를 기술과 대상을 먼저 정하고, 클릭한 행동을 우측 상세 패널에서 바로 검토합니다.')}</p>
+                <div className="double-action-card-grid">
                   {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => {
                     const meta = doubleSlotMeta[slot]
+                    const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
                     const options = doubleActionOptionsBySlot[slot] ?? []
-                    return <label key={`double-action-picker-${slot}`}>
-                      {meta.label}
-                      <select value={doubleActionMoveBySlot[slot]} onChange={(e) => setDoubleActionMoveBySlot[slot](e.target.value)}>
-                        {options.length ? options.map((move) => <option key={`double-action-option-${slot}-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
-                      </select>
-                    </label>
+                    const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
+                    return <button
+                      key={`double-action-card-${slot}`}
+                      type="button"
+                      className={`double-action-card ${doubleActionFocusSlot === slot ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
+                      onClick={() => setDoubleActionFocusSlot(slot)}
+                    >
+                      <div className="double-action-card-head">
+                        <strong>{meta.label}</strong>
+                        <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
+                      </div>
+                      <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
+                      <label>
+                        {lt('기술')}
+                        <select value={doubleActionMoveBySlot[slot]} onChange={(e) => setDoubleActionMoveBySlot[slot](e.target.value)} onClick={(e) => e.stopPropagation()}>
+                          {options.length ? options.map((move) => <option key={`double-action-option-${slot}-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
+                        </select>
+                      </label>
+                      <label>
+                        {lt('대상')}
+                        <select value={doubleActionTargetBySlot[slot]} onChange={(e) => setDoubleActionTargetBySlot[slot](e.target.value as DoubleBoardSlot)} onClick={(e) => e.stopPropagation()}>
+                          {targetOptions.map((targetSlot) => <option key={`double-action-target-${slot}-${targetSlot}`} value={targetSlot}>{doubleSlotMeta[targetSlot].label}</option>)}
+                        </select>
+                      </label>
+                      <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
+                    </button>
                   })}
                 </div>
-                <div className="double-speed-preview-list">
-                  {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className="double-speed-preview-item">
-                    <span>{idx + 1}{lt('순위')} · {entry.label}</span>
-                    <div className="double-order-main">
-                      <strong>{entry.name}</strong>
-                      <small>{entry.selectedMove || lt('등록 기술 없음')}</small>
-                    </div>
-                    <div className="pick-summary-badges">
-                      <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.speed ?? '—'}</span>
-                      <span className="pick-badge subtle">{lt('우선도')} {entry.priority >= 0 ? `+${entry.priority}` : entry.priority}</span>
-                    </div>
-                  </div>)}
+                <div className="double-inline-subcard">
+                  <div className="double-layout-card-head compact">
+                    <strong>{lt('4마리 행동순')}</strong>
+                    <span className="pick-badge subtle">{lt('우선도 + 실속도')}</span>
+                  </div>
+                  <div className="double-speed-preview-list">
+                    {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className="double-speed-preview-item">
+                      <span>{idx + 1}{lt('순위')} · {entry.label}</span>
+                      <div className="double-order-main">
+                        <strong>{entry.name}</strong>
+                        <small>{entry.selectedMove || lt('등록 기술 없음')}</small>
+                      </div>
+                      <div className="pick-summary-badges">
+                        <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.speed ?? '—'}</span>
+                        <span className="pick-badge subtle">{lt('우선도')} {entry.priority >= 0 ? `+${entry.priority}` : entry.priority}</span>
+                      </div>
+                    </div>)}
+                  </div>
                 </div>
               </article>
 
               <article className="double-layout-card accent">
                 <div className="double-layout-card-head">
-                  <strong>{lt('대미지 계산')}</strong>
-                  <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
+                  <strong>{lt('C. 선택 행동 상세 딜계산')}</strong>
+                  <span className="pick-badge verdict-badge">{lt('현재 선택 행동 기준')}</span>
                 </div>
-                <div className="double-board-control-grid">
-                  <label>
-                    {lt('공격자 슬롯')}
-                    <select value={doubleAttackerSlot} onChange={(e) => setDoubleAttackerSlot(e.target.value as DoubleBoardSlot)}>
-                      {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-attacker-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
-                    </select>
-                  </label>
-                  <label>
-                    {lt('대상 슬롯')}
-                    <select value={doubleDefenderSlot} onChange={(e) => setDoubleDefenderSlot(e.target.value as DoubleBoardSlot)}>
-                      {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-defender-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
-                    </select>
-                  </label>
-                  <label className="double-control-span-2">
-                    {lt('기술')}
-                    <select value={doubleMoveName} onChange={(e) => setDoubleMoveName(e.target.value)}>
-                      {doubleAttackerMoves.length ? doubleAttackerMoves.map((move) => <option key={`double-move-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
-                    </select>
-                  </label>
+                <p className="muted">{lt('행동 플래너에서 클릭한 슬롯의 기술/대상을 기준으로 더블 보정까지 묶어서 바로 확인합니다.')}</p>
+                <div className="sample-note-list">
+                  <span className="pick-badge">{doubleFocusedActionSummary.attackerLabel} · {doubleFocusedActionSummary.attackerName}</span>
+                  <span className="pick-badge subtle">{doubleFocusedActionSummary.moveName}</span>
+                  <span className="pick-badge enemy">{doubleFocusedActionSummary.targetLabel} · {doubleFocusedActionSummary.targetName}</span>
                 </div>
                 <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
                 <div className="sample-note-list">
-                  <span className="pick-badge">{lt('공격측')} · {doubleDamageAttackerMeta.option?.row ? displayName(doubleDamageAttackerMeta.option.row, siteLanguage) : lt('미선택')}</span>
-                  <span className="pick-badge enemy">{lt('방어측')} · {doubleDamageDefenderMeta.option?.row ? displayName(doubleDamageDefenderMeta.option.row, siteLanguage) : lt('미선택')}</span>
                   {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
                   {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
                   {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
@@ -5259,7 +5316,7 @@ export default function App() {
                       <strong>x{doubleDamageContext.effectiveness}</strong>
                     </div>
                   </div>
-                </div> : <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>}
+                </div> : <p className="muted">{lt('기술과 대상이 잡히면 여기서 더블 전용 딜체크를 이어서 보게 됩니다.')}</p>}
               </article>
             </div>
           </div>
@@ -5270,7 +5327,7 @@ export default function App() {
               <li>{lt('더블 계산 레이아웃 고정')}</li>
               <li>{lt('현재 2대2 보드 상태 입력 UI 추가')}</li>
               <li>{lt('4마리 행동순 계산 추가')}</li>
-              <li>{lt('광역기 / 프렌드가드 / 와이드가드 반영')}</li>
+              <li>{lt('턴 행동 플래너 + 선택 행동 딜패널 정리')}</li>
             </ol>
           </div>
         </section> : null}
