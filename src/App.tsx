@@ -6847,7 +6847,7 @@ export default function App() {
           </details>
         </section>
         </> : <>
-        {activeTab === 'speed' ? <section className="panel wide">
+        {(mainSection === 'single' && activeTab === 'speed') ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('내 파티 추월컷')}</h2>
           </div>
@@ -6955,7 +6955,7 @@ export default function App() {
           </> : <div className="speed-empty-box">{lt('선택한 상대 없음')}</div>}
         </section> : null}
 
-        {activeTab === 'power' ? <section className="panel wide">
+        {(mainSection === 'single' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <h2>{lt('간단 대미지 계산')}</h2>
             <div className="pick-summary-badges">
