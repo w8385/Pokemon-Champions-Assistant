@@ -5306,7 +5306,7 @@ export default function App() {
                       <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
                     </div>
                   ) : (
-                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 계산 작업 보드')}</button>
+                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
                   )}
                 </div>
               </div>
@@ -5344,7 +5344,7 @@ export default function App() {
         {(mainSection === 'double' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{lt('더블 계산 작업 보드')}</h2>
+              <h2>{lt('더블 배틀 플래너')}</h2>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('feature/double-battle')}</span>
@@ -5355,7 +5355,7 @@ export default function App() {
             <div className="double-layout-main">
               <article className="double-layout-card double-planner-main-card">
                 <div className="double-layout-card-head">
-                  <strong>{lt('B. 턴 행동 플래너')}</strong>
+                  <strong>{lt('턴 플랜')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
                 <div className="double-planner-context">
