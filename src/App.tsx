@@ -3104,6 +3104,10 @@ export default function App() {
     oppLeft: { label: lt('상대 좌측'), option: doubleBoardSlots.oppLeft, side: 'opp' as const },
     oppRight: { label: lt('상대 우측'), option: doubleBoardSlots.oppRight, side: 'opp' as const },
   }), [doubleBoardSlots, lt])
+  const doubleSlotDisplayName = React.useCallback((slot: DoubleBoardSlot) => {
+    const meta = doubleSlotMeta[slot]
+    return meta.option?.row ? displayName(meta.option.row, siteLanguage) : meta.label
+  }, [doubleSlotMeta, siteLanguage])
   const doubleDamageAttackerMeta = doubleSlotMeta[doubleAttackerSlot]
   const doubleDamageDefenderMeta = doubleSlotMeta[doubleDefenderSlot]
   const doubleProtectBySlot: Record<DoubleBoardSlot, boolean> = { myLeft: doubleProtectMyLeft, myRight: doubleProtectMyRight, oppLeft: doubleProtectOppLeft, oppRight: doubleProtectOppRight }
@@ -3298,7 +3302,7 @@ export default function App() {
               : lt('계산 대기')
           return {
             targetSlot,
-            label: doubleSlotMeta[targetSlot].label,
+            label: doubleSlotDisplayName(targetSlot),
             selected: selectedMove === move && doubleActionTargetBySlot[slot] === targetSlot,
             previewText,
           }
@@ -3324,7 +3328,7 @@ export default function App() {
         spreadMove: selectedRow?.spreadMove ?? selectedSpreadMove,
       }
     })
-  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotDisplayName, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
   const doubleCombinedDamageSummary = React.useMemo(() => {
     const attackers: DoubleBoardSlot[] = ['myLeft', 'myRight']
     const defenders: DoubleBoardSlot[] = ['oppLeft', 'oppRight']
@@ -3337,7 +3341,7 @@ export default function App() {
         const preview = moveName && hitsDefender ? buildDoubleDamageContext(attackerSlot, defenderSlot, moveName, spreadMove) : null
         return {
           attackerSlot,
-          attackerLabel: doubleSlotMeta[attackerSlot].label,
+          attackerLabel: doubleSlotDisplayName(attackerSlot),
           moveName,
           spreadMove,
           selectedTarget,
@@ -3357,7 +3361,7 @@ export default function App() {
       }))
       return {
         defenderSlot,
-        defenderLabel: doubleSlotMeta[defenderSlot].label,
+        defenderLabel: doubleSlotDisplayName(defenderSlot),
         contributions,
         hasDamage: damageEntries.length > 0,
         totalText: damageEntries.length ? `${min} ~ ${max}` : lt('계산 대기'),
@@ -3365,7 +3369,7 @@ export default function App() {
         blocked,
       }
     })
-  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleSlotMeta, lt])
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleSlotDisplayName, doubleSlotMeta, lt])
   React.useEffect(() => {
     ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
       const options = doubleActionOptionsBySlot[slot] ?? []
@@ -5375,7 +5379,7 @@ export default function App() {
                       <div className="double-combined-damage-total">{entry.totalText}</div>
                       <div className="double-combined-damage-lines">
                         {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
-                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotMeta[part.selectedTarget].label}`) : ''}
+                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}{part.moveName ? (part.spreadMove ? ` · ${lt('광역')}` : ` · ${doubleSlotDisplayName(part.selectedTarget)}`) : ''}
                         </span>)}
                       </div>
                       {entry.blocked.length ? <div className="double-combined-damage-notes">
