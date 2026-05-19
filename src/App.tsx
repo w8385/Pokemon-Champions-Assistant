@@ -3289,36 +3289,46 @@ export default function App() {
       const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
       const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
       const selectedMove = doubleActionMoveBySlot[slot] || ''
-      const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(selectedMove))
-      const moveDetails = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
-        const lookup = lookupMoveMeta(move)
-        const priority = lookup?.priority ?? 0
-        return { move, type: lookup?.type ?? null, priority }
-      })
+      const selectedSpreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(selectedMove))
       const enemyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side !== meta.side)
       const allyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side === meta.side)
-      const previewEntries = targetOptions.map((targetSlot) => {
-        const preview = selectedMove ? buildDoubleDamageContext(slot, targetSlot, selectedMove, spreadMove) : null
-        const previewText = preview?.reason
-          ? preview.reason
-          : preview?.damage
-            ? `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`
-            : lt('계산 대기')
+      const moveRows = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
+        const lookup = lookupMoveMeta(move)
+        const priority = lookup?.priority ?? 0
+        const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(move))
+        const targetPreview = (targetSlot: DoubleBoardSlot) => {
+          const preview = buildDoubleDamageContext(slot, targetSlot, move, spreadMove)
+          const previewText = preview?.reason
+            ? preview.reason
+            : preview?.damage
+              ? `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`
+              : lt('계산 대기')
+          return {
+            targetSlot,
+            label: doubleSlotMeta[targetSlot].label,
+            selected: selectedMove === move && doubleActionTargetBySlot[slot] === targetSlot,
+            previewText,
+          }
+        }
         return {
-          targetSlot,
-          label: doubleSlotMeta[targetSlot].label,
-          selected: doubleActionTargetBySlot[slot] === targetSlot,
-          previewText,
+          move,
+          type: lookup?.type ?? null,
+          priority,
+          selected: selectedMove === move,
+          spreadMove,
+          enemyTargets: enemyTargets.map(targetPreview),
+          allyTargets: allyTargets.map(targetPreview),
         }
       })
+      const selectedRow = moveRows.find((entry) => entry.selected) ?? moveRows[0] ?? null
       return {
         slot,
         meta,
         card,
-        moveDetails,
-        enemyTargets: previewEntries.filter((entry) => enemyTargets.includes(entry.targetSlot)),
-        allyTargets: previewEntries.filter((entry) => allyTargets.includes(entry.targetSlot)),
-        spreadMove,
+        moveRows,
+        summaryTargets: selectedRow?.enemyTargets ?? [],
+        allyTargets: selectedRow?.allyTargets ?? [],
+        spreadMove: selectedRow?.spreadMove ?? selectedSpreadMove,
       }
     })
   }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
@@ -5256,7 +5266,7 @@ export default function App() {
                 </div>
                 <div className="double-planner-layout">
                   <div className="double-slot-summary-list">
-                    {doubleActionCards.map(({ slot, meta, card, enemyTargets }) => {
+                    {doubleActionCards.map(({ slot, meta, card, summaryTargets }) => {
                       const active = doubleActionFocusSlot === slot
                       return <button
                         key={`double-slot-summary-${slot}`}
@@ -5271,12 +5281,12 @@ export default function App() {
                         <div className="double-slot-summary-name">{card?.name || lt('미선택')}</div>
                         <div className="double-slot-summary-move">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')}</div>
                         <div className="double-slot-summary-targets">
-                          {enemyTargets.map((entry) => <span key={`double-slot-summary-target-${slot}-${entry.targetSlot}`}>{entry.label} {entry.previewText}</span>)}
+                          {summaryTargets.map((entry) => <span key={`double-slot-summary-target-${slot}-${entry.targetSlot}`}>{entry.label} {entry.previewText}</span>)}
                         </div>
                       </button>
                     })}
                   </div>
-                  {doubleActionCards.filter((entry) => entry.slot === doubleActionFocusSlot).map(({ slot, meta, card, moveDetails, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-focus-editor">
+                  {doubleActionCards.filter((entry) => entry.slot === doubleActionFocusSlot).map(({ slot, meta, card, moveRows, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-focus-editor">
                     <div className="double-focus-editor-head">
                       <div>
                         <strong>{meta.label}</strong>
@@ -5288,34 +5298,38 @@ export default function App() {
                       </div>
                     </div>
                     <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{lt('기술 선택')}</span>
-                      <div className="double-action-chip-grid">
-                        {moveDetails.length ? moveDetails.map(({ move, type, priority }) => <button
-                          key={`double-action-option-${slot}-${move}`}
-                          type="button"
-                          className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
-                          onClick={() => setDoubleActionMoveBySlot[slot](move)}
+                      <span className="double-action-card-label">{lt('기술 선택 + 대상 기대값')}</span>
+                      <div className="double-move-matrix">
+                        {moveRows.length ? moveRows.map(({ move, type, priority, selected, enemyTargets: rowTargets }) => <div
+                          key={`double-move-row-${slot}-${move}`}
+                          className={`double-move-row ${selected ? 'active' : ''}`}
                         >
-                          <span className="double-action-chip-main">{move}</span>
-                          <span className="double-action-chip-meta">
-                            {type ? <SmallTypeBadgeImage type={type} /> : null}
-                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
-                          </span>
-                        </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
-                      </div>
-                    </div>
-                    <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{meta.side === 'my' ? lt('상대 좌/우 기대값') : lt('내 좌/우 기대값')}</span>
-                      <div className="double-target-summary-row wide">
-                        {enemyTargets.map((entry) => <button
-                          key={`double-target-summary-${slot}-${entry.targetSlot}`}
-                          type="button"
-                          className={`double-target-summary-chip ${entry.selected ? 'active' : ''}`}
-                          onClick={() => setDoubleActionTargetBySlot[slot](entry.targetSlot)}
-                        >
-                          <strong>{entry.label}</strong>
-                          <span>{entry.previewText}</span>
-                        </button>)}
+                          <button
+                            type="button"
+                            className="double-move-row-main"
+                            onClick={() => setDoubleActionMoveBySlot[slot](move)}
+                          >
+                            <span className="double-move-row-title">{move}</span>
+                            <span className="double-move-row-meta">
+                              {type ? <SmallTypeBadgeImage type={type} /> : null}
+                              <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                            </span>
+                          </button>
+                          <div className="double-move-row-targets">
+                            {rowTargets.map((entry) => <button
+                              key={`double-target-summary-${slot}-${move}-${entry.targetSlot}`}
+                              type="button"
+                              className={`double-move-target-cell ${entry.selected ? 'active' : ''}`}
+                              onClick={() => {
+                                setDoubleActionMoveBySlot[slot](move)
+                                setDoubleActionTargetBySlot[slot](entry.targetSlot)
+                              }}
+                            >
+                              <strong>{entry.label}</strong>
+                              <span>{entry.previewText}</span>
+                            </button>)}
+                          </div>
+                        </div>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
                       </div>
                     </div>
                     {allyTargets.length ? <div className="double-focus-editor-section">

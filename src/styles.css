@@ -1332,6 +1332,74 @@ header p {
   display: grid;
   gap: 6px;
 }
+.double-move-matrix {
+  display: grid;
+  gap: 8px;
+}
+.double-move-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.1fr);
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(51, 65, 85, 0.56);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.26);
+}
+.double-move-row.active {
+  border-color: rgba(96, 165, 250, 0.95);
+  background: rgba(15, 23, 42, 0.52);
+}
+.double-move-row-main {
+  border: 1px solid rgba(71, 85, 105, 0.8);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+.double-move-row-title {
+  font-weight: 700;
+}
+.double-move-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #93a4b8;
+  font-size: 11px;
+}
+.double-move-row-meta .move-autocomplete-type-icon {
+  width: 18px;
+  height: 18px;
+}
+.double-move-row-targets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.double-move-target-cell {
+  border: 1px solid rgba(71, 85, 105, 0.8);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  color: #e2e8f0;
+}
+.double-move-target-cell.active {
+  border-color: rgba(251, 146, 60, 0.95);
+  background: rgba(30, 41, 59, 0.98);
+}
+.double-move-target-cell strong {
+  font-size: 12px;
+}
+.double-move-target-cell span {
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+}
 .double-action-card-label {
   color: #93a4b8;
   font-size: 12px;
@@ -5013,7 +5081,9 @@ textarea { min-height: 72px; resize: vertical; }
   .double-state-sections.compact,
   .double-toggle-grid,
   .double-action-chip-grid,
-  .double-target-summary-row { grid-template-columns: 1fr; }
+  .double-target-summary-row,
+  .double-move-row,
+  .double-move-row-targets { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }
