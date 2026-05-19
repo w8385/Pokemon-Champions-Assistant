@@ -1556,6 +1556,9 @@ header p {
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
+.double-combined-damage-notes {
+  min-height: 16px;
+}
 .double-combined-damage-actions {
   display: flex;
   align-items: center;

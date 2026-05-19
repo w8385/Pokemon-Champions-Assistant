@@ -3467,8 +3467,8 @@ export default function App() {
         defenderSprite: doubleSlotMeta[defenderSlot].option?.row?.sprite ?? null,
         contributions,
         hasDamage: damageEntries.length > 0,
-        totalText: damageEntries.length ? `${min} ~ ${max}` : lt('계산 대기'),
-        totalPctText: damageEntries.length && minPct !== null && maxPct !== null ? `${minPct}% ~ ${maxPct}%` : lt('계산 대기'),
+        totalText: damageEntries.length ? `${min} ~ ${max}` : '—',
+        totalPctText: damageEntries.length && minPct !== null && maxPct !== null ? `${minPct}% ~ ${maxPct}%` : '—',
         blocked,
       }
     })
