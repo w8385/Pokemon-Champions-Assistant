@@ -1363,16 +1363,12 @@ header p {
   font-size: 12px;
   font-weight: 600;
 }
-.double-detail-summary {
-  display: grid;
-  gap: 4px;
+.double-action-card-damage-preview.active {
+  color: #f8fafc;
 }
-.double-detail-summary strong {
-  font-size: 15px;
-}
-.double-detail-summary span {
-  color: #93a4b8;
-  font-size: 12px;
+.double-inline-toggle {
+  justify-content: flex-start;
+  margin-top: -2px;
 }
 .double-inline-subcard {
   border: 1px solid rgba(51, 65, 85, 0.56);

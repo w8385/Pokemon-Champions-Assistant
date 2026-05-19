@@ -5253,7 +5253,6 @@ export default function App() {
                   <strong>{lt('B. 턴 행동 플래너')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
-                <p className="muted">{lt('카드는 한 번에 하나만 펼치고, 나머지는 요약만 보여서 중복 입력을 줄였습니다.')}</p>
                 <div className="double-action-card-grid">
                   {doubleActionCards.map(({ slot, meta, card, moveDetails, targetGroups, previewText }) => {
                     const expanded = doubleActionFocusSlot === slot
@@ -5271,7 +5270,7 @@ export default function App() {
                       </div>
                       <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
                       <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
-                      <div className="double-action-card-damage-preview">{previewText}</div>
+                      <div className={`double-action-card-damage-preview ${expanded ? 'active' : ''}`}>{previewText}</div>
                       {expanded ? <>
                         <div className="double-action-card-section">
                           <span className="double-action-card-label">{lt('기술')}</span>
@@ -5312,6 +5311,10 @@ export default function App() {
                             </div>)}
                           </div>
                         </div>
+                        <label className="calc-toggle-box double-inline-toggle" onClick={(e) => e.stopPropagation()}>
+                          <input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} />
+                          <span>{lt('광역기 감쇠 적용')}</span>
+                        </label>
                       </> : null}
                     </div>
                   })}
@@ -5339,15 +5342,9 @@ export default function App() {
 
               <article className="double-layout-card accent">
                 <div className="double-layout-card-head">
-                  <strong>{lt('C. 선택 행동 상세 딜계산')}</strong>
-                  <span className="pick-badge verdict-badge">{lt('현재 선택 행동 기준')}</span>
+                  <strong>{lt('C. 기대 대미지 상세')}</strong>
+                  <span className="pick-badge verdict-badge">{lt('현재 선택 행동')}</span>
                 </div>
-                <p className="muted">{lt('행동 플래너에서 클릭한 슬롯의 기술/대상을 기준으로 더블 보정까지 묶어서 바로 확인합니다.')}</p>
-                <div className="double-detail-summary">
-                  <strong>{doubleFocusedActionSummary.moveName}</strong>
-                  <span>{doubleFocusedActionSummary.attackerLabel} · {doubleFocusedActionSummary.attackerName} → {doubleFocusedActionSummary.targetLabel} · {doubleFocusedActionSummary.targetName}</span>
-                </div>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
                 <div className="sample-note-list">
                   {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
                   {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
