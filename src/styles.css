@@ -1281,6 +1281,45 @@ header p {
   display: grid;
   gap: 12px;
 }
+.double-damage-summary-card {
+  gap: 12px;
+}
+.double-combined-damage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.double-combined-damage-item {
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.42);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+.double-combined-damage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.double-combined-damage-head span {
+  color: #bfdbfe;
+  font-size: 13px;
+  font-weight: 700;
+}
+.double-combined-damage-total {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+.double-combined-damage-lines,
+.double-combined-damage-notes {
+  display: grid;
+  gap: 4px;
+  color: #93a4b8;
+  font-size: 12px;
+}
 .double-focus-editor-head {
   display: flex;
   align-items: center;
@@ -1304,23 +1343,15 @@ header p {
   border: 1px solid rgba(51, 65, 85, 0.56);
   border-radius: 14px;
   background: rgba(15, 23, 42, 0.26);
-  padding: 8px;
+  padding: 12px;
   display: grid;
-  gap: 8px;
+  gap: 6px;
+  text-align: left;
+  color: #e2e8f0;
 }
 .double-move-cell.active {
   border-color: rgba(96, 165, 250, 0.95);
   background: rgba(15, 23, 42, 0.52);
-}
-.double-move-cell-main {
-  border: 1px solid rgba(71, 85, 105, 0.8);
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.9);
-  color: #e2e8f0;
-  padding: 10px 12px;
-  display: grid;
-  gap: 4px;
-  text-align: left;
 }
 .double-move-row-title {
   font-weight: 700;
@@ -5044,7 +5075,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-toggle-grid,
   .double-action-chip-grid,
   .double-target-summary-row,
-  .double-move-grid-2x2 { grid-template-columns: 1fr; }
+  .double-move-grid-2x2,
+  .double-combined-damage-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }

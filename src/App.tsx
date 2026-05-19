@@ -3276,13 +3276,6 @@ export default function App() {
   const doubleFocusedActionMeta = doubleSlotMeta[doubleActionFocusSlot]
   const doubleFocusedTargetMeta = doubleSlotMeta[doubleFocusedActionTarget]
   const doubleFocusedActionMove = doubleActionMoveBySlot[doubleActionFocusSlot] || ''
-  const doubleFocusedActionSummary = React.useMemo(() => ({
-    attackerLabel: doubleFocusedActionMeta.label,
-    attackerName: doubleFocusedActionMeta.option?.row ? displayName(doubleFocusedActionMeta.option.row, siteLanguage) : lt('미선택'),
-    targetLabel: doubleFocusedTargetMeta.label,
-    targetName: doubleFocusedTargetMeta.option?.row ? displayName(doubleFocusedTargetMeta.option.row, siteLanguage) : lt('미선택'),
-    moveName: doubleFocusedActionMove || lt('등록 기술 없음'),
-  }), [doubleFocusedActionMeta, doubleFocusedTargetMeta, doubleFocusedActionMove, lt, siteLanguage])
   const doubleActionCards = React.useMemo(() => {
     return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot) => {
       const meta = doubleSlotMeta[slot]
@@ -3332,6 +3325,41 @@ export default function App() {
       }
     })
   }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleActionTargetBySlot, doubleBoardStateCards, doubleSlotMeta, doubleTargetOptionsBySlot, lt])
+  const doubleCombinedDamageSummary = React.useMemo(() => {
+    const attackers: DoubleBoardSlot[] = ['myLeft', 'myRight']
+    const defenders: DoubleBoardSlot[] = ['oppLeft', 'oppRight']
+    return defenders.map((defenderSlot) => {
+      const contributions = attackers.map((attackerSlot) => {
+        const moveName = doubleActionMoveBySlot[attackerSlot] || ''
+        const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(moveName))
+        const preview = moveName ? buildDoubleDamageContext(attackerSlot, defenderSlot, moveName, spreadMove) : null
+        return {
+          attackerSlot,
+          attackerLabel: doubleSlotMeta[attackerSlot].label,
+          moveName,
+          preview,
+        }
+      })
+      const damageEntries = contributions.filter((entry) => entry.preview?.damage)
+      const min = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.min ?? 0), 0)
+      const max = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.max ?? 0), 0)
+      const minPct = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.minPct ?? 0), 0)
+      const maxPct = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.maxPct ?? 0), 0)
+      const blocked = contributions.filter((entry) => entry.moveName && !entry.preview?.damage).map((entry) => ({
+        attackerLabel: entry.attackerLabel,
+        reason: entry.preview?.reason ?? lt('계산 대기'),
+      }))
+      return {
+        defenderSlot,
+        defenderLabel: doubleSlotMeta[defenderSlot].label,
+        contributions,
+        hasDamage: damageEntries.length > 0,
+        totalText: damageEntries.length ? `${min} ~ ${max}` : lt('계산 대기'),
+        totalPctText: damageEntries.length ? `${minPct}% ~ ${maxPct}%` : lt('계산 대기'),
+        blocked,
+      }
+    })
+  }, [buildDoubleDamageContext, doubleActionMoveBySlot, doubleSlotMeta, lt])
   React.useEffect(() => {
     ;(['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).forEach((slot) => {
       const options = doubleActionOptionsBySlot[slot] ?? []
@@ -5277,42 +5305,23 @@ export default function App() {
                       </div>
                     </div>
                     <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{lt('기술 2x2 + 상대 좌/우 기대값')}</span>
+                      <span className="double-action-card-label">{lt('기술 2x2 배치')}</span>
                       <div className="double-move-grid-2x2">
-                        {moveRows.length ? moveRows.map(({ move, type, priority, selected, enemyTargets: rowTargets }) => <div
+                        {moveRows.length ? moveRows.map(({ move, type, priority, selected }) => <button
                           key={`double-move-cell-${slot}-${move}`}
+                          type="button"
                           className={`double-move-cell ${selected ? 'active' : ''}`}
+                          onClick={() => {
+                            setDoubleActionFocusSlot(slot)
+                            setDoubleActionMoveBySlot[slot](move)
+                          }}
                         >
-                          <button
-                            type="button"
-                            className="double-move-cell-main"
-                            onClick={() => {
-                              setDoubleActionFocusSlot(slot)
-                              setDoubleActionMoveBySlot[slot](move)
-                            }}
-                          >
-                            <span className="double-move-row-title">{move}</span>
-                            <span className="double-move-row-meta">
-                              {type ? <SmallTypeBadgeImage type={type} /> : null}
-                              <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
-                            </span>
-                          </button>
-                          <div className="double-move-cell-targets">
-                            {rowTargets.map((entry) => <button
-                              key={`double-target-summary-${slot}-${move}-${entry.targetSlot}`}
-                              type="button"
-                              className={`double-move-target-cell ${entry.selected ? 'active' : ''}`}
-                              onClick={() => {
-                                setDoubleActionFocusSlot(slot)
-                                setDoubleActionMoveBySlot[slot](move)
-                                setDoubleActionTargetBySlot[slot](entry.targetSlot)
-                              }}
-                            >
-                              <strong>{entry.label}</strong>
-                              <span>{entry.previewText}</span>
-                            </button>)}
-                          </div>
-                        </div>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
+                          <span className="double-move-row-title">{move}</span>
+                          <span className="double-move-row-meta">
+                            {type ? <SmallTypeBadgeImage type={type} /> : null}
+                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                          </span>
+                        </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
                       </div>
                     </div>
                     {allyTargets.length ? <div className="double-focus-editor-section">
@@ -5334,6 +5343,29 @@ export default function App() {
                       <span>{lt('광역기 감쇠 적용')}</span>
                     </label> : null}
                   </div>)}
+                </div>
+                <div className="double-inline-subcard double-damage-summary-card">
+                  <div className="double-layout-card-head compact">
+                    <strong>{lt('상대별 총 기대 대미지')}</strong>
+                    <span className="pick-badge subtle">{lt('내 두 포켓몬 선택 기술 합산')}</span>
+                  </div>
+                  <div className="double-combined-damage-grid">
+                    {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
+                      <div className="double-combined-damage-head">
+                        <strong>{entry.defenderLabel}</strong>
+                        <span>{entry.totalPctText}</span>
+                      </div>
+                      <div className="double-combined-damage-total">{entry.totalText}</div>
+                      <div className="double-combined-damage-lines">
+                        {entry.contributions.map((part) => <span key={`double-combined-line-${entry.defenderSlot}-${part.attackerSlot}`}>
+                          {part.attackerLabel} · {part.moveName || lt('기술 미선택')}
+                        </span>)}
+                      </div>
+                      {entry.blocked.length ? <div className="double-combined-damage-notes">
+                        {entry.blocked.map((note) => <span key={`double-combined-note-${entry.defenderSlot}-${note.attackerLabel}`}>{note.attackerLabel} · {note.reason}</span>)}
+                      </div> : null}
+                    </div>)}
+                  </div>
                 </div>
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
