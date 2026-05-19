@@ -548,9 +548,13 @@ header p {
   border-bottom: 1px solid rgba(51, 65, 85, 0.9);
 }
 .double-opponent-modal-header {
-  margin: -20px -20px 0;
-  padding: 20px 20px 14px;
+  position: relative;
+  top: auto;
+  margin: 0 0 12px;
+  padding: 0 0 12px;
   gap: 16px;
+  background: transparent;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.9);
 }
 .double-opponent-modal-header h2 {
   min-width: 0;
@@ -620,20 +624,37 @@ header p {
 .double-opponent-modal-chips {
   margin-top: 12px;
   gap: 10px;
+  align-items: center;
 }
-.double-opponent-modal-chip-check {
+.double-opponent-modal-toggle-chip {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  padding: 8px 12px;
   min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid rgba(71, 85, 105, 0.9);
+  border-radius: 999px;
+  background: rgba(11, 18, 32, 0.92);
+  color: #dbe5f1;
+  font-size: 13px;
+  font-weight: 700;
 }
-.double-opponent-modal-chip-check input {
+.double-opponent-modal-toggle-chip.active {
+  border-color: rgba(96, 165, 250, 0.68);
+  background: linear-gradient(180deg, rgba(23, 37, 84, 0.96), rgba(19, 32, 52, 0.94));
+  color: #eff6ff;
+}
+.double-opponent-modal-toggle-chip input {
   width: 16px;
   height: 16px;
   accent-color: #8b5cf6;
   margin: 0;
 }
-.double-opponent-modal-total-chip {
-  padding-inline: 14px;
+.double-opponent-modal-total-meta {
+  color: #93a4b8;
+  font-size: 13px;
+  font-weight: 700;
+  padding-left: 2px;
 }
 .magic-helper-box {
   margin-top: 14px;
@@ -5328,8 +5349,8 @@ textarea { min-height: 72px; resize: vertical; }
     padding: 18px 16px 20px;
   }
   .double-opponent-modal-header {
-    margin: -18px -16px 0;
-    padding: 18px 16px 12px;
+    margin: 0 0 10px;
+    padding: 0 0 10px;
   }
   .double-opponent-modal-grid { grid-template-columns: 1fr; }
   .double-opponent-modal-chips { gap: 8px; }
@@ -5449,8 +5470,8 @@ textarea { min-height: 72px; resize: vertical; }
     padding: 14px 14px 10px;
   }
   .double-opponent-modal-header {
-    margin: -14px -14px 0;
-    padding: 14px 14px 10px;
+    margin: 0 0 10px;
+    padding: 0 0 10px;
   }
   .effort-gauge-track {
     height: 30px;

@@ -5071,15 +5071,15 @@ export default function App() {
               </label>
             </div>
             <div className="pick-summary-badges double-opponent-modal-chips">
-              <label className="pick-badge double-opponent-modal-chip-check">
+              <label className={`double-opponent-modal-toggle-chip ${modalEntry.defenseNature === 1.1 ? 'active' : ''}`}>
                 <input type="checkbox" checked={modalEntry.defenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { defenseNature: e.target.checked ? 1.1 : 1 })} />
                 <span>{lt('+방어 성격')}</span>
               </label>
-              <label className="pick-badge double-opponent-modal-chip-check">
+              <label className={`double-opponent-modal-toggle-chip ${modalEntry.spDefenseNature === 1.1 ? 'active' : ''}`}>
                 <input type="checkbox" checked={modalEntry.spDefenseNature === 1.1} onChange={(e) => updateDoubleOpponentBulk(modalSlot, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                 <span>{lt('+특방 성격')}</span>
               </label>
-              <span className="pick-badge double-opponent-modal-total-chip">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
+              <span className="double-opponent-modal-total-meta">{lt('노력치 합')} {totalEffortPoints(modalEvs)}</span>
             </div>
             <div className="drag-stat-list double-opponent-drag-stat-list">
               {visibleStats.map((stat) => {
