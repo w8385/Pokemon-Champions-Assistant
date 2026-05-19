@@ -1313,12 +1313,18 @@ function megaCandidateKeysForBase(baseKey: string) {
     .sort((a, b) => a.localeCompare(b, 'en'))
 }
 
-function resolveCalcKeyWithMega(key: string, megaOn: boolean) {
+function resolveCalcKeyWithMega(key: string, megaSelection: string | null) {
   const baseKey = megaBaseKey(key)
   const megaCandidates = megaCandidateKeysForBase(baseKey)
   if (!megaCandidates.length) return key
-  if (megaOn) return megaCandidates[0]
+  if (megaSelection && megaCandidates.includes(megaSelection)) return megaSelection
   return baseKey
+}
+
+function megaToggleLabel(key: string, language: SiteLanguage) {
+  if (key.endsWith('-x')) return language === 'en' ? 'Mega X' : language === 'ja' ? 'メガX' : '메가X'
+  if (key.endsWith('-y')) return language === 'en' ? 'Mega Y' : language === 'ja' ? 'メガY' : '메가Y'
+  return language === 'en' ? 'Mega' : language === 'ja' ? 'メガ' : '메가'
 }
 
 async function loadEmbeddedMovePools() {
@@ -3150,8 +3156,8 @@ export default function App() {
   const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
   const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? persisted?.activeTab ?? 'party')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
-  const [calcMyMegaOn, setCalcMyMegaOn] = React.useState(false)
-  const [calcOppMegaOn, setCalcOppMegaOn] = React.useState(false)
+  const [calcMyMegaKey, setCalcMyMegaKey] = React.useState<string | null>(null)
+  const [calcOppMegaKey, setCalcOppMegaKey] = React.useState<string | null>(null)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
@@ -3762,8 +3768,8 @@ export default function App() {
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
   const sampleMagicCandidate = sampleRow ? findMagicNumberCandidate(sampleRow, sampleForge) : null
-  const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaOn)
-  const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaOn) : ''
+  const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaKey)
+  const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaKey) : ''
   const myRow = indexByKey.get(calcMyKey) ?? rows[0]
   const oppRow = calcOppKey ? (indexByKey.get(calcOppKey) ?? rows[0]) : null
   const oppWeightKg = oppRow ? (typeof oppRow.weightKg === 'number' ? oppRow.weightKg : weightByKey[oppRow.key] ?? null) : null
@@ -3807,12 +3813,16 @@ export default function App() {
 
   React.useEffect(() => {
     const megaCandidates = megaCandidateKeysForBase(megaBaseKey(myMember.key))
-    setCalcMyMegaOn(myMember.key.startsWith('mega-') ? true : (megaCandidates.length ? false : false))
+    setCalcMyMegaKey(myMember.key.startsWith('mega-') ? myMember.key : null)
+    if (myMember.key.startsWith('mega-') && !megaCandidates.includes(myMember.key)) setCalcMyMegaKey(megaCandidates[0] ?? null)
+    if (!megaCandidates.length) setCalcMyMegaKey(null)
   }, [myMember.key])
 
   React.useEffect(() => {
     const megaCandidates = megaCandidateKeysForBase(megaBaseKey(oppMember.key))
-    setCalcOppMegaOn(oppMember.key.startsWith('mega-') ? true : (megaCandidates.length ? false : false))
+    setCalcOppMegaKey(oppMember.key.startsWith('mega-') ? oppMember.key : null)
+    if (oppMember.key.startsWith('mega-') && !megaCandidates.includes(oppMember.key)) setCalcOppMegaKey(megaCandidates[0] ?? null)
+    if (!megaCandidates.length) setCalcOppMegaKey(null)
   }, [oppMember.key])
 
   React.useEffect(() => {
@@ -7163,8 +7173,8 @@ export default function App() {
                         {mySpeedAbilityLine ? <span className="pick-badge subtle">{mySpeedAbilityLine.label} {mySpeedAbilityLine.speed}</span> : null}
                       </div>
                       {myMegaCandidates.length ? <div className="calc-toggle-row">
-                        <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
-                        <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
+                        <button type="button" className={`pick-chip ${!calcMyMegaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(null)}>{lt('일반')}</button>
+                        {myMegaCandidates.map((megaKey) => <button key={`my-speed-mega-${megaKey}`} type="button" className={`pick-chip ${calcMyMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                       </div> : null}
                     </div>
                   </div>
@@ -7178,8 +7188,8 @@ export default function App() {
                         <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
                       </div>
                       {oppMegaCandidates.length ? <div className="calc-toggle-row">
-                        <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
-                        <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
+                        <button type="button" className={`pick-chip ${!calcOppMegaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(null)}>{lt('일반')}</button>
+                        {oppMegaCandidates.map((megaKey) => <button key={`opp-speed-mega-${megaKey}`} type="button" className={`pick-chip ${calcOppMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                       </div> : null}
                     </div>
                   </div>
@@ -7271,8 +7281,8 @@ export default function App() {
                     <span className="pick-badge">{attackFromOpponent ? lt('방어측') : lt('공격측')}</span>
                   </div>
                   {myMegaCandidates.length ? <div className="calc-toggle-row">
-                    <button type="button" className={`pick-chip ${!calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(false)}>{lt('일반')}</button>
-                    <button type="button" className={`pick-chip ${calcMyMegaOn ? 'active' : ''}`} onClick={() => setCalcMyMegaOn(true)}>{lt('메가')}</button>
+                    <button type="button" className={`pick-chip ${!calcMyMegaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(null)}>{lt('일반')}</button>
+                    {myMegaCandidates.map((megaKey) => <button key={`my-damage-mega-${megaKey}`} type="button" className={`pick-chip ${calcMyMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                   </div> : null}
                 </div>
               </div>
@@ -7306,8 +7316,8 @@ export default function App() {
                     <span className="pick-badge enemy">{attackFromOpponent ? lt('공격측') : lt('방어측')}</span>
                   </div>
                   {oppMegaCandidates.length ? <div className="calc-toggle-row">
-                    <button type="button" className={`pick-chip ${!calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(false)}>{lt('일반')}</button>
-                    <button type="button" className={`pick-chip ${calcOppMegaOn ? 'active' : ''}`} onClick={() => setCalcOppMegaOn(true)}>{lt('메가')}</button>
+                    <button type="button" className={`pick-chip ${!calcOppMegaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(null)}>{lt('일반')}</button>
+                    {oppMegaCandidates.map((megaKey) => <button key={`opp-damage-mega-${megaKey}`} type="button" className={`pick-chip ${calcOppMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                   </div> : null}
                 </div>
               </div>
