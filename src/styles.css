@@ -1331,17 +1331,35 @@ header p {
 .double-target-chip.enemy.active {
   border-color: rgba(251, 146, 60, 0.95);
 }
-.double-target-groups {
+.double-target-preview-grid {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-.double-target-group {
+.double-target-preview-card {
+  border: 1px solid rgba(71, 85, 105, 0.8);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 10px;
   display: grid;
   gap: 4px;
+  text-align: left;
+  color: #e2e8f0;
 }
-.double-target-group-label {
-  color: #93a4b8;
-  font-size: 11px;
+.double-target-preview-card.active {
+  border-color: rgba(96, 165, 250, 0.95);
+  background: rgba(30, 41, 59, 0.98);
+}
+.double-target-preview-card.enemy.active {
+  border-color: rgba(251, 146, 60, 0.95);
+}
+.double-target-preview-card strong {
+  font-size: 12px;
+}
+.double-target-preview-card span {
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
 }
 .double-target-chip-row {
   display: flex;
@@ -1362,9 +1380,6 @@ header p {
   color: #cbd5e1;
   font-size: 12px;
   font-weight: 600;
-}
-.double-action-card-damage-preview.active {
-  color: #f8fafc;
 }
 .double-inline-toggle {
   justify-content: flex-start;
@@ -4948,7 +4963,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-slot-state-grid,
   .double-toggle-grid,
   .double-action-card-grid,
-  .double-action-chip-grid { grid-template-columns: 1fr; }
+  .double-action-chip-grid,
+  .double-target-preview-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }
