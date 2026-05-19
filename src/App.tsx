@@ -99,6 +99,12 @@ type SavedSample = {
   member: PartyMember
 }
 
+type SavedPartyPreset = {
+  id: string
+  label: string
+  party: PartyMember[]
+}
+
 type CalcMode = 'physical' | 'special'
 type DamageWeather = 'none' | 'sun' | 'rain' | 'sand' | 'snow'
 type DamageTerrain = 'none' | 'electric' | 'grassy' | 'psychic' | 'misty'
@@ -152,6 +158,7 @@ type PersistedState = {
   activeTab?: MainTab
   sampleForge?: PartyMember
   savedSamples?: SavedSample[]
+  savedPartyPresets?: SavedPartyPreset[]
   sampleWorkbenchTab?: SampleWorkbenchTab
   sampleSpeedTargets?: SampleSpeedTarget[]
   sampleDamageTargets?: SampleDamageTarget[]
@@ -333,7 +340,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
-    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
@@ -361,7 +368,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
-    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
@@ -399,6 +406,19 @@ function searchSlotPlaceholder(index: number, language: SiteLanguage) {
 
 function savedSampleCountLabel(count: number, language: SiteLanguage) {
   return language === 'en' ? String(count) : language === 'ja' ? `${count}件` : `${count}개`
+}
+
+function clonePartyMember(member: PartyMember): PartyMember {
+  return {
+    ...member,
+    evs: { ...member.evs },
+    config: { ...member.config },
+    tuning: { ...member.tuning },
+  }
+}
+
+function clonePartyList(party: PartyMember[]): PartyMember[] {
+  return party.map(clonePartyMember)
 }
 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
@@ -766,6 +786,7 @@ const defaultPartyTuning = (): PartyTuning => ({ magicNumber: 0, maxValue: 0 })
 const blankPartyMember = (): PartyMember => ({ key: '', config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: '', ability: '' })
 const defaultParty: PartyMember[] = starterKeys.map((key) => ({ key, config: { nature: defaultNatureForKey(key), scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(key, ''), ability: defaultAbilityForKey(key) }))
 const emptyParty: PartyMember[] = Array.from({ length: defaultParty.length }, () => blankPartyMember())
+const cloneEmptyParty = () => clonePartyList(emptyParty)
 const defaultSampleForge = (): PartyMember => ({ key: starterKeys[0], config: { nature: defaultNatureForKey(starterKeys[0]), scarf: false, speedStage: 0 }, picked: false, evs: { ...defaultEvs }, tuning: defaultPartyTuning(), item: normalizeItemForKey(starterKeys[0], ''), ability: defaultAbilityForKey(starterKeys[0]) })
 const blankOpponent = (): OpponentState => ({
   key: '',
@@ -1580,6 +1601,21 @@ function sanitizeSavedSamples(input: unknown): SavedSample[] {
       }
     })
     .filter((entry): entry is SavedSample => Boolean(entry))
+}
+
+function sanitizeSavedPartyPresets(input: unknown): SavedPartyPreset[] {
+  if (!Array.isArray(input)) return []
+  return input
+    .map((entry, idx) => {
+      if (!entry || typeof entry !== 'object') return null
+      const raw = entry as Partial<SavedPartyPreset>
+      return {
+        id: typeof raw.id === 'string' ? raw.id : `party-${idx}`,
+        label: typeof raw.label === 'string' && raw.label.trim() ? raw.label : `Party ${idx + 1}`,
+        party: sanitizeParty(raw.party),
+      }
+    })
+    .filter((entry): entry is SavedPartyPreset => Boolean(entry))
 }
 
 function sanitizeSelectedIndex(value: unknown, listLength: number) {
@@ -3127,6 +3163,9 @@ export default function App() {
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
+  const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
+  const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
+  const [activePartyPresetId, setActivePartyPresetId] = React.useState<string | null>(null)
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? persisted?.sampleWorkbenchTab ?? 'builder')
   const [sampleSpeedTargets, setSampleSpeedTargets] = React.useState<SampleSpeedTarget[]>(() => sanitizeSampleSpeedTargets(persisted?.sampleSpeedTargets))
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
@@ -3655,6 +3694,7 @@ export default function App() {
       activeTab,
       sampleForge,
       savedSamples,
+      savedPartyPresets,
       sampleWorkbenchTab,
       sampleSpeedTargets,
       sampleDamageTargets,
@@ -3688,7 +3728,7 @@ export default function App() {
       doubleActionFocusSlot,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, savedSamples, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, savedSamples, savedPartyPresets, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4624,6 +4664,52 @@ export default function App() {
     setActiveTab('party')
   }
 
+  const applyPartyPreset = (presetParty: PartyMember[], presetId?: string | null) => {
+    const nextParty = clonePartyList(sanitizeParty(presetParty))
+    setParty(nextParty)
+    setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+    setSelectedMy(0)
+    setActivePartyMetaEditor(null)
+    setActiveMetaListField(null)
+    setActiveItemField((prev) => prev?.scope === 'party' ? null : prev)
+    setActiveMoveField((prev) => prev?.scope === 'party' ? null : prev)
+    setTuningModalIndex(null)
+    setActivePartyPresetId(presetId ?? null)
+  }
+
+  const saveNewPartyPreset = () => {
+    const label = partyPresetLabelDraft.trim() || `${lt('파티 이름')} ${savedPartyPresets.length + 1}`
+    const nextPreset: SavedPartyPreset = {
+      id: `party-${Date.now()}`,
+      label,
+      party: clonePartyList(party),
+    }
+    setSavedPartyPresets((prev) => [nextPreset, ...prev])
+    setActivePartyPresetId(nextPreset.id)
+    setPartyPresetLabelDraft('')
+  }
+
+  const overwriteActivePartyPreset = () => {
+    if (!activePartyPresetId) {
+      saveNewPartyPreset()
+      return
+    }
+    setSavedPartyPresets((prev) => prev.map((entry) => entry.id === activePartyPresetId ? {
+      ...entry,
+      label: partyPresetLabelDraft.trim() || entry.label,
+      party: clonePartyList(party),
+    } : entry))
+    setPartyPresetLabelDraft('')
+  }
+
+  const renamePartyPreset = (preset: SavedPartyPreset) => {
+    if (typeof window === 'undefined') return
+    const nextLabel = window.prompt(lt('파티 이름'), preset.label)?.trim()
+    if (!nextLabel) return
+    setSavedPartyPresets((prev) => prev.map((entry) => entry.id === preset.id ? { ...entry, label: nextLabel } : entry))
+  }
+
   const saveCurrentSample = () => {
     const label = sampleLabelDraft.trim() || `${displayName(sampleRow, siteLanguage)} · ${natureLabel(sampleForge.config.nature, siteLanguage)}`
     const saved: SavedSample = {
@@ -4831,6 +4917,9 @@ export default function App() {
     setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
+    setSavedPartyPresets([])
+    setPartyPresetLabelDraft('')
+    setActivePartyPresetId(null)
     setSampleSpeedTargets(defaultSampleSpeedTargets)
     setSampleDamageTargets(defaultSampleDamageTargets)
     setSampleSpeedSearch('')
@@ -4886,6 +4975,7 @@ export default function App() {
       mainSection,
       sampleForge,
       savedSamples,
+      savedPartyPresets,
       sampleWorkbenchTab,
       sampleSpeedTargets,
       sampleDamageTargets,
@@ -4976,6 +5066,8 @@ export default function App() {
       setSampleItemDraft(displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage))
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
+      setSavedPartyPresets(sanitizeSavedPartyPresets(parsed.savedPartyPresets))
+      setActivePartyPresetId(null)
       setSampleLabelDraft('')
     } catch {
       if (typeof window !== 'undefined') window.alert(lt('불러오기 실패: JSON 형식을 확인하세요.'))
@@ -5510,6 +5602,46 @@ export default function App() {
               <div className="inline-controls compact-actions">
                 <span className="muted-inline">{lt('포켓몬별 기술배치 / 노력치보정')}</span>
                 <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('내 파티 초기화')}</button>
+              </div>
+            </div>
+            <div className="party-preset-board">
+              <div className="party-preset-board-head row-between">
+                <strong>{lt('저장한 파티')}</strong>
+                <span className="muted-inline">{savedSampleCountLabel(savedPartyPresets.length, siteLanguage)}</span>
+              </div>
+              <div className="party-preset-controls">
+                <input
+                  value={partyPresetLabelDraft}
+                  onChange={(e) => setPartyPresetLabelDraft(e.target.value)}
+                  placeholder={lt('파티 이름')}
+                />
+                <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
+                <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
+              </div>
+              <div className="party-preset-grid">
+                {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
+                  const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
+                  return <div key={preset.id} className={`party-preset-card ${activePartyPresetId === preset.id ? 'active' : ''}`}>
+                    <button type="button" className="party-preset-card-main" onClick={() => applyPartyPreset(preset.party, preset.id)}>
+                      <div className="party-preset-sprite-row">
+                        {leadMembers.length ? leadMembers.map((member, idx) => {
+                          const row = indexByKey.get(member.key) ?? rows[0]
+                          return row?.sprite ? <img key={`${preset.id}-${member.key}-${idx}`} src={row.sprite} alt={displayName(row, siteLanguage)} className="party-preset-sprite" /> : null
+                        }) : <span className="muted-inline">—</span>}
+                      </div>
+                      <strong>{preset.label}</strong>
+                      <span className="muted-inline">{leadMembers.length}/6</span>
+                    </button>
+                    <div className="party-preset-card-actions">
+                      <button type="button" className="pick-chip" onClick={() => applyPartyPreset(preset.party, preset.id)}>{lt('파티 적용')}</button>
+                      <button type="button" className="pick-chip" onClick={() => renamePartyPreset(preset)}>{lt('이름 변경')}</button>
+                      <button type="button" className="pick-chip" onClick={() => {
+                        setSavedPartyPresets((prev) => prev.filter((entry) => entry.id !== preset.id))
+                        setActivePartyPresetId((prev) => prev === preset.id ? null : prev)
+                      }}>{lt('삭제')}</button>
+                    </div>
+                  </div>
+                }) : <p className="muted">{lt('아직 저장한 파티가 없습니다.')}</p>}
               </div>
             </div>
             <div className="entry-grid manage-entry-grid">
