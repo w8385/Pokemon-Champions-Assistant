@@ -7441,23 +7441,8 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="damage-surface-card damage-control-surface">
-            {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
-              <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
-            </div> : null}
-            {activeDamageMovePower === null ? <div className="preset-row damage-preset-row">
-              {movePowerPresets.map((preset) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
-                  onClick={() => setMovePower(preset.value)}
-                >
-                  {lt(preset.label)}
-                </button>
-              ))}
-            </div> : null}
-            {defenderRow && damage ? <div className="damage-box">
+          <div className="damage-surface-card damage-result-surface">
+            {defenderRow && damage ? <div className="damage-box compact-top">
               <div className="damage-box-head">
                 <strong>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong> → <strong>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>{activeDamageMove ? ` · ${activeDamageMove}` : ''}
               </div>
@@ -7475,7 +7460,24 @@ export default function App() {
                   <strong>{damageNoEffect ? lt('무효') : `${damage.minPct}% ~ ${damage.maxPct}%`}</strong>
                 </div>
               </div>
-            </div> : <div className="damage-box empty"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
+            </div> : <div className="damage-box empty compact-top"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
+          </div>
+          <div className="damage-surface-card damage-control-surface separated">
+            {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
+              <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
+            </div> : null}
+            {activeDamageMovePower === null ? <div className="preset-row damage-preset-row">
+              {movePowerPresets.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  className={`preset-chip ${movePower === preset.value ? 'active' : ''}`}
+                  onClick={() => setMovePower(preset.value)}
+                >
+                  {lt(preset.label)}
+                </button>
+              ))}
+            </div> : null}
             <div className="damage-control-groups">
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>

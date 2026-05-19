@@ -4722,8 +4722,16 @@ textarea { min-height: 72px; resize: vertical; }
   min-width: 0;
   padding-right: 34px;
 }
-.damage-control-surface {
+.damage-result-surface {
   margin-top: 10px;
+  margin-bottom: 12px;
+}
+.damage-control-surface {
+  margin-top: 0;
+}
+.damage-control-surface.separated {
+  border-color: rgba(71, 85, 105, 0.78);
+  background: linear-gradient(180deg, rgba(10, 16, 28, 0.94), rgba(15, 23, 42, 0.78));
 }
 .damage-move-panel {
   display: flex;
@@ -4955,6 +4963,9 @@ textarea { min-height: 72px; resize: vertical; }
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.82));
   border: 1px solid rgba(51, 65, 85, 0.82);
+}
+.damage-box.compact-top {
+  margin-top: 0;
 }
 .damage-box-head {
   margin-bottom: 10px;
