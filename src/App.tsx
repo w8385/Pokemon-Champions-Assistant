@@ -5045,7 +5045,13 @@ export default function App() {
         return <div className="modal-backdrop" onClick={() => setDoubleBulkEditorSlot(null)}>
           <div className="modal-card double-opponent-modal" onClick={(e) => e.stopPropagation()}>
             <div className="row-between modal-header double-opponent-modal-header">
-              <h2>{modalName} · {lt('노력치 보정')}</h2>
+              <div className="double-opponent-modal-title-wrap">
+                {modalRow.sprite ? <img src={modalRow.sprite} alt={modalName} className="double-opponent-modal-sprite" /> : null}
+                <div className="double-opponent-modal-title-copy">
+                  <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+                  <h2>{modalName} · {lt('노력치 보정')}</h2>
+                </div>
+              </div>
               <button type="button" className="action-button double-opponent-modal-close" onClick={() => setDoubleBulkEditorSlot(null)}>{lt('닫기')}</button>
             </div>
             <div className="modal-grid double-opponent-modal-grid">
@@ -5375,6 +5381,9 @@ export default function App() {
                         <div className="double-combined-damage-defender">
                           {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
                           <div className="double-combined-damage-defender-copy">
+                            <div className="pick-summary-badges">
+                              <span className="pick-badge enemy">{lt('상대 포켓몬')}</span>
+                            </div>
                             <strong>{entry.defenderLabel}</strong>
                             <label className="double-slot-state-select compact">
                               <span>{lt('상대 포켓몬 선택')}</span>
@@ -5431,6 +5440,9 @@ export default function App() {
                       <div className="double-focus-editor-identity">
                         {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
                         <div>
+                          <div className="pick-summary-badges">
+                            <span className="pick-badge">{lt('내 포켓몬')}</span>
+                          </div>
                           <strong>{meta.label}</strong>
                           <div className="double-focus-editor-name">{card?.name || lt('미선택')}</div>
                           <label className="double-slot-state-select compact">
