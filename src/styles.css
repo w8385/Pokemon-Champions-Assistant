@@ -1593,6 +1593,9 @@ header p {
   gap: 10px;
   min-width: 0;
 }
+.double-focus-editor-head > .pick-summary-badges {
+  flex: 0 0 auto;
+}
 .double-focus-editor-sprite {
   width: 44px;
   height: 44px;
@@ -1605,11 +1608,13 @@ header p {
   font-weight: 700;
 }
 .double-focus-editor-identity {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
 }
-.double-focus-editor-identity .double-side-select,
+.double-focus-editor-identity .double-side-select {
+  width: clamp(180px, 24vw, 280px);
+}
 .double-combined-damage-defender-copy .double-side-select {
-  width: 100%;
+  width: clamp(180px, 24vw, 280px);
 }
 .double-focus-editor-section {
   display: grid;
