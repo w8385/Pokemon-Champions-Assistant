@@ -3177,7 +3177,7 @@ export default function App() {
     if (modifiers && spreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
     const damage = guardedByWide || protectedTarget ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
     const reason = guardedByWide ? lt('와이드가드로 차단됨') : protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
-    return { attackerRow, defenderRow, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
+    return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
   }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey])
   const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
   const doubleSpeedOrder = React.useMemo(() => {
@@ -3343,8 +3343,9 @@ export default function App() {
       const damageEntries = contributions.filter((entry) => entry.preview?.damage)
       const min = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.min ?? 0), 0)
       const max = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.max ?? 0), 0)
-      const minPct = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.minPct ?? 0), 0)
-      const maxPct = damageEntries.reduce((sum, entry) => sum + (entry.preview?.damage?.maxPct ?? 0), 0)
+      const defenderHp = contributions.find((entry) => entry.preview?.defenderHp)?.preview?.defenderHp ?? null
+      const minPct = defenderHp ? Math.round((min / defenderHp) * 1000) / 10 : null
+      const maxPct = defenderHp ? Math.round((max / defenderHp) * 1000) / 10 : null
       const blocked = contributions.filter((entry) => entry.moveName && !entry.preview?.damage).map((entry) => ({
         attackerLabel: entry.attackerLabel,
         reason: entry.preview?.reason ?? lt('계산 대기'),
@@ -3355,7 +3356,7 @@ export default function App() {
         contributions,
         hasDamage: damageEntries.length > 0,
         totalText: damageEntries.length ? `${min} ~ ${max}` : lt('계산 대기'),
-        totalPctText: damageEntries.length ? `${minPct}% ~ ${maxPct}%` : lt('계산 대기'),
+        totalPctText: damageEntries.length && minPct !== null && maxPct !== null ? `${minPct}% ~ ${maxPct}%` : lt('계산 대기'),
         blocked,
       }
     })
