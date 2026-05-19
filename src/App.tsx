@@ -5193,10 +5193,6 @@ export default function App() {
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
                 <div className="double-planner-context">
-                  <div className="double-planner-context-head">
-                    <strong>{lt('현재 보드')}</strong>
-                    <span className="pick-badge subtle">{lt('행동 전 컨텍스트')}</span>
-                  </div>
                   <div className="double-state-sections compact single">
                     <div className="double-state-card">
                       <strong>{lt('속도/전장')}</strong>
