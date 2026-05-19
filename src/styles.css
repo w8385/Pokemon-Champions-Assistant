@@ -1259,7 +1259,7 @@ header p {
   background: rgba(15, 23, 42, 0.52);
   padding: 12px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   text-align: left;
   color: inherit;
 }
@@ -1280,9 +1280,46 @@ header p {
   font-size: 15px;
   font-weight: 700;
 }
-.double-action-card label {
+.double-action-card-section {
   display: grid;
   gap: 6px;
+}
+.double-action-card-label {
+  color: #93a4b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+.double-action-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.double-action-chip,
+.double-target-chip {
+  border: 1px solid rgba(71, 85, 105, 0.8);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  padding: 8px 10px;
+  font-size: 12px;
+  text-align: left;
+}
+.double-action-chip.active,
+.double-target-chip.active {
+  border-color: rgba(96, 165, 250, 0.95);
+  background: rgba(30, 41, 59, 0.98);
+}
+.double-target-chip.enemy.active {
+  border-color: rgba(251, 146, 60, 0.95);
+}
+.double-target-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.double-action-empty {
+  color: #93a4b8;
+  font-size: 12px;
 }
 .double-action-card-preview {
   color: #93a4b8;
@@ -4865,7 +4902,8 @@ textarea { min-height: 72px; resize: vertical; }
   .double-board-control-grid,
   .double-slot-state-grid,
   .double-toggle-grid,
-  .double-action-card-grid { grid-template-columns: 1fr; }
+  .double-action-card-grid,
+  .double-action-chip-grid { grid-template-columns: 1fr; }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }

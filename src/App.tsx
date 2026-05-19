@@ -5235,31 +5235,51 @@ export default function App() {
                     const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
                     const options = doubleActionOptionsBySlot[slot] ?? []
                     const targetOptions = doubleTargetOptionsBySlot[slot] ?? []
-                    return <button
+                    return <div
                       key={`double-action-card-${slot}`}
-                      type="button"
                       className={`double-action-card ${doubleActionFocusSlot === slot ? 'active' : ''} ${meta.side === 'opp' ? 'enemy' : ''}`}
                       onClick={() => setDoubleActionFocusSlot(slot)}
                     >
                       <div className="double-action-card-head">
                         <strong>{meta.label}</strong>
-                        <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
+                        <div className="pick-summary-badges">
+                          <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
+                          {doubleActionFocusSlot === slot ? <span className="pick-badge subtle">{lt('현재 선택')}</span> : null}
+                        </div>
                       </div>
                       <div className="double-action-card-name">{card?.name || lt('미선택')}</div>
-                      <label>
-                        {lt('기술')}
-                        <select value={doubleActionMoveBySlot[slot]} onChange={(e) => setDoubleActionMoveBySlot[slot](e.target.value)} onClick={(e) => e.stopPropagation()}>
-                          {options.length ? options.map((move) => <option key={`double-action-option-${slot}-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
-                        </select>
-                      </label>
-                      <label>
-                        {lt('대상')}
-                        <select value={doubleActionTargetBySlot[slot]} onChange={(e) => setDoubleActionTargetBySlot[slot](e.target.value as DoubleBoardSlot)} onClick={(e) => e.stopPropagation()}>
-                          {targetOptions.map((targetSlot) => <option key={`double-action-target-${slot}-${targetSlot}`} value={targetSlot}>{doubleSlotMeta[targetSlot].label}</option>)}
-                        </select>
-                      </label>
+                      <div className="double-action-card-section">
+                        <span className="double-action-card-label">{lt('기술')}</span>
+                        <div className="double-action-chip-grid">
+                          {options.length ? options.map((move) => <button
+                            key={`double-action-option-${slot}-${move}`}
+                            type="button"
+                            className={`double-action-chip ${doubleActionMoveBySlot[slot] === move ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setDoubleActionFocusSlot(slot)
+                              setDoubleActionMoveBySlot[slot](move)
+                            }}
+                          >{move}</button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
+                        </div>
+                      </div>
+                      <div className="double-action-card-section">
+                        <span className="double-action-card-label">{lt('대상')}</span>
+                        <div className="double-target-chip-row">
+                          {targetOptions.map((targetSlot) => <button
+                            key={`double-action-target-${slot}-${targetSlot}`}
+                            type="button"
+                            className={`double-target-chip ${doubleActionTargetBySlot[slot] === targetSlot ? 'active' : ''} ${doubleSlotMeta[targetSlot].side === 'opp' ? 'enemy' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setDoubleActionFocusSlot(slot)
+                              setDoubleActionTargetBySlot[slot](targetSlot)
+                            }}
+                          >{doubleSlotMeta[targetSlot].label}</button>)}
+                        </div>
+                      </div>
                       <div className="double-action-card-preview">{doubleActionMoveBySlot[slot] || lt('등록 기술 없음')} → {doubleSlotMeta[doubleActionTargetBySlot[slot]].label}</div>
-                    </button>
+                    </div>
                   })}
                 </div>
                 <div className="double-inline-subcard">
