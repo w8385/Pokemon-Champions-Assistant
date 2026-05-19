@@ -1533,6 +1533,11 @@ header p {
   font-size: 13px;
   font-weight: 700;
 }
+.double-combined-damage-raw-inline {
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 800;
+}
 .double-combined-damage-total {
   font-size: 22px;
   font-weight: 800;

@@ -5388,7 +5388,7 @@ export default function App() {
                           </div>
                         </div>
                         <div className="pick-summary-badges">
-                          <span>{entry.totalPctText}</span>
+                          <span className="double-combined-damage-raw-inline">{entry.totalText}</span>
                           <label className="calc-toggle-box double-slot-protect-toggle compact">
                             <input
                               type="checkbox"
@@ -5399,7 +5399,7 @@ export default function App() {
                           </label>
                         </div>
                       </div>
-                      <div className="double-combined-damage-total">{entry.totalText}</div>
+                      <div className="double-combined-damage-total">{entry.totalPctText}</div>
                       <div className="double-combined-damage-actions">
                         <button
                           type="button"
