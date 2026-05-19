@@ -3363,6 +3363,7 @@ export default function App() {
       return {
         defenderSlot,
         defenderLabel: doubleSlotDisplayName(defenderSlot),
+        defenderSprite: doubleSlotMeta[defenderSlot].option?.row?.sprite ?? null,
         contributions,
         hasDamage: damageEntries.length > 0,
         totalText: damageEntries.length ? `${min} ~ ${max}` : lt('계산 대기'),
@@ -5376,7 +5377,10 @@ export default function App() {
                   <div className="double-combined-damage-grid">
                     {doubleCombinedDamageSummary.map((entry) => <div key={`double-combined-${entry.defenderSlot}`} className="double-combined-damage-item">
                       <div className="double-combined-damage-head">
-                        <strong>{entry.defenderLabel}</strong>
+                        <div className="double-combined-damage-defender">
+                          {entry.defenderSprite ? <img src={entry.defenderSprite} alt={entry.defenderLabel} className="double-combined-damage-sprite" /> : null}
+                          <strong>{entry.defenderLabel}</strong>
+                        </div>
                         <span>{entry.totalPctText}</span>
                       </div>
                       <div className="double-combined-damage-total">{entry.totalText}</div>

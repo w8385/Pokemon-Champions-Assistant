@@ -1303,6 +1303,19 @@ header p {
   justify-content: space-between;
   gap: 8px;
 }
+.double-combined-damage-defender {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.double-combined-damage-sprite {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 auto;
+}
 .double-combined-damage-head span {
   color: #bfdbfe;
   font-size: 13px;
