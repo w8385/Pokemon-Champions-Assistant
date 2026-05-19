@@ -1470,6 +1470,15 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
   return cleaned.length ? cleaned : defaultOpponents
 }
 
+function sanitizeConfirmedMovesByKey(input: unknown): Record<string, string[]> {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {}
+  return Object.fromEntries(
+    Object.entries(input)
+      .filter(([key]) => typeof key === 'string')
+      .map(([key, value]) => [key, Array.isArray(value) ? value.filter((move): move is string => typeof move === 'string' && move.trim().length > 0) : []])
+  )
+}
+
 function sanitizeSampleSpeedTargets(input: unknown): SampleSpeedTarget[] {
   if (!Array.isArray(input)) return defaultSampleSpeedTargets
   const cleaned = input
@@ -1596,7 +1605,7 @@ function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
   const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : '/'
-  if (viewState.mainSection === 'single' && viewState.activeTab) params.set('tab', viewState.activeTab)
+  if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
@@ -3013,7 +3022,7 @@ export default function App() {
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [moveSearch, setMoveSearch] = React.useState('')
-  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => persisted?.confirmedMovesByKey ?? {})
+  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey))
   const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
@@ -3101,7 +3110,8 @@ export default function App() {
       ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
       : buildOpponentBattleStats(defenderRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
-    const moveMeta = resolveAbilityAdjustedMoveMeta(doubleMoveName, moveMetaForName(doubleMoveName), attackerAbility)
+    const baseMoveMeta = resolveMoveMeta(doubleMoveName, moveOptions, movePoolByKey)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(doubleMoveName, baseMoveMeta, attackerAbility)
     const moveType = resolveMoveType(doubleMoveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
@@ -4622,7 +4632,7 @@ export default function App() {
       setCalcOpponentAttackNature(nextOffenseState.attackNature)
       setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
-      setConfirmedMovesByKey(parsed.confirmedMovesByKey ?? {})
+      setConfirmedMovesByKey(sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey))
       setMainSection(parsed.mainSection ?? 'home')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
@@ -4649,8 +4659,8 @@ export default function App() {
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => setMainSection('single')}>{lt('싱글배틀 메뉴')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => setMainSection('double')}>{lt('더블배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
               </div>
             </div>
@@ -4798,14 +4808,14 @@ export default function App() {
         <section className="panel wide home-hero-panel">
           <div className="row-between section-head home-hero-head" />
           <div className="home-route-grid">
-            <button type="button" className="home-route-card accent" onClick={() => setMainSection('single')}>
+            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('싱글배틀 메뉴')}</span>
                 <strong>{lt('싱글배틀')}</strong>
                 <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
               </div>
             </button>
-            <button type="button" className="home-route-card accent" onClick={() => setMainSection('double')}>
+            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('더블배틀 메뉴')}</span>
                 <strong>{lt('더블배틀')}</strong>
@@ -4882,24 +4892,28 @@ export default function App() {
               <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
               <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('현재 2대2 보드 기준으로 스피드와 대미지, 전장 보정을 함께 확인할 수 있게 준비 중입니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
             </div>
-            {mainSection === 'single' ? (
+            {mainSection === 'single' || mainSection === 'double' ? (
               <div className="battle-flow-nav">
                 <div className="battle-flow-diagram">
                   <button type="button" className={`flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
                   <span className="flow-arrow" aria-hidden="true">→</span>
                   <button type="button" className={`flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
                   <span className="flow-arrow" aria-hidden="true">→</span>
-                  <div className="flow-branch-group">
-                    <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
-                  </div>
+                  {mainSection === 'single' ? (
+                    <div className="flow-branch-group">
+                      <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                      <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
+                    </div>
+                  ) : (
+                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 계산 작업 보드')}</button>
+                  )}
                 </div>
               </div>
             ) : null}
           </div>
         </section> : null}
 
-        {mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power') ? (
+        {((mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) || mainSection === 'double') ? (
           <section className="panel wide">
             <h2>{lt('파티 한눈 요약')}</h2>
             <div className="team-strip-grid">
@@ -4975,121 +4989,141 @@ export default function App() {
           </div>
 
           <div className="double-layout-grid">
-            <article className="double-layout-card">
-              <div className="double-layout-card-head">
-                <strong>{lt('현재 보드')}</strong>
-                <span className="pick-badge verdict-badge">{lt('입력 가능')}</span>
-              </div>
-              <div className="double-board-control-grid">
-                <label>
-                  {lt('내 좌측')}
-                  <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
-                    {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                  </select>
-                </label>
-                <label>
-                  {lt('내 우측')}
-                  <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
-                    {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                  </select>
-                </label>
-                <label>
-                  {lt('상대 좌측')}
-                  <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
-                    {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                  </select>
-                </label>
-                <label>
-                  {lt('상대 우측')}
-                  <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
-                    {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                  </select>
-                </label>
-              </div>
-              <div className="double-toggle-grid">
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyLeft} onChange={(e) => setDoubleProtectMyLeft(e.target.checked)} /><span>{lt('내 좌측 방어')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyRight} onChange={(e) => setDoubleProtectMyRight(e.target.checked)} /><span>{lt('내 우측 방어')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppLeft} onChange={(e) => setDoubleProtectOppLeft(e.target.checked)} /><span>{lt('상대 좌측 방어')}</span></label>
-                <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppRight} onChange={(e) => setDoubleProtectOppRight(e.target.checked)} /><span>{lt('상대 우측 방어')}</span></label>
-              </div>
-            </article>
-
-            <article className="double-layout-card">
-              <div className="double-layout-card-head">
-                <strong>{lt('스피드 계산')}</strong>
-                <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
-              </div>
-              <p className="muted">{lt('현재 보드에서 고른 4마리를 기준으로 첫 번째 행동순 미리보기를 붙였습니다. 순풍은 반영되고, 이후 더블 전용 세부 보정을 추가합니다.')}</p>
-              <div className="double-speed-preview-list">
-                {doubleSpeedOrder.map((entry, idx) => <div key={`double-speed-${entry.slot}`} className="double-speed-preview-item">
-                  <span>{idx + 1}{lt('순위')} · {entry.label}</span>
-                  <strong>{entry.name}</strong>
-                  <div className="pick-summary-badges">
-                    <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.effectiveSpeed ?? '—'}</span>
-                    {entry.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+            <div className="double-layout-main">
+              <article className="double-layout-card double-board-setup-card">
+                <div className="double-layout-card-head">
+                  <strong>{lt('현재 보드')}</strong>
+                  <span className="pick-badge verdict-badge">{lt('입력 가능')}</span>
+                </div>
+                <p className="muted">{lt('공용 파티·상대 엔트리에서 정리한 6마리 중 실제 2대2 보드에 올라온 슬롯만 여기서 고릅니다.')}</p>
+                <div className="double-board-control-grid">
+                  <label>
+                    {lt('내 좌측')}
+                    <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
+                      {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    {lt('내 우측')}
+                    <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
+                      {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    {lt('상대 좌측')}
+                    <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
+                      {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    {lt('상대 우측')}
+                    <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
+                      {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="double-state-sections">
+                  <div className="double-state-card">
+                    <strong>{lt('속도/전장')}</strong>
+                    <div className="double-toggle-grid">
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTrickRoom} onChange={(e) => setDoubleTrickRoom(e.target.checked)} /><span>{lt('트릭룸')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindMy} onChange={(e) => setDoubleTailwindMy(e.target.checked)} /><span>{lt('아군 순풍')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleTailwindOpp} onChange={(e) => setDoubleTailwindOpp(e.target.checked)} /><span>{lt('상대 순풍')}</span></label>
+                    </div>
                   </div>
-                </div>)}
-              </div>
-            </article>
-
-            <article className="double-layout-card accent">
-              <div className="double-layout-card-head">
-                <strong>{lt('대미지 계산')}</strong>
-                <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
-              </div>
-              <div className="double-board-control-grid">
-                <label>
-                  {lt('공격자 슬롯')}
-                  <select value={doubleAttackerSlot} onChange={(e) => setDoubleAttackerSlot(e.target.value as DoubleBoardSlot)}>
-                    {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-attacker-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
-                  </select>
-                </label>
-                <label>
-                  {lt('대상 슬롯')}
-                  <select value={doubleDefenderSlot} onChange={(e) => setDoubleDefenderSlot(e.target.value as DoubleBoardSlot)}>
-                    {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-defender-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
-                  </select>
-                </label>
-                <label>
-                  {lt('기술')}
-                  <select value={doubleMoveName} onChange={(e) => setDoubleMoveName(e.target.value)}>
-                    {doubleAttackerMoves.length ? doubleAttackerMoves.map((move) => <option key={`double-move-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
-                  </select>
-                </label>
-              </div>
-              <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
-              <div className="sample-note-list">
-                <span className="pick-badge">{lt('공격측')} · {doubleDamageAttackerMeta.option?.row ? displayName(doubleDamageAttackerMeta.option.row, siteLanguage) : lt('미선택')}</span>
-                <span className="pick-badge enemy">{lt('방어측')} · {doubleDamageDefenderMeta.option?.row ? displayName(doubleDamageDefenderMeta.option.row, siteLanguage) : lt('미선택')}</span>
-                {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
-                {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
-                {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
-                {doubleProtectBySlot[doubleDefenderSlot] ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
-              </div>
-              {doubleDamageContext?.reason ? <div className="damage-box empty compact"><p>{doubleDamageContext.reason}</p></div> : doubleDamageContext?.damage ? <div className="damage-box compact">
-                <div className="damage-summary-grid">
-                  <div className="damage-summary-card verdict verdict-card">
-                    <span>{lt('대미지')}</span>
-                    <strong>{doubleDamageContext.damage.min} ~ {doubleDamageContext.damage.max}</strong>
+                  <div className="double-state-card">
+                    <strong>{lt('방어 보정')}</strong>
+                    <div className="double-toggle-grid">
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardMy} onChange={(e) => setDoubleFriendGuardMy(e.target.checked)} /><span>{lt('아군 프렌드가드')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleFriendGuardOpp} onChange={(e) => setDoubleFriendGuardOpp(e.target.checked)} /><span>{lt('상대 프렌드가드')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardMy} onChange={(e) => setDoubleWideGuardMy(e.target.checked)} /><span>{lt('아군 와이드가드')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleWideGuardOpp} onChange={(e) => setDoubleWideGuardOpp(e.target.checked)} /><span>{lt('상대 와이드가드')}</span></label>
+                    </div>
                   </div>
-                  <div className="damage-summary-card">
-                    <span>{lt('비율')}</span>
-                    <strong>{doubleDamageContext.damage.minPct}% ~ {doubleDamageContext.damage.maxPct}%</strong>
-                  </div>
-                  <div className="damage-summary-card accent">
-                    <span>{lt('효과')}</span>
-                    <strong>x{doubleDamageContext.effectiveness}</strong>
+                  <div className="double-state-card">
+                    <strong>{lt('개별 방어')}</strong>
+                    <div className="double-toggle-grid">
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyLeft} onChange={(e) => setDoubleProtectMyLeft(e.target.checked)} /><span>{lt('내 좌측 방어')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectMyRight} onChange={(e) => setDoubleProtectMyRight(e.target.checked)} /><span>{lt('내 우측 방어')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppLeft} onChange={(e) => setDoubleProtectOppLeft(e.target.checked)} /><span>{lt('상대 좌측 방어')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={doubleProtectOppRight} onChange={(e) => setDoubleProtectOppRight(e.target.checked)} /><span>{lt('상대 우측 방어')}</span></label>
+                    </div>
                   </div>
                 </div>
-              </div> : <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>}
-            </article>
+              </article>
+            </div>
+
+            <div className="double-layout-side">
+              <article className="double-layout-card">
+                <div className="double-layout-card-head">
+                  <strong>{lt('스피드 계산')}</strong>
+                  <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
+                </div>
+                <p className="muted">{lt('현재 보드에서 고른 4마리를 기준으로 첫 번째 행동순 미리보기를 붙였습니다. 순풍은 반영되고, 이후 더블 전용 세부 보정을 추가합니다.')}</p>
+                <div className="double-speed-preview-list">
+                  {doubleSpeedOrder.map((entry, idx) => <div key={`double-speed-${entry.slot}`} className="double-speed-preview-item">
+                    <span>{idx + 1}{lt('순위')} · {entry.label}</span>
+                    <strong>{entry.name}</strong>
+                    <div className="pick-summary-badges">
+                      <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.effectiveSpeed ?? '—'}</span>
+                      {entry.tailwind ? <span className="pick-badge subtle">{lt('순풍')}</span> : null}
+                    </div>
+                  </div>)}
+                </div>
+              </article>
+
+              <article className="double-layout-card accent">
+                <div className="double-layout-card-head">
+                  <strong>{lt('대미지 계산')}</strong>
+                  <span className="pick-badge verdict-badge">{lt('더블 전용 보정 예정')}</span>
+                </div>
+                <div className="double-board-control-grid">
+                  <label>
+                    {lt('공격자 슬롯')}
+                    <select value={doubleAttackerSlot} onChange={(e) => setDoubleAttackerSlot(e.target.value as DoubleBoardSlot)}>
+                      {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-attacker-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    {lt('대상 슬롯')}
+                    <select value={doubleDefenderSlot} onChange={(e) => setDoubleDefenderSlot(e.target.value as DoubleBoardSlot)}>
+                      {(Object.keys(doubleSlotMeta) as DoubleBoardSlot[]).map((slot) => <option key={`double-defender-${slot}`} value={slot}>{doubleSlotMeta[slot].label}</option>)}
+                    </select>
+                  </label>
+                  <label className="double-control-span-2">
+                    {lt('기술')}
+                    <select value={doubleMoveName} onChange={(e) => setDoubleMoveName(e.target.value)}>
+                      {doubleAttackerMoves.length ? doubleAttackerMoves.map((move) => <option key={`double-move-${move}`} value={move}>{move}</option>) : <option value="">{lt('등록 기술 없음')}</option>}
+                    </select>
+                  </label>
+                </div>
+                <label className="calc-toggle-box"><input type="checkbox" checked={doubleSpreadMove} onChange={(e) => setDoubleSpreadMove(e.target.checked)} /><span>{lt('광역기 감쇠 적용')}</span></label>
+                <div className="sample-note-list">
+                  <span className="pick-badge">{lt('공격측')} · {doubleDamageAttackerMeta.option?.row ? displayName(doubleDamageAttackerMeta.option.row, siteLanguage) : lt('미선택')}</span>
+                  <span className="pick-badge enemy">{lt('방어측')} · {doubleDamageDefenderMeta.option?.row ? displayName(doubleDamageDefenderMeta.option.row, siteLanguage) : lt('미선택')}</span>
+                  {doubleSpreadMove ? <span className="pick-badge subtle">{lt('광역기 감쇠')}</span> : null}
+                  {(doubleDamageDefenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp) ? <span className="pick-badge subtle">{lt('프렌드가드')}</span> : null}
+                  {(doubleDamageDefenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp) ? <span className="pick-badge subtle">{lt('와이드가드')}</span> : null}
+                  {doubleProtectBySlot[doubleDefenderSlot] ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
+                </div>
+                {doubleDamageContext?.reason ? <div className="damage-box empty compact"><p>{doubleDamageContext.reason}</p></div> : doubleDamageContext?.damage ? <div className="damage-box compact">
+                  <div className="damage-summary-grid">
+                    <div className="damage-summary-card verdict verdict-card">
+                      <span>{lt('대미지')}</span>
+                      <strong>{doubleDamageContext.damage.min} ~ {doubleDamageContext.damage.max}</strong>
+                    </div>
+                    <div className="damage-summary-card">
+                      <span>{lt('비율')}</span>
+                      <strong>{doubleDamageContext.damage.minPct}% ~ {doubleDamageContext.damage.maxPct}%</strong>
+                    </div>
+                    <div className="damage-summary-card accent">
+                      <span>{lt('효과')}</span>
+                      <strong>x{doubleDamageContext.effectiveness}</strong>
+                    </div>
+                  </div>
+                </div> : <p className="muted">{lt('지금은 공격자/대상과 보정 상태만 먼저 묶었습니다. 다음 단계에서 실제 더블 대미지 계산식을 연결합니다.')}</p>}
+              </article>
+            </div>
           </div>
 
           <div className="double-progress-card">
@@ -5103,7 +5137,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {mainSection === 'single' && activeTab === 'party' ? <section className="panel wide">
+        {((mainSection === 'single' && activeTab === 'party') || mainSection === 'double') ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between">
               <h2>{lt('내 파티 관리')}</h2>
@@ -5435,7 +5469,7 @@ export default function App() {
           </div>
         </section> : null}
 
-        {mainSection === 'home' ? null : mainSection === 'single' && activeTab === 'pick' ? <>
+        {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || mainSection === 'double') ? <>
         <section className="panel wide">
           <div className="row-between section-head">
             <div>
