@@ -5388,7 +5388,7 @@ export default function App() {
                             </label>
                           </div>
                         </div>
-                        <div className="pick-summary-badges">
+                        <div className="double-combined-damage-head-meta">
                           <span className="double-combined-damage-raw-inline">{entry.totalText}</span>
                           <label className="calc-toggle-box double-slot-protect-toggle compact">
                             <input
@@ -5427,9 +5427,7 @@ export default function App() {
                           </select>
                         </label>
                       </div>
-                      <div className="pick-summary-badges">
-                        <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
-                      </div>
+                      <div className="double-speed-value-inline">{card?.speed ?? '—'}</div>
                     </div>
                     <div className="double-focus-editor-section">
                       <div className="double-move-grid-2x2">
@@ -5492,9 +5490,7 @@ export default function App() {
                         {entry.sprite ? <img src={entry.sprite} alt={entry.name} className="double-order-sprite" /> : null}
                         <strong>{entry.name}</strong>
                       </div>
-                      <div className="pick-summary-badges">
-                        <span className={`pick-badge ${entry.side === 'opp' ? 'enemy' : ''}`}>{entry.speed ?? '—'}</span>
-                      </div>
+                      <div className="double-speed-value-inline">{entry.speed ?? '—'}</div>
                     </div>)}
                   </div>
                 </div>

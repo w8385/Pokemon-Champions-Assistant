@@ -1559,6 +1559,12 @@ header p {
 .double-combined-damage-notes {
   min-height: 16px;
 }
+.double-combined-damage-head-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .double-combined-damage-actions {
   display: flex;
   align-items: center;
@@ -1600,6 +1606,15 @@ header p {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+.double-speed-value-inline {
+  color: #e2e8f0;
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  min-width: 40px;
+  text-align: right;
 }
 .double-focus-editor-identity .pick-summary-badges,
 .double-combined-damage-defender-copy .pick-summary-badges {
@@ -1859,6 +1874,9 @@ header p {
 .double-speed-preview-item span {
   color: #93a4b8;
   font-size: 12px;
+}
+.double-speed-preview-item .double-speed-value-inline {
+  min-width: 48px;
 }
 .double-check-list {
   padding-left: 0;
