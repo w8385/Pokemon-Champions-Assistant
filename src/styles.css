@@ -1331,6 +1331,19 @@ header p {
   justify-content: space-between;
   gap: 8px;
 }
+.double-focus-editor-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.double-focus-editor-sprite {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 auto;
+}
 .double-focus-editor-name {
   font-size: 15px;
   font-weight: 700;

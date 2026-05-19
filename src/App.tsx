@@ -5305,9 +5305,12 @@ export default function App() {
                 <div className="double-attack-grid">
                   {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
                     <div className="double-focus-editor-head">
-                      <div>
-                        <strong>{meta.label}</strong>
-                        <div className="double-focus-editor-name">{card?.name || lt('미선택')}</div>
+                      <div className="double-focus-editor-identity">
+                        {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
+                        <div>
+                          <strong>{meta.label}</strong>
+                          <div className="double-focus-editor-name">{card?.name || lt('미선택')}</div>
+                        </div>
                       </div>
                       <div className="pick-summary-badges">
                         <span className={`pick-badge ${meta.side === 'opp' ? 'enemy' : ''}`}>{card?.speed ?? '—'}</span>
@@ -5315,7 +5318,6 @@ export default function App() {
                       </div>
                     </div>
                     <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{lt('기술 2x2 배치')}</span>
                       <div className="double-move-grid-2x2">
                         {moveRows.length ? moveRows.map(({ move, type, priority, selected }) => <button
                           key={`double-move-cell-${slot}-${move}`}
