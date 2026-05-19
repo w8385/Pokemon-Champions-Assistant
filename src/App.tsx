@@ -7445,7 +7445,7 @@ export default function App() {
                 {activeDamageMove ? <span className="damage-box-move-name">· {activeDamageMove}</span> : null}
               </div>
               <div className="damage-summary-grid">
-                <div className="damage-summary-card verdict verdict-card">
+                <div className="damage-summary-card verdict">
                   <span>{lt('판정')}</span>
                   <strong>{damageVerdict}</strong>
                 </div>
