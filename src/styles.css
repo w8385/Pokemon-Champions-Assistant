@@ -1183,6 +1183,11 @@ header p {
 .double-control-span-2 {
   grid-column: 1 / -1;
 }
+.double-board-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
 .double-slot-state-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1199,6 +1204,9 @@ header p {
   display: grid;
   gap: 8px;
 }
+.double-slot-state-card.merged {
+  gap: 10px;
+}
 .double-slot-state-card.enemy {
   border-color: rgba(124, 45, 18, 0.72);
 }
@@ -1208,6 +1216,24 @@ header p {
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
+}
+.double-slot-state-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.double-slot-state-sprite {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 auto;
+}
+.double-slot-state-identity-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 .double-slot-state-name {
   font-size: 15px;
@@ -1221,6 +1247,15 @@ header p {
 }
 .double-slot-protect-toggle {
   justify-content: flex-start;
+}
+.double-slot-state-select {
+  display: grid;
+  gap: 6px;
+}
+.double-slot-state-select span {
+  color: #93a4b8;
+  font-size: 12px;
+  font-weight: 600;
 }
 .double-slot-state-moves {
   display: flex;
@@ -5110,6 +5145,7 @@ textarea { min-height: 72px; resize: vertical; }
   .double-layout-side,
   .double-attack-grid,
   .double-board-control-grid,
+  .double-board-slot-grid,
   .double-slot-state-grid,
   .double-slot-state-grid.compact,
   .double-state-sections.compact,

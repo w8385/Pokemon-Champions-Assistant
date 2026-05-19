@@ -5197,31 +5197,57 @@ export default function App() {
                     <strong>{lt('현재 보드')}</strong>
                     <span className="pick-badge subtle">{lt('행동 전 컨텍스트')}</span>
                   </div>
-                  <div className="double-board-control-grid">
-                    <label>
-                      {lt('내 좌측')}
-                      <select value={doubleMyLeft} onChange={(e) => setDoubleMyLeft(Number(e.target.value))}>
-                        {doublePartyOptions.map((option) => <option key={`double-my-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                      </select>
-                    </label>
-                    <label>
-                      {lt('내 우측')}
-                      <select value={doubleMyRight} onChange={(e) => setDoubleMyRight(Number(e.target.value))}>
-                        {doublePartyOptions.map((option) => <option key={`double-my-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
-                      </select>
-                    </label>
-                    <label>
-                      {lt('상대 좌측')}
-                      <select value={doubleOppLeft} onChange={(e) => setDoubleOppLeft(Number(e.target.value))}>
-                        {doubleOpponentOptions.map((option) => <option key={`double-opp-left-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                      </select>
-                    </label>
-                    <label>
-                      {lt('상대 우측')}
-                      <select value={doubleOppRight} onChange={(e) => setDoubleOppRight(Number(e.target.value))}>
-                        {doubleOpponentOptions.map((option) => <option key={`double-opp-right-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('엔트리')} ${option.idx + 1}`}</option>)}
-                      </select>
-                    </label>
+                  <div className="double-board-slot-grid">
+                    {(['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[]).map((slot) => {
+                      const card = doubleBoardStateCards.find((entry) => entry.slot === slot)
+                      if (!card) return null
+                      const options = card.side === 'opp' ? doubleOpponentOptions : doublePartyOptions
+                      const value = slot === 'oppLeft' ? doubleOppLeft : slot === 'oppRight' ? doubleOppRight : slot === 'myLeft' ? doubleMyLeft : doubleMyRight
+                      const onChange = (nextValue: number) => {
+                        if (slot === 'oppLeft') setDoubleOppLeft(nextValue)
+                        else if (slot === 'oppRight') setDoubleOppRight(nextValue)
+                        else if (slot === 'myLeft') setDoubleMyLeft(nextValue)
+                        else setDoubleMyRight(nextValue)
+                      }
+                      return <div key={`double-board-slot-${slot}`} className={`double-slot-state-card merged ${card.side === 'opp' ? 'enemy' : ''}`}>
+                        <div className="double-slot-state-head">
+                          <strong>{card.label}</strong>
+                          <div className="pick-summary-badges">
+                            <span className={`pick-badge ${card.side === 'opp' ? 'enemy' : ''}`}>{card.speed ?? '—'}</span>
+                            {card.protected ? <span className="pick-badge verdict-badge">{lt('방어')}</span> : null}
+                          </div>
+                        </div>
+                        <div className="double-slot-state-identity">
+                          {card.row?.sprite ? <img src={card.row.sprite} alt={card.name} className="double-slot-state-sprite" /> : null}
+                          <div className="double-slot-state-identity-copy">
+                            <div className="double-slot-state-name">{card.name}</div>
+                            <div className="double-slot-state-meta">
+                              <span>{lt('특성')} · {card.ability || lt('미선택')}</span>
+                              <span>{lt('도구')} · {card.item || lt('도구 없음')}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <label className="double-slot-state-select">
+                          <span>{card.side === 'opp' ? lt('상대 포켓몬 선택') : lt('내 포켓몬 선택')}</span>
+                          <select value={value} onChange={(e) => onChange(Number(e.target.value))}>
+                            {options.map((option) => <option key={`double-slot-option-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${card.side === 'opp' ? lt('엔트리') : lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                          </select>
+                        </label>
+                        <label className="calc-toggle-box double-slot-protect-toggle">
+                          <input
+                            type="checkbox"
+                            checked={card.protected}
+                            onChange={(e) => {
+                              if (card.slot === 'myLeft') setDoubleProtectMyLeft(e.target.checked)
+                              else if (card.slot === 'myRight') setDoubleProtectMyRight(e.target.checked)
+                              else if (card.slot === 'oppLeft') setDoubleProtectOppLeft(e.target.checked)
+                              else setDoubleProtectOppRight(e.target.checked)
+                            }}
+                          />
+                          <span>{card.label} {lt('방어')}</span>
+                        </label>
+                      </div>
+                    })}
                   </div>
                   <div className="double-state-sections compact single">
                     <div className="double-state-card">
