@@ -6031,37 +6031,31 @@ export default function App() {
             <div>
               <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
             </div>
-            {mainSection === 'single' || mainSection === 'double' ? (
-              <div className="battle-flow-nav">
-                <div className="battle-flow-diagram">
-                  <button type="button" className={`flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
-                  <span className="flow-arrow" aria-hidden="true">→</span>
-                  <button type="button" className={`flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
-                  <span className="flow-arrow" aria-hidden="true">→</span>
-                  {mainSection === 'single' ? (
-                    <div className="flow-branch-group">
-                      <button type="button" className={`flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                      <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
-                    </div>
-                  ) : (
-                    <button type="button" className={`flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
-                  )}
-                </div>
-              </div>
-            ) : mainSection === 'sample' ? (
-              <div className="battle-flow-nav">
-                <div className="battle-flow-diagram sample-top-tab-bar">
-                {([
-                  ['builder', lt('샘플 빌드')],
-                  ['speed', lt('스피드 계산')],
-                  ['damage', lt('대미지 계산')],
-                ] as const).map(([value, label]) => (
-                  <button key={`sample-workbench-tab-${value}`} type="button" className={`flow-node ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
-                ))}
-                </div>
-              </div>
-            ) : null}
           </div>
+          {mainSection === 'single' || mainSection === 'double' ? (
+            <div className="tab-bar section-menu-tabs">
+              <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
+              <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+              {mainSection === 'single' ? (
+                <>
+                  <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                  <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
+                </>
+              ) : (
+                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
+              )}
+            </div>
+          ) : mainSection === 'sample' ? (
+            <div className="tab-bar section-menu-tabs">
+              {([
+                ['builder', lt('샘플 빌드')],
+                ['speed', lt('스피드 계산')],
+                ['damage', lt('대미지 계산')],
+              ] as const).map(([value, label]) => (
+                <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+              ))}
+            </div>
+          ) : null}
         </section> : null}
 
         {mainSection === 'dex' ? <section className="panel wide">

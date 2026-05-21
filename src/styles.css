@@ -420,6 +420,9 @@ header p {
   gap: 8px;
   flex-wrap: wrap;
 }
+.section-menu-tabs {
+  margin-top: 2px;
+}
 .battle-flow-nav {
   display: grid;
   gap: 10px;
@@ -4526,6 +4529,11 @@ label {
 .dex-mode-tabs {
   gap: 8px;
 }
+.section-menu-tabs .tab-chip {
+  min-height: 42px;
+  padding: 10px 14px;
+  font-weight: 700;
+}
 .dex-results-card {
   border: 1px solid #334155;
   border-radius: 16px;
@@ -6412,6 +6420,10 @@ html {
     justify-content: space-between;
   }
   .flow-node {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+  .section-menu-tabs .tab-chip {
     flex: 1 1 auto;
     text-align: center;
   }
