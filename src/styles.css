@@ -3931,6 +3931,11 @@ header p {
 .sample-top-tab-bar {
   justify-content: flex-start;
 }
+.sample-top-tab-bar .flow-node {
+  min-width: 124px;
+  justify-content: center;
+  text-align: center;
+}
 .sample-workbench-head {
   align-items: center;
   gap: 16px;
