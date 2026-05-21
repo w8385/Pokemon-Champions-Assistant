@@ -5759,7 +5759,7 @@ export default function App() {
           </div>
         </div>
         ) : null}
-        {mainSection !== 'home' ? <section className="panel wide">
+        {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
               <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
