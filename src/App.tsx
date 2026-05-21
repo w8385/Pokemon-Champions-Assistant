@@ -1265,6 +1265,10 @@ function findMatchingMoveOption(name: string, options: MoveOption[]) {
 }
 
 function resolveMoveType(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>) {
+  for (const candidate of moveNameCandidates(name)) {
+    const meta = lookupMoveMeta(candidate)
+    if (meta?.type) return meta.type
+  }
   const direct = findMatchingMoveOption(name, preferredOptions)
   if (direct?.type) return direct.type
   for (const pool of Object.values(movePools)) {
