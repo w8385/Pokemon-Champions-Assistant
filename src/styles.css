@@ -6374,6 +6374,83 @@ html {
   .app-shell {
     padding: 14px;
   }
+  .double-layout-card,
+  .double-attacker-card,
+  .double-state-card,
+  .double-combined-damage-item,
+  .double-inline-subcard {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  .double-planner-main-card {
+    gap: 10px;
+  }
+  .double-planner-context {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  .double-layout-card-head,
+  .double-focus-editor-head,
+  .double-combined-damage-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .double-focus-editor-identity,
+  .double-combined-damage-defender,
+  .double-combined-damage-defender-copy,
+  .double-focus-editor-identity .double-side-select,
+  .double-combined-damage-defender-copy .double-side-select,
+  .double-side-select,
+  .double-side-select-input {
+    width: 100%;
+  }
+  .double-focus-editor-identity .double-side-select,
+  .double-combined-damage-defender-copy .double-side-select {
+    max-width: none;
+  }
+  .double-focus-editor-sprite,
+  .double-combined-damage-sprite {
+    width: 36px;
+    height: 36px;
+  }
+  .double-speed-value-inline,
+  .double-combined-damage-total {
+    min-width: 0;
+    text-align: left;
+  }
+  .double-combined-damage-head-meta,
+  .double-combined-damage-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .double-move-cell {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  .double-move-row-title {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .double-target-chip-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .double-target-chip {
+    min-height: 40px;
+    text-align: center;
+  }
+  .double-speed-preview-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .double-speed-preview-item > span {
+    grid-column: 1 / -1;
+  }
+  .double-order-main.with-sprite {
+    min-width: 0;
+  }
   .header-primary-tabs {
     padding: 0 0 8px;
   }
