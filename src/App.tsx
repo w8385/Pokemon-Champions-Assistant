@@ -365,6 +365,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
     '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도감': 'Dex', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '배우는 포켓몬': 'Pokémon that learn this move', '합계': 'Total', '효과': 'Effect',
+    '선택 슬롯 비우기': 'Clear selected slot',
     '간단 설명': 'Summary', '상세 설명': 'Details', '설명': 'Description', '이름': 'Name', '설명 데이터 없음': 'No description available yet.',
     '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
@@ -396,6 +397,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
     '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도감': '図鑑', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'ポケモン・技・特性・持ち物をすばやく検索できます。', '포켓몬': 'ポケモン', '기술': '技', '검색 결과': '検索結果', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': '検索結果を選ぶと詳細をすぐ確認できます。', '기술 검색': '技検索', '도구 검색': '持ち物検索', '타입': 'タイプ', '분류': '分類', '명중': '命中', '변화': '変化', '해당 특성 포켓몬': 'この特性のポケモン', '배우는 포켓몬': 'この技を覚えるポケモン', '합계': '合計', '효과': '効果',
+    '선택 슬롯 비우기': '選択スロットを空にする',
     '간단 설명': '要約', '상세 설명': '詳細説明', '설명': '説明', '이름': '名前', '설명 데이터 없음': '説明データはまだありません。',
     '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
@@ -5303,6 +5305,18 @@ export default function App() {
     if (selectedMy === idx) setSelectedMy(0)
   }
 
+  const clearOpponentSlot = (idx: number) => {
+    setOpponents((prev) => prev.map((member, memberIdx) => memberIdx === idx ? { ...emptyOpponents[idx], revealedMoves: [...emptyOpponents[idx].revealedMoves] } : member))
+    setOpponentSearch((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
+    setOpponentItemDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
+    setOpponentAbilityDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
+    setActiveOpponentAbilityField((prev) => prev === idx ? null : prev)
+    setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', idx) ? null : prev)
+    setActiveItemField((prev) => sameItemField(prev, 'opponent', idx) ? null : prev)
+    setActiveMoveField((prev) => prev?.scope === 'opponent' && prev.key === opponents[idx]?.key ? null : prev)
+    if (selectedOpp === idx) setSelectedOpp(0)
+  }
+
   const resetAll = () => {
     setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
     setPartyItemDrafts(emptyParty.map(() => ''))
@@ -6166,6 +6180,10 @@ export default function App() {
                     const label = opponentSearch[idx] || (row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage))
                     return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{label}</button>
                   })}
+                </div>
+                <div className="team-strip-actions enemy">
+                  <button type="button" className="action-button subtle" onClick={() => clearOpponentSlot(selectedOpp)}>{lt('선택 슬롯 비우기')}</button>
+                  <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>{lt('상대 엔트리 초기화')}</button>
                 </div>
                 <div className="quick-opponent-search-bar compact embedded">
                   <label className="species-picker">

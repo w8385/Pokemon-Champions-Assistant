@@ -3954,6 +3954,15 @@ header p {
   flex-wrap: wrap;
   gap: 8px;
 }
+.team-strip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.team-strip-actions.enemy {
+  justify-content: flex-start;
+}
 .team-pill {
   appearance: none;
   display: inline-flex;
