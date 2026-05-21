@@ -3842,6 +3842,9 @@ header p {
 .sample-overview-badges-summary.compact-four {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+.sample-overview-badges-summary.compact-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 .sample-overview-badges-compact {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
