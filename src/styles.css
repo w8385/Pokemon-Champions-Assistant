@@ -6597,6 +6597,11 @@ html {
   .damage-box {
     padding: 10px;
   }
+  .damage-result-surface {
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
   .damage-compare-panel {
     gap: 10px;
   }
