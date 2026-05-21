@@ -430,6 +430,10 @@ header p {
 .section-menu-tabs {
   margin-top: 2px;
 }
+.section-menu-tabs-single {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .battle-flow-nav {
   display: grid;
   gap: 10px;
@@ -6433,6 +6437,9 @@ html {
   .section-menu-tabs .tab-chip {
     flex: 1 1 auto;
     text-align: center;
+  }
+  .section-menu-tabs-single {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .modal-backdrop {
     padding: 0;

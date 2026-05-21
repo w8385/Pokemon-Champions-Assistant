@@ -6035,7 +6035,7 @@ export default function App() {
             </div>
           </div>
           {mainSection === 'single' || mainSection === 'double' ? (
-            <div className="tab-bar section-menu-tabs">
+            <div className={`tab-bar section-menu-tabs ${mainSection === 'single' ? 'section-menu-tabs-single' : ''}`}>
               <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
               <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
               {mainSection === 'single' ? (
@@ -6582,7 +6582,6 @@ export default function App() {
             <div className="section-head row-between">
               <h2>{lt('내 파티 관리')}</h2>
               <div className="inline-controls compact-actions">
-                <span className="muted-inline">{lt('포켓몬별 기술배치 / 노력치보정')}</span>
                 <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('내 파티 초기화')}</button>
               </div>
             </div>
@@ -6949,7 +6948,6 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{lt('상대 엔트리')}</h2>
-              <p className="muted">{lt('초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.')}</p>
             </div>
             <div className="pick-summary-badges">
               <span className="pick-badge">{lt('엔트리')} {opponents.length}/6</span>
