@@ -1524,6 +1524,14 @@ header p {
   outline-offset: 1px;
   border-color: rgba(96, 165, 250, 0.7);
 }
+.double-side-select-input option {
+  background: #0b1220;
+  color: #eef2f7;
+}
+.double-side-select-input.enemy option {
+  background: #140b12;
+  color: #eef2f7;
+}
 .double-side-select-input.enemy:focus {
   outline-color: rgba(248, 113, 113, 0.24);
   border-color: rgba(248, 113, 113, 0.7);
