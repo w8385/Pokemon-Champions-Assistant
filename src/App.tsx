@@ -7688,8 +7688,7 @@ export default function App() {
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-workspace">
                       <div className="sample-track-card sample-slot-rail-card">
-                        <div className="row-between sample-track-head compact-gap">
-                          <strong>{lt('기술 슬롯')}</strong>
+                        <div className="row-between sample-track-head compact-gap sample-slot-rail-head-minimal">
                           <div className="pick-summary-badges sample-slot-target-badges">
                             <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
                             <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
