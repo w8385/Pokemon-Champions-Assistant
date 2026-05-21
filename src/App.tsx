@@ -5033,9 +5033,6 @@ export default function App() {
   const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
     .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
     .slice(0, 8)
-  const showPartyHeaderSaveActions = activeTab === 'party' && (mainSection === 'single' || mainSection === 'double')
-  const showSampleHeaderSaveActions = mainSection === 'sample'
-
   React.useEffect(() => {
     setSampleDamageTargets((prev) => {
       let changed = false
@@ -5734,13 +5731,6 @@ export default function App() {
             </div>
           </div>
           <div className="header-utility-row">
-            {showPartyHeaderSaveActions ? <div className="header-context-actions">
-              <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
-              <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
-            </div> : null}
-            {showSampleHeaderSaveActions ? <div className="header-context-actions">
-              <button type="button" className="action-button header-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
-            </div> : null}
             <div className="header-icon-actions">
             <div className="language-menu-wrap header-language-wrap">
               <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
@@ -6611,6 +6601,8 @@ export default function App() {
                   onChange={(e) => setPartyPresetLabelDraft(e.target.value)}
                   placeholder={lt('파티 이름')}
                 />
+                <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
+                <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
               </div>
               <div className="party-preset-grid">
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
@@ -8095,6 +8087,7 @@ export default function App() {
             </div>
             <div className="sample-builder-save-row">
               <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
             </div>
             <div className="sample-builder-slot-grid">
               {party.map((member, idx) => {
