@@ -2996,6 +2996,12 @@ header p {
   border-top: 1px solid rgba(51, 65, 85, 0.3);
   background: linear-gradient(180deg, rgba(37, 99, 235, 0.05), transparent);
 }
+.sample-hero-search {
+  width: 100%;
+}
+.sample-hero-search-input {
+  width: 100%;
+}
 .sample-hero-copy strong {
   font-size: 18px;
   line-height: 1.2;

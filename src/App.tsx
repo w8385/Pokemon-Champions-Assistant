@@ -7423,67 +7423,55 @@ export default function App() {
           {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
-                <label className="species-picker sample-species-picker">
-                {lt('포켓몬 선택')}
-                <div className="autocomplete sample-species-search">
-                  <input
-                    className="sample-species-search-input"
-                    value={sampleSearch}
-                    placeholder={lt('포켓몬 검색')}
-                    onFocus={() => {
-                      setActiveSearchField({ side: 'sample', idx: 0 })
-                      setAutocompleteMenuOpen(sampleSpeciesMenuId)
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)
-                      setTimeout(() => closeAutocompleteMenu(sampleSpeciesMenuId), 120)
-                    }}
-                    onChange={(e) => {
-                      setSampleSearch(e.target.value)
-                      setActiveSearchField({ side: 'sample', idx: 0 })
-                      setAutocompleteMenuOpen(sampleSpeciesMenuId)
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                        e.preventDefault()
-                        moveAutocompleteMenuHighlight(sampleSpeciesMenuId, sampleSpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
-                        return
-                      }
-                      if (e.key !== 'Enter') return
-                      const highlightedOption = sampleSpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId)]
-                      const committed = highlightedOption ? (selectSpecies('sample', 0, highlightedOption.key), true) : commitTopSpeciesOption('sample', 0, sampleSearch)
-                      if (committed) {
-                        e.preventDefault()
-                        closeAutocompleteMenu(sampleSpeciesMenuId)
-                      }
-                    }}
-                  />
-                  {sameSearchTarget(activeSearchField, 'sample', 0) ? (
-                    <div className="autocomplete-menu unified-dropdown-menu">
-                      {sampleSpeciesOptions.map((option, optionIdx) => (
-                        <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('sample', 0, option.key)}>
-                          {searchDisplayLabel(option.key, siteLanguage)}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </label>
               <div className="sample-hero sample-hero-attached">
                 {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
                 <div className="sample-hero-copy">
-                  <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                  <div className="autocomplete sample-species-search sample-hero-search">
+                    <input
+                      className="sample-species-search-input sample-hero-search-input"
+                      value={sampleSearch}
+                      placeholder={lt('포켓몬 검색')}
+                      onFocus={() => {
+                        setActiveSearchField({ side: 'sample', idx: 0 })
+                        setAutocompleteMenuOpen(sampleSpeciesMenuId)
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)
+                        setTimeout(() => closeAutocompleteMenu(sampleSpeciesMenuId), 120)
+                      }}
+                      onChange={(e) => {
+                        setSampleSearch(e.target.value)
+                        setActiveSearchField({ side: 'sample', idx: 0 })
+                        setAutocompleteMenuOpen(sampleSpeciesMenuId)
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                          e.preventDefault()
+                          moveAutocompleteMenuHighlight(sampleSpeciesMenuId, sampleSpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                          return
+                        }
+                        if (e.key !== 'Enter') return
+                        const highlightedOption = sampleSpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId)]
+                        const committed = highlightedOption ? (selectSpecies('sample', 0, highlightedOption.key), true) : commitTopSpeciesOption('sample', 0, sampleSearch)
+                        if (committed) {
+                          e.preventDefault()
+                          closeAutocompleteMenu(sampleSpeciesMenuId)
+                        }
+                      }}
+                    />
+                    {sameSearchTarget(activeSearchField, 'sample', 0) ? (
+                      <div className="autocomplete-menu unified-dropdown-menu">
+                        {sampleSpeciesOptions.map((option, optionIdx) => (
+                          <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('sample', 0, option.key)}>
+                            {searchDisplayLabel(option.key, siteLanguage)}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                   <div className="summary-line">
                     <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                  </div>
-                  <div className="pick-summary-badges sample-hero-meta">
-                    <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                    <span className="pick-badge item-badge-inline">
-                      <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                      {sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}
-                    </span>
-                    <span className="pick-badge">{lt('실수치 스피드')} {partySpeedValue(sampleRow, sampleForge)}</span>
                   </div>
                 </div>
               </div>
