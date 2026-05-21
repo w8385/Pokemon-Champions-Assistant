@@ -6134,7 +6134,6 @@ export default function App() {
                     const previewRows = option.pokemonKeys
                       .map((key) => indexByKey.get(key) ?? null)
                       .filter((row): row is Row => Boolean(row))
-                      .slice(0, 4)
                     return <button key={`dex-ability-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
                       <div className="dex-ability-result-card">
                         <div className="dex-ability-result-copy">
