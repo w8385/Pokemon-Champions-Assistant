@@ -2116,9 +2116,14 @@ header p {
   align-items: baseline;
   padding: 2px 2px 11px;
 }
+.sample-panel-header-side h2,
 .sample-panel-header-side strong {
   font-size: 18px;
   line-height: 1.25;
+  margin: 0;
+}
+.sample-content-head {
+  margin-bottom: 12px;
 }
 .sample-panel-header-side .action-button {
   flex-shrink: 0;

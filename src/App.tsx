@@ -7378,7 +7378,13 @@ export default function App() {
         </> : mainSection === 'sample' ? <>
         <section className="panel wide sample-workbench-panel">
           <div className="sample-content-panel">
-          {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
+          {sampleWorkbenchTab === 'builder' ? <>
+            <div className="section-head compact sample-content-head">
+              <div>
+                <h2>{lt('샘플 빌드')}</h2>
+              </div>
+            </div>
+            <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
               <div className="sample-hero sample-hero-attached">
@@ -7728,10 +7734,11 @@ export default function App() {
                   </div>
                 </>
             </div>
-          </div> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
+          </div>
+          </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
-                <strong>{lt('샘플 스피드')}</strong>
+                <h2>{lt('샘플 스피드')}</h2>
                 <span className="muted-inline">{lt('추월컷 계산')}</span>
               </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
@@ -7821,7 +7828,7 @@ export default function App() {
           </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
-                <strong>{lt('샘플 대미지 계산')}</strong>
+                <h2>{lt('샘플 대미지 계산')}</h2>
                 <span className="muted-inline">{sampleDamageMoveChoices[0] || lt('등록 기술 없음')}</span>
               </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
