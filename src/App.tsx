@@ -7379,9 +7379,12 @@ export default function App() {
         <section className="panel wide sample-workbench-panel">
           <div className="sample-content-panel">
           {sampleWorkbenchTab === 'builder' ? <>
-            <div className="section-head compact sample-content-head">
+            <div className="row-between section-head sample-content-head">
               <div>
                 <h2>{lt('샘플 빌드')}</h2>
+              </div>
+              <div className="pick-summary-badges">
+                <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
               </div>
             </div>
             <div className="sample-builder-grid compact-sample-builder-grid">
@@ -7737,9 +7740,13 @@ export default function App() {
           </div>
           </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="row-between sample-panel-header sample-panel-header-side">
-                <h2>{lt('샘플 스피드')}</h2>
-                <span className="muted-inline">{lt('추월컷 계산')}</span>
+              <div className="row-between section-head sample-content-head sample-content-head-inline">
+                <div>
+                  <h2>{lt('샘플 스피드')}</h2>
+                </div>
+                <div className="pick-summary-badges">
+                  <span className="pick-badge">{lt('추월컷 계산')}</span>
+                </div>
               </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
@@ -7827,9 +7834,13 @@ export default function App() {
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="row-between sample-panel-header sample-panel-header-side">
-                <h2>{lt('샘플 대미지 계산')}</h2>
-                <span className="muted-inline">{sampleDamageMoveChoices[0] || lt('등록 기술 없음')}</span>
+              <div className="row-between section-head sample-content-head sample-content-head-inline">
+                <div>
+                  <h2>{lt('샘플 대미지 계산')}</h2>
+                </div>
+                <div className="pick-summary-badges">
+                  <span className="pick-badge">{sampleDamageMoveChoices[0] || lt('등록 기술 없음')}</span>
+                </div>
               </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
