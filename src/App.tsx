@@ -5884,7 +5884,6 @@ export default function App() {
                           <div className="type-badge-wrap dex-result-typebadges">
                             {row.types.map((type) => <TypeBadgeImage key={`dex-row-type-icon-${option.key}-${type}`} type={type} />)}
                           </div>
-                          <div className="pick-summary-badges compact">{displayTypes(row, siteLanguage).map((type, idx) => <span key={`dex-row-type-${option.key}-${idx}`} className="pick-badge">{type}</span>)}</div>
                         </div>
                       </div>
                     </button>
