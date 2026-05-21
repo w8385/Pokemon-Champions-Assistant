@@ -6016,6 +6016,16 @@ export default function App() {
                   )}
                 </div>
               </div>
+            ) : mainSection === 'sample' ? (
+              <div className="tab-bar sample-filter-bar sample-top-tab-bar">
+                {([
+                  ['builder', lt('샘플 빌드')],
+                  ['speed', lt('스피드 계산')],
+                  ['damage', lt('대미지 계산')],
+                ] as const).map(([value, label]) => (
+                  <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+                ))}
+              </div>
             ) : null}
           </div>
         </section> : null}
@@ -7430,18 +7440,6 @@ export default function App() {
           </div> : null}
         </section>
         <section className="panel wide sample-workbench-panel">
-          <div className="row-between section-head sample-workbench-head">
-            <h2>{lt('포켓몬 샘플 깎기')}</h2>
-            <div className="tab-bar sample-filter-bar sample-top-tab-bar">
-              {([
-                ['builder', lt('샘플 빌드')],
-                ['speed', lt('스피드 계산')],
-                ['damage', lt('대미지 계산')],
-              ] as const).map(([value, label]) => (
-                <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
-              ))}
-            </div>
-          </div>
           {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
