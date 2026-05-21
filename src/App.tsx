@@ -7314,8 +7314,19 @@ export default function App() {
         </section>
         </> : mainSection === 'sample' ? <>
         <section className="panel wide">
-          <div className="row-between section-head">
-            <h2>{lt('샘플 개요')}</h2>
+          <div className="row-between section-head sample-top-head">
+            <div className="sample-top-head-main">
+              <h2>{lt('샘플 개요')}</h2>
+              <div className="tab-bar sample-filter-bar sample-top-tab-bar">
+                {([
+                  ['builder', lt('샘플 빌드')],
+                  ['speed', lt('스피드 계산')],
+                  ['damage', lt('대미지 계산')],
+                ] as const).map(([value, label]) => (
+                  <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+                ))}
+              </div>
+            </div>
             <div className="pick-summary-badges home-hero-badges">
               <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
               <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
@@ -7412,20 +7423,7 @@ export default function App() {
             </div>
           </div> : null}
         </section>
-        <section className="panel wide">
-          <div className="row-between section-head">
-            <h2>{lt('포켓몬 샘플 빌더')}</h2>
-            <span className="muted-inline">{displayName(sampleRow, siteLanguage)}</span>
-          </div>
-          <div className="tab-bar sample-filter-bar">
-            {([
-              ['builder', lt('샘플 빌드')],
-              ['speed', lt('샘플 스피드')],
-              ['damage', lt('샘플 대미지 계산')],
-            ] as const).map(([value, label]) => (
-              <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
-            ))}
-          </div>
+        <section className="panel wide sample-workbench-panel">
           {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">

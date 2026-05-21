@@ -3918,6 +3918,22 @@ header p {
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(11, 18, 32, 0.92));
   border-color: rgba(71, 85, 105, 0.56);
 }
+.sample-top-head {
+  align-items: flex-start;
+  gap: 16px;
+}
+.sample-top-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.sample-top-tab-bar {
+  justify-content: flex-start;
+}
+.sample-workbench-panel {
+  padding-top: 18px;
+}
 .sample-overview-inline-save {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
