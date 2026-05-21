@@ -5955,21 +5955,25 @@ export default function App() {
             <button type="button" className="home-route-card accent" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <strong>{lt('싱글배틀')}</strong>
+                <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <strong>{lt('더블배틀')}</strong>
+                <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
               <div className="home-route-card-copy">
                 <strong>{lt('포켓몬 샘플 빌더')}</strong>
+                <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('dex')}>
               <div className="home-route-card-copy">
                 <strong>{lt('도감')}</strong>
+                <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
               </div>
             </button>
           </div>
