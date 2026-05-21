@@ -240,9 +240,9 @@ type HoverTooltipCard = {
 }
 
 type DexDescriptionBundle = {
-  moves: Record<string, { moveId: number; nameEn: string; nameJa: string; shortEffect: string; effect: string; effectChance?: number | null }>
-  abilities: Record<string, { abilityId: number; nameKo: string; nameEn: string; nameJa: string; shortEffect: string; effect: string }>
-  items: Record<string, { itemId: number; nameKo: string; nameEn: string; nameJa: string; shortEffect: string; effect: string }>
+  moves: Record<string, { moveId: number; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }>; effectChance?: number | null }>
+  abilities: Record<string, { abilityId: number; nameKo: string; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }> }>
+  items: Record<string, { itemId: number; nameKo: string; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }> }>
 }
 
 const PUNCH_MOVE_NAMES = new Set([
@@ -3002,14 +3002,20 @@ function applyEffectChanceText(text: string, effectChance?: number | null) {
   return text.replace(/\$effect_chance%/g, `${effectChance}%`)
 }
 
-function moveDescriptionFor(name: string) {
-  const description = DEX_DESCRIPTIONS.moves[name]
+function localizedDexText(
+  description: { text: Record<SiteLanguage, { summary: string; detail: string }>; effectChance?: number | null } | null | undefined,
+  language: SiteLanguage,
+) {
   if (!description) return null
+  const selected = description.text[language] ?? description.text.ko ?? description.text.en
   return {
-    ...description,
-    shortEffect: applyEffectChanceText(description.shortEffect, description.effectChance),
-    effect: applyEffectChanceText(description.effect, description.effectChance),
+    summary: applyEffectChanceText(selected?.summary ?? '', description.effectChance),
+    detail: applyEffectChanceText(selected?.detail ?? '', description.effectChance),
   }
+}
+
+function moveDescriptionFor(name: string) {
+  return DEX_DESCRIPTIONS.moves[name] ?? null
 }
 
 function abilityDescriptionFor(abilityKey: string) {
@@ -3485,6 +3491,9 @@ export default function App() {
   const dexSelectedMoveDescription = React.useMemo(() => dexSelectedMove ? moveDescriptionFor(dexSelectedMove.name) : null, [dexSelectedMove])
   const dexSelectedAbilityDescription = React.useMemo(() => dexSelectedAbility ? abilityDescriptionFor(dexSelectedAbility.key) : null, [dexSelectedAbility])
   const dexSelectedItemDescription = React.useMemo(() => dexSelectedItem ? itemDescriptionFor(dexSelectedItem) : null, [dexSelectedItem])
+  const dexSelectedMoveText = React.useMemo(() => localizedDexText(dexSelectedMoveDescription, siteLanguage), [dexSelectedMoveDescription, siteLanguage])
+  const dexSelectedAbilityText = React.useMemo(() => localizedDexText(dexSelectedAbilityDescription, siteLanguage), [dexSelectedAbilityDescription, siteLanguage])
+  const dexSelectedItemText = React.useMemo(() => localizedDexText(dexSelectedItemDescription, siteLanguage), [dexSelectedItemDescription, siteLanguage])
 
   const hideHoverTooltip = React.useCallback(() => setHoverTooltip(null), [])
   const showHoverTooltip = React.useCallback((event: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, card: HoverTooltipCard | null | undefined) => {
@@ -6006,11 +6015,11 @@ export default function App() {
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('간단 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedMoveDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedMoveText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상세 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedMoveDescription?.effect || dexSelectedMoveDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedMoveText?.detail || dexSelectedMoveText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                 </div>
               </div> : null}
@@ -6038,11 +6047,11 @@ export default function App() {
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('간단 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedAbilityDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedAbilityText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상세 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedAbilityDescription?.effect || dexSelectedAbilityDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedAbilityText?.detail || dexSelectedAbilityText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('해당 특성 포켓몬')}</strong>
@@ -6077,11 +6086,11 @@ export default function App() {
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('간단 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedItemDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedItemText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상세 설명')}</strong>
-                    <p className="dex-description-copy">{dexSelectedItemDescription?.effect || dexSelectedItemDescription?.shortEffect || lt('설명 데이터 없음')}</p>
+                    <p className="dex-description-copy">{dexSelectedItemText?.detail || dexSelectedItemText?.summary || lt('설명 데이터 없음')}</p>
                   </div>
                 </div>
               </div> : null}
