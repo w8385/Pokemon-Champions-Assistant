@@ -5952,29 +5952,30 @@ export default function App() {
       <main className="grid">
         {mainSection === 'home' ? (
         <section className="panel wide home-hero-panel">
-          <div className="row-between section-head home-hero-head" />
+          <div className="row-between section-head home-hero-head">
+            <div>
+              <h2>{lt('포켓몬 챔피언스 배틀 도우미')}</h2>
+              <p className="muted">{lt('파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구')}</p>
+            </div>
+          </div>
           <div className="home-route-grid">
             <button type="button" className="home-route-card accent" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
-                <span className="home-route-eyebrow">{lt('싱글배틀 메뉴')}</span>
                 <strong>{lt('싱글배틀')}</strong>
               </div>
             </button>
             <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
-                <span className="home-route-eyebrow">{lt('더블배틀 메뉴')}</span>
                 <strong>{lt('더블배틀')}</strong>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
               <div className="home-route-card-copy">
-                <span className="home-route-eyebrow">{lt('포켓몬 샘플 깎기')}</span>
                 <strong>{lt('포켓몬 샘플 빌더')}</strong>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('dex')}>
               <div className="home-route-card-copy">
-                <span className="home-route-eyebrow">{lt('도감')}</span>
                 <strong>{lt('도감')}</strong>
               </div>
             </button>
