@@ -4619,6 +4619,18 @@ label {
   border: 1px solid rgba(51, 65, 85, 0.85);
   padding: 10px;
 }
+.dex-ability-pokemon-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.dex-ability-pokemon-sprite {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 24px;
+}
 .dex-detail-identity h3 {
   margin: 0;
 }

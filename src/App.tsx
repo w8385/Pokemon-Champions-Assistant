@@ -6063,7 +6063,10 @@ export default function App() {
                       {dexSelectedAbility.pokemonKeys.map((key) => {
                         const row = indexByKey.get(key)
                         if (!row) return null
-                        return <span key={`dex-ability-pokemon-${key}`} className="pick-badge subtle">{displayName(row, siteLanguage)}</span>
+                        return <span key={`dex-ability-pokemon-${key}`} className="pick-badge subtle dex-ability-pokemon-chip">
+                          {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
+                          <span>{displayName(row, siteLanguage)}</span>
+                        </span>
                       })}
                     </div>
                   </div>
