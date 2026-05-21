@@ -3239,6 +3239,9 @@ header p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+.sample-overview-grid.compact-single {
+  grid-template-columns: minmax(0, 1fr);
+}
 .sample-overview-stack {
   display: grid;
   gap: 18px;
@@ -3836,6 +3839,9 @@ header p {
   gap: 10px;
   align-items: stretch;
 }
+.sample-overview-badges-summary.compact-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .sample-overview-badges-compact {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3908,6 +3914,12 @@ header p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+.sample-overview-search {
+  width: 100%;
+}
+.sample-overview-search-input {
+  width: 100%;
 }
 .sample-overview-chip {
   min-height: 34px;
