@@ -6098,7 +6098,7 @@ export default function App() {
               <div className="dex-results-card">
                 <div className="row-between section-head compact">
                   <div>
-                    <strong>{lt('검색 결과')}</strong>
+                    <h2>{lt('검색 결과')}</h2>
                     <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
                   </div>
                 </div>
