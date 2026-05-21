@@ -4760,6 +4760,26 @@ label {
   display: grid;
   gap: 7px;
 }
+.floating-hover-tooltip-description {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(20, 28, 48, 0.78);
+  border: 1px solid rgba(71, 85, 105, 0.34);
+}
+.floating-hover-tooltip-description > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+}
+.floating-hover-tooltip-description > p {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 12px;
+  line-height: 1.55;
+}
 .floating-hover-tooltip-row {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
