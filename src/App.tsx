@@ -2070,9 +2070,15 @@ function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (normalizedTypeChart[attackKey]?.[defendType.toLowerCase()] ?? 1), 1)
 }
 
-function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes: string[], defenderAbility: string) {
-  const baseEffectiveness = typeEffectiveness(attackType, defendTypes)
-  if (attackType.toLowerCase() === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) return 0
+function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes: string[], defenderAbility: string, attackerAbility = '') {
+  const attackKey = attackType.toLowerCase()
+  const attackerAbilityKey = attackerAbility.toLowerCase()
+  const hasScrappy = attackerAbilityKey === 'scrappy' || attackerAbility === '배짱'
+  const normalizedDefendTypes = hasScrappy && (attackKey === 'normal' || attackKey === 'fighting')
+    ? defendTypes.filter((defendType) => defendType.toLowerCase() !== 'ghost')
+    : defendTypes
+  const baseEffectiveness = typeEffectiveness(attackType, normalizedDefendTypes)
+  if (attackKey === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) return 0
   return baseEffectiveness
 }
 
@@ -3657,7 +3663,7 @@ export default function App() {
     const moveType = resolveMoveType(moveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
-    const effectiveness = moveType ? typeEffectiveness(moveType, effectiveTypes) : 1
+    const effectiveness = moveType ? abilityAdjustedTypeEffectiveness(moveType, effectiveTypes, defenderAbility, attackerAbility) : 1
     const guardedByWide = spreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
     const protectedTarget = doubleProtectBySlot[defenderSlot]
     const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
@@ -4362,7 +4368,7 @@ export default function App() {
     }
   }, [showDefenderDisguiseToggle])
   const autoStab = resolveStabMultiplier(effectiveAttackerTypes, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
-  const autoEffectiveness = activeDamageMoveType && defenderRow ? abilityAdjustedTypeEffectiveness(activeDamageMoveType, effectiveDefenderTypes, defenderAbilitySlug) : 1
+  const autoEffectiveness = activeDamageMoveType && defenderRow ? abilityAdjustedTypeEffectiveness(activeDamageMoveType, effectiveDefenderTypes, defenderAbilitySlug, attackerAbilitySlug) : 1
   const setActiveDamageMoveConditionValue = (value: ConditionalPowerValue) => {
     if (!activeDamageMoveRule || !activeDamageMove) return
     const normalized = normalizeConditionalPowerValue(activeDamageMoveRule, value)
@@ -4962,7 +4968,7 @@ export default function App() {
     if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
       return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
-    const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue)
+    const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, attackerAbilityValue)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
       attackerItem: sampleForge.item,
