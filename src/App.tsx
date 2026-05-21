@@ -7379,16 +7379,16 @@ export default function App() {
         <section className="panel wide sample-workbench-panel">
           <div className="sample-content-panel">
           {sampleWorkbenchTab === 'builder' ? <>
-            <div className="row-between section-head sample-content-head">
-              <div>
-                <h2>{lt('샘플 빌드')}</h2>
-              </div>
-              <div className="pick-summary-badges">
-                <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-              </div>
-            </div>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
+              <div className="row-between section-head sample-content-head sample-content-head-inline">
+                <div>
+                  <h2>{lt('샘플 빌드')}</h2>
+                </div>
+                <div className="pick-summary-badges">
+                  <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                </div>
+              </div>
               <div className="sample-panel-header sample-panel-header-main">
               <div className="sample-hero sample-hero-attached">
                 {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
