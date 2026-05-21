@@ -3508,7 +3508,7 @@ export default function App() {
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
-  const [sampleOverviewCollapsed, setSampleOverviewCollapsed] = React.useState(false)
+  const [sampleOverviewCollapsed, setSampleOverviewCollapsed] = React.useState(true)
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [sampleItemDraft, setSampleItemDraft] = React.useState(() => displayItemLabel(visibleChampionsItem((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, (persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).item), 'ko'))
@@ -7435,8 +7435,8 @@ export default function App() {
                 })}
               </div>
               <div className="pick-row sample-overview-actions">
-                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
                 <button type="button" className="pick-chip sample-overview-chip active" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
+                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-saved-card')}>{lt('저장한 샘플')}</button>
               </div>
             </div>
           </div> : null}
