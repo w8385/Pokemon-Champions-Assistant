@@ -360,7 +360,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '파티 한눈 요약': 'Party Overview', '내 파티': 'My Party', '상대 파티': 'Opponent Party',
     '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
     '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item', '사용 가능 특성 선택': 'Choose listed ability', '포켓몬 먼저 선택': 'Choose Pokémon first',
-    '종 선택': 'Species', '포켓몬 선택': 'Choose Pokémon', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
+    '종 선택': 'Species', '포켓몬 선택': 'Choose Pokémon', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술 슬롯': 'Move Slots', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
     '시드': 'Seeded', '검증중': 'Verifying',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
@@ -392,7 +392,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '파티 한눈 요약': 'パーティ一覧', '내 파티': '自分のパーティ', '상대 파티': '相手パーティ',
     '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
     '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択', '사용 가능 특성 선택': '使用可能な特性を選択', '포켓몬 먼저 선택': '先にポケモンを選択',
-    '종 선택': 'ポケモン', '포켓몬 선택': 'ポケモン選択', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
+    '종 선택': 'ポケモン', '포켓몬 선택': 'ポケモン選択', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술 슬롯': '技スロット', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
     '시드': 'シード', '검증중': '検証中',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
     '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
@@ -7689,7 +7689,7 @@ export default function App() {
                     <div className="sample-track-workspace">
                       <div className="sample-track-card sample-slot-rail-card">
                         <div className="row-between sample-track-head compact-gap">
-                          <strong>{lt('확정 기술')}</strong>
+                          <strong>{lt('기술 슬롯')}</strong>
                           <div className="pick-summary-badges sample-slot-target-badges">
                             <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
                             <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
