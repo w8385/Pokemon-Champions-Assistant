@@ -6017,14 +6017,16 @@ export default function App() {
                 </div>
               </div>
             ) : mainSection === 'sample' ? (
-              <div className="tab-bar sample-filter-bar sample-top-tab-bar">
+              <div className="battle-flow-nav">
+                <div className="battle-flow-diagram sample-top-tab-bar">
                 {([
                   ['builder', lt('샘플 빌드')],
                   ['speed', lt('스피드 계산')],
                   ['damage', lt('대미지 계산')],
                 ] as const).map(([value, label]) => (
-                  <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+                  <button key={`sample-workbench-tab-${value}`} type="button" className={`flow-node ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
                 ))}
+                </div>
               </div>
             ) : null}
           </div>
