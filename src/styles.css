@@ -1364,77 +1364,6 @@ header p {
 .double-planner-main-card {
   gap: 14px;
 }
-.double-battle-board {
-  border: 1px solid rgba(51, 65, 85, 0.56);
-  border-radius: 16px;
-  background: rgba(2, 6, 23, 0.24);
-  padding: 14px;
-  display: grid;
-  gap: 10px;
-}
-.double-board-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-.double-board-center-line {
-  height: 1px;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(148, 163, 184, 0.5), rgba(239, 68, 68, 0.1));
-}
-.double-board-slot-card {
-  border: 1px solid rgba(51, 65, 85, 0.72);
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.42);
-  padding: 12px;
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
-.double-board-slot-card.enemy {
-  border-color: rgba(239, 68, 68, 0.32);
-  background: linear-gradient(180deg, rgba(40, 11, 20, 0.72), rgba(15, 23, 42, 0.5));
-}
-.double-board-slot-card.ally {
-  border-color: rgba(59, 130, 246, 0.42);
-  background: linear-gradient(180deg, rgba(9, 19, 38, 0.86), rgba(2, 6, 23, 0.7));
-}
-.double-board-slot-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  min-height: 22px;
-  padding: 0 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(51, 65, 85, 0.88);
-  background: rgba(11, 18, 32, 0.92);
-  color: #cbd5e1;
-  font-size: 11px;
-  font-weight: 700;
-}
-.double-board-slot-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.double-board-slot-sprite {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  flex: 0 0 auto;
-}
-.double-board-slot-copy {
-  min-width: 0;
-  display: grid;
-  gap: 6px;
-  flex: 1 1 auto;
-}
-.double-board-slot-copy strong {
-  font-size: 14px;
-  line-height: 1.25;
-}
 .double-planner-context {
   border: 1px solid rgba(51, 65, 85, 0.56);
   border-radius: 16px;
@@ -1635,6 +1564,10 @@ header p {
   padding: 14px;
   display: grid;
   gap: 12px;
+}
+.double-attacker-card.enemy {
+  border-color: rgba(239, 68, 68, 0.32);
+  background: linear-gradient(180deg, rgba(40, 11, 20, 0.82), rgba(15, 23, 42, 0.5));
 }
 .double-damage-summary-card {
   gap: 12px;
@@ -6322,7 +6255,6 @@ html {
   .double-layout-grid,
   .double-layout-main,
   .double-layout-side,
-  .double-attack-grid,
   .double-board-control-grid,
   .double-board-slot-grid,
   .double-slot-state-grid,
@@ -6335,6 +6267,7 @@ html {
   .double-move-grid-2x2,
   .double-combined-damage-grid,
   .double-bulk-editor-row { grid-template-columns: 1fr; }
+  .double-attack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .double-layout-side { position: static; }
   .double-control-span-2 { grid-column: auto; }
   .double-board-center-badges { min-width: 0; }
@@ -6457,28 +6390,6 @@ html {
   }
   .double-planner-main-card {
     gap: 10px;
-  }
-  .double-battle-board {
-    padding: 10px;
-    border-radius: 12px;
-  }
-  .double-board-row {
-    gap: 8px;
-  }
-  .double-board-slot-card {
-    padding: 10px;
-    border-radius: 12px;
-  }
-  .double-board-slot-head {
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .double-board-slot-sprite {
-    width: 34px;
-    height: 34px;
-  }
-  .double-board-slot-copy strong {
-    font-size: 13px;
   }
   .double-planner-context {
     padding: 10px;

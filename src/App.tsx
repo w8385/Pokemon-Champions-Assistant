@@ -6255,51 +6255,6 @@ export default function App() {
                   <strong>{lt('턴 플랜')}</strong>
                   <span className={`pick-badge ${doubleTrickRoom ? 'verdict-badge' : ''}`}>{doubleTrickRoom ? lt('트릭룸 순서') : lt('기본 순서')}</span>
                 </div>
-                <div className="double-battle-board">
-                  <div className="double-board-row enemy">
-                    {([
-                      ['oppLeft', doubleBoardSlots.oppLeft, doubleOppLeft, setDoubleOppLeft, lt('상대 좌측')],
-                      ['oppRight', doubleBoardSlots.oppRight, doubleOppRight, setDoubleOppRight, lt('상대 우측')],
-                    ] as const).map(([slot, option, selectedIdx, setSelectedIdx, fallbackLabel]) => (
-                      <div key={`double-board-top-${slot}`} className="double-board-slot-card enemy">
-                        <span className="double-board-slot-badge">{fallbackLabel}</span>
-                        <div className="double-board-slot-head">
-                          {option?.row?.sprite ? <img src={option.row.sprite} alt={displayName(option.row, siteLanguage)} className="double-board-slot-sprite" /> : null}
-                          <div className="double-board-slot-copy">
-                            <strong>{option?.row ? displayName(option.row, siteLanguage) : fallbackLabel}</strong>
-                            <label className="double-side-select enemy compact">
-                              <select className="double-side-select-input enemy" value={selectedIdx} onChange={(e) => setSelectedIdx(Number(e.target.value))}>
-                                {doubleOpponentOptions.map((entry) => <option key={`double-board-opp-${slot}-${entry.idx}`} value={entry.idx}>{entry.row ? displayName(entry.row, siteLanguage) : `${lt('엔트리')} ${entry.idx + 1}`}</option>)}
-                              </select>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="double-board-center-line" aria-hidden="true" />
-                  <div className="double-board-row ally">
-                    {([
-                      ['myLeft', doubleBoardSlots.myLeft, doubleMyLeft, setDoubleMyLeft, lt('내 좌측')],
-                      ['myRight', doubleBoardSlots.myRight, doubleMyRight, setDoubleMyRight, lt('내 우측')],
-                    ] as const).map(([slot, option, selectedIdx, setSelectedIdx, fallbackLabel]) => (
-                      <div key={`double-board-bottom-${slot}`} className="double-board-slot-card ally">
-                        <span className="double-board-slot-badge">{fallbackLabel}</span>
-                        <div className="double-board-slot-head">
-                          {option?.row?.sprite ? <img src={option.row.sprite} alt={displayName(option.row, siteLanguage)} className="double-board-slot-sprite" /> : null}
-                          <div className="double-board-slot-copy">
-                            <strong>{option?.row ? displayName(option.row, siteLanguage) : fallbackLabel}</strong>
-                            <label className="double-side-select compact">
-                              <select className="double-side-select-input" value={selectedIdx} onChange={(e) => setSelectedIdx(Number(e.target.value))}>
-                                {doublePartyOptions.map((entry) => <option key={`double-board-my-${slot}-${entry.idx}`} value={entry.idx}>{entry.row ? displayName(entry.row, siteLanguage) : `${lt('파티 슬롯')} ${entry.idx + 1}`}</option>)}
-                              </select>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
                 <div className="double-planner-context">
                   <div className="double-state-sections compact single">
                     <div className="double-state-card">
@@ -6359,13 +6314,18 @@ export default function App() {
                   </div>
                 </div>
                 <div className="double-attack-grid">
-                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => <div key={`double-focus-editor-${slot}`} className="double-attacker-card">
+                  {(['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[]).map((slot) => {
+                    const entry = doubleActionCards.find((cardEntry) => cardEntry.slot === slot)
+                    if (!entry) return null
+                    const { meta, card, moveRows, enemyTargets, allyTargets, spreadMove } = entry
+                    const isEnemy = meta.side === 'opp'
+                    return <div key={`double-focus-editor-${slot}`} className={`double-attacker-card ${isEnemy ? 'enemy' : 'ally'}`}>
                     <div className="double-focus-editor-head">
                       <div className="double-focus-editor-identity">
                         {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
-                        <label className="double-side-select compact">
-                          <select className="double-side-select-input" value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
-                            {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                        <label className={`double-side-select compact ${isEnemy ? 'enemy' : ''}`}>
+                          <select className={`double-side-select-input ${isEnemy ? 'enemy' : ''}`} value={slot === 'myLeft' ? doubleMyLeft : slot === 'myRight' ? doubleMyRight : slot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : slot === 'myRight' ? setDoubleMyRight(Number(e.target.value)) : slot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
+                            {(isEnemy ? doubleOpponentOptions : doublePartyOptions).map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${isEnemy ? lt('엔트리') : lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
                           </select>
                         </label>
                       </div>
@@ -6419,7 +6379,7 @@ export default function App() {
                       </div>
                     </div> : null}
                     {spreadMove ? <div className="double-spread-note">{lt('광역기 감쇠가 자동 적용됩니다.')}</div> : null}
-                  </div>)}
+                  </div>})}
                 </div>
                 <div className="double-inline-subcard">
                   <div className="double-layout-card-head compact">
