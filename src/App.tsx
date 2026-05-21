@@ -3912,10 +3912,10 @@ export default function App() {
     return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
   }, [doubleBoardStateCards])
   const doubleTargetOptionsBySlot = React.useMemo(() => ({
-    myLeft: ['oppLeft', 'oppRight', 'myRight', 'myLeft'] as DoubleBoardSlot[],
-    myRight: ['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[],
-    oppLeft: ['myLeft', 'myRight', 'oppRight', 'oppLeft'] as DoubleBoardSlot[],
-    oppRight: ['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[],
+    myLeft: ['oppLeft', 'oppRight'] as DoubleBoardSlot[],
+    myRight: ['oppLeft', 'oppRight'] as DoubleBoardSlot[],
+    oppLeft: ['myLeft', 'myRight'] as DoubleBoardSlot[],
+    oppRight: ['myLeft', 'myRight'] as DoubleBoardSlot[],
   }), [])
   const doubleActionOrder = React.useMemo(() => {
     return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
@@ -3960,7 +3960,6 @@ export default function App() {
       const selectedMove = doubleActionMoveBySlot[slot] || ''
       const selectedSpreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(selectedMove))
       const enemyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side !== meta.side)
-      const allyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side === meta.side)
       const moveRows = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
         const lookup = lookupMoveMeta(move)
         const priority = lookup?.priority ?? 0
@@ -3986,7 +3985,6 @@ export default function App() {
           selected: selectedMove === move,
           spreadMove,
           enemyTargets: enemyTargets.map(targetPreview),
-          allyTargets: allyTargets.map(targetPreview),
         }
       })
       const selectedRow = moveRows.find((entry) => entry.selected) ?? moveRows[0] ?? null
@@ -3996,7 +3994,6 @@ export default function App() {
         card,
         moveRows,
         enemyTargets: selectedRow?.enemyTargets ?? [],
-        allyTargets: selectedRow?.allyTargets ?? [],
         spreadMove: selectedRow?.spreadMove ?? selectedSpreadMove,
       }
     })
@@ -6507,7 +6504,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="double-attack-grid">
-                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => {
+                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, spreadMove }) => {
                     const isEnemy = meta.side === 'opp'
                     return <div key={`double-focus-editor-${slot}`} className={`double-attacker-card ${isEnemy ? 'enemy' : 'ally'}`}>
                     <div className="double-focus-editor-head">
@@ -6547,20 +6544,6 @@ export default function App() {
                           key={`double-action-enemy-target-${slot}-${entry.targetSlot}`}
                           type="button"
                           className={`double-target-chip ${entry.selected ? 'active enemy' : ''}`}
-                          onClick={() => {
-                            setDoubleActionFocusSlot(slot)
-                            setDoubleActionTargetBySlot[slot](entry.targetSlot)
-                          }}
-                        >{entry.label}</button>)}
-                      </div>
-                    </div> : null}
-                    {allyTargets.length ? <div className="double-focus-editor-section">
-                      <span className="double-action-card-label">{lt('보조/자기 대상')}</span>
-                      <div className="double-target-chip-row">
-                        {allyTargets.map((entry) => <button
-                          key={`double-action-target-${slot}-${entry.targetSlot}`}
-                          type="button"
-                          className={`double-target-chip ${entry.selected ? 'active' : ''} ${doubleSlotMeta[entry.targetSlot].side === 'opp' ? 'enemy' : ''}`}
                           onClick={() => {
                             setDoubleActionFocusSlot(slot)
                             setDoubleActionTargetBySlot[slot](entry.targetSlot)
