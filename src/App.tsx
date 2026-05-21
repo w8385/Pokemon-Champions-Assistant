@@ -6074,18 +6074,21 @@ export default function App() {
               <h2>{lt('도감')}</h2>
             </div>
           </div>
+          <div className="dex-tab-panel">
+            <div className="tab-bar dex-mode-tabs">
+              {([
+                ['pokemon', lt('포켓몬')],
+                ['move', lt('기술')],
+                ['ability', lt('특성')],
+                ['item', lt('도구')],
+              ] as [DexSearchMode, string][]).map(([mode, label]) => (
+                <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => setDexSearchMode(mode)}>{label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="dex-content-panel">
           <div className="dex-browser-layout">
             <div className="dex-browser-sidebar">
-              <div className="tab-bar dex-mode-tabs">
-                {([
-                  ['pokemon', lt('포켓몬')],
-                  ['move', lt('기술')],
-                  ['ability', lt('특성')],
-                  ['item', lt('도구')],
-                ] as [DexSearchMode, string][]).map(([mode, label]) => (
-                  <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => setDexSearchMode(mode)}>{label}</button>
-                ))}
-              </div>
               <div className="dex-search-autocomplete">
                 <input
                   value={dexSearch}
@@ -6341,6 +6344,7 @@ export default function App() {
                 <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
               </div> : null}
             </div>
+          </div>
           </div>
         </section> : null}
 

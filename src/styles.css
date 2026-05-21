@@ -4535,8 +4535,22 @@ label {
   border-color: #3b82f6;
   transform: translateY(-1px);
 }
-.dex-search-autocomplete {
+.dex-tab-panel {
   margin-top: 12px;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: rgba(11, 18, 32, 0.88);
+  padding: 12px;
+}
+.dex-content-panel {
+  margin-top: 12px;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  background: rgba(8, 15, 28, 0.72);
+  padding: 14px;
+}
+.dex-search-autocomplete {
+  margin-top: 0;
 }
 .dex-browser-layout {
   display: grid;
@@ -4552,6 +4566,9 @@ label {
 }
 .dex-mode-tabs {
   gap: 8px;
+}
+.dex-tab-panel .dex-mode-tabs {
+  margin-top: 0;
 }
 .section-menu-tabs .tab-chip {
   min-height: 42px;
