@@ -3936,7 +3936,10 @@ header p {
   gap: 16px;
 }
 .sample-workbench-panel {
-  padding-top: 18px;
+  padding: 18px 0 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .sample-overview-inline-save {
   display: grid;
