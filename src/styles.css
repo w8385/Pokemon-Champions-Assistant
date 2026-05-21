@@ -4663,6 +4663,9 @@ label {
   gap: 6px;
   flex: 1;
 }
+.dex-item-result-body {
+  gap: 2px;
+}
 .dex-result-sprite {
   width: 52px;
   height: 52px;

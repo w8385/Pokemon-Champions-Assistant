@@ -6153,7 +6153,7 @@ export default function App() {
                     return <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)}>
                       <div className="dex-move-preview-row">
                         <img src={itemSpriteSrc('', item)} alt={displayItemLabel(item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                        <div className="dex-pokemon-preview-body">
+                        <div className="dex-pokemon-preview-body dex-item-result-body">
                           <strong>{displayItemLabel(item, siteLanguage)}</strong>
                           {itemPreviewText ? <span className="muted">{itemPreviewText}</span> : null}
                         </div>
