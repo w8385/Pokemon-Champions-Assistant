@@ -3495,6 +3495,7 @@ export default function App() {
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const longPressTimerRef = React.useRef<number | null>(null)
   const longPressTriggeredRef = React.useRef(false)
+  const suppressFocusTooltipRef = React.useRef(false)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
@@ -3641,6 +3642,7 @@ export default function App() {
     ...bindTooltip(card),
     onPointerDown: (event: React.PointerEvent<HTMLElement>) => {
       if (!card || event.pointerType !== 'touch') return
+      suppressFocusTooltipRef.current = true
       longPressTriggeredRef.current = false
       clearLongPressTimer()
       const element = event.currentTarget
@@ -3651,12 +3653,22 @@ export default function App() {
     },
     onPointerUp: () => {
       clearLongPressTimer()
+      window.setTimeout(() => {
+        suppressFocusTooltipRef.current = false
+      }, 0)
     },
     onPointerCancel: () => {
       clearLongPressTimer()
+      suppressFocusTooltipRef.current = false
     },
     onPointerLeave: () => {
       clearLongPressTimer()
+      suppressFocusTooltipRef.current = false
+    },
+    onFocus: (event: React.FocusEvent<HTMLElement>) => {
+      if (suppressFocusTooltipRef.current) return
+      if (!card) return
+      showHoverTooltip(event, card)
     },
     onClick: (event: React.MouseEvent<HTMLElement>) => {
       if (longPressTriggeredRef.current) {
@@ -3667,9 +3679,27 @@ export default function App() {
       }
       onNavigate()
     },
-  }), [bindTooltip, clearLongPressTimer, showHoverTooltipAtElement])
+  }), [bindTooltip, clearLongPressTimer, showHoverTooltip, showHoverTooltipAtElement])
 
   React.useEffect(() => () => clearLongPressTimer(), [clearLongPressTimer])
+
+  React.useEffect(() => {
+    if (!hoverTooltip || typeof window === 'undefined') return
+    const close = () => setHoverTooltip(null)
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close()
+    }
+    window.addEventListener('scroll', close, true)
+    window.addEventListener('resize', close)
+    window.addEventListener('pointerdown', close)
+    window.addEventListener('keydown', handleKey)
+    return () => {
+      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('resize', close)
+      window.removeEventListener('pointerdown', close)
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [hoverTooltip])
 
   const tooltipWidth = 280
   const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : 170
