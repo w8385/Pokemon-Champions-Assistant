@@ -3322,7 +3322,7 @@ function menuLabelForSection(section: MainSection, activeTab: MainTab, language:
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
   if (section === 'dex') return translateText(language, '도감')
-  if (section === 'double') return translateText(language, '더블배틀 메뉴')
+  if (section === 'double') return translateText(language, '더블배틀')
   return menuLabelForTab(activeTab, language)
 }
 
@@ -5761,8 +5761,8 @@ export default function App() {
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
@@ -6034,7 +6034,7 @@ export default function App() {
         {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
+              <h2>{mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
             </div>
           </div>
           {mainSection === 'single' || mainSection === 'double' ? (
