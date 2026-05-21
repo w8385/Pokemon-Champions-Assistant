@@ -3513,7 +3513,6 @@ export default function App() {
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
-  const [sampleOverviewCollapsed, setSampleOverviewCollapsed] = React.useState(true)
   const [sampleDamageConditionsCollapsed, setSampleDamageConditionsCollapsed] = React.useState(true)
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
@@ -4914,7 +4913,6 @@ export default function App() {
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
   const sampleSpeciesMenuId = 'sample-species-0'
-  const sampleOverviewSpeciesMenuId = 'sample-overview-species-0'
   const sampleSpeciesOptions = filterSpeciesOptions(sampleSearch ?? '', { includeMega: true }).slice(0, 8)
   const sampleItemMenuId = 'sample-item-0'
   const sampleItemOptions = filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8)
@@ -7364,84 +7362,6 @@ export default function App() {
           />
         </section>
         </> : mainSection === 'sample' ? <>
-        <section className="panel wide">
-          <div className="row-between section-head sample-top-head">
-            <div className="sample-top-head-main">
-              <h2>{lt('샘플 개요')}</h2>
-            </div>
-            <div className="pick-summary-badges home-hero-badges">
-              <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
-              <button type="button" className={`pick-chip sample-overview-chip ${sampleOverviewCollapsed ? '' : 'active'}`} onClick={() => setSampleOverviewCollapsed((prev) => !prev)} aria-expanded={!sampleOverviewCollapsed}>{sampleOverviewCollapsed ? lt('펼치기') : lt('접기')}</button>
-            </div>
-          </div>
-          {!sampleOverviewCollapsed ? <div className="team-strip-grid sample-overview-grid compact-single">
-            <div className="sample-overview-card sample-overview-card-summary">
-              <div className="sample-overview-card-head">
-                <div className="autocomplete sample-overview-search">
-                  <input
-                    className="sample-species-search-input sample-overview-search-input"
-                    value={sampleSearch}
-                    placeholder={lt('포켓몬 검색')}
-                    onFocus={() => {
-                      setActiveSearchField({ side: 'sample', idx: 1 })
-                      setAutocompleteMenuOpen(sampleOverviewSpeciesMenuId)
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 1) ? null : prev), 120)
-                      setTimeout(() => closeAutocompleteMenu(sampleOverviewSpeciesMenuId), 120)
-                    }}
-                    onChange={(e) => {
-                      setSampleSearch(e.target.value)
-                      setActiveSearchField({ side: 'sample', idx: 1 })
-                      setAutocompleteMenuOpen(sampleOverviewSpeciesMenuId)
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                        e.preventDefault()
-                        moveAutocompleteMenuHighlight(sampleOverviewSpeciesMenuId, sampleSpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
-                        return
-                      }
-                      if (e.key !== 'Enter') return
-                      const highlightedOption = sampleSpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleOverviewSpeciesMenuId)]
-                      const committed = highlightedOption ? (selectSpecies('sample', 0, highlightedOption.key), true) : commitTopSpeciesOption('sample', 0, sampleSearch)
-                      if (committed) {
-                        e.preventDefault()
-                        closeAutocompleteMenu(sampleOverviewSpeciesMenuId)
-                      }
-                    }}
-                  />
-                  {sameSearchTarget(activeSearchField, 'sample', 1) ? (
-                    <div className="autocomplete-menu unified-dropdown-menu">
-                      {sampleSpeciesOptions.map((option, optionIdx) => (
-                        <button key={`sample-overview-species-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleOverviewSpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('sample', 0, option.key)}>
-                          {searchDisplayLabel(option.key, siteLanguage)}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-              <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary compact-three">
-                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
-                  <em>{lt('성격')}</em>
-                  <strong>{natureChipLabel(sampleForge.config.nature, siteLanguage)}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('실수치 스피드')}</em>
-                  <strong>{partySpeedValue(sampleRow, sampleForge)}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('확정 기술')}</em>
-                  <strong>{sampleConfirmedMoves.length}/4</strong>
-                </span>
-              </div>
-              <div className="pick-row sample-overview-actions sample-overview-actions-summary sample-overview-action-grid">
-                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
-                <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-moves-card')}>{lt('기술 구성')}</button>
-              </div>
-            </div>
-          </div> : null}
-        </section>
         <section className="panel wide sample-workbench-panel">
           {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
