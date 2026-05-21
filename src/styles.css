@@ -432,7 +432,8 @@ header p {
 }
 .section-menu-tabs-single {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(140px, 180px));
+  justify-content: start;
 }
 .battle-flow-nav {
   display: grid;
@@ -3252,10 +3253,12 @@ header p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 .team-strip-group {
   display: grid;
-  gap: 4px;
+  align-content: start;
+  gap: 8px;
   padding: 14px;
   border-radius: 16px;
   background: rgba(11, 18, 32, 0.62);
