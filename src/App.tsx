@@ -2315,6 +2315,22 @@ function resolveStabMultiplier(attackerTypes: string[], moveType: string | null,
   return hasNativeStab ? 1.5 : 1
 }
 
+function weatherFromAbility(ability: string): DamageWeather {
+  if (ability === 'drought' || ability === '가뭄') return 'sun'
+  if (ability === 'drizzle' || ability === '잔비') return 'rain'
+  if (ability === 'sand-stream' || ability === '모래날림') return 'sand'
+  if (ability === 'snow-warning' || ability === '싸라기눈') return 'snow'
+  return 'none'
+}
+
+function deriveAutoWeatherFromAbilities(...abilities: string[]) {
+  for (const ability of abilities) {
+    const resolved = weatherFromAbility(ability)
+    if (resolved !== 'none') return resolved
+  }
+  return 'none' as DamageWeather
+}
+
 function abilityNoteLabel(ability: string) {
   const labels: Record<string, string> = {
     'adaptability': '적응력',
@@ -4349,6 +4365,22 @@ export default function App() {
   }, [activeDamageMove, activeDamageMoveHitOptions])
   const attackerAbilitySlug = attackerAbilityValue
   const defenderAbilitySlug = defenderAbilityValue
+  const autoWeatherFromAbilities = React.useMemo(() => deriveAutoWeatherFromAbilities(attackerAbilitySlug, defenderAbilitySlug), [attackerAbilitySlug, defenderAbilitySlug])
+  const autoWeatherRef = React.useRef<DamageWeather>('none')
+  React.useEffect(() => {
+    const previousAutoWeather = autoWeatherRef.current
+    if (autoWeatherFromAbilities === 'none') {
+      if (calcWeather === previousAutoWeather && previousAutoWeather !== 'none') setCalcWeather('none')
+      autoWeatherRef.current = 'none'
+      return
+    }
+    if (calcWeather === 'none' || calcWeather === previousAutoWeather) {
+      if (calcWeather !== autoWeatherFromAbilities) setCalcWeather(autoWeatherFromAbilities)
+      autoWeatherRef.current = autoWeatherFromAbilities
+      return
+    }
+    autoWeatherRef.current = autoWeatherFromAbilities
+  }, [autoWeatherFromAbilities, calcWeather])
   const effectiveAttackerTypes = attackerRow ? resolveAbilityAdjustedTypes(attackerRow.types, attackerAbilitySlug, calcWeather, calcTerrain) : []
   const effectiveDefenderTypes = defenderRow ? resolveAbilityAdjustedTypes(defenderRow.types, defenderAbilitySlug, calcWeather, calcTerrain) : []
   const usesTypeChangeStabAbility = ['libero', 'protean', '변환자재'].includes(attackerAbilitySlug)
