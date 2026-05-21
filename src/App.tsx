@@ -6167,6 +6167,57 @@ export default function App() {
                     return <button key={`team-opp-${idx}`} type="button" className={`team-pill enemy ${selectedOpp === idx ? 'active' : ''}`} onClick={() => setSelectedOpp(idx)}>{label}</button>
                   })}
                 </div>
+                <div className="quick-opponent-search-bar compact embedded">
+                  <label className="species-picker">
+                    {lt('상대 엔트리 빠른 입력')}
+                    <div className="autocomplete">
+                      <input
+                        value={opponentQuickSearch}
+                        placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
+                        onFocus={() => {
+                          setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+                          setAutocompleteMenuOpen('opponent-quick-species-0')
+                        }}
+                        onBlur={() => {
+                          setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)
+                          setTimeout(() => closeAutocompleteMenu('opponent-quick-species-0'), 120)
+                        }}
+                        onChange={(e) => {
+                          setOpponentQuickSearch(e.target.value)
+                          setActiveSearchField({ side: 'opponentQuick', idx: 0 })
+                          setAutocompleteMenuOpen('opponent-quick-species-0')
+                        }}
+                        onKeyDown={(e) => {
+                          const options = filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8)
+                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                            e.preventDefault()
+                            moveAutocompleteMenuHighlight('opponent-quick-species-0', options.length, e.key === 'ArrowDown' ? 1 : -1)
+                            return
+                          }
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0')]
+                            commitOpponentQuickSearch(highlightedOption?.key)
+                            closeAutocompleteMenu('opponent-quick-species-0')
+                          }
+                        }}
+                      />
+                      {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
+                        <div className="autocomplete-menu unified-dropdown-menu">
+                          {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
+                            <button key={`speed-power-opp-quick-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0') === optionIdx ? 'active' : ''}`} onMouseDown={() => commitOpponentQuickSearch(option.key)}>
+                              {searchDisplayLabel(option.key, siteLanguage)}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </label>
+                  <div className="quick-opponent-hint compact">
+                    <strong>{lt('현재 입력 슬롯')}</strong>
+                    <span>{selectedOpp + 1} / {MAX_OPPONENTS}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

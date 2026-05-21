@@ -5934,6 +5934,11 @@ textarea { min-height: 72px; resize: vertical; }
   align-items: end;
   margin-top: 12px;
 }
+.quick-opponent-search-bar.compact.embedded {
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 10px;
+  margin-top: 10px;
+}
 .quick-opponent-hint {
   display: flex;
   flex-direction: column;
@@ -5943,6 +5948,11 @@ textarea { min-height: 72px; resize: vertical; }
   border: 1px solid #334155;
   border-radius: 12px;
   background: #0b1220;
+}
+.quick-opponent-hint.compact {
+  min-height: 42px;
+  gap: 4px;
+  padding: 8px 10px;
 }
 .opponent-detail-layout {
   display: grid;
