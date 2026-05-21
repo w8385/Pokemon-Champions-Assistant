@@ -7375,6 +7375,7 @@ export default function App() {
         </section>
         </> : mainSection === 'sample' ? <>
         <section className="panel wide sample-workbench-panel">
+          <div className="sample-content-panel">
           {sampleWorkbenchTab === 'builder' ? <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
@@ -8006,6 +8007,7 @@ export default function App() {
               </div>
             </div>
           </div>}
+          </div>
         </section>
         <section className="panel wide">
           <div className="sample-builder-action-card">

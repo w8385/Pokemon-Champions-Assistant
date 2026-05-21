@@ -4010,6 +4010,12 @@ header p {
   gap: 16px;
 }
 .sample-workbench-panel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.sample-content-panel {
   margin-top: 12px;
   padding: 14px;
   border: 1px solid #334155;
