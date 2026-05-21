@@ -6070,7 +6070,7 @@ export default function App() {
             </div>
           </div>
           <div className="dex-tab-panel">
-            <div className="tab-bar dex-mode-tabs">
+            <div className="tab-bar section-menu-tabs dex-mode-tabs">
               {([
                 ['pokemon', lt('포켓몬')],
                 ['move', lt('기술')],
