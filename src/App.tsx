@@ -7347,16 +7347,12 @@ export default function App() {
               <h2>{lt('샘플 개요')}</h2>
             </div>
             <div className="pick-summary-badges home-hero-badges">
-              <span className="pick-badge">{displayName(sampleRow, siteLanguage)}</span>
-              <span className="pick-badge">{lt('확정 기술 수')} {sampleConfirmedMoves.length}/4</span>
-              <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
               <button type="button" className={`pick-chip sample-overview-chip ${sampleOverviewCollapsed ? '' : 'active'}`} onClick={() => setSampleOverviewCollapsed((prev) => !prev)} aria-expanded={!sampleOverviewCollapsed}>{sampleOverviewCollapsed ? lt('펼치기') : lt('접기')}</button>
             </div>
           </div>
           {!sampleOverviewCollapsed ? <div className="team-strip-grid sample-overview-grid compact-single">
             <div className="sample-overview-card sample-overview-card-summary">
               <div className="sample-overview-card-head">
-                <span className="muted sample-overview-eyebrow">{lt('포켓몬 선택')}</span>
                 <div className="autocomplete sample-overview-search">
                   <input
                     className="sample-species-search-input sample-overview-search-input"
@@ -7400,32 +7396,6 @@ export default function App() {
                     </div>
                   ) : null}
                 </div>
-              </div>
-              <div className="pick-summary-badges sample-overview-badges sample-overview-badges-summary compact-four">
-                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
-                  <em>{lt('성격')}</em>
-                  <strong>{natureChipLabel(sampleForge.config.nature, siteLanguage)}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('실수치 스피드')}</em>
-                  <strong>{partySpeedValue(sampleRow, sampleForge)}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('노력치 합')}</em>
-                  <strong>{sampleEvTotal}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('도구')}</em>
-                  <strong>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-rich">
-                  <em>{lt('특성')}</em>
-                  <strong>{sampleAbility || lt('미선택')}</strong>
-                </span>
-                <span className="pick-badge sample-overview-badge sample-overview-badge-accent sample-overview-badge-rich">
-                  <em>{lt('확정 기술')}</em>
-                  <strong>{sampleConfirmedMoves.length}/4</strong>
-                </span>
               </div>
               <div className="pick-row sample-overview-actions sample-overview-actions-summary sample-overview-action-grid">
                 <button type="button" className="pick-chip sample-overview-chip" onClick={() => scrollToSampleSection('sample-builder-card')}>{lt('기본 정보')}</button>
