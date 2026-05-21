@@ -6314,18 +6314,15 @@ export default function App() {
                   </div>
                 </div>
                 <div className="double-attack-grid">
-                  {(['oppLeft', 'oppRight', 'myLeft', 'myRight'] as DoubleBoardSlot[]).map((slot) => {
-                    const entry = doubleActionCards.find((cardEntry) => cardEntry.slot === slot)
-                    if (!entry) return null
-                    const { meta, card, moveRows, enemyTargets, allyTargets, spreadMove } = entry
+                  {doubleActionCards.filter((entry) => entry.meta.side === 'my').map(({ slot, meta, card, moveRows, enemyTargets, allyTargets, spreadMove }) => {
                     const isEnemy = meta.side === 'opp'
                     return <div key={`double-focus-editor-${slot}`} className={`double-attacker-card ${isEnemy ? 'enemy' : 'ally'}`}>
                     <div className="double-focus-editor-head">
                       <div className="double-focus-editor-identity">
                         {card?.row?.sprite ? <img src={card.row.sprite} alt={card.name || meta.label} className="double-focus-editor-sprite" /> : null}
                         <label className={`double-side-select compact ${isEnemy ? 'enemy' : ''}`}>
-                          <select className={`double-side-select-input ${isEnemy ? 'enemy' : ''}`} value={slot === 'myLeft' ? doubleMyLeft : slot === 'myRight' ? doubleMyRight : slot === 'oppLeft' ? doubleOppLeft : doubleOppRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : slot === 'myRight' ? setDoubleMyRight(Number(e.target.value)) : slot === 'oppLeft' ? setDoubleOppLeft(Number(e.target.value)) : setDoubleOppRight(Number(e.target.value))}>
-                            {(isEnemy ? doubleOpponentOptions : doublePartyOptions).map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${isEnemy ? lt('엔트리') : lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
+                          <select className={`double-side-select-input ${isEnemy ? 'enemy' : ''}`} value={slot === 'myLeft' ? doubleMyLeft : doubleMyRight} onChange={(e) => slot === 'myLeft' ? setDoubleMyLeft(Number(e.target.value)) : setDoubleMyRight(Number(e.target.value))}>
+                            {doublePartyOptions.map((option) => <option key={`double-attacker-select-${slot}-${option.idx}`} value={option.idx}>{option.row ? displayName(option.row, siteLanguage) : `${lt('파티 슬롯')} ${option.idx + 1}`}</option>)}
                           </select>
                         </label>
                       </div>
