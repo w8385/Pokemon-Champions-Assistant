@@ -4545,6 +4545,17 @@ label {
   border: 1px solid rgba(51, 65, 85, 0.85);
   padding: 4px;
 }
+.dex-item-preview-sprite {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 42px;
+  border-radius: 10px;
+  background: radial-gradient(circle at top, rgba(30, 41, 59, 0.96), rgba(11, 18, 32, 0.94));
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  padding: 6px;
+}
 .dex-result-sprite.placeholder {
   display: block;
 }
@@ -4597,6 +4608,16 @@ label {
   width: 84px;
   height: 84px;
   object-fit: contain;
+}
+.dex-detail-item-sprite {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border-radius: 16px;
+  background: radial-gradient(circle at top, rgba(30, 41, 59, 0.96), rgba(11, 18, 32, 0.94));
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  padding: 10px;
 }
 .dex-detail-identity h3 {
   margin: 0;
