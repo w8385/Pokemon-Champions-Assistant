@@ -97,6 +97,7 @@ type SavedSample = {
   id: string
   label: string
   member: PartyMember
+  lockedMoves: string[]
 }
 
 type SavedPartyPreset = {
@@ -130,6 +131,7 @@ type PersistedState = {
   calcAttackerLowHp?: boolean
   calcTargetPoisoned?: boolean
   calcDefenderFullHp?: boolean
+  calcDefenderDisguise?: boolean
   calcMovedAfterTarget?: boolean
   calcFaintedAllies?: number
   calcRivalryMode?: RivalryMode
@@ -158,6 +160,7 @@ type PersistedState = {
   mainSection?: MainSection
   activeTab?: MainTab
   sampleForge?: PartyMember
+  sampleLockedMoves?: string[]
   savedSamples?: SavedSample[]
   savedPartyPresets?: SavedPartyPreset[]
   sampleWorkbenchTab?: SampleWorkbenchTab
@@ -198,9 +201,10 @@ type ImportExportPayload = PersistedState & {
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
-type MainSection = 'home' | 'single' | 'double' | 'sample'
+type MainSection = 'home' | 'single' | 'double' | 'sample' | 'dex'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
+type DexSearchMode = 'pokemon' | 'move' | 'ability' | 'item'
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
 type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
 type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
@@ -271,6 +275,7 @@ type DamageCalcModifiers = {
   incomingScreenName?: string | null
   critical?: boolean
   burned?: boolean
+  ignoreFirstHitDamage?: boolean
 }
 type BattleStatBlock = {
   hp: number
@@ -341,10 +346,11 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
-    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
-    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도감': 'Dex', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
+    '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '합계': 'Total',
+    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed',
+    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -370,10 +376,11 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
     '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
     '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
-    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
-    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도감': '図鑑', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
+    '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'ポケモン・技・特性・持ち物をすばやく検索できます。', '포켓몬': 'ポケモン', '기술': '技', '검색 결과': '検索結果', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': '検索結果を選ぶと詳細をすぐ確認できます。', '기술 검색': '技検索', '도구 검색': '持ち物検索', '타입': 'タイプ', '분류': '分類', '명중': '命中', '변화': '変化', '해당 특성 포켓몬': 'この特性のポケモン', '합계': '合計',
+    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準',
+    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -1273,6 +1280,11 @@ function normalizeMoveSlots(moves: string[]) {
   return normalized
 }
 
+function sanitizeMoveSlotList(input: unknown) {
+  if (!Array.isArray(input)) return []
+  return normalizeMoveSlots(input.filter((move): move is string => typeof move === 'string'))
+}
+
 function pokemonApiCandidates(key: string) {
   const candidates = [key]
   if (key.startsWith('mega-')) {
@@ -1613,10 +1625,14 @@ function sanitizeSavedSamples(input: unknown): SavedSample[] {
       const raw = entry as Partial<SavedSample>
       const member = sanitizeParty([raw.member])[0]
       if (!member) return null
+      const lockedMoves = Array.isArray(raw.lockedMoves)
+        ? raw.lockedMoves.filter((move): move is string => typeof move === 'string' && Boolean(move.trim())).slice(0, 4)
+        : []
       return {
         id: typeof raw.id === 'string' ? raw.id : `sample-${idx}`,
         label: typeof raw.label === 'string' && raw.label.trim() ? raw.label : `${member.key}-${idx + 1}`,
         member,
+        lockedMoves,
       }
     })
     .filter((entry): entry is SavedSample => Boolean(entry))
@@ -1667,6 +1683,8 @@ function parseViewStateFromUrl(): ViewState | null {
       ? 'single'
       : routePath === '/sample-builder'
         ? 'sample'
+        : routePath === '/dex'
+          ? 'dex'
         : routePath === '/double'
           ? 'double'
           : routePath === '/'
@@ -1691,7 +1709,7 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : '/'
+  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : '/'
   if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
@@ -2227,7 +2245,8 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
   const hitPowers = moveMeta?.hitPowers?.length ? moveMeta.hitPowers : Array.from({ length: Math.max(1, moveMeta?.hits ?? 1) }, () => resolvedPower)
   const finalMod = chainMods([fixedMod(modifiers?.finalMultiplier ?? 1)])
   const stabMod = fixedMod(stab)
-  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => hitPowers.reduce((sum, power) => {
+  const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => hitPowers.reduce((sum, power, hitIdx) => {
+    if (modifiers?.ignoreFirstHitDamage && hitIdx === 0) return sum
     const scaledPower = Math.max(1, applyFixedMod(Math.floor(power), powerMod))
     let base = getBaseDamage(level, scaledPower, scaledAttack, scaledDefense)
     if (moveMeta?.alwaysCrit || modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
@@ -2279,6 +2298,7 @@ function abilityNoteLabel(ability: string) {
     'dark-aura': '다크오라',
     'dragonize': '드래고나이즈',
     'dragons-maw': '용의턱',
+    'disguise': '탈',
     'dry-skin': '건조피부',
     'earth-eater': '대지먹기',
     'fairy-aura': '페어리오라',
@@ -2376,9 +2396,10 @@ function resolveDamageModifiers(params: {
   lightScreen: boolean
   auroraVeil: boolean
   friendGuard: boolean
+  disguiseActive?: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, critical } = params
+  const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
   const effectiveCritical = Boolean(critical || (attackerAbility === 'merciless' && targetPoisoned))
@@ -2711,6 +2732,11 @@ function resolveDamageModifiers(params: {
     notes.push('프렌드가드')
   }
 
+  const defenderHasActiveDisguise = Boolean(disguiseActive && (defenderAbility === 'disguise' || defenderAbility === '탈'))
+  if (adjustedEffectiveness > 0 && defenderHasActiveDisguise) {
+    notes.push(`${abilityNoteLabel(defenderAbility)}(첫타 무효)`)
+  }
+
   if (adjustedEffectiveness > 0 && defenderFullHp && (defenderAbility === 'multiscale' || defenderAbility === 'shadow-shield')) {
     finalMultiplier *= 0.5
     notes.push(abilityNoteLabel(defenderAbility))
@@ -2781,6 +2807,7 @@ function resolveDamageModifiers(params: {
     effectiveness: adjustedEffectiveness,
     critical: effectiveCritical,
     burned: burnApplies,
+    ignoreFirstHitDamage: defenderHasActiveDisguise,
     notes,
   }
 }
@@ -2936,6 +2963,168 @@ function filterMoveOptions(query: string, options: MoveOption[]) {
   return scored.map((entry) => entry.option)
 }
 
+function displayTypeName(type: string | null | undefined, language: SiteLanguage) {
+  if (!type) return translateText(language, '없음')
+  if (language === 'en') return titleCaseSlug(type)
+  if (language === 'ja') return getJaTypes([type])[0] ?? titleCaseSlug(type)
+  return TYPE_KO_BY_KEY[type] ?? type
+}
+
+function displayMoveCategoryName(category: MoveCategory | null | undefined, language: SiteLanguage) {
+  if (category === 'physical') return translateText(language, '물리')
+  if (category === 'special') return translateText(language, '특수')
+  if (category === 'status') return translateText(language, '변화')
+  return translateText(language, '없음')
+}
+
+function moveSearchCandidates(name: string) {
+  const candidates = moveNameCandidates(name)
+  return Array.from(new Set(candidates.flatMap((entry) => [entry, normalizeSearchText(entry)])))
+}
+
+function filterDexMoveOptions(query: string) {
+  const normalized = normalizeSearchText(query.trim())
+  const entries = Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta }))
+  if (!normalized) return entries.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+  return entries
+    .map((entry) => {
+      const score = moveSearchCandidates(entry.name).reduce((best, candidate) => {
+        if (candidate === normalized) return Math.min(best, 0)
+        if (candidate.startsWith(normalized)) return Math.min(best, 1)
+        if (candidate.includes(normalized)) return Math.min(best, 2)
+        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        return best
+      }, Number.POSITIVE_INFINITY)
+      return Number.isFinite(score) ? { ...entry, score } : null
+    })
+    .filter((entry): entry is { key: string; name: string; meta: MoveMeta; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name, 'ko'))
+}
+
+function abilityDisplayName(abilityKey: string, abilityKo: string, language: SiteLanguage) {
+  return language === 'ko' ? abilityKo : titleCaseSlug(abilityKey)
+}
+
+function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
+  const enLabel = titleCaseSlug(abilityKey)
+  return Array.from(new Set([
+    abilityKey,
+    abilityKo,
+    enLabel,
+    normalizeSearchText(abilityKey),
+    normalizeSearchText(abilityKo),
+    normalizeSearchText(enLabel),
+  ]))
+}
+
+function filterDexAbilityOptions(query: string) {
+  const byKey = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
+  for (const row of rows) {
+    row.abilities.forEach((abilityKey, idx) => {
+      const koLabel = row.abilities_ko[idx] ?? titleCaseSlug(abilityKey)
+      const existing = byKey.get(abilityKey)
+      if (existing) {
+        existing.pokemonKeys.push(row.key)
+        return
+      }
+      byKey.set(abilityKey, { key: abilityKey, koLabel, pokemonKeys: [row.key] })
+    })
+  }
+  const normalized = normalizeSearchText(query.trim())
+  const entries = [...byKey.values()].map((entry) => ({ ...entry, pokemonKeys: Array.from(new Set(entry.pokemonKeys)).sort((a, b) => a.localeCompare(b, 'ko')) }))
+  if (!normalized) return entries.sort((a, b) => a.koLabel.localeCompare(b.koLabel, 'ko'))
+  return entries
+    .map((entry) => {
+      const score = abilitySearchCandidates(entry.key, entry.koLabel).reduce((best, candidate) => {
+        if (candidate === normalized) return Math.min(best, 0)
+        if (candidate.startsWith(normalized)) return Math.min(best, 1)
+        if (candidate.includes(normalized)) return Math.min(best, 2)
+        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        return best
+      }, Number.POSITIVE_INFINITY)
+      return Number.isFinite(score) ? { ...entry, score } : null
+    })
+    .filter((entry): entry is { key: string; koLabel: string; pokemonKeys: string[]; score: number } => Boolean(entry))
+    .sort((a, b) => a.score - b.score || a.koLabel.localeCompare(b.koLabel, 'ko'))
+}
+
+const ABILITY_INDEX = (() => {
+  const byKey = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
+  for (const row of rows) {
+    row.abilities.forEach((abilityKey, idx) => {
+      const koLabel = row.abilities_ko[idx] ?? titleCaseSlug(abilityKey)
+      const existing = byKey.get(abilityKey)
+      if (existing) {
+        existing.pokemonKeys.push(row.key)
+        return
+      }
+      byKey.set(abilityKey, { key: abilityKey, koLabel, pokemonKeys: [row.key] })
+    })
+  }
+  const byNormalized = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
+  for (const entry of byKey.values()) {
+    const pokemonKeys = Array.from(new Set(entry.pokemonKeys))
+    const payload = { ...entry, pokemonKeys }
+    byNormalized.set(normalizeSearchText(entry.key), payload)
+    byNormalized.set(normalizeSearchText(entry.koLabel), payload)
+    byNormalized.set(normalizeSearchText(titleCaseSlug(entry.key)), payload)
+  }
+  return { byKey, byNormalized }
+})()
+
+function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
+  const normalized = normalizeSearchText(rawAbility)
+  const direct = ABILITY_INDEX.byNormalized.get(normalized)
+  if (direct) return direct
+  if (row) {
+    const idx = row.abilities.findIndex((abilityKey, abilityIdx) => {
+      const ko = row.abilities_ko[abilityIdx] ?? ''
+      return normalizeSearchText(abilityKey) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(abilityKey)) === normalized
+    })
+    if (idx >= 0) {
+      const abilityKey = row.abilities[idx]
+      return ABILITY_INDEX.byKey.get(abilityKey) ?? { key: abilityKey, koLabel: row.abilities_ko[idx] ?? titleCaseSlug(abilityKey), pokemonKeys: [row.key] }
+    }
+  }
+  return null
+}
+
+function moveTooltipText(name: string, language: SiteLanguage) {
+  const meta = lookupMoveMeta(name)
+  if (!meta) return name
+  const lines = [name]
+  lines.push(`${translateText(language, '타입')}: ${displayTypeName(meta.type, language)}`)
+  lines.push(`${translateText(language, '분류')}: ${displayMoveCategoryName(meta.category, language)}`)
+  lines.push(`${translateText(language, '위력')}: ${meta.power != null ? resolvedMovePower(meta) : '-'}`)
+  lines.push(`${translateText(language, '명중')}: ${meta.accuracy != null ? `${meta.accuracy}%` : '-'}`)
+  if (typeof meta.priority === 'number' && meta.priority !== 0) lines.push(`${translateText(language, '우선도')}: ${meta.priority}`)
+  return lines.join('\n')
+}
+
+function abilityTooltipText(name: string, language: SiteLanguage, row?: Row | null) {
+  const info = resolveAbilityInfo(name, row)
+  if (!info) return name
+  const localized = abilityDisplayName(info.key, info.koLabel, language)
+  const previewNames = info.pokemonKeys.slice(0, 6).map((key) => {
+    const pokemonRow = indexByKey.get(key)
+    return pokemonRow ? displayName(pokemonRow, language) : key
+  })
+  const lines = [localized]
+  if (language !== 'ko') lines.push(info.koLabel)
+  lines.push(`Key: ${info.key}`)
+  lines.push(`${translateText(language, '해당 특성 포켓몬')}: ${info.pokemonKeys.length}`)
+  if (previewNames.length) lines.push(previewNames.join(', '))
+  return lines.join('\n')
+}
+
+function MoveTextWithTooltip({ name, language, className }: { name: string; language: SiteLanguage; className?: string }) {
+  return <span className={className} title={moveTooltipText(name, language)}>{name}</span>
+}
+
+function AbilityTextWithTooltip({ name, language, row, className }: { name: string; language: SiteLanguage; row?: Row | null; className?: string }) {
+  return <span className={className} title={abilityTooltipText(name, language, row)}>{name}</span>
+}
+
 function resolveSpeciesKey(raw: string, options?: { includeMega?: boolean }) {
   const normalized = normalizeSearchText(raw.trim())
   if (!normalized) return null
@@ -3023,6 +3212,7 @@ function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
 function menuLabelForSection(section: MainSection, activeTab: MainTab, language: SiteLanguage = 'ko') {
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
+  if (section === 'dex') return translateText(language, '도감')
   if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
 }
@@ -3129,6 +3319,7 @@ export default function App() {
   const [calcAttackerLowHp, setCalcAttackerLowHp] = React.useState(() => Boolean(persisted?.calcAttackerLowHp))
   const [calcTargetPoisoned, setCalcTargetPoisoned] = React.useState(() => Boolean(persisted?.calcTargetPoisoned))
   const [calcDefenderFullHp, setCalcDefenderFullHp] = React.useState(() => Boolean(persisted?.calcDefenderFullHp))
+  const [calcDefenderDisguise, setCalcDefenderDisguise] = React.useState(() => Boolean(persisted?.calcDefenderDisguise))
   const [calcMovedAfterTarget, setCalcMovedAfterTarget] = React.useState(() => Boolean(persisted?.calcMovedAfterTarget))
   const [calcFaintedAllies, setCalcFaintedAllies] = React.useState(() => Number.isFinite(Number(persisted?.calcFaintedAllies)) ? Math.max(0, Math.min(5, Math.trunc(Number(persisted?.calcFaintedAllies)))) : 0)
   const [calcRivalryMode, setCalcRivalryMode] = React.useState<RivalryMode>(() => persisted?.calcRivalryMode === 'same' || persisted?.calcRivalryMode === 'opposite' ? persisted.calcRivalryMode : 'neutral')
@@ -3170,6 +3361,7 @@ export default function App() {
   const [calcOppMegaKey, setCalcOppMegaKey] = React.useState<string | null>(null)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
+  const [sampleMoveFilter, setSampleMoveFilter] = React.useState<MoveFilter>('core')
   const [moveSearch, setMoveSearch] = React.useState('')
   const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey))
   const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
@@ -3190,7 +3382,11 @@ export default function App() {
   const [settingsMenuOpen, setSettingsMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
+  const [sampleLockedMoves, setSampleLockedMoves] = React.useState<string[]>(() => persisted?.sampleLockedMoves ? sanitizeMoveSlotList(persisted.sampleLockedMoves) : sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey)[(persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()).key] ?? [])
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
+  const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>('pokemon')
+  const [dexSearch, setDexSearch] = React.useState('')
+  const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(null)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
@@ -3223,6 +3419,33 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
+  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(dexSearch, { includeMega: true }).slice(0, 12), [dexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(dexSearch).slice(0, 48), [dexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(dexSearch).slice(0, 48), [dexSearch])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(dexSearch, siteLanguage).slice(0, 48), [dexSearch, siteLanguage])
+  const dexResultKeys = React.useMemo(() => {
+    if (dexSearchMode === 'pokemon') return dexSpeciesOptions.map((option) => option.key)
+    if (dexSearchMode === 'move') return dexMoveOptions.map((option) => option.key)
+    if (dexSearchMode === 'ability') return dexAbilityOptions.map((option) => option.key)
+    return dexItemOptions
+  }, [dexAbilityOptions, dexItemOptions, dexMoveOptions, dexSearchMode, dexSpeciesOptions])
+  const dexSelectedRow = dexSearchMode === 'pokemon' && dexSelectedValue ? (indexByKey.get(dexSelectedValue) ?? null) : null
+  const dexSelectedMove = dexSearchMode === 'move' && dexSelectedValue
+    ? (dexMoveOptions.find((option) => option.key === dexSelectedValue) ?? (MOVE_META_BY_NAME[dexSelectedValue] ? { key: dexSelectedValue, name: dexSelectedValue, meta: MOVE_META_BY_NAME[dexSelectedValue] } : null))
+    : null
+  const dexSelectedAbility = dexSearchMode === 'ability' && dexSelectedValue ? (dexAbilityOptions.find((option) => option.key === dexSelectedValue) ?? null) : null
+  const dexSelectedItem = dexSearchMode === 'item' && dexSelectedValue ? dexSelectedValue : null
+  const dexTopMoves = React.useMemo(() => dexSelectedRow ? ((championsUsageTopMoves as Record<string, { moves?: string[] }>)[dexSelectedRow.key]?.moves?.slice(0, 10) ?? []) : [], [dexSelectedRow])
+
+  React.useEffect(() => {
+    if (!dexResultKeys.length) {
+      if (dexSelectedValue !== null) setDexSelectedValue(null)
+      return
+    }
+    if (!dexSelectedValue || !dexResultKeys.includes(dexSelectedValue)) {
+      setDexSelectedValue(dexResultKeys[0])
+    }
+  }, [dexResultKeys, dexSelectedValue])
   const doublePartyOptions = React.useMemo(() => party.map((member, idx) => ({ idx, member, row: member.key ? (indexByKey.get(member.key) ?? rows[0]) : null })), [party])
   const doubleOpponentOptions = React.useMemo(() => opponents.map((entry, idx) => ({ idx, entry, row: entry.key ? (indexByKey.get(entry.key) ?? rows[0]) : null })), [opponents])
   const doubleBoardSlots = React.useMemo(() => ({
@@ -3697,6 +3920,7 @@ export default function App() {
       calcAttackerLowHp,
       calcTargetPoisoned,
       calcDefenderFullHp,
+      calcDefenderDisguise,
       calcMovedAfterTarget,
       calcFaintedAllies,
       calcRivalryMode,
@@ -3725,6 +3949,7 @@ export default function App() {
       mainSection,
       activeTab,
       sampleForge,
+      sampleLockedMoves,
       savedSamples,
       savedPartyPresets,
       sampleWorkbenchTab,
@@ -3760,7 +3985,7 @@ export default function App() {
       doubleActionFocusSlot,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, savedSamples, savedPartyPresets, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
+  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcDefenderDisguise, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, sampleLockedMoves, savedSamples, savedPartyPresets, sampleWorkbenchTab, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -4006,6 +4231,12 @@ export default function App() {
   const showElectromorphosisToggle = attackerAbilitySlug === 'electromorphosis'
   const showDefenderStatusedToggle = defenderAbilitySlug === 'marvel-scale'
   const showDefenderFullHpToggle = ['multiscale', 'shadow-shield'].includes(defenderAbilitySlug)
+  const showDefenderDisguiseToggle = defenderAbilitySlug === 'disguise' || defenderAbilitySlug === '탈'
+  React.useEffect(() => {
+    if (showDefenderDisguiseToggle) {
+      setCalcDefenderDisguise(true)
+    }
+  }, [showDefenderDisguiseToggle])
   const autoStab = resolveStabMultiplier(effectiveAttackerTypes, activeDamageMoveType, attackerAbilitySlug, calcTypeChangeStab)
   const autoEffectiveness = activeDamageMoveType && defenderRow ? abilityAdjustedTypeEffectiveness(activeDamageMoveType, effectiveDefenderTypes, defenderAbilitySlug) : 1
   const setActiveDamageMoveConditionValue = (value: ConditionalPowerValue) => {
@@ -4287,6 +4518,7 @@ export default function App() {
       setOpponentSearch(nextSearch)
     } else {
       setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
+      setSampleLockedMoves(confirmedMovesByKey[key] ?? [])
       setSampleItemDraft(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
       setActiveSampleMetaEditor(null)
@@ -4328,6 +4560,7 @@ export default function App() {
     attackerLowHp: calcAttackerLowHp,
     targetPoisoned: calcTargetPoisoned,
     defenderFullHp: calcDefenderFullHp,
+    disguiseActive: calcDefenderDisguise,
     movedAfterTarget: calcMovedAfterTarget,
     faintedAllies: calcFaintedAllies,
     rivalryMode: calcRivalryMode,
@@ -4391,7 +4624,7 @@ export default function App() {
   const sampleItemMenuId = 'sample-item-0'
   const sampleItemOptions = filterItemOptions(sampleItemDraft || '', siteLanguage).slice(0, 8)
   const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
-  const sampleRegisteredMoves = [...(confirmedMovesByKey[sampleForge.key] ?? [])]
+  const sampleRegisteredMoves = [...sampleLockedMoves]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const sampleConfirmedMoves = sampleRegisteredMoves.filter(Boolean).slice(0, 4)
   const nextOpenSampleSlot = (moves: string[], fromIdx: number) => {
@@ -4415,14 +4648,24 @@ export default function App() {
     if (!top) return false
     const nextMoves = [...sampleRegisteredMoves]
     nextMoves[slotIdx] = top.name
-    setConfirmedMoveSlot(sampleForge.key, slotIdx, top.name)
+    setSampleLockedMoves((prev) => {
+      const current = [...prev]
+      while (current.length < 4) current.push('')
+      current[slotIdx] = top.name
+      return normalizeMoveSlots(current)
+    })
     focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
     return true
   }
   const selectSampleMoveOption = (slotIdx: number, moveName: string) => {
     const nextMoves = [...sampleRegisteredMoves]
     nextMoves[slotIdx] = moveName
-    setConfirmedMoveSlot(sampleForge.key, slotIdx, moveName)
+    setSampleLockedMoves((prev) => {
+      const current = [...prev]
+      while (current.length < 4) current.push('')
+      current[slotIdx] = moveName
+      return normalizeMoveSlots(current)
+    })
     focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
   }
   const applySampleCandidateMove = (move: string, preferredSlotIdx: number) => {
@@ -4430,10 +4673,23 @@ export default function App() {
     const existingIdx = nextMoves.indexOf(move)
     if (existingIdx >= 0) nextMoves[existingIdx] = ''
     nextMoves[preferredSlotIdx] = move
-    applyMoveToSlot(sampleForge.key, move, preferredSlotIdx)
+    setSampleLockedMoves((prev) => {
+      const current = [...prev]
+      const existingIdx = current.indexOf(move)
+      while (current.length < 4) current.push('')
+      if (existingIdx >= 0) current[existingIdx] = ''
+      current[preferredSlotIdx] = move
+      return normalizeMoveSlots(current)
+    })
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
   const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
+  const sampleCuratedMoveBuckets = [
+    { id: 'core' as const, label: lt('코어'), moves: sampleMoveSet?.core ?? [] },
+    { id: 'options' as const, label: lt('선택'), moves: sampleMoveSet?.options ?? [] },
+    { id: 'utility' as const, label: lt('유틸'), moves: sampleMoveSet?.utility ?? [] },
+  ].filter((bucket) => bucket.moves.length)
+  const sampleVisibleMoveBuckets = sampleCuratedMoveBuckets.filter((bucket) => sampleMoveFilter === 'all' || sampleMoveFilter === bucket.id)
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const activeSampleMoveSlotIdx = activeMoveField?.scope === 'sample' && activeMoveField.key === sampleForge.key
     ? activeMoveField.slotIdx
@@ -4529,6 +4785,12 @@ export default function App() {
   const sampleShowElectromorphosisToggle = sampleAttackerAbilityValue === 'electromorphosis'
   const sampleShowDefenderStatusedToggle = sampleDamageDefenderAbilitySlugs.includes('marvel-scale')
   const sampleShowDefenderFullHpToggle = sampleDamageDefenderAbilitySlugs.some((ability) => ability === 'multiscale' || ability === 'shadow-shield')
+  const sampleShowDefenderDisguiseToggle = sampleDamageDefenderAbilitySlugs.some((ability) => ability === 'disguise' || ability === '탈')
+  React.useEffect(() => {
+    if (sampleShowDefenderDisguiseToggle) {
+      setCalcDefenderDisguise(true)
+    }
+  }, [sampleShowDefenderDisguiseToggle])
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
     const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? member.ability) : member.ability
@@ -4595,6 +4857,7 @@ export default function App() {
       attackerLowHp: calcAttackerLowHp,
       targetPoisoned: calcTargetPoisoned,
       defenderFullHp: calcDefenderFullHp,
+      disguiseActive: calcDefenderDisguise,
       movedAfterTarget: calcMovedAfterTarget,
       faintedAllies: calcFaintedAllies,
       rivalryMode: calcRivalryMode,
@@ -4673,7 +4936,7 @@ export default function App() {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const applyMemberToPartySlot = (member: PartyMember, slotIdx: number) => {
+  const applyMemberToPartySlot = (member: PartyMember, slotIdx: number, lockedMoves?: string[]) => {
     const target = party[slotIdx]
     if (!target) return
     const next = [...party]
@@ -4687,6 +4950,12 @@ export default function App() {
       item: member.item,
     }
     setParty(next)
+    if (member.key) {
+      setConfirmedMovesByKey((prev) => ({
+        ...prev,
+        [member.key]: (lockedMoves ?? prev[member.key] ?? []).filter(Boolean).slice(0, 4),
+      }))
+    }
     setPartyItemDrafts((prev) => {
       const nextDrafts = [...prev]
       nextDrafts[slotIdx] = visibleChampionsItem(member.key, member.item)
@@ -4766,13 +5035,14 @@ export default function App() {
       id: `sample-${Date.now()}`,
       label,
       member: { ...sampleForge, evs: { ...sampleForge.evs }, config: { ...sampleForge.config }, tuning: { ...sampleForge.tuning } },
+      lockedMoves: sampleLockedMoves.filter(Boolean).slice(0, 4),
     }
     setSavedSamples((prev) => [saved, ...prev])
     setSampleLabelDraft('')
   }
 
   const applySampleToPartySlot = (slotIdx: number) => {
-    applyMemberToPartySlot(sampleForge, slotIdx)
+    applyMemberToPartySlot(sampleForge, slotIdx, sampleLockedMoves.filter(Boolean).slice(0, 4))
   }
 
   const updateTuningEffortFromPointer = (slotIdx: number, stat: EffortStatKey, availableCap: number, clientX: number, element: HTMLDivElement) => {
@@ -4939,6 +5209,7 @@ export default function App() {
     setCalcAttackerLowHp(false)
     setCalcTargetPoisoned(false)
     setCalcDefenderFullHp(false)
+    setCalcDefenderDisguise(false)
     setCalcMovedAfterTarget(false)
     setCalcFaintedAllies(0)
     setCalcRivalryMode('neutral')
@@ -4964,6 +5235,7 @@ export default function App() {
     setActiveTab('party')
     setMainSection('home')
     setSampleForge(defaultSampleForge())
+    setSampleLockedMoves([])
     setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
@@ -4997,6 +5269,7 @@ export default function App() {
       calcAttackerLowHp,
       calcTargetPoisoned,
       calcDefenderFullHp,
+      calcDefenderDisguise,
       calcMovedAfterTarget,
       calcFaintedAllies,
       calcRivalryMode,
@@ -5024,6 +5297,7 @@ export default function App() {
       confirmedMovesByKey,
       mainSection,
       sampleForge,
+      sampleLockedMoves,
       savedSamples,
       savedPartyPresets,
       sampleWorkbenchTab,
@@ -5067,6 +5341,7 @@ export default function App() {
       setCalcAttackerLowHp(Boolean(parsed.calcAttackerLowHp))
       setCalcTargetPoisoned(Boolean(parsed.calcTargetPoisoned))
       setCalcDefenderFullHp(Boolean(parsed.calcDefenderFullHp))
+      setCalcDefenderDisguise(Boolean(parsed.calcDefenderDisguise))
       setCalcMovedAfterTarget(Boolean(parsed.calcMovedAfterTarget))
       setCalcFaintedAllies(Number.isFinite(Number(parsed.calcFaintedAllies)) ? Math.max(0, Math.min(5, Math.trunc(Number(parsed.calcFaintedAllies)))) : 0)
       setCalcRivalryMode(parsed.calcRivalryMode === 'same' || parsed.calcRivalryMode === 'opposite' ? parsed.calcRivalryMode : 'neutral')
@@ -5109,10 +5384,12 @@ export default function App() {
       setCalcOpponentAttackNature(nextOffenseState.attackNature)
       setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
-      setConfirmedMovesByKey(sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey))
+      const nextConfirmedMovesByKey = sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey)
+      setConfirmedMovesByKey(nextConfirmedMovesByKey)
       setMainSection(parsed.mainSection ?? 'home')
       const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
+      setSampleLockedMoves(parsed.sampleLockedMoves ? sanitizeMoveSlotList(parsed.sampleLockedMoves) : nextConfirmedMovesByKey[nextSampleForge.key] ?? [])
       setSampleItemDraft(displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage))
       setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
       setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
@@ -5141,6 +5418,7 @@ export default function App() {
                 <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
             </div>
           </div>
@@ -5377,6 +5655,13 @@ export default function App() {
                 <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
               </div>
             </button>
+            <button type="button" className="home-route-card" onClick={() => setMainSection('dex')}>
+              <div className="home-route-card-copy">
+                <span className="home-route-eyebrow">{lt('도감')}</span>
+                <strong>{lt('도감')}</strong>
+                <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
+              </div>
+            </button>
           </div>
         </section>
         ) : null}
@@ -5437,8 +5722,8 @@ export default function App() {
         {mainSection !== 'home' ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : lt('포켓몬 샘플 깎기')}</h2>
-              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.') : lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
+              <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
+              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.') : mainSection === 'sample' ? lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.') : lt('포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.')}</p>
             </div>
             {mainSection === 'single' || mainSection === 'double' ? (
               <div className="battle-flow-nav">
@@ -5458,6 +5743,237 @@ export default function App() {
                 </div>
               </div>
             ) : null}
+          </div>
+        </section> : null}
+
+        {mainSection === 'dex' ? <section className="panel wide">
+          <div className="section-head">
+            <div>
+              <h2>{lt('도감')}</h2>
+              <p className="muted">{lt('포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.')}</p>
+            </div>
+          </div>
+          <div className="dex-browser-layout">
+            <div className="dex-browser-sidebar">
+              <div className="tab-bar dex-mode-tabs">
+                {([
+                  ['pokemon', lt('포켓몬')],
+                  ['move', lt('기술')],
+                  ['ability', lt('특성')],
+                  ['item', lt('도구')],
+                ] as [DexSearchMode, string][]).map(([mode, label]) => (
+                  <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => setDexSearchMode(mode)}>{label}</button>
+                ))}
+              </div>
+              <div className="dex-search-autocomplete">
+                <input
+                  value={dexSearch}
+                  placeholder={dexSearchMode === 'pokemon' ? lt('포켓몬 검색') : dexSearchMode === 'move' ? lt('기술 검색') : dexSearchMode === 'ability' ? lt('특성 검색') : lt('도구 검색')}
+                  onChange={(e) => setDexSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key !== 'Enter' || !dexResultKeys.length) return
+                    setDexSelectedValue(dexResultKeys[0])
+                  }}
+                />
+              </div>
+              <div className="dex-results-card">
+                <div className="row-between section-head compact">
+                  <div>
+                    <strong>{lt('검색 결과')}</strong>
+                    <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
+                  </div>
+                </div>
+                <div className="dex-results-list">
+                  {dexSearchMode === 'pokemon' ? dexSpeciesOptions.map((option) => {
+                    const row = indexByKey.get(option.key)
+                    if (!row) return null
+                    return <button key={`dex-pokemon-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
+                      <div className="dex-pokemon-preview-row">
+                        {row.sprite ? <img src={row.sprite} alt={searchDisplayLabel(option.key, siteLanguage)} className="dex-result-sprite" /> : <div className="dex-result-sprite placeholder" />}
+                        <div className="dex-pokemon-preview-body">
+                          <div>
+                            <strong>{searchDisplayLabel(option.key, siteLanguage)}</strong>
+                            <div className="muted dex-result-subline">{row.name_en}</div>
+                          </div>
+                          <div className="type-badge-wrap dex-result-typebadges">
+                            {row.types.map((type) => <TypeBadgeImage key={`dex-row-type-icon-${option.key}-${type}`} type={type} />)}
+                          </div>
+                          <div className="pick-summary-badges compact">{displayTypes(row, siteLanguage).map((type, idx) => <span key={`dex-row-type-${option.key}-${idx}`} className="pick-badge">{type}</span>)}</div>
+                        </div>
+                      </div>
+                    </button>
+                  }) : null}
+                  {dexSearchMode === 'move' ? dexMoveOptions.map((option) => <button key={`dex-move-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
+                    <div className="dex-move-preview-row">
+                      {option.meta.type ? <TypeBadgeImage type={option.meta.type} /> : null}
+                      <div className="dex-pokemon-preview-body">
+                        <strong>{option.name}</strong>
+                        <span className="muted">{displayTypeName(option.meta.type, siteLanguage)} · {displayMoveCategoryName(option.meta.category, siteLanguage)}{option.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(option.meta)}` : ''}</span>
+                      </div>
+                    </div>
+                  </button>) : null}
+                  {dexSearchMode === 'ability' ? dexAbilityOptions.map((option) => <button key={`dex-ability-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
+                    <strong>{abilityDisplayName(option.key, option.koLabel, siteLanguage)}</strong>
+                    <span className="muted">{option.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
+                  </button>) : null}
+                  {dexSearchMode === 'item' ? dexItemOptions.map((item) => <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)}>
+                    <strong>{displayItemLabel(item, siteLanguage)}</strong>
+                    <span className="muted">{item}</span>
+                  </button>) : null}
+                  {!dexResultKeys.length ? <div className="dex-empty-state muted">{lt('검색 결과가 없습니다.')}</div> : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="dex-browser-detail">
+              {dexSelectedRow ? <div className="dex-detail-card">
+                <div className="dex-detail-head">
+                  <div className="dex-detail-identity">
+                    {dexSelectedRow.sprite ? <img src={dexSelectedRow.sprite} alt={displayName(dexSelectedRow, siteLanguage)} className="dex-detail-sprite" /> : null}
+                    <div>
+                      <h3>{displayName(dexSelectedRow, siteLanguage)}</h3>
+                      <p className="muted">{dexSelectedRow.name_en}</p>
+                    </div>
+                  </div>
+                  <div className="pick-summary-badges">
+                    {displayTypes(dexSelectedRow, siteLanguage).map((type, idx) => <span key={`dex-type-${dexSelectedRow.key}-${idx}`} className="pick-badge">{type}</span>)}
+                  </div>
+                </div>
+                <div className="dex-detail-grid">
+                  <div className="dex-detail-panel">
+                    <strong>{lt('종족값')}</strong>
+                    <div className="dex-stat-table" role="table" aria-label={lt('종족값')}>
+                      {[
+                        ['HP', dexSelectedRow.hp],
+                        ['A', dexSelectedRow.attack],
+                        ['B', dexSelectedRow.defense],
+                        ['C', dexSelectedRow.spAttack],
+                        ['D', dexSelectedRow.spDefense],
+                        ['S', dexSelectedRow.speed],
+                      ].map(([label, value]) => <div key={`dex-stat-${dexSelectedRow.key}-${label}`} className="dex-stat-row" role="row">
+                        <span className="dex-stat-label" role="cell">{label}</span>
+                        <div className="dex-stat-bar-track" role="cell" aria-hidden="true">
+                          <span className="dex-stat-bar-fill" style={{ width: `${Math.max(10, Math.min(100, Number(value) / 255 * 100))}%` }} />
+                        </div>
+                        <strong className="dex-stat-value" role="cell">{value}</strong>
+                      </div>)}
+                      <div className="dex-stat-row total" role="row">
+                        <span className="dex-stat-label" role="cell">{lt('합계')}</span>
+                        <div className="dex-stat-bar-track" role="cell" aria-hidden="true">
+                          <span className="dex-stat-bar-fill total" style={{ width: `${Math.max(14, Math.min(100, (dexSelectedRow.hp + dexSelectedRow.attack + dexSelectedRow.defense + dexSelectedRow.spAttack + dexSelectedRow.spDefense + dexSelectedRow.speed) / 780 * 100))}%` }} />
+                        </div>
+                        <strong className="dex-stat-value" role="cell">{dexSelectedRow.hp + dexSelectedRow.attack + dexSelectedRow.defense + dexSelectedRow.spAttack + dexSelectedRow.spDefense + dexSelectedRow.speed}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="dex-detail-panel">
+                    <strong>{lt('특성')}</strong>
+                    <div className="pick-summary-badges">
+                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <AbilityTextWithTooltip key={`dex-ability-${dexSelectedRow.key}-${idx}`} name={ability} language={siteLanguage} row={dexSelectedRow} className="pick-badge subtle" />)}
+                    </div>
+                  </div>
+                  <div className="dex-detail-panel">
+                    <strong>{lt('상위 채용 기술')}</strong>
+                    <div className="pick-summary-badges">
+                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <MoveTextWithTooltip key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} name={move} language={siteLanguage} className="pick-badge" />) : <span className="pick-badge">-</span>}
+                    </div>
+                  </div>
+                  <div className="dex-detail-panel">
+                    <strong>{lt('빠른 이동')}</strong>
+                    <div className="pick-summary-badges">
+                      <button type="button" className="chip-button" onClick={() => {
+                        setSampleForge((prev) => ({ ...prev, key: dexSelectedRow.key, ability: defaultAbilityForKey(dexSelectedRow.key) }))
+                        setSampleSearch(searchDisplayLabel(dexSelectedRow.key, siteLanguage))
+                        setSampleItemDraft(displayItemLabel(visibleChampionsItem(dexSelectedRow.key, ''), siteLanguage))
+                        setMainSection('sample')
+                      }}>{lt('샘플 빌더로 열기')}</button>
+                      <button type="button" className="chip-button" onClick={() => {
+                        const key = dexSelectedRow.key
+                        setParty((prev) => prev.map((member, idx) => idx === 0 ? { ...member, key, ability: defaultAbilityForKey(key) } : member))
+                        setPartySearch((prev) => prev.map((value, idx) => idx === 0 ? searchDisplayLabel(key, siteLanguage) : value))
+                        setPartyItemDrafts((prev) => prev.map((value, idx) => idx === 0 ? displayItemLabel(visibleChampionsItem(key, ''), siteLanguage) : value))
+                        setMainSection('single')
+                        setActiveTab('party')
+                      }}>{lt('싱글 파티에 넣기')}</button>
+                    </div>
+                  </div>
+                </div>
+              </div> : null}
+
+              {dexSelectedMove ? <div className="dex-detail-card">
+                <div className="dex-detail-head">
+                  <div className="dex-detail-identity compact">
+                    <div>
+                      <h3>{dexSelectedMove.name}</h3>
+                      <p className="muted">{displayTypeName(dexSelectedMove.meta.type, siteLanguage)} · {displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage)}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="dex-detail-grid single-column">
+                  <div className="dex-detail-panel">
+                    <strong>{lt('기본 정보')}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">{lt('타입')} {displayTypeName(dexSelectedMove.meta.type, siteLanguage)}</span>
+                      <span className="pick-badge">{lt('분류')} {displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage)}</span>
+                      <span className="pick-badge">{lt('위력')} {dexSelectedMove.meta.power != null ? resolvedMovePower(dexSelectedMove.meta) : '-'}</span>
+                      <span className="pick-badge">{lt('명중')} {dexSelectedMove.meta.accuracy != null ? `${dexSelectedMove.meta.accuracy}%` : '-'}</span>
+                      <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? 0}</span>
+                    </div>
+                  </div>
+                </div>
+              </div> : null}
+
+              {dexSelectedAbility ? <div className="dex-detail-card">
+                <div className="dex-detail-head">
+                  <div className="dex-detail-identity compact">
+                    <div>
+                      <h3>{abilityDisplayName(dexSelectedAbility.key, dexSelectedAbility.koLabel, siteLanguage)}</h3>
+                      <p className="muted">{dexSelectedAbility.key}</p>
+                    </div>
+                  </div>
+                  <div className="pick-summary-badges">
+                    <span className="pick-badge">{dexSelectedAbility.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
+                  </div>
+                </div>
+                <div className="dex-detail-grid single-column">
+                  <div className="dex-detail-panel">
+                    <strong>{lt('해당 특성 포켓몬')}</strong>
+                    <div className="pick-summary-badges">
+                      {dexSelectedAbility.pokemonKeys.map((key) => {
+                        const row = indexByKey.get(key)
+                        if (!row) return null
+                        return <span key={`dex-ability-pokemon-${key}`} className="pick-badge subtle">{displayName(row, siteLanguage)}</span>
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div> : null}
+
+              {dexSelectedItem ? <div className="dex-detail-card">
+                <div className="dex-detail-head">
+                  <div className="dex-detail-identity compact">
+                    <div>
+                      <h3>{displayItemLabel(dexSelectedItem, siteLanguage)}</h3>
+                      <p className="muted">{dexSelectedItem}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="dex-detail-grid single-column">
+                  <div className="dex-detail-panel">
+                    <strong>{lt('기본 정보')}</strong>
+                    <div className="pick-summary-badges">
+                      <span className="pick-badge">{displayItemLabel(dexSelectedItem, 'ko')}</span>
+                      <span className="pick-badge">{displayItemLabel(dexSelectedItem, 'en')}</span>
+                      <span className="pick-badge">{displayItemLabel(dexSelectedItem, 'ja')}</span>
+                    </div>
+                  </div>
+                </div>
+              </div> : null}
+
+              {!dexSelectedRow && !dexSelectedMove && !dexSelectedAbility && !dexSelectedItem ? <div className="dex-detail-card dex-placeholder-card">
+                <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
+              </div> : null}
+            </div>
           </div>
         </section> : null}
 
@@ -5732,7 +6248,7 @@ export default function App() {
                       <div className="party-meta-chip party-meta-chip-editor">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
                           <span>{lt('특성')}</span>
-                          <strong>{activeAbility || lt('미선택')}</strong>
+                          <strong title={activeAbility ? abilityTooltipText(activeAbility, siteLanguage, row) : undefined}>{activeAbility || lt('미선택')}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
                           const nextFocus = e.relatedTarget as Node | null
@@ -5755,6 +6271,7 @@ export default function App() {
                               setActiveMetaListField(null)
                               setActivePartyMetaEditor(null)
                             }}
+                          title={abilityTooltipText(ability, siteLanguage, row)}
                           >{ability}</button>)}
                         </div> : null}
                       </div>
@@ -5944,6 +6461,7 @@ export default function App() {
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
+                              title={move ? moveTooltipText(move, siteLanguage) : undefined}
                               placeholder={memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                               onFocus={() => {
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
@@ -5978,7 +6496,7 @@ export default function App() {
                             {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
                               <div className="move-autocomplete-menu unified-dropdown-menu">
                                 {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
+                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" title={moveTooltipText(option.name, siteLanguage)} className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
                                     <span className="move-autocomplete-main">
                                       {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
                                       <span>{option.name}</span>
@@ -5998,7 +6516,7 @@ export default function App() {
                         <div className="move-chip-wrap">
                           {memberTopSuggestedMoves.map((move) => {
                             const locked = registeredMoves.includes(move)
-                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            return <button key={`party-top-${member.key}-${move}`} type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
                           })}
                         </div>
                       </div> : null}
@@ -6243,6 +6761,7 @@ export default function App() {
                   <select
                     className="opponent-meta-select"
                     value={oppMember.ability}
+                    title={oppMember.ability ? abilityTooltipText(oppMember.ability, siteLanguage, oppRow) : undefined}
                     disabled={!oppMember.key}
                     onChange={(e) => {
                       const next = [...opponents]
@@ -6263,7 +6782,7 @@ export default function App() {
                       const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                       return (
                         <div key={`opp-entry-move-${selectedOpp}-${move}`} className="damage-move-chip-wrap">
-                          <button type="button" className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)}`} onClick={() => {
+                          <button type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)}`} onClick={() => {
                             setCalcSwapSides(true)
                             setSelectedDamageMove({ key: oppMember.key, move })
                             setActiveTab('power')
@@ -6291,6 +6810,7 @@ export default function App() {
                               <button
                                 key={`opp-top-move-${oppMember.key}-${move}`}
                                 type="button"
+                                title={moveTooltipText(move, siteLanguage)}
                                 className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`}
                                 onClick={() => addOpponentRevealedMove(move)}
                                 disabled={locked || oppMember.revealedMoves.length >= 4}
@@ -6616,7 +7136,7 @@ export default function App() {
                 <div className="party-meta-chip party-meta-chip-editor">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
                     <span>{lt('특성')}</span>
-                    <strong>{sampleAbility || lt('미선택')}</strong>
+                    <strong title={sampleAbility ? abilityTooltipText(sampleAbility, siteLanguage, sampleRow) : undefined}>{sampleAbility || lt('미선택')}</strong>
                   </button>
                   {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
                     const nextFocus = e.relatedTarget as Node | null
@@ -6637,6 +7157,7 @@ export default function App() {
                         setActiveMetaListField(null)
                         setActiveSampleMetaEditor(null)
                       }}
+                    title={abilityTooltipText(ability, siteLanguage, sampleRow)}
                     >{ability}</button>)}
                   </div> : null}
                 </div>
@@ -6750,6 +7271,36 @@ export default function App() {
                   </button>
                 ))}
               </div>
+              <div className="sample-builder-action-card">
+                <div className="sample-builder-action-head">
+                  <strong>{lt('저장/적용')}</strong>
+                  <div className="pick-summary-badges sample-slot-target-badges">
+                    <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                    <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+                  </div>
+                </div>
+                <div className="sample-builder-save-row">
+                  <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+                  <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
+                </div>
+                <div className="sample-builder-slot-grid">
+                  {party.map((member, idx) => {
+                    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                    return (
+                      <button
+                        key={`sample-builder-slot-${idx}`}
+                        type="button"
+                        className={`sample-builder-slot-chip ${selectedMy === idx ? 'active' : ''}`}
+                        onClick={() => setSelectedMy(idx)}
+                      >
+                        <span>{slotNumberLabel(idx, siteLanguage)}</span>
+                        <strong>{row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</strong>
+                      </button>
+                    )
+                  })}
+                </div>
+                <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
+              </div>
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
@@ -6757,90 +7308,179 @@ export default function App() {
               </div>
               <>
                   <div className="sample-tracking-cluster">
-                    <div className="sample-track-card sample-track-editor-card">
-                      <div className="row-between sample-track-head">
-                        <strong>{lt('기술 배치')}</strong>
-                        <div className="pick-summary-badges sample-slot-target-badges">
-                          {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
-                          <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
-                          <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-                          <button type="button" className="pick-badge sample-slot-clear-badge" onClick={() => clearConfirmedMoveSlot(sampleForge.key, activeSampleMoveSlotIdx)}>{lt('슬롯 비우기')}</button>
+                    <div className="sample-track-workspace">
+                      <div className="sample-track-card sample-slot-rail-card">
+                        <div className="row-between sample-track-head compact-gap">
+                          <strong>{lt('확정 기술')}</strong>
+                          <div className="pick-summary-badges sample-slot-target-badges">
+                            <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
+                            <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                          </div>
                         </div>
+                        <div className="sample-slot-rail-grid">
+                          {sampleRegisteredMoves.map((move, moveIdx) => {
+                            const active = activeSampleMoveSlotIdx === moveIdx
+                            const filled = Boolean(move)
+                            return (
+                              <button
+                                key={`sample-slot-rail-${sampleForge.key}-${moveIdx}`}
+                                type="button"
+                                title={move ? moveTooltipText(move, siteLanguage) : undefined}
+                                className={`sample-slot-rail-button ${moveTypeThemeClass(sampleMoveType(move))} ${active ? 'active' : ''} ${filled ? 'filled' : 'empty'}`}
+                                onClick={() => focusSampleSlot(moveIdx)}
+                              >
+                                <span className="sample-slot-rail-index">{moveIdx + 1}</span>
+                                <span className="sample-slot-rail-copy">
+                                  <strong>{move || lt('빈 슬롯')}</strong>
+                                  <span>{filled ? lt('확정') : lt('미지정')}</span>
+                                </span>
+                              </button>
+                            )
+                          })}
+                        </div>
+                        <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
+                          const current = [...prev]
+                          while (current.length < 4) current.push('')
+                          current[activeSampleMoveSlotIdx] = ''
+                          return normalizeMoveSlots(current)
+                        })}>{lt('슬롯 비우기')}</button>
                       </div>
-                      <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
-                        {sampleRegisteredMoves.map((move, moveIdx) => (
-                          <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                            <span>{moveIdx + 1}번</span>
-                            <input
-                              value={move}
-                              placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                              onFocus={() => {
-                                setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
-                              }}
-                              onBlur={() => {
-                                setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)
-                                setTimeout(() => closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`), 120)
-                              }}
-                              onChange={(e) => {
-                                setConfirmedMoveSlot(sampleForge.key, moveIdx, e.target.value)
-                                setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
-                              }}
-                              onKeyDown={(e) => {
-                                const moveSuggestions = filterMoveOptions(move, sampleMoveOptions).slice(0, 8)
-                                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                                  e.preventDefault()
-                                  moveAutocompleteMenuHighlight(`sample-move-${sampleForge.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
-                                  return
-                                }
-                                if (e.key !== 'Enter') return
-                                const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`)]
-                                const committed = highlightedMove ? (selectSampleMoveOption(moveIdx, highlightedMove.name), true) : commitSampleMoveOption(moveIdx, move)
-                                if (committed) {
-                                  e.preventDefault()
-                                  closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`)
-                                }
-                              }}
-                            />
-                            {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
-                              <div className="move-autocomplete-menu unified-dropdown-menu">
-                                {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                  <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
-                                    <span className="move-autocomplete-main">
-                                      {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
-                                      <span>{option.name}</span>
-                                    </span>
+                      <div className="sample-track-main-column">
+                        <div className="sample-track-card sample-track-editor-card">
+                          <div className="row-between sample-track-head">
+                            <strong>{lt('기술 배치')}</strong>
+                            <div className="pick-summary-badges sample-slot-target-badges">
+                              {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
+                            </div>
+                          </div>
+                          <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
+                            {sampleRegisteredMoves.map((move, moveIdx) => (
+                              <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
+                                <span>{moveIdx + 1}번</span>
+                                <input
+                                  value={move}
+                                  title={move ? moveTooltipText(move, siteLanguage) : undefined}
+                                  placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
+                                  onFocus={() => {
+                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                    setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
+                                  }}
+                                  onBlur={() => {
+                                    setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)
+                                    setTimeout(() => closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`), 120)
+                                  }}
+                                  onChange={(e) => {
+                                    setSampleLockedMoves((prev) => {
+                                      const current = [...prev]
+                                      while (current.length < 4) current.push('')
+                                      current[moveIdx] = e.target.value
+                                      return normalizeMoveSlots(current)
+                                    })
+                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                    setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
+                                  }}
+                                  onKeyDown={(e) => {
+                                    const moveSuggestions = filterMoveOptions(move, sampleMoveOptions).slice(0, 8)
+                                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                      e.preventDefault()
+                                      moveAutocompleteMenuHighlight(`sample-move-${sampleForge.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
+                                      return
+                                    }
+                                    if (e.key !== 'Enter') return
+                                    const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`)]
+                                    const committed = highlightedMove ? (selectSampleMoveOption(moveIdx, highlightedMove.name), true) : commitSampleMoveOption(moveIdx, move)
+                                    if (committed) {
+                                      e.preventDefault()
+                                      closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`)
+                                    }
+                                  }}
+                                />
+                                {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
+                                  <div className="move-autocomplete-menu unified-dropdown-menu">
+                                    {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
+                                      <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" title={moveTooltipText(option.name, siteLanguage)} className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
+                                        <span className="move-autocomplete-main">
+                                          {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
+                                          <span>{option.name}</span>
+                                        </span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : null}
+                              </label>
+                            ))}
+                          </div>
+                          {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
+                        </div>
+                        {sampleCuratedMoveBuckets.length ? <div className="sample-track-card top-move-chip-card">
+                          <div className="row-between sample-track-head compact-gap sample-candidate-head">
+                            <strong>{lt('실전 후보')}</strong>
+                            <div className="tab-bar sample-filter-bar sample-candidate-filter-bar">
+                              {([
+                                { value: 'core', label: lt('코어'), count: sampleCuratedMoveBuckets.find((bucket) => bucket.id === 'core')?.moves.length ?? 0 },
+                                { value: 'options', label: lt('선택'), count: sampleCuratedMoveBuckets.find((bucket) => bucket.id === 'options')?.moves.length ?? 0 },
+                                { value: 'utility', label: lt('유틸'), count: sampleCuratedMoveBuckets.find((bucket) => bucket.id === 'utility')?.moves.length ?? 0 },
+                                { value: 'all', label: lt('전체'), count: sampleCuratedMoveBuckets.reduce((sum, bucket) => sum + bucket.moves.length, 0) },
+                              ] as { value: MoveFilter; label: string; count: number }[])
+                                .filter((option) => option.value === 'all' || option.count > 0)
+                                .map((option) => (
+                                  <button key={`sample-candidate-filter-${option.value}`} type="button" className={`tab-chip sample-filter-chip ${sampleMoveFilter === option.value ? 'active' : ''}`} onClick={() => setSampleMoveFilter(option.value)}>
+                                    {option.label}
+                                    <strong>{option.count}</strong>
                                   </button>
                                 ))}
-                              </div>
-                            ) : null}
-                          </label>
-                        ))}
+                            </div>
+                          </div>
+                          <div className="sample-candidate-bucket-grid">
+                            {sampleVisibleMoveBuckets.map((bucket) => (
+                              <section key={`sample-candidate-bucket-${bucket.id}`} className={`sample-candidate-bucket ${bucket.id}`}>
+                                <div className="row-between sample-candidate-bucket-head compact-gap">
+                                  <span className={`pick-badge sample-candidate-kind-badge ${bucket.id}`}>{bucket.label}</span>
+                                  <span className="muted-inline">{bucket.moves.length}</span>
+                                </div>
+                                <div className="move-chip-wrap">
+                                  {bucket.moves.map((move) => {
+                                    const locked = sampleConfirmedMoves.includes(move)
+                                    return (
+                                      <button
+                                        key={`sample-top-move-${sampleForge.key}-${bucket.id}-${move}`}
+                                        type="button"
+                                        title={moveTooltipText(move, siteLanguage)}
+                                        className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
+                                        onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}
+                                      >
+                                        {move}
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </section>
+                            ))}
+                          </div>
+                        </div> : sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                          <div className="row-between sample-track-head compact-gap">
+                            <strong>{lt('사용률 상위 기술')}</strong>
+                            <span className="muted-inline">Top {Math.min(10, sampleTopSuggestedMoves.length)}</span>
+                          </div>
+                          <div className="move-chip-wrap">
+                            {sampleTopSuggestedMoves.map((move) => {
+                              const locked = sampleConfirmedMoves.includes(move)
+                              return (
+                                <button
+                                  key={`sample-top-move-${sampleForge.key}-${move}`}
+                                  type="button"
+                                  title={moveTooltipText(move, siteLanguage)}
+                                  className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
+                                  onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}
+                                >
+                                  {move}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div> : sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
                       </div>
-                      {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div>
-                    {sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
-                      <div className="row-between sample-track-head compact-gap">
-                        <strong>{lt('사용률 상위 기술')}</strong>
-                        <span className="muted-inline">Top {Math.min(10, sampleTopSuggestedMoves.length)}</span>
-                      </div>
-                      <div className="move-chip-wrap">
-                        {sampleTopSuggestedMoves.map((move) => {
-                          const locked = sampleConfirmedMoves.includes(move)
-                          return (
-                            <button
-                              key={`sample-top-move-${sampleForge.key}-${move}`}
-                              type="button"
-                              className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
-                              onClick={() => applyMoveToSlot(sampleForge.key, move, activeSampleMoveSlotIdx)}
-                            >
-                              {move}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div> : sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
                   </div>
                 </>
             </div>
@@ -7000,6 +7640,7 @@ export default function App() {
                     <label>{lt('공격측 화력 랭크')}<select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
                     <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
                     {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 만땅')}</span></label> : null}
+                    {sampleShowDefenderDisguiseToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} /><span>{lt('상대 탈 intact')}</span></label> : null}
                   </div>
                 </div>
                 <div className="damage-control-group">
@@ -7128,27 +7769,44 @@ export default function App() {
                 <span className="pick-badge">{savedSampleCountLabel(savedSamples.length, siteLanguage)}</span>
               </div>
             </summary>
-            <div className="saved-sample-drawer-body">
+            <div className="saved-sample-drawer-body sample-saved-grid">
             {savedSamples.length ? savedSamples.map((entry) => {
               const savedRow = indexByKey.get(entry.member.key) ?? rows[0]
+              const savedItem = visibleChampionsItem(entry.member.key, entry.member.item)
+              const savedMoves = entry.lockedMoves.filter(Boolean).slice(0, 4)
               return (
-                <div key={entry.id} className="saved-sample-item sample-saved-card-item">
-                  <div>
-                    <strong>{entry.label}</strong>
-                    <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}{entry.member.item ? ` · ${displayItemLabel(entry.member.item, siteLanguage)}` : ''}</p>
-                    <div className="pick-summary-badges sample-saved-item-badges">
-                      <span className="pick-badge">{lt('노력치 합')} {Object.values(entry.member.evs).reduce((sum, value) => sum + value, 0)}</span>
-                      <span className="pick-badge">{lt('실수치 스피드')} {partyStatValue(savedRow, entry.member, 'speed')}</span>
+                <div key={entry.id} className="saved-sample-item sample-saved-card-item sample-saved-grid-card">
+                  <div className="sample-saved-card-top">
+                    <div className="sample-saved-card-hero">
+                      {savedRow?.sprite ? <img src={savedRow.sprite} alt={displayName(savedRow, siteLanguage)} className="sample-saved-card-sprite" /> : null}
+                      <div className="sample-saved-card-copy">
+                        <strong>{entry.label}</strong>
+                        <p className="muted">{displayName(savedRow, siteLanguage)} · {natureLabel(entry.member.config.nature, siteLanguage)}</p>
+                      </div>
                     </div>
+                    <span className="pick-badge sample-saved-slot-badge">{applyToSlotLabel(selectedMy, siteLanguage)}</span>
                   </div>
-                  <div className="inline-controls">
+                  <div className="pick-summary-badges sample-saved-item-badges sample-saved-rich-badges">
+                    {savedItem ? <span className="pick-badge item-badge-inline">
+                      <img src={itemSpriteSrc(entry.member.key, savedItem)} alt={displayItemLabel(savedItem, siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                      {displayItemLabel(savedItem, siteLanguage)}
+                    </span> : null}
+                    <span className="pick-badge">{lt('실수치 스피드')} {partyStatValue(savedRow, entry.member, 'speed')}</span>
+                    <span className="pick-badge">{lt('노력치 합')} {Object.values(entry.member.evs).reduce((sum, value) => sum + value, 0)}</span>
+                    <span className="pick-badge">{lt('확정 기술 수')} {savedMoves.length}/4</span>
+                  </div>
+                  <div className="sample-saved-move-row">
+                    {savedMoves.length ? savedMoves.map((move) => <span key={`${entry.id}-${move}`} className={`move-chip core confirmed sample-saved-move-chip ${moveTypeThemeClass(resolveMoveType(move, moveOptionsForEntry(sampleMoves.find((sample) => sample.key === entry.member.key)), movePoolByKey))}`}>{move}</span>) : <span className="muted-inline">{lt('아직 없음')}</span>}
+                  </div>
+                  <div className="sample-saved-actions">
                     <button type="button" className="pick-chip" onClick={() => {
                       setSampleForge({ ...entry.member, evs: { ...entry.member.evs }, config: { ...entry.member.config }, tuning: { ...entry.member.tuning } })
+                      setSampleLockedMoves(entry.lockedMoves.filter(Boolean).slice(0, 4))
                       setSampleItemDraft(displayItemLabel(visibleChampionsItem(entry.member.key, entry.member.item), siteLanguage))
                       setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
                       setActiveSampleMetaEditor(null)
                     }}>{lt('불러오기')}</button>
-                    <button type="button" className="pick-chip" onClick={() => applyMemberToPartySlot(entry.member, selectedMy)}>{lt('파티 슬롯에 적용')}</button>
+                    <button type="button" className="action-button sample-saved-apply-button" onClick={() => applyMemberToPartySlot(entry.member, selectedMy, entry.lockedMoves)}>{lt('파티 슬롯에 적용')}</button>
                     <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('삭제')}</button>
                   </div>
                 </div>
@@ -7293,6 +7951,7 @@ export default function App() {
                     <button
                       key={`damage-move-my-${myMember.key}-${move}`}
                       type="button"
+                      title={moveTooltipText(move, siteLanguage)}
                       className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
                       onClick={() => {
                         setCalcSwapSides(false)
@@ -7331,6 +7990,7 @@ export default function App() {
                     >
                       <button
                         type="button"
+                        title={moveTooltipText(move, siteLanguage)}
                         className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
                         onClick={() => {
                           if (!oppRow) return
@@ -7363,7 +8023,7 @@ export default function App() {
                       {oppTopSuggestedMoves.map((move) => {
                         const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                         const locked = opponentRegisteredDamageMoves.includes(move)
-                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4}>{move}</button>
+                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4}>{move}</button>
                       })}
                     </div>
                   </div> : null}
@@ -7649,6 +8309,10 @@ export default function App() {
                   {showDefenderFullHpToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
                     <span>{lt('상대 HP 만땅')}</span>
+                  </label> : null}
+                  {showDefenderDisguiseToggle ? <label className="calc-toggle-box">
+                    <input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} />
+                    <span>{lt('상대 탈 intact')}</span>
                   </label> : null}
                 </div>
               </div>
