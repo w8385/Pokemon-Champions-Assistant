@@ -6021,8 +6021,11 @@ export default function App() {
               <span className="home-reference-label">{lt('참고 데이터베이스')}</span>
               <div className="home-reference-list">
                 <span className="pick-badge">PokéAPI</span>
+                <span className="pick-badge">veekun</span>
                 <span className="pick-badge">PokemonDB</span>
                 <span className="pick-badge">Serebii</span>
+                <span className="pick-badge">Smogon Dex</span>
+                <span className="pick-badge">Pikalytics</span>
                 <span className="pick-badge">champs.pokedb.tokyo</span>
               </div>
             </div>
