@@ -6239,10 +6239,10 @@ export default function App() {
                       {dexSelectedAbility.pokemonKeys.map((key) => {
                         const row = indexByKey.get(key)
                         if (!row) return null
-                        return <span key={`dex-ability-pokemon-${key}`} className="pick-badge subtle dex-ability-pokemon-chip">
+                        return <button key={`dex-ability-pokemon-${key}`} type="button" className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={() => openDexPokemonDetail(key)}>
                           {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
                           <span>{displayName(row, siteLanguage)}</span>
-                        </span>
+                        </button>
                       })}
                     </div>
                   </div>
