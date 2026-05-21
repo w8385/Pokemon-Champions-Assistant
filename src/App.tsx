@@ -3481,6 +3481,8 @@ export default function App() {
   const [dexSearch, setDexSearch] = React.useState('')
   const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(null)
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
+  const longPressTimerRef = React.useRef<number | null>(null)
+  const longPressTriggeredRef = React.useRef(false)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
@@ -3564,9 +3566,9 @@ export default function App() {
   }, [dexSelectedMove])
 
   const hideHoverTooltip = React.useCallback(() => setHoverTooltip(null), [])
-  const showHoverTooltip = React.useCallback((event: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, card: HoverTooltipCard | null | undefined) => {
+  const showHoverTooltipAtElement = React.useCallback((element: HTMLElement, card: HoverTooltipCard | null | undefined) => {
     if (!card) return
-    const rect = event.currentTarget.getBoundingClientRect()
+    const rect = element.getBoundingClientRect()
     setHoverTooltip({
       ...card,
       anchorX: rect.left + (rect.width / 2),
@@ -3574,12 +3576,21 @@ export default function App() {
       anchorBottom: rect.bottom,
     })
   }, [])
+  const showHoverTooltip = React.useCallback((event: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, card: HoverTooltipCard | null | undefined) => {
+    showHoverTooltipAtElement(event.currentTarget, card)
+  }, [showHoverTooltipAtElement])
   const bindTooltip = React.useCallback((card: HoverTooltipCard | null | undefined) => card ? {
     onMouseEnter: (event: React.MouseEvent<HTMLElement>) => showHoverTooltip(event, card),
     onMouseLeave: hideHoverTooltip,
     onFocus: (event: React.FocusEvent<HTMLElement>) => showHoverTooltip(event, card),
     onBlur: hideHoverTooltip,
   } : {}, [hideHoverTooltip, showHoverTooltip])
+  const clearLongPressTimer = React.useCallback(() => {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current)
+      longPressTimerRef.current = null
+    }
+  }, [])
 
   React.useEffect(() => {
     if (!dexResultKeys.length) {
@@ -3592,10 +3603,61 @@ export default function App() {
   }, [dexResultKeys, dexSelectedValue])
 
   const openDexPokemonDetail = React.useCallback((key: string) => {
+    hideHoverTooltip()
     setDexSearchMode('pokemon')
     setDexSearch(searchDisplayLabel(key, siteLanguage))
     setDexSelectedValue(key)
-  }, [siteLanguage])
+  }, [hideHoverTooltip, siteLanguage])
+
+  const openDexMoveDetail = React.useCallback((name: string) => {
+    hideHoverTooltip()
+    setDexSearchMode('move')
+    setDexSearch(name)
+    setDexSelectedValue(name)
+  }, [hideHoverTooltip])
+
+  const openDexAbilityDetail = React.useCallback((ability: string, row?: Row | null) => {
+    const resolved = resolveAbilityInfo(ability, row)
+    if (!resolved) return
+    hideHoverTooltip()
+    setDexSearchMode('ability')
+    setDexSearch(resolved.koLabel)
+    setDexSelectedValue(resolved.key)
+  }, [hideHoverTooltip])
+
+  const bindNavigableTooltip = React.useCallback((card: HoverTooltipCard | null | undefined, onNavigate: () => void) => ({
+    ...bindTooltip(card),
+    onPointerDown: (event: React.PointerEvent<HTMLElement>) => {
+      if (!card || event.pointerType !== 'touch') return
+      longPressTriggeredRef.current = false
+      clearLongPressTimer()
+      const element = event.currentTarget
+      longPressTimerRef.current = window.setTimeout(() => {
+        longPressTriggeredRef.current = true
+        showHoverTooltipAtElement(element, card)
+      }, 420)
+    },
+    onPointerUp: () => {
+      clearLongPressTimer()
+    },
+    onPointerCancel: () => {
+      clearLongPressTimer()
+    },
+    onPointerLeave: () => {
+      clearLongPressTimer()
+    },
+    onClick: (event: React.MouseEvent<HTMLElement>) => {
+      if (longPressTriggeredRef.current) {
+        event.preventDefault()
+        event.stopPropagation()
+        longPressTriggeredRef.current = false
+        return
+      }
+      onNavigate()
+    },
+  }), [bindTooltip, clearLongPressTimer, showHoverTooltipAtElement])
+
+  React.useEffect(() => () => clearLongPressTimer(), [clearLongPressTimer])
 
   const tooltipWidth = 280
   const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : 170
@@ -6070,13 +6132,13 @@ export default function App() {
                   <div className="dex-detail-panel">
                     <strong>{lt('특성')}</strong>
                     <div className="pick-summary-badges">
-                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <span key={`dex-ability-${dexSelectedRow.key}-${idx}`} className="pick-badge subtle" {...bindTooltip(abilityTooltipData(ability, siteLanguage, dexSelectedRow))}>{ability}</span>)}
+                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <button key={`dex-ability-${dexSelectedRow.key}-${idx}`} type="button" className="pick-badge subtle dex-chip-button" {...bindNavigableTooltip(abilityTooltipData(ability, siteLanguage, dexSelectedRow), () => openDexAbilityDetail(ability, dexSelectedRow))}>{ability}</button>)}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상위 채용 기술')}</strong>
                     <div className="pick-summary-badges">
-                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <span key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} className="pick-badge" {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</span>) : <span className="pick-badge">-</span>}
+                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <button key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} type="button" className="pick-badge dex-chip-button" {...bindNavigableTooltip(moveTooltipData(move, siteLanguage), () => openDexMoveDetail(move))}>{move}</button>) : <span className="pick-badge">-</span>}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
