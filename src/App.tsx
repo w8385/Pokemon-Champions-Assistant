@@ -5741,6 +5741,7 @@ export default function App() {
             {showSampleHeaderSaveActions ? <div className="header-context-actions">
               <button type="button" className="action-button header-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
             </div> : null}
+            <div className="header-icon-actions">
             <div className="language-menu-wrap header-language-wrap">
               <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
                 <LanguageIcon />
@@ -5776,6 +5777,7 @@ export default function App() {
                   </div>
                 </div>
               ) : null}
+            </div>
             </div>
           </div>
         </div>

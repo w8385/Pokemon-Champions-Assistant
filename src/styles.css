@@ -105,6 +105,12 @@ header {
   gap: 8px;
   flex: 0 0 auto;
 }
+.header-icon-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
 .header-context-actions {
   display: flex;
   align-items: center;
@@ -6241,19 +6247,26 @@ html {
   }
   .header-title-row {
     width: 100%;
+    padding-right: 96px;
   }
   .header-title-stack {
     gap: 8px;
   }
   .header-utility-row {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 6px;
     flex-wrap: wrap;
   }
   .header-context-actions {
     width: 100%;
     justify-content: flex-end;
+  }
+  .header-icon-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;
   }
   .header-primary-tabs {
     flex-wrap: nowrap;
