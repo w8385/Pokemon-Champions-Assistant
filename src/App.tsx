@@ -7649,36 +7649,6 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <div className="sample-builder-action-card">
-                <div className="sample-builder-action-head">
-                  <strong>{lt('저장/적용')}</strong>
-                  <div className="pick-summary-badges sample-slot-target-badges">
-                    <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-                    <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
-                  </div>
-                </div>
-                <div className="sample-builder-save-row">
-                  <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
-                  <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
-                </div>
-                <div className="sample-builder-slot-grid">
-                  {party.map((member, idx) => {
-                    const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                    return (
-                      <button
-                        key={`sample-builder-slot-${idx}`}
-                        type="button"
-                        className={`sample-builder-slot-chip ${selectedMy === idx ? 'active' : ''}`}
-                        onClick={() => setSelectedMy(idx)}
-                      >
-                        <span>{slotNumberLabel(idx, siteLanguage)}</span>
-                        <strong>{row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</strong>
-                      </button>
-                    )
-                  })}
-                </div>
-                <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
-              </div>
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <div className="row-between sample-panel-header sample-panel-header-side">
@@ -8109,6 +8079,38 @@ export default function App() {
               </div>
             </div>
           </div>}
+        </section>
+        <section className="panel wide">
+          <div className="sample-builder-action-card">
+            <div className="sample-builder-action-head">
+              <strong>{lt('저장/적용')}</strong>
+              <div className="pick-summary-badges sample-slot-target-badges">
+                <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              </div>
+            </div>
+            <div className="sample-builder-save-row">
+              <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('현재 샘플 저장')}</button>
+            </div>
+            <div className="sample-builder-slot-grid">
+              {party.map((member, idx) => {
+                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                return (
+                  <button
+                    key={`sample-builder-slot-${idx}`}
+                    type="button"
+                    className={`sample-builder-slot-chip ${selectedMy === idx ? 'active' : ''}`}
+                    onClick={() => setSelectedMy(idx)}
+                  >
+                    <span>{slotNumberLabel(idx, siteLanguage)}</span>
+                    <strong>{row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</strong>
+                  </button>
+                )
+              })}
+            </div>
+            <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
+          </div>
         </section>
         <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
