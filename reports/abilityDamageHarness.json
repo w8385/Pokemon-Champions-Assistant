@@ -1,15 +1,16 @@
 {
-  "generatedAt": "2026-05-17T12:37:58.313Z",
+  "generatedAt": "2026-05-21T21:20:06.007Z",
   "totalAbilities": 190,
-  "implementedCount": 54,
+  "implementedCount": 57,
   "categories": {
     "implemented": {
-      "count": 54,
+      "count": 57,
       "abilities": [
         "adaptability",
         "aerilate",
         "analytic",
         "blaze",
+        "disguise",
         "dragonize",
         "dry-skin",
         "earth-eater",
@@ -29,11 +30,13 @@
         "marvel-scale",
         "mega-launcher",
         "merciless",
+        "minus",
         "motor-drive",
         "multiscale",
         "overgrow",
         "parental-bond",
         "pixilate",
+        "plus",
         "protean",
         "pure-power",
         "purifying-salt",
@@ -78,12 +81,10 @@
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 7,
+      "count": 5,
       "abilities": [
         "gale-wings",
-        "minus",
         "opportunist",
-        "plus",
         "quick-draw",
         "stance-change",
         "super-luck"
@@ -128,7 +129,7 @@
       ]
     },
     "indirectOrNonDamage": {
-      "count": 96,
+      "count": 95,
       "abilities": [
         "aftermath",
         "anticipation",
@@ -146,7 +147,6 @@
         "cursed-body",
         "cute-charm",
         "damp",
-        "disguise",
         "early-bird",
         "flame-body",
         "flower-veil",
@@ -233,7 +233,7 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 29,
+  "damageRelevantMissingCount": 28,
   "damageRelevantMissing": [
     "berserk",
     "chlorophyll",
@@ -248,7 +248,6 @@
     "mimicry",
     "opportunist",
     "piercing-drill",
-    "plus",
     "poison-heal",
     "quick-draw",
     "quick-feet",

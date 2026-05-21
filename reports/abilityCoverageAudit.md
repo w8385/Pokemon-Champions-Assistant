@@ -38,6 +38,7 @@
 - `supreme-overlord` — 대장군
 - `rivalry` — 투쟁심
 - `parental-bond` — 부자유친
+- `plus` / `minus` — 플러스 / 마이너스 (더블 특수 화력)
 - `merciless` — 무자비
 
 ### 타입/자속/상성 관련
@@ -142,8 +143,6 @@
 
 - `gale-wings`
   - HP 만땅일 때 비행 기술 우선도 보정
-- `plus` / `minus`
-  - 더블 전용 화력 보정
 - `super-luck`
   - 급소율 관련
 - `quick-draw`
@@ -177,7 +176,6 @@
 ## 추천 후속 작업
 
 1. `drought / drizzle / sand-stream / snow-warning` 자동 전장 반영
-2. `plus / minus` 더블 화력 보정 반영
-3. `gale-wings` 우선도 처리 반영
-4. `super-luck` 급소율 보정 처리 여부 결정
-5. 하네스를 `damage-only` / `speed-only` / `field-auto`로 분리해서 오탐 줄이기
+2. `gale-wings` 우선도 처리 반영
+3. `super-luck` 급소율 보정 처리 여부 결정
+4. 하네스를 `damage-only` / `speed-only` / `field-auto`로 분리해서 오탐 줄이기

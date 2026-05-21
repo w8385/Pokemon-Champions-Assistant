@@ -2389,6 +2389,8 @@ function abilityNoteLabel(ability: string) {
     'strong-jaw': '옹골찬턱',
     'supreme-overlord': '대장군',
     'parental-bond': '부자유친',
+    'plus': '플러스',
+    'minus': '마이너스',
     'steelworker': '강철술사',
     'steely-spirit': '강철정신',
     'storm-drain': '마중물',
@@ -2413,6 +2415,7 @@ function abilityNoteLabel(ability: string) {
 
 function resolveDamageModifiers(params: {
   attackerAbility: string
+  attackerAllyAbility?: string
   attackerItem: string
   defenderAbility: string
   defenderItem: string
@@ -2444,7 +2447,7 @@ function resolveDamageModifiers(params: {
   disguiseActive?: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
   const effectiveCritical = Boolean(critical || (attackerAbility === 'merciless' && targetPoisoned))
@@ -2589,6 +2592,11 @@ function resolveDamageModifiers(params: {
   if (attackerAbility === 'parental-bond' && parentalBond) {
     finalMultiplier *= 1.25
     notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (mode === 'special' && ['plus', 'minus', '플러스', '마이너스'].includes(attackerAbility) && ['plus', 'minus', '플러스', '마이너스'].includes(attackerAllyAbility)) {
+    attackMultiplier *= 1.5
+    notes.push(`${abilityNoteLabel(attackerAbility)}+${abilityNoteLabel(attackerAllyAbility)}`)
   }
 
   if (attackerAbility === 'strong-jaw' && moveMatchesTaggedSet(moveName, BITE_MOVE_NAMES)) {
@@ -3661,6 +3669,13 @@ export default function App() {
     const defenderRow = defenderMeta.option.row
     const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
     const defenderAbility = defenderMeta.side === 'my' ? (defenderMeta.option.member.ability || defaultAbilityForKey(defenderMeta.option.member.key)) : defenderMeta.option.entry.ability
+    const attackerAllySlot: DoubleBoardSlot | null = attackerSlot === 'myLeft' ? 'myRight' : attackerSlot === 'myRight' ? 'myLeft' : attackerSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
+    const attackerAllyMeta = attackerAllySlot ? doubleSlotMeta[attackerAllySlot] : null
+    const attackerAllyAbility = attackerAllyMeta?.option?.row
+      ? (attackerAllyMeta.side === 'my'
+        ? (attackerAllyMeta.option.member.ability || defaultAbilityForKey(attackerAllyMeta.option.member.key))
+        : attackerAllyMeta.option.entry.ability)
+      : ''
     const attackerStats = attackerMeta.side === 'my'
       ? buildPartyBattleStats(attackerRow, attackerMeta.option.member)
       : buildOpponentBattleStats(attackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
@@ -3685,6 +3700,7 @@ export default function App() {
     const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
     const modifiers = guardedByWide || protectedTarget ? null : resolveDamageModifiers({
       attackerAbility,
+      attackerAllyAbility,
       attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
       defenderAbility,
       defenderItem: defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item,
