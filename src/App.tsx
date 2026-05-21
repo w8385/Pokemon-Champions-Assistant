@@ -3826,6 +3826,7 @@ export default function App() {
         speed: doubleSpeedBySlot[slot] ?? null,
       }
     }).sort((a, b) => {
+      if (a.priority !== b.priority) return b.priority - a.priority
       const aSpeed = a.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
       const bSpeed = b.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
       if (aSpeed !== bSpeed) return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
