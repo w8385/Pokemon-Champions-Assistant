@@ -6063,25 +6063,27 @@ export default function App() {
           ) : null}
         </section> : null}
 
-        {mainSection === 'dex' ? <section className="panel wide">
-          <div className="section-head">
-            <div>
-              <h2>{lt('도감')}</h2>
+        {mainSection === 'dex' ? <>
+          <section className="panel wide">
+            <div className="section-head">
+              <div>
+                <h2>{lt('도감')}</h2>
+              </div>
             </div>
-          </div>
-          <div className="dex-tab-panel">
-            <div className="tab-bar section-menu-tabs dex-mode-tabs">
-              {([
-                ['pokemon', lt('포켓몬')],
-                ['move', lt('기술')],
-                ['ability', lt('특성')],
-                ['item', lt('도구')],
-              ] as [DexSearchMode, string][]).map(([mode, label]) => (
-                <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => setDexSearchMode(mode)}>{label}</button>
-              ))}
+            <div className="dex-tab-panel">
+              <div className="tab-bar section-menu-tabs dex-mode-tabs">
+                {([
+                  ['pokemon', lt('포켓몬')],
+                  ['move', lt('기술')],
+                  ['ability', lt('특성')],
+                  ['item', lt('도구')],
+                ] as [DexSearchMode, string][]).map(([mode, label]) => (
+                  <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => setDexSearchMode(mode)}>{label}</button>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="dex-content-panel">
+          </section>
+          <section className="panel wide dex-content-panel">
           <div className="dex-browser-layout">
             <div className="dex-browser-sidebar">
               <div className="dex-search-autocomplete">
@@ -6356,8 +6358,8 @@ export default function App() {
               </div> : null}
             </div>
           </div>
-          </div>
-        </section> : null}
+        </section>
+        </> : null}
 
         {(mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) ? (
           <section className="panel wide party-overview-panel">
