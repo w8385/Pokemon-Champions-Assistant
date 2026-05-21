@@ -3591,6 +3591,12 @@ export default function App() {
     }
   }, [dexResultKeys, dexSelectedValue])
 
+  const openDexPokemonDetail = React.useCallback((key: string) => {
+    setDexSearchMode('pokemon')
+    setDexSearch(searchDisplayLabel(key, siteLanguage))
+    setDexSelectedValue(key)
+  }, [siteLanguage])
+
   const tooltipWidth = 280
   const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : 170
   const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1280
@@ -6131,10 +6137,10 @@ export default function App() {
                     <div className="pick-summary-badges">
                       {dexMoveLearnersStatus === 'loading' ? <span className="pick-badge">Loading…</span> : null}
                       {dexMoveLearnersStatus === 'error' ? <span className="pick-badge">-</span> : null}
-                      {dexMoveLearnersStatus === 'ready' ? dexMoveLearners.map((row) => <span key={`dex-move-learner-${dexSelectedMove.key}-${row.key}`} className="pick-badge subtle dex-ability-pokemon-chip">
+                      {dexMoveLearnersStatus === 'ready' ? dexMoveLearners.map((row) => <button key={`dex-move-learner-${dexSelectedMove.key}-${row.key}`} type="button" className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={() => openDexPokemonDetail(row.key)}>
                         {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
                         <span>{displayName(row, siteLanguage)}</span>
-                      </span>) : null}
+                      </button>) : null}
                     </div>
                   </div>
                 </div>

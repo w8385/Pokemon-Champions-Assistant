@@ -4637,6 +4637,10 @@ label {
   align-items: center;
   gap: 8px;
 }
+.dex-chip-button {
+  appearance: none;
+  cursor: pointer;
+}
 .dex-ability-pokemon-sprite {
   width: 24px;
   height: 24px;
