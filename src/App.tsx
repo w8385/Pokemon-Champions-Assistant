@@ -5952,28 +5952,24 @@ export default function App() {
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('싱글배틀 메뉴')}</span>
                 <strong>{lt('싱글배틀')}</strong>
-                <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('더블배틀 메뉴')}</span>
                 <strong>{lt('더블배틀')}</strong>
-                <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('포켓몬 샘플 깎기')}</span>
                 <strong>{lt('포켓몬 샘플 빌더')}</strong>
-                <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
               </div>
             </button>
             <button type="button" className="home-route-card" onClick={() => setMainSection('dex')}>
               <div className="home-route-card-copy">
                 <span className="home-route-eyebrow">{lt('도감')}</span>
                 <strong>{lt('도감')}</strong>
-                <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
               </div>
             </button>
           </div>
@@ -6037,7 +6033,6 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{mainSection === 'single' ? lt('싱글배틀 메뉴') : mainSection === 'double' ? lt('더블배틀 메뉴') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
-              <p className="muted">{mainSection === 'single' ? lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.') : mainSection === 'double' ? lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.') : mainSection === 'sample' ? lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.') : lt('포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.')}</p>
             </div>
             {mainSection === 'single' || mainSection === 'double' ? (
               <div className="battle-flow-nav">
@@ -6076,7 +6071,6 @@ export default function App() {
           <div className="section-head">
             <div>
               <h2>{lt('도감')}</h2>
-              <p className="muted">{lt('포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.')}</p>
             </div>
           </div>
           <div className="dex-browser-layout">
