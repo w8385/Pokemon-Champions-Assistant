@@ -6139,15 +6139,19 @@ export default function App() {
                     <strong>{abilityDisplayName(option.key, option.koLabel, siteLanguage)}</strong>
                     <span className="muted">{option.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
                   </button>) : null}
-                  {dexSearchMode === 'item' ? dexItemOptions.map((item) => <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)}>
-                    <div className="dex-move-preview-row">
-                      <img src={itemSpriteSrc('', item)} alt={displayItemLabel(item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                      <div className="dex-pokemon-preview-body">
-                        <strong>{displayItemLabel(item, siteLanguage)}</strong>
-                        <span className="muted">{item}</span>
+                  {dexSearchMode === 'item' ? dexItemOptions.map((item) => {
+                    const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
+                    const itemPreviewText = itemText?.summary || itemText?.detail || ''
+                    return <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)}>
+                      <div className="dex-move-preview-row">
+                        <img src={itemSpriteSrc('', item)} alt={displayItemLabel(item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
+                        <div className="dex-pokemon-preview-body">
+                          <strong>{displayItemLabel(item, siteLanguage)}</strong>
+                          {itemPreviewText ? <span className="muted">{itemPreviewText}</span> : null}
+                        </div>
                       </div>
-                    </div>
-                  </button>) : null}
+                    </button>
+                  }) : null}
                   {!dexResultKeys.length ? <div className="dex-empty-state muted">{lt('검색 결과가 없습니다.')}</div> : null}
                 </div>
               </div>
