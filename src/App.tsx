@@ -6130,10 +6130,23 @@ export default function App() {
                       </div>
                     </div>
                   </button>) : null}
-                  {dexSearchMode === 'ability' ? dexAbilityOptions.map((option) => <button key={`dex-ability-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
-                    <strong>{abilityDisplayName(option.key, option.koLabel, siteLanguage)}</strong>
-                    <span className="muted">{option.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
-                  </button>) : null}
+                  {dexSearchMode === 'ability' ? dexAbilityOptions.map((option) => {
+                    const previewRows = option.pokemonKeys
+                      .map((key) => indexByKey.get(key) ?? null)
+                      .filter((row): row is Row => Boolean(row))
+                      .slice(0, 4)
+                    return <button key={`dex-ability-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
+                      <div className="dex-ability-result-card">
+                        <div className="dex-ability-result-copy">
+                          <strong>{abilityDisplayName(option.key, option.koLabel, siteLanguage)}</strong>
+                          <span className="muted">{option.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
+                        </div>
+                        {previewRows.length ? <div className="dex-ability-result-sprites" aria-hidden="true">
+                          {previewRows.map((row) => row.sprite ? <img key={`dex-ability-result-sprite-${option.key}-${row.key}`} src={row.sprite} alt="" className="dex-ability-result-sprite" /> : null)}
+                        </div> : null}
+                      </div>
+                    </button>
+                  }) : null}
                   {dexSearchMode === 'item' ? dexItemOptions.map((item) => {
                     const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
                     const itemPreviewText = itemText?.summary || itemText?.detail || ''

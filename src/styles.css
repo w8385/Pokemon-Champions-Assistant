@@ -4747,6 +4747,29 @@ label {
   border: 1px solid rgba(51, 65, 85, 0.85);
   padding: 10px;
 }
+.dex-ability-result-card {
+  display: grid;
+  gap: 10px;
+}
+.dex-ability-result-copy {
+  display: grid;
+  gap: 4px;
+}
+.dex-ability-result-sprites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dex-ability-result-sprite {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  padding: 2px;
+}
 .dex-ability-pokemon-chip {
   display: inline-flex;
   align-items: center;
