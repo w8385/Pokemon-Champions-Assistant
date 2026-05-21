@@ -229,6 +229,15 @@ type MoveMeta = {
   priority?: number
 }
 
+type HoverTooltipCard = {
+  kind: 'move' | 'ability'
+  title: string
+  subtitle?: string
+  accentType?: string | null
+  rows: { label: string; value: string }[]
+  chips?: string[]
+}
+
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
   '불꽃펀치', '불릿펀치', '섀도펀치', '연속펀치', '잼잼펀치', '제트펀치', '코멧펀치', '폭발펀치', '힘껏펀치',
@@ -3089,40 +3098,42 @@ function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
   return null
 }
 
-function moveTooltipText(name: string, language: SiteLanguage) {
+function moveTooltipData(name: string, language: SiteLanguage): HoverTooltipCard | null {
   const meta = lookupMoveMeta(name)
-  if (!meta) return name
-  const lines = [name]
-  lines.push(`${translateText(language, '타입')}: ${displayTypeName(meta.type, language)}`)
-  lines.push(`${translateText(language, '분류')}: ${displayMoveCategoryName(meta.category, language)}`)
-  lines.push(`${translateText(language, '위력')}: ${meta.power != null ? resolvedMovePower(meta) : '-'}`)
-  lines.push(`${translateText(language, '명중')}: ${meta.accuracy != null ? `${meta.accuracy}%` : '-'}`)
-  if (typeof meta.priority === 'number' && meta.priority !== 0) lines.push(`${translateText(language, '우선도')}: ${meta.priority}`)
-  return lines.join('\n')
+  if (!meta) return null
+  return {
+    kind: 'move',
+    title: name,
+    subtitle: displayMoveCategoryName(meta.category, language),
+    accentType: meta.type,
+    rows: [
+      { label: translateText(language, '타입'), value: displayTypeName(meta.type, language) },
+      { label: translateText(language, '분류'), value: displayMoveCategoryName(meta.category, language) },
+      { label: translateText(language, '위력'), value: meta.power != null ? String(resolvedMovePower(meta)) : '-' },
+      { label: translateText(language, '명중'), value: meta.accuracy != null ? `${meta.accuracy}%` : '-' },
+      ...(typeof meta.priority === 'number' && meta.priority !== 0 ? [{ label: translateText(language, '우선도'), value: String(meta.priority) }] : []),
+    ],
+  }
 }
 
-function abilityTooltipText(name: string, language: SiteLanguage, row?: Row | null) {
+function abilityTooltipData(name: string, language: SiteLanguage, row?: Row | null): HoverTooltipCard | null {
   const info = resolveAbilityInfo(name, row)
-  if (!info) return name
+  if (!info) return null
   const localized = abilityDisplayName(info.key, info.koLabel, language)
-  const previewNames = info.pokemonKeys.slice(0, 6).map((key) => {
+  const previewNames = info.pokemonKeys.slice(0, 5).map((key) => {
     const pokemonRow = indexByKey.get(key)
     return pokemonRow ? displayName(pokemonRow, language) : key
   })
-  const lines = [localized]
-  if (language !== 'ko') lines.push(info.koLabel)
-  lines.push(`Key: ${info.key}`)
-  lines.push(`${translateText(language, '해당 특성 포켓몬')}: ${info.pokemonKeys.length}`)
-  if (previewNames.length) lines.push(previewNames.join(', '))
-  return lines.join('\n')
-}
-
-function MoveTextWithTooltip({ name, language, className }: { name: string; language: SiteLanguage; className?: string }) {
-  return <span className={className} title={moveTooltipText(name, language)}>{name}</span>
-}
-
-function AbilityTextWithTooltip({ name, language, row, className }: { name: string; language: SiteLanguage; row?: Row | null; className?: string }) {
-  return <span className={className} title={abilityTooltipText(name, language, row)}>{name}</span>
+  return {
+    kind: 'ability',
+    title: localized,
+    subtitle: language === 'ko' ? info.key : info.koLabel,
+    rows: [
+      { label: 'Key', value: info.key },
+      { label: translateText(language, '해당 특성 포켓몬'), value: String(info.pokemonKeys.length) },
+    ],
+    chips: previewNames,
+  }
 }
 
 function resolveSpeciesKey(raw: string, options?: { includeMega?: boolean }) {
@@ -3387,6 +3398,7 @@ export default function App() {
   const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>('pokemon')
   const [dexSearch, setDexSearch] = React.useState('')
   const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(null)
+  const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
@@ -3437,6 +3449,24 @@ export default function App() {
   const dexSelectedItem = dexSearchMode === 'item' && dexSelectedValue ? dexSelectedValue : null
   const dexTopMoves = React.useMemo(() => dexSelectedRow ? ((championsUsageTopMoves as Record<string, { moves?: string[] }>)[dexSelectedRow.key]?.moves?.slice(0, 10) ?? []) : [], [dexSelectedRow])
 
+  const hideHoverTooltip = React.useCallback(() => setHoverTooltip(null), [])
+  const showHoverTooltip = React.useCallback((event: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, card: HoverTooltipCard | null | undefined) => {
+    if (!card) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    setHoverTooltip({
+      ...card,
+      anchorX: rect.left + (rect.width / 2),
+      anchorTop: rect.top,
+      anchorBottom: rect.bottom,
+    })
+  }, [])
+  const bindTooltip = React.useCallback((card: HoverTooltipCard | null | undefined) => card ? {
+    onMouseEnter: (event: React.MouseEvent<HTMLElement>) => showHoverTooltip(event, card),
+    onMouseLeave: hideHoverTooltip,
+    onFocus: (event: React.FocusEvent<HTMLElement>) => showHoverTooltip(event, card),
+    onBlur: hideHoverTooltip,
+  } : {}, [hideHoverTooltip, showHoverTooltip])
+
   React.useEffect(() => {
     if (!dexResultKeys.length) {
       if (dexSelectedValue !== null) setDexSelectedValue(null)
@@ -3446,6 +3476,16 @@ export default function App() {
       setDexSelectedValue(dexResultKeys[0])
     }
   }, [dexResultKeys, dexSelectedValue])
+
+  const tooltipWidth = 280
+  const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : 170
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1280
+  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 720
+  const tooltipPlacement = hoverTooltip && hoverTooltip.anchorBottom + tooltipHeight + 18 <= viewportHeight ? 'bottom' : 'top'
+  const tooltipLeft = hoverTooltip ? Math.max(12, Math.min(viewportWidth - tooltipWidth - 12, hoverTooltip.anchorX - (tooltipWidth / 2))) : 0
+  const tooltipTop = hoverTooltip ? (tooltipPlacement === 'bottom'
+    ? Math.min(viewportHeight - tooltipHeight - 12, hoverTooltip.anchorBottom + 12)
+    : Math.max(12, hoverTooltip.anchorTop - tooltipHeight - 12)) : 0
   const doublePartyOptions = React.useMemo(() => party.map((member, idx) => ({ idx, member, row: member.key ? (indexByKey.get(member.key) ?? rows[0]) : null })), [party])
   const doubleOpponentOptions = React.useMemo(() => opponents.map((entry, idx) => ({ idx, entry, row: entry.key ? (indexByKey.get(entry.key) ?? rows[0]) : null })), [opponents])
   const doubleBoardSlots = React.useMemo(() => ({
@@ -5869,13 +5909,13 @@ export default function App() {
                   <div className="dex-detail-panel">
                     <strong>{lt('특성')}</strong>
                     <div className="pick-summary-badges">
-                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <AbilityTextWithTooltip key={`dex-ability-${dexSelectedRow.key}-${idx}`} name={ability} language={siteLanguage} row={dexSelectedRow} className="pick-badge subtle" />)}
+                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <span key={`dex-ability-${dexSelectedRow.key}-${idx}`} className="pick-badge subtle" {...bindTooltip(abilityTooltipData(ability, siteLanguage, dexSelectedRow))}>{ability}</span>)}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상위 채용 기술')}</strong>
                     <div className="pick-summary-badges">
-                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <MoveTextWithTooltip key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} name={move} language={siteLanguage} className="pick-badge" />) : <span className="pick-badge">-</span>}
+                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <span key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} className="pick-badge" {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</span>) : <span className="pick-badge">-</span>}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
@@ -6248,7 +6288,7 @@ export default function App() {
                       <div className="party-meta-chip party-meta-chip-editor">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
                           <span>{lt('특성')}</span>
-                          <strong title={activeAbility ? abilityTooltipText(activeAbility, siteLanguage, row) : undefined}>{activeAbility || lt('미선택')}</strong>
+                          <strong {...bindTooltip(activeAbility ? abilityTooltipData(activeAbility, siteLanguage, row) : null)}>{activeAbility || lt('미선택')}</strong>
                         </button>
                         {activePartyMetaEditor?.idx === idx && activePartyMetaEditor.field === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
                           const nextFocus = e.relatedTarget as Node | null
@@ -6271,7 +6311,7 @@ export default function App() {
                               setActiveMetaListField(null)
                               setActivePartyMetaEditor(null)
                             }}
-                          title={abilityTooltipText(ability, siteLanguage, row)}
+                          {...bindTooltip(abilityTooltipData(ability, siteLanguage, row))}
                           >{ability}</button>)}
                         </div> : null}
                       </div>
@@ -6461,7 +6501,7 @@ export default function App() {
                             <span>{moveIdx + 1}번</span>
                             <input
                               value={move}
-                              title={move ? moveTooltipText(move, siteLanguage) : undefined}
+                              {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
                               placeholder={memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                               onFocus={() => {
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
@@ -6496,7 +6536,7 @@ export default function App() {
                             {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
                               <div className="move-autocomplete-menu unified-dropdown-menu">
                                 {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" title={moveTooltipText(option.name, siteLanguage)} className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)}>
+                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)} {...bindTooltip(moveTooltipData(option.name, siteLanguage))}>
                                     <span className="move-autocomplete-main">
                                       {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
                                       <span>{option.name}</span>
@@ -6516,7 +6556,7 @@ export default function App() {
                         <div className="move-chip-wrap">
                           {memberTopSuggestedMoves.map((move) => {
                             const locked = registeredMoves.includes(move)
-                            return <button key={`party-top-${member.key}-${move}`} type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)}>{move}</button>
+                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</button>
                           })}
                         </div>
                       </div> : null}
@@ -6761,7 +6801,7 @@ export default function App() {
                   <select
                     className="opponent-meta-select"
                     value={oppMember.ability}
-                    title={oppMember.ability ? abilityTooltipText(oppMember.ability, siteLanguage, oppRow) : undefined}
+                    {...bindTooltip(oppMember.ability ? abilityTooltipData(oppMember.ability, siteLanguage, oppRow) : null)}
                     disabled={!oppMember.key}
                     onChange={(e) => {
                       const next = [...opponents]
@@ -6782,11 +6822,11 @@ export default function App() {
                       const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                       return (
                         <div key={`opp-entry-move-${selectedOpp}-${move}`} className="damage-move-chip-wrap">
-                          <button type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)}`} onClick={() => {
+                          <button type="button" className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)}`} onClick={() => {
                             setCalcSwapSides(true)
                             setSelectedDamageMove({ key: oppMember.key, move })
                             setActiveTab('power')
-                          }}>
+                          }} {...bindTooltip(moveTooltipData(move, siteLanguage))}>
                             {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
                             <span>{move}</span>
                           </button>
@@ -6810,10 +6850,10 @@ export default function App() {
                               <button
                                 key={`opp-top-move-${oppMember.key}-${move}`}
                                 type="button"
-                                title={moveTooltipText(move, siteLanguage)}
                                 className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`}
                                 onClick={() => addOpponentRevealedMove(move)}
                                 disabled={locked || oppMember.revealedMoves.length >= 4}
+                                {...bindTooltip(moveTooltipData(move, siteLanguage))}
                               >
                                 {move}
                               </button>
@@ -7136,7 +7176,7 @@ export default function App() {
                 <div className="party-meta-chip party-meta-chip-editor">
                   <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'ability' ? null : 'ability')}>
                     <span>{lt('특성')}</span>
-                    <strong title={sampleAbility ? abilityTooltipText(sampleAbility, siteLanguage, sampleRow) : undefined}>{sampleAbility || lt('미선택')}</strong>
+                    <strong {...bindTooltip(sampleAbility ? abilityTooltipData(sampleAbility, siteLanguage, sampleRow) : null)}>{sampleAbility || lt('미선택')}</strong>
                   </button>
                   {activeSampleMetaEditor === 'ability' ? <div className="party-meta-popover party-meta-option-list" onBlurCapture={(e) => {
                     const nextFocus = e.relatedTarget as Node | null
@@ -7157,7 +7197,7 @@ export default function App() {
                         setActiveMetaListField(null)
                         setActiveSampleMetaEditor(null)
                       }}
-                    title={abilityTooltipText(ability, siteLanguage, sampleRow)}
+                    {...bindTooltip(abilityTooltipData(ability, siteLanguage, sampleRow))}
                     >{ability}</button>)}
                   </div> : null}
                 </div>
@@ -7325,7 +7365,7 @@ export default function App() {
                               <button
                                 key={`sample-slot-rail-${sampleForge.key}-${moveIdx}`}
                                 type="button"
-                                title={move ? moveTooltipText(move, siteLanguage) : undefined}
+                                {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
                                 className={`sample-slot-rail-button ${moveTypeThemeClass(sampleMoveType(move))} ${active ? 'active' : ''} ${filled ? 'filled' : 'empty'}`}
                                 onClick={() => focusSampleSlot(moveIdx)}
                               >
@@ -7359,7 +7399,7 @@ export default function App() {
                                 <span>{moveIdx + 1}번</span>
                                 <input
                                   value={move}
-                                  title={move ? moveTooltipText(move, siteLanguage) : undefined}
+                                  {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
                                   placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
                                   onFocus={() => {
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
@@ -7398,7 +7438,7 @@ export default function App() {
                                 {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
                                   <div className="move-autocomplete-menu unified-dropdown-menu">
                                     {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                      <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" title={moveTooltipText(option.name, siteLanguage)} className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)}>
+                                      <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)} {...bindTooltip(moveTooltipData(option.name, siteLanguage))}>
                                         <span className="move-autocomplete-main">
                                           {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
                                           <span>{option.name}</span>
@@ -7445,9 +7485,9 @@ export default function App() {
                                       <button
                                         key={`sample-top-move-${sampleForge.key}-${bucket.id}-${move}`}
                                         type="button"
-                                        title={moveTooltipText(move, siteLanguage)}
                                         className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
                                         onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}
+                                        {...bindTooltip(moveTooltipData(move, siteLanguage))}
                                       >
                                         {move}
                                       </button>
@@ -7469,9 +7509,9 @@ export default function App() {
                                 <button
                                   key={`sample-top-move-${sampleForge.key}-${move}`}
                                   type="button"
-                                  title={moveTooltipText(move, siteLanguage)}
                                   className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
                                   onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}
+                                  {...bindTooltip(moveTooltipData(move, siteLanguage))}
                                 >
                                   {move}
                                 </button>
@@ -7951,12 +7991,12 @@ export default function App() {
                     <button
                       key={`damage-move-my-${myMember.key}-${move}`}
                       type="button"
-                      title={moveTooltipText(move, siteLanguage)}
                       className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
                       onClick={() => {
                         setCalcSwapSides(false)
                         setSelectedDamageMove({ key: myMember.key, move })
                       }}
+                      {...bindTooltip(moveTooltipData(move, siteLanguage))}
                     >
                       {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
                       <span>{move}</span>
@@ -7990,7 +8030,6 @@ export default function App() {
                     >
                       <button
                         type="button"
-                        title={moveTooltipText(move, siteLanguage)}
                         className={`move-chip core damage-move-chip ${moveTypeThemeClass(moveType)} ${active ? 'confirmed' : ''}`}
                         onClick={() => {
                           if (!oppRow) return
@@ -7998,6 +8037,7 @@ export default function App() {
                           setSelectedDamageMove({ key: oppMember.key, move })
                         }}
                         disabled={!oppRow}
+                        {...bindTooltip(moveTooltipData(move, siteLanguage))}
                       >
                         {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
                         <span>{move}</span>
@@ -8023,7 +8063,7 @@ export default function App() {
                       {oppTopSuggestedMoves.map((move) => {
                         const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                         const locked = opponentRegisteredDamageMoves.includes(move)
-                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" title={moveTooltipText(move, siteLanguage)} className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4}>{move}</button>
+                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</button>
                       })}
                     </div>
                   </div> : null}
@@ -8357,6 +8397,24 @@ export default function App() {
           </div>
         </section> : null}
         </>}
+        {hoverTooltip ? <div className={`floating-hover-tooltip ${tooltipPlacement}`} style={{ left: tooltipLeft, top: tooltipTop }} aria-hidden="true">
+          <div className="floating-hover-tooltip-head">
+            <div>
+              <strong>{hoverTooltip.title}</strong>
+              {hoverTooltip.subtitle ? <p>{hoverTooltip.subtitle}</p> : null}
+            </div>
+            {hoverTooltip.accentType ? <span className="floating-hover-tooltip-type"><TypeBadgeImage type={hoverTooltip.accentType} /></span> : null}
+          </div>
+          <div className="floating-hover-tooltip-body">
+            {hoverTooltip.rows.map((row) => <div key={`tooltip-row-${hoverTooltip.kind}-${row.label}`} className="floating-hover-tooltip-row">
+              <span>{row.label}</span>
+              <strong>{row.value}</strong>
+            </div>)}
+          </div>
+          {hoverTooltip.chips?.length ? <div className="floating-hover-tooltip-chips">
+            {hoverTooltip.chips.map((chip) => <span key={`tooltip-chip-${hoverTooltip.kind}-${chip}`} className="floating-hover-tooltip-chip">{chip}</span>)}
+          </div> : null}
+        </div> : null}
       </main>
     </div>
   )
