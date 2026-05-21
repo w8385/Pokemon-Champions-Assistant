@@ -5316,6 +5316,7 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 8px;
   padding-top: 10px;
   border-top: 1px solid rgba(51, 65, 85, 0.8);
+  align-items: stretch;
 }
 .damage-side-moves > .damage-move-chip,
 .damage-side-moves > .damage-side-empty,
@@ -5437,16 +5438,17 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-side-moves .damage-move-chip {
   width: 100%;
   justify-content: flex-start;
+  min-height: 42px;
 }
 .damage-side-moves-player {
-  grid-template-columns: repeat(2, minmax(0, 220px));
-  justify-content: start;
-  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+  align-items: stretch;
 }
 .damage-side-moves-player > .damage-move-chip {
-  width: auto;
+  width: 100%;
   min-width: 0;
-  max-width: 220px;
+  max-width: none;
 }
 .damage-move-chip-wrap .damage-move-chip {
   flex: 1 1 auto;
@@ -6214,8 +6216,8 @@ html {
   .calc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-target-panel { grid-template-columns: 1fr; }
-  .damage-compare-panel { grid-template-columns: 1fr; }
-  .damage-side-moves { grid-template-columns: 1fr; }
+  .damage-compare-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .damage-side-moves { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .damage-opponent-move-adder { grid-column: 1 / -1; }
   .speed-plane-board { min-height: 460px; }
   .speed-plane-plot { top: 74px; right: 8px; bottom: 82px; left: 42px; }
@@ -6502,6 +6504,25 @@ html {
   .damage-box {
     padding: 10px;
   }
+  .damage-compare-panel {
+    gap: 10px;
+  }
+  .damage-side-card {
+    min-width: 0;
+  }
+  .damage-side-card .speed-target-head {
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .damage-side-card .speed-target-head > div {
+    min-width: 0;
+  }
+  .damage-side-card .speed-target-head strong {
+    margin-bottom: 4px;
+    font-size: 14px;
+    line-height: 1.25;
+    word-break: keep-all;
+  }
   .damage-box-head {
     font-size: 13px;
     line-height: 1.45;
@@ -6511,7 +6532,7 @@ html {
   }
   .damage-side-moves,
   .damage-side-moves-player {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
   }
   .opponent-revealed-moves-grid {
@@ -6521,6 +6542,22 @@ html {
   .damage-side-moves > .damage-move-chip {
     width: 100%;
     max-width: none;
+  }
+  .damage-side-moves .damage-move-chip,
+  .damage-move-chip-wrap .damage-move-chip {
+    min-height: 44px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .damage-move-chip-wrap {
+    width: 100%;
+  }
+  .damage-move-chip span {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.25;
   }
   .damage-top-move-strip {
     gap: 6px;
