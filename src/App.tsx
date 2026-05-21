@@ -7941,7 +7941,7 @@ export default function App() {
                   <strong>{lt('세부 조건')}</strong>
                   <button type="button" className={`pick-chip ${sampleDamageConditionsCollapsed ? '' : 'active'}`} onClick={() => setSampleDamageConditionsCollapsed((prev) => !prev)} aria-expanded={!sampleDamageConditionsCollapsed}>{sampleDamageConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
                 </div>
-                {!sampleDamageConditionsCollapsed ? <>
+                {!sampleDamageConditionsCollapsed ? <div className="sample-damage-conditions-box damage-control-groups">
                 <div className="damage-control-group">
                   <div className="damage-control-group-title">{lt('화력 조건')}</div>
                   <div className="calc-grid damage-calc-grid compact offense-grid">
@@ -7973,7 +7973,7 @@ export default function App() {
                     <label className="calc-toggle-box"><input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} /><span>{lt('프렌드가드')}</span></label>
                   </div>
                 </div>
-                </> : null}
+                </div> : null}
               </div>
               <div className="sample-overview-stack">
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
