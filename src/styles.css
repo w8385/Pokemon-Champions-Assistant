@@ -2765,6 +2765,10 @@ header p {
   border-color: #60a5fa;
   box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35), 0 8px 18px rgba(37, 99, 235, 0.16);
 }
+.sample-registered-move-slot.active-target[class*="move-type-"] {
+  border-color: var(--move-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--move-border) 72%, transparent), 0 8px 18px color-mix(in srgb, var(--move-glow) 22%, transparent);
+}
 .sample-core-strip {
   margin-top: 8px;
   display: grid;
