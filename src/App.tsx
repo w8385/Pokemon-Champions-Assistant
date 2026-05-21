@@ -339,6 +339,9 @@ type ViewState = {
   mainSection?: MainSection
   activeTab?: MainTab
   sampleWorkbenchTab?: SampleWorkbenchTab
+  dexSearchMode?: DexSearchMode
+  dexSearch?: string
+  dexSelectedValue?: string
   selectedMy?: number
   selectedOpp?: number
 }
@@ -1720,9 +1723,15 @@ function parseViewStateFromUrl(): ViewState | null {
     const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage'
       ? sampleTabParam
       : undefined
+    const dexTabParam = routeUrl.searchParams.get('dexTab')
+    const dexSearchMode = dexTabParam === 'pokemon' || dexTabParam === 'move' || dexTabParam === 'ability' || dexTabParam === 'item'
+      ? dexTabParam
+      : undefined
+    const dexSearch = routeUrl.searchParams.get('q') ?? undefined
+    const dexSelectedValue = routeUrl.searchParams.get('sel') ?? undefined
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
-    return { mainSection, activeTab, sampleWorkbenchTab, selectedMy, selectedOpp }
+    return { mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexSelectedValue, selectedMy, selectedOpp }
   } catch {
     return null
   }
@@ -1734,6 +1743,9 @@ function syncViewStateToUrl(viewState: ViewState) {
   const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : '/'
   if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
+  if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
+  if (viewState.mainSection === 'dex' && viewState.dexSearch) params.set('q', viewState.dexSearch)
+  if (viewState.mainSection === 'dex' && viewState.dexSelectedValue) params.set('sel', viewState.dexSelectedValue)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
   const nextHash = `${routePath}${params.toString() ? `?${params.toString()}` : ''}`
@@ -3477,9 +3489,9 @@ export default function App() {
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleLockedMoves, setSampleLockedMoves] = React.useState<string[]>(() => persisted?.sampleLockedMoves ? sanitizeMoveSlotList(persisted.sampleLockedMoves) : sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey)[(persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()).key] ?? [])
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
-  const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>('pokemon')
-  const [dexSearch, setDexSearch] = React.useState('')
-  const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(null)
+  const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>(() => viewState?.dexSearchMode ?? 'pokemon')
+  const [dexSearch, setDexSearch] = React.useState(() => viewState?.dexSearch ?? '')
+  const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(() => viewState?.dexSelectedValue ?? null)
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const longPressTimerRef = React.useRef<number | null>(null)
   const longPressTriggeredRef = React.useRef(false)
@@ -4223,15 +4235,18 @@ export default function App() {
       mainSection,
       activeTab: mainSection === 'single' || mainSection === 'double' ? activeTab : undefined,
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
+      dexSearchMode: mainSection === 'dex' ? dexSearchMode : undefined,
+      dexSearch: mainSection === 'dex' ? dexSearch.trim() : undefined,
+      dexSelectedValue: mainSection === 'dex' ? dexSelectedValue ?? undefined : undefined,
       selectedMy,
       selectedOpp,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexSelectedValue, selectedMy, selectedOpp])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }, [mainSection, activeTab, sampleWorkbenchTab])
+  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
