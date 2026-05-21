@@ -5717,9 +5717,51 @@ export default function App() {
         <div className="header-top-row">
           <div className="header-title-row">
             <div className="header-title-stack">
-              <div>
-                <h1>{lt('포켓몬 챔피언스 배틀 도우미')}</h1>
-                <p>{mainSection === 'home' ? lt('포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
+              <div className="header-main-row">
+                <div>
+                  <h1>{lt('포켓몬 챔피언스 배틀 도우미')}</h1>
+                  <p>{mainSection === 'home' ? lt('포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
+                </div>
+                <div className="header-utility-row">
+                  <div className="header-icon-actions">
+                  <div className="language-menu-wrap header-language-wrap">
+                    <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
+                      <LanguageIcon />
+                    </button>
+                    {languageMenuOpen ? (
+                      <div className="language-menu">
+                        <button type="button" className={`language-menu-item ${siteLanguage === 'ko' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ko'); setLanguageMenuOpen(false) }}>{lt('한국어')}</button>
+                        <button type="button" className={`language-menu-item ${siteLanguage === 'ja' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ja'); setLanguageMenuOpen(false) }}>{lt('일본어')}</button>
+                        <button type="button" className={`language-menu-item ${siteLanguage === 'en' ? 'active' : ''}`} onClick={() => { setSiteLanguage('en'); setLanguageMenuOpen(false) }}>{lt('영어')}</button>
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="settings-menu-wrap">
+                    <button type="button" className="icon-button" aria-label={lt('설정')} title={lt('설정')} onClick={() => { setSettingsMenuOpen((prev) => !prev); setLanguageMenuOpen(false) }}>
+                      <SettingsIcon />
+                    </button>
+                    {settingsMenuOpen ? (
+                      <div className="settings-menu">
+                        <div className="settings-menu-section">
+                          <span className="settings-menu-title">{lt('데이터 관리')}</span>
+                          <button type="button" className="settings-action-item" onClick={() => { exportState(); setSettingsMenuOpen(false) }}>
+                            <strong>{lt('백업 저장')}</strong>
+                            <span>{lt('현재 작업 상태를 JSON으로 저장')}</span>
+                          </button>
+                          <button type="button" className="settings-action-item" onClick={() => { fileInputRef.current?.click(); setSettingsMenuOpen(false) }}>
+                            <strong>{lt('백업 불러오기')}</strong>
+                            <span>{lt('저장한 JSON 상태 파일을 불러오기')}</span>
+                          </button>
+                          <button type="button" className="settings-action-item danger" onClick={() => { resetAll(); setSettingsMenuOpen(false) }}>
+                            <strong>{lt('전체 데이터 초기화')}</strong>
+                            <span>{lt('파티·상대·샘플을 전부 초기화')}</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                  </div>
+                </div>
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
@@ -5728,46 +5770,6 @@ export default function App() {
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
-            </div>
-          </div>
-          <div className="header-utility-row">
-            <div className="header-icon-actions">
-            <div className="language-menu-wrap header-language-wrap">
-              <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
-                <LanguageIcon />
-              </button>
-              {languageMenuOpen ? (
-                <div className="language-menu">
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'ko' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ko'); setLanguageMenuOpen(false) }}>{lt('한국어')}</button>
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'ja' ? 'active' : ''}`} onClick={() => { setSiteLanguage('ja'); setLanguageMenuOpen(false) }}>{lt('일본어')}</button>
-                  <button type="button" className={`language-menu-item ${siteLanguage === 'en' ? 'active' : ''}`} onClick={() => { setSiteLanguage('en'); setLanguageMenuOpen(false) }}>{lt('영어')}</button>
-                </div>
-              ) : null}
-            </div>
-            <div className="settings-menu-wrap">
-              <button type="button" className="icon-button" aria-label={lt('설정')} title={lt('설정')} onClick={() => { setSettingsMenuOpen((prev) => !prev); setLanguageMenuOpen(false) }}>
-                <SettingsIcon />
-              </button>
-              {settingsMenuOpen ? (
-                <div className="settings-menu">
-                  <div className="settings-menu-section">
-                    <span className="settings-menu-title">{lt('데이터 관리')}</span>
-                    <button type="button" className="settings-action-item" onClick={() => { exportState(); setSettingsMenuOpen(false) }}>
-                      <strong>{lt('백업 저장')}</strong>
-                      <span>{lt('현재 작업 상태를 JSON으로 저장')}</span>
-                    </button>
-                    <button type="button" className="settings-action-item" onClick={() => { fileInputRef.current?.click(); setSettingsMenuOpen(false) }}>
-                      <strong>{lt('백업 불러오기')}</strong>
-                      <span>{lt('저장한 JSON 상태 파일을 불러오기')}</span>
-                    </button>
-                    <button type="button" className="settings-action-item danger" onClick={() => { resetAll(); setSettingsMenuOpen(false) }}>
-                      <strong>{lt('전체 데이터 초기화')}</strong>
-                      <span>{lt('파티·상대·샘플을 전부 초기화')}</span>
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
             </div>
           </div>
         </div>

@@ -56,6 +56,12 @@ header {
   gap: 10px;
   flex: 1;
 }
+.header-main-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
 .header-primary-tabs {
   display: flex;
   align-items: flex-end;
@@ -102,6 +108,7 @@ header {
 .header-utility-row {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-end;
   gap: 8px;
   flex: 0 0 auto;
 }
@@ -6239,11 +6246,10 @@ html {
     padding: 18px;
   }
   .header-top-row {
-    position: relative;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-    padding-top: 52px;
+    padding-top: 0;
   }
   .header-title-row {
     width: 100%;
@@ -6252,17 +6258,18 @@ html {
   .header-title-stack {
     gap: 8px;
   }
+  .header-main-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
   .header-utility-row {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    justify-content: flex-end;
     gap: 6px;
-    flex-wrap: wrap;
   }
   .header-icon-actions {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 5;
+    position: static;
+    gap: 6px;
   }
   .header-primary-tabs {
     flex-wrap: nowrap;
