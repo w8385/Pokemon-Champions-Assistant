@@ -6268,7 +6268,7 @@ html {
   .party-overview { position: static; }
   .party-columns { grid-template-columns: 1fr; }
   .entry-grid { grid-template-columns: 1fr; }
-  .manage-entry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .manage-entry-grid { grid-template-columns: 1fr; }
   .party-entry-grid, .opponent-entry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .team-strip-grid { grid-template-columns: 1fr; }
   .matchup { grid-template-columns: 1fr; }
