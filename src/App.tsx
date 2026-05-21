@@ -7802,6 +7802,23 @@ export default function App() {
               </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
+                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
+                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
+                    <div className="sample-compare-hero">
+                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
+                      <div>
+                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                      </div>
+                    </div>
+                    {renderSampleForgeEffortGrid('speed')}
+                    <div className="pick-summary-badges sample-current-build-badges">
+                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                      <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
+                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
+                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                    </div>
+                  </div>
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
                     <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onBlur={() => { setTimeout(() => setSampleSpeedSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-speed-add'), 120) }} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onKeyDown={(e) => {
@@ -7822,23 +7839,6 @@ export default function App() {
                       {sampleSpeedSearchResults.map((option, optionIdx) => <button key={`sample-speed-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-speed-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
-                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
-                    <div className="sample-compare-hero">
-                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
-                      <div>
-                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
-                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
-                      </div>
-                    </div>
-                    {renderSampleForgeEffortGrid('speed')}
-                    <div className="pick-summary-badges sample-current-build-badges">
-                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                      <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
-                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
-                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="sample-overview-stack">
@@ -7892,6 +7892,24 @@ export default function App() {
               </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
+                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
+                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
+                    <div className="sample-compare-hero">
+                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
+                      <div>
+                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
+                      </div>
+                    </div>
+                    {renderSampleForgeEffortGrid('damage')}
+                    <div className="pick-summary-badges sample-current-build-badges">
+                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
+                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
+                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                      <span className="pick-badge">{lt('공격')} {sampleAttackerStats.attack}</span>
+                      <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
+                    </div>
+                  </div>
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
                     <span>{lt('추가')}</span>
                     <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onBlur={() => { setTimeout(() => setSampleDamageSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-damage-add'), 120) }} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onKeyDown={(e) => {
@@ -7912,24 +7930,6 @@ export default function App() {
                       {sampleDamageSearchResults.map((option, optionIdx) => <button key={`sample-damage-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
                   </label>
-                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
-                    <span className="sample-current-build-label">{lt('기준 빌드')}</span>
-                    <div className="sample-compare-hero">
-                      {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
-                      <div>
-                        <strong>{displayName(sampleRow, siteLanguage)}</strong>
-                        <p className="sample-current-build-copy">{lt('샘플 빌드 기준으로 자동 반영')}</p>
-                      </div>
-                    </div>
-                    {renderSampleForgeEffortGrid('damage')}
-                    <div className="pick-summary-badges sample-current-build-badges">
-                      <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
-                      {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
-                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
-                      <span className="pick-badge">{lt('공격')} {sampleAttackerStats.attack}</span>
-                      <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="sample-damage-shared-controls sample-workbench-wide-card">
