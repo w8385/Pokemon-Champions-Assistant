@@ -2117,8 +2117,8 @@ header p {
   padding: 2px 2px 11px;
 }
 .sample-panel-header-side strong {
-  font-size: 15px;
-  line-height: 1.2;
+  font-size: 18px;
+  line-height: 1.25;
 }
 .sample-panel-header-side .action-button {
   flex-shrink: 0;
@@ -4025,11 +4025,10 @@ header p {
 }
 .sample-content-panel {
   margin-top: 12px;
-  padding: 14px;
-  border: 1px solid #334155;
-  border-radius: 18px;
-  background: rgba(8, 15, 28, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .sample-overview-inline-save {
   display: grid;
