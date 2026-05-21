@@ -7687,47 +7687,20 @@ export default function App() {
               <>
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-workspace">
-                      <div className="sample-track-card sample-slot-rail-card">
-                        <div className="row-between sample-track-head compact-gap sample-slot-rail-head-minimal">
-                          <div className="pick-summary-badges sample-slot-target-badges">
-                            <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
-                            <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-                          </div>
-                        </div>
-                        <div className="sample-slot-rail-grid">
-                          {sampleRegisteredMoves.map((move, moveIdx) => {
-                            const active = activeSampleMoveSlotIdx === moveIdx
-                            const filled = Boolean(move)
-                            return (
-                              <button
-                                key={`sample-slot-rail-${sampleForge.key}-${moveIdx}`}
-                                type="button"
-                                {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                                className={`sample-slot-rail-button ${moveTypeThemeClass(sampleMoveType(move))} ${active ? 'active' : ''} ${filled ? 'filled' : 'empty'}`}
-                                onClick={() => focusSampleSlot(moveIdx)}
-                              >
-                                <span className="sample-slot-rail-index">{moveIdx + 1}</span>
-                                <span className="sample-slot-rail-copy">
-                                  <strong>{move || lt('빈 슬롯')}</strong>
-                                  <span>{filled ? lt('확정') : lt('미지정')}</span>
-                                </span>
-                              </button>
-                            )
-                          })}
-                        </div>
-                        <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
-                          const current = [...prev]
-                          while (current.length < 4) current.push('')
-                          current[activeSampleMoveSlotIdx] = ''
-                          return normalizeMoveSlots(current)
-                        })}>{lt('슬롯 비우기')}</button>
-                      </div>
                       <div className="sample-track-main-column">
                         <div className="sample-track-card sample-track-editor-card">
                           <div className="row-between sample-track-head">
                             <strong>{lt('기술 배치')}</strong>
                             <div className="pick-summary-badges sample-slot-target-badges">
+                              <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
+                              <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
                               {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
+                              <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
+                                const current = [...prev]
+                                while (current.length < 4) current.push('')
+                                current[activeSampleMoveSlotIdx] = ''
+                                return normalizeMoveSlots(current)
+                              })}>{lt('슬롯 비우기')}</button>
                             </div>
                           </div>
                           <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
