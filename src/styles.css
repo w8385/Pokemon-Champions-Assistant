@@ -4575,11 +4575,10 @@ label {
 }
 .dex-tab-panel {
   margin-top: 12px;
-  padding: 12px;
-  border: 1px solid #334155;
-  border-radius: 16px;
-  background: rgba(11, 18, 32, 0.88);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .dex-content-panel {
   margin-top: 0;
