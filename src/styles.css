@@ -6590,7 +6590,7 @@ html {
   .calc-inline-pair {
     grid-column: span 2;
   }
-  .calc-toggle-box.span-2 { grid-column: span 1; }
+  .calc-toggle-box.span-2 { grid-column: span 2; }
   .damage-summary-grid { grid-template-columns: 1fr; }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }

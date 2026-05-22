@@ -8758,7 +8758,7 @@ export default function App() {
                       <span>{lt('빛의장막')}</span>
                     </label>
                   </div>
-                  <label className="calc-toggle-box">
+                  <label className="calc-toggle-box span-2">
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
                   </label>
