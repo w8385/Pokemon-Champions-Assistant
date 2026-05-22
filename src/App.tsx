@@ -7381,14 +7381,6 @@ export default function App() {
           {sampleWorkbenchTab === 'builder' ? <>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
-              <div className="row-between section-head sample-content-head sample-content-head-inline">
-                <div>
-                  <h2>{lt('샘플 빌드')}</h2>
-                </div>
-                <div className="pick-summary-badges">
-                  <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-                </div>
-              </div>
               <div className="sample-panel-header sample-panel-header-main">
               <div className="sample-hero sample-hero-attached">
                 {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
@@ -7737,14 +7729,6 @@ export default function App() {
           </div>
           </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="row-between section-head sample-content-head sample-content-head-inline">
-                <div>
-                  <h2>{lt('샘플 스피드')}</h2>
-                </div>
-                <div className="pick-summary-badges">
-                  <span className="pick-badge">{lt('추월컷 계산')}</span>
-                </div>
-              </div>
               <div className="sample-speed-toolbar sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">
@@ -7831,14 +7815,6 @@ export default function App() {
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="row-between section-head sample-content-head sample-content-head-inline">
-                <div>
-                  <h2>{lt('샘플 대미지 계산')}</h2>
-                </div>
-                <div className="pick-summary-badges">
-                  <span className="pick-badge">{sampleDamageMoveChoices[0] || lt('등록 기술 없음')}</span>
-                </div>
-              </div>
               <div className="sample-damage-adder sample-workbench-toolbar">
                 <div className="sample-speed-inline-controls sample-current-build-toolbar">
                   <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded">

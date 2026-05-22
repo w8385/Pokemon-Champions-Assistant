@@ -2127,12 +2127,6 @@ header p {
   line-height: 1.25;
   margin: 0;
 }
-.sample-content-head {
-  margin-bottom: 12px;
-}
-.sample-content-head-inline {
-  margin-bottom: 14px;
-}
 .sample-panel-header-side .action-button {
   flex-shrink: 0;
   align-self: center;
