@@ -8596,15 +8596,15 @@ export default function App() {
                       {lt('상대 공격')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentAttackEv} onChange={(e) => updateOpponentOffenseState({ attackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
+                    <label className="calc-toggle-box calc-toggle-box-compact">
+                      <input type="checkbox" checked={calcOpponentAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ attackNature: e.target.checked ? 1.1 : 1 })} />
+                      <span>{lt('+공격 성격')}</span>
+                    </label>
                     <label>
                       {lt('상대 특수공격')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpAttackEv} onChange={(e) => updateOpponentOffenseState({ spAttackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
-                    <label className="calc-toggle-box">
-                      <input type="checkbox" checked={calcOpponentAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ attackNature: e.target.checked ? 1.1 : 1 })} />
-                      <span>{lt('+공격 성격')}</span>
-                    </label>
-                    <label className="calc-toggle-box">
+                    <label className="calc-toggle-box calc-toggle-box-compact">
                       <input type="checkbox" checked={calcOpponentSpAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ spAttackNature: e.target.checked ? 1.1 : 1 })} />
                       <span>{lt('+특수공격 성격')}</span>
                     </label>
@@ -8672,15 +8672,15 @@ export default function App() {
                       {lt('상대 방어')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentDefenseEv} onChange={(e) => updateOpponentBulkState({ defenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
+                    <label className="calc-toggle-box calc-toggle-box-compact">
+                      <input type="checkbox" checked={calcOpponentDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ defenseNature: e.target.checked ? 1.1 : 1 })} />
+                      <span>{lt('+방어 성격')}</span>
+                    </label>
                     <label>
                       {lt('상대 특수방어')}
                       <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpDefenseEv} onChange={(e) => updateOpponentBulkState({ spDefenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                     </label>
-                    <label className="calc-toggle-box">
-                      <input type="checkbox" checked={calcOpponentDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ defenseNature: e.target.checked ? 1.1 : 1 })} />
-                      <span>{lt('+방어 성격')}</span>
-                    </label>
-                    <label className="calc-toggle-box">
+                    <label className="calc-toggle-box calc-toggle-box-compact">
                       <input type="checkbox" checked={calcOpponentSpDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                       <span>{lt('+특수방어 성격')}</span>
                     </label>

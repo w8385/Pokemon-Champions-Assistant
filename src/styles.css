@@ -5814,7 +5814,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-calc-grid.compact.offense-grid,
 .damage-calc-grid.compact.defender-grid {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 .damage-calc-grid.compact.field-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -5862,6 +5862,9 @@ textarea { min-height: 72px; resize: vertical; }
 .calc-toggle-box span {
   color: #e2e8f0;
   font-weight: 700;
+}
+.calc-toggle-box-compact {
+  min-height: 76px;
 }
 .calc-toggle-box.span-2 {
   grid-column: span 2;
