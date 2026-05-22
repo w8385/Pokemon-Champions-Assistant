@@ -3553,15 +3553,19 @@ header p {
 .sample-damage-adder {
   margin-bottom: 14px;
 }
+.sample-damage-conditions-panel {
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(8, 15, 28, 0.84), rgba(15, 23, 42, 0.72));
+  padding: 14px;
+}
 .sample-damage-conditions-head {
   margin-bottom: 10px;
   align-items: center;
 }
 .sample-damage-conditions-box {
-  border: 1px solid rgba(51, 65, 85, 0.8);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(8, 15, 28, 0.84), rgba(15, 23, 42, 0.72));
-  padding: 14px;
+  border-top: 1px solid rgba(51, 65, 85, 0.62);
+  padding-top: 14px;
 }
 .sample-overview-stack {
   gap: 14px;

@@ -7884,7 +7884,7 @@ export default function App() {
                   </label>
                 </div>
               </div>
-              <div className="sample-damage-shared-controls sample-workbench-wide-card">
+              <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel">
                 <div className="row-between sample-damage-conditions-head">
                   <strong>{lt('세부 조건')}</strong>
                   <button type="button" className={`pick-chip ${sampleDamageConditionsCollapsed ? '' : 'active'}`} onClick={() => setSampleDamageConditionsCollapsed((prev) => !prev)} aria-expanded={!sampleDamageConditionsCollapsed}>{sampleDamageConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
