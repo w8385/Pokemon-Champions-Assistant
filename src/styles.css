@@ -4479,6 +4479,10 @@ header p {
   gap: 10px;
   margin-top: 6px;
 }
+.sample-type-line {
+  justify-content: flex-start;
+  margin-top: 2px;
+}
 .compact-gap {
   margin-bottom: 8px;
 }

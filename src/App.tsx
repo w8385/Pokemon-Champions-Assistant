@@ -7428,8 +7428,7 @@ export default function App() {
                       </div>
                     ) : null}
                   </div>
-                  <div className="summary-line">
-                    <span className="muted">{displayTypes(sampleRow, siteLanguage).join(' / ')}</span>
+                  <div className="summary-line sample-type-line">
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
                 </div>
