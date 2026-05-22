@@ -3353,7 +3353,7 @@ header p {
   align-items: start;
 }
 .sample-current-build-toolbar {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 .sample-speed-slider-field {
   display: grid;
