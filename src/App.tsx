@@ -6757,6 +6757,52 @@ export default function App() {
                             {row ? <div className="type-line">
                               <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                             </div> : <p className="muted">{lt('포켓몬을 검색해서 추가하세요.')}</p>}
+                            <label className="species-picker party-inline-species-picker">
+                              <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
+                                <input
+                                  value={partySearch[idx] ?? ''}
+                                  placeholder={lt('포켓몬 검색')}
+                                  onFocus={() => {
+                                    setActiveSearchField({ side: 'party', idx })
+                                    setAutocompleteMenuOpen(partySpeciesMenuId)
+                                  }}
+                                  onBlur={() => {
+                                    setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)
+                                    setTimeout(() => closeAutocompleteMenu(partySpeciesMenuId), 120)
+                                  }}
+                                  onChange={(e) => {
+                                    const next = [...partySearch]
+                                    next[idx] = e.target.value
+                                    setPartySearch(next)
+                                    setActiveSearchField({ side: 'party', idx })
+                                    setAutocompleteMenuOpen(partySpeciesMenuId)
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                      e.preventDefault()
+                                      moveAutocompleteMenuHighlight(partySpeciesMenuId, partySpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
+                                      return
+                                    }
+                                    if (e.key !== 'Enter') return
+                                    const highlightedOption = partySpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId)]
+                                    const committed = highlightedOption ? (selectSpecies('party', idx, highlightedOption.key), true) : commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
+                                    if (committed) {
+                                      e.preventDefault()
+                                      closeAutocompleteMenu(partySpeciesMenuId)
+                                    }
+                                  }}
+                                />
+                                {sameSearchTarget(activeSearchField, 'party', idx) ? (
+                                  <div className="autocomplete-menu unified-dropdown-menu">
+                                    {partySpeciesOptions.map((option, optionIdx) => (
+                                      <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('party', idx, option.key)}>
+                                        {searchDisplayLabel(option.key, siteLanguage)}
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : null}
+                              </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -6903,53 +6949,6 @@ export default function App() {
                       </div>
                       {memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div> : null}
-                    <label className="species-picker">
-                      {lt('포켓몬 선택')}
-                      <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          value={partySearch[idx] ?? ''}
-                          placeholder={lt('포켓몬 검색')}
-                          onFocus={() => {
-                            setActiveSearchField({ side: 'party', idx })
-                            setAutocompleteMenuOpen(partySpeciesMenuId)
-                          }}
-                          onBlur={() => {
-                            setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)
-                            setTimeout(() => closeAutocompleteMenu(partySpeciesMenuId), 120)
-                          }}
-                          onChange={(e) => {
-                            const next = [...partySearch]
-                            next[idx] = e.target.value
-                            setPartySearch(next)
-                            setActiveSearchField({ side: 'party', idx })
-                            setAutocompleteMenuOpen(partySpeciesMenuId)
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                              e.preventDefault()
-                              moveAutocompleteMenuHighlight(partySpeciesMenuId, partySpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
-                              return
-                            }
-                            if (e.key !== 'Enter') return
-                            const highlightedOption = partySpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId)]
-                            const committed = highlightedOption ? (selectSpecies('party', idx, highlightedOption.key), true) : commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
-                            if (committed) {
-                              e.preventDefault()
-                              closeAutocompleteMenu(partySpeciesMenuId)
-                            }
-                          }}
-                        />
-                        {sameSearchTarget(activeSearchField, 'party', idx) ? (
-                          <div className="autocomplete-menu unified-dropdown-menu">
-                            {partySpeciesOptions.map((option, optionIdx) => (
-                              <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('party', idx, option.key)}>
-                                {searchDisplayLabel(option.key, siteLanguage)}
-                              </button>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    </label>
                     {row ? <div className="stat-preview-list">
                       {EFFORT_STAT_OPTIONS.map((stat) => (
                         <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button ${statThemeClass(stat.key)}`} onClick={(e) => {

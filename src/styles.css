@@ -4227,6 +4227,12 @@ header p {
   justify-content: center;
   gap: 6px;
 }
+.party-inline-species-picker {
+  margin-top: 2px;
+}
+.party-inline-species-picker .autocomplete input {
+  width: 100%;
+}
 .party-card-title-block strong {
   font-size: 21px;
   line-height: 1.15;
@@ -4552,6 +4558,9 @@ label {
 }
 .species-picker {
   margin-top: 10px;
+}
+.party-inline-species-picker {
+  margin-top: 2px;
 }
 .autocomplete {
   position: relative;
