@@ -6576,6 +6576,10 @@ html {
   .damage-calc-grid.compact.offense-grid,
   .damage-calc-grid.compact.defender-grid,
   .damage-calc-grid.compact.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calc-pair-field {
+    grid-column: span 1;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
   .calc-toggle-box.span-2 { grid-column: span 1; }
   .damage-summary-grid { grid-template-columns: 1fr; }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
