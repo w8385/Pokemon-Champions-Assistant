@@ -8594,7 +8594,7 @@ export default function App() {
                         <option value="custom">{lt('직접 조절')}</option>
                       </select>
                     </label>
-                    <div className="calc-pair-field">
+                    <div className="calc-inline-pair calc-stat-pair">
                       <label>
                         {lt('상대 공격')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentAttackEv} onChange={(e) => updateOpponentOffenseState({ attackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -8604,7 +8604,7 @@ export default function App() {
                         <span>{lt('+공격 성격')}</span>
                       </label>
                     </div>
-                    <div className="calc-pair-field">
+                    <div className="calc-inline-pair calc-stat-pair">
                       <label>
                         {lt('상대 특수공격')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpAttackEv} onChange={(e) => updateOpponentOffenseState({ spAttackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -8696,7 +8696,7 @@ export default function App() {
                         <span>{lt('상대 HP 만땅')}</span>
                       </label> : null}
                     </div>
-                    <div className="calc-pair-field">
+                    <div className="calc-inline-pair calc-stat-pair">
                       <label>
                         {lt('상대 방어')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentDefenseEv} onChange={(e) => updateOpponentBulkState({ defenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -8706,7 +8706,7 @@ export default function App() {
                         <span>{lt('+방어 성격')}</span>
                       </label>
                     </div>
-                    <div className="calc-pair-field">
+                    <div className="calc-inline-pair calc-stat-pair">
                       <label>
                         {lt('상대 특수방어')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentSpDefenseEv} onChange={(e) => updateOpponentBulkState({ spDefenseEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
