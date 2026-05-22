@@ -2086,14 +2086,14 @@ header p {
   border-bottom: 1px solid rgba(51, 65, 85, 0.72);
 }
 .sample-panel-header-main {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: grid;
   align-items: start;
   gap: 10px;
-  padding: 12px;
-  border: 1px solid rgba(51, 65, 85, 0.82);
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(11, 18, 32, 0.88));
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .sample-panel-header-main .species-picker {
   width: 100%;
@@ -2444,11 +2444,11 @@ header p {
   z-index: 1;
   overflow: visible;
   margin-top: 0;
-  padding: 12px;
-  border: 1px solid var(--sample-surface-border);
-  border-radius: var(--sample-surface-radius);
-  background: var(--sample-surface-bg);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .sample-track-editor-card {
   display: grid;
@@ -3027,9 +3027,8 @@ header p {
 }
 .sample-hero-attached {
   margin: 0;
-  padding-top: 2px;
-  padding: 8px 12px 0;
-  border-top: 1px solid rgba(51, 65, 85, 0.56);
+  padding: 0;
+  border-top: 0;
 }
 .sample-hero-attached .entry-sprite.large {
   width: 84px;
@@ -3042,12 +3041,7 @@ header p {
   position: relative;
 }
 .sample-hero-copy::after {
-  content: '';
-  display: block;
-  height: 8px;
-  margin-top: 1px;
-  border-top: 1px solid rgba(51, 65, 85, 0.3);
-  background: linear-gradient(180deg, rgba(37, 99, 235, 0.05), transparent);
+  content: none;
 }
 .sample-hero-search {
   width: 100%;
@@ -4225,7 +4219,7 @@ header p {
 .sample-meta-grid {
   margin-top: 0;
   gap: 6px;
-  padding: 10px 12px 12px;
+  padding: 0;
 }
 .party-meta-chip {
   min-width: 0;
@@ -5548,7 +5542,7 @@ textarea { min-height: 72px; resize: vertical; }
   min-width: 0;
 }
 .top-move-chip-card {
-  padding: 12px;
+  padding: 0;
   gap: 10px;
 }
 .top-move-chip-card .move-chip-wrap,
@@ -5764,11 +5758,11 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-top: var(--sample-rhythm-tight);
-  padding: 10px 12px;
-  border: 1px solid rgba(51, 65, 85, 0.66);
-  border-radius: var(--sample-surface-radius);
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.64), rgba(11, 18, 32, 0.5));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.015);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .compact-stat-list {
   margin-top: 12px;
