@@ -7585,7 +7585,6 @@ export default function App() {
                             <strong>{lt('기술 배치')}</strong>
                             <div className="pick-summary-badges sample-slot-target-badges">
                               <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
-                              <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
                               {sampleMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
                               <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
                                 const current = [...prev]
