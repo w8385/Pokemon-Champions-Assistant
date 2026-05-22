@@ -4243,10 +4243,30 @@ header p {
   gap: 6px;
 }
 .party-inline-species-picker {
-  margin-top: 2px;
+  margin-top: 0;
 }
 .party-inline-species-picker .autocomplete input {
   width: 100%;
+}
+.party-inline-species-input {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 21px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #eef2f7;
+}
+.party-inline-species-input::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+.party-inline-species-input:focus {
+  outline: none;
+  color: #f8fbff;
 }
 .party-card-title-block strong {
   font-size: 21px;

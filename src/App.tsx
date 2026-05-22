@@ -6753,15 +6753,12 @@ export default function App() {
                       <div className="entry-card-head">
                         <div className="party-card-header">
                           <div className="party-card-title-block">
-                            <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
-                            {row ? <div className="type-line">
-                              <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                            </div> : <p className="muted">{lt('포켓몬을 검색해서 추가하세요.')}</p>}
                             <label className="species-picker party-inline-species-picker">
                               <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
                                 <input
                                   value={partySearch[idx] ?? ''}
-                                  placeholder={lt('포켓몬 검색')}
+                                  className="party-inline-species-input"
+                                  placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
                                   onFocus={() => {
                                     setActiveSearchField({ side: 'party', idx })
                                     setAutocompleteMenuOpen(partySpeciesMenuId)
@@ -6803,6 +6800,9 @@ export default function App() {
                                 ) : null}
                               </div>
                             </label>
+                            {row ? <div className="type-line">
+                              <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
+                            </div> : null}
                           </div>
                         </div>
                       </div>
