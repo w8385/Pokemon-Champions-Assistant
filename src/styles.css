@@ -6227,6 +6227,9 @@ textarea { min-height: 72px; resize: vertical; }
   background: rgba(23, 37, 84, 0.98);
   color: #dbeafe;
 }
+.opponent-board-card strong {
+  color: #eef2f7;
+}
 .opponent-board-card span {
   color: #93a4b8;
   font-size: 12px;
