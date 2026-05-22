@@ -5870,7 +5870,7 @@ textarea { min-height: 72px; resize: vertical; }
   display: flex !important;
   align-items: center !important;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
 }
 .calc-toggle-box input {
   width: 18px;
