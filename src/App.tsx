@@ -1223,6 +1223,51 @@ const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
 
 const MOVE_META_BY_NAME = championsLearnedMoveMeta as Record<string, MoveMeta>
 const DEX_DESCRIPTIONS = dexDescriptions as DexDescriptionBundle
+const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
+  'おうじゃのしるし': { ko: '공격 기술 명중 시 10% 확률로 상대를 풀죽게 함.', en: 'Damaging moves have a 10% chance to make the target flinch.', ja: '攻撃技が当たると10%の確率で相手をひるませる。' },
+  'きあいのタスキ': { ko: 'HP가 가득 찬 상태에서 기절할 공격을 받으면 HP 1로 버팀.', en: 'If at full HP, survives a would-be KO hit with 1 HP.', ja: 'HP満タンのとき ひんしになる攻撃を受けても HP1で耐える。' },
+  'きせきのタネ': { ko: '풀 타입 기술 위력 20% 증가.', en: 'Boosts Grass-type move power by 20%.', ja: 'くさタイプの技の威力が20%上がる。' },
+  'くろいメガネ': { ko: '악 타입 기술 위력 20% 증가.', en: 'Boosts Dark-type move power by 20%.', ja: 'あくタイプの技の威力が20%上がる。' },
+  'くろおび': { ko: '격투 타입 기술 위력 20% 증가.', en: 'Boosts Fighting-type move power by 20%.', ja: 'かくとうタイプの技の威力が20%上がる。' },
+  'こだわりスカーフ': { ko: '스피드 1.5배. 대신 처음 고른 기술만 계속 사용.', en: 'Raises Speed by 1.5x, but locks the user into the first move used.', ja: '素早さが1.5倍になるが 最初に選んだ技しか出せなくなる。' },
+  'しろいハーブ': { ko: '한 번만 능력 하락을 원래대로 되돌리고 소모됨.', en: 'Restores lowered stats once, then is consumed.', ja: '下がった能力を一度だけ元に戻して消費される。' },
+  'しんぴのしずく': { ko: '물 타입 기술 위력 20% 증가.', en: 'Boosts Water-type move power by 20%.', ja: 'みずタイプの技の威力が20%上がる。' },
+  'じしゃく': { ko: '전기 타입 기술 위력 20% 증가.', en: 'Boosts Electric-type move power by 20%.', ja: 'でんきタイプの技の威力が20%上がる。' },
+  'するどいくちばし': { ko: '비행 타입 기술 위력 20% 증가.', en: 'Boosts Flying-type move power by 20%.', ja: 'ひこうタイプの技の威力が20%上がる。' },
+  'せんせいのツメ': { ko: '20% 확률로 같은 우선도 내에서 먼저 행동.', en: 'Gives a 20% chance to move first within the same priority bracket.', ja: '20%の確率で 同じ優先度内なら先に行動できる。' },
+  'たべのこし': { ko: '턴 종료마다 최대 HP의 1/16 회복.', en: 'Restores 1/16 of max HP at the end of each turn.', ja: '毎ターン終了時に 最大HPの1/16を回復する。' },
+  'でんきだま': { ko: '피카츄가 들면 공격·특수공격 2배.', en: 'When held by Pikachu, doubles Attack and Special Attack.', ja: 'ピカチュウが持つと 攻撃と特攻が2倍になる。' },
+  'とけないこおり': { ko: '얼음 타입 기술 위력 20% 증가.', en: 'Boosts Ice-type move power by 20%.', ja: 'こおりタイプの技の威力が20%上がる。' },
+  'どくバリ': { ko: '독 타입 기술 위력 20% 증가.', en: 'Boosts Poison-type move power by 20%.', ja: 'どくタイプの技の威力が20%上がる。' },
+  'のろいのおふだ': { ko: '고스트 타입 기술 위력 20% 증가.', en: 'Boosts Ghost-type move power by 20%.', ja: 'ゴーストタイプの技の威力が20%上がる。' },
+  'ひかりのこな': { ko: '상대 기술의 명중률을 10% 낮춤.', en: 'Lowers the accuracy of moves used against the holder by 10%.', ja: '相手の技の命中率を10%下げる。' },
+  'まがったスプーン': { ko: '에스퍼 타입 기술 위력 20% 증가.', en: 'Boosts Psychic-type move power by 20%.', ja: 'エスパータイプの技の威力が20%上がる。' },
+  'もくたん': { ko: '불꽃 타입 기술 위력 20% 증가.', en: 'Boosts Fire-type move power by 20%.', ja: 'ほのおタイプの技の威力が20%上がる。' },
+  'やわらかいすな': { ko: '땅 타입 기술 위력 20% 증가.', en: 'Boosts Ground-type move power by 20%.', ja: 'じめんタイプの技の威力が20%上がる。' },
+  'りゅうのキバ': { ko: '드래곤 타입 기술 위력 20% 증가.', en: 'Boosts Dragon-type move power by 20%.', ja: 'ドラゴンタイプの技の威力が20%上がる。' },
+  'イトケのみ': { ko: '효과가 굉장한 물 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Water-type hit, then is consumed.', ja: '効果抜群の みず技を一度だけ半減して消費される。' },
+  'オッカのみ': { ko: '효과가 굉장한 불꽃 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Fire-type hit, then is consumed.', ja: '効果抜群の ほのお技を一度だけ半減して消費される。' },
+  'オボンのみ': { ko: 'HP가 절반 이하일 때 최대 HP의 25% 회복.', en: 'Restores 25% of max HP when HP drops to half or below.', ja: 'HPが半分以下になると 最大HPの25%を回復する。' },
+  'カゴのみ': { ko: '잠듦 상태가 되면 즉시 잠에서 깨어나며 소모됨.', en: 'Wakes the holder immediately if it falls asleep, then is consumed.', ja: 'ねむり状態になると すぐ目を覚まして消費される。' },
+  'カシブのみ': { ko: '효과가 굉장한 고스트 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Ghost-type hit, then is consumed.', ja: '効果抜群の ゴースト技を一度だけ半減して消費される。' },
+  'シュカのみ': { ko: '효과가 굉장한 땅 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Ground-type hit, then is consumed.', ja: '効果抜群の じめん技を一度だけ半減して消費される。' },
+  'シルクのスカーフ': { ko: '노말 타입 기술 위력 20% 증가.', en: 'Boosts Normal-type move power by 20%.', ja: 'ノーマルタイプの技の威力が20%上がる。' },
+  'ソクノのみ': { ko: '효과가 굉장한 전기 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Electric-type hit, then is consumed.', ja: '効果抜群の でんき技を一度だけ半減して消費される。' },
+  'ナモのみ': { ko: '효과가 굉장한 악 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Dark-type hit, then is consumed.', ja: '効果抜群の あく技を一度だけ半減して消費される。' },
+  'ハバンのみ': { ko: '효과가 굉장한 드래곤 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Dragon-type hit, then is consumed.', ja: '効果抜群の ドラゴン技を一度だけ半減して消費される。' },
+  'バコウのみ': { ko: '효과가 굉장한 비행 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Flying-type hit, then is consumed.', ja: '効果抜群の ひこう技を一度だけ半減して消費される。' },
+  'ビアーのみ': { ko: '효과가 굉장한 독 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Poison-type hit, then is consumed.', ja: '効果抜群の どく技を一度だけ半減して消費される。' },
+  'ピントレンズ': { ko: '급소 랭크 1단계 상승.', en: 'Raises the holder’s critical-hit ratio by 1 stage.', ja: '急所ランクが1段階上がる。' },
+  'メタルコート': { ko: '강철 타입 기술 위력 20% 증가.', en: 'Boosts Steel-type move power by 20%.', ja: 'はがねタイプの技の威力が20%上がる。' },
+  'メンタルハーブ': { ko: '도발·앵콜·트집·금지류를 한 번 해제하고 소모됨.', en: 'Clears Taunt, Encore, Torment, Disable, and similar effects once, then is consumed.', ja: 'ちょうはつ・アンコール・いちゃもん・かなしばり系を一度だけ解除して消費される。' },
+  'ヤチェのみ': { ko: '효과가 굉장한 얼음 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Ice-type hit, then is consumed.', ja: '効果抜群の こおり技を一度だけ半減して消費される。' },
+  'ヨプのみ': { ko: '효과가 굉장한 격투 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Fighting-type hit, then is consumed.', ja: '効果抜群の かくとう技を一度だけ半減して消費される。' },
+  'ヨロギのみ': { ko: '효과가 굉장한 바위 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Rock-type hit, then is consumed.', ja: '効果抜群の いわ技を一度だけ半減して消費される。' },
+  'ラムのみ': { ko: '상태이상에 걸리면 한 번 즉시 회복하고 소모됨.', en: 'Cures a status condition once, then is consumed.', ja: '状態異常になると 一度だけすぐ回復して消費される。' },
+  'リリバのみ': { ko: '효과가 굉장한 강철 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Steel-type hit, then is consumed.', ja: '効果抜群の はがね技を一度だけ半減して消費される。' },
+  'リンドのみ': { ko: '효과가 굉장한 풀 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Grass-type hit, then is consumed.', ja: '効果抜群の くさ技を一度だけ半減して消費される。' },
+  'ロゼルのみ': { ko: '효과가 굉장한 페어리 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Fairy-type hit, then is consumed.', ja: '効果抜群の フェアリー技を一度だけ半減して消費される。' },
+}
 const MOVE_META_BY_NORMALIZED = new Map(
   Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => [normalizeSearchText(name), meta] as const),
 )
@@ -3076,6 +3121,12 @@ function itemDescriptionFor(itemNameJa: string) {
   return DEX_DESCRIPTIONS.items[itemNameJa] ?? null
 }
 
+function itemEffectSummaryFor(itemNameJa: string, language: SiteLanguage) {
+  const summary = ITEM_EFFECT_SUMMARIES[itemNameJa]
+  if (!summary) return ''
+  return summary[language] ?? summary.ko ?? summary.en ?? ''
+}
+
 async function dexMoveLearnerRows(name: string) {
   const embeddedMovePools = await loadEmbeddedMovePools()
   const learnerRows = rows.filter((row) => {
@@ -3557,6 +3608,7 @@ export default function App() {
   const dexSelectedMoveText = React.useMemo(() => localizedDexText(dexSelectedMoveDescription, siteLanguage), [dexSelectedMoveDescription, siteLanguage])
   const dexSelectedAbilityText = React.useMemo(() => localizedDexText(dexSelectedAbilityDescription, siteLanguage), [dexSelectedAbilityDescription, siteLanguage])
   const dexSelectedItemText = React.useMemo(() => localizedDexText(dexSelectedItemDescription, siteLanguage), [dexSelectedItemDescription, siteLanguage])
+  const dexSelectedItemEffectSummary = React.useMemo(() => dexSelectedItem ? itemEffectSummaryFor(dexSelectedItem, siteLanguage) : '', [dexSelectedItem, siteLanguage])
 
   React.useEffect(() => {
     let cancelled = false
@@ -6346,6 +6398,10 @@ export default function App() {
                       <span className="pick-badge">JP {displayItemLabel(dexSelectedItem, 'ja')}</span>
                     </div>
                   </div>
+                  {dexSelectedItemEffectSummary ? <div className="dex-detail-panel">
+                    <strong>{lt('효과')}</strong>
+                    <p className="dex-description-copy">{dexSelectedItemEffectSummary}</p>
+                  </div> : null}
                   <div className="dex-detail-panel">
                     <strong>{lt('설명')}</strong>
                     <p className="dex-description-copy">{dexSelectedItemText?.detail || dexSelectedItemText?.summary || lt('설명 데이터 없음')}</p>
