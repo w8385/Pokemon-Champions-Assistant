@@ -6605,11 +6605,15 @@ html {
   .sample-speed-inline-controls,
   .sample-current-build-toolbar { grid-template-columns: 1fr; }
   .sample-speed-top-panel { grid-template-columns: 1fr; }
+  .sample-damage-top-panel { padding: 18px; gap: 16px; }
+  .sample-speed-stage-inline-card { padding: 16px 18px; }
+  .sample-damage-compare-adder-standalone { padding: 16px 18px; }
+  .sample-damage-compare-card { padding: 18px; }
+  .sample-workbench-card-body { grid-template-columns: 1fr; gap: 16px; padding-top: 10px; }
   .sample-inline-ev-editor-dual { grid-template-columns: 1fr; }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: 1fr; }
   .sample-embedded-drag-stat-list-damage { grid-template-columns: 1fr !important; width: 100%; max-width: none; }
   .sample-speed-ev-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .sample-workbench-card-body { grid-template-columns: 1fr; }
   .sample-speed-axis { margin-left: 0; }
   .sample-speed-row { grid-template-columns: 1fr; }
   .sample-damage-target-controls,
