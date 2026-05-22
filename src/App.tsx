@@ -8576,14 +8576,16 @@ export default function App() {
                       <option value={4}>4x</option>
                     </select>
                   </label> : <div className="calc-lock-box">{lt('상성')} {damageModifiers.effectiveness}x</div>}
-                  {activeDamageMoveAlwaysCrit ? <div className="calc-lock-box">{lt('급소')}</div> : <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} />
-                    <span>{lt('급소')}</span>
-                  </label>}
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
-                    <span>{lt('화상')}</span>
-                  </label>
+                  <div className="calc-inline-pair">
+                    {activeDamageMoveAlwaysCrit ? <div className="calc-lock-box">{lt('급소')}</div> : <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} />
+                      <span>{lt('급소')}</span>
+                    </label>}
+                    <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
+                      <span>{lt('화상')}</span>
+                    </label>
+                  </div>
                   {attackFromOpponent ? <>
                     <label>
                       {lt('상대 화력 프리셋')}
@@ -8613,42 +8615,50 @@ export default function App() {
                       </label>
                     </div>
                   </> : null}
-                  {showAttackerLowHpToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} />
-                    <span>{lt('공격측 HP 1/3 이하')}</span>
-                  </label> : null}
-                  {showTargetPoisonedToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} />
-                    <span>{lt('상대 독/맹독')}</span>
-                  </label> : null}
-                  {showMovedAfterTargetToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} />
-                    <span>{lt('상대보다 늦게 행동')}</span>
-                  </label> : null}
-                  {showFaintedAlliesInput ? <label>
-                    {lt('기절한 아군 수')}
-                    <input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} />
-                  </label> : null}
-                  {showRivalryModeInput ? <label>
-                    {lt('라이벌리 성별 관계')}
-                    <select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}>
-                      <option value="neutral">{lt('없음')}</option>
-                      <option value="same">{lt('같은 성별')}</option>
-                      <option value="opposite">{lt('다른 성별')}</option>
-                    </select>
-                  </label> : null}
-                  {showParentalBondToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} />
-                    <span>{lt('부자유친 발동')}</span>
-                  </label> : null}
-                  {showDefenderStatusedToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} />
-                    <span>{lt('상대 상태이상')}</span>
-                  </label> : null}
-                  {showElectromorphosisToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} />
-                    <span>{lt('일렉트릭 차지됨')}</span>
-                  </label> : null}
+                  {showAttackerLowHpToggle || showTargetPoisonedToggle ? <div className="calc-inline-pair">
+                    {showAttackerLowHpToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} />
+                      <span>{lt('공격측 HP 1/3 이하')}</span>
+                    </label> : null}
+                    {showTargetPoisonedToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} />
+                      <span>{lt('상대 독/맹독')}</span>
+                    </label> : null}
+                  </div> : null}
+                  {showMovedAfterTargetToggle || showDefenderStatusedToggle ? <div className="calc-inline-pair">
+                    {showMovedAfterTargetToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} />
+                      <span>{lt('상대보다 늦게 행동')}</span>
+                    </label> : null}
+                    {showDefenderStatusedToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} />
+                      <span>{lt('상대 상태이상')}</span>
+                    </label> : null}
+                  </div> : null}
+                  {showFaintedAlliesInput || showRivalryModeInput ? <div className="calc-inline-pair">
+                    {showFaintedAlliesInput ? <label>
+                      {lt('기절한 아군 수')}
+                      <input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} />
+                    </label> : null}
+                    {showRivalryModeInput ? <label>
+                      {lt('라이벌리 성별 관계')}
+                      <select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}>
+                        <option value="neutral">{lt('없음')}</option>
+                        <option value="same">{lt('같은 성별')}</option>
+                        <option value="opposite">{lt('다른 성별')}</option>
+                      </select>
+                    </label> : null}
+                  </div> : null}
+                  {showParentalBondToggle || showElectromorphosisToggle ? <div className="calc-inline-pair">
+                    {showParentalBondToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} />
+                      <span>{lt('부자유친 발동')}</span>
+                    </label> : null}
+                    {showElectromorphosisToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} />
+                      <span>{lt('일렉트릭 차지됨')}</span>
+                    </label> : null}
+                  </div> : null}
                   <label>
                     {lt('공격측 화력 랭크')}
                     <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
@@ -8661,17 +8671,31 @@ export default function App() {
                 <div className="damage-control-group-title">{lt('방어측')}</div>
                 <div className="calc-grid damage-calc-grid compact defender-grid">
                   {attackFromOpponent ? <div className="calc-lock-box">{lt('방어측은 내 파티 실수치를 사용함')}</div> : <>
-                    <label>
-                      {lt('상대 내구 프리셋')}
-                      <select value={calcOpponentBulkPreset} onChange={(e) => applyOpponentBulkPresetSelection(e.target.value as OpponentBulkPreset)}>
-                        {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={key} value={key}>{preset.label}</option>)}
-                        <option value="custom">{lt('직접 조절')}</option>
-                      </select>
-                    </label>
-                    <label>
-                      {lt('상대 체력')}
-                      <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                    </label>
+                    <div className="calc-inline-pair">
+                      <label>
+                        {lt('상대 내구 프리셋')}
+                        <select value={calcOpponentBulkPreset} onChange={(e) => applyOpponentBulkPresetSelection(e.target.value as OpponentBulkPreset)}>
+                          {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={key} value={key}>{preset.label}</option>)}
+                          <option value="custom">{lt('직접 조절')}</option>
+                        </select>
+                      </label>
+                      <label>
+                        {lt('방어측 내구 랭크')}
+                        <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
+                          {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="calc-inline-pair">
+                      <label>
+                        {lt('상대 체력')}
+                        <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                      </label>
+                      {showDefenderFullHpToggle ? <label className="calc-toggle-box">
+                        <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
+                        <span>{lt('상대 HP 만땅')}</span>
+                      </label> : null}
+                    </div>
                     <div className="calc-pair-field">
                       <label>
                         {lt('상대 방어')}
@@ -8693,16 +8717,6 @@ export default function App() {
                       </label>
                     </div>
                   </>}
-                  <label>
-                    {lt('방어측 내구 랭크')}
-                    <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
-                      {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-                    </select>
-                  </label>
-                  {showDefenderFullHpToggle ? <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
-                    <span>{lt('상대 HP 만땅')}</span>
-                  </label> : null}
                   {showDefenderDisguiseToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} />
                     <span>{lt('상대 탈 intact')}</span>
@@ -8712,34 +8726,38 @@ export default function App() {
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('전장 조건')}</div>
                 <div className="calc-grid damage-calc-grid compact field-grid">
-                  <label>
-                    {lt('날씨')}
-                    <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
-                      <option value="none">{lt('없음')}</option>
-                      <option value="sun">{lt('쾌청')}</option>
-                      <option value="rain">{lt('비')}</option>
-                      <option value="sand">{lt('모래바람')}</option>
-                      <option value="snow">{lt('싸라기눈')}</option>
-                    </select>
-                  </label>
-                  <label>
-                    {lt('필드')}
-                    <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
-                      <option value="none">{lt('없음')}</option>
-                      <option value="electric">{lt('일렉트릭필드')}</option>
-                      <option value="grassy">{lt('그래스필드')}</option>
-                      <option value="psychic">{lt('사이코필드')}</option>
-                      <option value="misty">{lt('미스트필드')}</option>
-                    </select>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
-                    <span>{lt('리플렉터')}</span>
-                  </label>
-                  <label className="calc-toggle-box">
-                    <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
-                    <span>{lt('빛의장막')}</span>
-                  </label>
+                  <div className="calc-inline-pair">
+                    <label>
+                      {lt('날씨')}
+                      <select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}>
+                        <option value="none">{lt('없음')}</option>
+                        <option value="sun">{lt('쾌청')}</option>
+                        <option value="rain">{lt('비')}</option>
+                        <option value="sand">{lt('모래바람')}</option>
+                        <option value="snow">{lt('싸라기눈')}</option>
+                      </select>
+                    </label>
+                    <label>
+                      {lt('필드')}
+                      <select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}>
+                        <option value="none">{lt('없음')}</option>
+                        <option value="electric">{lt('일렉트릭필드')}</option>
+                        <option value="grassy">{lt('그래스필드')}</option>
+                        <option value="psychic">{lt('사이코필드')}</option>
+                        <option value="misty">{lt('미스트필드')}</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div className="calc-inline-pair">
+                    <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} />
+                      <span>{lt('리플렉터')}</span>
+                    </label>
+                    <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} />
+                      <span>{lt('빛의장막')}</span>
+                    </label>
+                  </div>
                   <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
