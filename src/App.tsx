@@ -231,7 +231,7 @@ type MoveMeta = {
 }
 
 type HoverTooltipCard = {
-  kind: 'move' | 'ability'
+  kind: 'move' | 'ability' | 'item'
   title: string
   subtitle?: string
   accentType?: string | null
@@ -1223,6 +1223,17 @@ const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
 
 const MOVE_META_BY_NAME = championsLearnedMoveMeta as Record<string, MoveMeta>
 const DEX_DESCRIPTIONS = dexDescriptions as DexDescriptionBundle
+const ITEM_INDEX = (() => {
+  const byKey = new Map<string, DexDescriptionBundle['items'][string]>()
+  const byNormalized = new Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }>()
+  for (const [key, entry] of Object.entries(DEX_DESCRIPTIONS.items)) {
+    byKey.set(key, entry)
+    for (const candidate of [key, entry.nameKo, entry.nameEn, entry.nameJa]) {
+      byNormalized.set(normalizeSearchText(candidate), { key, entry })
+    }
+  }
+  return { byKey, byNormalized }
+})()
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'おうじゃのしるし': { ko: '공격 기술 명중 시 10% 확률로 상대를 풀죽게 함.', en: 'Damaging moves have a 10% chance to make the target flinch.', ja: '攻撃技が当たると10%の確率で相手をひるませる。' },
   'きあいのタスキ': { ko: 'HP가 가득 찬 상태에서 기절할 공격을 받으면 HP 1로 버팀.', en: 'If at full HP, survives a would-be KO hit with 1 HP.', ja: 'HP満タンのとき ひんしになる攻撃を受けても HP1で耐える。' },
@@ -3117,14 +3128,38 @@ function abilityDescriptionFor(abilityKey: string) {
   return DEX_DESCRIPTIONS.abilities[abilityKey] ?? null
 }
 
-function itemDescriptionFor(itemNameJa: string) {
-  return DEX_DESCRIPTIONS.items[itemNameJa] ?? null
+function resolveItemInfo(rawItem: string) {
+  if (!rawItem) return null
+  return ITEM_INDEX.byKey.has(rawItem)
+    ? { key: rawItem, entry: ITEM_INDEX.byKey.get(rawItem)! }
+    : ITEM_INDEX.byNormalized.get(normalizeSearchText(rawItem)) ?? null
 }
 
-function itemEffectSummaryFor(itemNameJa: string, language: SiteLanguage) {
-  const summary = ITEM_EFFECT_SUMMARIES[itemNameJa]
+function itemDescriptionFor(rawItem: string) {
+  return resolveItemInfo(rawItem)?.entry ?? null
+}
+
+function itemEffectSummaryFor(rawItem: string, language: SiteLanguage) {
+  const info = resolveItemInfo(rawItem)
+  if (!info) return ''
+  const summary = ITEM_EFFECT_SUMMARIES[info.key]
   if (!summary) return ''
   return summary[language] ?? summary.ko ?? summary.en ?? ''
+}
+
+function itemTooltipData(itemName: string, language: SiteLanguage): HoverTooltipCard | null {
+  const info = resolveItemInfo(itemName)
+  if (!info) return null
+  const title = language === 'ko' ? info.entry.nameKo : language === 'ja' ? info.entry.nameJa : info.entry.nameEn
+  const description = localizedDexText(info.entry, language)
+  const effectSummary = itemEffectSummaryFor(info.key, language)
+  return {
+    kind: 'item',
+    title,
+    subtitle: language === 'ko' ? info.entry.nameEn : info.entry.nameKo,
+    rows: effectSummary ? [{ label: translateText(language, '효과'), value: effectSummary }] : [],
+    description: description?.detail || description?.summary || '',
+  }
 }
 
 async function dexMoveLearnerRows(name: string) {
@@ -3758,7 +3793,7 @@ export default function App() {
   }, [hoverTooltip])
 
   const tooltipWidth = 280
-  const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : 170
+  const tooltipHeight = hoverTooltip?.kind === 'ability' ? 190 : hoverTooltip?.kind === 'item' ? 210 : 170
   const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1280
   const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 720
   const tooltipPlacement = hoverTooltip && hoverTooltip.anchorBottom + tooltipHeight + 18 <= viewportHeight ? 'bottom' : 'top'
@@ -6203,7 +6238,7 @@ export default function App() {
                   {dexSearchMode === 'item' ? dexItemOptions.map((item) => {
                     const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
                     const itemPreviewText = itemText?.summary || itemText?.detail || ''
-                    return <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)}>
+                    return <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)} {...bindTooltip(itemTooltipData(item, siteLanguage))}>
                       <div className="dex-move-preview-row">
                         <img src={itemSpriteSrc('', item)} alt={displayItemLabel(item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                         <div className="dex-pokemon-preview-body dex-item-result-body">
@@ -6787,7 +6822,7 @@ export default function App() {
                         </div> : null}
                       </div>
                       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
-                        <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : { idx, field: 'item' })}>
+                        <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'item' ? null : { idx, field: 'item' })} {...bindTooltip(currentItem ? itemTooltipData(currentItem, siteLanguage) : null)}>
                           <span>{lt('도구')}</span>
                           <div className="item-meta-row">
                             <img src={itemSpriteSrc(member.key, currentItem)} alt={displayItemLabel(currentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
@@ -7088,7 +7123,7 @@ export default function App() {
                   {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                   <span>{opponentSearch[idx] || (row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage))}</span>
                   <small>{member.picked ? lt('추정 체크됨') : lt('미체크')}</small>
-                  <small>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 없음')}</small>
+                  <small {...bindTooltip(member.item ? itemTooltipData(member.item, siteLanguage) : null)}>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 없음')}</small>
                 </button>
               )
             })}
@@ -7107,7 +7142,7 @@ export default function App() {
                     <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
                     <span>{opponentSearch[idx] || lt('포켓몬 미입력')}</span>
                     <span>{member.ability || lt('특성 미기입')}</span>
-                    <span>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 미기입')}</span>
+                    <span {...bindTooltip(member.item ? itemTooltipData(member.item, siteLanguage) : null)}>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 미기입')}</span>
                   </button>
                 )
               })}
@@ -7547,7 +7582,7 @@ export default function App() {
                   </div> : null}
                 </div>
                 <div className="party-meta-chip party-meta-chip-editor item-meta-chip">
-                  <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : 'item')}>
+                  <button type="button" className="party-meta-chip-button" onClick={() => setActiveSampleMetaEditor((prev) => prev === 'item' ? null : 'item')} {...bindTooltip(sampleCurrentItem ? itemTooltipData(sampleCurrentItem, siteLanguage) : null)}>
                     <span>{lt('도구')}</span>
                     <div className="item-meta-row">
                       <img src={itemSpriteSrc(sampleForge.key, sampleCurrentItem)} alt={displayItemLabel(sampleCurrentItem || '도구', siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
@@ -7799,7 +7834,7 @@ export default function App() {
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       <span className="pick-badge">{lt('실수치 스피드')} {sampleSpeedValueNow}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
-                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                      <span className="pick-badge" {...bindTooltip(sampleCurrentItem ? itemTooltipData(sampleCurrentItem, siteLanguage) : null)}>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                     </div>
                   </div>
                   <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card">
@@ -7884,7 +7919,7 @@ export default function App() {
                     <div className="pick-summary-badges sample-current-build-badges">
                       <span className="pick-badge">{natureChipLabel(sampleForge.config.nature, siteLanguage)}</span>
                       {sampleAbility ? <span className="pick-badge">{sampleAbility}</span> : null}
-                      <span className="pick-badge">{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
+                      <span className="pick-badge" {...bindTooltip(sampleCurrentItem ? itemTooltipData(sampleCurrentItem, siteLanguage) : null)}>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                       <span className="pick-badge">{lt('공격')} {sampleAttackerStats.attack}</span>
                       <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
                     </div>
@@ -8115,7 +8150,7 @@ export default function App() {
                     <span className="pick-badge sample-saved-slot-badge">{applyToSlotLabel(selectedMy, siteLanguage)}</span>
                   </div>
                   <div className="pick-summary-badges sample-saved-item-badges sample-saved-rich-badges">
-                    {savedItem ? <span className="pick-badge item-badge-inline">
+                    {savedItem ? <span className="pick-badge item-badge-inline" {...bindTooltip(itemTooltipData(savedItem, siteLanguage))}>
                       <img src={itemSpriteSrc(entry.member.key, savedItem)} alt={displayItemLabel(savedItem, siteLanguage)} className="item-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
                       {displayItemLabel(savedItem, siteLanguage)}
                     </span> : null}
