@@ -7824,7 +7824,7 @@ export default function App() {
             <div className="sample-main-card flat-sample-main-card">
               <div className="sample-damage-top-panel sample-speed-top-panel">
                 <div className="sample-speed-toolbar sample-workbench-toolbar">
-                  <div className="sample-speed-inline-controls sample-current-build-toolbar">
+                  <div className="sample-speed-inline-controls sample-current-build-toolbar sample-current-build-toolbar-speed">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
                       <span className="sample-current-build-label sample-workbench-section-label">{lt('기준 빌드')}</span>
                       <div className="sample-compare-hero">
@@ -7842,14 +7842,14 @@ export default function App() {
                         <span className="pick-badge" {...bindTooltip(sampleCurrentItem ? itemTooltipData(sampleCurrentItem, siteLanguage) : null)}>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</span>
                       </div>
                     </div>
+                    <label className="sample-speed-slider-field sample-speed-stage-inline-card sample-workbench-section-block">
+                      <span className="sample-workbench-section-label">{lt('내 스피드 랭크')}</span>
+                      <select value={sampleForge.config.speedStage} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, speedStage: clampSpeedStage(e.target.value) } }))}>
+                        {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                      </select>
+                    </label>
                   </div>
                 </div>
-                <label className="sample-speed-slider-field sample-speed-stage-inline-card">
-                  <span className="sample-workbench-section-label">{lt('내 스피드 랭크')}</span>
-                  <select value={sampleForge.config.speedStage} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, speedStage: clampSpeedStage(e.target.value) } }))}>
-                    {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-                  </select>
-                </label>
               </div>
               <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                 <span className="sample-workbench-section-label">{lt('비교 포켓몬 추가')}</span>
