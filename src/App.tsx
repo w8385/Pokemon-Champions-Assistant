@@ -6972,9 +6972,13 @@ export default function App() {
                         {memberMovePool?.status === 'loading' ? <span className="pick-badge move-pool-status-badge loading">{lt('기술풀 불러오는 중…')}</span> : null}
                       </div>
                       <div className="registered-move-grid">
-                        {registeredMoves.map((move, moveIdx) => (
-                          <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(findMoveType(move))} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                            <span>{moveIdx + 1}번</span>
+                        {registeredMoves.map((move, moveIdx) => {
+                          const moveType = findMoveType(move)
+                          return <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
+                            <div className="registered-move-slot-head">
+                              <span>{moveIdx + 1}번</span>
+                              {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                            </div>
                             <input
                               value={move}
                               {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
@@ -7022,7 +7026,7 @@ export default function App() {
                               </div>
                             ) : null}
                           </label>
-                        ))}
+                        })}
                       </div>
                       {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
                         <div className="row-between sample-track-head compact-gap">
@@ -7032,7 +7036,8 @@ export default function App() {
                         <div className="move-chip-wrap">
                           {memberTopSuggestedMoves.map((move) => {
                             const locked = registeredMoves.includes(move)
-                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(findMoveType(move))}`} onClick={() => applyMoveToSlot(member.key, move)} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</button>
+                            const moveType = findMoveType(move)
+                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(member.key, move)} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{moveType ? <SmallTypeBadgeImage type={moveType} /> : null}<span>{move}</span></button>
                           })}
                         </div>
                       </div> : null}
