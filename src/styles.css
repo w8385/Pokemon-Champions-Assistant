@@ -4032,17 +4032,11 @@ header p {
   gap: 16px;
 }
 .sample-workbench-panel {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+  padding: 16px;
 }
 .sample-content-panel {
-  margin-top: 12px;
+  margin-top: 0;
   padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
 }
 .sample-overview-inline-save {
   display: grid;
