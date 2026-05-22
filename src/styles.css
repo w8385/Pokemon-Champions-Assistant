@@ -5874,9 +5874,38 @@ textarea { min-height: 72px; resize: vertical; }
   gap: 4px;
 }
 .calc-toggle-box input {
-  width: 18px;
-  height: 18px;
-  accent-color: #8b5cf6;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
+  border: 1px solid rgba(71, 85, 105, 0.88);
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.96);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+  cursor: pointer;
+}
+.calc-toggle-box input::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.96), rgba(99, 102, 241, 0.96));
+  transform: scale(0);
+  transition: transform 120ms ease;
+}
+.calc-toggle-box input:checked {
+  border-color: rgba(129, 140, 248, 0.92);
+  background: rgba(30, 41, 59, 0.96);
+}
+.calc-toggle-box input:checked::after {
+  transform: scale(1);
+}
+.calc-toggle-box input:focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.9);
+  outline-offset: 2px;
 }
 .calc-toggle-box span {
   color: #e2e8f0;
