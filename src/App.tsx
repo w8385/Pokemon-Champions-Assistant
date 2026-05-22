@@ -3595,7 +3595,6 @@ export default function App() {
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
   const [sampleSpeedSearchOpen, setSampleSpeedSearchOpen] = React.useState(false)
-  const [sampleSpeedConditionsCollapsed, setSampleSpeedConditionsCollapsed] = React.useState(true)
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
@@ -7823,7 +7822,7 @@ export default function App() {
           </div>
           </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="sample-damage-top-panel">
+              <div className="sample-damage-top-panel sample-speed-top-panel">
                 <div className="sample-speed-toolbar sample-workbench-toolbar">
                   <div className="sample-speed-inline-controls sample-current-build-toolbar">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
@@ -7845,25 +7844,12 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel sample-workbench-section sample-damage-top-conditions">
-                  <div className="row-between sample-damage-conditions-head sample-workbench-section-head">
-                    <strong>{lt('세부 조건')}</strong>
-                    <button type="button" className={`pick-chip ${sampleSpeedConditionsCollapsed ? '' : 'active'}`} onClick={() => setSampleSpeedConditionsCollapsed((prev) => !prev)} aria-expanded={!sampleSpeedConditionsCollapsed}>{sampleSpeedConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
-                  </div>
-                  {!sampleSpeedConditionsCollapsed ? <div className="sample-damage-conditions-box damage-control-groups">
-                    <div className="damage-control-group">
-                      <div className="damage-control-group-title">{lt('실속도 기준')}</div>
-                      <div className="calc-grid damage-calc-grid compact offense-grid">
-                        <label>
-                          {lt('내 스피드 랭크')}
-                          <select value={sampleForge.config.speedStage} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, speedStage: clampSpeedStage(e.target.value) } }))}>
-                            {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-                          </select>
-                        </label>
-                      </div>
-                    </div>
-                  </div> : null}
-                </div>
+                <label className="sample-speed-slider-field sample-speed-stage-inline-card">
+                  <span className="sample-workbench-section-label">{lt('내 스피드 랭크')}</span>
+                  <select value={sampleForge.config.speedStage} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, speedStage: clampSpeedStage(e.target.value) } }))}>
+                    {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                  </select>
+                </label>
               </div>
               <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                 <span className="sample-workbench-section-label">{lt('비교 포켓몬 추가')}</span>

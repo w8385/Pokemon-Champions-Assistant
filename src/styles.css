@@ -3399,6 +3399,22 @@ header p {
   background: rgba(15, 23, 42, 0.66);
   box-shadow: 0 14px 28px rgba(2, 6, 23, 0.18);
 }
+.sample-speed-top-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+  align-items: start;
+}
+.sample-speed-stage-inline-card {
+  display: grid;
+  gap: 8px;
+  align-self: stretch;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(71, 85, 105, 0.52);
+  background: rgba(15, 23, 42, 0.5);
+}
+.sample-speed-stage-inline-card select {
+  width: 100%;
+}
 .sample-compare-adder-block {
   padding-top: 14px;
   border-top: 1px dashed rgba(71, 85, 105, 0.78);
@@ -6588,6 +6604,7 @@ html {
   .sample-tuning-inline { grid-template-columns: 1fr; }
   .sample-speed-inline-controls,
   .sample-current-build-toolbar { grid-template-columns: 1fr; }
+  .sample-speed-top-panel { grid-template-columns: 1fr; }
   .sample-inline-ev-editor-dual { grid-template-columns: 1fr; }
   .sample-current-build-card-embedded .drag-stat-list { grid-template-columns: 1fr; }
   .sample-embedded-drag-stat-list-damage { grid-template-columns: 1fr !important; width: 100%; max-width: none; }
