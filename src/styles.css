@@ -3334,11 +3334,11 @@ header p {
   margin-bottom: 14px;
 }
 .sample-workbench-toolbar {
-  padding: 14px;
-  border: 1px solid var(--sample-surface-border);
-  border-radius: 16px;
-  background: var(--sample-surface-bg);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .sample-workbench-toolbar-head {
   display: flex;
@@ -3350,7 +3350,7 @@ header p {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(240px, 320px) minmax(220px, 280px);
   gap: 12px;
-  align-items: stretch;
+  align-items: start;
 }
 .sample-current-build-toolbar {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3362,10 +3362,10 @@ header p {
   color: #93a4b8;
 }
 .sample-speed-control-card {
-  padding: 12px;
-  border: 1px solid var(--sample-surface-border);
-  border-radius: 14px;
-  background: rgba(2, 6, 23, 0.22);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .sample-damage-search-field.sample-speed-control-card {
   width: 100%;
@@ -3548,10 +3548,11 @@ header p {
   margin-bottom: 14px;
 }
 .sample-damage-conditions-panel {
-  border: 1px solid var(--sample-surface-border);
-  border-radius: 16px;
-  background: var(--sample-surface-bg);
-  padding: 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(51, 65, 85, 0.56);
 }
 .sample-damage-conditions-head {
   margin-bottom: 10px;
@@ -3576,20 +3577,22 @@ header p {
 }
 .sample-damage-target-card {
   gap: 12px;
-  padding: 14px;
-  border-radius: 16px;
-  border: 1px solid var(--sample-surface-border);
-  background: var(--sample-surface-bg);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  padding: 12px 0 0;
+  border-radius: 0;
+  border: 0;
+  border-top: 1px solid rgba(51, 65, 85, 0.56);
+  background: transparent;
+  box-shadow: none;
 }
 .sample-workbench-wide-card {
-  padding: 14px;
+  padding: 0;
 }
 .sample-workbench-card-body {
   display: grid;
   grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
   gap: 18px;
   align-items: start;
+  padding-top: 2px;
 }
 .sample-workbench-sidepanel,
 .sample-workbench-mainpanel {
