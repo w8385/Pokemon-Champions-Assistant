@@ -3440,9 +3440,9 @@ header p {
   margin-top: 12px;
 }
 .sample-embedded-drag-stat-list-speed {
-  grid-template-columns: minmax(0, 1fr) !important;
-  width: min(100%, 275px);
-  max-width: 100%;
+  grid-template-columns: minmax(0, 280px) !important;
+  width: 100%;
+  max-width: 280px;
 }
 .sample-embedded-drag-stat-list-speed .drag-stat-card {
   padding: 10px 12px;
@@ -3460,9 +3460,9 @@ header p {
   font-size: 11px;
 }
 .sample-embedded-drag-stat-list-damage {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  width: min(100%, 560px);
-  max-width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 280px)) !important;
+  width: 100%;
+  max-width: 572px;
 }
 .sample-embedded-drag-stat-list-damage .drag-stat-card {
   padding: 10px 12px;
@@ -3480,6 +3480,7 @@ header p {
   font-size: 11px;
 }
 .sample-current-build-card-embedded .drag-stat-card {
+  min-height: 192px;
   padding: 10px;
 }
 .sample-current-build-card-embedded .effort-gauge-wrap {
