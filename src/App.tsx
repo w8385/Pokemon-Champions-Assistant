@@ -7584,9 +7584,6 @@ export default function App() {
               </div>
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
-              <div className="row-between sample-panel-header sample-panel-header-side">
-                <strong>{lt('샘플 기술')}</strong>
-              </div>
               <>
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-workspace">
@@ -7665,7 +7662,7 @@ export default function App() {
                           </div>
                           {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                         </div>
-                        {sampleCuratedMoveBuckets.length ? <div className="sample-track-card top-move-chip-card">
+                        {sampleCuratedMoveBuckets.length ? <div className="sample-track-card top-move-chip-card sample-track-secondary-section">
                           <div className="row-between sample-track-head compact-gap sample-candidate-head">
                             <strong>{lt('실전 후보')}</strong>
                             <div className="tab-bar sample-filter-bar sample-candidate-filter-bar">
@@ -7710,7 +7707,7 @@ export default function App() {
                               </section>
                             ))}
                           </div>
-                        </div> : sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                        </div> : sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card sample-track-secondary-section">
                           <div className="row-between sample-track-head compact-gap">
                             <strong>{lt('사용률 상위 기술')}</strong>
                             <span className="muted-inline">Top {Math.min(10, sampleTopSuggestedMoves.length)}</span>

@@ -2062,6 +2062,10 @@ header p {
   padding: 12px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
+.flat-sample-move-card {
+  display: grid;
+  gap: 12px;
+}
 .flat-sample-main-card {
   overflow: visible;
 }
@@ -2425,19 +2429,19 @@ header p {
   margin: 0;
 }
 .sample-tracking-cluster {
-  margin-top: calc(var(--sample-rhythm) + 2px);
+  margin-top: 0;
   display: grid;
   gap: 0;
 }
 .sample-track-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+  gap: 0;
   align-items: start;
 }
 .sample-track-main-column {
   display: grid;
-  gap: 12px;
+  gap: 0;
 }
 .sample-track-card {
   position: relative;
@@ -5544,6 +5548,11 @@ textarea { min-height: 72px; resize: vertical; }
 .top-move-chip-card {
   padding: 0;
   gap: 10px;
+}
+.sample-track-secondary-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(51, 65, 85, 0.62);
 }
 .top-move-chip-card .move-chip-wrap,
 .opponent-top-moves-card .move-chip-wrap {
