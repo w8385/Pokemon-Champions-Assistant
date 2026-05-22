@@ -7891,7 +7891,7 @@ export default function App() {
                   {sampleSpeedCalcs.length ? <span className="pick-badge">{sampleSpeedCalcs.length}</span> : null}
                 </div>
                 {sampleSpeedCalcs.length ? sampleSpeedCalcs.map((entry) => (
-                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
+                  <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     <div className="row-between sample-compare-card-head">
                       <div className="sample-compare-hero sample-compare-hero-compact">
                         {entry.row.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}

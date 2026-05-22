@@ -3393,7 +3393,7 @@ header p {
 .sample-damage-top-panel {
   display: grid;
   gap: 14px;
-  padding: 14px;
+  padding: 16px;
   border-radius: 18px;
   border: 1px solid rgba(71, 85, 105, 0.58);
   background: rgba(15, 23, 42, 0.66);
@@ -3629,8 +3629,12 @@ header p {
 }
 .sample-damage-compare-adder-standalone {
   margin-top: 14px;
-  padding-top: 0;
+  padding: 14px 16px;
   border-top: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(71, 85, 105, 0.52);
+  background: rgba(15, 23, 42, 0.5);
+  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.14);
 }
 .sample-damage-search-field {
   position: relative;
@@ -3644,15 +3648,14 @@ header p {
 }
 .sample-damage-target-card {
   gap: 12px;
-  padding: 12px 0 0;
+  padding: 0;
   border-radius: 0;
   border: 0;
-  border-top: 1px solid rgba(51, 65, 85, 0.56);
   background: transparent;
   box-shadow: none;
 }
 .sample-damage-compare-card {
-  padding: 14px;
+  padding: 16px;
   border-radius: 18px;
   border: 1px solid rgba(71, 85, 105, 0.58);
   background: rgba(15, 23, 42, 0.58);
@@ -3666,7 +3669,7 @@ header p {
   grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
   gap: 18px;
   align-items: start;
-  padding-top: 2px;
+  padding-top: 6px;
 }
 .sample-workbench-sidepanel,
 .sample-workbench-mainpanel {
