@@ -5814,7 +5814,7 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-calc-grid.compact.offense-grid,
 .damage-calc-grid.compact.defender-grid {
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 .damage-calc-grid.compact.field-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -5840,6 +5840,18 @@ textarea { min-height: 72px; resize: vertical; }
 .calc-grid > label input,
 .calc-grid > label select {
   width: 100%;
+}
+.calc-pair-field {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(120px, 0.8fr);
+  gap: 8px;
+}
+.calc-pair-field > label {
+  min-width: 0;
+}
+.calc-pair-field .calc-toggle-box {
+  min-height: 76px;
 }
 .calc-lock-box {
   display: flex;
@@ -5874,6 +5886,10 @@ textarea { min-height: 72px; resize: vertical; }
   .damage-calc-grid.compact.offense-grid,
   .damage-calc-grid.compact.defender-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .calc-pair-field {
+    grid-column: span 2;
+    grid-template-columns: 1fr 1fr;
   }
   .damage-calc-grid.compact.field-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
