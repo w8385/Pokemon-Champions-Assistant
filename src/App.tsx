@@ -8732,7 +8732,7 @@ export default function App() {
           </div>
         </section> : null}
         </>}
-        {hoverTooltip ? <div className={`floating-hover-tooltip ${tooltipPlacement}`} style={{ left: tooltipLeft, top: tooltipTop }} aria-hidden="true">
+        {hoverTooltip ? <div className={`floating-hover-tooltip ${tooltipPlacement} ${hoverTooltip.kind === 'item' ? 'item-tooltip' : ''}`} style={{ left: tooltipLeft, top: tooltipTop }} aria-hidden="true">
           <div className="floating-hover-tooltip-head">
             <div>
               <strong>{hoverTooltip.title}</strong>
@@ -8740,15 +8740,15 @@ export default function App() {
             </div>
             {hoverTooltip.accentType ? <span className="floating-hover-tooltip-type"><TypeBadgeImage type={hoverTooltip.accentType} /></span> : null}
           </div>
-          {hoverTooltip.description ? <div className="floating-hover-tooltip-description">
-            <span>{lt('효과')}</span>
-            <p>{hoverTooltip.description}</p>
-          </div> : null}
-          {hoverTooltip.rows.length ? <div className="floating-hover-tooltip-body">
+          {hoverTooltip.rows.length ? <div className={`floating-hover-tooltip-body ${hoverTooltip.kind === 'item' ? 'item-tooltip-effect-body' : ''}`}>
             {hoverTooltip.rows.map((row) => <div key={`tooltip-row-${hoverTooltip.kind}-${row.label}`} className="floating-hover-tooltip-row">
               <span>{row.label}</span>
               <strong>{row.value}</strong>
             </div>)}
+          </div> : null}
+          {hoverTooltip.description ? <div className="floating-hover-tooltip-description">
+            <span>{hoverTooltip.kind === 'item' ? lt('설명') : lt('효과')}</span>
+            <p>{hoverTooltip.description}</p>
           </div> : null}
           {hoverTooltip.chips?.length ? <div className="floating-hover-tooltip-chips">
             {hoverTooltip.chips.map((chip) => <span key={`tooltip-chip-${hoverTooltip.kind}-${chip}`} className="floating-hover-tooltip-chip">{chip}</span>)}

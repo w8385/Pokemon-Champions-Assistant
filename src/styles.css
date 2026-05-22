@@ -5015,12 +5015,20 @@ label {
   display: grid;
   gap: 7px;
 }
+.floating-hover-tooltip-body.item-tooltip-effect-body {
+  gap: 6px;
+  margin-bottom: 8px;
+}
 .floating-hover-tooltip-description {
-  margin-bottom: 12px;
+  margin-top: 10px;
+  margin-bottom: 0;
   padding: 10px 12px;
   border-radius: 14px;
   background: rgba(20, 28, 48, 0.78);
   border: 1px solid rgba(71, 85, 105, 0.34);
+}
+.item-tooltip .floating-hover-tooltip-description {
+  margin-top: 8px;
 }
 .floating-hover-tooltip-description > span {
   display: block;
@@ -5043,6 +5051,10 @@ label {
   padding: 8px 10px;
   border-radius: 12px;
   background: rgba(30, 41, 59, 0.56);
+}
+.item-tooltip .floating-hover-tooltip-row {
+  gap: 8px;
+  padding: 7px 10px;
 }
 .floating-hover-tooltip-row > span {
   color: #94a3b8;
