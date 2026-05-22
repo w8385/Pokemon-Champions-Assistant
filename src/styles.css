@@ -3390,6 +3390,15 @@ header p {
 .sample-current-build-toolbar {
   grid-template-columns: minmax(0, 1fr);
 }
+.sample-damage-top-panel {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(71, 85, 105, 0.58);
+  background: rgba(15, 23, 42, 0.66);
+  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.18);
+}
 .sample-compare-adder-block {
   padding-top: 14px;
   border-top: 1px dashed rgba(71, 85, 105, 0.78);
@@ -3585,7 +3594,7 @@ header p {
   box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.22);
 }
 .sample-damage-adder {
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 .sample-damage-conditions-panel {
   border: 0;
@@ -3593,6 +3602,9 @@ header p {
   background: transparent;
   padding: 0;
   border-top: 0;
+}
+.sample-damage-top-conditions {
+  margin-top: -2px;
 }
 .sample-damage-conditions-head {
   margin-bottom: 10px;
@@ -3607,6 +3619,11 @@ header p {
 }
 .sample-compare-targets-section {
   margin-top: 18px;
+}
+.sample-damage-compare-adder-standalone {
+  margin-top: 14px;
+  padding-top: 0;
+  border-top: 0;
 }
 .sample-damage-search-field {
   position: relative;
@@ -3626,6 +3643,13 @@ header p {
   border-top: 1px solid rgba(51, 65, 85, 0.56);
   background: transparent;
   box-shadow: none;
+}
+.sample-damage-compare-card {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(71, 85, 105, 0.58);
+  background: rgba(15, 23, 42, 0.58);
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.16);
 }
 .sample-workbench-wide-card {
   padding: 0;

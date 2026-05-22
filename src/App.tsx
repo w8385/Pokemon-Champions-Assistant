@@ -7912,9 +7912,10 @@ export default function App() {
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
-              <div className="sample-damage-adder sample-workbench-toolbar">
-                <div className="sample-speed-inline-controls sample-current-build-toolbar">
-                  <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
+              <div className="sample-damage-top-panel">
+                <div className="sample-damage-adder sample-workbench-toolbar">
+                  <div className="sample-speed-inline-controls sample-current-build-toolbar">
+                    <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
                     <span className="sample-current-build-label sample-workbench-section-label">{lt('기준 빌드')}</span>
                     <div className="sample-compare-hero">
                       {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="sample-compare-sprite" /> : null}
@@ -7932,7 +7933,49 @@ export default function App() {
                       <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
                     </div>
                   </div>
-                  <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block">
+                  </div>
+                </div>
+                <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel sample-workbench-section sample-damage-top-conditions">
+                  <div className="row-between sample-damage-conditions-head sample-workbench-section-head">
+                    <strong>{lt('세부 조건')}</strong>
+                    <button type="button" className={`pick-chip ${sampleDamageConditionsCollapsed ? '' : 'active'}`} onClick={() => setSampleDamageConditionsCollapsed((prev) => !prev)} aria-expanded={!sampleDamageConditionsCollapsed}>{sampleDamageConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
+                  </div>
+                  {!sampleDamageConditionsCollapsed ? <div className="sample-damage-conditions-box damage-control-groups">
+                  <div className="damage-control-group">
+                    <div className="damage-control-group-title">{lt('화력 조건')}</div>
+                    <div className="calc-grid damage-calc-grid compact offense-grid">
+                      {sampleUsesTypeChangeStabAbility ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} /><span>{lt('타입변환 자속')}</span></label> : null}
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} /><span>{lt('급소')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} /><span>{lt('화상')}</span></label>
+                      {sampleShowAttackerLowHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} /><span>{lt('공격측 HP 1/3 이하')}</span></label> : null}
+                      {sampleShowTargetPoisonedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} /><span>{lt('상대 독/맹독')}</span></label> : null}
+                      {sampleShowMovedAfterTargetToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} /><span>{lt('상대보다 늦게 행동')}</span></label> : null}
+                      {sampleShowFaintedAlliesInput ? <label>{lt('기절한 아군 수')}<input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} /></label> : null}
+                      {sampleShowRivalryModeInput ? <label>{lt('라이벌리 성별 관계')}<select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}><option value="neutral">{lt('없음')}</option><option value="same">{lt('같은 성별')}</option><option value="opposite">{lt('다른 성별')}</option></select></label> : null}
+                      {sampleShowParentalBondToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} /><span>{lt('부자유친 발동')}</span></label> : null}
+                      {sampleShowDefenderStatusedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} /><span>{lt('상대 상태이상')}</span></label> : null}
+                      {sampleShowElectromorphosisToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} /><span>{lt('일렉트릭 차지됨')}</span></label> : null}
+                      <label>{lt('공격측 화력 랭크')}<select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
+                      <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
+                      {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 만땅')}</span></label> : null}
+                      {sampleShowDefenderDisguiseToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} /><span>{lt('상대 탈 intact')}</span></label> : null}
+                    </div>
+                  </div>
+                  <div className="damage-control-group">
+                    <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                    <div className="calc-grid damage-calc-grid compact field-grid">
+                      <label>{lt('날씨')}<select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}><option value="none">{lt('없음')}</option><option value="sun">{lt('쾌청')}</option><option value="rain">{lt('비')}</option><option value="sand">{lt('모래바람')}</option><option value="snow">{lt('싸라기눈')}</option></select></label>
+                      <label>{lt('필드')}<select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}><option value="none">{lt('없음')}</option><option value="electric">{lt('일렉트릭필드')}</option><option value="grassy">{lt('그래스필드')}</option><option value="psychic">{lt('사이코필드')}</option><option value="misty">{lt('미스트필드')}</option></select></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} /><span>{lt('리플렉터')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} /><span>{lt('빛의장막')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} /><span>{lt('오로라베일')}</span></label>
+                      <label className="calc-toggle-box"><input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} /><span>{lt('프렌드가드')}</span></label>
+                    </div>
+                  </div>
+                  </div> : null}
+                </div>
+              </div>
+              <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                     <span className="sample-workbench-section-label">{lt('비교 포켓몬 추가')}</span>
                     <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onBlur={() => { setTimeout(() => setSampleDamageSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-damage-add'), 120) }} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onKeyDown={(e) => {
                       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -7951,55 +7994,14 @@ export default function App() {
                     {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
                       {sampleDamageSearchResults.map((option, optionIdx) => <button key={`sample-damage-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
-                  </label>
-                </div>
-              </div>
-              <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel sample-workbench-section">
-                <div className="row-between sample-damage-conditions-head sample-workbench-section-head">
-                  <strong>{lt('세부 조건')}</strong>
-                  <button type="button" className={`pick-chip ${sampleDamageConditionsCollapsed ? '' : 'active'}`} onClick={() => setSampleDamageConditionsCollapsed((prev) => !prev)} aria-expanded={!sampleDamageConditionsCollapsed}>{sampleDamageConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
-                </div>
-                {!sampleDamageConditionsCollapsed ? <div className="sample-damage-conditions-box damage-control-groups">
-                <div className="damage-control-group">
-                  <div className="damage-control-group-title">{lt('화력 조건')}</div>
-                  <div className="calc-grid damage-calc-grid compact offense-grid">
-                    {sampleUsesTypeChangeStabAbility ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} /><span>{lt('타입변환 자속')}</span></label> : null}
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} /><span>{lt('급소')}</span></label>
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} /><span>{lt('화상')}</span></label>
-                    {sampleShowAttackerLowHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} /><span>{lt('공격측 HP 1/3 이하')}</span></label> : null}
-                    {sampleShowTargetPoisonedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} /><span>{lt('상대 독/맹독')}</span></label> : null}
-                    {sampleShowMovedAfterTargetToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} /><span>{lt('상대보다 늦게 행동')}</span></label> : null}
-                    {sampleShowFaintedAlliesInput ? <label>{lt('기절한 아군 수')}<input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} /></label> : null}
-                    {sampleShowRivalryModeInput ? <label>{lt('라이벌리 성별 관계')}<select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}><option value="neutral">{lt('없음')}</option><option value="same">{lt('같은 성별')}</option><option value="opposite">{lt('다른 성별')}</option></select></label> : null}
-                    {sampleShowParentalBondToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} /><span>{lt('부자유친 발동')}</span></label> : null}
-                    {sampleShowDefenderStatusedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} /><span>{lt('상대 상태이상')}</span></label> : null}
-                    {sampleShowElectromorphosisToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} /><span>{lt('일렉트릭 차지됨')}</span></label> : null}
-                    <label>{lt('공격측 화력 랭크')}<select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
-                    <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
-                    {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 만땅')}</span></label> : null}
-                    {sampleShowDefenderDisguiseToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} /><span>{lt('상대 탈 intact')}</span></label> : null}
-                  </div>
-                </div>
-                <div className="damage-control-group">
-                  <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                  <div className="calc-grid damage-calc-grid compact field-grid">
-                    <label>{lt('날씨')}<select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}><option value="none">{lt('없음')}</option><option value="sun">{lt('쾌청')}</option><option value="rain">{lt('비')}</option><option value="sand">{lt('모래바람')}</option><option value="snow">{lt('싸라기눈')}</option></select></label>
-                    <label>{lt('필드')}<select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}><option value="none">{lt('없음')}</option><option value="electric">{lt('일렉트릭필드')}</option><option value="grassy">{lt('그래스필드')}</option><option value="psychic">{lt('사이코필드')}</option><option value="misty">{lt('미스트필드')}</option></select></label>
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} /><span>{lt('리플렉터')}</span></label>
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} /><span>{lt('빛의장막')}</span></label>
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} /><span>{lt('오로라베일')}</span></label>
-                    <label className="calc-toggle-box"><input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} /><span>{lt('프렌드가드')}</span></label>
-                  </div>
-                </div>
-                </div> : null}
-              </div>
+              </label>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
                 <div className="row-between sample-workbench-section-head">
                   <span className="sample-workbench-section-label">{lt('비교 포켓몬')}</span>
                   {sampleDamageCalcs.length ? <span className="pick-badge">{sampleDamageCalcs.length}</span> : null}
                 </div>
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
-                  <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card">
+                  <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     <div className="row-between sample-compare-card-head">
                       <div className="sample-compare-hero sample-compare-hero-compact">
                         {entry.row?.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
