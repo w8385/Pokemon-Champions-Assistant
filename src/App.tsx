@@ -4678,11 +4678,11 @@ export default function App() {
   const defenderRow = attackFromOpponent ? myRow : oppRow
   const attackerMemberKey = attackFromOpponent ? oppMember.key : myMember.key
   const attackerAbilityValue = attackFromOpponent
-    ? (selectedOppAbility?.slug ?? sanitizeAbilityForKey(oppMember.key, oppMember.ability, false))
-    : (selectedMyAbility?.slug ?? sanitizeAbilityForKey(myMember.key, myMember.ability, true))
+    ? (selectedOppAbility?.slug ?? sanitizeAbilityForKey(attackerRow?.key ?? oppMember.key, oppMember.ability, false))
+    : (selectedMyAbility?.slug ?? sanitizeAbilityForKey(attackerRow?.key ?? myMember.key, myMember.ability, true))
   const defenderAbilityValue = attackFromOpponent
-    ? (selectedMyAbility?.slug ?? sanitizeAbilityForKey(myMember.key, myMember.ability, true))
-    : (selectedOppAbility?.slug ?? sanitizeAbilityForKey(oppMember.key, oppMember.ability, false))
+    ? (selectedMyAbility?.slug ?? sanitizeAbilityForKey(defenderRow?.key ?? myMember.key, myMember.ability, true))
+    : (selectedOppAbility?.slug ?? sanitizeAbilityForKey(defenderRow?.key ?? oppMember.key, oppMember.ability, false))
   const selectedAttackAbility = attackFromOpponent ? selectedOppAbility : selectedMyAbility
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null) : myBattleStats
