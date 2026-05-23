@@ -205,7 +205,7 @@ type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'home' | 'single' | 'double' | 'sample' | 'dex'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
 type MainTab = 'party' | 'pick' | 'speed' | 'power'
-type DexSearchMode = 'all' | 'pokemon' | 'move' | 'ability' | 'item'
+type DexSearchMode = 'pokemon' | 'move' | 'ability' | 'item'
 type DexResultItem =
   | { id: string; kind: 'pokemon'; key: string; row: Row; score: number }
   | { id: string; kind: 'move'; key: string; name: string; meta: MoveMeta; score: number }
@@ -346,6 +346,7 @@ type ViewState = {
   sampleWorkbenchTab?: SampleWorkbenchTab
   dexSearchMode?: DexSearchMode
   dexSearch?: string
+  dexUnifiedSearch?: string
   dexSelectedValue?: string
   selectedMy?: number
   selectedOpp?: number
@@ -371,7 +372,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
     '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
     '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
-    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도감': 'Dex', '통합검색': 'All', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
+    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도감': 'Dex', '통합검색': 'Unified Search', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '포켓몬 / 기술 / 특성 / 도구 검색': 'Search Pokémon / moves / abilities / items', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '배우는 포켓몬': 'Pokémon that learn this move', '합계': 'Total', '효과': 'Effect',
     '선택 슬롯 비우기': 'Clear selected slot',
     '간단 설명': 'Summary', '상세 설명': 'Details', '설명': 'Description', '이름': 'Name', '설명 데이터 없음': 'No description available yet.',
@@ -1789,14 +1790,15 @@ function parseViewStateFromUrl(): ViewState | null {
       ? sampleTabParam
       : undefined
     const dexTabParam = routeUrl.searchParams.get('dexTab')
-    const dexSearchMode = dexTabParam === 'all' || dexTabParam === 'pokemon' || dexTabParam === 'move' || dexTabParam === 'ability' || dexTabParam === 'item'
+    const dexSearchMode = dexTabParam === 'pokemon' || dexTabParam === 'move' || dexTabParam === 'ability' || dexTabParam === 'item'
       ? dexTabParam
       : undefined
     const dexSearch = routeUrl.searchParams.get('q') ?? undefined
+    const dexUnifiedSearch = routeUrl.searchParams.get('uq') ?? undefined
     const dexSelectedValue = routeUrl.searchParams.get('sel') ?? undefined
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
-    return { mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexSelectedValue, selectedMy, selectedOpp }
+    return { mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
   } catch {
     return null
   }
@@ -1810,6 +1812,7 @@ function syncViewStateToUrl(viewState: ViewState) {
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
   if (viewState.mainSection === 'dex' && viewState.dexSearch) params.set('q', viewState.dexSearch)
+  if (viewState.mainSection === 'dex' && viewState.dexUnifiedSearch) params.set('uq', viewState.dexUnifiedSearch)
   if (viewState.mainSection === 'dex' && viewState.dexSelectedValue) params.set('sel', viewState.dexSelectedValue)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
@@ -3602,6 +3605,7 @@ export default function App() {
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
   const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>(() => viewState?.dexSearchMode ?? 'pokemon')
   const [dexSearch, setDexSearch] = React.useState(() => viewState?.dexSearch ?? '')
+  const [dexUnifiedSearch, setDexUnifiedSearch] = React.useState(() => viewState?.dexUnifiedSearch ?? '')
   const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(() => viewState?.dexSelectedValue ?? null)
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const longPressTimerRef = React.useRef<number | null>(null)
@@ -3641,36 +3645,43 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
-  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(dexSearch, { includeMega: true }).slice(0, dexSearchMode === 'all' ? 10 : 12), [dexSearch, dexSearchMode])
-  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(dexSearch).slice(0, dexSearchMode === 'all' ? 16 : 48), [dexSearch, dexSearchMode])
-  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(dexSearch).slice(0, dexSearchMode === 'all' ? 10 : 48), [dexSearch, dexSearchMode])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(dexSearch, siteLanguage).slice(0, dexSearchMode === 'all' ? 16 : 48), [dexSearch, dexSearchMode, siteLanguage])
+  const hasDexUnifiedSearch = dexUnifiedSearch.trim().length > 0
+  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(dexSearch, { includeMega: true }).slice(0, 12), [dexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(dexSearch).slice(0, 48), [dexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(dexSearch).slice(0, 48), [dexSearch])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(dexSearch, siteLanguage).slice(0, 48), [dexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
-    const pokemonResults = dexSpeciesOptions
+    const unifiedQuery = dexUnifiedSearch.trim()
+    if (!unifiedQuery) return []
+    const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true }).slice(0, 10)
+    const moveOptions = filterDexMoveOptions(unifiedQuery).slice(0, 16)
+    const abilityOptions = filterDexAbilityOptions(unifiedQuery).slice(0, 10)
+    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage).slice(0, 16)
+    const pokemonResults = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
         return row ? { id: dexSelectionId('pokemon', option.key), kind: 'pokemon' as const, key: option.key, row, score: idx + 0 } : null
       })
       .filter((entry): entry is DexResultItem => Boolean(entry))
-    const moveResults = dexMoveOptions.map((option, idx) => ({ id: dexSelectionId('move', option.key), kind: 'move' as const, key: option.key, name: option.name, meta: option.meta, score: idx + 0.15 }))
-    const abilityResults = dexAbilityOptions.map((option, idx) => ({ id: dexSelectionId('ability', option.key), kind: 'ability' as const, key: option.key, koLabel: option.koLabel, pokemonKeys: option.pokemonKeys, score: idx + 0.3 }))
-    const itemResults = dexItemOptions.map((item, idx) => {
+    const moveResults = moveOptions.map((option, idx) => ({ id: dexSelectionId('move', option.key), kind: 'move' as const, key: option.key, name: option.name, meta: option.meta, score: idx + 0.15 }))
+    const abilityResults = abilityOptions.map((option, idx) => ({ id: dexSelectionId('ability', option.key), kind: 'ability' as const, key: option.key, koLabel: option.koLabel, pokemonKeys: option.pokemonKeys, score: idx + 0.3 }))
+    const itemResults = itemOptions.map((item, idx) => {
       const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
       return { id: dexSelectionId('item', item), kind: 'item' as const, key: item, item, previewText: itemText?.summary || itemText?.detail || '', score: idx + 0.45 }
     })
     return [...pokemonResults, ...moveResults, ...abilityResults, ...itemResults]
       .sort((a, b) => a.score - b.score || a.kind.localeCompare(b.kind) || a.key.localeCompare(b.key, 'ko'))
       .slice(0, 40)
-  }, [dexAbilityOptions, dexItemOptions, dexMoveOptions, dexSpeciesOptions, siteLanguage])
+  }, [dexUnifiedSearch, siteLanguage])
   const dexResultKeys = React.useMemo(() => {
-    if (dexSearchMode === 'all') return dexAllResults.map((result) => result.id)
+    if (hasDexUnifiedSearch) return dexAllResults.map((result) => result.id)
     if (dexSearchMode === 'pokemon') return dexSpeciesOptions.map((option) => option.key)
     if (dexSearchMode === 'move') return dexMoveOptions.map((option) => option.key)
     if (dexSearchMode === 'ability') return dexAbilityOptions.map((option) => option.key)
     return dexItemOptions
-  }, [dexAbilityOptions, dexAllResults, dexItemOptions, dexMoveOptions, dexSearchMode, dexSpeciesOptions])
+  }, [dexAbilityOptions, dexAllResults, dexItemOptions, dexMoveOptions, dexSearchMode, dexSpeciesOptions, hasDexUnifiedSearch])
   const dexSelectedAllResult = React.useMemo(() => {
-    if (dexSearchMode !== 'all' || !dexSelectedValue) return null
+    if (!hasDexUnifiedSearch || !dexSelectedValue) return null
     const direct = dexAllResults.find((result) => result.id === dexSelectedValue)
     if (direct) return direct
     const parsed = parseDexSelectionId(dexSelectedValue)
@@ -3690,7 +3701,7 @@ export default function App() {
     return ITEM_INDEX.byKey.has(parsed.key)
       ? { id: dexSelectionId('item', parsed.key), kind: 'item' as const, key: parsed.key, item: parsed.key, previewText: '', score: 0 }
       : null
-  }, [dexAllResults, dexSearchMode, dexSelectedValue])
+  }, [dexAllResults, dexSelectedValue, hasDexUnifiedSearch])
   const dexSelectedRow = dexSelectedAllResult?.kind === 'pokemon'
     ? dexSelectedAllResult.row
     : dexSearchMode === 'pokemon' && dexSelectedValue
@@ -3779,38 +3790,41 @@ export default function App() {
 
   const openDexPokemonDetail = React.useCallback((key: string) => {
     hideHoverTooltip()
-    setDexSearch(searchDisplayLabel(key, siteLanguage))
-    if (dexSearchMode === 'all') {
+    if (hasDexUnifiedSearch) {
+      setDexUnifiedSearch((prev) => prev || searchDisplayLabel(key, siteLanguage))
       setDexSelectedValue(dexSelectionId('pokemon', key))
       return
     }
+    setDexSearch(searchDisplayLabel(key, siteLanguage))
     setDexSearchMode('pokemon')
     setDexSelectedValue(key)
-  }, [dexSearchMode, hideHoverTooltip, siteLanguage])
+  }, [hasDexUnifiedSearch, hideHoverTooltip, siteLanguage])
 
   const openDexMoveDetail = React.useCallback((name: string) => {
     hideHoverTooltip()
-    setDexSearch(name)
-    if (dexSearchMode === 'all') {
+    if (hasDexUnifiedSearch) {
+      setDexUnifiedSearch((prev) => prev || name)
       setDexSelectedValue(dexSelectionId('move', name))
       return
     }
+    setDexSearch(name)
     setDexSearchMode('move')
     setDexSelectedValue(name)
-  }, [dexSearchMode, hideHoverTooltip])
+  }, [hasDexUnifiedSearch, hideHoverTooltip])
 
   const openDexAbilityDetail = React.useCallback((ability: string, row?: Row | null) => {
     const resolved = resolveAbilityInfo(ability, row)
     if (!resolved) return
     hideHoverTooltip()
-    setDexSearch(resolved.koLabel)
-    if (dexSearchMode === 'all') {
+    if (hasDexUnifiedSearch) {
+      setDexUnifiedSearch((prev) => prev || resolved.koLabel)
       setDexSelectedValue(dexSelectionId('ability', resolved.key))
       return
     }
+    setDexSearch(resolved.koLabel)
     setDexSearchMode('ability')
     setDexSelectedValue(resolved.key)
-  }, [dexSearchMode, hideHoverTooltip])
+  }, [hasDexUnifiedSearch, hideHoverTooltip])
 
   const bindNavigableTooltip = React.useCallback((card: HoverTooltipCard | null | undefined, onNavigate: () => void) => ({
     ...bindTooltip(card),
@@ -4438,11 +4452,12 @@ export default function App() {
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
       dexSearchMode: mainSection === 'dex' ? dexSearchMode : undefined,
       dexSearch: mainSection === 'dex' ? dexSearch.trim() : undefined,
+      dexUnifiedSearch: mainSection === 'dex' ? dexUnifiedSearch.trim() : undefined,
       dexSelectedValue: mainSection === 'dex' ? dexSelectedValue ?? undefined : undefined,
       selectedMy,
       selectedOpp,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexSelectedValue, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -6241,9 +6256,27 @@ export default function App() {
               </div>
             </div>
             <div className="dex-tab-panel">
+              <div className="dex-unified-search-card">
+                <div className="section-head compact">
+                  <div>
+                    <strong>{lt('통합검색')}</strong>
+                    <p className="muted">{lt('포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.')}</p>
+                  </div>
+                </div>
+                <div className="dex-search-autocomplete">
+                  <input
+                    value={dexUnifiedSearch}
+                    placeholder={lt('포켓몬 / 기술 / 특성 / 도구 검색')}
+                    onChange={(e) => setDexUnifiedSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter' || !dexAllResults.length) return
+                      setDexSelectedValue(dexAllResults[0].id)
+                    }}
+                  />
+                </div>
+              </div>
               <div className="tab-bar section-menu-tabs dex-mode-tabs">
                 {([
-                  ['all', lt('통합검색')],
                   ['pokemon', lt('포켓몬')],
                   ['move', lt('기술')],
                   ['ability', lt('특성')],
@@ -6257,10 +6290,10 @@ export default function App() {
           <section className="panel wide dex-content-panel">
           <div className="dex-browser-layout">
             <div className="dex-browser-sidebar">
-              <div className="dex-search-autocomplete">
+              <div className="dex-search-autocomplete dex-tab-search-box">
                 <input
                   value={dexSearch}
-                  placeholder={dexSearchMode === 'all' ? lt('포켓몬 / 기술 / 특성 / 도구 검색') : dexSearchMode === 'pokemon' ? lt('포켓몬 검색') : dexSearchMode === 'move' ? lt('기술 검색') : dexSearchMode === 'ability' ? lt('특성 검색') : lt('도구 검색')}
+                  placeholder={dexSearchMode === 'pokemon' ? lt('포켓몬 검색') : dexSearchMode === 'move' ? lt('기술 검색') : dexSearchMode === 'ability' ? lt('특성 검색') : lt('도구 검색')}
                   onChange={(e) => setDexSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key !== 'Enter' || !dexResultKeys.length) return
@@ -6276,7 +6309,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="dex-results-list">
-                  {dexSearchMode === 'all' ? dexAllResults.map((result) => {
+                  {hasDexUnifiedSearch ? dexAllResults.map((result) => {
                     if (result.kind === 'pokemon') {
                       return <button key={result.id} type="button" className={`dex-result-item ${dexSelectedValue === result.id ? 'active' : ''}`} onClick={() => setDexSelectedValue(result.id)}>
                         <div className="row-between compact-gap">

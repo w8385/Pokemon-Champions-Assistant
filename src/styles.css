@@ -4725,6 +4725,18 @@ label {
 .dex-mode-tabs {
   gap: 8px;
 }
+.dex-unified-search-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: rgba(11, 18, 32, 0.88);
+  margin-bottom: 12px;
+}
+.dex-tab-search-box {
+  margin-top: 0;
+}
 .dex-tab-panel .dex-mode-tabs {
   margin-top: 0;
 }
