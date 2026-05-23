@@ -1548,7 +1548,9 @@ function abilityMatchesKey(key: string, ability: string) {
 function sanitizeAbilityForKey(key: string, ability: unknown, fallbackToDefault = true) {
   const raw = typeof ability === 'string' ? ability : ''
   if (raw && abilityMatchesKey(key, raw)) return raw
-  return fallbackToDefault ? defaultAbilityForKey(key) : ''
+  const row = indexByKey.get(key)
+  const shouldUseDefault = fallbackToDefault || Boolean(row && row.abilities.length === 1)
+  return shouldUseDefault ? defaultAbilityForKey(key) : ''
 }
 
 function sanitizePartyTuning(input: unknown): PartyTuning {
