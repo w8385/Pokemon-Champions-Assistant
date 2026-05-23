@@ -1534,6 +1534,23 @@ function sanitizeMemberConfig(input: unknown, key = ''): MemberConfig {
   }
 }
 
+function abilityMatchesKey(key: string, ability: string) {
+  const row = indexByKey.get(key)
+  if (!row) return false
+  const normalized = normalizeSearchText(ability)
+  if (!normalized) return false
+  return row.abilities.some((slug, idx) => {
+    const ko = row.abilities_ko[idx] ?? ''
+    return normalizeSearchText(slug) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(slug)) === normalized
+  })
+}
+
+function sanitizeAbilityForKey(key: string, ability: unknown, fallbackToDefault = true) {
+  const raw = typeof ability === 'string' ? ability : ''
+  if (raw && abilityMatchesKey(key, raw)) return raw
+  return fallbackToDefault ? defaultAbilityForKey(key) : ''
+}
+
 function sanitizePartyTuning(input: unknown): PartyTuning {
   const tuning = input && typeof input === 'object' ? (input as Partial<PartyTuning>) : {}
   return {
@@ -1599,7 +1616,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
         item: normalizeItemForKey(raw.key, typeof raw.item === 'string' ? raw.item : ''),
-        ability: typeof raw.ability === 'string' ? raw.ability : defaultAbilityForKey(raw.key),
+        ability: sanitizeAbilityForKey(raw.key, raw.ability, true),
       }
     })
     .filter((member): member is PartyMember => Boolean(member))
@@ -1618,7 +1635,7 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
       return {
         key: raw.key,
         item: typeof raw.item === 'string' ? raw.item : '',
-        ability: typeof raw.ability === 'string' ? raw.ability : '',
+        ability: sanitizeAbilityForKey(raw.key, raw.ability, false),
         notes: typeof raw.notes === 'string' ? raw.notes : '',
         revealedMoves: Array.isArray(raw.revealedMoves)
           ? raw.revealedMoves.filter((move): move is string => typeof move === 'string')
@@ -3728,6 +3745,43 @@ export default function App() {
   const dexSelectedItemEffectSummary = React.useMemo(() => dexSelectedItem ? itemEffectSummaryFor(dexSelectedItem, siteLanguage) : '', [dexSelectedItem, siteLanguage])
 
   React.useEffect(() => {
+    setParty((prev) => {
+      let changed = false
+      const next = prev.map((member) => {
+        const ability = sanitizeAbilityForKey(member.key, member.ability, true)
+        if (ability === member.ability) return member
+        changed = true
+        return { ...member, ability }
+      })
+      return changed ? next : prev
+    })
+  }, [])
+
+  React.useEffect(() => {
+    setSampleForge((prev) => {
+      const ability = sanitizeAbilityForKey(prev.key, prev.ability, true)
+      return ability === prev.ability ? prev : { ...prev, ability }
+    })
+  }, [])
+
+  React.useEffect(() => {
+    let nextAbilities: string[] | null = null
+    setOpponents((prev) => {
+      let changed = false
+      const next = prev.map((member, idx) => {
+        const ability = sanitizeAbilityForKey(member.key, member.ability, false)
+        if (ability === member.ability) return member
+        changed = true
+        if (!nextAbilities) nextAbilities = prev.map((item) => item.ability)
+        nextAbilities[idx] = ability
+        return { ...member, ability }
+      })
+      return changed ? next : prev
+    })
+    if (nextAbilities) setOpponentAbilityDrafts(nextAbilities)
+  }, [])
+
+  React.useEffect(() => {
     let cancelled = false
     if (!dexSelectedMove) {
       setDexMoveLearners([])
@@ -4623,8 +4677,12 @@ export default function App() {
   const attackerRow = attackFromOpponent ? oppRow : myRow
   const defenderRow = attackFromOpponent ? myRow : oppRow
   const attackerMemberKey = attackFromOpponent ? oppMember.key : myMember.key
-  const attackerAbilityValue = attackFromOpponent ? (selectedOppAbility?.slug ?? oppMember.ability) : (selectedMyAbility?.slug ?? myMember.ability)
-  const defenderAbilityValue = attackFromOpponent ? (selectedMyAbility?.slug ?? myMember.ability) : (selectedOppAbility?.slug ?? oppMember.ability)
+  const attackerAbilityValue = attackFromOpponent
+    ? (selectedOppAbility?.slug ?? sanitizeAbilityForKey(oppMember.key, oppMember.ability, false))
+    : (selectedMyAbility?.slug ?? sanitizeAbilityForKey(myMember.key, myMember.ability, true))
+  const defenderAbilityValue = attackFromOpponent
+    ? (selectedMyAbility?.slug ?? sanitizeAbilityForKey(myMember.key, myMember.ability, true))
+    : (selectedOppAbility?.slug ?? sanitizeAbilityForKey(oppMember.key, oppMember.ability, false))
   const selectedAttackAbility = attackFromOpponent ? selectedOppAbility : selectedMyAbility
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
   const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null) : myBattleStats
@@ -5247,7 +5305,7 @@ export default function App() {
       cancelled = true
     }
   }, [sampleDamageTargets, weightByKey])
-  const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sampleForge.ability) : sampleForge.ability
+  const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(sampleForge.key, sampleForge.ability, true)) : sampleForge.ability
   const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
   const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
@@ -5270,7 +5328,7 @@ export default function App() {
   }, [sampleShowDefenderDisguiseToggle])
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? member.ability) : member.ability
+    const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(member.key, member.ability, false)) : member.ability
     const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
     const moveHitOptions = multiHitOptions(moveName)
