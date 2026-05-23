@@ -3,296 +3,345 @@
     "type": "ground",
     "category": "physical",
     "power": 95,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "10만볼트": {
     "type": "electric",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "3연화살": {
     "type": "fighting",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "가드셰어": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "가드스웹": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "가로챔": {
     "type": "dark",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "가시대포": {
     "type": "normal",
     "category": "physical",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "가위자르기": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 30
+    "accuracy": 30,
+    "pp": 5
   },
   "가지찌르기": {
     "type": "grass",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "각지기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "간지르기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "강철날개": {
     "type": "steel",
     "category": "physical",
     "power": 70,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 25
   },
   "개척하기": {
     "type": "grass",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "객기": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
-  },
-  "거미집": {
-    "type": "bug",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "거짓울음": {
-    "type": "dark",
-    "category": "status",
-    "power": null,
-    "accuracy": 100
-  },
-  "거품": {
-    "type": "water",
-    "category": "special",
-    "power": 40,
-    "accuracy": 100
-  },
-  "거품광선": {
-    "type": "water",
-    "category": "special",
-    "power": 65,
-    "accuracy": 100
-  },
-  "검은눈빛": {
-    "type": "normal",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "겁나는얼굴": {
-    "type": "normal",
-    "category": "status",
-    "power": null,
-    "accuracy": 100
-  },
-  "경혈찌르기": {
-    "type": "normal",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "고드름떨구기": {
-    "type": "ice",
-    "category": "physical",
-    "power": 85,
-    "accuracy": 90
-  },
-  "고드름침": {
-    "type": "ice",
-    "category": "physical",
-    "power": 25,
-    "accuracy": 100
-  },
-  "고민씨": {
-    "type": "grass",
-    "category": "status",
-    "power": null,
-    "accuracy": 100
-  },
-  "고속스핀": {
-    "type": "normal",
-    "category": "physical",
-    "power": 50,
-    "accuracy": 100
-  },
-  "고속이동": {
-    "type": "psychic",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "고스트다이브": {
-    "type": "ghost",
-    "category": "physical",
-    "power": 90,
-    "accuracy": 100
-  },
-  "고양이돈받기": {
-    "type": "normal",
-    "category": "physical",
-    "power": 40,
-    "accuracy": 100
-  },
-  "공중날기": {
-    "type": "flying",
-    "category": "physical",
-    "power": 90,
-    "accuracy": 95
-  },
-  "광합성": {
-    "type": "grass",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "괴력": {
-    "type": "normal",
-    "category": "physical",
-    "power": 80,
-    "accuracy": 100
-  },
-  "괴상한바람": {
-    "type": "ghost",
-    "category": "special",
-    "power": 60,
-    "accuracy": 100
-  },
-  "괴전파": {
-    "type": "electric",
-    "category": "status",
-    "power": null,
-    "accuracy": 100
-  },
-  "구르기": {
-    "type": "rock",
-    "category": "physical",
-    "power": 30,
-    "accuracy": 90
-  },
-  "구멍파기": {
-    "type": "ground",
-    "category": "physical",
-    "power": 80,
-    "accuracy": 100
-  },
-  "그래스믹서": {
-    "type": "grass",
-    "category": "special",
-    "power": 65,
-    "accuracy": 90
-  },
-  "그래스슬라이더": {
-    "type": "grass",
-    "category": "physical",
-    "power": 55,
-    "accuracy": 100
-  },
-  "그래스필드": {
-    "type": "grass",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "그로우펀치": {
-    "type": "fighting",
-    "category": "physical",
-    "power": 40,
-    "accuracy": 100
-  },
-  "그림자꿰매기": {
-    "type": "ghost",
-    "category": "physical",
-    "power": 80,
-    "accuracy": 100
-  },
-  "그림자분신": {
-    "type": "normal",
-    "category": "status",
-    "power": null,
-    "accuracy": null
-  },
-  "금속음": {
-    "type": "steel",
-    "category": "status",
-    "power": null,
-    "accuracy": 85
-  },
-  "금제": {
-    "type": "dark",
-    "category": "status",
-    "power": null,
-    "accuracy": 100
-  },
-  "기가드레인": {
-    "type": "grass",
-    "category": "special",
-    "power": 75,
-    "accuracy": 100
-  },
-  "기가임팩트": {
-    "type": "normal",
-    "category": "physical",
-    "power": 150,
-    "accuracy": 90
+    "accuracy": 100,
+    "pp": 20
   },
   "거대해머": {
     "type": "steel",
     "category": "physical",
     "power": 160,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
+  },
+  "거미집": {
+    "type": "bug",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 10
+  },
+  "거짓울음": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "거품": {
+    "type": "water",
+    "category": "special",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "거품광선": {
+    "type": "water",
+    "category": "special",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "검은눈빛": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 5
+  },
+  "겁나는얼굴": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "경혈찌르기": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 30
+  },
+  "고드름떨구기": {
+    "type": "ice",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "고드름침": {
+    "type": "ice",
+    "category": "physical",
+    "power": 25,
+    "accuracy": 100,
+    "pp": 30
+  },
+  "고민씨": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "고속스핀": {
+    "type": "normal",
+    "category": "physical",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 40
+  },
+  "고속이동": {
+    "type": "psychic",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 30
+  },
+  "고스트다이브": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "고양이돈받기": {
+    "type": "normal",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "공중날기": {
+    "type": "flying",
+    "category": "physical",
+    "power": 90,
+    "accuracy": 95,
+    "pp": 15
+  },
+  "광합성": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 5
+  },
+  "괴력": {
+    "type": "normal",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "괴상한바람": {
+    "type": "ghost",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 5
+  },
+  "괴전파": {
+    "type": "electric",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "구르기": {
+    "type": "rock",
+    "category": "physical",
+    "power": 30,
+    "accuracy": 90,
+    "pp": 20
+  },
+  "구멍파기": {
+    "type": "ground",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "그래스믹서": {
+    "type": "grass",
+    "category": "special",
+    "power": 65,
+    "accuracy": 90,
+    "pp": 10
+  },
+  "그래스슬라이더": {
+    "type": "grass",
+    "category": "physical",
+    "power": 55,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "그래스필드": {
+    "type": "grass",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 10
+  },
+  "그로우펀치": {
+    "type": "fighting",
+    "category": "physical",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20
+  },
+  "그림자꿰매기": {
+    "type": "ghost",
+    "category": "physical",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "그림자분신": {
+    "type": "normal",
+    "category": "status",
+    "power": null,
+    "accuracy": null,
+    "pp": 15
+  },
+  "금속음": {
+    "type": "steel",
+    "category": "status",
+    "power": null,
+    "accuracy": 85,
+    "pp": 40
+  },
+  "금제": {
+    "type": "dark",
+    "category": "status",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15
+  },
+  "기가드레인": {
+    "type": "grass",
+    "category": "special",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 10
+  },
+  "기가임팩트": {
+    "type": "normal",
+    "category": "physical",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5
   },
   "기관총": {
     "type": "grass",
     "category": "physical",
     "power": 25,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "기사회생": {
     "type": "fighting",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "기선제압": {
     "type": "fighting",
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 15,
     "priority": 3
   },
   "기습": {
@@ -300,187 +349,218 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 5,
     "priority": 1
   },
   "기어오르기": {
     "type": "dark",
     "category": "physical",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "기충전": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "기프트패스": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "기합구슬": {
     "type": "fighting",
     "category": "special",
     "power": 120,
-    "accuracy": 70
+    "accuracy": 70,
+    "pp": 5
   },
   "길동무": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "김밥말이": {
     "type": "normal",
     "category": "physical",
     "power": 15,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 20
   },
   "깃털댄스": {
     "type": "flying",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "깜짝베기": {
     "type": "dark",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "깨물어부수기": {
     "type": "dark",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "깨트리다": {
     "type": "fighting",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "껍질깨기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "껍질에숨기": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "꼬리자르기": {
     "type": "normal",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "꼬리흔들기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "꽃가루경단": {
     "type": "bug",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "꽃보라": {
     "type": "grass",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "꽃잎댄스": {
     "type": "grass",
     "category": "special",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "꿀꺽": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "꿈먹기": {
     "type": "psychic",
     "category": "special",
     "power": 100,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "꿰뚫어보기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "끈적끈적네트": {
     "type": "bug",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "나뭇잎": {
     "type": "grass",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "나비춤": {
     "type": "bug",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "나쁜음모": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "나이트버스트": {
     "type": "dark",
     "category": "special",
     "power": 85,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "나이트헤드": {
     "type": "ghost",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "난동부리기": {
     "type": "normal",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "날개쉬기": {
     "type": "flying",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "날개치기": {
     "type": "flying",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "날따름": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 2
   },
   "날려버리기": {
@@ -488,3067 +568,3571 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6
   },
   "내던지기": {
     "type": "dark",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "냄새구별": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "냉동빔": {
     "type": "ice",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "냉동펀치": {
     "type": "ice",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "노래하기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 55
+    "accuracy": 55,
+    "pp": 15
   },
   "녹기": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "놀래키기": {
     "type": "ghost",
     "category": "physical",
     "power": 30,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "농성": {
     "type": "steel",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "누르기": {
     "type": "normal",
     "category": "physical",
     "power": 85,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "눈물그렁그렁": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "눈보라": {
     "type": "ice",
     "category": "special",
     "power": 110,
-    "accuracy": 70
+    "accuracy": 70,
+    "pp": 5
   },
   "눈사태": {
     "type": "ice",
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": -4
   },
   "눈싸라기": {
     "type": "ice",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "니들가드": {
     "type": "grass",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "니트로차지": {
     "type": "fire",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "다과회": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "다이빙": {
     "type": "water",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "단단해지기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "달려들기": {
     "type": "bug",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "달의불빛": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "달콤한향기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "당신먼저": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "대격분": {
     "type": "fire",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "대지의파동": {
     "type": "normal",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "대지의힘": {
     "type": "ground",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "대타출동": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "대폭발": {
     "type": "normal",
     "category": "physical",
     "power": 250,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "더블니들": {
     "type": "bug",
     "category": "physical",
     "power": 25,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "더블어택": {
     "type": "normal",
     "category": "physical",
     "power": 35,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "더블윙": {
     "type": "flying",
     "category": "physical",
     "power": 40,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "더블촙": {
     "type": "dragon",
     "category": "physical",
     "power": 40,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "더스트슈트": {
     "type": "poison",
     "category": "physical",
     "power": 120,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 5
   },
   "덤벼들기": {
     "type": "bug",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "덩굴채찍": {
     "type": "grass",
     "category": "physical",
     "power": 45,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "데코레이션": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "도각참": {
     "type": "dark",
     "category": "physical",
     "power": 85,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "도깨비불": {
     "type": "fire",
     "category": "status",
     "power": null,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "도둑질": {
     "type": "dark",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "도발": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "도우미": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 5
   },
   "독가루": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 35
   },
   "독가스": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 40
   },
   "독실": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "독압정": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "독엄니": {
     "type": "poison",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "독찌르기": {
     "type": "poison",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "독침": {
     "type": "poison",
     "category": "physical",
     "power": 15,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "돌떨구기": {
     "type": "rock",
     "category": "physical",
     "power": 50,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "돌림노래": {
     "type": "normal",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "돌진": {
     "type": "normal",
     "category": "physical",
     "power": 90,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 20
   },
   "동료만들기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "두번치기": {
     "type": "fighting",
     "category": "physical",
     "power": 30,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "뒀다쓰기": {
     "type": "normal",
     "category": "physical",
     "power": 140,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "드래곤다이브": {
     "type": "dragon",
     "category": "physical",
     "power": 100,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 10
   },
   "드래곤애로": {
     "type": "dragon",
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "hits": 2
   },
   "드래곤옐": {
     "type": "dragon",
     "category": "status",
     "power": 0,
-    "accuracy": 0
+    "accuracy": 0,
+    "pp": 15
   },
   "드래곤크루": {
     "type": "dragon",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "드래곤테일": {
     "type": "dragon",
     "category": "physical",
     "power": 60,
     "accuracy": 90,
+    "pp": 10,
     "priority": -6
   },
   "드레인키스": {
     "type": "fairy",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "드레인펀치": {
     "type": "fighting",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "드릴라이너": {
     "type": "ground",
     "category": "physical",
     "power": 80,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "들이받기": {
     "type": "ground",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "따라가때리기": {
     "type": "dark",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "따라하기": {
     "type": "flying",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "땅가르기": {
     "type": "ground",
     "category": "physical",
     "power": null,
-    "accuracy": 30
+    "accuracy": 30,
+    "pp": 5
   },
   "땅고르기": {
     "type": "ground",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "떨어뜨리기": {
     "type": "rock",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "똬리틀기": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "뛰어오르다": {
     "type": "flying",
     "category": "physical",
     "power": 85,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 5
   },
   "라이징볼트": {
     "type": "electric",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "락블레스트": {
     "type": "rock",
     "category": "physical",
     "power": 25,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "락클라임": {
     "type": "normal",
     "category": "physical",
     "power": 90,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 20
   },
   "러스터캐논": {
     "type": "steel",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "레이징볼": {
     "type": "normal",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "로우킥": {
     "type": "fighting",
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "variablePower": true
   },
   "로케트박치기": {
     "type": "normal",
     "category": "physical",
     "power": 130,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "로킥": {
     "type": "fighting",
     "category": "physical",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "록온": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "록커트": {
     "type": "rock",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "루미나콜리전": {
     "type": "psychic",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "리벤지": {
     "type": "fighting",
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": -4
   },
   "리사이클": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "리프레쉬": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "리프블레이드": {
     "type": "grass",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "리프스톰": {
     "type": "grass",
     "category": "special",
     "power": 130,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "리플렉터": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "마구찌르기": {
     "type": "normal",
     "category": "physical",
     "power": 15,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 20
   },
   "마구할퀴기": {
     "type": "normal",
     "category": "physical",
     "power": 18,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 15
   },
   "마룻바닥세워막기": {
     "type": "fighting",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "마법가루": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "마음의눈": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "마지막수단": {
     "type": "normal",
     "category": "special",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "마지막일침": {
     "type": "bug",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "마하펀치": {
     "type": "fighting",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "막말내뱉기": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "막치기": {
     "type": "normal",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "망각술": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "매그니튜드": {
     "type": "ground",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "매지컬샤인": {
     "type": "fairy",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "매지컬플레임": {
     "type": "fire",
     "category": "special",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "매직룸": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "매직코트": {
     "type": "psychic",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 4
   },
   "매혹의보이스": {
     "type": "fairy",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "맹독": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "머드숏": {
     "type": "ground",
     "category": "special",
     "power": 55,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "멀리짖음": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "메가드레인": {
     "type": "grass",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "메가톤킥": {
     "type": "normal",
     "category": "physical",
     "power": 120,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 5
   },
   "메가톤펀치": {
     "type": "normal",
     "category": "physical",
     "power": 80,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 20
   },
   "메가폰": {
     "type": "bug",
     "category": "physical",
     "power": 120,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "메지컬리프": {
     "type": "grass",
     "category": "special",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "메탈버스트": {
     "type": "steel",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "메탈크로우": {
     "type": "steel",
     "category": "physical",
     "power": 50,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 35
   },
   "메테오빔": {
     "type": "rock",
     "category": "special",
     "power": 120,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "멸망의노래": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "명상": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "모래바람": {
     "type": "rock",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "모래뿌리기": {
     "type": "ground",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "모래지옥": {
     "type": "ground",
     "category": "physical",
     "power": 35,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "목숨걸기": {
     "type": "fighting",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "목화포자": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "몸통박치기": {
     "type": "normal",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "무릎차기": {
     "type": "fighting",
     "category": "physical",
     "power": 130,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "문포스": {
     "type": "fairy",
     "category": "special",
     "power": 95,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "물거품아리아": {
     "type": "water",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "물기": {
     "type": "dark",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "물놀이": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "물대포": {
     "type": "water",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "물붓기": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "물수리검": {
     "type": "water",
     "category": "special",
     "power": 15,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1
   },
   "물의맹세": {
     "type": "water",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "물의파동": {
     "type": "water",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "미라클아이": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "미래예지": {
     "type": "psychic",
     "category": "special",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "미러숏": {
     "type": "steel",
     "category": "special",
     "power": 65,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "미러코트": {
     "type": "psychic",
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": -5
   },
   "미러타입": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "미스트버스트": {
     "type": "fairy",
     "category": "special",
     "power": 100,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "미스트필드": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "바꿔치기": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "바늘미사일": {
     "type": "bug",
     "category": "physical",
     "power": 25,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 20
   },
   "바늘팔": {
     "type": "grass",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "바다회오리": {
     "type": "water",
     "category": "special",
     "power": 35,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "바둥바둥": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "바디퍼지": {
     "type": "steel",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "바디프레스": {
     "type": "fighting",
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "usesDefenseAsAttack": true
   },
   "바람일으키기": {
     "type": "flying",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "바위깨기": {
     "type": "fighting",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "바크아웃": {
     "type": "dark",
     "category": "special",
     "power": 55,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "바톤터치": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "박치기": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "받아던지기": {
     "type": "fighting",
     "category": "physical",
     "power": 70,
     "accuracy": null,
+    "pp": 10,
     "priority": -1
   },
   "발경": {
     "type": "fighting",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "발꿈치찍기": {
     "type": "fighting",
     "category": "physical",
     "power": 120,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "방어": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "방전": {
     "type": "electric",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "배대뒤치기": {
     "type": "fighting",
     "category": "physical",
     "power": 60,
     "accuracy": 90,
+    "pp": 10,
     "priority": -6
   },
   "배리어": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "배리어러시": {
     "type": "psychic",
     "category": "physical",
     "power": 70,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "배북": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "백귀야행": {
     "type": "ghost",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "뱀눈초리": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "버티기": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "번개": {
     "type": "electric",
     "category": "special",
     "power": 110,
-    "accuracy": 70
+    "accuracy": 70,
+    "pp": 10
   },
   "번개엄니": {
     "type": "electric",
     "category": "physical",
     "power": 65,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "번개펀치": {
     "type": "electric",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "벌레먹음": {
     "type": "bug",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "벌레의야단법석": {
     "type": "bug",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "벌레의저항": {
     "type": "bug",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "벌크업": {
     "type": "fighting",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "베놈쇼크": {
     "type": "poison",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "베놈트랩": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "베어가르기": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "변덕레이저": {
     "type": "dragon",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "변신": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "병상첨병": {
     "type": "ghost",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "보복": {
     "type": "dark",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "보호색": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "본러쉬": {
     "type": "ground",
     "category": "physical",
     "power": 25,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "볼부비부비": {
     "type": "electric",
     "category": "physical",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "볼트체인지": {
     "type": "electric",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "볼트태클": {
     "type": "electric",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "봉인": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "부르짖기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "부리캐논": {
     "type": "flying",
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 15,
     "priority": -3
   },
   "부식가스": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "부추기기": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "분노": {
     "type": "normal",
     "category": "physical",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "분노가루": {
     "type": "bug",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 2
   },
   "분노의앞니": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "분발": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "분연": {
     "type": "fire",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "분진": {
     "type": "bug",
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1
   },
   "분풀이": {
     "type": "dark",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "분함의발구르기": {
     "type": "ground",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "분화": {
     "type": "fire",
     "category": "special",
     "power": 150,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "불꽃세례": {
     "type": "fire",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "불꽃엄니": {
     "type": "fire",
     "category": "physical",
     "power": 65,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "불꽃의맹세": {
     "type": "fire",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "불꽃채찍": {
     "type": "fire",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "불꽃춤": {
     "type": "fire",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "불꽃튀기기": {
     "type": "fire",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "불꽃펀치": {
     "type": "fire",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "불대문자": {
     "type": "fire",
     "category": "special",
     "power": 110,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 5
   },
   "불릿펀치": {
     "type": "steel",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "불사르기": {
     "type": "fire",
     "category": "special",
     "power": 130,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "불새": {
     "type": "flying",
     "category": "physical",
     "power": 140,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "불태우기": {
     "type": "fire",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "브레이브버드": {
     "type": "flying",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "브레이즈킥": {
     "type": "fire",
     "category": "physical",
     "power": 85,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "브레이크크루": {
     "type": "normal",
     "category": "physical",
     "power": 75,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "블러스트번": {
     "type": "fire",
     "category": "special",
     "power": 150,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "블록": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "비검천중파": {
     "type": "dark",
     "category": "physical",
     "power": 65,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "비밀의힘": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "비밀이야기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "비바라기": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "비축하기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "빙산바람": {
     "type": "ice",
     "category": "physical",
     "power": 100,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "빛의장막": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "뽐내기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "뿌리박기": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "뿔드릴": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 30
+    "accuracy": 30,
+    "pp": 5
   },
   "뿔찌르기": {
     "type": "normal",
     "category": "physical",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "사과산": {
     "type": "grass",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "사념의박치기": {
     "type": "psychic",
     "category": "physical",
     "power": 80,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "사슬묶기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "사이드체인지": {
     "type": "psychic",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 2
   },
   "사이코노이즈": {
     "type": "psychic",
     "category": "special",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "사이코쇼크": {
     "type": "psychic",
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "targetsDefenseStat": "defense"
   },
   "사이코웨이브": {
     "type": "psychic",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "사이코커터": {
     "type": "psychic",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "사이코키네시스": {
     "type": "psychic",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "사이코팽": {
     "type": "psychic",
     "category": "physical",
     "power": 85,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "사이코필드": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "생명의물방울": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "섀도볼": {
     "type": "ghost",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "섀도크루": {
     "type": "ghost",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "섀도펀치": {
     "type": "ghost",
     "category": "physical",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "선취": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "설경": {
     "type": "ice",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "섬뜩한주문": {
     "type": "psychic",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "성묘": {
     "type": "ghost",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "성스러운칼": {
     "type": "fighting",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "성장": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "세차게휘두르기": {
     "type": "dark",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "셸블레이드": {
     "type": "water",
     "category": "physical",
     "power": 75,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "셸암즈": {
     "type": "poison",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "소금물": {
     "type": "water",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "소금절이": {
     "type": "rock",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "소란피기": {
     "type": "normal",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "소울비트": {
     "type": "dragon",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "속여때리기": {
     "type": "dark",
     "category": "physical",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "속이다": {
     "type": "normal",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 10,
     "priority": 3
   },
   "속임수": {
     "type": "dark",
     "category": "physical",
     "power": 95,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "손가락흔들기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "손바닥치기": {
     "type": "fighting",
     "category": "physical",
     "power": 15,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "손톱갈기": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "솔라블레이드": {
     "type": "grass",
     "category": "physical",
     "power": 125,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "솔라빔": {
     "type": "grass",
     "category": "special",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "송전": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "수면가루": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 15
   },
   "순간이동": {
     "type": "psychic",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6
   },
   "순서미루기": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "순풍": {
     "type": "flying",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "숟가락휘기": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 15
   },
   "숲의저주": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "스마트호른": {
     "type": "steel",
     "category": "physical",
     "power": 70,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "스모그": {
     "type": "poison",
     "category": "special",
     "power": 30,
-    "accuracy": 70
+    "accuracy": 70,
+    "pp": 20
   },
   "스위프뺨치기": {
     "type": "normal",
     "category": "physical",
     "power": 25,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "스카이업퍼": {
     "type": "fighting",
     "category": "physical",
     "power": 85,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "스케일노이즈": {
     "type": "dragon",
     "category": "special",
     "power": 110,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "스케일샷": {
     "type": "dragon",
     "category": "physical",
     "power": 25,
     "accuracy": 90,
+    "pp": 20,
     "variablePower": true
   },
   "스킬스웹": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "스텔스록": {
     "type": "rock",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "스톤샤워": {
     "type": "rock",
     "category": "physical",
     "power": 75,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "스톤에지": {
     "type": "rock",
     "category": "physical",
     "power": 100,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 5
   },
   "스파크": {
     "type": "electric",
     "category": "physical",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "스포트라이트": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 3
   },
   "스피드스웹": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "스피드스타": {
     "type": "normal",
     "category": "special",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "승부굳히기": {
     "type": "dark",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "시그널빔": {
     "type": "bug",
     "category": "special",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "시럽봄": {
     "type": "grass",
     "category": "special",
     "power": 60,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "시저크로스": {
     "type": "bug",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "신비의부적": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 25
   },
   "신속": {
     "type": "normal",
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 5,
     "priority": 2
   },
   "신통력": {
     "type": "psychic",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "실뿜기": {
     "type": "bug",
     "category": "status",
     "power": null,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 40
   },
   "싫은소리": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 40
   },
   "심플빔": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "싱크로노이즈": {
     "type": "psychic",
     "category": "special",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "싸라기눈": {
     "type": "ice",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "썬더다이브": {
     "type": "electric",
     "category": "physical",
     "power": 100,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "썰렁개그": {
     "type": "ice",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "씨뿌리기": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "씨폭탄": {
     "type": "grass",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "아로마미스트": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "아로마테라피": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "아머캐논": {
     "type": "fire",
     "category": "special",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "아이스볼": {
     "type": "ice",
     "category": "physical",
     "power": 30,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 20
   },
   "아이스스피너": {
     "type": "ice",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "아이스해머": {
     "type": "ice",
     "category": "physical",
     "power": 100,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "아이언롤러": {
     "type": "steel",
     "category": "physical",
     "power": 130,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "아이언테일": {
     "type": "steel",
     "category": "physical",
     "power": 100,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 15
   },
   "아이언헤드": {
     "type": "steel",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "아침햇살": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "아쿠아링": {
     "type": "water",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "아쿠아브레이크": {
     "type": "water",
     "category": "physical",
     "power": 85,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "아쿠아스텝": {
     "type": "water",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "아쿠아제트": {
     "type": "water",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1
   },
   "아쿠아커터": {
     "type": "water",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "아쿠아테일": {
     "type": "water",
     "category": "physical",
     "power": 90,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "아픔나누기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "악몽": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "악의파동": {
     "type": "dark",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "안개제거": {
     "type": "flying",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "안다리걸기": {
     "type": "fighting",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "알낳기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "암석봉인": {
     "type": "rock",
     "category": "physical",
     "power": 60,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "암석액스": {
     "type": "rock",
     "category": "physical",
     "power": 65,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "암석포": {
     "type": "rock",
     "category": "physical",
     "power": 150,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "암해머": {
     "type": "fighting",
     "category": "physical",
     "power": 100,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "압정뿌리기": {
     "type": "ground",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "앙갚음": {
     "type": "dark",
     "category": "physical",
     "power": 1,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "애교부리기": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "애시드봄": {
     "type": "poison",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "애크러뱃": {
     "type": "flying",
     "category": "physical",
     "power": 55,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "액셀록": {
     "type": "rock",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1
   },
   "앵콜": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "야금야금": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "야습": {
     "type": "ghost",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "양날박치기": {
     "type": "rock",
     "category": "physical",
     "power": 150,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 5
   },
   "어시스트파워": {
     "type": "psychic",
     "category": "special",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "얼다바람": {
     "type": "ice",
     "category": "special",
     "power": 55,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "얼음뭉치": {
     "type": "ice",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "얼음숨결": {
     "type": "ice",
     "category": "special",
     "power": 60,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "얼음엄니": {
     "type": "ice",
     "category": "physical",
     "power": 65,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "엄습하는일격": {
     "type": "bug",
     "category": "physical",
     "power": 70,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "엄청난힘": {
     "type": "fighting",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "업어후리기": {
     "type": "fighting",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "엉겨붙기": {
     "type": "bug",
     "category": "special",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "에너지볼": {
     "type": "grass",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "에어슬래시": {
     "type": "flying",
     "category": "special",
     "power": 75,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "에어컷터": {
     "type": "flying",
     "category": "special",
     "power": 60,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 25
   },
   "에코보이스": {
     "type": "normal",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "역린": {
     "type": "dragon",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "역할": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "연막": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "연속뺨치기": {
     "type": "normal",
     "category": "physical",
     "power": 15,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "연속자르기": {
     "type": "bug",
     "category": "physical",
     "power": 40,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 20
   },
   "연속펀치": {
     "type": "normal",
     "category": "physical",
     "power": 18,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "연옥": {
     "type": "fire",
     "category": "special",
     "power": 100,
-    "accuracy": 50
+    "accuracy": 50,
+    "pp": 5
   },
   "열불내기": {
     "type": "fire",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "열사의대지": {
     "type": "ground",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "열탕": {
     "type": "water",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "열풍": {
     "type": "fire",
     "category": "special",
     "power": 95,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "염동력": {
     "type": "psychic",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "예민해지기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "오라휠": {
     "type": "electric",
     "category": "physical",
     "power": 110,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "오로라베일": {
     "type": "ice",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "오로라빔": {
     "type": "ice",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "오물공격": {
     "type": "poison",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "오물웨이브": {
     "type": "poison",
     "category": "special",
     "power": 95,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "오물폭탄": {
     "type": "poison",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "오버히트": {
     "type": "fire",
     "category": "special",
     "power": 130,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "와이드가드": {
     "type": "rock",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 3
   },
   "와이드브레이커": {
     "type": "dragon",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "와이드포스": {
     "type": "psychic",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "와일드볼트": {
     "type": "electric",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "요가포즈": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "요정의바람": {
     "type": "fairy",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "용성군": {
     "type": "dragon",
     "category": "special",
     "power": 130,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "용의분노": {
     "type": "dragon",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "용의숨결": {
     "type": "dragon",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "용의춤": {
     "type": "dragon",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "용의파동": {
     "type": "dragon",
     "category": "special",
     "power": 85,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "용해액": {
     "type": "poison",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "우드해머": {
     "type": "grass",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "우드호른": {
     "type": "grass",
     "category": "physical",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "울부짖기": {
     "type": "normal",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6
   },
   "울음소리": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "웅크리기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "원념": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "원념의칼": {
     "type": "fire",
     "category": "physical",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "원더룸": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "원수갚기": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "원시의힘": {
     "type": "rock",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "원한": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "웨더볼": {
     "type": "normal",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "웨이브태클": {
     "type": "water",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "위액": {
     "type": "poison",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "유턴": {
     "type": "bug",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "유혹": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "은빛바람": {
     "type": "bug",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "은혜갚기": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "이상한빛": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "이판사판태클": {
     "type": "normal",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "인파이트": {
     "type": "fighting",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "일구기": {
     "type": "ground",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "일렉트로빔": {
     "type": "electric",
     "category": "special",
     "power": 130,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "일렉트릭네트": {
     "type": "electric",
     "category": "special",
     "power": 55,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 15
   },
   "일렉트릭볼": {
     "type": "electric",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "일렉트릭필드": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "잎날가르기": {
     "type": "grass",
     "category": "physical",
     "power": 55,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 25
   },
   "자기암시": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "자기장조작": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "자연의은혜": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "자연의힘": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "자이로볼": {
     "type": "steel",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "자폭": {
     "type": "normal",
     "category": "physical",
     "power": 200,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "작아지기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "잠깨움뺨치기": {
     "type": "fighting",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "잠꼬대": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "잠자기": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "잠재파워": {
     "type": "normal",
     "category": "special",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "잼잼펀치": {
     "type": "normal",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "저리가루": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 30
   },
   "저주": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "전격파": {
     "type": "electric",
     "category": "special",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "전광석화": {
     "type": "normal",
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "전기쇼크": {
     "type": "electric",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "전기자석파": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 20
   },
   "전자부유": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "전자포": {
     "type": "electric",
     "category": "special",
     "power": 120,
-    "accuracy": 50
+    "accuracy": 50,
+    "pp": 5
   },
   "절대영도": {
     "type": "ice",
     "category": "special",
     "power": null,
-    "accuracy": 30
+    "accuracy": 30,
+    "pp": 5
   },
   "점프킥": {
     "type": "fighting",
     "category": "physical",
     "power": 100,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "정리정돈": {
     "type": "normal",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "제비반환": {
     "type": "flying",
     "category": "physical",
     "power": 60,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "제트펀치": {
     "type": "water",
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 1
   },
   "조수": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "조이기": {
     "type": "normal",
     "category": "physical",
     "power": 15,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 20
   },
   "주술": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "죽기살기": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "중력": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "쥐어짜기": {
     "type": "normal",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "지구던지기": {
     "type": "fighting",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "지옥의바퀴": {
     "type": "fighting",
     "category": "physical",
     "power": 80,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 20
   },
   "지옥찌르기": {
     "type": "dark",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "지진": {
     "type": "ground",
     "category": "physical",
     "power": 100,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "지휘": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "진공파": {
     "type": "fighting",
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "진흙뿌리기": {
     "type": "ground",
     "category": "special",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "진흙폭탄": {
     "type": "ground",
     "category": "special",
     "power": 65,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "질투의불꽃": {
     "type": "fire",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "집게덫": {
     "type": "grass",
     "category": "physical",
     "power": 35,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "집단구타": {
     "type": "dark",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "짓밟기": {
     "type": "normal",
     "category": "physical",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "째려보기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "쪼기": {
     "type": "flying",
     "category": "physical",
     "power": 35,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "쪼아대기": {
     "type": "flying",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "찍찍베기": {
     "type": "normal",
     "category": "physical",
     "power": 20,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "찝게햄머": {
     "type": "water",
     "category": "physical",
     "power": 100,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "찝기": {
     "type": "normal",
     "category": "physical",
     "power": 55,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "차밍보이스": {
     "type": "fairy",
     "category": "special",
     "power": 40,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "차지빔": {
     "type": "electric",
     "category": "special",
     "power": 50,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "찬물끼얹기": {
     "type": "water",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "참기": {
     "type": "normal",
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 1
   },
   "천사의키스": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 10
   },
   "천추지한": {
     "type": "ghost",
     "category": "special",
     "power": 75,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "철벽": {
     "type": "steel",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "철제광선": {
     "type": "steel",
     "category": "special",
     "power": 140,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 5
   },
   "초롱초롱눈동자": {
     "type": "fairy",
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1
   },
   "초음파": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 55
+    "accuracy": 55,
+    "pp": 20
   },
   "최면술": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": 60
+    "accuracy": 60,
+    "pp": 20
   },
   "추억의선물": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "충전": {
     "type": "electric",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "치근거리기": {
     "type": "fairy",
     "category": "physical",
     "power": 90,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "치료방울": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "치유소원": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "치유파동": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "친해지기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "카운터": {
     "type": "fighting",
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": -5
   },
   "칼등치기": {
     "type": "normal",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 40
   },
   "칼바람": {
     "type": "normal",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "칼춤": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "코골기": {
     "type": "normal",
     "category": "special",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "코멧펀치": {
     "type": "steel",
     "category": "physical",
     "power": 90,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "코스믹파워": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "코칭": {
     "type": "fighting",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "코튼가드": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "쾌청": {
     "type": "fire",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "퀵턴": {
     "type": "water",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "크로스촙": {
     "type": "fighting",
     "category": "physical",
     "power": 100,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 5
   },
   "크로스포이즌": {
     "type": "poison",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "클리어스모그": {
     "type": "poison",
     "category": "special",
     "power": 50,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "킬러스핀": {
     "type": "poison",
     "category": "physical",
     "power": 30,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "킹실드": {
     "type": "steel",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "탁류": {
     "type": "water",
     "category": "special",
     "power": 90,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "탁쳐서떨구기": {
     "type": "dark",
     "category": "physical",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "탐내다": {
     "type": "normal",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "태권당수": {
     "type": "fighting",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "태만함": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   },
   "테라버스트": {
     "type": "normal",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "텔레키네시스": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "토치카": {
     "type": "poison",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4
   },
   "토해내기": {
     "type": "normal",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "튀어오르기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 40
   },
   "트라이어택": {
     "type": "normal",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "트로피컬킥": {
     "type": "grass",
     "category": "physical",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "트리플악셀": {
     "type": "ice",
     "category": "physical",
     "power": 20,
     "accuracy": 90,
+    "pp": 10,
     "variablePower": true
   },
   "트릭": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "트릭가드": {
     "type": "fairy",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 3
   },
   "트릭룸": {
@@ -3556,6 +4140,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": -7
   },
   "트릭플라워": {
@@ -3563,97 +4148,113 @@
     "category": "physical",
     "power": 70,
     "accuracy": null,
+    "pp": 10,
     "alwaysCrit": true
   },
   "트림": {
     "type": "poison",
     "category": "special",
     "power": 120,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 10
   },
   "트윈빔": {
     "type": "psychic",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "트집": {
     "type": "dark",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "파괴광선": {
     "type": "normal",
     "category": "special",
     "power": 150,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "파도타기": {
     "type": "water",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "파동탄": {
     "type": "fighting",
     "category": "special",
     "power": 80,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "파라볼라차지": {
     "type": "electric",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "파멸의빛": {
     "type": "fairy",
     "category": "special",
     "power": 140,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "파워셰어": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "파워스웹": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "파워시프트": {
     "type": "normal",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "파워젬": {
     "type": "rock",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "파워트릭": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "파워휩": {
     "type": "grass",
     "category": "physical",
     "power": 120,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 10
   },
   "판별": {
     "type": "fighting",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 4
   },
   "퍼스트가드": {
@@ -3661,387 +4262,451 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 3
   },
   "페어리록": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "페이탈클로": {
     "type": "poison",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "페인트": {
     "type": "normal",
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 10,
     "priority": 2
   },
   "포이즌테일": {
     "type": "poison",
     "category": "physical",
     "power": 50,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "폭발펀치": {
     "type": "fighting",
     "category": "physical",
     "power": 100,
-    "accuracy": 50
+    "accuracy": 50,
+    "pp": 5
   },
   "폭음파": {
     "type": "normal",
     "category": "special",
     "power": 140,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "폭포오르기": {
     "type": "water",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "폭풍": {
     "type": "flying",
     "category": "special",
     "power": 110,
-    "accuracy": 70
+    "accuracy": 70,
+    "pp": 10
   },
   "폴터가이스트": {
     "type": "ghost",
     "category": "physical",
     "power": 110,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "풀묶기": {
     "type": "grass",
     "category": "special",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "풀베기": {
     "type": "normal",
     "category": "physical",
     "power": 50,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 30
   },
   "풀의맹세": {
     "type": "grass",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "풀피리": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 55
+    "accuracy": 55,
+    "pp": 15
   },
   "프레젠트": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "프리즈드라이": {
     "type": "ice",
     "category": "special",
     "power": 70,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "프리폴": {
     "type": "flying",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "플라스마샤워": {
     "type": "electric",
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 25,
     "priority": 1
   },
   "플라워가드": {
     "type": "fairy",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "플라잉프레스": {
     "type": "fighting",
     "category": "physical",
     "power": 100,
-    "accuracy": 95
+    "accuracy": 95,
+    "pp": 10
   },
   "플래시": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "플레어드라이브": {
     "type": "fire",
     "category": "physical",
     "power": 120,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "플레어송": {
     "type": "fire",
     "category": "special",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "필살앞니": {
     "type": "normal",
     "category": "physical",
     "power": 80,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "하드프레스": {
     "type": "steel",
     "category": "physical",
     "power": 0,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "하드플랜트": {
     "type": "grass",
     "category": "special",
     "power": 150,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "하바네로엑기스": {
     "type": "grass",
     "category": "status",
     "power": 0,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "하이드로캐논": {
     "type": "water",
     "category": "special",
     "power": 150,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 5
   },
   "하이드로펌프": {
     "type": "water",
     "category": "special",
     "power": 110,
-    "accuracy": 80
+    "accuracy": 80,
+    "pp": 5
   },
   "하이퍼보이스": {
     "type": "normal",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "하품": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "할퀴기": {
     "type": "normal",
     "category": "physical",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "핥기": {
     "type": "ghost",
     "category": "physical",
     "power": 30,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 30
   },
   "해수스파우팅": {
     "type": "water",
     "category": "special",
     "power": 150,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "핼러윈": {
     "type": "ghost",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "헤롱헤롱": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "헤비봄버": {
     "type": "steel",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "혼내기": {
     "type": "dark",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 5
   },
   "화염방사": {
     "type": "fire",
     "category": "special",
     "power": 90,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "화염자동차": {
     "type": "fire",
     "category": "physical",
     "power": 60,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "화풀이": {
     "type": "normal",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "환상빔": {
     "type": "psychic",
     "category": "special",
     "power": 65,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "회복봉인": {
     "type": "psychic",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 15
   },
   "회오리": {
     "type": "dragon",
     "category": "special",
     "power": 40,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "회오리불꽃": {
     "type": "fire",
     "category": "special",
     "power": 35,
-    "accuracy": 85
+    "accuracy": 85,
+    "pp": 15
   },
   "회전부리": {
     "type": "flying",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "휘감기": {
     "type": "normal",
     "category": "physical",
     "power": 10,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 35
   },
   "휘적휘적포": {
     "type": "grass",
     "category": "special",
     "power": 80,
-    "accuracy": 90
+    "accuracy": 90,
+    "pp": 15
   },
   "흉내내기": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "흉내쟁이": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 20
   },
   "흑안개": {
     "type": "ice",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "흔들흔들댄스": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 20
   },
   "흙놀이": {
     "type": "ground",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 15
   },
   "흡수": {
     "type": "grass",
     "category": "special",
     "power": 20,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 25
   },
   "흡혈": {
     "type": "bug",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "희망사항": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 10
   },
   "흰안개": {
     "type": "ice",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 30
   },
   "히트스탬프": {
     "type": "fire",
     "category": "physical",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "힘껏치기": {
     "type": "normal",
     "category": "physical",
     "power": 80,
-    "accuracy": 75
+    "accuracy": 75,
+    "pp": 20
   },
   "힘껏펀치": {
     "type": "fighting",
     "category": "physical",
     "power": 150,
     "accuracy": 100,
+    "pp": 20,
     "priority": -3
   },
   "힘흡수": {
     "type": "grass",
     "category": "status",
     "power": null,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "DD래리어트": {
     "type": "dark",
     "category": "physical",
     "power": 85,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "G의힘": {
     "type": "grass",
     "category": "physical",
     "power": 80,
-    "accuracy": 100
+    "accuracy": 100,
+    "pp": 10
   },
   "HP회복": {
     "type": "normal",
     "category": "status",
     "power": null,
-    "accuracy": null
+    "accuracy": null,
+    "pp": 5
   }
 }

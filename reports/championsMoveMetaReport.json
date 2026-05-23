@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T10:08:39.737Z",
+  "generatedAt": "2026-05-23T15:40:21.361Z",
   "source": {
     "movePools": "src/championsMovePools.json",
     "moveNameOverrides": "src/championsMoveNameOverrides.json",
@@ -98,6 +98,12 @@
       "apiName": "facade",
       "ko": "객기",
       "en": "Facade"
+    },
+    {
+      "moveName": "거대해머",
+      "apiName": "gigaton-hammer",
+      "ko": null,
+      "en": "Gigaton Hammer"
     },
     {
       "moveName": "거미집",
@@ -284,12 +290,6 @@
       "apiName": "giga-impact",
       "ko": "기가임팩트",
       "en": "Giga Impact"
-    },
-    {
-      "moveName": "기가톤해머",
-      "apiName": "gigaton-hammer",
-      "ko": null,
-      "en": "Gigaton Hammer"
     },
     {
       "moveName": "기관총",

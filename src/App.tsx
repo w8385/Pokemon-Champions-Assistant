@@ -226,6 +226,7 @@ type MoveMeta = {
   category: MoveCategory | null
   power: number | null
   accuracy?: number | null
+  pp?: number | null
   hits?: number
   hitPowers?: number[]
   variablePower?: boolean
@@ -6394,11 +6395,11 @@ export default function App() {
                         <div className="row-between compact-gap">
                           <span className="pick-badge subtle">{lt('기술')}</span>
                         </div>
-                        <div className="dex-move-preview-row">
+                      <div className="dex-move-preview-row">
                           {result.meta.type ? <TypeBadgeImage type={result.meta.type} /> : null}
                           <div className="dex-pokemon-preview-body">
                             <strong>{result.name}</strong>
-                            <span className="muted">{displayTypeName(result.meta.type, siteLanguage)} · {displayMoveCategoryName(result.meta.category, siteLanguage)}{result.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(result.meta)}` : ''}</span>
+                            <span className="muted">{displayTypeName(result.meta.type, siteLanguage)} · {displayMoveCategoryName(result.meta.category, siteLanguage)}{result.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(result.meta)}` : ''}{result.meta.pp != null ? ` · PP ${result.meta.pp}` : ''}</span>
                           </div>
                         </div>
                       </button>
@@ -6458,7 +6459,7 @@ export default function App() {
                       {option.meta.type ? <TypeBadgeImage type={option.meta.type} /> : null}
                       <div className="dex-pokemon-preview-body">
                         <strong>{option.name}</strong>
-                        <span className="muted">{displayTypeName(option.meta.type, siteLanguage)} · {displayMoveCategoryName(option.meta.category, siteLanguage)}{option.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(option.meta)}` : ''}</span>
+                        <span className="muted">{displayTypeName(option.meta.type, siteLanguage)} · {displayMoveCategoryName(option.meta.category, siteLanguage)}{option.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(option.meta)}` : ''}{option.meta.pp != null ? ` · PP ${option.meta.pp}` : ''}</span>
                       </div>
                     </div>
                   </button>) : null}
@@ -6587,6 +6588,7 @@ export default function App() {
                       <span className="pick-badge">{lt('타입')} {displayTypeName(dexSelectedMove.meta.type, siteLanguage)}</span>
                       <span className="pick-badge">{lt('분류')} {displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage)}</span>
                       <span className="pick-badge">{lt('위력')} {dexSelectedMove.meta.power != null ? resolvedMovePower(dexSelectedMove.meta) : '-'}</span>
+                      <span className="pick-badge">PP {dexSelectedMove.meta.pp != null ? dexSelectedMove.meta.pp : '-'}</span>
                       <span className="pick-badge">{lt('명중')} {dexSelectedMove.meta.accuracy != null ? `${dexSelectedMove.meta.accuracy}%` : '-'}</span>
                       <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? 0}</span>
                     </div>

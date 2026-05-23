@@ -84,6 +84,7 @@ function toMoveMeta(detail, overrides = {}) {
     category: detail.category,
     power: detail.power,
     accuracy: detail.accuracy,
+    pp: detail.pp,
     ...(typeof detail.priority === 'number' && detail.priority !== 0 ? { priority: detail.priority } : {}),
     ...overrides,
   }
@@ -115,7 +116,7 @@ async function main() {
   const indexEntries = moveIndex.results ?? []
 
   const detailCache = { ...(cache ?? {}) }
-  const missingDetailEntries = indexEntries.filter((entry) => !detailCache[entry.name])
+  const missingDetailEntries = indexEntries.filter((entry) => !detailCache[entry.name] || !Object.prototype.hasOwnProperty.call(detailCache[entry.name], 'pp'))
 
   for (const batch of chunk(missingDetailEntries, CONCURRENCY)) {
     const resolved = await Promise.all(batch.map(async (entry) => {
@@ -126,6 +127,7 @@ async function main() {
         category: detail.damage_class?.name ?? null,
         power: detail.power ?? null,
         accuracy: detail.accuracy ?? null,
+        pp: detail.pp ?? null,
         priority: detail.priority ?? 0,
         names: Object.fromEntries(
           (detail.names ?? [])

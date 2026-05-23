@@ -5,6 +5,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "막치기",
@@ -18,6 +19,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "태권당수",
@@ -31,6 +33,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "연속뺨치기",
@@ -44,6 +47,7 @@
     "category": "physical",
     "power": 18,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "연속펀치",
@@ -57,6 +61,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "메가톤펀치",
@@ -70,6 +75,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "고양이돈받기",
@@ -83,6 +89,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "불꽃펀치",
@@ -96,6 +103,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "냉동펀치",
@@ -109,6 +117,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "번개펀치",
@@ -122,6 +131,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "할퀴기",
@@ -135,6 +145,7 @@
     "category": "physical",
     "power": 55,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "찝기",
@@ -148,6 +159,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 30,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "가위자르기",
@@ -161,6 +173,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "칼바람",
@@ -174,6 +187,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "칼춤",
@@ -187,6 +201,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 95,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "풀베기",
@@ -200,6 +215,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "바람일으키기",
@@ -213,6 +229,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "날개치기",
@@ -226,6 +243,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6,
     "names": {
       "ko": "날려버리기",
@@ -239,6 +257,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "공중날기",
@@ -252,6 +271,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "조이기",
@@ -265,6 +285,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 75,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "힘껏치기",
@@ -278,6 +299,7 @@
     "category": "physical",
     "power": 45,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "덩굴채찍",
@@ -291,6 +313,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "짓밟기",
@@ -304,6 +327,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "두번치기",
@@ -317,6 +341,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 75,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "메가톤킥",
@@ -330,6 +355,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "점프킥",
@@ -343,6 +369,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "돌려차기",
@@ -356,6 +383,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "모래뿌리기",
@@ -369,6 +397,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "박치기",
@@ -382,6 +411,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "뿔찌르기",
@@ -395,6 +425,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "마구찌르기",
@@ -408,6 +439,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 30,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "뿔드릴",
@@ -421,6 +453,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "몸통박치기",
@@ -434,6 +467,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "누르기",
@@ -447,6 +481,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "김밥말이",
@@ -460,6 +495,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "돌진",
@@ -473,6 +509,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "난동부리기",
@@ -486,6 +523,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "이판사판태클",
@@ -499,6 +537,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "꼬리흔들기",
@@ -512,6 +551,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "독침",
@@ -525,6 +565,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "더블니들",
@@ -538,6 +579,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 95,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "바늘미사일",
@@ -551,6 +593,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "째려보기",
@@ -564,6 +607,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "물기",
@@ -577,6 +621,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "울음소리",
@@ -590,6 +635,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6,
     "names": {
       "ko": "울부짖기",
@@ -603,6 +649,7 @@
     "category": "status",
     "power": null,
     "accuracy": 55,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "노래하기",
@@ -616,6 +663,7 @@
     "category": "status",
     "power": null,
     "accuracy": 55,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "초음파",
@@ -629,6 +677,7 @@
     "category": "special",
     "power": null,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "소닉붐",
@@ -642,6 +691,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "사슬묶기",
@@ -655,6 +705,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "용해액",
@@ -668,6 +719,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "불꽃세례",
@@ -681,6 +733,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "화염방사",
@@ -694,6 +747,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "흰안개",
@@ -707,6 +761,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "물대포",
@@ -720,6 +775,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "하이드로펌프",
@@ -733,6 +789,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "파도타기",
@@ -746,6 +803,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "냉동빔",
@@ -759,6 +817,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 70,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "눈보라",
@@ -772,6 +831,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "환상빔",
@@ -785,6 +845,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "거품광선",
@@ -798,6 +859,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "오로라빔",
@@ -811,6 +873,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "파괴광선",
@@ -824,6 +887,7 @@
     "category": "physical",
     "power": 35,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "쪼기",
@@ -837,6 +901,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "회전부리",
@@ -850,6 +915,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 80,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "지옥의바퀴",
@@ -863,6 +929,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "안다리걸기",
@@ -876,6 +943,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": -5,
     "names": {
       "ko": "카운터",
@@ -889,6 +957,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "지구던지기",
@@ -902,6 +971,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "괴력",
@@ -915,6 +985,7 @@
     "category": "special",
     "power": 20,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "흡수",
@@ -928,6 +999,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "메가드레인",
@@ -941,6 +1013,7 @@
     "category": "status",
     "power": null,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "씨뿌리기",
@@ -954,6 +1027,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "성장",
@@ -967,6 +1041,7 @@
     "category": "physical",
     "power": 55,
     "accuracy": 95,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "잎날가르기",
@@ -980,6 +1055,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "솔라빔",
@@ -993,6 +1069,7 @@
     "category": "status",
     "power": null,
     "accuracy": 75,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "독가루",
@@ -1006,6 +1083,7 @@
     "category": "status",
     "power": null,
     "accuracy": 75,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "저리가루",
@@ -1019,6 +1097,7 @@
     "category": "status",
     "power": null,
     "accuracy": 75,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "수면가루",
@@ -1032,6 +1111,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "꽃잎댄스",
@@ -1045,6 +1125,7 @@
     "category": "status",
     "power": null,
     "accuracy": 95,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "실뿜기",
@@ -1058,6 +1139,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "용의분노",
@@ -1071,6 +1153,7 @@
     "category": "special",
     "power": 35,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "회오리불꽃",
@@ -1084,6 +1167,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "전기쇼크",
@@ -1097,6 +1181,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "10만볼트",
@@ -1110,6 +1195,7 @@
     "category": "status",
     "power": null,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "전기자석파",
@@ -1123,6 +1209,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 70,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "번개",
@@ -1136,6 +1223,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "돌떨구기",
@@ -1149,6 +1237,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "지진",
@@ -1162,6 +1251,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 30,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "땅가르기",
@@ -1175,6 +1265,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "구멍파기",
@@ -1188,6 +1279,7 @@
     "category": "status",
     "power": null,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "맹독",
@@ -1201,6 +1293,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "염동력",
@@ -1214,6 +1307,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코키네시스",
@@ -1227,6 +1321,7 @@
     "category": "status",
     "power": null,
     "accuracy": 60,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "최면술",
@@ -1240,6 +1335,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "요가포즈",
@@ -1253,6 +1349,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "고속이동",
@@ -1266,6 +1363,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "전광석화",
@@ -1279,6 +1377,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "분노",
@@ -1292,6 +1391,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": -6,
     "names": {
       "ko": "순간이동",
@@ -1305,6 +1405,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "나이트헤드",
@@ -1318,6 +1419,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "흉내내기",
@@ -1331,6 +1433,7 @@
     "category": "status",
     "power": null,
     "accuracy": 85,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "싫은소리",
@@ -1344,6 +1447,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "그림자분신",
@@ -1357,6 +1461,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "HP회복",
@@ -1370,6 +1475,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "단단해지기",
@@ -1383,6 +1489,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "작아지기",
@@ -1396,6 +1503,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "연막",
@@ -1409,6 +1517,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "이상한빛",
@@ -1422,6 +1531,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "껍질에숨기",
@@ -1435,6 +1545,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "웅크리기",
@@ -1448,6 +1559,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "배리어",
@@ -1461,6 +1573,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "빛의장막",
@@ -1474,6 +1587,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "흑안개",
@@ -1487,6 +1601,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "리플렉터",
@@ -1500,6 +1615,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "기충전",
@@ -1513,6 +1629,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 1,
     "names": {
       "ko": "참기",
@@ -1526,6 +1643,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "손가락흔들기",
@@ -1539,6 +1657,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "따라하기",
@@ -1552,6 +1671,7 @@
     "category": "physical",
     "power": 200,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "자폭",
@@ -1565,6 +1685,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 75,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "알폭탄",
@@ -1578,6 +1699,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "핥기",
@@ -1591,6 +1713,7 @@
     "category": "special",
     "power": 30,
     "accuracy": 70,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "스모그",
@@ -1604,6 +1727,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "오물공격",
@@ -1617,6 +1741,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "뼈다귀치기",
@@ -1630,6 +1755,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "불대문자",
@@ -1643,6 +1769,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "폭포오르기",
@@ -1656,6 +1783,7 @@
     "category": "physical",
     "power": 35,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "껍질끼우기",
@@ -1669,6 +1797,7 @@
     "category": "special",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "스피드스타",
@@ -1682,6 +1811,7 @@
     "category": "physical",
     "power": 130,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "로케트박치기",
@@ -1695,6 +1825,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "가시대포",
@@ -1708,6 +1839,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": 100,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "휘감기",
@@ -1721,6 +1853,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "망각술",
@@ -1734,6 +1867,7 @@
     "category": "status",
     "power": null,
     "accuracy": 80,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "숟가락휘기",
@@ -1747,6 +1881,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "알낳기",
@@ -1760,6 +1895,7 @@
     "category": "physical",
     "power": 130,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "무릎차기",
@@ -1773,6 +1909,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "뱀눈초리",
@@ -1786,6 +1923,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "꿈먹기",
@@ -1799,6 +1937,7 @@
     "category": "status",
     "power": null,
     "accuracy": 90,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "독가스",
@@ -1812,6 +1951,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "구슬던지기",
@@ -1825,6 +1965,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "흡혈",
@@ -1838,6 +1979,7 @@
     "category": "status",
     "power": null,
     "accuracy": 75,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "악마의키스",
@@ -1851,6 +1993,7 @@
     "category": "physical",
     "power": 140,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "불새",
@@ -1864,6 +2007,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "변신",
@@ -1877,6 +2021,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "거품",
@@ -1890,6 +2035,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "잼잼펀치",
@@ -1903,6 +2049,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "버섯포자",
@@ -1916,6 +2063,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "플래시",
@@ -1929,6 +2077,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "사이코웨이브",
@@ -1942,6 +2091,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "튀어오르기",
@@ -1955,6 +2105,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "녹기",
@@ -1968,6 +2119,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "찝게햄머",
@@ -1981,6 +2133,7 @@
     "category": "physical",
     "power": 250,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "대폭발",
@@ -1994,6 +2147,7 @@
     "category": "physical",
     "power": 18,
     "accuracy": 80,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "마구할퀴기",
@@ -2007,6 +2161,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "뼈다귀부메랑",
@@ -2020,6 +2175,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "잠자기",
@@ -2033,6 +2189,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "스톤샤워",
@@ -2046,6 +2203,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "필살앞니",
@@ -2059,6 +2217,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "각지기",
@@ -2072,6 +2231,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "텍스처",
@@ -2085,6 +2245,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "트라이어택",
@@ -2098,6 +2259,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "분노의앞니",
@@ -2111,6 +2273,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "베어가르기",
@@ -2124,6 +2287,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "대타출동",
@@ -2137,6 +2301,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "발버둥",
@@ -2150,6 +2315,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "스케치",
@@ -2163,6 +2329,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "트리플킥",
@@ -2176,6 +2343,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "도둑질",
@@ -2189,6 +2357,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "거미집",
@@ -2202,6 +2371,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "마음의눈",
@@ -2215,6 +2385,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "악몽",
@@ -2228,6 +2399,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "화염자동차",
@@ -2241,6 +2413,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "코골기",
@@ -2254,6 +2427,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "저주",
@@ -2267,6 +2441,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바둥바둥",
@@ -2280,6 +2455,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "텍스처2",
@@ -2293,6 +2469,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "에어로블라스트",
@@ -2306,6 +2483,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "목화포자",
@@ -2319,6 +2497,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "기사회생",
@@ -2332,6 +2511,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "원한",
@@ -2345,6 +2525,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "눈싸라기",
@@ -2358,6 +2539,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "방어",
@@ -2371,6 +2553,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "마하펀치",
@@ -2384,6 +2567,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "겁나는얼굴",
@@ -2397,6 +2581,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "속여때리기",
@@ -2410,6 +2595,7 @@
     "category": "status",
     "power": null,
     "accuracy": 75,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "천사의키스",
@@ -2423,6 +2609,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "배북",
@@ -2436,6 +2623,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "오물폭탄",
@@ -2449,6 +2637,7 @@
     "category": "special",
     "power": 20,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "진흙뿌리기",
@@ -2462,6 +2651,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "대포무노포",
@@ -2475,6 +2665,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "압정뿌리기",
@@ -2488,6 +2679,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 50,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "전자포",
@@ -2501,6 +2693,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "꿰뚫어보기",
@@ -2514,6 +2707,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "길동무",
@@ -2527,6 +2721,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "멸망의노래",
@@ -2540,6 +2735,7 @@
     "category": "special",
     "power": 55,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "얼다바람",
@@ -2553,6 +2749,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 4,
     "names": {
       "ko": "판별",
@@ -2566,6 +2763,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "본러쉬",
@@ -2579,6 +2777,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "록온",
@@ -2592,6 +2791,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "역린",
@@ -2605,6 +2805,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "모래바람",
@@ -2618,6 +2819,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "기가드레인",
@@ -2631,6 +2833,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "버티기",
@@ -2644,6 +2847,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "애교부리기",
@@ -2657,6 +2861,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "구르기",
@@ -2670,6 +2875,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "칼등치기",
@@ -2683,6 +2889,7 @@
     "category": "status",
     "power": null,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "뽐내기",
@@ -2696,6 +2903,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "우유마시기",
@@ -2709,6 +2917,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "스파크",
@@ -2722,6 +2931,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 95,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "연속자르기",
@@ -2735,6 +2945,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 90,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "강철날개",
@@ -2748,6 +2959,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "검은눈빛",
@@ -2761,6 +2973,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "헤롱헤롱",
@@ -2774,6 +2987,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "잠꼬대",
@@ -2787,6 +3001,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "치료방울",
@@ -2800,6 +3015,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "은혜갚기",
@@ -2813,6 +3029,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "프레젠트",
@@ -2826,6 +3043,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "화풀이",
@@ -2839,6 +3057,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "신비의부적",
@@ -2852,6 +3071,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "아픔나누기",
@@ -2865,6 +3085,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "성스러운불꽃",
@@ -2878,6 +3099,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "매그니튜드",
@@ -2891,6 +3113,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 50,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "폭발펀치",
@@ -2904,6 +3127,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "메가폰",
@@ -2917,6 +3141,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "용의숨결",
@@ -2930,6 +3155,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "바톤터치",
@@ -2943,6 +3169,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "앵콜",
@@ -2956,6 +3183,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "따라가때리기",
@@ -2969,6 +3197,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "고속스핀",
@@ -2982,6 +3211,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "달콤한향기",
@@ -2995,6 +3225,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 75,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "아이언테일",
@@ -3008,6 +3239,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 95,
+    "pp": 35,
     "priority": 0,
     "names": {
       "ko": "메탈크로우",
@@ -3021,6 +3253,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": null,
+    "pp": 10,
     "priority": -1,
     "names": {
       "ko": "받아던지기",
@@ -3034,6 +3267,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "아침햇살",
@@ -3047,6 +3281,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "광합성",
@@ -3060,6 +3295,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "달의불빛",
@@ -3073,6 +3309,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "잠재파워",
@@ -3086,6 +3323,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "크로스촙",
@@ -3099,6 +3337,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "회오리",
@@ -3112,6 +3351,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "비바라기",
@@ -3125,6 +3365,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "쾌청",
@@ -3138,6 +3379,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "깨물어부수기",
@@ -3151,6 +3393,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": -5,
     "names": {
       "ko": "미러코트",
@@ -3164,6 +3407,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "자기암시",
@@ -3177,6 +3421,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 5,
     "priority": 2,
     "names": {
       "ko": "신속",
@@ -3190,6 +3435,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "원시의힘",
@@ -3203,6 +3449,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "섀도볼",
@@ -3216,6 +3463,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "미래예지",
@@ -3229,6 +3477,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바위깨기",
@@ -3242,6 +3491,7 @@
     "category": "special",
     "power": 35,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바다회오리",
@@ -3255,6 +3505,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "집단구타",
@@ -3268,6 +3519,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 10,
     "priority": 3,
     "names": {
       "ko": "속이다",
@@ -3281,6 +3533,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "소란피기",
@@ -3294,6 +3547,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "비축하기",
@@ -3307,6 +3561,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "토해내기",
@@ -3320,6 +3575,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "꿀꺽",
@@ -3333,6 +3589,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "열풍",
@@ -3346,6 +3603,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "싸라기눈",
@@ -3359,6 +3617,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "트집",
@@ -3372,6 +3631,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "부추기기",
@@ -3385,6 +3645,7 @@
     "category": "status",
     "power": null,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "도깨비불",
@@ -3398,6 +3659,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "추억의선물",
@@ -3411,6 +3673,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "객기",
@@ -3424,6 +3687,7 @@
     "category": "physical",
     "power": 150,
     "accuracy": 100,
+    "pp": 20,
     "priority": -3,
     "names": {
       "ko": "힘껏펀치",
@@ -3437,6 +3701,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "정신차리기",
@@ -3450,6 +3715,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 2,
     "names": {
       "ko": "날따름",
@@ -3463,6 +3729,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "자연의힘",
@@ -3476,6 +3743,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "충전",
@@ -3489,6 +3757,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "도발",
@@ -3502,6 +3771,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 5,
     "names": {
       "ko": "도우미",
@@ -3515,6 +3785,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "트릭",
@@ -3528,6 +3799,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "역할",
@@ -3541,6 +3813,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "희망사항",
@@ -3554,6 +3827,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "조수",
@@ -3567,6 +3841,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "뿌리박기",
@@ -3580,6 +3855,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "엄청난힘",
@@ -3593,6 +3869,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 4,
     "names": {
       "ko": "매직코트",
@@ -3606,6 +3883,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "리사이클",
@@ -3619,6 +3897,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": -4,
     "names": {
       "ko": "리벤지",
@@ -3632,6 +3911,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "깨트리다",
@@ -3645,6 +3925,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "하품",
@@ -3658,6 +3939,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "탁쳐서떨구기",
@@ -3671,6 +3953,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "죽기살기",
@@ -3684,6 +3967,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "분화",
@@ -3697,6 +3981,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "스킬스웹",
@@ -3710,6 +3995,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "봉인",
@@ -3723,6 +4009,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "리프레쉬",
@@ -3736,6 +4023,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "원념",
@@ -3749,6 +4037,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "가로챔",
@@ -3762,6 +4051,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "비밀의힘",
@@ -3775,6 +4065,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이빙",
@@ -3788,6 +4079,7 @@
     "category": "physical",
     "power": 15,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "손바닥치기",
@@ -3801,6 +4093,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "보호색",
@@ -3814,6 +4107,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "반딧불",
@@ -3827,6 +4121,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "라스트버지",
@@ -3840,6 +4135,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "미스트볼",
@@ -3853,6 +4149,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "깃털댄스",
@@ -3866,6 +4163,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "흔들흔들댄스",
@@ -3879,6 +4177,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "브레이즈킥",
@@ -3892,6 +4191,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "흙놀이",
@@ -3905,6 +4205,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "아이스볼",
@@ -3918,6 +4219,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바늘팔",
@@ -3931,6 +4233,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "태만함",
@@ -3944,6 +4247,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "하이퍼보이스",
@@ -3957,6 +4261,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "독엄니",
@@ -3970,6 +4275,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "브레이크크루",
@@ -3983,6 +4289,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "블러스트번",
@@ -3996,6 +4303,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "하이드로캐논",
@@ -4009,6 +4317,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "코멧펀치",
@@ -4022,6 +4331,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "놀래키기",
@@ -4035,6 +4345,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "웨더볼",
@@ -4048,6 +4359,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "아로마테라피",
@@ -4061,6 +4373,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "거짓울음",
@@ -4074,6 +4387,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 95,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "에어컷터",
@@ -4087,6 +4401,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "오버히트",
@@ -4100,6 +4415,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "냄새구별",
@@ -4113,6 +4429,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "암석봉인",
@@ -4126,6 +4443,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "은빛바람",
@@ -4139,6 +4457,7 @@
     "category": "status",
     "power": null,
     "accuracy": 85,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "금속음",
@@ -4152,6 +4471,7 @@
     "category": "status",
     "power": null,
     "accuracy": 55,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "풀피리",
@@ -4165,6 +4485,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "간지르기",
@@ -4178,6 +4499,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "코스믹파워",
@@ -4191,6 +4513,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "해수스파우팅",
@@ -4204,6 +4527,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "시그널빔",
@@ -4217,6 +4541,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "섀도펀치",
@@ -4230,6 +4555,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "신통력",
@@ -4243,6 +4569,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "스카이업퍼",
@@ -4256,6 +4583,7 @@
     "category": "physical",
     "power": 35,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "모래지옥",
@@ -4269,6 +4597,7 @@
     "category": "special",
     "power": null,
     "accuracy": 30,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "절대영도",
@@ -4282,6 +4611,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "탁류",
@@ -4295,6 +4625,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "기관총",
@@ -4308,6 +4639,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "제비반환",
@@ -4321,6 +4653,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "고드름침",
@@ -4334,6 +4667,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "철벽",
@@ -4347,6 +4681,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "블록",
@@ -4360,6 +4695,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "멀리짖음",
@@ -4373,6 +4709,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "드래곤크루",
@@ -4386,6 +4723,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "하드플랜트",
@@ -4399,6 +4737,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "벌크업",
@@ -4412,6 +4751,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "뛰어오르다",
@@ -4425,6 +4765,7 @@
     "category": "special",
     "power": 55,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "머드숏",
@@ -4438,6 +4779,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "포이즌테일",
@@ -4451,6 +4793,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "탐내다",
@@ -4464,6 +4807,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "볼트태클",
@@ -4477,6 +4821,7 @@
     "category": "special",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "메지컬리프",
@@ -4490,6 +4835,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "물놀이",
@@ -4503,6 +4849,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "명상",
@@ -4516,6 +4863,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "리프블레이드",
@@ -4529,6 +4877,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "용의춤",
@@ -4542,6 +4891,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "락블레스트",
@@ -4555,6 +4905,7 @@
     "category": "special",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "전격파",
@@ -4568,6 +4919,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "물의파동",
@@ -4581,6 +4933,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "파멸의소원",
@@ -4594,6 +4947,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "사이코부스트",
@@ -4607,6 +4961,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "날개쉬기",
@@ -4620,6 +4975,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "중력",
@@ -4633,6 +4989,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "미라클아이",
@@ -4646,6 +5003,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "잠깨움뺨치기",
@@ -4659,6 +5017,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "암해머",
@@ -4672,6 +5031,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "자이로볼",
@@ -4685,6 +5045,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "치유소원",
@@ -4698,6 +5059,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "소금물",
@@ -4711,6 +5073,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "자연의은혜",
@@ -4724,6 +5087,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 10,
     "priority": 2,
     "names": {
       "ko": "페인트",
@@ -4737,6 +5101,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "쪼아대기",
@@ -4750,6 +5115,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "순풍",
@@ -4763,6 +5129,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "경혈찌르기",
@@ -4776,6 +5143,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "메탈버스트",
@@ -4789,6 +5157,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "유턴",
@@ -4802,6 +5171,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "인파이트",
@@ -4815,6 +5185,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "보복",
@@ -4828,6 +5199,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "승부굳히기",
@@ -4841,6 +5213,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "금제",
@@ -4854,6 +5227,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "내던지기",
@@ -4867,6 +5241,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코시프트",
@@ -4880,6 +5255,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "마지막수단",
@@ -4893,6 +5269,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "회복봉인",
@@ -4906,6 +5283,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "쥐어짜기",
@@ -4919,6 +5297,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "파워트릭",
@@ -4932,6 +5311,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "위액",
@@ -4945,6 +5325,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "주술",
@@ -4958,6 +5339,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "선취",
@@ -4971,6 +5353,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "흉내쟁이",
@@ -4984,6 +5367,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "파워스웹",
@@ -4997,6 +5381,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "가드스웹",
@@ -5010,6 +5395,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "혼내기",
@@ -5023,6 +5409,7 @@
     "category": "physical",
     "power": 140,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "뒀다쓰기",
@@ -5036,6 +5423,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "고민씨",
@@ -5049,6 +5437,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 5,
     "priority": 1,
     "names": {
       "ko": "기습",
@@ -5062,6 +5451,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "독압정",
@@ -5075,6 +5465,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "하트스웹",
@@ -5088,6 +5479,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "아쿠아링",
@@ -5101,6 +5493,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "전자부유",
@@ -5114,6 +5507,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "플레어드라이브",
@@ -5127,6 +5521,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "발경",
@@ -5140,6 +5535,7 @@
     "category": "special",
     "power": 80,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "파동탄",
@@ -5153,6 +5549,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "록커트",
@@ -5166,6 +5563,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "독찌르기",
@@ -5179,6 +5577,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "악의파동",
@@ -5192,6 +5591,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "깜짝베기",
@@ -5205,6 +5605,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "아쿠아테일",
@@ -5218,6 +5619,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "씨폭탄",
@@ -5231,6 +5633,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "에어슬래시",
@@ -5244,6 +5647,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "시저크로스",
@@ -5257,6 +5661,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "벌레의야단법석",
@@ -5270,6 +5675,7 @@
     "category": "special",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "용의파동",
@@ -5283,6 +5689,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 75,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드래곤다이브",
@@ -5296,6 +5703,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "파워젬",
@@ -5309,6 +5717,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드레인펀치",
@@ -5322,6 +5731,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "진공파",
@@ -5335,6 +5745,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 70,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "기합구슬",
@@ -5348,6 +5759,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "에너지볼",
@@ -5361,6 +5773,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "브레이브버드",
@@ -5374,6 +5787,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "대지의힘",
@@ -5387,6 +5801,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "바꿔치기",
@@ -5400,6 +5815,7 @@
     "category": "physical",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "기가임팩트",
@@ -5413,6 +5829,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "나쁜음모",
@@ -5426,6 +5843,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "불릿펀치",
@@ -5439,6 +5857,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": -4,
     "names": {
       "ko": "눈사태",
@@ -5452,6 +5871,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "얼음뭉치",
@@ -5465,6 +5885,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "섀도크루",
@@ -5478,6 +5899,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "번개엄니",
@@ -5491,6 +5913,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "얼음엄니",
@@ -5504,6 +5927,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "불꽃엄니",
@@ -5517,6 +5941,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "야습",
@@ -5530,6 +5955,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "진흙폭탄",
@@ -5543,6 +5969,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "사이코커터",
@@ -5556,6 +5983,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "사념의박치기",
@@ -5569,6 +5997,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "미러숏",
@@ -5582,6 +6011,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "러스터캐논",
@@ -5595,6 +6025,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 85,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "락클라임",
@@ -5608,6 +6039,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "안개제거",
@@ -5621,6 +6053,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": -7,
     "names": {
       "ko": "트릭룸",
@@ -5634,6 +6067,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "용성군",
@@ -5647,6 +6081,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "방전",
@@ -5660,6 +6095,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "분연",
@@ -5673,6 +6109,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "리프스톰",
@@ -5686,6 +6123,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "파워휩",
@@ -5699,6 +6137,7 @@
     "category": "physical",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "암석포",
@@ -5712,6 +6151,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "크로스포이즌",
@@ -5725,6 +6165,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "더스트슈트",
@@ -5738,6 +6179,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "아이언헤드",
@@ -5751,6 +6193,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "마그넷봄",
@@ -5764,6 +6207,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "스톤에지",
@@ -5777,6 +6221,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "유혹",
@@ -5790,6 +6235,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "스텔스록",
@@ -5803,6 +6249,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "풀묶기",
@@ -5816,6 +6263,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "수다",
@@ -5829,6 +6277,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "심판의뭉치",
@@ -5842,6 +6291,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "벌레먹음",
@@ -5855,6 +6305,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "차지빔",
@@ -5868,6 +6319,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "우드해머",
@@ -5881,6 +6333,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1,
     "names": {
       "ko": "아쿠아제트",
@@ -5894,6 +6347,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "공격지령",
@@ -5907,6 +6361,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "방어지령",
@@ -5920,6 +6375,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "회복지령",
@@ -5933,6 +6389,7 @@
     "category": "physical",
     "power": 150,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "양날박치기",
@@ -5946,6 +6403,7 @@
     "category": "physical",
     "power": 35,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "더블어택",
@@ -5959,6 +6417,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "시간의포효",
@@ -5972,6 +6431,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "공간절단",
@@ -5985,6 +6445,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "초승달춤",
@@ -5998,6 +6459,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "묵사발",
@@ -6011,6 +6473,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 75,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "마그마스톰",
@@ -6024,6 +6487,7 @@
     "category": "status",
     "power": null,
     "accuracy": 50,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다크홀",
@@ -6037,6 +6501,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "시드플레어",
@@ -6050,6 +6515,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "괴상한바람",
@@ -6063,6 +6529,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "섀도다이브",
@@ -6076,6 +6543,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "손톱갈기",
@@ -6089,6 +6557,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 3,
     "names": {
       "ko": "와이드가드",
@@ -6102,6 +6571,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "가드셰어",
@@ -6115,6 +6585,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "파워셰어",
@@ -6128,6 +6599,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "원더룸",
@@ -6141,6 +6613,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코쇼크",
@@ -6154,6 +6627,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "베놈쇼크",
@@ -6167,6 +6641,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바디퍼지",
@@ -6180,6 +6655,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 2,
     "names": {
       "ko": "분노가루",
@@ -6193,6 +6669,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "텔레키네시스",
@@ -6206,6 +6683,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "매직룸",
@@ -6219,6 +6697,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "떨어뜨리기",
@@ -6232,6 +6711,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "업어후리기",
@@ -6245,6 +6725,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "불꽃튀기기",
@@ -6258,6 +6739,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "오물웨이브",
@@ -6271,6 +6753,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "나비춤",
@@ -6284,6 +6767,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "헤비봄버",
@@ -6297,6 +6781,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "싱크로노이즈",
@@ -6310,6 +6795,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "일렉트릭볼",
@@ -6323,6 +6809,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "물붓기",
@@ -6336,6 +6823,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "니트로차지",
@@ -6349,6 +6837,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "똬리틀기",
@@ -6362,6 +6851,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "로킥",
@@ -6375,6 +6865,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "애시드봄",
@@ -6388,6 +6879,7 @@
     "category": "physical",
     "power": 95,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "속임수",
@@ -6401,6 +6893,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "심플빔",
@@ -6414,6 +6907,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "동료만들기",
@@ -6427,6 +6921,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "당신먼저",
@@ -6440,6 +6935,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "돌림노래",
@@ -6453,6 +6949,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "에코보이스",
@@ -6466,6 +6963,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "야금야금",
@@ -6479,6 +6977,7 @@
     "category": "special",
     "power": 50,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "클리어스모그",
@@ -6492,6 +6991,7 @@
     "category": "special",
     "power": 20,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "어시스트파워",
@@ -6505,6 +7005,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 3,
     "names": {
       "ko": "퍼스트가드",
@@ -6518,6 +7019,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 2,
     "names": {
       "ko": "사이드체인지",
@@ -6531,6 +7033,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "열탕",
@@ -6544,6 +7047,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "껍질깨기",
@@ -6557,6 +7061,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "치유파동",
@@ -6570,6 +7075,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "병상첨병",
@@ -6583,6 +7089,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "프리폴",
@@ -6596,6 +7103,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "기어체인지",
@@ -6609,6 +7117,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 90,
+    "pp": 10,
     "priority": -6,
     "names": {
       "ko": "배대뒤치기",
@@ -6622,6 +7131,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "불태우기",
@@ -6635,6 +7145,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "순서미루기",
@@ -6648,6 +7159,7 @@
     "category": "physical",
     "power": 55,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "애크러뱃",
@@ -6661,6 +7173,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "미러타입",
@@ -6674,6 +7187,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "원수갚기",
@@ -6687,6 +7201,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "목숨걸기",
@@ -6700,6 +7215,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "기프트패스",
@@ -6713,6 +7229,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 50,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "연옥",
@@ -6726,6 +7243,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "물의맹세",
@@ -6739,6 +7257,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "불꽃의맹세",
@@ -6752,6 +7271,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "풀의맹세",
@@ -6765,6 +7285,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "볼트체인지",
@@ -6778,6 +7299,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "벌레의저항",
@@ -6791,6 +7313,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "땅고르기",
@@ -6804,6 +7327,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "얼음숨결",
@@ -6817,6 +7341,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 90,
+    "pp": 10,
     "priority": -6,
     "names": {
       "ko": "드래곤테일",
@@ -6830,6 +7355,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "분발",
@@ -6843,6 +7369,7 @@
     "category": "special",
     "power": 55,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "일렉트릭네트",
@@ -6856,6 +7383,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "와일드볼트",
@@ -6869,6 +7397,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드릴라이너",
@@ -6882,6 +7411,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "더블촙",
@@ -6895,6 +7425,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "하트스탬프",
@@ -6908,6 +7439,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "우드호른",
@@ -6921,6 +7453,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "성스러운칼",
@@ -6934,6 +7467,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "셸블레이드",
@@ -6947,6 +7481,7 @@
     "category": "physical",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "히트스탬프",
@@ -6960,6 +7495,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "그래스믹서",
@@ -6973,6 +7509,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "하드롤러",
@@ -6986,6 +7523,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "코튼가드",
@@ -6999,6 +7537,7 @@
     "category": "special",
     "power": 85,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "나이트버스트",
@@ -7012,6 +7551,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코브레이크",
@@ -7025,6 +7565,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "스위프뺨치기",
@@ -7038,6 +7579,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 70,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "폭풍",
@@ -7051,6 +7593,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "아프로브레이크",
@@ -7064,6 +7607,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 85,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "기어소서",
@@ -7077,6 +7621,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "화염탄",
@@ -7090,6 +7635,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "테크노버스터",
@@ -7103,6 +7649,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "옛노래",
@@ -7116,6 +7663,7 @@
     "category": "special",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "신비의칼",
@@ -7129,6 +7677,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "얼다세계",
@@ -7142,6 +7691,7 @@
     "category": "physical",
     "power": 130,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "뇌격",
@@ -7155,6 +7705,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "푸른불꽃",
@@ -7168,6 +7719,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "불꽃춤",
@@ -7181,6 +7733,7 @@
     "category": "physical",
     "power": 140,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "프리즈볼트",
@@ -7194,6 +7747,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "콜드플레어",
@@ -7207,6 +7761,7 @@
     "category": "special",
     "power": 55,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "바크아웃",
@@ -7220,6 +7775,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "고드름떨구기",
@@ -7233,6 +7789,7 @@
     "category": "physical",
     "power": 180,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "V제너레이트",
@@ -7246,6 +7803,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "크로스플레임",
@@ -7259,6 +7817,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "크로스썬더",
@@ -7272,6 +7831,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "플라잉프레스",
@@ -7285,6 +7845,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "마룻바닥세워막기",
@@ -7298,6 +7859,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "트림",
@@ -7311,6 +7873,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "일구기",
@@ -7324,6 +7887,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "끈적끈적네트",
@@ -7337,6 +7901,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 25,
     "priority": 0,
     "names": {
       "ko": "마지막일침",
@@ -7350,6 +7915,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "고스트다이브",
@@ -7363,6 +7929,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "핼러윈",
@@ -7376,6 +7943,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "부르짖기",
@@ -7389,6 +7957,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 25,
     "priority": 1,
     "names": {
       "ko": "플라스마샤워",
@@ -7402,6 +7971,7 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "파라볼라차지",
@@ -7415,6 +7985,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "숲의저주",
@@ -7428,6 +7999,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "꽃보라",
@@ -7441,6 +8013,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "프리즈드라이",
@@ -7454,6 +8027,7 @@
     "category": "special",
     "power": 40,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "차밍보이스",
@@ -7467,6 +8041,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "막말내뱉기",
@@ -7480,6 +8055,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "뒤집어엎기",
@@ -7493,6 +8069,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드레인키스",
@@ -7506,6 +8083,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 3,
     "names": {
       "ko": "트릭가드",
@@ -7519,6 +8097,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "플라워가드",
@@ -7532,6 +8111,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "그래스필드",
@@ -7545,6 +8125,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "미스트필드",
@@ -7558,6 +8139,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "송전",
@@ -7571,6 +8153,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "치근거리기",
@@ -7584,6 +8167,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "요정의바람",
@@ -7597,6 +8181,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "문포스",
@@ -7610,6 +8195,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "폭음파",
@@ -7623,6 +8209,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "페어리록",
@@ -7636,6 +8223,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "킹실드",
@@ -7649,6 +8237,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "친해지기",
@@ -7662,6 +8251,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "비밀이야기",
@@ -7675,6 +8265,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "다이아스톰",
@@ -7688,6 +8279,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "스팀버스트",
@@ -7701,6 +8293,7 @@
     "category": "special",
     "power": 80,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "다른차원홀",
@@ -7714,6 +8307,7 @@
     "category": "special",
     "power": 15,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1,
     "names": {
       "ko": "물수리검",
@@ -7727,6 +8321,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "매지컬플레임",
@@ -7740,6 +8335,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "니들가드",
@@ -7753,6 +8349,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "아로마미스트",
@@ -7766,6 +8363,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "괴전파",
@@ -7779,6 +8377,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "베놈트랩",
@@ -7792,6 +8391,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1,
     "names": {
       "ko": "분진",
@@ -7805,6 +8405,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "지오컨트롤",
@@ -7818,6 +8419,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "자기장조작",
@@ -7831,6 +8433,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "해피타임",
@@ -7844,6 +8447,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "일렉트릭필드",
@@ -7857,6 +8461,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "매지컬샤인",
@@ -7870,6 +8475,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "축하",
@@ -7883,6 +8489,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "손에손잡기",
@@ -7896,6 +8503,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 30,
     "priority": 1,
     "names": {
       "ko": "초롱초롱눈동자",
@@ -7909,6 +8517,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "볼부비부비",
@@ -7922,6 +8531,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "적당히손봐주기",
@@ -7935,6 +8545,7 @@
     "category": "special",
     "power": 20,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "엉겨붙기",
@@ -7948,6 +8559,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "그로우펀치",
@@ -7961,6 +8573,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "데스윙",
@@ -7974,6 +8587,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사우전드애로",
@@ -7987,6 +8601,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사우전드웨이브",
@@ -8000,6 +8615,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "그라운드포스",
@@ -8013,6 +8629,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "파멸의빛",
@@ -8026,6 +8643,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "근원의파동",
@@ -8039,6 +8657,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "단애의칼",
@@ -8052,6 +8671,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "화룡점정",
@@ -8065,6 +8685,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "다른차원러시",
@@ -8078,6 +8699,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "울트라대시어택",
@@ -8091,6 +8713,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "울트라대시어택",
@@ -8104,6 +8727,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "전력무쌍격렬권",
@@ -8117,6 +8741,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "전력무쌍격렬권",
@@ -8130,6 +8755,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "파이널다이브클래시",
@@ -8143,6 +8769,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "파이널다이브클래시",
@@ -8156,6 +8783,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "애시드포이즌딜리트",
@@ -8169,6 +8797,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "애시드포이즌딜리트",
@@ -8182,6 +8811,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "라이징랜드오버",
@@ -8195,6 +8825,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "라이징랜드오버",
@@ -8208,6 +8839,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "월즈엔드폴",
@@ -8221,6 +8853,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "월즈엔드폴",
@@ -8234,6 +8867,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "절대포식회전참",
@@ -8247,6 +8881,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "절대포식회전참",
@@ -8260,6 +8895,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "무한암야로의유인",
@@ -8273,6 +8909,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "무한암야로의유인",
@@ -8286,6 +8923,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "초월나선연격",
@@ -8299,6 +8937,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "초월나선연격",
@@ -8312,6 +8951,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "다이내믹풀플레임",
@@ -8325,6 +8965,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "다이내믹풀플레임",
@@ -8338,6 +8979,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "슈퍼아쿠아토네이도",
@@ -8351,6 +8993,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "슈퍼아쿠아토네이도",
@@ -8364,6 +9007,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "블룸샤인엑스트라",
@@ -8377,6 +9021,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "블룸샤인엑스트라",
@@ -8390,6 +9035,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "스파킹기가볼트",
@@ -8403,6 +9049,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "스파킹기가볼트",
@@ -8416,6 +9063,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "맥시멈사이브레이커",
@@ -8429,6 +9077,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "맥시멈사이브레이커",
@@ -8442,6 +9091,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "레이징지오프리즈",
@@ -8455,6 +9105,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "레이징지오프리즈",
@@ -8468,6 +9119,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "얼티메이트드래곤번",
@@ -8481,6 +9133,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "얼티메이트드래곤번",
@@ -8494,6 +9147,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "블랙홀이클립스",
@@ -8507,6 +9161,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "블랙홀이클립스",
@@ -8520,6 +9175,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "러블리스타임팩트",
@@ -8533,6 +9189,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "러블리스타임팩트",
@@ -8546,6 +9203,7 @@
     "category": "physical",
     "power": 210,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "필살피카슛",
@@ -8559,6 +9217,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "모래모으기",
@@ -8572,6 +9231,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 2,
     "names": {
       "ko": "만나자마자",
@@ -8585,6 +9245,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "토치카",
@@ -8598,6 +9259,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "그림자꿰매기",
@@ -8611,6 +9273,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "DD래리어트",
@@ -8624,6 +9287,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "물거품아리아",
@@ -8637,6 +9301,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "아이스해머",
@@ -8650,6 +9315,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "플라워힐",
@@ -8663,6 +9329,7 @@
     "category": "physical",
     "power": 95,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "10만마력",
@@ -8676,6 +9343,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "힘흡수",
@@ -8689,6 +9357,7 @@
     "category": "physical",
     "power": 125,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "솔라블레이드",
@@ -8702,6 +9371,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "나뭇잎",
@@ -8715,6 +9385,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 3,
     "names": {
       "ko": "스포트라이트",
@@ -8728,6 +9399,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "독실",
@@ -8741,6 +9413,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 30,
     "priority": 0,
     "names": {
       "ko": "예민해지기",
@@ -8754,6 +9427,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "어시스트기어",
@@ -8767,6 +9441,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "지옥찌르기",
@@ -8780,6 +9455,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "꽃가루경단",
@@ -8793,6 +9469,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "앵커숏",
@@ -8806,6 +9483,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코필드",
@@ -8819,6 +9497,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "덤벼들기",
@@ -8832,6 +9511,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "불꽃채찍",
@@ -8845,6 +9525,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "기어오르기",
@@ -8858,6 +9539,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "불사르기",
@@ -8871,6 +9553,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "스피드스웹",
@@ -8884,6 +9567,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "스마트호른",
@@ -8897,6 +9581,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "정화",
@@ -8910,6 +9595,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "잠재댄스",
@@ -8923,6 +9609,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "코어퍼니셔",
@@ -8936,6 +9623,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "트로피컬킥",
@@ -8949,6 +9637,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "지휘",
@@ -8962,6 +9651,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 15,
     "priority": -3,
     "names": {
       "ko": "부리캐논",
@@ -8975,6 +9665,7 @@
     "category": "special",
     "power": 110,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "스케일노이즈",
@@ -8988,6 +9679,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "드래곤해머",
@@ -9001,6 +9693,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "세차게휘두르기",
@@ -9014,6 +9707,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "오로라베일",
@@ -9027,6 +9721,7 @@
     "category": "physical",
     "power": 180,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "섀도애로우즈스트라이크",
@@ -9040,6 +9735,7 @@
     "category": "physical",
     "power": 180,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "하이퍼다크크러셔",
@@ -9053,6 +9749,7 @@
     "category": "special",
     "power": 195,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "바다의심포니",
@@ -9066,6 +9763,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "알로라의수호자",
@@ -9079,6 +9777,7 @@
     "category": "physical",
     "power": 195,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "칠성탈혼퇴",
@@ -9092,6 +9791,7 @@
     "category": "special",
     "power": 175,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "라이트닝서프라이드",
@@ -9105,6 +9805,7 @@
     "category": "physical",
     "power": 210,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "진심의공격",
@@ -9118,6 +9819,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "나인이볼부스트",
@@ -9131,6 +9833,7 @@
     "category": "special",
     "power": 185,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "오리진즈슈퍼노바",
@@ -9144,6 +9847,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": -3,
     "names": {
       "ko": "트랩셸",
@@ -9157,6 +9861,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "플뢰르캐논",
@@ -9170,6 +9875,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코팽",
@@ -9183,6 +9889,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "분함의발구르기",
@@ -9196,6 +9903,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "섀도본",
@@ -9209,6 +9917,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 20,
     "priority": 1,
     "names": {
       "ko": "액셀록",
@@ -9222,6 +9931,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "아쿠아브레이크",
@@ -9235,6 +9945,7 @@
     "category": "special",
     "power": 160,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "프리즘레이저",
@@ -9248,6 +9959,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "섀도스틸",
@@ -9261,6 +9973,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "메테오드라이브",
@@ -9274,6 +9987,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "섀도레이",
@@ -9287,6 +10001,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "눈물그렁그렁",
@@ -9300,6 +10015,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "찌리리따끔따끔",
@@ -9313,6 +10029,7 @@
     "category": "special",
     "power": null,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "자연의분노",
@@ -9326,6 +10043,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "멀티어택",
@@ -9339,6 +10057,7 @@
     "category": "special",
     "power": 195,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "1000만볼트",
@@ -9352,6 +10071,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "깜짝헤드",
@@ -9365,6 +10085,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "플라스마피스트",
@@ -9378,6 +10099,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "포톤가이저",
@@ -9391,6 +10113,7 @@
     "category": "special",
     "power": 200,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "하늘을태우는멸망의빛",
@@ -9404,6 +10127,7 @@
     "category": "physical",
     "power": 200,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "선샤인스매셔",
@@ -9417,6 +10141,7 @@
     "category": "special",
     "power": 200,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "문라이트블래스터",
@@ -9430,6 +10155,7 @@
     "category": "physical",
     "power": 190,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "투닥투닥프렌드타임",
@@ -9443,6 +10169,7 @@
     "category": "physical",
     "power": 190,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "레이디얼에지스톰",
@@ -9456,6 +10183,7 @@
     "category": "special",
     "power": 185,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "ko": "브레이징소울비트",
@@ -9469,6 +10197,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 2,
     "names": {
       "ko": "파찌파찌액셀",
@@ -9482,6 +10211,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "참방참방서핑",
@@ -9495,6 +10225,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "둥실둥실폴",
@@ -9508,6 +10239,7 @@
     "category": "special",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "피카피카썬더",
@@ -9521,6 +10253,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "생생버블",
@@ -9534,6 +10267,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "찌릿찌릿일렉",
@@ -9547,6 +10281,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "이글이글번",
@@ -9560,6 +10295,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "콸콸오라",
@@ -9573,6 +10309,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "아그아그존",
@@ -9586,6 +10323,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "쑥쑥봄버",
@@ -9599,6 +10337,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "꽁꽁프로스트",
@@ -9612,6 +10351,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 85,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "반짝반짝스톰",
@@ -9625,6 +10365,7 @@
     "category": "physical",
     "power": null,
     "accuracy": null,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "브이브이브레이크",
@@ -9638,6 +10379,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "더블펀처",
@@ -9651,6 +10393,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "다이월",
@@ -9664,6 +10407,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "다이맥스포",
@@ -9677,6 +10421,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "노려맞히기",
@@ -9690,6 +10435,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "물고버티기",
@@ -9703,6 +10449,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "볼가득넣기",
@@ -9716,6 +10463,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "배수의진",
@@ -9729,6 +10477,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "타르숏",
@@ -9742,6 +10491,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "마법가루",
@@ -9755,6 +10505,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드래곤애로",
@@ -9768,6 +10519,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다과회",
@@ -9781,6 +10533,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "문어굳히기",
@@ -9794,6 +10547,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "전격부리",
@@ -9807,6 +10561,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "아가미물기",
@@ -9820,6 +10575,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "코트체인지",
@@ -9833,6 +10589,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이번",
@@ -9846,6 +10603,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이웜",
@@ -9859,6 +10617,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이썬더",
@@ -9872,6 +10631,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이어택",
@@ -9885,6 +10645,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이너클",
@@ -9898,6 +10659,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이할로우",
@@ -9911,6 +10673,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이아이스",
@@ -9924,6 +10687,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이애시드",
@@ -9937,6 +10701,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이스트림",
@@ -9950,6 +10715,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이제트",
@@ -9963,6 +10729,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이페어리",
@@ -9976,6 +10743,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이드라군",
@@ -9989,6 +10757,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이사이코",
@@ -10002,6 +10771,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이록",
@@ -10015,6 +10785,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이어스",
@@ -10028,6 +10799,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이아크",
@@ -10041,6 +10813,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이그래스",
@@ -10054,6 +10827,7 @@
     "category": "physical",
     "power": 10,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "다이스틸",
@@ -10067,6 +10841,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "소울비트",
@@ -10080,6 +10855,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "바디프레스",
@@ -10093,6 +10869,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "데코레이션",
@@ -10106,6 +10883,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "드럼어택",
@@ -10119,6 +10897,7 @@
     "category": "physical",
     "power": 35,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "집게덫",
@@ -10132,6 +10911,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "화염볼",
@@ -10145,6 +10925,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "거수참",
@@ -10158,6 +10939,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "거수탄",
@@ -10171,6 +10953,7 @@
     "category": "physical",
     "power": 110,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "오라휠",
@@ -10184,6 +10967,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "와이드브레이커",
@@ -10197,6 +10981,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "가지찌르기",
@@ -10210,6 +10995,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "오버드라이브",
@@ -10223,6 +11009,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사과산",
@@ -10236,6 +11023,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "G의힘",
@@ -10249,6 +11037,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "소울크래시",
@@ -10262,6 +11051,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "원더스팀",
@@ -10275,6 +11065,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "생명의물방울",
@@ -10288,6 +11079,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "블로킹",
@@ -10301,6 +11093,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사죄의찌르기",
@@ -10314,6 +11107,7 @@
     "category": "physical",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "스타어설트",
@@ -10327,6 +11121,7 @@
     "category": "special",
     "power": 160,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "무한다이빔",
@@ -10340,6 +11135,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "철제광선",
@@ -10353,6 +11149,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "와이드포스",
@@ -10366,6 +11163,7 @@
     "category": "physical",
     "power": 130,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "아이언롤러",
@@ -10379,6 +11177,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 90,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "스케일샷",
@@ -10392,6 +11191,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "메테오빔",
@@ -10405,6 +11205,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "셸암즈",
@@ -10418,6 +11219,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "미스트버스트",
@@ -10431,6 +11233,7 @@
     "category": "physical",
     "power": 55,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "그래스슬라이더",
@@ -10444,6 +11247,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "라이징볼트",
@@ -10457,6 +11261,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "대지의파동",
@@ -10470,6 +11275,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "엄습하는일격",
@@ -10483,6 +11289,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "질투의불꽃",
@@ -10496,6 +11303,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "분풀이",
@@ -10509,6 +11317,7 @@
     "category": "physical",
     "power": 110,
     "accuracy": 90,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "폴터가이스트",
@@ -10522,6 +11331,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": 40,
     "priority": 0,
     "names": {
       "ko": "부식가스",
@@ -10535,6 +11345,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "코칭",
@@ -10548,6 +11359,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "ko": "퀵턴",
@@ -10561,6 +11373,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "트리플악셀",
@@ -10574,6 +11387,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "더블윙",
@@ -10587,6 +11401,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "열사의대지",
@@ -10600,6 +11415,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "정글힐",
@@ -10613,6 +11429,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "암흑강타",
@@ -10626,6 +11443,7 @@
     "category": "physical",
     "power": 25,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "수류연타",
@@ -10639,6 +11457,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "썬더프리즌",
@@ -10652,6 +11471,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "드래곤에너지",
@@ -10665,6 +11485,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "얼어붙는시선",
@@ -10678,6 +11499,7 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "타오르는분노",
@@ -10691,6 +11513,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "천둥차기",
@@ -10704,6 +11527,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "블리자드랜스",
@@ -10717,6 +11541,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "아스트랄비트",
@@ -10730,6 +11555,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "섬뜩한주문",
@@ -10743,6 +11569,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Dire Claw",
@@ -10755,6 +11582,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Psyshield Bash",
@@ -10767,6 +11595,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Power Shift",
@@ -10779,6 +11608,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Stone Axe",
@@ -10791,6 +11621,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 80,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Springtide Storm",
@@ -10803,6 +11634,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Mystical Power",
@@ -10815,6 +11647,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Raging Fury",
@@ -10827,6 +11660,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Wave Crash",
@@ -10839,6 +11673,7 @@
     "category": "special",
     "power": 150,
     "accuracy": 95,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Chloroblast",
@@ -10851,6 +11686,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Mountain Gale",
@@ -10863,6 +11699,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Victory Dance",
@@ -10875,6 +11712,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Headlong Rush",
@@ -10887,6 +11725,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Barb Barrage",
@@ -10899,6 +11738,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Esper Wing",
@@ -10911,6 +11751,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Bitter Malice",
@@ -10923,6 +11764,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Shelter",
@@ -10935,6 +11777,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Triple Arrows",
@@ -10947,6 +11790,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Infernal Parade",
@@ -10959,6 +11803,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Ceaseless Edge",
@@ -10971,6 +11816,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 80,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Bleakwind Storm",
@@ -10983,6 +11829,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 80,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Wildbolt Storm",
@@ -10995,6 +11842,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 80,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Sandsear Storm",
@@ -11007,6 +11855,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Lunar Blessing",
@@ -11019,6 +11868,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Take Heart",
@@ -11031,6 +11881,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Tera Blast",
@@ -11043,6 +11894,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 4,
     "names": {
       "en": "Silk Trap",
@@ -11055,6 +11907,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Axe Kick",
@@ -11067,6 +11920,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Last Respects",
@@ -11079,6 +11933,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Lumina Crash",
@@ -11091,6 +11946,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Order Up",
@@ -11103,6 +11959,7 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
+    "pp": 15,
     "priority": 1,
     "names": {
       "en": "Jet Punch",
@@ -11115,6 +11972,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Spicy Extract",
@@ -11127,6 +11985,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Spin Out",
@@ -11139,6 +11998,7 @@
     "category": "physical",
     "power": 20,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Population Bomb",
@@ -11151,6 +12011,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Ice Spinner",
@@ -11163,6 +12024,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Glaive Rush",
@@ -11175,6 +12037,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 1,
     "priority": 0,
     "names": {
       "en": "Revival Blessing",
@@ -11187,6 +12050,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Salt Cure",
@@ -11199,6 +12063,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 95,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Triple Dive",
@@ -11211,6 +12076,7 @@
     "category": "physical",
     "power": 30,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Mortal Spin",
@@ -11223,6 +12089,7 @@
     "category": "status",
     "power": 0,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Doodle",
@@ -11235,6 +12102,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Fillet Away",
@@ -11247,6 +12115,7 @@
     "category": "physical",
     "power": 85,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Kowtow Cleave",
@@ -11259,6 +12128,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Flower Trick",
@@ -11271,6 +12141,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Torch Song",
@@ -11283,6 +12154,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Aqua Step",
@@ -11295,6 +12167,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Raging Bull",
@@ -11307,6 +12180,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Make It Rain",
@@ -11319,6 +12193,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "사이코블레이드",
@@ -11332,6 +12207,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "하이드로스팀",
@@ -11345,6 +12221,7 @@
     "category": "special",
     "power": 1,
     "accuracy": 90,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Ruination",
@@ -11357,6 +12234,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Collision Course",
@@ -11369,6 +12247,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Electro Drift",
@@ -11381,6 +12260,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Shed Tail",
@@ -11393,6 +12273,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Chilly Reception",
@@ -11405,6 +12286,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Tidy Up",
@@ -11417,6 +12299,7 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Snowscape",
@@ -11429,6 +12312,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "en": "Pounce",
@@ -11441,6 +12325,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "en": "Trailblaze",
@@ -11453,6 +12338,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "en": "Chilling Water",
@@ -11465,6 +12351,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Hyper Drill",
@@ -11477,6 +12364,7 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Twin Beam",
@@ -11489,6 +12377,7 @@
     "category": "physical",
     "power": 50,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Rage Fist",
@@ -11501,6 +12390,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Armor Cannon",
@@ -11513,6 +12403,7 @@
     "category": "physical",
     "power": 90,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Bitter Blade",
@@ -11525,6 +12416,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Double Shock",
@@ -11537,6 +12429,7 @@
     "category": "physical",
     "power": 160,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Gigaton Hammer",
@@ -11549,6 +12442,7 @@
     "category": "physical",
     "power": 1,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Comeuppance",
@@ -11561,6 +12455,7 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
+    "pp": 20,
     "priority": 0,
     "names": {
       "en": "Aqua Cutter",
@@ -11573,6 +12468,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Blazing Torque",
@@ -11585,6 +12481,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Wicked Torque",
@@ -11597,6 +12494,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Noxious Torque",
@@ -11609,6 +12507,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Combat Torque",
@@ -11621,6 +12520,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Magical Torque",
@@ -11633,6 +12533,7 @@
     "category": "special",
     "power": 140,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "en": "Blood Moon",
@@ -11645,6 +12546,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 90,
+    "pp": 15,
     "priority": 0,
     "names": {
       "en": "Matcha Gotcha",
@@ -11657,6 +12559,7 @@
     "category": "special",
     "power": 60,
     "accuracy": 85,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Syrup Bomb",
@@ -11669,6 +12572,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "en": "Ivy Cudgel",
@@ -11681,6 +12585,7 @@
     "category": "special",
     "power": 130,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "일렉트로빔",
@@ -11694,6 +12599,7 @@
     "category": "special",
     "power": 120,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "테라클러스터",
@@ -11707,6 +12613,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "변덕레이저",
@@ -11720,6 +12627,7 @@
     "category": "status",
     "power": 0,
     "accuracy": 0,
+    "pp": 10,
     "priority": 4,
     "names": {
       "ko": "화염의수호",
@@ -11733,6 +12641,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": 5,
     "priority": 1,
     "names": {
       "ko": "질풍신뢰",
@@ -11746,6 +12655,7 @@
     "category": "physical",
     "power": 95,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "파워풀에지",
@@ -11759,6 +12669,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 0,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "타키온커터",
@@ -11772,6 +12683,7 @@
     "category": "physical",
     "power": 0,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "하드프레스",
@@ -11785,6 +12697,7 @@
     "category": "status",
     "power": 0,
     "accuracy": 0,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "드래곤옐",
@@ -11798,6 +12711,7 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "매혹의보이스",
@@ -11811,6 +12725,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "열불내기",
@@ -11824,6 +12739,7 @@
     "category": "physical",
     "power": 100,
     "accuracy": 95,
+    "pp": 15,
     "priority": 0,
     "names": {
       "ko": "썬더다이브",
@@ -11837,6 +12753,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": 10,
     "priority": 0,
     "names": {
       "ko": "사이코노이즈",
@@ -11850,6 +12767,7 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
+    "pp": 15,
     "priority": 3,
     "names": {
       "ko": "기선제압",
@@ -11863,6 +12781,7 @@
     "category": "special",
     "power": 100,
     "accuracy": 100,
+    "pp": 5,
     "priority": 0,
     "names": {
       "ko": "악독사슬",
@@ -11876,6 +12795,7 @@
     "category": "physical",
     "power": 55,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Rush"
@@ -11887,6 +12807,7 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Blast"
@@ -11898,6 +12819,7 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Blitz"
@@ -11909,6 +12831,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Bolt"
@@ -11920,6 +12843,7 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Break"
@@ -11931,6 +12855,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Chill"
@@ -11942,6 +12867,7 @@
     "category": "physical",
     "power": 120,
     "accuracy": 60,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow End"
@@ -11953,6 +12879,7 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Fire"
@@ -11964,6 +12891,7 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Rave"
@@ -11975,6 +12903,7 @@
     "category": "special",
     "power": 95,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Storm"
@@ -11986,6 +12915,7 @@
     "category": "special",
     "power": 50,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Wave"
@@ -11997,6 +12927,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Down"
@@ -12008,6 +12939,7 @@
     "category": "special",
     "power": null,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Half"
@@ -12019,6 +12951,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Hold"
@@ -12030,6 +12963,7 @@
     "category": "status",
     "power": null,
     "accuracy": 100,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Mist"
@@ -12041,6 +12975,7 @@
     "category": "status",
     "power": null,
     "accuracy": 90,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Panic"
@@ -12052,6 +12987,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Shed"
@@ -12063,6 +12999,7 @@
     "category": "status",
     "power": null,
     "accuracy": null,
+    "pp": null,
     "priority": 0,
     "names": {
       "en": "Shadow Sky"
