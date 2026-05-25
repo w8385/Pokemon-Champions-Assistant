@@ -4127,6 +4127,7 @@ export default function App() {
     : dexSearchMode === 'move' && dexSelectedValue
       ? (dexMoveOptions.find((option) => option.key === dexSelectedValue) ?? (MOVE_META_BY_NAME[dexSelectedValue] ? { key: dexSelectedValue, name: dexSelectedValue, meta: MOVE_META_BY_NAME[dexSelectedValue] } : null))
       : null
+  const dexSelectedMoveName = dexSelectedMove?.name ?? ''
   const dexSelectedAbility = dexSelectedAllResult?.kind === 'ability'
     ? { key: dexSelectedAllResult.key, koLabel: dexSelectedAllResult.koLabel, pokemonKeys: dexSelectedAllResult.pokemonKeys }
     : dexSearchMode === 'ability' && dexSelectedValue
@@ -4181,13 +4182,13 @@ export default function App() {
 
   React.useEffect(() => {
     let cancelled = false
-    if (!dexSelectedMove) {
+    if (!dexSelectedMoveName) {
       setDexMoveLearners([])
       setDexMoveLearnersStatus('idle')
       return
     }
     setDexMoveLearnersStatus('loading')
-    dexMoveLearnerRows(dexSelectedMove.name)
+    dexMoveLearnerRows(dexSelectedMoveName)
       .then((rows) => {
         if (cancelled) return
         setDexMoveLearners(rows)
@@ -4201,7 +4202,7 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [dexSelectedMove])
+  }, [dexSelectedMoveName])
 
   const hideHoverTooltip = React.useCallback(() => setHoverTooltip(null), [])
   const showHoverTooltipAtElement = React.useCallback((element: HTMLElement, card: HoverTooltipCard | null | undefined) => {
