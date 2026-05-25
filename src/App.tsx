@@ -4004,6 +4004,8 @@ export default function App() {
   const [dexSearchMode, setDexSearchMode] = React.useState<DexSearchMode>(() => viewState?.dexSearchMode ?? 'pokemon')
   const [dexSearch, setDexSearch] = React.useState(() => viewState?.dexSearch ?? '')
   const [dexUnifiedSearch, setDexUnifiedSearch] = React.useState(() => viewState?.dexUnifiedSearch ?? '')
+  const [dexUnifiedSearchDraft, setDexUnifiedSearchDraft] = React.useState(() => viewState?.dexUnifiedSearch ?? '')
+  const [dexUnifiedSearchComposing, setDexUnifiedSearchComposing] = React.useState(false)
   const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(() => viewState?.dexSelectedValue ?? null)
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const longPressTimerRef = React.useRef<number | null>(null)
@@ -4046,6 +4048,9 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
+  React.useEffect(() => {
+    if (!dexUnifiedSearchComposing) setDexUnifiedSearchDraft(dexUnifiedSearch)
+  }, [dexUnifiedSearch, dexUnifiedSearchComposing])
   const deferredDexSearch = React.useDeferredValue(dexSearch)
   const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
@@ -6777,9 +6782,20 @@ export default function App() {
                 </div>
                 <div className="dex-search-autocomplete">
                   <input
-                    value={dexUnifiedSearch}
+                    value={dexUnifiedSearchDraft}
                     placeholder={lt('포켓몬 / 기술 / 특성 / 도구 검색')}
-                    onChange={(e) => setDexUnifiedSearch(e.target.value)}
+                    onChange={(e) => {
+                      const nextValue = e.target.value
+                      setDexUnifiedSearchDraft(nextValue)
+                      if (!dexUnifiedSearchComposing) setDexUnifiedSearch(nextValue)
+                    }}
+                    onCompositionStart={() => setDexUnifiedSearchComposing(true)}
+                    onCompositionEnd={(e) => {
+                      const nextValue = e.currentTarget.value
+                      setDexUnifiedSearchComposing(false)
+                      setDexUnifiedSearchDraft(nextValue)
+                      setDexUnifiedSearch(nextValue)
+                    }}
                     onKeyDown={(e) => {
                       if (e.key !== 'Enter' || !dexAllResults.length) return
                       setDexSelectedValue(dexAllResults[0].id)
