@@ -2994,14 +2994,15 @@ function speciesSearchCandidates(row: Row) {
   return Array.from(new Set([...base, ...extra].flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
+const SPECIES_SEARCH_INDEX = rows.map((row) => ({ row, candidates: speciesSearchCandidates(row) }))
+
 function filterSpeciesOptions(query: string, options?: { includeMega?: boolean }) {
   const includeMega = options?.includeMega ?? true
   const normalized = normalizeSearchText(query.trim())
-  const candidateRows = includeMega ? rows : rows.filter((row) => !row.key.startsWith('mega-'))
-  if (!normalized) return candidateRows.map((row) => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
-  return candidateRows
-    .map((row) => {
-      const candidates = speciesSearchCandidates(row)
+  const candidateEntries = includeMega ? SPECIES_SEARCH_INDEX : SPECIES_SEARCH_INDEX.filter(({ row }) => !row.key.startsWith('mega-'))
+  if (!normalized) return candidateEntries.map(({ row }) => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
+  return candidateEntries
+    .map(({ row, candidates }) => {
       const score = candidates.reduce((best, candidate) => {
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
@@ -3203,13 +3204,14 @@ function moveSearchCandidates(name: string) {
   return Array.from(new Set(candidates.flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
+const DEX_MOVE_INDEX = Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta, candidates: moveSearchCandidates(name) }))
+
 function filterDexMoveOptions(query: string) {
   const normalized = normalizeSearchText(query.trim())
-  const entries = Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta }))
-  if (!normalized) return entries.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
-  return entries
-    .map((entry) => {
-      const score = moveSearchCandidates(entry.name).reduce((best, candidate) => {
+  if (!normalized) return DEX_MOVE_INDEX.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+  return DEX_MOVE_INDEX
+    .map(({ candidates, ...entry }) => {
+      const score = candidates.reduce((best, candidate) => {
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
         if (candidate.includes(normalized)) return Math.min(best, 2)
@@ -3239,20 +3241,8 @@ function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
 }
 
 function filterDexAbilityOptions(query: string) {
-  const byKey = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
-  for (const row of rows) {
-    row.abilities.forEach((abilityKey, idx) => {
-      const koLabel = row.abilities_ko[idx] ?? titleCaseSlug(abilityKey)
-      const existing = byKey.get(abilityKey)
-      if (existing) {
-        existing.pokemonKeys.push(row.key)
-        return
-      }
-      byKey.set(abilityKey, { key: abilityKey, koLabel, pokemonKeys: [row.key] })
-    })
-  }
   const normalized = normalizeSearchText(query.trim())
-  const entries = [...byKey.values()].map((entry) => ({ ...entry, pokemonKeys: Array.from(new Set(entry.pokemonKeys)).sort((a, b) => a.localeCompare(b, 'ko')) }))
+  const entries = [...ABILITY_INDEX.byKey.values()].map((entry) => ({ ...entry, pokemonKeys: [...entry.pokemonKeys].sort((a, b) => a.localeCompare(b, 'ko')) }))
   if (!normalized) return entries.sort((a, b) => a.koLabel.localeCompare(b.koLabel, 'ko'))
   return entries
     .map((entry) => {
@@ -3665,34 +3655,36 @@ export default function App() {
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
-  const hasDexUnifiedSearch = dexUnifiedSearch.trim().length > 0
-  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(dexSearch, { includeMega: true }).slice(0, 12), [dexSearch])
-  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(dexSearch).slice(0, 48), [dexSearch])
-  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(dexSearch).slice(0, 48), [dexSearch])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(dexSearch, siteLanguage).slice(0, 48), [dexSearch, siteLanguage])
+  const deferredDexSearch = React.useDeferredValue(dexSearch)
+  const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
+  const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
+  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true }).slice(0, 12), [deferredDexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage).slice(0, 48), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
-    const unifiedQuery = dexUnifiedSearch.trim()
+    const unifiedQuery = deferredDexUnifiedSearch.trim()
     if (!unifiedQuery) return []
     const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true }).slice(0, 10)
     const moveOptions = filterDexMoveOptions(unifiedQuery).slice(0, 16)
     const abilityOptions = filterDexAbilityOptions(unifiedQuery).slice(0, 10)
     const itemOptions = filterItemOptions(unifiedQuery, siteLanguage).slice(0, 16)
-    const pokemonResults = speciesOptions
+    const pokemonResults: Extract<DexResultItem, { kind: 'pokemon' }>[] = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
         return row ? { id: dexSelectionId('pokemon', option.key), kind: 'pokemon' as const, key: option.key, row, score: idx + 0 } : null
       })
-      .filter((entry): entry is DexResultItem => Boolean(entry))
-    const moveResults = moveOptions.map((option, idx) => ({ id: dexSelectionId('move', option.key), kind: 'move' as const, key: option.key, name: option.name, meta: option.meta, score: idx + 0.15 }))
-    const abilityResults = abilityOptions.map((option, idx) => ({ id: dexSelectionId('ability', option.key), kind: 'ability' as const, key: option.key, koLabel: option.koLabel, pokemonKeys: option.pokemonKeys, score: idx + 0.3 }))
-    const itemResults = itemOptions.map((item, idx) => {
+      .filter((entry): entry is Extract<DexResultItem, { kind: 'pokemon' }> => entry !== null)
+    const moveResults: Extract<DexResultItem, { kind: 'move' }>[] = moveOptions.map((option, idx) => ({ id: dexSelectionId('move', option.key), kind: 'move' as const, key: option.key, name: option.name, meta: option.meta, score: idx + 0.15 }))
+    const abilityResults: Extract<DexResultItem, { kind: 'ability' }>[] = abilityOptions.map((option, idx) => ({ id: dexSelectionId('ability', option.key), kind: 'ability' as const, key: option.key, koLabel: option.koLabel, pokemonKeys: option.pokemonKeys, score: idx + 0.3 }))
+    const itemResults: Extract<DexResultItem, { kind: 'item' }>[] = itemOptions.map((item, idx) => {
       const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
       return { id: dexSelectionId('item', item), kind: 'item' as const, key: item, item, previewText: itemText?.summary || itemText?.detail || '', score: idx + 0.45 }
     })
-    return [...pokemonResults, ...moveResults, ...abilityResults, ...itemResults]
+    return ([...pokemonResults, ...moveResults, ...abilityResults, ...itemResults] as DexResultItem[])
       .sort((a, b) => a.score - b.score || a.kind.localeCompare(b.kind) || a.key.localeCompare(b.key, 'ko'))
       .slice(0, 40)
-  }, [dexUnifiedSearch, siteLanguage])
+  }, [deferredDexUnifiedSearch, siteLanguage])
   const dexResultKeys = React.useMemo(() => {
     if (hasDexUnifiedSearch) return dexAllResults.map((result) => result.id)
     if (dexSearchMode === 'pokemon') return dexSpeciesOptions.map((option) => option.key)
@@ -4508,13 +4500,13 @@ export default function App() {
       activeTab: mainSection === 'single' || mainSection === 'double' ? activeTab : undefined,
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
       dexSearchMode: mainSection === 'dex' ? dexSearchMode : undefined,
-      dexSearch: mainSection === 'dex' ? dexSearch.trim() : undefined,
-      dexUnifiedSearch: mainSection === 'dex' ? dexUnifiedSearch.trim() : undefined,
+      dexSearch: mainSection === 'dex' ? deferredDexSearch.trim() : undefined,
+      dexUnifiedSearch: mainSection === 'dex' ? deferredDexUnifiedSearch.trim() : undefined,
       dexSelectedValue: mainSection === 'dex' ? dexSelectedValue ?? undefined : undefined,
       selectedMy,
       selectedOpp,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return

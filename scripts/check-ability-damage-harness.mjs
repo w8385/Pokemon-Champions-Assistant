@@ -30,7 +30,11 @@ function extractFunctionBlock(source, name) {
   return source.slice(start)
 }
 
-const damageBlock = `${extractFunctionBlock(appSource, 'resolveStabMultiplier')}\n${extractFunctionBlock(appSource, 'resolveDamageModifiers')}`
+const damageBlock = [
+  extractFunctionBlock(appSource, 'resolveAbilityAdjustedMoveMeta'),
+  extractFunctionBlock(appSource, 'resolveStabMultiplier'),
+  extractFunctionBlock(appSource, 'resolveDamageModifiers'),
+].join('\n')
 const slugMatches = [...damageBlock.matchAll(/'([a-z][a-z-]+)'/g)].map((m) => m[1])
 const implemented = new Set(slugMatches.filter((slug) => allAbilities.includes(slug)))
 
@@ -53,7 +57,7 @@ const indirectOrNonDamage = new Set([
   'aftermath', 'anticipation', 'armor-tail', 'aroma-veil', 'big-pecks', 'bulletproof', 'cheek-pouch', 'clear-body', 'cloud-nine', 'compoundeyes', 'corrosion', 'cud-chew', 'curious-medicine', 'cursed-body', 'cute-charm', 'damp', 'disguise', 'early-bird', 'flame-body', 'flower-veil', 'friend-guard', 'frisk', 'gluttony', 'harvest', 'healer', 'heavy-metal', 'hospitality', 'hunger-switch', 'hyper-cutter', 'illuminate', 'illusion', 'immunity', 'imposter', 'infiltrator', 'innards-out', 'inner-focus', 'insomnia', 'justified', 'keen-eye', 'klutz', 'levitate', 'light-metal', 'limber', 'long-reach', 'magic-bounce', 'magic-guard', 'magician', 'magma-armor', 'minus', 'mirror-armor', 'mold-breaker', 'moody', 'mummy', 'natural-cure', 'no-guard', 'oblivious', 'overcoat', 'own-tempo', 'pickpocket', 'pickup', 'poison-point', 'poison-touch', 'prankster', 'pressure', 'purifying-salt', 'queenly-majesty', 'receiver', 'regenerator', 'ripen', 'rock-head', 'rough-skin', 'scrappy', 'screen-cleaner', 'shadow-tag', 'shed-skin', 'shell-armor', 'shield-dust', 'soundproof', 'spicy-spray', 'stall', 'stalwart', 'static', 'steadfast', 'stench', 'sticky-hold', 'sturdy', 'supersweet-syrup', 'sweet-veil', 'symbiosis', 'synchronize', 'tangled-feet', 'telepathy', 'toxic-debris', 'trace', 'unburden', 'unnerve', 'unseen-fist', 'wandering-spirit', 'white-smoke', 'zero-to-hero'
 ])
 const defenderDamageRelevant = new Set([
-  'dry-skin', 'earth-eater', 'fairy-aura', 'filter', 'flash-fire', 'fur-coat', 'heatproof', 'ice-scales', 'levitate', 'lightning-rod', 'motor-drive', 'multiscale', 'prism-armor', 'purifying-salt', 'sap-sipper', 'shadow-shield', 'solid-rock', 'soundproof', 'thick-fat', 'volt-absorb', 'water-absorb', 'water-bubble'
+  'dry-skin', 'earth-eater', 'fairy-aura', 'filter', 'flash-fire', 'friend-guard', 'fur-coat', 'heatproof', 'ice-scales', 'levitate', 'lightning-rod', 'motor-drive', 'multiscale', 'prism-armor', 'purifying-salt', 'sap-sipper', 'shadow-shield', 'solid-rock', 'soundproof', 'thick-fat', 'volt-absorb', 'water-absorb', 'water-bubble'
 ])
 
 const categories = {
