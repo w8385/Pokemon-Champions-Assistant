@@ -3657,7 +3657,7 @@ function findBestOcrItemMatch(line: string) {
 
 function parseOcrImportedMember(lines: string[], speciesOverride?: string | null) {
   const normalizedLines = lines.map(cleanOcrLine).filter(Boolean)
-  const speciesKey = speciesOverride ?? normalizedLines.map((line) => findBestOcrSpeciesMatch(line)).find((entry) => entry && entry.score <= 1)?.key ?? null
+  const speciesKey = speciesOverride ?? normalizedLines.map((line) => findBestOcrSpeciesMatch(line)).find((entry) => entry && entry.score <= 2)?.key ?? null
   if (!speciesKey) return null
   const row = indexByKey.get(speciesKey)
   if (!row) return null
@@ -3692,7 +3692,7 @@ function parseOcrImportedParty(text: string): OcrImportedPartyMember[] {
   const anchors = lines
     .map((line, idx) => {
       const species = findBestOcrSpeciesMatch(line)
-      return species && species.score <= 1 ? { idx, key: species.key } : null
+      return species && species.score <= 2 ? { idx, key: species.key } : null
     })
     .filter((entry): entry is { idx: number; key: string } => entry !== null)
     .filter((entry, idx, list) => idx === 0 || entry.idx !== list[idx - 1].idx)
@@ -3702,6 +3702,31 @@ function parseOcrImportedParty(text: string): OcrImportedPartyMember[] {
     return parseOcrImportedMember(lines.slice(anchor.idx, nextIdx), anchor.key)
   })
   return members.filter((entry): entry is OcrImportedPartyMember => entry !== null)
+}
+
+function parseOcrImportedPartyDocuments(texts: string[]) {
+  const orderedKeys: string[] = []
+  const linesByKey = new Map<string, string[]>()
+  for (const text of texts) {
+    const lines = text.split(/\r?\n/).map(cleanOcrLine).filter(Boolean)
+    if (!lines.length) continue
+    const anchors = lines
+      .map((line, idx) => {
+        const species = findBestOcrSpeciesMatch(line)
+        return species && species.score <= 2 ? { idx, key: species.key } : null
+      })
+      .filter((entry): entry is { idx: number; key: string } => entry !== null)
+      .filter((entry, idx, list) => idx === 0 || entry.idx !== list[idx - 1].idx)
+    if (!anchors.length) continue
+    anchors.forEach((anchor, anchorIdx) => {
+      const nextIdx = anchors[anchorIdx + 1]?.idx ?? lines.length
+      const segment = lines.slice(Math.max(0, anchor.idx - 1), nextIdx)
+      if (!orderedKeys.includes(anchor.key)) orderedKeys.push(anchor.key)
+      linesByKey.set(anchor.key, [...(linesByKey.get(anchor.key) ?? []), ...segment])
+    })
+  }
+  const imported = orderedKeys.slice(0, 6).map((key) => parseOcrImportedMember(linesByKey.get(key) ?? [], key))
+  return imported.filter((entry): entry is OcrImportedPartyMember => entry !== null)
 }
 
 async function inferImportedPartyFromSpriteGuidedImage(file: File, recognize: (image: HTMLCanvasElement, logger?: (message: { status: string; progress?: number }) => void) => Promise<string>, status?: (message: string) => void) {
@@ -6342,17 +6367,13 @@ export default function App() {
         })
         return result.data.text
       }
-      const imported: OcrImportedPartyMember[] = []
+      const documents: string[] = []
       for (const file of files) {
-        setPartyImageImportStatus(`${file.name} · ${lt('스프라이트+OCR 분석 중...')}`)
-        const spriteGuided = await inferImportedPartyFromSpriteGuidedImage(file, (canvas) => recognize(canvas, file.name), (message) => setPartyImageImportStatus(message))
-        if (spriteGuided.length) {
-          imported.push(...spriteGuided)
-          continue
-        }
+        setPartyImageImportStatus(`${file.name} · ${lt('레이아웃 OCR 분석 중...')}`)
         const text = await recognize(file, file.name)
-        imported.push(...parseOcrImportedParty(text))
+        documents.push(text)
       }
+      const imported = parseOcrImportedPartyDocuments(documents)
       if (!imported.length) {
         setPartyImageImportStatus(lt('사진에서 파티를 찾지 못했습니다.'))
         if (typeof window !== 'undefined') window.alert(lt('사진에서 포켓몬 이름을 찾지 못했습니다. 조금 더 선명한 스크린샷으로 다시 시도해 주세요.'))
@@ -7377,7 +7398,7 @@ export default function App() {
                 <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
                 <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
               </div>
-              <span className="muted-inline">{lt('스프라이트 매칭 + OCR로 종/도구/특성/기술/성격/노력치를 최대한 복원합니다.')}</span>
+              <span className="muted-inline">{lt('여러 스크린샷의 이름/상세 영역을 합쳐 종·도구·특성·기술·성격·노력치를 최대한 복원합니다.')}</span>
               {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
               <div className="party-preset-grid">
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
