@@ -15,6 +15,7 @@
     "check:type-effectiveness": "node scripts/check-type-effectiveness-harness.mjs",
     "check:damage-parity": "node scripts/check-damage-parity.mjs",
     "check:ability-damage": "node scripts/check-ability-damage-harness.mjs",
+    "check:party-image-import": "node scripts/check-party-image-import-harness.mjs",
     "build:champions-item-whitelist": "node scripts/build-champions-item-whitelist.mjs",
     "sync:item-sprites": "node scripts/sync-item-sprites.mjs",
     "build:champion-sprite-hashes": "node scripts/build-champion-sprite-hashes.mjs",
