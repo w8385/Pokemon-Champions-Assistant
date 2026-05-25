@@ -1910,7 +1910,7 @@ function syncViewStateToUrl(viewState: ViewState) {
 }
 
 function actualStat(base: number, ev: number, natureMultiplierValue = 1, hp = false) {
-  const evContribution = Math.floor(Math.max(0, ev) / 8)
+  const evContribution = Math.max(0, Math.trunc(ev))
   if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + evContribution
   const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + evContribution
   return Math.floor(raw * natureMultiplierValue)
