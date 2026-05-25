@@ -3088,8 +3088,9 @@ function displayItemLabel(item: string, language: SiteLanguage) {
   return localized !== item ? localized : translateText(language, item)
 }
 
-function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
+function filterItemOptions(query: string, language: SiteLanguage = 'ko', options?: { fallbackToAll?: boolean }) {
   const normalized = query.trim().toLowerCase()
+  const fallbackToAll = options?.fallbackToAll ?? true
   if (!normalized) return [...CHAMPIONS_ITEM_OPTIONS]
   const matched = [...CHAMPIONS_ITEM_OPTIONS]
     .map((item) => {
@@ -3107,7 +3108,7 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko') {
     .filter((entry): entry is { item: ChampionsItem; score: number } => Boolean(entry))
     .sort((a, b) => a.score - b.score || a.item.localeCompare(b.item, 'ko'))
     .map((entry) => entry.item)
-  return matched.length ? matched : [...CHAMPIONS_ITEM_OPTIONS]
+  return matched.length ? matched : (fallbackToAll ? [...CHAMPIONS_ITEM_OPTIONS] : [])
 }
 
 function resolveItemInput(key: string, raw: string, language: SiteLanguage = 'ko') {
@@ -4064,14 +4065,14 @@ export default function App() {
   const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true }).slice(0, 12), [deferredDexSearch])
   const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
   const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage).slice(0, 48), [deferredDexSearch, siteLanguage])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false }).slice(0, 48), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
     const unifiedQuery = deferredDexUnifiedSearch.trim()
     if (!unifiedQuery) return []
     const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true }).slice(0, 10)
     const moveOptions = filterDexMoveOptions(unifiedQuery).slice(0, 16)
     const abilityOptions = filterDexAbilityOptions(unifiedQuery).slice(0, 10)
-    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage).slice(0, 16)
+    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false }).slice(0, 16)
     const pokemonResults: Extract<DexResultItem, { kind: 'pokemon' }>[] = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
