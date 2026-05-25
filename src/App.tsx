@@ -201,6 +201,12 @@ type ImportExportPayload = PersistedState & {
   version: 1
 }
 
+type OcrImportedPartyMember = {
+  member: PartyMember
+  lockedMoves: string[]
+  rawLines: string[]
+}
+
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 type MainSection = 'home' | 'single' | 'double' | 'sample' | 'dex'
 type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
@@ -1241,6 +1247,26 @@ const ITEM_INDEX = (() => {
   }
   return { byKey, byNormalized }
 })()
+
+const OCR_MOVE_INDEX = Object.entries(DEX_DESCRIPTIONS.moves).map(([nameKo, description]) => ({
+  nameKo,
+  candidates: Array.from(new Set([
+    nameKo,
+    description.nameEn,
+    description.nameJa,
+    ...moveNameCandidates(nameKo),
+  ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+}))
+
+const OCR_ITEM_INDEX = Object.entries(DEX_DESCRIPTIONS.items).map(([itemKey, description]) => ({
+  itemKey,
+  candidates: Array.from(new Set([
+    itemKey,
+    description.nameKo,
+    description.nameEn,
+    description.nameJa,
+  ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+}))
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'おうじゃのしるし': { ko: '공격 기술 명중 시 10% 확률로 상대를 풀죽게 함.', en: 'Damaging moves have a 10% chance to make the target flinch.', ja: '攻撃技が当たると10%の確率で相手をひるませる。' },
   'きあいのタスキ': { ko: 'HP가 가득 찬 상태에서 기절할 공격을 받으면 HP 1로 버팀.', en: 'If at full HP, survives a would-be KO hit with 1 HP.', ja: 'HP満タンのとき ひんしになる攻撃を受けても HP1で耐える。' },
@@ -3299,6 +3325,21 @@ const ABILITY_INDEX = (() => {
   return { byKey, byNormalized }
 })()
 
+const OCR_ABILITY_INDEX = Object.entries(DEX_DESCRIPTIONS.abilities).map(([abilityKey, description]) => {
+  const fallback = ABILITY_INDEX.byKey.get(abilityKey)
+  return {
+    abilityKey,
+    koLabel: fallback?.koLabel ?? description.nameKo,
+    candidates: Array.from(new Set([
+      abilityKey,
+      fallback?.koLabel,
+      description.nameKo,
+      description.nameEn,
+      description.nameJa,
+    ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+  }
+})
+
 function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
   const normalized = normalizeSearchText(rawAbility)
   const direct = ABILITY_INDEX.byNormalized.get(normalized)
@@ -3358,6 +3399,123 @@ function resolveSpeciesKey(raw: string, options?: { includeMega?: boolean }) {
   const normalized = normalizeSearchText(raw.trim())
   if (!normalized) return null
   return filterSpeciesOptions(normalized, options)[0]?.key ?? null
+}
+
+function defaultAbilityLabelForKey(key: string, abilityKey: string) {
+  const row = indexByKey.get(key)
+  if (!row) return defaultAbilityForKey(key)
+  const idx = row.abilities.indexOf(abilityKey)
+  return row.abilities_ko[idx] ?? defaultAbilityForKey(key)
+}
+
+function cleanOcrLine(line: string) {
+  return line
+    .replace(/[•·●▪■□◆◇○◎]/g, ' ')
+    .replace(/[|｜]/g, 'I')
+    .replace(/[“”"'`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function scoreOcrCandidate(source: string, candidate: string) {
+  if (!source || !candidate) return Number.POSITIVE_INFINITY
+  if (source === candidate) return 0
+  if (source.includes(candidate)) return source.length - candidate.length <= 6 ? 1 : 2
+  if (candidate.includes(source)) return 2
+  if (matchesLooseQuery(source, candidate) || matchesLooseQuery(candidate, source)) return 3
+  return Number.POSITIVE_INFINITY
+}
+
+function findBestOcrSpeciesMatch(line: string) {
+  const normalized = normalizeSearchText(cleanOcrLine(line))
+  if (!normalized) return null
+  const best = SPECIES_SEARCH_INDEX.reduce<{ key: string; score: number } | null>((currentBest, entry) => {
+    const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
+    if (!Number.isFinite(score)) return currentBest
+    if (!currentBest || score < currentBest.score) return { key: entry.row.key, score }
+    return currentBest
+  }, null)
+  return best
+}
+
+function findBestOcrMoveMatch(line: string) {
+  const normalized = normalizeSearchText(cleanOcrLine(line))
+  if (!normalized) return null
+  const best = OCR_MOVE_INDEX.reduce<{ nameKo: string; score: number } | null>((currentBest, entry) => {
+    const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
+    if (!Number.isFinite(score)) return currentBest
+    if (!currentBest || score < currentBest.score) return { nameKo: entry.nameKo, score }
+    return currentBest
+  }, null)
+  return best
+}
+
+function findBestOcrAbilityMatch(line: string, key: string) {
+  const normalized = normalizeSearchText(cleanOcrLine(line))
+  const row = indexByKey.get(key)
+  if (!normalized || !row) return null
+  const best = OCR_ABILITY_INDEX.reduce<{ abilityKey: string; koLabel: string; score: number } | null>((currentBest, entry) => {
+    if (!row.abilities.includes(entry.abilityKey)) return currentBest
+    const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
+    if (!Number.isFinite(score)) return currentBest
+    if (!currentBest || score < currentBest.score) return { abilityKey: entry.abilityKey, koLabel: entry.koLabel, score }
+    return currentBest
+  }, null)
+  return best
+}
+
+function findBestOcrItemMatch(line: string) {
+  const normalized = normalizeSearchText(cleanOcrLine(line))
+  if (!normalized) return null
+  const best = OCR_ITEM_INDEX.reduce<{ itemKey: string; score: number } | null>((currentBest, entry) => {
+    const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
+    if (!Number.isFinite(score)) return currentBest
+    if (!currentBest || score < currentBest.score) return { itemKey: entry.itemKey, score }
+    return currentBest
+  }, null)
+  return best
+}
+
+function parseOcrImportedParty(text: string): OcrImportedPartyMember[] {
+  const lines = text.split(/\r?\n/).map(cleanOcrLine).filter(Boolean)
+  if (!lines.length) return []
+  const anchors = lines
+    .map((line, idx) => {
+      const species = findBestOcrSpeciesMatch(line)
+      return species && species.score <= 1 ? { idx, key: species.key } : null
+    })
+    .filter((entry): entry is { idx: number; key: string } => entry !== null)
+    .filter((entry, idx, list) => idx === 0 || entry.idx !== list[idx - 1].idx)
+  if (!anchors.length) return []
+  const members = anchors.slice(0, 6).map((anchor, anchorIdx) => {
+    const nextIdx = anchors[anchorIdx + 1]?.idx ?? lines.length
+    const rawLines = lines.slice(anchor.idx, nextIdx)
+    const key = anchor.key
+    const row = indexByKey.get(key)
+    if (!row) return null
+    const moveSet = new Set<string>()
+    let item = ''
+    let ability = defaultAbilityForKey(key)
+    for (const line of rawLines) {
+      const itemMatch = findBestOcrItemMatch(line)
+      if (!item && itemMatch && itemMatch.score <= 1) item = itemMatch.itemKey
+      const abilityMatch = findBestOcrAbilityMatch(line, key)
+      if (abilityMatch && abilityMatch.score <= 1) ability = defaultAbilityLabelForKey(key, abilityMatch.abilityKey)
+      const moveMatch = findBestOcrMoveMatch(line)
+      if (moveMatch && moveMatch.score <= 1) moveSet.add(moveMatch.nameKo)
+    }
+    const member: PartyMember = {
+      key,
+      config: { nature: defaultNatureForKey(key), scarf: false, speedStage: 0 },
+      picked: false,
+      evs: { ...defaultEvs },
+      tuning: defaultPartyTuning(),
+      item: normalizeItemForKey(key, item),
+      ability,
+    }
+    return { member, lockedMoves: [...moveSet].slice(0, 4), rawLines }
+  })
+  return members.filter((entry): entry is OcrImportedPartyMember => entry !== null)
 }
 
 function displayName(row: Row, language: SiteLanguage) {
@@ -3623,6 +3781,8 @@ export default function App() {
   const suppressFocusTooltipRef = React.useRef(false)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
+  const [partyImageImportBusy, setPartyImageImportBusy] = React.useState(false)
+  const [partyImageImportStatus, setPartyImageImportStatus] = React.useState('')
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
   const [activePartyPresetId, setActivePartyPresetId] = React.useState<string | null>(null)
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? persisted?.sampleWorkbenchTab ?? 'builder')
@@ -3642,6 +3802,7 @@ export default function App() {
   const [dexMoveLearnersStatus, setDexMoveLearnersStatus] = React.useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+  const partyImageInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
   const [activePartyMetaEditor, setActivePartyMetaEditor] = React.useState<{ idx: number; field: 'ability' | 'nature' | 'item' } | null>(null)
   const [activeSampleMetaEditor, setActiveSampleMetaEditor] = React.useState<'ability' | 'nature' | 'item' | null>(null)
@@ -5945,6 +6106,64 @@ export default function App() {
     }
   }
 
+  const applyOcrImportedParty = React.useCallback((imported: OcrImportedPartyMember[]) => {
+    const nextParty = cloneEmptyParty()
+    const nextConfirmedMovesByKey = { ...confirmedMovesByKey }
+    imported.slice(0, nextParty.length).forEach((entry, idx) => {
+      nextParty[idx] = clonePartyMember(entry.member)
+      nextConfirmedMovesByKey[entry.member.key] = entry.lockedMoves
+    })
+    setParty(nextParty)
+    setConfirmedMovesByKey(nextConfirmedMovesByKey)
+    setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
+    setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+    setSelectedMy(firstFilledIndex(nextParty, 0))
+  }, [confirmedMovesByKey, siteLanguage])
+
+  const importPartyFromImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? [])
+    if (!files.length || partyImageImportBusy) return
+    try {
+      setPartyImageImportBusy(true)
+      setPartyImageImportStatus(lt('OCR 준비 중...'))
+      const Tesseract = await import('tesseract.js')
+      const imported: OcrImportedPartyMember[] = []
+      for (const file of files) {
+        setPartyImageImportStatus(`${file.name} · ${lt('OCR 추출 중...')}`)
+        const result = await Tesseract.recognize(file, 'jpn+eng+kor', {
+          logger: (message) => {
+            if (message.status === 'recognizing text' && typeof message.progress === 'number') {
+              setPartyImageImportStatus(`${file.name} · ${lt('OCR 추출 중...')} ${Math.round(message.progress * 100)}%`)
+            }
+          },
+        })
+        imported.push(...parseOcrImportedParty(result.data.text))
+      }
+      if (!imported.length) {
+        setPartyImageImportStatus(lt('사진에서 파티를 찾지 못했습니다.'))
+        if (typeof window !== 'undefined') window.alert(lt('사진에서 포켓몬 이름을 찾지 못했습니다. 조금 더 선명한 스크린샷으로 다시 시도해 주세요.'))
+        return
+      }
+      const summary = imported.slice(0, 6).map((entry) => searchDisplayLabel(entry.member.key, siteLanguage)).join(', ')
+      if (typeof window !== 'undefined') {
+        const confirmed = window.confirm(`${lt('다음 파티를 가져올까요?')}\n${summary}`)
+        if (!confirmed) {
+          setPartyImageImportStatus(lt('사진 IMPORT가 취소되었습니다.'))
+          return
+        }
+      }
+      applyOcrImportedParty(imported)
+      setPartyImageImportStatus(`${lt('사진 IMPORT 완료')}: ${summary}`)
+    } catch (error) {
+      console.error(error)
+      setPartyImageImportStatus(lt('사진 IMPORT 실패'))
+      if (typeof window !== 'undefined') window.alert(lt('사진 IMPORT에 실패했습니다. 잠시 후 다시 시도해 주세요.'))
+    } finally {
+      setPartyImageImportBusy(false)
+      event.target.value = ''
+    }
+  }
+
   return (
     <div className="app-shell">
       <header>
@@ -6008,6 +6227,7 @@ export default function App() {
           </div>
         </div>
         <input ref={fileInputRef} type="file" accept="application/json" className="hidden-file" onChange={importState} />
+        <input ref={partyImageInputRef} type="file" accept="image/*" multiple className="hidden-file" onChange={importPartyFromImage} />
       </header>
 
       {doubleBulkEditorSlot !== null && doubleSlotMeta[doubleBulkEditorSlot].option?.entry && doubleSlotMeta[doubleBulkEditorSlot].option?.row ? (() => {
@@ -6921,6 +7141,7 @@ export default function App() {
             <div className="section-head row-between">
               <h2>{lt('내 파티 관리')}</h2>
               <div className="inline-controls compact-actions">
+                <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}>{partyImageImportBusy ? lt('OCR 추출 중...') : lt('사진 IMPORT')}</button>
                 <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('내 파티 초기화')}</button>
               </div>
             </div>
@@ -6938,6 +7159,7 @@ export default function App() {
                 <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
                 <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
               </div>
+              {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
               <div className="party-preset-grid">
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
                   const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
