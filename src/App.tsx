@@ -2,6 +2,7 @@ import React from 'react'
 import championsData from './pokemon_champions_verified_data.json'
 import championsLearnedMoveMeta from './championsLearnedMoveMeta.json'
 import championsUsageTopMoves from './championsUsageTopMoves.json'
+import championSpriteHashes from './championSpriteHashes.json'
 import dexDescriptions from './dexDescriptions.json'
 import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
@@ -205,6 +206,15 @@ type OcrImportedPartyMember = {
   member: PartyMember
   lockedMoves: string[]
   rawLines: string[]
+}
+
+type OcrStatKey = keyof EffortValues
+
+type CropRect = {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 type MoveFilter = 'all' | 'core' | 'options' | 'utility'
@@ -1267,6 +1277,36 @@ const OCR_ITEM_INDEX = Object.entries(DEX_DESCRIPTIONS.items).map(([itemKey, des
     description.nameJa,
   ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
 }))
+
+const OCR_NATURE_INDEX = NATURES.map((nature) => ({
+  id: nature.id,
+  candidates: Array.from(new Set([
+    nature.id,
+    nature.label,
+    titleCaseSlug(nature.id),
+  ].flatMap((entry) => [entry, normalizeSearchText(entry)]))),
+}))
+
+const OCR_EFFORT_LABELS: Record<OcrStatKey, string[]> = {
+  hp: ['hp', 'h', '체력', 'hp체력'],
+  attack: ['atk', 'attack', 'a', '공격'],
+  defense: ['def', 'defense', 'b', '방어'],
+  spAttack: ['spa', 'spatk', 'satk', 'specialattack', 'c', '특공', '특수공격'],
+  spDefense: ['spd', 'spdef', 'sdef', 'specialdefense', 'd', '특방', '특수방어'],
+  speed: ['spe', 'speed', 's', '스피드', '속도'],
+}
+
+const OCR_EFFORT_PATTERNS = Object.fromEntries(
+  Object.entries(OCR_EFFORT_LABELS).map(([stat, labels]) => [
+    stat,
+    labels.map((label) => new RegExp(`(?:^|[^a-z])${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:/=-]?\\s*(\\d{1,3})`, 'i')),
+  ]),
+) as Record<OcrStatKey, RegExp[]>
+
+const SPRITE_HASH_INDEX = (championSpriteHashes as { key: string; hash: string }[])
+  .filter((entry) => typeof entry?.key === 'string' && typeof entry?.hash === 'string')
+
+const MAX_SPRITE_HASH_DISTANCE = 72
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'おうじゃのしるし': { ko: '공격 기술 명중 시 10% 확률로 상대를 풀죽게 함.', en: 'Damaging moves have a 10% chance to make the target flinch.', ja: '攻撃技が当たると10%の確率で相手をひるませる。' },
   'きあいのタスキ': { ko: 'HP가 가득 찬 상태에서 기절할 공격을 받으면 HP 1로 버팀.', en: 'If at full HP, survives a would-be KO hit with 1 HP.', ja: 'HP満タンのとき ひんしになる攻撃を受けても HP1で耐える。' },
@@ -3408,6 +3448,145 @@ function defaultAbilityLabelForKey(key: string, abilityKey: string) {
   return row.abilities_ko[idx] ?? defaultAbilityForKey(key)
 }
 
+function cropRect(imageWidth: number, imageHeight: number, rect: CropRect) {
+  const x = Math.max(0, Math.min(imageWidth, rect.x))
+  const y = Math.max(0, Math.min(imageHeight, rect.y))
+  const width = Math.max(1, Math.min(imageWidth - x, rect.width))
+  const height = Math.max(1, Math.min(imageHeight - y, rect.height))
+  return { x, y, width, height }
+}
+
+function createCanvas(width: number, height: number) {
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.max(1, Math.round(width))
+  canvas.height = Math.max(1, Math.round(height))
+  return canvas
+}
+
+async function loadImageElement(file: File) {
+  const url = URL.createObjectURL(file)
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const image = new Image()
+      image.crossOrigin = 'anonymous'
+      image.onload = () => {
+        resolve()
+      }
+      image.onerror = () => reject(new Error(`image load failed: ${file.name}`))
+      image.src = url
+      Object.assign(file, { __openclawImageEl: image })
+    })
+    return (file as File & { __openclawImageEl?: HTMLImageElement }).__openclawImageEl!
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+}
+
+function renderImageRegion(image: HTMLImageElement, rect: CropRect, targetWidth = rect.width, targetHeight = rect.height) {
+  const safeRect = cropRect(image.naturalWidth || image.width, image.naturalHeight || image.height, rect)
+  const canvas = createCanvas(targetWidth, targetHeight)
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return canvas
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(image, safeRect.x, safeRect.y, safeRect.width, safeRect.height, 0, 0, canvas.width, canvas.height)
+  return canvas
+}
+
+function computeCanvasDHash(canvas: HTMLCanvasElement) {
+  const scaled = createCanvas(16, 16)
+  const ctx = scaled.getContext('2d', { willReadFrequently: true })
+  if (!ctx) return ''
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, 16, 16)
+  ctx.drawImage(canvas, 0, 0, 16, 16)
+  const { data } = ctx.getImageData(0, 0, 16, 16)
+  const grayscale: number[] = []
+  for (let idx = 0; idx < data.length; idx += 4) {
+    grayscale.push(Math.round((data[idx] * 0.299) + (data[idx + 1] * 0.587) + (data[idx + 2] * 0.114)))
+  }
+  const bits: string[] = []
+  for (let y = 0; y < 16; y += 1) {
+    for (let x = 0; x < 15; x += 1) {
+      const left = grayscale[(y * 16) + x]
+      const right = grayscale[(y * 16) + x + 1]
+      bits.push(left > right ? '1' : '0')
+    }
+  }
+  let hash = ''
+  for (let idx = 0; idx < bits.length; idx += 4) {
+    hash += Number.parseInt(bits.slice(idx, idx + 4).join(''), 2).toString(16)
+  }
+  return hash
+}
+
+function hammingDistanceHex(left: string, right: string) {
+  if (!left || !right || left.length !== right.length) return Number.POSITIVE_INFINITY
+  let distance = 0
+  for (let idx = 0; idx < left.length; idx += 1) {
+    const xor = Number.parseInt(left[idx], 16) ^ Number.parseInt(right[idx], 16)
+    distance += xor.toString(2).replace(/0/g, '').length
+  }
+  return distance
+}
+
+function matchSpeciesBySpriteCanvas(canvas: HTMLCanvasElement) {
+  const hash = computeCanvasDHash(canvas)
+  const best = SPRITE_HASH_INDEX.reduce<{ key: string; distance: number } | null>((currentBest, entry) => {
+    const distance = hammingDistanceHex(hash, entry.hash)
+    if (!Number.isFinite(distance)) return currentBest
+    if (!currentBest || distance < currentBest.distance) return { key: entry.key, distance }
+    return currentBest
+  }, null)
+  return best
+}
+
+function estimatePartyRowRects(imageWidth: number, imageHeight: number) {
+  const top = imageHeight * 0.06
+  const usableHeight = imageHeight * 0.88
+  const rowHeight = usableHeight / 6
+  return Array.from({ length: 6 }, (_, idx) => ({
+    x: imageWidth * 0.02,
+    y: top + (rowHeight * idx),
+    width: imageWidth * 0.96,
+    height: rowHeight,
+  }))
+}
+
+function estimateSpriteRects(rowRect: CropRect) {
+  return [
+    { x: rowRect.x + (rowRect.width * 0.02), y: rowRect.y + (rowRect.height * 0.08), width: rowRect.width * 0.24, height: rowRect.height * 0.82 },
+    { x: rowRect.x + (rowRect.width * 0.05), y: rowRect.y + (rowRect.height * 0.06), width: rowRect.width * 0.26, height: rowRect.height * 0.84 },
+    { x: rowRect.x, y: rowRect.y + (rowRect.height * 0.04), width: rowRect.width * 0.3, height: rowRect.height * 0.88 },
+  ]
+}
+
+function parseOcrNature(lines: string[]) {
+  for (const line of lines) {
+    const normalized = normalizeSearchText(line)
+    const matched = OCR_NATURE_INDEX.find((entry) => entry.candidates.some((candidate) => scoreOcrCandidate(normalized, candidate) <= 1))
+    if (matched) return matched.id
+  }
+  return null
+}
+
+function parseOcrEffortValues(lines: string[]) {
+  const next = { ...defaultEvs }
+  for (const line of lines) {
+    const normalized = normalizeSearchText(line)
+    for (const stat of Object.keys(OCR_EFFORT_PATTERNS) as OcrStatKey[]) {
+      const patterns = OCR_EFFORT_PATTERNS[stat]
+      for (const pattern of patterns) {
+        const match = normalized.match(pattern)
+        if (!match) continue
+        next[stat] = Math.max(0, Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, Math.trunc(Number(match[1]) || 0)))
+        break
+      }
+    }
+  }
+  return next
+}
+
 function cleanOcrLine(line: string) {
   return line
     .replace(/[•·●▪■□◆◇○◎]/g, ' ')
@@ -3476,6 +3655,37 @@ function findBestOcrItemMatch(line: string) {
   return best
 }
 
+function parseOcrImportedMember(lines: string[], speciesOverride?: string | null) {
+  const normalizedLines = lines.map(cleanOcrLine).filter(Boolean)
+  const speciesKey = speciesOverride ?? normalizedLines.map((line) => findBestOcrSpeciesMatch(line)).find((entry) => entry && entry.score <= 1)?.key ?? null
+  if (!speciesKey) return null
+  const row = indexByKey.get(speciesKey)
+  if (!row) return null
+  const lockedMoves: string[] = []
+  let item = ''
+  let ability = defaultAbilityForKey(speciesKey)
+  for (const line of normalizedLines) {
+    const itemMatch = findBestOcrItemMatch(line)
+    if (!item && itemMatch && itemMatch.score <= 2) item = itemMatch.itemKey
+    const abilityMatch = findBestOcrAbilityMatch(line, speciesKey)
+    if (abilityMatch && abilityMatch.score <= 2) ability = defaultAbilityLabelForKey(speciesKey, abilityMatch.abilityKey)
+    const moveMatch = findBestOcrMoveMatch(line)
+    if (moveMatch && moveMatch.score <= 2 && !lockedMoves.includes(moveMatch.nameKo)) lockedMoves.push(moveMatch.nameKo)
+  }
+  const parsedNature = parseOcrNature(normalizedLines)
+  const parsedEvs = parseOcrEffortValues(normalizedLines)
+  const member: PartyMember = {
+    key: speciesKey,
+    config: { nature: parsedNature ?? defaultNatureForKey(speciesKey), scarf: false, speedStage: 0 },
+    picked: false,
+    evs: parsedEvs,
+    tuning: defaultPartyTuning(),
+    item: normalizeItemForKey(speciesKey, item),
+    ability,
+  }
+  return { member, lockedMoves: lockedMoves.slice(0, 4), rawLines: normalizedLines }
+}
+
 function parseOcrImportedParty(text: string): OcrImportedPartyMember[] {
   const lines = text.split(/\r?\n/).map(cleanOcrLine).filter(Boolean)
   if (!lines.length) return []
@@ -3489,33 +3699,28 @@ function parseOcrImportedParty(text: string): OcrImportedPartyMember[] {
   if (!anchors.length) return []
   const members = anchors.slice(0, 6).map((anchor, anchorIdx) => {
     const nextIdx = anchors[anchorIdx + 1]?.idx ?? lines.length
-    const rawLines = lines.slice(anchor.idx, nextIdx)
-    const key = anchor.key
-    const row = indexByKey.get(key)
-    if (!row) return null
-    const moveSet = new Set<string>()
-    let item = ''
-    let ability = defaultAbilityForKey(key)
-    for (const line of rawLines) {
-      const itemMatch = findBestOcrItemMatch(line)
-      if (!item && itemMatch && itemMatch.score <= 1) item = itemMatch.itemKey
-      const abilityMatch = findBestOcrAbilityMatch(line, key)
-      if (abilityMatch && abilityMatch.score <= 1) ability = defaultAbilityLabelForKey(key, abilityMatch.abilityKey)
-      const moveMatch = findBestOcrMoveMatch(line)
-      if (moveMatch && moveMatch.score <= 1) moveSet.add(moveMatch.nameKo)
-    }
-    const member: PartyMember = {
-      key,
-      config: { nature: defaultNatureForKey(key), scarf: false, speedStage: 0 },
-      picked: false,
-      evs: { ...defaultEvs },
-      tuning: defaultPartyTuning(),
-      item: normalizeItemForKey(key, item),
-      ability,
-    }
-    return { member, lockedMoves: [...moveSet].slice(0, 4), rawLines }
+    return parseOcrImportedMember(lines.slice(anchor.idx, nextIdx), anchor.key)
   })
   return members.filter((entry): entry is OcrImportedPartyMember => entry !== null)
+}
+
+async function inferImportedPartyFromSpriteGuidedImage(file: File, recognize: (image: HTMLCanvasElement, logger?: (message: { status: string; progress?: number }) => void) => Promise<string>, status?: (message: string) => void) {
+  const image = await loadImageElement(file)
+  const rowRects = estimatePartyRowRects(image.naturalWidth || image.width, image.naturalHeight || image.height)
+  const imported: OcrImportedPartyMember[] = []
+  for (const [idx, rowRect] of rowRects.entries()) {
+    const rowCanvas = renderImageRegion(image, rowRect, 1280, 200)
+    const spriteMatches = estimateSpriteRects(rowRect)
+      .map((rect) => matchSpeciesBySpriteCanvas(renderImageRegion(image, rect, 96, 96)))
+      .filter((entry): entry is { key: string; distance: number } => entry !== null)
+      .sort((left, right) => left.distance - right.distance)
+    const bestSpriteMatch = spriteMatches[0] ?? null
+    status?.(`${file.name} · ${idx + 1}/6 ${translateText('ko', 'OCR 추출 중...')}`)
+    const text = await recognize(rowCanvas)
+    const fallbackMember = parseOcrImportedMember(text.split(/\r?\n/), bestSpriteMatch && bestSpriteMatch.distance <= MAX_SPRITE_HASH_DISTANCE ? bestSpriteMatch.key : null)
+    if (fallbackMember?.member.key) imported.push(fallbackMember)
+  }
+  return imported
 }
 
 function displayName(row: Row, language: SiteLanguage) {
@@ -6127,24 +6332,37 @@ export default function App() {
       setPartyImageImportBusy(true)
       setPartyImageImportStatus(lt('OCR 준비 중...'))
       const Tesseract = await import('tesseract.js')
-      const imported: OcrImportedPartyMember[] = []
-      for (const file of files) {
-        setPartyImageImportStatus(`${file.name} · ${lt('OCR 추출 중...')}`)
-        const result = await Tesseract.recognize(file, 'jpn+eng+kor', {
+      const recognize = async (image: File | HTMLCanvasElement, fileLabel: string) => {
+        const result = await Tesseract.recognize(image, 'jpn+eng+kor', {
           logger: (message) => {
             if (message.status === 'recognizing text' && typeof message.progress === 'number') {
-              setPartyImageImportStatus(`${file.name} · ${lt('OCR 추출 중...')} ${Math.round(message.progress * 100)}%`)
+              setPartyImageImportStatus(`${fileLabel} · ${lt('OCR 추출 중...')} ${Math.round(message.progress * 100)}%`)
             }
           },
         })
-        imported.push(...parseOcrImportedParty(result.data.text))
+        return result.data.text
+      }
+      const imported: OcrImportedPartyMember[] = []
+      for (const file of files) {
+        setPartyImageImportStatus(`${file.name} · ${lt('스프라이트+OCR 분석 중...')}`)
+        const spriteGuided = await inferImportedPartyFromSpriteGuidedImage(file, (canvas) => recognize(canvas, file.name), (message) => setPartyImageImportStatus(message))
+        if (spriteGuided.length) {
+          imported.push(...spriteGuided)
+          continue
+        }
+        const text = await recognize(file, file.name)
+        imported.push(...parseOcrImportedParty(text))
       }
       if (!imported.length) {
         setPartyImageImportStatus(lt('사진에서 파티를 찾지 못했습니다.'))
         if (typeof window !== 'undefined') window.alert(lt('사진에서 포켓몬 이름을 찾지 못했습니다. 조금 더 선명한 스크린샷으로 다시 시도해 주세요.'))
         return
       }
-      const summary = imported.slice(0, 6).map((entry) => searchDisplayLabel(entry.member.key, siteLanguage)).join(', ')
+      const summary = imported.slice(0, 6).map((entry) => {
+        const nature = natureChipLabel(entry.member.config.nature, siteLanguage)
+        const moves = entry.lockedMoves.slice(0, 2).join(', ')
+        return `${searchDisplayLabel(entry.member.key, siteLanguage)}${nature ? ` · ${nature}` : ''}${moves ? ` · ${moves}` : ''}`
+      }).join('\n')
       if (typeof window !== 'undefined') {
         const confirmed = window.confirm(`${lt('다음 파티를 가져올까요?')}\n${summary}`)
         if (!confirmed) {
@@ -6153,7 +6371,7 @@ export default function App() {
         }
       }
       applyOcrImportedParty(imported)
-      setPartyImageImportStatus(`${lt('사진 IMPORT 완료')}: ${summary}`)
+      setPartyImageImportStatus(`${lt('사진 IMPORT 완료')} · ${imported.length}${lt('마리 반영')}`)
     } catch (error) {
       console.error(error)
       setPartyImageImportStatus(lt('사진 IMPORT 실패'))
@@ -7159,6 +7377,7 @@ export default function App() {
                 <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
                 <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
               </div>
+              <span className="muted-inline">{lt('스프라이트 매칭 + OCR로 종/도구/특성/기술/성격/노력치를 최대한 복원합니다.')}</span>
               {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
               <div className="party-preset-grid">
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
