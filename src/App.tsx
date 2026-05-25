@@ -3062,8 +3062,9 @@ function speciesSearchCandidates(row: Row) {
 
 const SPECIES_SEARCH_INDEX = rows.map((row) => ({ row, candidates: speciesSearchCandidates(row) }))
 
-function filterSpeciesOptions(query: string, options?: { includeMega?: boolean }) {
+function filterSpeciesOptions(query: string, options?: { includeMega?: boolean; allowLoose?: boolean }) {
   const includeMega = options?.includeMega ?? true
+  const allowLoose = options?.allowLoose ?? true
   const normalized = normalizeSearchText(query.trim())
   const candidateEntries = includeMega ? SPECIES_SEARCH_INDEX : SPECIES_SEARCH_INDEX.filter(({ row }) => !row.key.startsWith('mega-'))
   if (!normalized) return candidateEntries.map(({ row }) => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
@@ -3073,7 +3074,7 @@ function filterSpeciesOptions(query: string, options?: { includeMega?: boolean }
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
         if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
         return best
       }, Number.POSITIVE_INFINITY)
       return Number.isFinite(score) ? { row, score } : null
@@ -3088,9 +3089,10 @@ function displayItemLabel(item: string, language: SiteLanguage) {
   return localized !== item ? localized : translateText(language, item)
 }
 
-function filterItemOptions(query: string, language: SiteLanguage = 'ko', options?: { fallbackToAll?: boolean }) {
+function filterItemOptions(query: string, language: SiteLanguage = 'ko', options?: { fallbackToAll?: boolean; allowLoose?: boolean }) {
   const normalized = query.trim().toLowerCase()
   const fallbackToAll = options?.fallbackToAll ?? true
+  const allowLoose = options?.allowLoose ?? true
   if (!normalized) return [...CHAMPIONS_ITEM_OPTIONS]
   const matched = [...CHAMPIONS_ITEM_OPTIONS]
     .map((item) => {
@@ -3100,7 +3102,7 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko', options
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
         if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
         return best
       }, Number.POSITIVE_INFINITY)
       return Number.isFinite(score) ? { item, score } : null
@@ -3273,7 +3275,8 @@ function moveSearchCandidates(name: string) {
 
 const DEX_MOVE_INDEX = Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta, candidates: moveSearchCandidates(name) }))
 
-function filterDexMoveOptions(query: string) {
+function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean }) {
+  const allowLoose = options?.allowLoose ?? true
   const normalized = normalizeSearchText(query.trim())
   if (!normalized) return DEX_MOVE_INDEX.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
   return DEX_MOVE_INDEX
@@ -3282,7 +3285,7 @@ function filterDexMoveOptions(query: string) {
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
         if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
         return best
       }, Number.POSITIVE_INFINITY)
       return Number.isFinite(score) ? { ...entry, score } : null
@@ -3307,7 +3310,8 @@ function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
   ]))
 }
 
-function filterDexAbilityOptions(query: string) {
+function filterDexAbilityOptions(query: string, options?: { allowLoose?: boolean }) {
+  const allowLoose = options?.allowLoose ?? true
   const normalized = normalizeSearchText(query.trim())
   const entries = [...ABILITY_INDEX.byKey.values()].map((entry) => ({ ...entry, pokemonKeys: [...entry.pokemonKeys].sort((a, b) => a.localeCompare(b, 'ko')) }))
   if (!normalized) return entries.sort((a, b) => a.koLabel.localeCompare(b.koLabel, 'ko'))
@@ -3317,7 +3321,7 @@ function filterDexAbilityOptions(query: string) {
         if (candidate === normalized) return Math.min(best, 0)
         if (candidate.startsWith(normalized)) return Math.min(best, 1)
         if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
+        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
         return best
       }, Number.POSITIVE_INFINITY)
       return Number.isFinite(score) ? { ...entry, score } : null
@@ -4062,17 +4066,17 @@ export default function App() {
   const deferredDexSearch = React.useDeferredValue(dexSearch)
   const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
-  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true }).slice(0, 12), [deferredDexSearch])
-  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
-  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch).slice(0, 48), [deferredDexSearch])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false }).slice(0, 48), [deferredDexSearch, siteLanguage])
+  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }).slice(0, 12), [deferredDexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [deferredDexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [deferredDexSearch])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }).slice(0, 48), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
     const unifiedQuery = deferredDexUnifiedSearch.trim()
     if (!unifiedQuery) return []
-    const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true }).slice(0, 10)
-    const moveOptions = filterDexMoveOptions(unifiedQuery).slice(0, 16)
-    const abilityOptions = filterDexAbilityOptions(unifiedQuery).slice(0, 10)
-    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false }).slice(0, 16)
+    const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true, allowLoose: false }).slice(0, 10)
+    const moveOptions = filterDexMoveOptions(unifiedQuery, { allowLoose: false }).slice(0, 16)
+    const abilityOptions = filterDexAbilityOptions(unifiedQuery, { allowLoose: false }).slice(0, 10)
+    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false, allowLoose: false }).slice(0, 16)
     const pokemonResults: Extract<DexResultItem, { kind: 'pokemon' }>[] = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
