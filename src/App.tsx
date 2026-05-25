@@ -4051,6 +4051,13 @@ export default function App() {
   React.useEffect(() => {
     if (!dexUnifiedSearchComposing) setDexUnifiedSearchDraft(dexUnifiedSearch)
   }, [dexUnifiedSearch, dexUnifiedSearchComposing])
+  React.useEffect(() => {
+    if (dexUnifiedSearchComposing) return
+    const timeout = window.setTimeout(() => {
+      setDexUnifiedSearch((prev) => prev === dexUnifiedSearchDraft ? prev : dexUnifiedSearchDraft)
+    }, 120)
+    return () => window.clearTimeout(timeout)
+  }, [dexUnifiedSearchComposing, dexUnifiedSearchDraft])
   const deferredDexSearch = React.useDeferredValue(dexSearch)
   const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
@@ -4236,7 +4243,9 @@ export default function App() {
   const openDexPokemonDetail = React.useCallback((key: string) => {
     hideHoverTooltip()
     if (hasDexUnifiedSearch) {
-      setDexUnifiedSearch((prev) => prev || searchDisplayLabel(key, siteLanguage))
+      const nextLabel = searchDisplayLabel(key, siteLanguage)
+      setDexUnifiedSearchDraft((prev) => prev || nextLabel)
+      setDexUnifiedSearch((prev) => prev || nextLabel)
       setDexSelectedValue(dexSelectionId('pokemon', key))
       return
     }
@@ -4248,6 +4257,7 @@ export default function App() {
   const openDexMoveDetail = React.useCallback((name: string) => {
     hideHoverTooltip()
     if (hasDexUnifiedSearch) {
+      setDexUnifiedSearchDraft((prev) => prev || name)
       setDexUnifiedSearch((prev) => prev || name)
       setDexSelectedValue(dexSelectionId('move', name))
       return
@@ -4262,6 +4272,7 @@ export default function App() {
     if (!resolved) return
     hideHoverTooltip()
     if (hasDexUnifiedSearch) {
+      setDexUnifiedSearchDraft((prev) => prev || resolved.koLabel)
       setDexUnifiedSearch((prev) => prev || resolved.koLabel)
       setDexSelectedValue(dexSelectionId('ability', resolved.key))
       return
@@ -6785,9 +6796,7 @@ export default function App() {
                     value={dexUnifiedSearchDraft}
                     placeholder={lt('포켓몬 / 기술 / 특성 / 도구 검색')}
                     onChange={(e) => {
-                      const nextValue = e.target.value
-                      setDexUnifiedSearchDraft(nextValue)
-                      if (!dexUnifiedSearchComposing) setDexUnifiedSearch(nextValue)
+                      setDexUnifiedSearchDraft(e.target.value)
                     }}
                     onCompositionStart={() => setDexUnifiedSearchComposing(true)}
                     onCompositionEnd={(e) => {
