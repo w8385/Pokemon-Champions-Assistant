@@ -1,25 +1,34 @@
 {
-  "generatedAt": "2026-05-15T12:09:23.861Z",
+  "generatedAt": "2026-06-23T11:29:58.860Z",
+  "currentSeasonNumber": 3,
   "sourceGuideUrl": "https://champs.pokedb.tokyo/guide/opendata",
   "sourceJsonUrls": [
     "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
-    "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json"
+    "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json",
+    "https://champs.pokedb.tokyo/opendata/s2_double_ranked_teams.json",
+    "https://champs.pokedb.tokyo/opendata/s2_single_ranked_teams.json"
   ],
+  "sourcePokemonListBaseUrl": "https://champs.pokedb.tokyo/pokemon/list",
   "sourcePokeApiItemListUrl": "https://pokeapi.co/api/v2/item?limit=2200",
   "datasets": [
     {
       "url": "https://champs.pokedb.tokyo/opendata/s1_double_ranked_teams.json",
       "season": "M-1",
       "rule": "ダブル",
-      "updatedAt": "2026-05-15 17:21:53",
-      "uniqueItemCount": 53,
+      "updatedAt": "2026-06-04 23:08:02",
+      "uniqueItemCount": 65,
       "uniqueItems": [
+        "アブソルナイト",
         "イトケのみ",
+        "エアームドナイト",
         "おうじゃのしるし",
+        "オッカのみ",
         "オボンのみ",
         "カイリュナイト",
         "カイロスナイト",
         "カシブのみ",
+        "かたいいし",
+        "ガブリアスナイト",
         "カメックスナイト",
         "ガルーラナイト",
         "きあいのタスキ",
@@ -40,20 +49,27 @@
         "せんせいのツメ",
         "たべのこし",
         "チリーンナイト",
+        "チルタリスナイト",
+        "とけないこおり",
         "ナモのみ",
         "のろいのおふだ",
         "バクーダナイト",
         "バコウのみ",
+        "ハッサムナイト",
         "ハバンのみ",
+        "バンギラスナイト",
         "ひかりのこな",
         "ピジョットナイト",
         "ピントレンズ",
+        "フーディナイト",
         "フシギバナイト",
         "プテラナイト",
         "フラエッテナイト",
         "ヘラクロスナイト",
         "ボスゴドラナイト",
+        "マフォクシナイト",
         "ミミロップナイト",
+        "メタルコート",
         "メンタルハーブ",
         "もくたん",
         "ヤドランナイト",
@@ -73,7 +89,7 @@
       "url": "https://champs.pokedb.tokyo/opendata/s1_single_ranked_teams.json",
       "season": "M-1",
       "rule": "シングル",
-      "updatedAt": "2026-05-15 20:58:31",
+      "updatedAt": "2026-06-04 22:50:11",
       "uniqueItemCount": 89,
       "uniqueItems": [
         "イトケのみ",
@@ -103,7 +119,6 @@
         "サメハダナイト",
         "じしゃく",
         "シャンデラナイト",
-        "ジュカインナイト",
         "シュカのみ",
         "ジュペッタナイト",
         "シルクのスカーフ",
@@ -135,6 +150,7 @@
         "ピントレンズ",
         "フーディナイト",
         "フシギバナイト",
+        "プテラナイト",
         "フラエッテナイト",
         "ブリガロナイト",
         "ヘラクロスナイト",
@@ -166,39 +182,266 @@
         "ロゼルのみ",
         "持ち物なし"
       ]
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/opendata/s2_double_ranked_teams.json",
+      "season": "M-2",
+      "rule": "ダブル",
+      "updatedAt": "2026-06-23 10:50:29",
+      "uniqueItemCount": 44,
+      "uniqueItems": [
+        "イトケのみ",
+        "オッカのみ",
+        "オボンのみ",
+        "カイリュナイト",
+        "カシブのみ",
+        "かたいいし",
+        "カメックスナイト",
+        "ガルーラナイト",
+        "きあいのタスキ",
+        "くろいメガネ",
+        "くろおび",
+        "ケケンカニナイト",
+        "ゲッコウガナイト",
+        "ゲンガナイト",
+        "こだわりスカーフ",
+        "ゴルーグナイト",
+        "しろいハーブ",
+        "しんぴのしずく",
+        "スコヴィラナイト",
+        "たべのこし",
+        "チャーレムナイト",
+        "デンリュウナイト",
+        "とつげきチョッキ",
+        "ナモのみ",
+        "バクーダナイト",
+        "バコウのみ",
+        "バンギラスナイト",
+        "フシギバナイト",
+        "プテラナイト",
+        "フラエッテナイト",
+        "まがったスプーン",
+        "マフォクシナイト",
+        "ミミロップナイト",
+        "もくたん",
+        "やわらかいすな",
+        "ユキメノコナイト",
+        "ようせいのハネ",
+        "ヨプのみ",
+        "ヨロギのみ",
+        "ラムのみ",
+        "リザードナイトＸ",
+        "リザードナイトＹ",
+        "りゅうのキバ",
+        "ロゼルのみ"
+      ]
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/opendata/s2_single_ranked_teams.json",
+      "season": "M-2",
+      "rule": "シングル",
+      "updatedAt": "2026-06-23 10:54:17",
+      "uniqueItemCount": 75,
+      "uniqueItems": [
+        "イトケのみ",
+        "ウツボットナイト",
+        "エアームドナイト",
+        "オッカのみ",
+        "オボンのみ",
+        "オレンのみ",
+        "カイリュナイト",
+        "カイロスナイト",
+        "カゴのみ",
+        "カシブのみ",
+        "かたいいし",
+        "カメックスナイト",
+        "ガルーラナイト",
+        "きあいのタスキ",
+        "ギャラドスナイト",
+        "キラフロルナイト",
+        "くろいメガネ",
+        "くろおび",
+        "ゲッコウガナイト",
+        "ゲンガナイト",
+        "こだわりスカーフ",
+        "ゴルーグナイト",
+        "サーナイトナイト",
+        "じしゃく",
+        "シュカのみ",
+        "しろいハーブ",
+        "しんぴのしずく",
+        "スコヴィラナイト",
+        "スターミナイト",
+        "スピアナイト",
+        "せんせいのツメ",
+        "たべのこし",
+        "チャーレムナイト",
+        "チルタリスナイト",
+        "でんきだま",
+        "とけないこおり",
+        "ドリュウズナイト",
+        "ナモのみ",
+        "のろいのおふだ",
+        "ハッサムナイト",
+        "ハバンのみ",
+        "バンギラスナイト",
+        "ビアーのみ",
+        "ひかりのこな",
+        "ピクシナイト",
+        "ピントレンズ",
+        "フーディナイト",
+        "フシギバナイト",
+        "プテラナイト",
+        "フラエッテナイト",
+        "ブリガロナイト",
+        "ヘラクロスナイト",
+        "ヘルガナイト",
+        "ボスゴドラナイト",
+        "マフォクシナイト",
+        "ミミロップナイト",
+        "メガニウムナイト",
+        "メタルコート",
+        "メンタルハーブ",
+        "もくたん",
+        "ヤドランナイト",
+        "ヤミラミナイト",
+        "やわらかいすな",
+        "ユキメノコナイト",
+        "ようせいのハネ",
+        "ヨプのみ",
+        "ライチュウナイトＸ",
+        "ラムのみ",
+        "リザードナイトＸ",
+        "リザードナイトＹ",
+        "りゅうのキバ",
+        "リリバのみ",
+        "ルカリオナイト",
+        "ロゼルのみ",
+        "持ち物なし"
+      ]
     }
   ],
-  "extractedItemCount": 94,
-  "whitelistItemCount": 44,
-  "excludedMegaStoneCount": 49,
+  "usageListPages": [
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=1&rule=0",
+      "season": 1,
+      "rule": 0,
+      "showPageCount": 213
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=1&rule=1",
+      "season": 1,
+      "rule": 1,
+      "showPageCount": 213
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=2&rule=0",
+      "season": 2,
+      "rule": 0,
+      "showPageCount": 213
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=2&rule=1",
+      "season": 2,
+      "rule": 1,
+      "showPageCount": 213
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=3&rule=0",
+      "season": 3,
+      "rule": 0,
+      "showPageCount": 235
+    },
+    {
+      "url": "https://champs.pokedb.tokyo/pokemon/list?season=3&rule=1",
+      "season": 3,
+      "rule": 1,
+      "showPageCount": 235
+    }
+  ],
+  "usagePageCount": 1322,
+  "extractedItemCount": 146,
+  "opendataItemCount": 101,
+  "usagePageItemCount": 144,
+  "whitelistItemCount": 70,
+  "onlyInUsagePagesCount": 23,
+  "onlyInUsagePages": [
+    "あついいわ",
+    "いのちのたま",
+    "ウタンのみ",
+    "おおきなねっこ",
+    "かいがらのすず",
+    "きあいのハチマキ",
+    "キーのみ",
+    "きれいなぬけがら",
+    "ぎんのこな",
+    "くろいてっきゅう",
+    "こうかくレンズ",
+    "さらさらいわ",
+    "しめったいわ",
+    "たつじんのおび",
+    "タンガのみ",
+    "ちからのハチマキ",
+    "つめたいいわ",
+    "ひかりのねんど",
+    "ヒメリのみ",
+    "フォーカスレンズ",
+    "ホズのみ",
+    "メトロノーム",
+    "ものしりメガネ"
+  ],
+  "onlyInOpenDataCount": 1,
+  "onlyInOpenData": [
+    "とつげきチョッキ"
+  ],
+  "inBothSourcesCount": 46,
+  "excludedMegaStoneCount": 75,
   "excludedMegaStones": [
+    "アブソルナイト",
     "ウツボットナイト",
     "エアームドナイト",
     "エルレイドナイト",
     "エンブオナイト",
+    "オーダイルナイト",
+    "オニゴーリナイト",
     "カイリュナイト",
     "カイロスナイト",
+    "カエンジシナイト",
     "ガブリアスナイト",
     "カメックスナイト",
+    "ガメノデスナイト",
+    "カラマネナイト",
     "ガルーラナイト",
     "ギャラドスナイト",
     "キラフロルナイト",
+    "クチートナイト",
     "ケケンカニナイト",
     "ゲッコウガナイト",
     "ゲンガナイト",
+    "ゴルーグナイト",
     "サーナイトナイト",
     "サメハダナイト",
+    "ジジーロナイト",
+    "シビルドナイト",
     "シャンデラナイト",
     "ジュカインナイト",
     "ジュペッタナイト",
     "スコヴィラナイト",
     "スターミナイト",
     "スピアナイト",
+    "ズルズキナイト",
+    "タイレーツナイト",
+    "タブンネナイト",
     "チャーレムナイト",
     "チリーンナイト",
     "チルタリスナイト",
+    "デンリュウナイト",
+    "ドラミドナイト",
     "ドリュウズナイト",
+    "ニャオニクスナイト",
+    "ハガネールナイト",
     "バクーダナイト",
+    "バシャーモナイト",
     "ハッサムナイト",
     "バンギラスナイト",
     "ピクシナイト",
@@ -209,14 +452,22 @@
     "フラエッテナイト",
     "ブリガロナイト",
     "ヘラクロスナイト",
+    "ヘルガナイト",
+    "ペンドラナイト",
     "ボスゴドラナイト",
     "マフォクシナイト",
     "ミミロップナイト",
+    "ムクホークナイト",
     "メガニウムナイト",
+    "メタグロスナイト",
     "ヤドランナイト",
     "ヤミラミナイト",
+    "ユキノオナイト",
     "ユキメノコナイト",
+    "ライチュウナイトＸ",
+    "ライチュウナイトＹ",
     "ライボルトナイト",
+    "ラグラージナイト",
     "リザードナイトＸ",
     "リザードナイトＹ",
     "ルカリオナイト",
@@ -227,18 +478,33 @@
     "持ち物なし"
   ],
   "whitelistItems": [
+    "あついいわ",
     "イトケのみ",
+    "いのちのたま",
+    "ウタンのみ",
     "おうじゃのしるし",
+    "おおきなねっこ",
     "オッカのみ",
     "オボンのみ",
+    "オレンのみ",
+    "かいがらのすず",
     "カゴのみ",
     "カシブのみ",
+    "かたいいし",
     "きあいのタスキ",
+    "きあいのハチマキ",
+    "キーのみ",
     "きせきのタネ",
+    "きれいなぬけがら",
+    "ぎんのこな",
+    "くろいてっきゅう",
     "くろいメガネ",
     "くろおび",
+    "こうかくレンズ",
     "こだわりスカーフ",
+    "さらさらいわ",
     "じしゃく",
+    "しめったいわ",
     "シュカのみ",
     "シルクのスカーフ",
     "しろいハーブ",
@@ -246,21 +512,32 @@
     "するどいくちばし",
     "せんせいのツメ",
     "ソクノのみ",
+    "たつじんのおび",
     "たべのこし",
+    "タンガのみ",
+    "ちからのハチマキ",
+    "つめたいいわ",
     "でんきだま",
     "どくバリ",
     "とけないこおり",
+    "とつげきチョッキ",
     "ナモのみ",
     "のろいのおふだ",
     "バコウのみ",
     "ハバンのみ",
     "ビアーのみ",
     "ひかりのこな",
+    "ひかりのねんど",
+    "ヒメリのみ",
     "ピントレンズ",
+    "フォーカスレンズ",
+    "ホズのみ",
     "まがったスプーン",
     "メタルコート",
+    "メトロノーム",
     "メンタルハーブ",
     "もくたん",
+    "ものしりメガネ",
     "ヤチェのみ",
     "やわらかいすな",
     "ようせいのハネ",
@@ -273,60 +550,3969 @@
     "ロゼルのみ"
   ],
   "verifiedKoLabels": {
-    "イトケのみ": "꼬시개열매",
-    "おうじゃのしるし": "왕의징표석",
-    "オッカのみ": "오카열매",
-    "オボンのみ": "자뭉열매",
-    "カゴのみ": "유루열매",
-    "カシブのみ": "수불열매",
-    "きあいのタスキ": "기합의띠",
-    "きせきのタネ": "기적의씨",
-    "くろいメガネ": "검은안경",
-    "くろおび": "검은띠",
-    "こだわりスカーフ": "구애스카프",
-    "じしゃく": "자석",
-    "シュカのみ": "슈캐열매",
-    "シルクのスカーフ": "실크스카프",
-    "しろいハーブ": "하양허브",
-    "しんぴのしずく": "신비의물방울",
-    "するどいくちばし": "예리한부리",
-    "せんせいのツメ": "선제공격손톱",
-    "ソクノのみ": "초나열매",
-    "たべのこし": "먹다남은음식",
-    "でんきだま": "전기구슬",
-    "どくバリ": "독바늘",
-    "とけないこおり": "녹지않는얼음",
-    "ナモのみ": "마코열매",
-    "のろいのおふだ": "저주의부적",
-    "バコウのみ": "바코열매",
-    "ハバンのみ": "하반열매",
-    "ビアーのみ": "으름열매",
-    "ひかりのこな": "반짝가루",
-    "ピントレンズ": "초점렌즈",
-    "まがったスプーン": "휘어진스푼",
-    "メタルコート": "금속코트",
-    "メンタルハーブ": "멘탈허브",
-    "もくたん": "목탄",
-    "ヤチェのみ": "플카열매",
-    "やわらかいすな": "부드러운모래",
+    "あついいわ": "이상한플레이트",
+    "イトケのみ": "의문열매",
+    "いのちのたま": "파워앵클릿",
+    "ウタンのみ": "학습장치",
+    "おうじゃのしるし": "예리한부리",
+    "おおきなねっこ": "행운의향로",
+    "オッカのみ": "스타열매",
+    "オボンのみ": "슈박열매",
+    "オレンのみ": "노멜열매",
+    "かいがらのすず": "포커스렌즈",
+    "カゴのみ": "또뽀열매",
+    "カシブのみ": "멘탈허브",
+    "かたいいし": "파랑밴드",
+    "きあいのタスキ": "불구슬플레이트",
+    "きあいのハチマキ": "조개껍질방울",
+    "キーのみ": "메호키열매",
+    "きせきのタネ": "분홍밴드",
+    "きれいなぬけがら": "꽃향로",
+    "ぎんのこな": "독바늘",
+    "くろいてっきゅう": "초록플레이트",
+    "くろいメガネ": "초록밴드",
+    "くろおび": "노랑밴드",
+    "こうかくレンズ": "끈적끈적바늘",
+    "こだわりスカーフ": "원령플레이트",
+    "さらさらいわ": "푸른하늘플레이트",
+    "じしゃく": "광각렌즈",
+    "しめったいわ": "비단벌레플레이트",
+    "シュカのみ": "하양허브",
+    "シルクのスカーフ": "스피드파우더",
+    "しろいハーブ": "부드러운모래",
+    "しんぴのしずく": "힘의머리띠",
+    "するどいくちばし": "박식안경",
+    "せんせいのツメ": "검은안경",
+    "ソクノのみ": "미클열매",
+    "たつじんのおび": "파워렌즈",
+    "たべのこし": "금속파우더",
+    "タンガのみ": "선제공격손톱",
+    "ちからのハチマキ": "파워리스트",
+    "つめたいいわ": "대지플레이트",
+    "でんきだま": "대파",
+    "どくバリ": "달인의띠",
+    "とけないこおり": "빛의점토",
+    "とつげきチョッキ": "돌격조끼",
+    "ナモのみ": "왕의징표석",
+    "のろいのおふだ": "생명의구슬",
+    "バコウのみ": "교정깁스",
+    "ハバンのみ": "구애머리띠",
+    "ビアーのみ": "반짝가루",
+    "ひかりのこな": "전기구슬",
+    "ひかりのねんど": "파워밴드",
+    "ヒメリのみ": "라부탐열매",
+    "ピントレンズ": "무사태평향로",
+    "フォーカスレンズ": "물방울플레이트",
+    "ホズのみ": "부적금화",
+    "まがったスプーン": "파워풀허브",
+    "メタルコート": "럭키펀치",
+    "メトロノーム": "우뢰플레이트",
+    "メンタルハーブ": "자석",
+    "もくたん": "맹독구슬",
+    "ものしりメガネ": "파워벨트",
+    "ヤチェのみ": "자보열매",
+    "やわらかいすな": "빨강밴드",
     "ようせいのハネ": "요정의깃털",
-    "ヨプのみ": "로플열매",
-    "ヨロギのみ": "루미열매",
-    "ラムのみ": "리샘열매",
-    "りゅうのキバ": "용의이빨",
-    "リリバのみ": "바리비열매",
-    "リンドのみ": "린드열매",
-    "ロゼルのみ": "로셀열매"
+    "ヨプのみ": "애터열매",
+    "ヨロギのみ": "평온의방울",
+    "ラムのみ": "자야열매",
+    "りゅうのキバ": "화염구슬",
+    "リリバのみ": "은빛가루",
+    "リンドのみ": "애슈열매",
+    "ロゼルのみ": "휘핑팝"
   },
   "missingKoLabels": [],
   "manualSpritePaths": {
     "こだわりスカーフ": "item-sprites/choice-scarf.png",
     "ようせいのハネ": "item-sprites/fairy-feather.png"
   },
+  "sourceSummaryByItem": {
+    "あついいわ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          284
+        ],
+        "pageCount": 6,
+        "bestRank": 1,
+        "highestRate": 43.3,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 1,
+            "rate": 32.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0324-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 1,
+            "rate": 43.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0683-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 2,
+            "rate": 9.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0324-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 3,
+            "rate": 6.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 284,
+        "apiName": "mind-plate",
+        "ko": "이상한플레이트",
+        "en": "Mind Plate"
+      }
+    },
+    "イトケのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          185
+        ],
+        "pageCount": 107,
+        "bestRank": 3,
+        "highestRate": 14,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0323-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0392-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 11.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0450-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0464-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 9.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 185,
+        "apiName": "enigma-berry",
+        "ko": "의문열매",
+        "en": "Enigma Berry"
+      }
+    },
+    "いのちのたま": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          270
+        ],
+        "pageCount": 393,
+        "bestRank": 1,
+        "highestRate": 81.7,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 2,
+            "rate": 4.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 270,
+        "apiName": "power-anklet",
+        "ko": "파워앵클릿",
+        "en": "Power Anklet"
+      }
+    },
+    "ウタンのみ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          193
+        ],
+        "pageCount": 7,
+        "bestRank": 7,
+        "highestRate": 3.3,
+        "seasonRuleCount": 4,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 9,
+            "rate": 3.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=2&rule=1",
+            "season": 2,
+            "rule": 1,
+            "rank": 10,
+            "rate": 2.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0454-00?season=2&rule=1",
+            "season": 2,
+            "rule": 1,
+            "rank": 8,
+            "rate": 2.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0748-00?season=2&rule=1",
+            "season": 2,
+            "rule": 1,
+            "rank": 8,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0045-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 193,
+        "apiName": "exp-share",
+        "ko": "학습장치",
+        "en": "Exp. Share"
+      }
+    },
+    "おうじゃのしるし": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          221
+        ],
+        "pageCount": 191,
+        "bestRank": 1,
+        "highestRate": 53.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 4.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0130-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0135-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0142-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 1.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 221,
+        "apiName": "sharp-beak",
+        "ko": "예리한부리",
+        "en": "Sharp Beak"
+      }
+    },
+    "おおきなねっこ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          296
+        ],
+        "pageCount": 41,
+        "bestRank": 1,
+        "highestRate": 29.4,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0045-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 2,
+            "rate": 29.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0071-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0154-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0389-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 296,
+        "apiName": "luck-incense",
+        "ko": "행운의향로",
+        "en": "Luck Incense"
+      }
+    },
+    "オッカのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          184
+        ],
+        "pageCount": 178,
+        "bestRank": 2,
+        "highestRate": 19.4,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0205-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 2.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0212-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0227-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.5
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 184,
+        "apiName": "starf-berry",
+        "ko": "스타열매",
+        "en": "Starf Berry"
+      }
+    },
+    "オボンのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          158
+        ],
+        "pageCount": 1293,
+        "bestRank": 1,
+        "highestRate": 87.9,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 158,
+        "apiName": "watmel-berry",
+        "ko": "슈박열매",
+        "en": "Watmel Berry"
+      }
+    },
+    "オレンのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          155
+        ],
+        "pageCount": 9,
+        "bestRank": 3,
+        "highestRate": 11.5,
+        "seasonRuleCount": 5,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0685-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 10
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0702-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 1.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0359-00?season=2&rule=0",
+            "season": 2,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0685-00?season=2&rule=0",
+            "season": 2,
+            "rule": 0,
+            "rank": 3,
+            "rate": 11.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0702-00?season=2&rule=0",
+            "season": 2,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 155,
+        "apiName": "nomel-berry",
+        "ko": "노멜열매",
+        "en": "Nomel Berry"
+      }
+    },
+    "かいがらのすず": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          253
+        ],
+        "pageCount": 188,
+        "bestRank": 2,
+        "highestRate": 13.4,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0068-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-02?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0132-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0134-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 253,
+        "apiName": "zoom-lens",
+        "ko": "포커스렌즈",
+        "en": "Zoom Lens"
+      }
+    },
+    "カゴのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          150
+        ],
+        "pageCount": 106,
+        "bestRank": 3,
+        "highestRate": 16,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0130-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0134-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 5.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0143-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 12.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0181-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.8
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 150,
+        "apiName": "grepa-berry",
+        "ko": "또뽀열매",
+        "en": "Grepa Berry"
+      }
+    },
+    "カシブのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          196
+        ],
+        "pageCount": 131,
+        "bestRank": 2,
+        "highestRate": 27,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 1.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0196-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 2.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0358-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 196,
+        "apiName": "mental-herb",
+        "ko": "멘탈허브",
+        "en": "Mental Herb"
+      }
+    },
+    "かたいいし": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          238
+        ],
+        "pageCount": 82,
+        "bestRank": 2,
+        "highestRate": 24.6,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 2.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0142-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0409-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 11
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0464-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0697-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 8.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 238,
+        "apiName": "blue-scarf",
+        "ko": "파랑밴드",
+        "en": "Blue Scarf"
+      }
+    },
+    "きあいのタスキ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          275
+        ],
+        "pageCount": 1182,
+        "bestRank": 1,
+        "highestRate": 88.6,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 275,
+        "apiName": "flame-plate",
+        "ko": "불구슬플레이트",
+        "en": "Flame Plate"
+      }
+    },
+    "きあいのハチマキ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          230
+        ],
+        "pageCount": 71,
+        "bestRank": 1,
+        "highestRate": 36.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0065-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0132-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 230,
+        "apiName": "shell-bell",
+        "ko": "조개껍질방울",
+        "en": "Shell Bell"
+      }
+    },
+    "キーのみ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          156
+        ],
+        "pageCount": 3,
+        "bestRank": 6,
+        "highestRate": 0.4,
+        "seasonRuleCount": 3,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0701-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 10,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0701-00?season=2&rule=1",
+            "season": 2,
+            "rule": 1,
+            "rank": 6,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0701-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 9,
+            "rate": 0.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 156,
+        "apiName": "spelon-berry",
+        "ko": "메호키열매",
+        "en": "Spelon Berry"
+      }
+    },
+    "きせきのタネ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          239
+        ],
+        "pageCount": 100,
+        "bestRank": 1,
+        "highestRate": 42.9,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0071-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0154-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0389-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0407-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 7.8
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 239,
+        "apiName": "pink-scarf",
+        "ko": "분홍밴드",
+        "en": "Pink Scarf"
+      }
+    },
+    "きれいなぬけがら": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          295
+        ],
+        "pageCount": 2,
+        "bestRank": 8,
+        "highestRate": 0.4,
+        "seasonRuleCount": 1,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0227-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0748-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 295,
+        "apiName": "rose-incense",
+        "ko": "꽃향로",
+        "en": "Rose Incense"
+      }
+    },
+    "ぎんのこな": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          222
+        ],
+        "pageCount": 17,
+        "bestRank": 2,
+        "highestRate": 14.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0127-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 3.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 7,
+            "rate": 1.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 222,
+        "apiName": "poison-barb",
+        "ko": "독바늘",
+        "en": "Poison Barb"
+      }
+    },
+    "くろいてっきゅう": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          278
+        ],
+        "pageCount": 41,
+        "bestRank": 4,
+        "highestRate": 6.1,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0208-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0211-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 2.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0308-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0354-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0442-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 278,
+        "apiName": "meadow-plate",
+        "ko": "초록플레이트",
+        "en": "Meadow Plate"
+      }
+    },
+    "くろいメガネ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          240
+        ],
+        "pageCount": 107,
+        "bestRank": 1,
+        "highestRate": 74,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0197-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0229-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0302-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0319-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0359-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 1.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 240,
+        "apiName": "green-scarf",
+        "ko": "초록밴드",
+        "en": "Green Scarf"
+      }
+    },
+    "くろおび": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          241
+        ],
+        "pageCount": 126,
+        "bestRank": 1,
+        "highestRate": 43.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0068-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 7.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 3.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-02?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 8.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-03?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 2.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 2.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 241,
+        "apiName": "yellow-scarf",
+        "ko": "노랑밴드",
+        "en": "Yellow Scarf"
+      }
+    },
+    "こうかくレンズ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          265
+        ],
+        "pageCount": 95,
+        "bestRank": 1,
+        "highestRate": 63.9,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0045-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-01?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0094-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0127-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 265,
+        "apiName": "sticky-barb",
+        "ko": "끈적끈적바늘",
+        "en": "Sticky Barb"
+      }
+    },
+    "こだわりスカーフ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          287
+        ],
+        "pageCount": 867,
+        "bestRank": 1,
+        "highestRate": 86.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 12.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 287,
+        "apiName": "spooky-plate",
+        "ko": "원령플레이트",
+        "en": "Spooky Plate"
+      }
+    },
+    "さらさらいわ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          283
+        ],
+        "pageCount": 5,
+        "bestRank": 3,
+        "highestRate": 8.2,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0248-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 4.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0450-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 3,
+            "rate": 2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0844-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 3,
+            "rate": 8.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0248-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 8,
+            "rate": 1.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0450-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 4,
+            "rate": 5.9
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 283,
+        "apiName": "sky-plate",
+        "ko": "푸른하늘플레이트",
+        "en": "Sky Plate"
+      }
+    },
+    "じしゃく": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          242
+        ],
+        "pageCount": 112,
+        "bestRank": 1,
+        "highestRate": 33.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 10.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 11.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0121-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0135-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 31.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 242,
+        "apiName": "wide-lens",
+        "ko": "광각렌즈",
+        "en": "Wide Lens"
+      }
+    },
+    "しめったいわ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          285
+        ],
+        "pageCount": 17,
+        "bestRank": 1,
+        "highestRate": 74,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0127-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0186-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 1,
+            "rate": 63.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0279-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 1,
+            "rate": 74
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 285,
+        "apiName": "insect-plate",
+        "ko": "비단벌레플레이트",
+        "en": "Insect Plate"
+      }
+    },
+    "シュカのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          191
+        ],
+        "pageCount": 258,
+        "bestRank": 1,
+        "highestRate": 49.3,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 16.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 3.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 9.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 8.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 191,
+        "apiName": "white-herb",
+        "ko": "하양허브",
+        "en": "White Herb"
+      }
+    },
+    "シルクのスカーフ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          251
+        ],
+        "pageCount": 102,
+        "bestRank": 1,
+        "highestRate": 54.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0115-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 12.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0143-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 3.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 251,
+        "apiName": "quick-powder",
+        "ko": "스피드파우더",
+        "en": "Quick Powder"
+      }
+    },
+    "しろいハーブ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          214
+        ],
+        "pageCount": 450,
+        "bestRank": 1,
+        "highestRate": 89.7,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 7.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 5.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0071-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 214,
+        "apiName": "soft-sand",
+        "ko": "부드러운모래",
+        "en": "Soft Sand"
+      }
+    },
+    "しんぴのしずく": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          243
+        ],
+        "pageCount": 152,
+        "bestRank": 1,
+        "highestRate": 66.1,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0121-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-03?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 9.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0130-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 1.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 243,
+        "apiName": "muscle-band",
+        "ko": "힘의머리띠",
+        "en": "Muscle Band"
+      }
+    },
+    "するどいくちばし": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          244
+        ],
+        "pageCount": 46,
+        "bestRank": 1,
+        "highestRate": 35.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0279-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0479-04?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0663-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 1,
+            "rate": 18.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0666-18?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 244,
+        "apiName": "wise-glasses",
+        "ko": "박식안경",
+        "en": "Wise Glasses"
+      }
+    },
+    "せんせいのツメ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          217
+        ],
+        "pageCount": 999,
+        "bestRank": 1,
+        "highestRate": 84.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 217,
+        "apiName": "black-glasses",
+        "ko": "검은안경",
+        "en": "Black Glasses"
+      }
+    },
+    "ソクノのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          186
+        ],
+        "pageCount": 57,
+        "bestRank": 4,
+        "highestRate": 4.4,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0130-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0186-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 2.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0279-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 3.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0350-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0693-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 186,
+        "apiName": "micle-berry",
+        "ko": "미클열매",
+        "en": "Micle Berry"
+      }
+    },
+    "たつじんのおび": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          268
+        ],
+        "pageCount": 211,
+        "bestRank": 2,
+        "highestRate": 17.6,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 2.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 268,
+        "apiName": "power-lens",
+        "ko": "파워렌즈",
+        "en": "Power Lens"
+      }
+    },
+    "たべのこし": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          234
+        ],
+        "pageCount": 1112,
+        "bestRank": 1,
+        "highestRate": 92,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 2.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 11.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 234,
+        "apiName": "metal-powder",
+        "ko": "금속파우더",
+        "en": "Metal Powder"
+      }
+    },
+    "タンガのみ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          194
+        ],
+        "pageCount": 1,
+        "bestRank": 8,
+        "highestRate": 1.2,
+        "seasonRuleCount": 1,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0687-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 194,
+        "apiName": "quick-claw",
+        "ko": "선제공격손톱",
+        "en": "Quick Claw"
+      }
+    },
+    "ちからのハチマキ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          266
+        ],
+        "pageCount": 104,
+        "bestRank": 3,
+        "highestRate": 13.1,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-01?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 1.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0068-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 3.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0115-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-01?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.5
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 266,
+        "apiName": "power-bracer",
+        "ko": "파워리스트",
+        "en": "Power Bracer"
+      }
+    },
+    "つめたいいわ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          282
+        ],
+        "pageCount": 11,
+        "bestRank": 5,
+        "highestRate": 2.3,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-01?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0186-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0279-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 282,
+        "apiName": "earth-plate",
+        "ko": "대지플레이트",
+        "en": "Earth Plate"
+      }
+    },
+    "でんきだま": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          236
+        ],
+        "pageCount": 45,
+        "bestRank": 1,
+        "highestRate": 90,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 1,
+            "rate": 83.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0127-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0186-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0306-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0354-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 236,
+        "apiName": "stick",
+        "ko": "대파",
+        "en": "Leek"
+      }
+    },
+    "どくバリ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          245
+        ],
+        "pageCount": 62,
+        "bestRank": 3,
+        "highestRate": 11.4,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0071-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-02?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 2.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0407-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 245,
+        "apiName": "expert-belt",
+        "ko": "달인의띠",
+        "en": "Expert Belt"
+      }
+    },
+    "とけないこおり": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          246
+        ],
+        "pageCount": 100,
+        "bestRank": 1,
+        "highestRate": 79.5,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 21
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 2.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0205-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0362-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0460-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 2.8
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 246,
+        "apiName": "light-clay",
+        "ko": "빛의점토",
+        "en": "Light Clay"
+      }
+    },
+    "とつげきチョッキ": {
+      "sources": [
+        "opendata"
+      ],
+      "usagePageReferences": null,
+      "pokeApi": {
+        "id": 683,
+        "apiName": "assault-vest",
+        "ko": "돌격조끼",
+        "en": "Assault Vest"
+      }
+    },
+    "ナモのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          198
+        ],
+        "pageCount": 165,
+        "bestRank": 1,
+        "highestRate": 37.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0080-02?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0196-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 2.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0563-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 4.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 198,
+        "apiName": "kings-rock",
+        "ko": "왕의징표석",
+        "en": "King’s Rock"
+      }
+    },
+    "のろいのおふだ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          247
+        ],
+        "pageCount": 97,
+        "bestRank": 1,
+        "highestRate": 49.1,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0094-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0157-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0354-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0479-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0571-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 4.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 247,
+        "apiName": "life-orb",
+        "ko": "생명의구슬",
+        "en": "Life Orb"
+      }
+    },
+    "バコウのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          192
+        ],
+        "pageCount": 44,
+        "bestRank": 3,
+        "highestRate": 8.4,
+        "seasonRuleCount": 4,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 8,
+            "rate": 1.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 10,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0534-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 10,
+            "rate": 1.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0547-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 5,
+            "rate": 2.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0652-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 5,
+            "rate": 1.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 192,
+        "apiName": "macho-brace",
+        "ko": "교정깁스",
+        "en": "Macho Brace"
+      }
+    },
+    "ハバンのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          197
+        ],
+        "pageCount": 51,
+        "bestRank": 2,
+        "highestRate": 14.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0334-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0445-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0635-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0706-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 7.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0715-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 197,
+        "apiName": "choice-band",
+        "ko": "구애머리띠",
+        "en": "Choice Band"
+      }
+    },
+    "ビアーのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          190
+        ],
+        "pageCount": 50,
+        "bestRank": 3,
+        "highestRate": 11.6,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0547-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0671-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0683-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 9.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0685-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 1.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0702-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 190,
+        "apiName": "bright-powder",
+        "ko": "반짝가루",
+        "en": "Bright Powder"
+      }
+    },
+    "ひかりのこな": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          213
+        ],
+        "pageCount": 751,
+        "bestRank": 1,
+        "highestRate": 56.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 4.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 4.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 213,
+        "apiName": "light-ball",
+        "ko": "전기구슬",
+        "en": "Light Ball"
+      }
+    },
+    "ひかりのねんど": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          269
+        ],
+        "pageCount": 75,
+        "bestRank": 1,
+        "highestRate": 85.2,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0025-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0036-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-01?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 1,
+            "rate": 85.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0065-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 269,
+        "apiName": "power-band",
+        "ko": "파워밴드",
+        "en": "Power Band"
+      }
+    },
+    "ヒメリのみ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          154
+        ],
+        "pageCount": 2,
+        "bestRank": 4,
+        "highestRate": 3.7,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0748-00?season=2&rule=0",
+            "season": 2,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0713-00?season=2&rule=1",
+            "season": 2,
+            "rule": 1,
+            "rank": 4,
+            "rate": 3.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 154,
+        "apiName": "rabuta-berry",
+        "ko": "라부탐열매",
+        "en": "Rabuta Berry"
+      }
+    },
+    "ピントレンズ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          232
+        ],
+        "pageCount": 143,
+        "bestRank": 1,
+        "highestRate": 62.3,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0026-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0068-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 5.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 3.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0308-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 232,
+        "apiName": "lax-incense",
+        "ko": "무사태평향로",
+        "en": "Lax Incense"
+      }
+    },
+    "フォーカスレンズ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          276
+        ],
+        "pageCount": 23,
+        "bestRank": 3,
+        "highestRate": 15.1,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0045-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 2.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0323-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0334-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0409-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0442-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 4.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 276,
+        "apiName": "splash-plate",
+        "ko": "물방울플레이트",
+        "en": "Splash Plate"
+      }
+    },
+    "ホズのみ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          200
+        ],
+        "pageCount": 1,
+        "bestRank": 8,
+        "highestRate": 1.5,
+        "seasonRuleCount": 1,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0510-00?season=3&rule=1",
+            "season": 3,
+            "rule": 1,
+            "rank": 8,
+            "rate": 1.5
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 200,
+        "apiName": "amulet-coin",
+        "ko": "부적금화",
+        "en": "Amulet Coin"
+      }
+    },
+    "まがったスプーン": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          248
+        ],
+        "pageCount": 69,
+        "bestRank": 2,
+        "highestRate": 13.9,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0065-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0196-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 4.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0199-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0579-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 5.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0678-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.9
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 248,
+        "apiName": "power-herb",
+        "ko": "파워풀허브",
+        "en": "Power Herb"
+      }
+    },
+    "メタルコート": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          233
+        ],
+        "pageCount": 44,
+        "bestRank": 2,
+        "highestRate": 13.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0212-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 2.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0306-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0707-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 2.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0959-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 8.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0205-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 7,
+            "rate": 3.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 233,
+        "apiName": "lucky-punch",
+        "ko": "럭키펀치",
+        "en": "Lucky Punch"
+      }
+    },
+    "メトロノーム": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          277
+        ],
+        "pageCount": 24,
+        "bestRank": 3,
+        "highestRate": 5.6,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0115-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 6,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0132-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0497-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 2.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0571-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 277,
+        "apiName": "zap-plate",
+        "ko": "우뢰플레이트",
+        "en": "Zap Plate"
+      }
+    },
+    "メンタルハーブ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          219
+        ],
+        "pageCount": 296,
+        "bestRank": 1,
+        "highestRate": 44.1,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0024-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0036-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 2.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0134-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0168-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 2.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 219,
+        "apiName": "magnet",
+        "ko": "자석",
+        "en": "Magnet"
+      }
+    },
+    "もくたん": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          249
+        ],
+        "pageCount": 147,
+        "bestRank": 1,
+        "highestRate": 87.9,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 2,
+            "rate": 16.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0059-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 3.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-02?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 15.2
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 249,
+        "apiName": "toxic-orb",
+        "ko": "맹독구슬",
+        "en": "Toxic Orb"
+      }
+    },
+    "ものしりメガネ": {
+      "sources": [
+        "usage-pages"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          267
+        ],
+        "pageCount": 65,
+        "bestRank": 3,
+        "highestRate": 8.5,
+        "seasonRuleCount": 2,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0065-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0094-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0121-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0135-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0157-00?season=3&rule=0",
+            "season": 3,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 267,
+        "apiName": "power-belt",
+        "ko": "파워벨트",
+        "en": "Power Belt"
+      }
+    },
+    "ヤチェのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          188
+        ],
+        "pageCount": 52,
+        "bestRank": 1,
+        "highestRate": 16.7,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0149-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0334-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0389-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 3.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0445-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0472-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 4.3
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 188,
+        "apiName": "jaboca-berry",
+        "ko": "자보열매",
+        "en": "Jaboca Berry"
+      }
+    },
+    "やわらかいすな": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          237
+        ],
+        "pageCount": 78,
+        "bestRank": 1,
+        "highestRate": 34,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0450-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0464-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0472-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0530-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 4.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0553-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 3.7
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 237,
+        "apiName": "red-scarf",
+        "ko": "빨강밴드",
+        "en": "Red Scarf"
+      }
+    },
+    "ようせいのハネ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          2401
+        ],
+        "pageCount": 90,
+        "bestRank": 1,
+        "highestRate": 88.8,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0036-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0184-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0282-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0547-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0670-05?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 3,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 2105,
+        "apiName": "fairy-feather",
+        "ko": null,
+        "en": "Fairy Feather"
+      }
+    },
+    "ヨプのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          189
+        ],
+        "pageCount": 243,
+        "bestRank": 1,
+        "highestRate": 56.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0115-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 4.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0143-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 9.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0197-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0248-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 7.4
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 189,
+        "apiName": "rowap-berry",
+        "ko": "애터열매",
+        "en": "Rowap Berry"
+      }
+    },
+    "ヨロギのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          195
+        ],
+        "pageCount": 37,
+        "bestRank": 3,
+        "highestRate": 11.7,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0142-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0637-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0663-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.9
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0752-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=1",
+            "season": 1,
+            "rule": 1,
+            "rank": 8,
+            "rate": 0
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 195,
+        "apiName": "soothe-bell",
+        "ko": "평온의방울",
+        "en": "Soothe Bell"
+      }
+    },
+    "ラムのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          157
+        ],
+        "pageCount": 758,
+        "bestRank": 2,
+        "highestRate": 26.2,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0003-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0006-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0009-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 0.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0015-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0018-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 157,
+        "apiName": "pamtre-berry",
+        "ko": "자야열매",
+        "en": "Pamtre Berry"
+      }
+    },
+    "りゅうのキバ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          250
+        ],
+        "pageCount": 49,
+        "bestRank": 2,
+        "highestRate": 16.9,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0149-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0635-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0706-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 3.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0706-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 5,
+            "rate": 4.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0715-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 1.6
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 250,
+        "apiName": "flame-orb",
+        "ko": "화염구슬",
+        "en": "Flame Orb"
+      }
+    },
+    "リリバのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          199
+        ],
+        "pageCount": 57,
+        "bestRank": 1,
+        "highestRate": 36.5,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0036-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0038-01?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 4.8
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0282-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0683-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 5.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0685-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 7,
+            "rate": 1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 199,
+        "apiName": "silver-powder",
+        "ko": "은빛가루",
+        "en": "Silver Powder"
+      }
+    },
+    "リンドのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          187
+        ],
+        "pageCount": 54,
+        "bestRank": 3,
+        "highestRate": 10.6,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0128-03?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 1.6
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0134-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.4
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0160-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.2
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0350-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 8,
+            "rate": 0.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0450-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 0.1
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 187,
+        "apiName": "custap-berry",
+        "ko": "애슈열매",
+        "en": "Custap Berry"
+      }
+    },
+    "ロゼルのみ": {
+      "sources": [
+        "usage-pages",
+        "opendata"
+      ],
+      "usagePageReferences": {
+        "itemKeys": [
+          686
+        ],
+        "pageCount": 76,
+        "bestRank": 1,
+        "highestRate": 64,
+        "seasonRuleCount": 6,
+        "samplePages": [
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0068-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 10,
+            "rate": 1.5
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0197-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 9,
+            "rate": 0.1
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0302-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 6,
+            "rate": 2.3
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0359-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 1.7
+          },
+          {
+            "url": "https://champs.pokedb.tokyo/pokemon/show/0442-00?season=1&rule=0",
+            "season": 1,
+            "rule": 0,
+            "rank": 4,
+            "rate": 10.5
+          }
+        ]
+      },
+      "pokeApi": {
+        "id": 686,
+        "apiName": "whipped-dream",
+        "ko": "휘핑팝",
+        "en": "Whipped Dream"
+      }
+    }
+  },
   "notes": [
-    "Whitelist is built from publicly linked Champions opendata JSON files.",
-    "Japanese item names remain the source-of-truth for reverse-mapping Champions opendata.",
-    "Korean labels are sourced from PokeAPI item names when available.",
+    "Primary source is aggregated held-item usage from Pokémon pages on champs.pokedb.tokyo across seasons 1..current for both single(rule=0) and double(rule=1).",
+    "Usage pages are more reliable than top-team opendata alone because they surface broader per-species held-item usage.",
+    "Opendata remains as a supplement because some low-frequency items can appear there without surfacing in the usage-page top slices.",
+    "Japanese item names remain the source-of-truth for reverse-mapping Champions site data.",
+    "Korean and English labels are sourced from PokeAPI item names when available.",
     "Mega stones are excluded because the app handles mega items separately via species-locked item generation.",
     "持ち物なし is excluded because the app represents no-item as an empty value."
   ]

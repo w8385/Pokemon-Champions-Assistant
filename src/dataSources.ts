@@ -41,8 +41,8 @@ export const dataSourcePolicy = {
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',
     report: 'reports/championsItemWhitelistReport.json',
-    primary: '포챔스 공개 opendata JSON에서 역추출한 일반 도구 화이트리스트',
-    supplements: ['https://champs.pokedb.tokyo/guide/opendata', '메가스톤 제외 목록', '일부 아이템 sprite slug'],
-    caveat: '현재 공개 opendata에 등장한 일반 도구만 포함한다. 메가스톤은 종 고정 도구로 앱에서 별도 처리하며, `持ち物なし`는 빈 값으로 처리한다.',
+    primary: '포챔스 종별 사용률 페이지의 도구 통계를 시즌 단위로 집계한 일반 도구 화이트리스트',
+    supplements: ['https://champs.pokedb.tokyo/pokemon/list', 'https://champs.pokedb.tokyo/guide/opendata', '메가스톤 제외 목록', '일부 아이템 sprite slug'],
+    caveat: '현재는 종별 사용률 페이지(top slice) 집계 + 공개 opendata 보강의 합집합이다. 메가스톤은 종 고정 도구로 앱에서 별도 처리하며, `持ち物なし`는 빈 값으로 처리한다.',
   },
 } as const
