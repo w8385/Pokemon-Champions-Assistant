@@ -45,4 +45,11 @@ export const dataSourcePolicy = {
     supplements: ['https://champs.pokedb.tokyo/pokemon/list', 'https://champs.pokedb.tokyo/guide/opendata', '메가스톤 제외 목록', '일부 아이템 sprite slug'],
     caveat: '현재는 종별 사용률 페이지(top slice) 집계 + 공개 opendata 보강의 합집합이다. 메가스톤은 종 고정 도구로 앱에서 별도 처리하며, `持ち物なし`는 빈 값으로 처리한다.',
   },
+  verifiedSpecies: {
+    sourceOfTruth: 'src/pokemon_champions_verified_data.json',
+    report: 'reports/championsVerifiedDataSyncReport.json',
+    primary: '포챔스 현재 리스트(rule 0/1)에 실제 노출되는 종을 기준으로 검증한 앱용 종 데이터',
+    supplements: ['https://champs.pokedb.tokyo/pokemon/list', '../pokemon-data/pkmnchamps_allPokemon.json', 'PokeAPI localized species/ability metadata'],
+    caveat: '기본 종은 현재 포챔스 리스트 기준으로 자동 보강하고, 리스트에 아직 노출되지 않은 신규 커스텀 폼(예: 메가찌르호크)은 별도 override로 추가 검증한다.',
+  },
 } as const

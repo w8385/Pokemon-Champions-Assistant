@@ -9183,6 +9183,865 @@
       "scarf_neutral": 108,
       "sprite": "https://www.serebii.net/pokemonhome/pokemon/small/323-m.png",
       "sprite_status": "serebii-direct-fallback"
+    },
+    {
+      "id": 10308,
+      "key": "mega-staraptor",
+      "canonicalFormSlug": "mega-staraptor",
+      "name_ko": "메가찌르호크",
+      "name_en": "Mega Staraptor",
+      "name_ja": "メガムクホーク",
+      "types": [
+        "fighting",
+        "flying"
+      ],
+      "types_ko": [
+        "격투",
+        "비행"
+      ],
+      "abilities": [
+        "contrary"
+      ],
+      "abilities_ko": [
+        "심술꾸러기"
+      ],
+      "hp": 85,
+      "attack": 140,
+      "defense": 100,
+      "spAttack": 60,
+      "spDefense": 90,
+      "speed": 110,
+      "fast": 178,
+      "neutral": 162,
+      "uninvested": 130,
+      "scarf_fast": 267,
+      "scarf_neutral": 243,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10308.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 45,
+      "key": "vileplume",
+      "canonicalFormSlug": "base",
+      "name_ko": "라플레시아",
+      "name_en": "Vileplume",
+      "name_ja": "ラフレシア",
+      "types": [
+        "grass",
+        "poison"
+      ],
+      "types_ko": [
+        "풀",
+        "독"
+      ],
+      "abilities": [
+        "chlorophyll",
+        "effect-spore"
+      ],
+      "abilities_ko": [
+        "엽록소",
+        "포자"
+      ],
+      "hp": 75,
+      "attack": 80,
+      "defense": 85,
+      "spAttack": 110,
+      "spDefense": 90,
+      "speed": 50,
+      "fast": 112,
+      "neutral": 102,
+      "uninvested": 70,
+      "scarf_fast": 168,
+      "scarf_neutral": 153,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/45.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 211,
+      "key": "qwilfish",
+      "canonicalFormSlug": "base",
+      "name_ko": "침바루",
+      "name_en": "Qwilfish",
+      "name_ja": "ハリーセン",
+      "types": [
+        "water",
+        "poison"
+      ],
+      "types_ko": [
+        "물",
+        "독"
+      ],
+      "abilities": [
+        "poison-point",
+        "swift-swim",
+        "intimidate"
+      ],
+      "abilities_ko": [
+        "독가시",
+        "쓱쓱",
+        "위협"
+      ],
+      "hp": 65,
+      "attack": 95,
+      "defense": 85,
+      "spAttack": 55,
+      "spDefense": 55,
+      "speed": 85,
+      "fast": 150,
+      "neutral": 137,
+      "uninvested": 105,
+      "scarf_fast": 225,
+      "scarf_neutral": 205,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/211.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 254,
+      "key": "sceptile",
+      "canonicalFormSlug": "base",
+      "name_ko": "나무킹",
+      "name_en": "Sceptile",
+      "name_ja": "ジュカイン",
+      "types": [
+        "grass"
+      ],
+      "types_ko": [
+        "풀"
+      ],
+      "abilities": [
+        "overgrow",
+        "unburden"
+      ],
+      "abilities_ko": [
+        "심록",
+        "곡예"
+      ],
+      "hp": 70,
+      "attack": 85,
+      "defense": 65,
+      "spAttack": 105,
+      "spDefense": 85,
+      "speed": 120,
+      "fast": 189,
+      "neutral": 172,
+      "uninvested": 140,
+      "scarf_fast": 283,
+      "scarf_neutral": 258,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/254.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 257,
+      "key": "blaziken",
+      "canonicalFormSlug": "base",
+      "name_ko": "번치코",
+      "name_en": "Blaziken",
+      "name_ja": "バシャーモ",
+      "types": [
+        "fire",
+        "fighting"
+      ],
+      "types_ko": [
+        "불꽃",
+        "격투"
+      ],
+      "abilities": [
+        "blaze",
+        "speed-boost"
+      ],
+      "abilities_ko": [
+        "맹화",
+        "가속"
+      ],
+      "hp": 80,
+      "attack": 120,
+      "defense": 70,
+      "spAttack": 110,
+      "spDefense": 70,
+      "speed": 80,
+      "fast": 145,
+      "neutral": 132,
+      "uninvested": 100,
+      "scarf_fast": 217,
+      "scarf_neutral": 198,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/257.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 260,
+      "key": "swampert",
+      "canonicalFormSlug": "base",
+      "name_ko": "대짱이",
+      "name_en": "Swampert",
+      "name_ja": "ラグラージ",
+      "types": [
+        "water",
+        "ground"
+      ],
+      "types_ko": [
+        "물",
+        "땅"
+      ],
+      "abilities": [
+        "torrent",
+        "damp"
+      ],
+      "abilities_ko": [
+        "급류",
+        "습기"
+      ],
+      "hp": 100,
+      "attack": 110,
+      "defense": 90,
+      "spAttack": 85,
+      "spDefense": 90,
+      "speed": 60,
+      "fast": 123,
+      "neutral": 112,
+      "uninvested": 80,
+      "scarf_fast": 184,
+      "scarf_neutral": 168,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/260.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 303,
+      "key": "mawile",
+      "canonicalFormSlug": "base",
+      "name_ko": "입치트",
+      "name_en": "Mawile",
+      "name_ja": "クチート",
+      "types": [
+        "steel",
+        "fairy"
+      ],
+      "types_ko": [
+        "강철",
+        "페어리"
+      ],
+      "abilities": [
+        "hyper-cutter",
+        "intimidate",
+        "sheer-force"
+      ],
+      "abilities_ko": [
+        "괴력집게",
+        "위협",
+        "우격다짐"
+      ],
+      "hp": 50,
+      "attack": 85,
+      "defense": 85,
+      "spAttack": 55,
+      "spDefense": 55,
+      "speed": 50,
+      "fast": 112,
+      "neutral": 102,
+      "uninvested": 70,
+      "scarf_fast": 168,
+      "scarf_neutral": 153,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/303.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 376,
+      "key": "metagross",
+      "canonicalFormSlug": "base",
+      "name_ko": "메타그로스",
+      "name_en": "Metagross",
+      "name_ja": "メタグロス",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "types_ko": [
+        "강철",
+        "에스퍼"
+      ],
+      "abilities": [
+        "clear-body",
+        "light-metal"
+      ],
+      "abilities_ko": [
+        "클리어바디",
+        "라이트메탈"
+      ],
+      "hp": 80,
+      "attack": 135,
+      "defense": 130,
+      "spAttack": 95,
+      "spDefense": 90,
+      "speed": 70,
+      "fast": 134,
+      "neutral": 122,
+      "uninvested": 90,
+      "scarf_fast": 201,
+      "scarf_neutral": 183,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 398,
+      "key": "staraptor",
+      "canonicalFormSlug": "base",
+      "name_ko": "찌르호크",
+      "name_en": "Staraptor",
+      "name_ja": "ムクホーク",
+      "types": [
+        "normal",
+        "flying"
+      ],
+      "types_ko": [
+        "노말",
+        "비행"
+      ],
+      "abilities": [
+        "intimidate",
+        "reckless"
+      ],
+      "abilities_ko": [
+        "위협",
+        "이판사판"
+      ],
+      "hp": 85,
+      "attack": 120,
+      "defense": 70,
+      "spAttack": 50,
+      "spDefense": 60,
+      "speed": 100,
+      "fast": 167,
+      "neutral": 152,
+      "uninvested": 120,
+      "scarf_fast": 250,
+      "scarf_neutral": 228,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/398.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 518,
+      "key": "musharna",
+      "canonicalFormSlug": "base",
+      "name_ko": "몽얌나",
+      "name_en": "Musharna",
+      "name_ja": "ムシャーナ",
+      "types": [
+        "psychic"
+      ],
+      "types_ko": [
+        "에스퍼"
+      ],
+      "abilities": [
+        "forewarn",
+        "synchronize",
+        "telepathy"
+      ],
+      "abilities_ko": [
+        "예지몽",
+        "싱크로",
+        "텔레파시"
+      ],
+      "hp": 116,
+      "attack": 55,
+      "defense": 85,
+      "spAttack": 107,
+      "spDefense": 95,
+      "speed": 29,
+      "fast": 89,
+      "neutral": 81,
+      "uninvested": 49,
+      "scarf_fast": 133,
+      "scarf_neutral": 121,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/518.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 545,
+      "key": "scolipede",
+      "canonicalFormSlug": "base",
+      "name_ko": "펜드라",
+      "name_en": "Scolipede",
+      "name_ja": "ペンドラー",
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "types_ko": [
+        "벌레",
+        "독"
+      ],
+      "abilities": [
+        "poison-point",
+        "swarm",
+        "speed-boost"
+      ],
+      "abilities_ko": [
+        "독가시",
+        "벌레의알림",
+        "가속"
+      ],
+      "hp": 60,
+      "attack": 100,
+      "defense": 89,
+      "spAttack": 55,
+      "spDefense": 69,
+      "speed": 112,
+      "fast": 180,
+      "neutral": 164,
+      "uninvested": 132,
+      "scarf_fast": 270,
+      "scarf_neutral": 246,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/545.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 560,
+      "key": "scrafty",
+      "canonicalFormSlug": "base",
+      "name_ko": "곤율거니",
+      "name_en": "Scrafty",
+      "name_ja": "ズルズキン",
+      "types": [
+        "dark",
+        "fighting"
+      ],
+      "types_ko": [
+        "악",
+        "격투"
+      ],
+      "abilities": [
+        "shed-skin",
+        "moxie",
+        "intimidate"
+      ],
+      "abilities_ko": [
+        "탈피",
+        "자기과신",
+        "위협"
+      ],
+      "hp": 65,
+      "attack": 90,
+      "defense": 115,
+      "spAttack": 45,
+      "spDefense": 115,
+      "speed": 58,
+      "fast": 121,
+      "neutral": 110,
+      "uninvested": 78,
+      "scarf_fast": 181,
+      "scarf_neutral": 165,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/560.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 604,
+      "key": "eelektross",
+      "canonicalFormSlug": "base",
+      "name_ko": "저리더프",
+      "name_en": "Eelektross",
+      "name_ja": "シビルドン",
+      "types": [
+        "electric"
+      ],
+      "types_ko": [
+        "전기"
+      ],
+      "abilities": [
+        "levitate"
+      ],
+      "abilities_ko": [
+        "부유"
+      ],
+      "hp": 85,
+      "attack": 115,
+      "defense": 80,
+      "spAttack": 105,
+      "spDefense": 80,
+      "speed": 50,
+      "fast": 112,
+      "neutral": 102,
+      "uninvested": 70,
+      "scarf_fast": 168,
+      "scarf_neutral": 153,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/604.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 668,
+      "key": "pyroar-male",
+      "canonicalFormSlug": "base",
+      "name_ko": "화염레오",
+      "name_en": "Pyroar-male",
+      "name_ja": "カエンジシ",
+      "types": [
+        "fire",
+        "normal"
+      ],
+      "types_ko": [
+        "불꽃",
+        "노말"
+      ],
+      "abilities": [
+        "rivalry",
+        "unnerve",
+        "moxie"
+      ],
+      "abilities_ko": [
+        "투쟁심",
+        "긴장감",
+        "자기과신"
+      ],
+      "hp": 86,
+      "attack": 68,
+      "defense": 72,
+      "spAttack": 109,
+      "spDefense": 66,
+      "speed": 106,
+      "fast": 173,
+      "neutral": 158,
+      "uninvested": 126,
+      "scarf_fast": 259,
+      "scarf_neutral": 237,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/668.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 687,
+      "key": "malamar",
+      "canonicalFormSlug": "base",
+      "name_ko": "칼라마네로",
+      "name_en": "Malamar",
+      "name_ja": "カラマネロ",
+      "types": [
+        "dark",
+        "psychic"
+      ],
+      "types_ko": [
+        "악",
+        "에스퍼"
+      ],
+      "abilities": [
+        "contrary",
+        "suction-cups",
+        "infiltrator"
+      ],
+      "abilities_ko": [
+        "심술꾸러기",
+        "흡반",
+        "틈새포착"
+      ],
+      "hp": 86,
+      "attack": 92,
+      "defense": 88,
+      "spAttack": 68,
+      "spDefense": 75,
+      "speed": 73,
+      "fast": 137,
+      "neutral": 125,
+      "uninvested": 93,
+      "scarf_fast": 205,
+      "scarf_neutral": 187,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/687.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 689,
+      "key": "barbaracle",
+      "canonicalFormSlug": "base",
+      "name_ko": "거북손데스",
+      "name_en": "Barbaracle",
+      "name_ja": "ガメノデス",
+      "types": [
+        "rock",
+        "water"
+      ],
+      "types_ko": [
+        "바위",
+        "물"
+      ],
+      "abilities": [
+        "tough-claws",
+        "sniper",
+        "pickpocket"
+      ],
+      "abilities_ko": [
+        "단단한발톱",
+        "스나이퍼",
+        "나쁜손버릇"
+      ],
+      "hp": 72,
+      "attack": 105,
+      "defense": 115,
+      "spAttack": 54,
+      "spDefense": 86,
+      "speed": 68,
+      "fast": 132,
+      "neutral": 120,
+      "uninvested": 88,
+      "scarf_fast": 198,
+      "scarf_neutral": 180,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/689.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 691,
+      "key": "dragalge",
+      "canonicalFormSlug": "base",
+      "name_ko": "드래캄",
+      "name_en": "Dragalge",
+      "name_ja": "ドラミドロ",
+      "types": [
+        "poison",
+        "dragon"
+      ],
+      "types_ko": [
+        "독",
+        "드래곤"
+      ],
+      "abilities": [
+        "poison-point",
+        "poison-touch",
+        "adaptability"
+      ],
+      "abilities_ko": [
+        "독가시",
+        "독수",
+        "적응력"
+      ],
+      "hp": 65,
+      "attack": 75,
+      "defense": 90,
+      "spAttack": 97,
+      "spDefense": 123,
+      "speed": 44,
+      "fast": 105,
+      "neutral": 96,
+      "uninvested": 64,
+      "scarf_fast": 157,
+      "scarf_neutral": 144,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/691.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 861,
+      "key": "grimmsnarl",
+      "canonicalFormSlug": "base",
+      "name_ko": "오롱털",
+      "name_en": "Grimmsnarl",
+      "name_ja": "オーロンゲ",
+      "types": [
+        "dark",
+        "fairy"
+      ],
+      "types_ko": [
+        "악",
+        "페어리"
+      ],
+      "abilities": [
+        "prankster",
+        "frisk",
+        "pickpocket"
+      ],
+      "abilities_ko": [
+        "짓궂은마음",
+        "통찰",
+        "나쁜손버릇"
+      ],
+      "hp": 95,
+      "attack": 120,
+      "defense": 65,
+      "spAttack": 95,
+      "spDefense": 75,
+      "speed": 60,
+      "fast": 123,
+      "neutral": 112,
+      "uninvested": 80,
+      "scarf_fast": 184,
+      "scarf_neutral": 168,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/861.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 870,
+      "key": "falinks",
+      "canonicalFormSlug": "base",
+      "name_ko": "대여르",
+      "name_en": "Falinks",
+      "name_ja": "タイレーツ",
+      "types": [
+        "fighting"
+      ],
+      "types_ko": [
+        "격투"
+      ],
+      "abilities": [
+        "battle-armor",
+        "defiant"
+      ],
+      "abilities_ko": [
+        "전투무장",
+        "오기"
+      ],
+      "hp": 65,
+      "attack": 100,
+      "defense": 100,
+      "spAttack": 70,
+      "spDefense": 60,
+      "speed": 75,
+      "fast": 139,
+      "neutral": 127,
+      "uninvested": 95,
+      "scarf_fast": 208,
+      "scarf_neutral": 190,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/870.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 904,
+      "key": "overqwil",
+      "canonicalFormSlug": "base",
+      "name_ko": "장침바루",
+      "name_en": "Overqwil",
+      "name_ja": "ハリーマン",
+      "types": [
+        "dark",
+        "poison"
+      ],
+      "types_ko": [
+        "악",
+        "독"
+      ],
+      "abilities": [
+        "poison-point",
+        "swift-swim",
+        "intimidate"
+      ],
+      "abilities_ko": [
+        "독가시",
+        "쓱쓱",
+        "위협"
+      ],
+      "hp": 85,
+      "attack": 115,
+      "defense": 95,
+      "spAttack": 65,
+      "spDefense": 65,
+      "speed": 85,
+      "fast": 150,
+      "neutral": 137,
+      "uninvested": 105,
+      "scarf_fast": 225,
+      "scarf_neutral": 205,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/904.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 972,
+      "key": "houndstone",
+      "canonicalFormSlug": "base",
+      "name_ko": "묘두기",
+      "name_en": "Houndstone",
+      "name_ja": "ハカドッグ",
+      "types": [
+        "ghost"
+      ],
+      "types_ko": [
+        "고스트"
+      ],
+      "abilities": [
+        "sand-rush",
+        "fluffy"
+      ],
+      "abilities_ko": [
+        "모래헤치기",
+        "복슬복슬"
+      ],
+      "hp": 72,
+      "attack": 101,
+      "defense": 100,
+      "spAttack": 50,
+      "spDefense": 97,
+      "speed": 68,
+      "fast": 132,
+      "neutral": 120,
+      "uninvested": 88,
+      "scarf_fast": 198,
+      "scarf_neutral": 180,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/972.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 979,
+      "key": "annihilape",
+      "canonicalFormSlug": "base",
+      "name_ko": "저승갓숭",
+      "name_en": "Annihilape",
+      "name_ja": "コノヨザル",
+      "types": [
+        "fighting",
+        "ghost"
+      ],
+      "types_ko": [
+        "격투",
+        "고스트"
+      ],
+      "abilities": [
+        "vital-spirit",
+        "inner-focus",
+        "defiant"
+      ],
+      "abilities_ko": [
+        "의기양양",
+        "정신력",
+        "오기"
+      ],
+      "hp": 110,
+      "attack": 115,
+      "defense": 80,
+      "spAttack": 50,
+      "spDefense": 90,
+      "speed": 90,
+      "fast": 156,
+      "neutral": 142,
+      "uninvested": 110,
+      "scarf_fast": 234,
+      "scarf_neutral": 213,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/979.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 1000,
+      "key": "gholdengo",
+      "canonicalFormSlug": "base",
+      "name_ko": "타부자고",
+      "name_en": "Gholdengo",
+      "name_ja": "サーフゴー",
+      "types": [
+        "steel",
+        "ghost"
+      ],
+      "types_ko": [
+        "강철",
+        "고스트"
+      ],
+      "abilities": [
+        "good-as-gold"
+      ],
+      "abilities_ko": [
+        "황금몸"
+      ],
+      "hp": 87,
+      "attack": 60,
+      "defense": 95,
+      "spAttack": 133,
+      "spDefense": 91,
+      "speed": 84,
+      "fast": 149,
+      "neutral": 136,
+      "uninvested": 104,
+      "scarf_fast": 223,
+      "scarf_neutral": 204,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1000.png",
+      "sprite_status": "pokeapi-official-artwork"
     }
   ],
   "verified_sprite_count": 259,
