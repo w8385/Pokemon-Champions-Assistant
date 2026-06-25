@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T03:12:01.899Z",
+  "generatedAt": "2026-06-25T03:15:03.647Z",
   "currentListBaseIds": [
     3,
     6,
@@ -209,152 +209,8 @@
     1019
   ],
   "missingBaseIds": [],
-  "addedCount": 13,
-  "added": [
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10304,
-      "key": "mega-raichu-x",
-      "canonicalFormSlug": "mega-raichu-x",
-      "name_ko": "메가라이츄X",
-      "name_en": "Mega Raichu X",
-      "abilities": [
-        "electric-surge"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10305,
-      "key": "mega-raichu-y",
-      "canonicalFormSlug": "mega-raichu-y",
-      "name_ko": "메가라이츄Y",
-      "name_en": "Mega Raichu Y",
-      "abilities": [
-        "no-guard"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10043,
-      "key": "mega-mewtwo-x",
-      "canonicalFormSlug": "mega-mewtwo-x",
-      "name_ko": "메가뮤츠X",
-      "name_en": "Mega Mewtwo X",
-      "abilities": [
-        "steadfast"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10044,
-      "key": "mega-mewtwo-y",
-      "canonicalFormSlug": "mega-mewtwo-y",
-      "name_ko": "메가뮤츠Y",
-      "name_en": "Mega Mewtwo Y",
-      "abilities": [
-        "insomnia"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10065,
-      "key": "mega-sceptile",
-      "canonicalFormSlug": "mega-sceptile",
-      "name_ko": "메가나무킹",
-      "name_en": "Mega Sceptile",
-      "abilities": [
-        "lightning-rod"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10050,
-      "key": "mega-blaziken",
-      "canonicalFormSlug": "mega-blaziken",
-      "name_ko": "메가번치코",
-      "name_en": "Mega Blaziken",
-      "abilities": [
-        "speed-boost"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10064,
-      "key": "mega-swampert",
-      "canonicalFormSlug": "mega-swampert",
-      "name_ko": "메가대짱이",
-      "name_en": "Mega Swampert",
-      "abilities": [
-        "swift-swim"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10052,
-      "key": "mega-mawile",
-      "canonicalFormSlug": "mega-mawile",
-      "name_ko": "메가입치트",
-      "name_en": "Mega Mawile",
-      "abilities": [
-        "huge-power"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10089,
-      "key": "mega-salamence",
-      "canonicalFormSlug": "mega-salamence",
-      "name_ko": "메가보만다",
-      "name_en": "Mega Salamence",
-      "abilities": [
-        "aerilate"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10062,
-      "key": "mega-latias",
-      "canonicalFormSlug": "mega-latias",
-      "name_ko": "메가라티아스",
-      "name_en": "Mega Latias",
-      "abilities": [
-        "levitate"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10063,
-      "key": "mega-latios",
-      "canonicalFormSlug": "mega-latios",
-      "name_ko": "메가라티오스",
-      "name_en": "Mega Latios",
-      "abilities": [
-        "levitate"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10079,
-      "key": "mega-rayquaza",
-      "canonicalFormSlug": "mega-rayquaza",
-      "name_ko": "메가레쿠쟈",
-      "name_en": "Mega Rayquaza",
-      "abilities": [
-        "delta-stream"
-      ]
-    },
-    {
-      "source": "allPokemon-mega-catalog",
-      "id": 10075,
-      "key": "mega-diancie",
-      "canonicalFormSlug": "mega-diancie",
-      "name_ko": "메가디안시",
-      "name_en": "Mega Diancie",
-      "abilities": [
-        "magic-bounce"
-      ]
-    }
-  ],
+  "addedCount": 0,
+  "added": [],
   "manualFormsConfigured": [
     "mega-staraptor",
     "mega-metagross",
@@ -379,5 +235,5 @@
     "mega-dragalge",
     "mega-falinks"
   ],
-  "totalRows": 304
+  "totalRows": 298
 }

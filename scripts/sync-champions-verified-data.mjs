@@ -181,9 +181,6 @@ function japaneseMegaName(baseJa, formName) {
 async function main() {
   const verifiedData = JSON.parse(await fs.readFile(verifiedDataPath, 'utf8'))
   const allPokemon = JSON.parse(await fs.readFile(allPokemonPath, 'utf8'))
-  const currentRows = verifiedData.rows ?? []
-  const currentIds = new Set(currentRows.map((row) => row.id))
-  const currentKeys = new Set(currentRows.map((row) => row.key))
 
   const currentListBaseIds = new Set()
   for (const rule of [0, 1]) {
@@ -220,6 +217,21 @@ async function main() {
     abilityKoCache.set(name, ko)
     return ko
   }
+
+  const megaCatalogEntries = allPokemon.filter((entry) => entry.isMega && entry.formName)
+  const disallowedLegendaryMegaKeys = new Set()
+  for (const formEntry of megaCatalogEntries) {
+    const megaKey = keyFromMegaFormName(formEntry.formName, formEntry.nameEn)
+    if (!megaKey) continue
+    const { species } = await getPokemonBundle(formEntry.nameEn)
+    if (species.is_legendary || species.is_mythical) {
+      disallowedLegendaryMegaKeys.add(megaKey)
+    }
+  }
+
+  const currentRows = (verifiedData.rows ?? []).filter((row) => !disallowedLegendaryMegaKeys.has(row.key))
+  const currentIds = new Set(currentRows.map((row) => row.id))
+  const currentKeys = new Set(currentRows.map((row) => row.key))
 
   async function buildBaseRow(baseEntry) {
     const { pokemon, species } = await getPokemonBundle(baseEntry.nameEn)
@@ -339,10 +351,9 @@ async function main() {
     }
   }
 
-  const megaCatalogEntries = allPokemon.filter((entry) => entry.isMega && entry.formName)
   for (const formEntry of megaCatalogEntries) {
     const megaKey = keyFromMegaFormName(formEntry.formName, formEntry.nameEn)
-    if (!megaKey || currentKeys.has(megaKey)) continue
+    if (!megaKey || disallowedLegendaryMegaKeys.has(megaKey) || currentKeys.has(megaKey)) continue
     const row = await buildMegaCatalogRow(formEntry)
     currentKeys.add(row.key)
     addedRows.push({ row, source: 'allPokemon-mega-catalog' })
