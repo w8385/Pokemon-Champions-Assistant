@@ -228,7 +228,7 @@ type DexResultItem =
   | { id: string; kind: 'ability'; key: string; koLabel: string; pokemonKeys: string[]; score: number }
   | { id: string; kind: 'item'; key: string; item: string; previewText: string; score: number }
 type SearchFieldTarget = { side: 'party' | 'opponent'; idx: number } | { side: 'sample' | 'opponentQuick'; idx: 0 } | null
-type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' } | null
+type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | 'sample' | 'opponent' } | null
 type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
 type MetaListField = { scope: 'party'; idx: number; field: 'ability' | 'nature' } | { scope: 'sample'; field: 'ability' | 'nature' } | null
 type SiteLanguage = 'ko' | 'en' | 'ja'
@@ -376,7 +376,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
     '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': 'Manage your party and calculate speed and damage based on opponent entries.', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': 'Adjust one Pokémon’s nature, effort values, and moves, then save it as a sample.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions battles in one place.', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'Quickly check doubles turn order and expected damage.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '기능제안/버그제보': 'Feature Requests / Bug Reports', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
-    '더블배틀': 'Doubles Battle', '더블배틀 메뉴': 'Doubles Menu', '더블 배틀 플래너': 'Doubles Battle Planner', '턴 플랜': 'Turn Plan', '속도/전장': 'Speed / Field', '아군 순풍': 'My Tailwind', '상대 순풍': 'Opponent Tailwind', '트릭룸': 'Trick Room', '트릭룸 순서': 'Trick Room Order', '기본 순서': 'Normal Order', '상대 프렌드가드': 'Opponent Friend Guard', '상대별 총 기대 대미지': 'Expected Damage by Target', '상대 대상': 'Opponent Target', '보조/자기 대상': 'Ally / Self Target', '4마리 행동순': '4-Pokémon Turn Order', '광역기 감쇠가 자동 적용됩니다.': 'Spread move reduction applies automatically.', '우선도': 'Priority', '순위': 'Rank', '계산 대기': 'Waiting for calc', '방어로 막힘': 'Blocked by Protect', '와이드가드로 차단됨': 'Blocked by Wide Guard', '내 좌측': 'My Left', '내 우측': 'My Right', '상대 좌측': 'Opp Left', '상대 우측': 'Opp Right', '사용률 상위 기술': 'Top Usage Moves',
+    '더블배틀': 'Doubles Battle', '더블배틀 메뉴': 'Doubles Menu', '더블 계산 작업 보드': 'Doubles Planning Board', '더블 배틀 플래너': 'Doubles Battle Planner', '턴 플랜': 'Turn Plan', '속도/전장': 'Speed / Field', '아군 순풍': 'My Tailwind', '상대 순풍': 'Opponent Tailwind', '트릭룸': 'Trick Room', '트릭룸 순서': 'Trick Room Order', '기본 순서': 'Normal Order', '상대 프렌드가드': 'Opponent Friend Guard', '상대별 총 기대 대미지': 'Expected Damage by Target', '상대 대상': 'Opponent Target', '보조/자기 대상': 'Ally / Self Target', '4마리 행동순': '4-Pokémon Turn Order', '광역기 감쇠가 자동 적용됩니다.': 'Spread move reduction applies automatically.', '우선도': 'Priority', '순위': 'Rank', '계산 대기': 'Waiting for calc', '방어로 막힘': 'Blocked by Protect', '와이드가드로 차단됨': 'Blocked by Wide Guard', '내 좌측': 'My Left', '내 우측': 'My Right', '상대 좌측': 'Opp Left', '상대 우측': 'Opp Right', '사용률 상위 기술': 'Top Usage Moves',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
@@ -408,7 +408,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
     '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': '自分のパーティを管理し、相手エントリーに応じて素早さと火力を計算できます。', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': '1匹を基準に性格・努力値・技を調整し、サンプルとして保存できます。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'ポケモンチャンピオンズのバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'ダブルバトルの行動順と想定ダメージをすばやく確認できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '기능제안/버그제보': '機能提案 / バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
-    '더블배틀': 'ダブルバトル', '더블배틀 메뉴': 'ダブルバトルメニュー', '더블 배틀 플래너': 'ダブルバトルプランナー', '턴 플랜': 'ターンプラン', '속도/전장': '素早さ / 盤面', '아군 순풍': '味方おいかぜ', '상대 순풍': '相手おいかぜ', '트릭룸': 'トリックルーム', '트릭룸 순서': 'トリル順', '기본 순서': '通常順', '상대 프렌드가드': '相手フレンドガード', '상대별 총 기대 대미지': '相手ごとの想定総ダメージ', '상대 대상': '相手対象', '보조/자기 대상': '味方 / 自分対象', '4마리 행동순': '4匹の行動順', '광역기 감쇠가 자동 적용됩니다.': '全体技の補正を自動適用します。', '우선도': '優先度', '순위': '順位', '계산 대기': '計算待ち', '방어로 막힘': 'まもるで防がれた', '와이드가드로 차단됨': 'ワイドガードで防がれた', '내 좌측': '自分左', '내 우측': '自分右', '상대 좌측': '相手左', '상대 우측': '相手右', '사용률 상위 기술': '使用率上位の技',
+    '더블배틀': 'ダブルバトル', '더블배틀 메뉴': 'ダブルバトルメニュー', '더블 계산 작업 보드': 'ダブル計算作業ボード', '더블 배틀 플래너': 'ダブルバトルプランナー', '턴 플랜': 'ターンプラン', '속도/전장': '素早さ / 盤面', '아군 순풍': '味方おいかぜ', '상대 순풍': '相手おいかぜ', '트릭룸': 'トリックルーム', '트릭룸 순서': 'トリル順', '기본 순서': '通常順', '상대 프렌드가드': '相手フレンドガード', '상대별 총 기대 대미지': '相手ごとの想定総ダメージ', '상대 대상': '相手対象', '보조/자기 대상': '味方 / 自分対象', '4마리 행동순': '4匹の行動順', '광역기 감쇠가 자동 적용됩니다.': '全体技の補正を自動適用します。', '우선도': '優先度', '순위': '順位', '계산 대기': '計算待ち', '방어로 막힘': 'まもるで防がれた', '와이드가드로 차단됨': 'ワイドガードで防がれた', '내 좌측': '自分左', '내 우측': '自分右', '상대 좌측': '相手左', '상대 우측': '相手右', '사용률 상위 기술': '使用率上位の技',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
@@ -874,15 +874,9 @@ const blankOpponent = (): OpponentState => ({
 })
 const defaultOpponentKeys = ['rotom', 'garchomp', 'primarina', 'dragapult', 'mimikyu', 'meowscarada'].filter((key) => indexByKey.has(key))
 const defaultOpponents: OpponentState[] = defaultOpponentKeys.map((key) => ({
+  ...blankOpponent(),
   key,
-  item: '',
-  ability: '',
-  notes: '',
-  revealedMoves: [],
   natureBoost: true,
-  scarf: false,
-  speedStage: 0,
-  picked: false,
 }))
 const blankSampleSpeedTarget = (): SampleSpeedTarget => ({
   ...blankOpponent(),
@@ -3831,7 +3825,7 @@ function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sa
   return a?.side === side && a?.idx === idx
 }
 
-function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample') {
+function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample' | 'opponent') {
   return a?.key === key && a?.slotIdx === slotIdx && a?.scope === scope
 }
 
@@ -3867,7 +3861,7 @@ function menuLabelForSection(section: MainSection, activeTab: MainTab, language:
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
   if (section === 'dex') return translateText(language, '도감')
-  if (section === 'double') return translateText(language, '더블배틀')
+  if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
 }
 
@@ -4557,29 +4551,35 @@ export default function App() {
       const meta = doubleSlotMeta[slot]
       const option = meta.option
       const row = option?.row ?? null
-      const isMySide = meta.side === 'my'
-      const key = isMySide ? option?.member.key ?? '' : option?.entry.key ?? ''
-      const item = isMySide
-        ? displayItemLabel(visibleChampionsItem(key, option?.member.item ?? ''), siteLanguage)
-        : displayItemLabel(visibleChampionsItem(key, option?.entry.item ?? ''), siteLanguage)
-      const ability = isMySide
-        ? (option?.member.ability || defaultAbilityForKey(key) || '')
-        : (option?.entry.ability || '')
-      const moves = isMySide
-        ? (confirmedMovesByKey[key] ?? []).filter(Boolean)
-        : (option?.entry.revealedMoves ?? []).filter(Boolean)
+      if (meta.side === 'my' && option && 'member' in option) {
+        const key = option.member.key ?? ''
+        return {
+          slot,
+          side: meta.side,
+          label: meta.label,
+          row,
+          name: row ? displayName(row, siteLanguage) : lt('미선택'),
+          item: displayItemLabel(visibleChampionsItem(key, option.member.item ?? ''), siteLanguage),
+          ability: option.member.ability || defaultAbilityForKey(key) || '',
+          moves: (confirmedMovesByKey[key] ?? []).filter(Boolean),
+          speed: doubleSpeedBySlot[slot],
+          protected: doubleProtectBySlot[slot],
+          tailwind: doubleTailwindMy,
+        }
+      }
+      const key = option && 'entry' in option ? option.entry.key ?? '' : ''
       return {
         slot,
         side: meta.side,
         label: meta.label,
         row,
         name: row ? displayName(row, siteLanguage) : lt('미선택'),
-        item,
-        ability,
-        moves,
+        item: displayItemLabel(visibleChampionsItem(key, option && 'entry' in option ? option.entry.item ?? '' : ''), siteLanguage),
+        ability: option && 'entry' in option ? option.entry.ability || '' : '',
+        moves: (option && 'entry' in option ? option.entry.revealedMoves : []).filter(Boolean),
         speed: doubleSpeedBySlot[slot],
         protected: doubleProtectBySlot[slot],
-        tailwind: meta.side === 'my' ? doubleTailwindMy : doubleTailwindOpp,
+        tailwind: doubleTailwindOpp,
       }
     })
   }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
@@ -4601,10 +4601,15 @@ export default function App() {
       const row = option?.row ?? null
       const moves = doubleActionOptionsBySlot[slot] ?? []
       const selectedMove = doubleActionMoveBySlot[slot] && moves.includes(doubleActionMoveBySlot[slot]) ? doubleActionMoveBySlot[slot] : ''
-      const key = meta.side === 'my' ? option?.member.key ?? '' : option?.entry.key ?? ''
-      const moveOptions = meta.side === 'my'
-        ? ((movePoolByKey[key]?.moves?.length ? movePoolByKey[key].moves : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))))
-        : moves.map((name) => ({ name, type: lookupMoveMeta(name)?.type ?? null }))
+      let key = ''
+      let moveOptions: { name: string, type: string | null }[] = []
+      if (meta.side === 'my' && option && 'member' in option) {
+        key = option.member.key ?? ''
+        moveOptions = movePoolByKey[key]?.moves?.length ? movePoolByKey[key].moves : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === key))
+      } else {
+        key = option && 'entry' in option ? option.entry.key ?? '' : ''
+        moveOptions = moves.map((name) => ({ name, type: lookupMoveMeta(name)?.type ?? null }))
+      }
       const moveMeta = selectedMove ? resolveMoveMeta(selectedMove, moveOptions, movePoolByKey) : null
       return {
         slot,
@@ -6511,8 +6516,8 @@ export default function App() {
               </div>
               <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
@@ -6523,13 +6528,15 @@ export default function App() {
         <input ref={partyImageInputRef} type="file" accept="image/*" multiple className="hidden-file" onChange={importPartyFromImage} />
       </header>
 
-      {doubleBulkEditorSlot !== null && doubleSlotMeta[doubleBulkEditorSlot].option?.entry && doubleSlotMeta[doubleBulkEditorSlot].option?.row ? (() => {
+      {doubleBulkEditorSlot !== null ? (() => {
         const modalSlot = doubleBulkEditorSlot
-        const modalEntry = doubleSlotMeta[modalSlot].option.entry
-        const modalRow = doubleSlotMeta[modalSlot].option.row
+        const modalMeta = doubleSlotMeta[modalSlot]
+        if (modalMeta.side !== 'opp' || !modalMeta.option?.entry || !modalMeta.option?.row) return null
+        const modalEntry = modalMeta.option.entry
+        const modalRow = modalMeta.option.row
         const modalName = displayName(modalRow, siteLanguage)
         const modalEvs = opponentEffortValues(modalEntry)
-        const visibleStats = EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'hp' || stat.key === 'defense' || stat.key === 'spDefense' || stat.key === 'speed')
+        const visibleStats = EFFORT_STAT_OPTIONS.filter((stat): stat is { key: Extract<EffortStatKey, 'hp' | 'defense' | 'spDefense' | 'speed'>, short: string, label: string } => stat.key === 'hp' || stat.key === 'defense' || stat.key === 'spDefense' || stat.key === 'speed')
         return <div className="modal-backdrop" onClick={() => setDoubleBulkEditorSlot(null)}>
           <div className="modal-card double-opponent-modal" onClick={(e) => e.stopPropagation()}>
             <div className="row-between modal-header double-opponent-modal-header">
@@ -6786,29 +6793,30 @@ export default function App() {
           <div className="row-between section-head">
             <div>
               <h2>{mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
+              {mainSection === 'double' ? <p className="muted">{lt('더블 계산 작업 보드')}</p> : null}
             </div>
           </div>
           {mainSection === 'single' || mainSection === 'double' ? (
             <div className={`tab-bar section-menu-tabs ${mainSection === 'single' ? 'section-menu-tabs-single' : ''}`}>
-              <button type="button" className={`tab-chip ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
-              <button type="button" className={`tab-chip ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+              <button type="button" className={`tab-chip flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
+              <button type="button" className={`tab-chip flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
               {mainSection === 'single' ? (
                 <>
-                  <button type="button" className={`tab-chip ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                  <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
+                  <button type="button" className={`tab-chip flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
+                  <button type="button" className={`tab-chip flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
                 </>
               ) : (
-                <button type="button" className={`tab-chip ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
+                <button type="button" className={`tab-chip flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
               )}
             </div>
           ) : mainSection === 'sample' ? (
             <div className="tab-bar section-menu-tabs">
               {([
                 ['builder', lt('샘플 빌드')],
-                ['speed', lt('스피드 계산')],
-                ['damage', lt('대미지 계산')],
+                ['speed', lt('샘플 스피드')],
+                ['damage', lt('샘플 대미지 계산')],
               ] as const).map(([value, label]) => (
-                <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+                <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
               ))}
             </div>
           ) : null}
@@ -7296,7 +7304,7 @@ export default function App() {
         {(mainSection === 'double' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
             <div>
-              <h2>{lt('더블 배틀 플래너')}</h2>
+              <h2>{lt('더블 계산 작업 보드')}</h2>
             </div>
           </div>
 
