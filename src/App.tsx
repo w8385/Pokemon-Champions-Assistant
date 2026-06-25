@@ -5454,7 +5454,7 @@ export default function App() {
       setParty(next)
       setPartyItemDrafts((prev) => {
         const nextDrafts = [...prev]
-        nextDrafts[idx] = visibleChampionsItem(key, next[idx].item)
+        nextDrafts[idx] = displayItemLabel(visibleChampionsItem(key, next[idx].item), siteLanguage)
         return nextDrafts
       })
       const nextSearch = [...partySearch]
@@ -5484,7 +5484,7 @@ export default function App() {
     } else {
       setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
       setSampleLockedMoves(confirmedMovesByKey[key] ?? [])
-      setSampleItemDraft(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)))
+      setSampleItemDraft(displayItemLabel(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)), siteLanguage))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
       setActiveSampleMetaEditor(null)
     }
@@ -6212,7 +6212,7 @@ export default function App() {
     setMainSection('home')
     setSampleForge(defaultSampleForge())
     setSampleLockedMoves([])
-    setSampleItemDraft(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item))
+    setSampleItemDraft(displayItemLabel(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item), siteLanguage))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
     setSavedPartyPresets([])
