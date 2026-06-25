@@ -10042,6 +10042,317 @@
       "scarf_neutral": 204,
       "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1000.png",
       "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10076,
+      "key": "mega-metagross",
+      "canonicalFormSlug": "mega-metagross",
+      "name_ko": "메가메타그로스",
+      "name_en": "Mega Metagross",
+      "name_ja": "メガメタグロス",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "types_ko": [
+        "강철",
+        "에스퍼"
+      ],
+      "abilities": [
+        "tough-claws"
+      ],
+      "abilities_ko": [
+        "단단한발톱"
+      ],
+      "hp": 80,
+      "attack": 145,
+      "defense": 150,
+      "spAttack": 105,
+      "spDefense": 110,
+      "speed": 110,
+      "fast": 178,
+      "neutral": 162,
+      "uninvested": 130,
+      "scarf_fast": 267,
+      "scarf_neutral": 243,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10076.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10288,
+      "key": "mega-scolipede",
+      "canonicalFormSlug": "mega-scolipede",
+      "name_ko": "메가펜드라",
+      "name_en": "Mega Scolipede",
+      "name_ja": "メガペンドラー",
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "types_ko": [
+        "벌레",
+        "독"
+      ],
+      "abilities": [
+        "shell-armor"
+      ],
+      "abilities_ko": [
+        "조가비갑옷"
+      ],
+      "hp": 60,
+      "attack": 140,
+      "defense": 149,
+      "spAttack": 75,
+      "spDefense": 99,
+      "speed": 62,
+      "fast": 125,
+      "neutral": 114,
+      "uninvested": 82,
+      "scarf_fast": 187,
+      "scarf_neutral": 171,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10288.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10289,
+      "key": "mega-scrafty",
+      "canonicalFormSlug": "mega-scrafty",
+      "name_ko": "메가곤율거니",
+      "name_en": "Mega Scrafty",
+      "name_ja": "メガズルズキン",
+      "types": [
+        "dark",
+        "fighting"
+      ],
+      "types_ko": [
+        "악",
+        "격투"
+      ],
+      "abilities": [
+        "intimidate"
+      ],
+      "abilities_ko": [
+        "위협"
+      ],
+      "hp": 65,
+      "attack": 130,
+      "defense": 135,
+      "spAttack": 55,
+      "spDefense": 135,
+      "speed": 68,
+      "fast": 132,
+      "neutral": 120,
+      "uninvested": 88,
+      "scarf_fast": 198,
+      "scarf_neutral": 180,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10289.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10290,
+      "key": "mega-eelektross",
+      "canonicalFormSlug": "mega-eelektross",
+      "name_ko": "메가저리더프",
+      "name_en": "Mega Eelektross",
+      "name_ja": "メガシビルドン",
+      "types": [
+        "electric"
+      ],
+      "types_ko": [
+        "전기"
+      ],
+      "abilities": [
+        "eelevate"
+      ],
+      "abilities_ko": [
+        "eelevate"
+      ],
+      "hp": 85,
+      "attack": 145,
+      "defense": 80,
+      "spAttack": 135,
+      "spDefense": 90,
+      "speed": 80,
+      "fast": 145,
+      "neutral": 132,
+      "uninvested": 100,
+      "scarf_fast": 217,
+      "scarf_neutral": 198,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10290.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10295,
+      "key": "mega-pyroar",
+      "canonicalFormSlug": "mega-pyroar",
+      "name_ko": "메가화염레오",
+      "name_en": "Mega Pyroar",
+      "name_ja": "メガカエンジシ",
+      "types": [
+        "fire",
+        "normal"
+      ],
+      "types_ko": [
+        "불꽃",
+        "노말"
+      ],
+      "abilities": [
+        "fire-mane"
+      ],
+      "abilities_ko": [
+        "fire-mane"
+      ],
+      "hp": 86,
+      "attack": 88,
+      "defense": 92,
+      "spAttack": 129,
+      "spDefense": 86,
+      "speed": 126,
+      "fast": 195,
+      "neutral": 178,
+      "uninvested": 146,
+      "scarf_fast": 292,
+      "scarf_neutral": 267,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10295.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10297,
+      "key": "mega-malamar",
+      "canonicalFormSlug": "mega-malamar",
+      "name_ko": "메가칼라마네로",
+      "name_en": "Mega Malamar",
+      "name_ja": "メガカラマネロ",
+      "types": [
+        "dark",
+        "psychic"
+      ],
+      "types_ko": [
+        "악",
+        "에스퍼"
+      ],
+      "abilities": [
+        "contrary"
+      ],
+      "abilities_ko": [
+        "심술꾸러기"
+      ],
+      "hp": 86,
+      "attack": 102,
+      "defense": 88,
+      "spAttack": 98,
+      "spDefense": 120,
+      "speed": 88,
+      "fast": 154,
+      "neutral": 140,
+      "uninvested": 108,
+      "scarf_fast": 231,
+      "scarf_neutral": 210,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10297.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10298,
+      "key": "mega-barbaracle",
+      "canonicalFormSlug": "mega-barbaracle",
+      "name_ko": "메가거북손데스",
+      "name_en": "Mega Barbaracle",
+      "name_ja": "メガガメノデス",
+      "types": [
+        "rock",
+        "fighting"
+      ],
+      "types_ko": [
+        "바위",
+        "격투"
+      ],
+      "abilities": [
+        "tough-claws"
+      ],
+      "abilities_ko": [
+        "단단한발톱"
+      ],
+      "hp": 72,
+      "attack": 140,
+      "defense": 130,
+      "spAttack": 64,
+      "spDefense": 106,
+      "speed": 88,
+      "fast": 154,
+      "neutral": 140,
+      "uninvested": 108,
+      "scarf_fast": 231,
+      "scarf_neutral": 210,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10298.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10299,
+      "key": "mega-dragalge",
+      "canonicalFormSlug": "mega-dragalge",
+      "name_ko": "메가드래캄",
+      "name_en": "Mega Dragalge",
+      "name_ja": "メガドラミドロ",
+      "types": [
+        "poison",
+        "dragon"
+      ],
+      "types_ko": [
+        "독",
+        "드래곤"
+      ],
+      "abilities": [
+        "regenerator"
+      ],
+      "abilities_ko": [
+        "재생력"
+      ],
+      "hp": 65,
+      "attack": 85,
+      "defense": 105,
+      "spAttack": 132,
+      "spDefense": 163,
+      "speed": 44,
+      "fast": 105,
+      "neutral": 96,
+      "uninvested": 64,
+      "scarf_fast": 157,
+      "scarf_neutral": 144,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10299.png",
+      "sprite_status": "pokeapi-official-artwork"
+    },
+    {
+      "id": 10303,
+      "key": "mega-falinks",
+      "canonicalFormSlug": "mega-falinks",
+      "name_ko": "메가대여르",
+      "name_en": "Mega Falinks",
+      "name_ja": "メガタイレーツ",
+      "types": [
+        "fighting"
+      ],
+      "types_ko": [
+        "격투"
+      ],
+      "abilities": [
+        "defiant"
+      ],
+      "abilities_ko": [
+        "오기"
+      ],
+      "hp": 65,
+      "attack": 135,
+      "defense": 135,
+      "spAttack": 70,
+      "spDefense": 65,
+      "speed": 100,
+      "fast": 167,
+      "neutral": 152,
+      "uninvested": 120,
+      "scarf_fast": 250,
+      "scarf_neutral": 228,
+      "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10303.png",
+      "sprite_status": "pokeapi-official-artwork"
     }
   ],
   "verified_sprite_count": 259,

@@ -22,7 +22,87 @@ const MANUAL_FORMS = [
     name_ko: '메가찌르호크',
     name_en: 'Mega Staraptor',
     name_ja: 'メガムクホーク',
-    abilityNames: ['contrary'],
+  },
+  {
+    key: 'mega-metagross',
+    apiName: 'metagross-mega',
+    canonicalFormSlug: 'mega-metagross',
+    source: 'manual-season-3-mega',
+    name_ko: '메가메타그로스',
+    name_en: 'Mega Metagross',
+    name_ja: 'メガメタグロス',
+  },
+  {
+    key: 'mega-scolipede',
+    apiName: 'scolipede-mega',
+    canonicalFormSlug: 'mega-scolipede',
+    source: 'manual-season-3-mega',
+    name_ko: '메가펜드라',
+    name_en: 'Mega Scolipede',
+    name_ja: 'メガペンドラー',
+  },
+  {
+    key: 'mega-scrafty',
+    apiName: 'scrafty-mega',
+    canonicalFormSlug: 'mega-scrafty',
+    source: 'manual-season-3-mega',
+    name_ko: '메가곤율거니',
+    name_en: 'Mega Scrafty',
+    name_ja: 'メガズルズキン',
+  },
+  {
+    key: 'mega-eelektross',
+    apiName: 'eelektross-mega',
+    canonicalFormSlug: 'mega-eelektross',
+    source: 'manual-season-3-mega',
+    name_ko: '메가저리더프',
+    name_en: 'Mega Eelektross',
+    name_ja: 'メガシビルドン',
+  },
+  {
+    key: 'mega-pyroar',
+    apiName: 'pyroar-mega',
+    canonicalFormSlug: 'mega-pyroar',
+    source: 'manual-season-3-mega',
+    name_ko: '메가화염레오',
+    name_en: 'Mega Pyroar',
+    name_ja: 'メガカエンジシ',
+  },
+  {
+    key: 'mega-malamar',
+    apiName: 'malamar-mega',
+    canonicalFormSlug: 'mega-malamar',
+    source: 'manual-season-3-mega',
+    name_ko: '메가칼라마네로',
+    name_en: 'Mega Malamar',
+    name_ja: 'メガカラマネロ',
+  },
+  {
+    key: 'mega-barbaracle',
+    apiName: 'barbaracle-mega',
+    canonicalFormSlug: 'mega-barbaracle',
+    source: 'manual-season-3-mega',
+    name_ko: '메가거북손데스',
+    name_en: 'Mega Barbaracle',
+    name_ja: 'メガガメノデス',
+  },
+  {
+    key: 'mega-dragalge',
+    apiName: 'dragalge-mega',
+    canonicalFormSlug: 'mega-dragalge',
+    source: 'manual-season-3-mega',
+    name_ko: '메가드래캄',
+    name_en: 'Mega Dragalge',
+    name_ja: 'メガドラミドロ',
+  },
+  {
+    key: 'mega-falinks',
+    apiName: 'falinks-mega',
+    canonicalFormSlug: 'mega-falinks',
+    source: 'manual-season-3-mega',
+    name_ko: '메가대여르',
+    name_en: 'Mega Falinks',
+    name_ja: 'メガタイレーツ',
   },
 ]
 
@@ -160,7 +240,9 @@ async function main() {
   async function buildManualFormRow(config) {
     const { pokemon } = await getPokemonBundle(config.apiName ?? config.key)
     const statsByName = Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
-    const abilities = config.abilityNames
+    const abilities = config.abilityNames?.length
+      ? config.abilityNames
+      : pokemon.abilities.map((entry) => entry.ability.name)
     const abilities_ko = await Promise.all(abilities.map(getAbilityKo))
     return buildRow({
       id: pokemon.id,

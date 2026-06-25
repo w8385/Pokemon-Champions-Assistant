@@ -79,7 +79,7 @@ function parseListEntries(html) {
 
 function parseTopMoves(html) {
   const moves = []
-  const regex = /<div class="pokemon-trend__move-item">[\s\S]*?<span class="pokemon-trend__move-name">([^<]+)<\/span>[\s\S]*?<span class="pokemon-trend__move-rate is-family-monospace">\s*([\d.]+)<small>%<\/small>/g
+  const regex = /<div class="pokemon-trend__move-item">[\s\S]*?<span[^>]*class="pokemon-trend__move-name"[^>]*>\s*([^<]+?)\s*<\/span>[\s\S]*?<span[^>]*class="pokemon-trend__move-rate is-family-monospace"[^>]*>\s*([\d.]+)<small>%<\/small>/g
   let match
   while ((match = regex.exec(html))) {
     moves.push({ nameJa: match[1].trim(), rate: Number(match[2]) })

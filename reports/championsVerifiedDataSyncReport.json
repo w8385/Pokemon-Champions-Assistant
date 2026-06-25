@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-23T11:42:40.041Z",
+  "generatedAt": "2026-06-25T03:02:47.341Z",
   "currentListBaseIds": [
     3,
     6,
@@ -209,13 +209,131 @@
     1019
   ],
   "missingBaseIds": [],
-  "addedCount": 0,
-  "added": [],
+  "addedCount": 9,
+  "added": [
+    {
+      "source": "manual-season-3-mega",
+      "id": 10076,
+      "key": "mega-metagross",
+      "canonicalFormSlug": "mega-metagross",
+      "name_ko": "메가메타그로스",
+      "name_en": "Mega Metagross",
+      "abilities": [
+        "tough-claws"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10288,
+      "key": "mega-scolipede",
+      "canonicalFormSlug": "mega-scolipede",
+      "name_ko": "메가펜드라",
+      "name_en": "Mega Scolipede",
+      "abilities": [
+        "shell-armor"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10289,
+      "key": "mega-scrafty",
+      "canonicalFormSlug": "mega-scrafty",
+      "name_ko": "메가곤율거니",
+      "name_en": "Mega Scrafty",
+      "abilities": [
+        "intimidate"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10290,
+      "key": "mega-eelektross",
+      "canonicalFormSlug": "mega-eelektross",
+      "name_ko": "메가저리더프",
+      "name_en": "Mega Eelektross",
+      "abilities": [
+        "eelevate"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10295,
+      "key": "mega-pyroar",
+      "canonicalFormSlug": "mega-pyroar",
+      "name_ko": "메가화염레오",
+      "name_en": "Mega Pyroar",
+      "abilities": [
+        "fire-mane"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10297,
+      "key": "mega-malamar",
+      "canonicalFormSlug": "mega-malamar",
+      "name_ko": "메가칼라마네로",
+      "name_en": "Mega Malamar",
+      "abilities": [
+        "contrary"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10298,
+      "key": "mega-barbaracle",
+      "canonicalFormSlug": "mega-barbaracle",
+      "name_ko": "메가거북손데스",
+      "name_en": "Mega Barbaracle",
+      "abilities": [
+        "tough-claws"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10299,
+      "key": "mega-dragalge",
+      "canonicalFormSlug": "mega-dragalge",
+      "name_ko": "메가드래캄",
+      "name_en": "Mega Dragalge",
+      "abilities": [
+        "regenerator"
+      ]
+    },
+    {
+      "source": "manual-season-3-mega",
+      "id": 10303,
+      "key": "mega-falinks",
+      "canonicalFormSlug": "mega-falinks",
+      "name_ko": "메가대여르",
+      "name_en": "Mega Falinks",
+      "abilities": [
+        "defiant"
+      ]
+    }
+  ],
   "manualFormsConfigured": [
-    "mega-staraptor"
+    "mega-staraptor",
+    "mega-metagross",
+    "mega-scolipede",
+    "mega-scrafty",
+    "mega-eelektross",
+    "mega-pyroar",
+    "mega-malamar",
+    "mega-barbaracle",
+    "mega-dragalge",
+    "mega-falinks"
   ],
   "manualFormsPresent": [
-    "mega-staraptor"
+    "mega-staraptor",
+    "mega-metagross",
+    "mega-scolipede",
+    "mega-scrafty",
+    "mega-eelektross",
+    "mega-pyroar",
+    "mega-malamar",
+    "mega-barbaracle",
+    "mega-dragalge",
+    "mega-falinks"
   ],
-  "totalRows": 282
+  "totalRows": 291
 }
