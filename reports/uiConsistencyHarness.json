@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T11:49:38Z",
+  "generatedAt": "2026-06-25T23:21:14Z",
   "source": "Chromium headless DOM/screenshot harness",
   "routes": [
     {
       "id": "home",
-      "url": "http://127.0.0.1:47609/#/",
+      "url": "http://127.0.0.1:49823/#/",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.",
       "activePrimary": [
@@ -50,7 +50,7 @@
     },
     {
       "id": "single-party",
-      "url": "http://127.0.0.1:47609/#/single?tab=party",
+      "url": "http://127.0.0.1:49823/#/single?tab=party",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "내 파티 관리",
       "activePrimary": [
@@ -101,7 +101,7 @@
     },
     {
       "id": "single-pick",
-      "url": "http://127.0.0.1:47609/#/single?tab=pick",
+      "url": "http://127.0.0.1:49823/#/single?tab=pick",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "상대 엔트리",
       "activePrimary": [
@@ -152,7 +152,7 @@
     },
     {
       "id": "single-speed",
-      "url": "http://127.0.0.1:47609/#/single?tab=speed",
+      "url": "http://127.0.0.1:49823/#/single?tab=speed",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "스피드 계산",
       "activePrimary": [
@@ -203,7 +203,7 @@
     },
     {
       "id": "single-power",
-      "url": "http://127.0.0.1:47609/#/single?tab=power",
+      "url": "http://127.0.0.1:49823/#/single?tab=power",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "대미지 계산",
       "activePrimary": [
@@ -254,7 +254,7 @@
     },
     {
       "id": "double-board",
-      "url": "http://127.0.0.1:47609/#/double",
+      "url": "http://127.0.0.1:49823/#/double",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "더블배틀 메뉴",
       "activePrimary": [
@@ -310,7 +310,7 @@
     },
     {
       "id": "sample-builder",
-      "url": "http://127.0.0.1:47609/#/sample-builder?sampleTab=builder",
+      "url": "http://127.0.0.1:49823/#/sample-builder?sampleTab=builder",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [
@@ -361,7 +361,7 @@
     },
     {
       "id": "sample-speed",
-      "url": "http://127.0.0.1:47609/#/sample-builder?sampleTab=speed",
+      "url": "http://127.0.0.1:49823/#/sample-builder?sampleTab=speed",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [
@@ -412,7 +412,7 @@
     },
     {
       "id": "sample-damage",
-      "url": "http://127.0.0.1:47609/#/sample-builder?sampleTab=damage",
+      "url": "http://127.0.0.1:49823/#/sample-builder?sampleTab=damage",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [

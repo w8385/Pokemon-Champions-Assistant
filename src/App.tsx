@@ -8,6 +8,7 @@ import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
+import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
 
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
@@ -3008,24 +3009,6 @@ function displayMoveCategoryName(category: MoveCategory | null | undefined, lang
   return translateText(language, '없음')
 }
 
-function applyEffectChanceText(text: string, effectChance?: number | null) {
-  if (!text) return ''
-  if (typeof effectChance !== 'number') return text.replace(/\$effect_chance%/g, '')
-  return text.replace(/\$effect_chance%/g, `${effectChance}%`)
-}
-
-function localizedDexText(
-  description: { text: Record<SiteLanguage, { summary: string; detail: string }>; effectChance?: number | null } | null | undefined,
-  language: SiteLanguage,
-) {
-  if (!description) return null
-  const selected = description.text[language] ?? description.text.ko ?? description.text.en
-  return {
-    summary: applyEffectChanceText(selected?.summary ?? '', description.effectChance),
-    detail: applyEffectChanceText(selected?.detail ?? '', description.effectChance),
-  }
-}
-
 function moveDescriptionFor(name: string) {
   const bundle = getDexDescriptionsSync()
   return bundle?.moves[name] ?? null
@@ -3143,22 +3126,6 @@ function filterDexAbilityOptions(query: string, options?: { allowLoose?: boolean
     })
     .filter((entry): entry is { key: string; koLabel: string; pokemonKeys: string[]; score: number } => Boolean(entry))
     .sort((a, b) => a.score - b.score || a.koLabel.localeCompare(b.koLabel, 'ko'))
-}
-
-function dexSelectionId(kind: DexResultItem['kind'], key: string) {
-  return `${kind}:${key}`
-}
-
-function parseDexSelectionId(value: string | null | undefined) {
-  if (!value) return null
-  const separatorIdx = value.indexOf(':')
-  if (separatorIdx <= 0) return null
-  const kind = value.slice(0, separatorIdx)
-  const key = value.slice(separatorIdx + 1)
-  if ((kind === 'pokemon' || kind === 'move' || kind === 'ability' || kind === 'item') && key) {
-    return { kind, key } as const
-  }
-  return null
 }
 
 const ABILITY_INDEX = (() => {
