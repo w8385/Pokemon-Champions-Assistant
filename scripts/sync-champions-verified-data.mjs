@@ -106,6 +106,14 @@ const MANUAL_FORMS = [
   },
 ]
 
+function keyFromMegaFormName(formName, fallbackBaseName) {
+  if (!formName) return fallbackBaseName ? `mega-${fallbackBaseName}` : null
+  const match = formName.match(/^(.*)-mega(?:-(x|y))?$/)
+  if (!match) return fallbackBaseName ? `mega-${fallbackBaseName}` : null
+  const [, baseName, suffix] = match
+  return `mega-${baseName}${suffix ? `-${suffix}` : ''}`
+}
+
 function actualStat(base, ev, natureMultiplierValue = 1, hp = false) {
   const evContribution = Math.max(0, Math.trunc(ev))
   if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + evContribution
@@ -161,6 +169,13 @@ function buildRow({ key, canonicalFormSlug, name_ko, name_en, name_ja, types, ab
 
 function canonicalForBase(nameEn) {
   return 'base'
+}
+
+function japaneseMegaName(baseJa, formName) {
+  if (!baseJa) return formName
+  if (formName?.endsWith('-mega-x')) return `メガ${baseJa}X`
+  if (formName?.endsWith('-mega-y')) return `メガ${baseJa}Y`
+  return `メガ${baseJa}`
 }
 
 async function main() {
@@ -267,6 +282,50 @@ async function main() {
     })
   }
 
+  async function buildMegaCatalogRow(formEntry) {
+    const apiName = formEntry.formName ?? `${formEntry.nameEn}-mega`
+    const { pokemon, species } = await getPokemonBundle(apiName)
+    const stats = formEntry.stats
+      ? {
+          hp: formEntry.stats.hp,
+          attack: formEntry.stats.atk,
+          defense: formEntry.stats.def,
+          spAttack: formEntry.stats.spa,
+          spDefense: formEntry.stats.spd,
+          speed: formEntry.stats.spe,
+        }
+      : Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
+    const abilities = pokemon.abilities.map((entry) => entry.ability.name)
+    const abilities_ko = await Promise.all(abilities.map(getAbilityKo))
+    const baseJa = species.names.find((entry) => entry.language.name === 'ja-Hrkt')?.name
+      ?? species.names.find((entry) => entry.language.name === 'ja')?.name
+      ?? formEntry.nameEn
+    const key = keyFromMegaFormName(formEntry.formName, formEntry.nameEn)
+    return buildRow({
+      id: pokemon.id,
+      key,
+      canonicalFormSlug: key,
+      name_ko: formEntry.formLabelKo ?? `메가${formEntry.nameKo}`,
+      name_en: formEntry.formLabelEn ?? `Mega ${formEntry.nameEn.charAt(0).toUpperCase() + formEntry.nameEn.slice(1)}`,
+      name_ja: japaneseMegaName(baseJa, formEntry.formName),
+      types: formEntry.types?.length ? formEntry.types : pokemon.types.map((entry) => entry.type.name),
+      abilities,
+      abilities_ko,
+      stats: formEntry.stats
+        ? stats
+        : {
+            hp: stats.hp,
+            attack: stats.attack,
+            defense: stats.defense,
+            spAttack: stats['special-attack'],
+            spDefense: stats['special-defense'],
+            speed: stats.speed,
+          },
+      sprite: pokemon.sprites.other['official-artwork'].front_default,
+      sprite_status: 'pokeapi-official-artwork',
+    })
+  }
+
   const missingBaseIds = [...currentListBaseIds].filter((id) => !currentIds.has(id)).sort((a, b) => a - b)
   const addedRows = []
 
@@ -278,6 +337,15 @@ async function main() {
       currentKeys.add(row.key)
       addedRows.push({ row, source: 'current-list-base' })
     }
+  }
+
+  const megaCatalogEntries = allPokemon.filter((entry) => entry.isMega && entry.formName)
+  for (const formEntry of megaCatalogEntries) {
+    const megaKey = keyFromMegaFormName(formEntry.formName, formEntry.nameEn)
+    if (!megaKey || currentKeys.has(megaKey)) continue
+    const row = await buildMegaCatalogRow(formEntry)
+    currentKeys.add(row.key)
+    addedRows.push({ row, source: 'allPokemon-mega-catalog' })
   }
 
   for (const config of MANUAL_FORMS) {
