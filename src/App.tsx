@@ -4146,6 +4146,7 @@ export default function App() {
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
   React.useEffect(() => {
+    if (mainSection !== 'dex') return
     let cancelled = false
     void Promise.all([
       loadMoveMetaByName(),
@@ -4157,7 +4158,7 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [mainSection])
   React.useEffect(() => {
     if (!dexUnifiedSearchComposing) setDexUnifiedSearchDraft(dexUnifiedSearch)
   }, [dexUnifiedSearch, dexUnifiedSearchComposing])
