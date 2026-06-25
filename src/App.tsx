@@ -2101,11 +2101,22 @@ function resolveSelectedAbility(row: Row, selectedAbility: string, language: Sit
   }
 }
 
-function mySpeedAbilityMarker(row: Row, member: PartyMember, language: SiteLanguage) {
-  const ability = resolveSelectedAbility(row, member.ability, language)
+function isSpeedAbilityConditionActive(slug: string, weather: DamageWeather, terrain: DamageTerrain) {
+  if (slug === 'swift-swim') return weather === 'rain'
+  if (slug === 'sand-rush') return weather === 'sand'
+  if (slug === 'chlorophyll') return weather === 'sun'
+  if (slug === 'slush-rush') return weather === 'snow'
+  if (slug === 'surge-surfer') return terrain === 'electric'
+  return true
+}
+
+function mySpeedAbilityMarker(row: Row, member: PartyMember, language: SiteLanguage, weather: DamageWeather, terrain: DamageTerrain) {
+  const sanitizedAbility = sanitizeAbilityForKey(row.key, member.ability, true)
+  const ability = resolveSelectedAbility(row, sanitizedAbility, language)
   if (!ability) return null
   const effect = MY_SPEED_ABILITY_MARKERS[ability.slug]
   if (!effect) return null
+  if (effect.type === 'multiplier' && !isSpeedAbilityConditionActive(ability.slug, weather, terrain)) return null
   const baseSpeed = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   const totalStage = effect.type === 'stage' ? member.config.speedStage + effect.value : member.config.speedStage
   let speed = applySpeedStage(baseSpeed, totalStage)
@@ -5028,7 +5039,7 @@ export default function App() {
   }, [selectedOpp, oppMember.key])
 
   const mySpeed = partySpeedValue(myRow, myMember)
-  const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage) : null
+  const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage, calcWeather, calcTerrain) : null
   const oppSpeed = oppRow ? opponentSpeedValue(oppRow, oppMember) : null
   const pickedParty = party.filter((member) => member.picked)
   const pickedOpponents = opponents.filter((member) => member.picked)
@@ -5667,7 +5678,7 @@ export default function App() {
   const sampleCurrentItem = visibleChampionsItem(sampleForge.key, sampleForge.item)
   const sampleEvTotal = Object.values(sampleForge.evs).reduce((sum, value) => sum + value, 0)
   const sampleSpeedValueNow = partySpeedValue(sampleRow, sampleCalcMember)
-  const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleCalcMember, siteLanguage) : null
+  const sampleSpeedAbilityLine = sampleRow ? mySpeedAbilityMarker(sampleRow, sampleCalcMember, siteLanguage, calcWeather, calcTerrain) : null
   const sampleSpeedSearchResults = filterSpeciesOptions(sampleSpeedSearch, { includeMega: true })
     .filter((option) => !sampleSpeedTargets.some((target) => target.key === option.key))
     .slice(0, 8)
