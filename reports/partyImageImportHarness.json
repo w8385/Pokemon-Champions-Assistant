@@ -1,0 +1,192 @@
+{
+  "generatedAt": "2026-06-25T03:25:11.763Z",
+  "fixtures": [
+    {
+      "path": "fixtures/party-image-import/party-list-sample-1.png",
+      "confidence": 57
+    },
+    {
+      "path": "fixtures/party-image-import/party-list-sample-2.png",
+      "confidence": 59
+    }
+  ],
+  "expectedKeys": [
+    "ceruledge",
+    "archaludon",
+    "hippowdon",
+    "gyarados"
+  ],
+  "importedKeys": [
+    "mega-alakazam",
+    "ceruledge",
+    "hippowdon",
+    "primarina",
+    "mega-greninja",
+    "noivern"
+  ],
+  "missingKeys": [
+    "archaludon",
+    "gyarados"
+  ],
+  "passed": false,
+  "imported": [
+    {
+      "key": "mega-alakazam",
+      "ability": "트레이스",
+      "item": "きあいのタスキ",
+      "nature": null,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "moves": [
+        "DD래리어트"
+      ],
+      "rawLines": [
+        "NZ 6 99900",
+        "A ( :",
+        "RRR lI TIERRA ———~"
+      ]
+    },
+    {
+      "key": "ceruledge",
+      "ability": "깨어진갑옷",
+      "item": "きあいのタスキ",
+      "nature": null,
+      "evs": {
+        "hp": 0,
+        "attack": 32,
+        "defense": 32,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "moves": [
+        "명상",
+        "파동탄",
+        "방어",
+        "HP회복"
+      ],
+      "rawLines": [
+        "RRR lI TIERRA ———~",
+        ": SSETCE @ 이 & 파 라 블레이즈 © 4 * _*「 플 터 가스 I",
+        "I 28416 & 문 깨 어 진 갑옷 I ふ I : 야 슨 I",
+        "Zoli EILto 레 인 키스 기 합 의 띠 1 lolz I",
+        "a 명상 oO zz",
+        "Hi ! 리 두 라 스 ® ¢ 058 az } GLY の i ミ Ei",
+        "@ 하 양 허 [I I 1002 E 7) ? 애 스카 뿔 파 동 탄 ルル",
+        "0 방어 0 유턴 I 7",
+        "ve - -",
+        ". = cH 의 & 파 라 블레이즈 2s & I",
+        "노 [ 헬리 a @ E2ZH 169 24 Hi 기. © 특 수 긍 격 * 72_ 0 I",
+        "ody 76 0 [© 특 숭어 148 _ ( ※ za 94 32 BB 특 수 방어 121 1",
+        "&3 방어 97 10 = AIlE4a 158 32 £3 방어 00 =r ATE 137=-200",
+        "IV: 7 Hal= aA 』 NATE} —"
+      ]
+    },
+    {
+      "key": "hippowdon",
+      "ability": "모래날림",
+      "item": "",
+      "nature": null,
+      "evs": {
+        "hp": 32,
+        "attack": 32,
+        "defense": 32,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 32
+      },
+      "moves": [
+        "방어",
+        "도발"
+      ],
+      "rawLines": [
+        "0 방어 0 유턴 I 7",
+        "=). 하 마 돈 이레 ㆍ トブ ゴース 999 [고",
+        "1 alt [이 버리 oI <a! hl",
+        "CET © 하품 © katz Altos lv 도발",
+        "® 스 텔 스 콕 \\ 용 의 줌",
+        "aa I",
+        "po 4 . @ 돌 아 간 다",
+        "EET ンー トー ミン I",
+        "=) 하 마 돈 (에 가 라 도스 6 ( 5",
+        "9 HF 215 32 @ I 79 0 HP 656 < 트 수 공 격 20: k",
+        "6 공격 132_ 0 BB E+20ia136 32 ※ Za 194 32 [E40 120 0",
+        "3 방어 140 2 = 스피: 67 10 £3 방어 102-3 == 스 피 드 1927 = 220 I",
+        "[3 @ 돌 아 간 다",
+        "09 ~ 99960 。 y 4 06 2"
+      ]
+    },
+    {
+      "key": "primarina",
+      "ability": "급류",
+      "item": "",
+      "nature": null,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "moves": [
+        "경혈찌르기"
+      ],
+      "rawLines": [
+        "pr",
+        "pt El 9 ie",
+        "I q V I 는 て) I 上",
+        "22999 I"
+      ]
+    },
+    {
+      "key": "mega-greninja",
+      "ability": "변환자재",
+      "item": "イトケのみ",
+      "nature": null,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "moves": [
+        "강철날개"
+      ],
+      "rawLines": [
+        "22999 I",
+        "개 @ :"
+      ]
+    },
+    {
+      "key": "noivern",
+      "ability": "통찰",
+      "item": "イトケのみ",
+      "nature": null,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "moves": [
+        "강철날개",
+        "HP회복"
+      ],
+      "rawLines": [
+        "개 @ :",
+        "ve - -"
+      ]
+    }
+  ]
+}

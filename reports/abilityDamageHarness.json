@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-21T21:20:06.007Z",
-  "totalAbilities": 190,
+  "generatedAt": "2026-06-25T03:24:47.504Z",
+  "totalAbilities": 200,
   "implementedCount": 57,
   "categories": {
     "implemented": {
@@ -229,18 +229,37 @@
       ]
     },
     "uncategorized": {
-      "count": 0,
-      "abilities": []
+      "count": 10,
+      "abilities": [
+        "battle-armor",
+        "eelevate",
+        "effect-spore",
+        "electric-surge",
+        "fire-mane",
+        "fluffy",
+        "forewarn",
+        "good-as-gold",
+        "suction-cups",
+        "vital-spirit"
+      ]
     }
   },
-  "damageRelevantMissingCount": 28,
+  "damageRelevantMissingCount": 38,
   "damageRelevantMissing": [
+    "battle-armor",
     "berserk",
     "chlorophyll",
     "drizzle",
     "drought",
+    "eelevate",
+    "effect-spore",
+    "electric-surge",
+    "fire-mane",
+    "fluffy",
     "forecast",
+    "forewarn",
     "gale-wings",
+    "good-as-gold",
     "hydration",
     "ice-body",
     "leaf-guard",
@@ -260,9 +279,11 @@
     "snow-cloak",
     "snow-warning",
     "stance-change",
+    "suction-cups",
     "super-luck",
     "surge-surfer",
-    "swift-swim"
+    "swift-swim",
+    "vital-spirit"
   ],
   "notableDefenderAbilities": [
     {

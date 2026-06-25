@@ -36,6 +36,9 @@ const POKEMON_ALIAS_CANDIDATES = {
   'slowking-galarian': ['slowking-galar'],
   'mega-charizard-x': ['charizard-mega-x'],
   'mega-charizard-y': ['charizard-mega-y'],
+  'mega-pyroar': ['pyroar-male'],
+  'mega-raichu-x': ['raichu', 'raichu-alola'],
+  'mega-raichu-y': ['raichu', 'raichu-alola'],
   'mega-floette': ['floette', 'floette-eternal'],
   'floette-eternal-flower': ['floette', 'floette-eternal'],
 }
