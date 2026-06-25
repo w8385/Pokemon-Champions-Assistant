@@ -1443,11 +1443,35 @@ function sanitizeMoveSlotList(input: unknown) {
   return normalizeMoveSlots(input.filter((move): move is string => typeof move === 'string'))
 }
 
+function megaRawBaseKey(key: string) {
+  if (!key.startsWith('mega-')) return key
+  const raw = key.slice(5)
+  if (raw.endsWith('-x') || raw.endsWith('-y')) return raw.slice(0, -2)
+  return raw
+}
+
+function megaBaseKey(key: string) {
+  if (!key.startsWith('mega-')) return key
+  const rawBaseKey = megaRawBaseKey(key)
+  if (indexByKey.has(rawBaseKey)) return rawBaseKey
+  const row = indexByKey.get(key)
+  if (!row) return rawBaseKey
+  const koBaseName = row.name_ko.replace(/^메가/, '').replace(/\s*[XY]$/i, '').trim()
+  const enBaseName = row.name_en.replace(/^Mega\s+/i, '').replace(/\s+[XY]$/i, '').trim().toLowerCase()
+  const matched = rows.find((candidate) => !candidate.key.startsWith('mega-') && (
+    candidate.name_ko.trim() === koBaseName
+    || candidate.name_en.trim().toLowerCase() === enBaseName
+  ))
+  return matched?.key ?? rawBaseKey
+}
+
 function pokemonApiCandidates(key: string) {
   const candidates = [key]
   if (key.startsWith('mega-')) {
-    const base = key.slice(5)
-    candidates.push(`${base}-mega`, base)
+    const rawBase = megaRawBaseKey(key)
+    const base = megaBaseKey(key)
+    candidates.push(`${rawBase}-mega`, rawBase)
+    if (base !== rawBase) candidates.push(base)
   }
   const regionalPrefixes: Record<string, string> = {
     alolan: 'alola',
@@ -1465,17 +1489,14 @@ function pokemonApiCandidates(key: string) {
 
 function relatedMovePoolKeys(key: string) {
   const keys = [key]
-  if (key.startsWith('mega-')) keys.push(key.slice(5))
+  if (key.startsWith('mega-')) {
+    keys.push(megaBaseKey(key))
+    const rawBase = megaRawBaseKey(key)
+    if (rawBase !== megaBaseKey(key)) keys.push(rawBase)
+  }
   const [first, ...rest] = key.split('-')
   if (['alolan', 'galarian', 'hisuian', 'paldean'].includes(first) && rest.length) keys.push(rest.join('-'))
   return Array.from(new Set(keys))
-}
-
-function megaBaseKey(key: string) {
-  if (!key.startsWith('mega-')) return key
-  const raw = key.slice(5)
-  if (raw.endsWith('-x') || raw.endsWith('-y')) return raw.slice(0, -2)
-  return raw
 }
 
 function megaCandidateKeysForBase(baseKey: string) {
