@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-05-18T14:09:41Z",
+  "generatedAt": "2026-06-25T11:28:41Z",
   "source": "Chromium headless DOM/screenshot harness",
   "routes": [
     {
       "id": "home",
-      "url": "http://127.0.0.1:53111/#/",
+      "url": "http://127.0.0.1:60053/#/",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.",
       "activePrimary": [
@@ -50,7 +50,7 @@
     },
     {
       "id": "single-party",
-      "url": "http://127.0.0.1:53111/#/single?tab=party",
+      "url": "http://127.0.0.1:60053/#/single?tab=party",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "내 파티 관리",
       "activePrimary": [
@@ -101,7 +101,7 @@
     },
     {
       "id": "single-pick",
-      "url": "http://127.0.0.1:53111/#/single?tab=pick",
+      "url": "http://127.0.0.1:60053/#/single?tab=pick",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "상대 엔트리",
       "activePrimary": [
@@ -152,7 +152,7 @@
     },
     {
       "id": "single-speed",
-      "url": "http://127.0.0.1:53111/#/single?tab=speed",
+      "url": "http://127.0.0.1:60053/#/single?tab=speed",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "스피드 계산",
       "activePrimary": [
@@ -203,7 +203,7 @@
     },
     {
       "id": "single-power",
-      "url": "http://127.0.0.1:53111/#/single?tab=power",
+      "url": "http://127.0.0.1:60053/#/single?tab=power",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "대미지 계산",
       "activePrimary": [
@@ -254,13 +254,13 @@
     },
     {
       "id": "double-board",
-      "url": "http://127.0.0.1:53111/#/double",
+      "url": "http://127.0.0.1:60053/#/double",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "더블배틀 메뉴",
       "activePrimary": [
         "더블배틀 메뉴"
       ],
-      "activeSecondary": null,
+      "activeSecondary": "내 파티 관리",
       "panelCount": 2,
       "sectionHeadCount": 2,
       "utilityButtonCount": 2,
@@ -310,7 +310,7 @@
     },
     {
       "id": "sample-builder",
-      "url": "http://127.0.0.1:53111/#/sample-builder?sampleTab=builder",
+      "url": "http://127.0.0.1:60053/#/sample-builder?sampleTab=builder",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [
@@ -318,7 +318,7 @@
       ],
       "activeSecondary": "샘플 빌드",
       "panelCount": 6,
-      "sectionHeadCount": 3,
+      "sectionHeadCount": 1,
       "utilityButtonCount": 2,
       "screenshots": [
         {
@@ -361,15 +361,15 @@
     },
     {
       "id": "sample-speed",
-      "url": "http://127.0.0.1:53111/#/sample-builder?sampleTab=speed",
+      "url": "http://127.0.0.1:60053/#/sample-builder?sampleTab=speed",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [
         "포켓몬 샘플 깎기"
       ],
       "activeSecondary": "샘플 스피드",
-      "panelCount": 11,
-      "sectionHeadCount": 3,
+      "panelCount": 12,
+      "sectionHeadCount": 2,
       "utilityButtonCount": 2,
       "screenshots": [
         {
@@ -412,14 +412,14 @@
     },
     {
       "id": "sample-damage",
-      "url": "http://127.0.0.1:53111/#/sample-builder?sampleTab=damage",
+      "url": "http://127.0.0.1:60053/#/sample-builder?sampleTab=damage",
       "title": "포켓몬 챔피언스 배틀 도우미",
       "subtitle": "포켓몬 샘플 깎기",
       "activePrimary": [
         "포켓몬 샘플 깎기"
       ],
       "activeSecondary": "샘플 대미지 계산",
-      "panelCount": 11,
+      "panelCount": 13,
       "sectionHeadCount": 3,
       "utilityButtonCount": 2,
       "screenshots": [

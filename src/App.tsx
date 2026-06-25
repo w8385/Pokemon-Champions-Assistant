@@ -1,9 +1,5 @@
 import React from 'react'
 import championsData from './pokemon_champions_verified_data.json'
-import championsLearnedMoveMeta from './championsLearnedMoveMeta.json'
-import championsUsageTopMoves from './championsUsageTopMoves.json'
-import championSpriteHashes from './championSpriteHashes.json'
-import dexDescriptions from './dexDescriptions.json'
 import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
@@ -1224,10 +1220,17 @@ function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>,
   return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
 }
 
-const USAGE_TOP_MOVES_BY_KEY = championsUsageTopMoves as Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }>
+let usageTopMovesByKeyCache: Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }> | null = null
+
+async function loadUsageTopMovesByKey() {
+  if (usageTopMovesByKeyCache) return usageTopMovesByKeyCache
+  const mod = await import('./championsUsageTopMoves.json')
+  usageTopMovesByKeyCache = mod.default as Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }>
+  return usageTopMovesByKeyCache
+}
 
 function usageTopMovesForKey(key: string, limit = 10) {
-  return (USAGE_TOP_MOVES_BY_KEY[key]?.moves ?? []).slice(0, limit)
+  return (usageTopMovesByKeyCache?.[key]?.moves ?? []).slice(0, limit)
 }
 
 const MOVE_NAME_ALIASES: Record<string, string> = {
@@ -1238,39 +1241,78 @@ const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
   Object.entries(MOVE_NAME_ALIASES).map(([name, alias]) => [normalizeSearchText(name), alias] as const),
 )
 
-const MOVE_META_BY_NAME = championsLearnedMoveMeta as Record<string, MoveMeta>
-const DEX_DESCRIPTIONS = dexDescriptions as DexDescriptionBundle
-const ITEM_INDEX = (() => {
+const MOVE_META_BY_NAME: Record<string, MoveMeta> = {}
+let dexDescriptionsCache: DexDescriptionBundle | null = null
+let itemIndexCache: { byKey: Map<string, DexDescriptionBundle['items'][string]>; byNormalized: Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }> } | null = null
+let ocrMoveIndexCache: { nameKo: string; candidates: string[] }[] | null = null
+let ocrItemIndexCache: { itemKey: string; candidates: string[] }[] | null = null
+let ocrAbilityIndexCache: { abilityKey: string; koLabel: string; candidates: string[] }[] | null = null
+
+async function loadDexDescriptions() {
+  if (dexDescriptionsCache) return dexDescriptionsCache
+  const mod = await import('./dexDescriptions.json')
+  dexDescriptionsCache = mod.default as DexDescriptionBundle
+  return dexDescriptionsCache
+}
+
+function getDexDescriptionsSync() {
+  return dexDescriptionsCache
+}
+
+function getItemIndexSync() {
+  if (itemIndexCache) return itemIndexCache
+  const bundle = getDexDescriptionsSync()
+  if (!bundle) return null
   const byKey = new Map<string, DexDescriptionBundle['items'][string]>()
   const byNormalized = new Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }>()
-  for (const [key, entry] of Object.entries(DEX_DESCRIPTIONS.items)) {
+  for (const [key, entry] of Object.entries(bundle.items)) {
     byKey.set(key, entry)
     for (const candidate of [key, entry.nameKo, entry.nameEn, entry.nameJa]) {
       byNormalized.set(normalizeSearchText(candidate), { key, entry })
     }
   }
-  return { byKey, byNormalized }
-})()
+  itemIndexCache = { byKey, byNormalized }
+  return itemIndexCache
+}
 
-const OCR_MOVE_INDEX = Object.entries(DEX_DESCRIPTIONS.moves).map(([nameKo, description]) => ({
-  nameKo,
-  candidates: Array.from(new Set([
+async function loadMoveMetaByName() {
+  if (Object.keys(MOVE_META_BY_NAME).length) return MOVE_META_BY_NAME
+  const mod = await import('./championsLearnedMoveMeta.json')
+  Object.assign(MOVE_META_BY_NAME, mod.default as Record<string, MoveMeta>)
+  return MOVE_META_BY_NAME
+}
+
+function getOcrMoveIndexSync() {
+  if (ocrMoveIndexCache) return ocrMoveIndexCache
+  const bundle = getDexDescriptionsSync()
+  if (!bundle) return []
+  ocrMoveIndexCache = Object.entries(bundle.moves).map(([nameKo, description]) => ({
     nameKo,
-    description.nameEn,
-    description.nameJa,
-    ...moveNameCandidates(nameKo),
-  ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
-}))
+    candidates: Array.from(new Set([
+      nameKo,
+      description.nameEn,
+      description.nameJa,
+      ...moveNameCandidates(nameKo),
+    ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+  }))
+  return ocrMoveIndexCache
+}
 
-const OCR_ITEM_INDEX = Object.entries(DEX_DESCRIPTIONS.items).map(([itemKey, description]) => ({
-  itemKey,
-  candidates: Array.from(new Set([
+function getOcrItemIndexSync() {
+  if (ocrItemIndexCache) return ocrItemIndexCache
+  const bundle = getDexDescriptionsSync()
+  if (!bundle) return []
+  ocrItemIndexCache = Object.entries(bundle.items).map(([itemKey, description]) => ({
     itemKey,
-    description.nameKo,
-    description.nameEn,
-    description.nameJa,
-  ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
-}))
+    candidates: Array.from(new Set([
+      itemKey,
+      description.nameKo,
+      description.nameEn,
+      description.nameJa,
+    ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+  }))
+  return ocrItemIndexCache
+}
 
 const OCR_NATURE_INDEX = NATURES.map((nature) => ({
   id: nature.id,
@@ -1297,8 +1339,15 @@ const OCR_EFFORT_PATTERNS = Object.fromEntries(
   ]),
 ) as Record<OcrStatKey, RegExp[]>
 
-const SPRITE_HASH_INDEX = (championSpriteHashes as { key: string; hash: string }[])
-  .filter((entry) => typeof entry?.key === 'string' && typeof entry?.hash === 'string')
+let spriteHashIndexCache: { key: string; hash: string }[] | null = null
+
+async function loadSpriteHashIndex() {
+  if (spriteHashIndexCache) return spriteHashIndexCache
+  const mod = await import('./championSpriteHashes.json')
+  spriteHashIndexCache = (mod.default as { key: string; hash: string }[])
+    .filter((entry) => typeof entry?.key === 'string' && typeof entry?.hash === 'string')
+  return spriteHashIndexCache
+}
 
 const MAX_SPRITE_HASH_DISTANCE = 72
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
@@ -3245,18 +3294,22 @@ function localizedDexText(
 }
 
 function moveDescriptionFor(name: string) {
-  return DEX_DESCRIPTIONS.moves[name] ?? null
+  const bundle = getDexDescriptionsSync()
+  return bundle?.moves[name] ?? null
 }
 
 function abilityDescriptionFor(abilityKey: string) {
-  return DEX_DESCRIPTIONS.abilities[abilityKey] ?? null
+  const bundle = getDexDescriptionsSync()
+  return bundle?.abilities[abilityKey] ?? null
 }
 
 function resolveItemInfo(rawItem: string) {
   if (!rawItem) return null
-  return ITEM_INDEX.byKey.has(rawItem)
-    ? { key: rawItem, entry: ITEM_INDEX.byKey.get(rawItem)! }
-    : ITEM_INDEX.byNormalized.get(normalizeSearchText(rawItem)) ?? null
+  const itemIndex = getItemIndexSync()
+  if (!itemIndex) return null
+  return itemIndex.byKey.has(rawItem)
+    ? { key: rawItem, entry: itemIndex.byKey.get(rawItem)! }
+    : itemIndex.byNormalized.get(normalizeSearchText(rawItem)) ?? null
 }
 
 function itemDescriptionFor(rawItem: string) {
@@ -3299,13 +3352,16 @@ function moveSearchCandidates(name: string) {
   return Array.from(new Set(candidates.flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
-const DEX_MOVE_INDEX = Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta, candidates: moveSearchCandidates(name) }))
+function dexMoveIndex() {
+  return Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta, candidates: moveSearchCandidates(name) }))
+}
 
 function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean }) {
   const allowLoose = options?.allowLoose ?? true
   const normalized = normalizeSearchText(query.trim())
-  if (!normalized) return DEX_MOVE_INDEX.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
-  return DEX_MOVE_INDEX
+  const index = dexMoveIndex()
+  if (!normalized) return index.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+  return index
     .map(({ candidates, ...entry }) => {
       const score = candidates.reduce((best, candidate) => {
         if (candidate === normalized) return Math.min(best, 0)
@@ -3396,20 +3452,26 @@ const ABILITY_INDEX = (() => {
   return { byKey, byNormalized }
 })()
 
-const OCR_ABILITY_INDEX = Object.entries(DEX_DESCRIPTIONS.abilities).map(([abilityKey, description]) => {
-  const fallback = ABILITY_INDEX.byKey.get(abilityKey)
-  return {
-    abilityKey,
-    koLabel: fallback?.koLabel ?? description.nameKo,
-    candidates: Array.from(new Set([
+function getOcrAbilityIndexSync() {
+  if (ocrAbilityIndexCache) return ocrAbilityIndexCache
+  const bundle = getDexDescriptionsSync()
+  if (!bundle) return []
+  ocrAbilityIndexCache = Object.entries(bundle.abilities).map(([abilityKey, description]) => {
+    const fallback = ABILITY_INDEX.byKey.get(abilityKey)
+    return {
       abilityKey,
-      fallback?.koLabel,
-      description.nameKo,
-      description.nameEn,
-      description.nameJa,
-    ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
-  }
-})
+      koLabel: fallback?.koLabel ?? description.nameKo,
+      candidates: Array.from(new Set([
+        abilityKey,
+        fallback?.koLabel,
+        description.nameKo,
+        description.nameEn,
+        description.nameJa,
+      ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
+    }
+  })
+  return ocrAbilityIndexCache
+}
 
 function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
   const normalized = normalizeSearchText(rawAbility)
@@ -3561,9 +3623,10 @@ function hammingDistanceHex(left: string, right: string) {
   return distance
 }
 
-function matchSpeciesBySpriteCanvas(canvas: HTMLCanvasElement) {
+async function matchSpeciesBySpriteCanvas(canvas: HTMLCanvasElement) {
   const hash = computeCanvasDHash(canvas)
-  const best = SPRITE_HASH_INDEX.reduce<{ key: string; distance: number } | null>((currentBest, entry) => {
+  const spriteHashIndex = await loadSpriteHashIndex()
+  const best = spriteHashIndex.reduce<{ key: string; distance: number } | null>((currentBest, entry) => {
     const distance = hammingDistanceHex(hash, entry.hash)
     if (!Number.isFinite(distance)) return currentBest
     if (!currentBest || distance < currentBest.distance) return { key: entry.key, distance }
@@ -3651,7 +3714,7 @@ function findBestOcrSpeciesMatch(line: string) {
 function findBestOcrMoveMatch(line: string) {
   const normalized = normalizeSearchText(cleanOcrLine(line))
   if (!normalized) return null
-  const best = OCR_MOVE_INDEX.reduce<{ nameKo: string; score: number } | null>((currentBest, entry) => {
+  const best = getOcrMoveIndexSync().reduce<{ nameKo: string; score: number } | null>((currentBest, entry) => {
     const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
     if (!Number.isFinite(score)) return currentBest
     if (!currentBest || score < currentBest.score) return { nameKo: entry.nameKo, score }
@@ -3664,7 +3727,7 @@ function findBestOcrAbilityMatch(line: string, key: string) {
   const normalized = normalizeSearchText(cleanOcrLine(line))
   const row = indexByKey.get(key)
   if (!normalized || !row) return null
-  const best = OCR_ABILITY_INDEX.reduce<{ abilityKey: string; koLabel: string; score: number } | null>((currentBest, entry) => {
+  const best = getOcrAbilityIndexSync().reduce<{ abilityKey: string; koLabel: string; score: number } | null>((currentBest, entry) => {
     if (!row.abilities.includes(entry.abilityKey)) return currentBest
     const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
     if (!Number.isFinite(score)) return currentBest
@@ -3677,7 +3740,7 @@ function findBestOcrAbilityMatch(line: string, key: string) {
 function findBestOcrItemMatch(line: string) {
   const normalized = normalizeSearchText(cleanOcrLine(line))
   if (!normalized) return null
-  const best = OCR_ITEM_INDEX.reduce<{ itemKey: string; score: number } | null>((currentBest, entry) => {
+  const best = getOcrItemIndexSync().reduce<{ itemKey: string; score: number } | null>((currentBest, entry) => {
     const score = entry.candidates.reduce((bestScore, candidate) => Math.min(bestScore, scoreOcrCandidate(normalized, candidate)), Number.POSITIVE_INFINITY)
     if (!Number.isFinite(score)) return currentBest
     if (!currentBest || score < currentBest.score) return { itemKey: entry.itemKey, score }
@@ -3766,8 +3829,10 @@ async function inferImportedPartyFromSpriteGuidedImage(file: File, recognize: (i
   const imported: OcrImportedPartyMember[] = []
   for (const [idx, rowRect] of rowRects.entries()) {
     const rowCanvas = renderImageRegion(image, rowRect, 1280, 200)
-    const spriteMatches = estimateSpriteRects(rowRect)
-      .map((rect) => matchSpeciesBySpriteCanvas(renderImageRegion(image, rect, 96, 96)))
+    const spriteMatches = (await Promise.all(
+      estimateSpriteRects(rowRect)
+        .map((rect) => matchSpeciesBySpriteCanvas(renderImageRegion(image, rect, 96, 96)))
+    ))
       .filter((entry): entry is { key: string; distance: number } => entry !== null)
       .sort((left, right) => left.distance - right.distance)
     const bestSpriteMatch = spriteMatches[0] ?? null
@@ -4064,6 +4129,7 @@ export default function App() {
   const [dexMoveLearners, setDexMoveLearners] = React.useState<Row[]>([])
   const [dexMoveLearnersStatus, setDexMoveLearnersStatus] = React.useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
+  const [asyncDataVersion, setAsyncDataVersion] = React.useState(0)
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const partyImageInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -4080,6 +4146,19 @@ export default function App() {
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
   React.useEffect(() => {
+    let cancelled = false
+    void Promise.all([
+      loadMoveMetaByName(),
+      loadUsageTopMovesByKey(),
+      loadDexDescriptions(),
+    ]).then(() => {
+      if (!cancelled) setAsyncDataVersion((prev) => prev + 1)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  React.useEffect(() => {
     if (!dexUnifiedSearchComposing) setDexUnifiedSearchDraft(dexUnifiedSearch)
   }, [dexUnifiedSearch, dexUnifiedSearchComposing])
   React.useEffect(() => {
@@ -4093,7 +4172,7 @@ export default function App() {
   const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
   const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }).slice(0, 12), [deferredDexSearch])
-  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [deferredDexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [asyncDataVersion, deferredDexSearch])
   const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [deferredDexSearch])
   const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }).slice(0, 48), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
@@ -4118,7 +4197,7 @@ export default function App() {
     return ([...pokemonResults, ...moveResults, ...abilityResults, ...itemResults] as DexResultItem[])
       .sort((a, b) => a.score - b.score || a.kind.localeCompare(b.kind) || a.key.localeCompare(b.key, 'ko'))
       .slice(0, 40)
-  }, [deferredDexUnifiedSearch, siteLanguage])
+  }, [asyncDataVersion, deferredDexUnifiedSearch, siteLanguage])
   const dexResultKeys = React.useMemo(() => {
     if (hasDexUnifiedSearch) return dexAllResults.map((result) => result.id)
     if (dexSearchMode === 'pokemon') return dexSpeciesOptions.map((option) => option.key)
@@ -4144,7 +4223,8 @@ export default function App() {
       const resolved = ABILITY_INDEX.byKey.get(parsed.key)
       return resolved ? { id: dexSelectionId('ability', parsed.key), kind: 'ability' as const, key: resolved.key, koLabel: resolved.koLabel, pokemonKeys: resolved.pokemonKeys, score: 0 } : null
     }
-    return ITEM_INDEX.byKey.has(parsed.key)
+    const itemIndex = getItemIndexSync()
+    return itemIndex?.byKey.has(parsed.key)
       ? { id: dexSelectionId('item', parsed.key), kind: 'item' as const, key: parsed.key, item: parsed.key, previewText: '', score: 0 }
       : null
   }, [dexAllResults, dexSelectedValue, hasDexUnifiedSearch])
@@ -4165,7 +4245,7 @@ export default function App() {
       ? (dexAbilityOptions.find((option) => option.key === dexSelectedValue) ?? null)
       : null
   const dexSelectedItem = dexSelectedAllResult?.kind === 'item' ? dexSelectedAllResult.item : dexSearchMode === 'item' && dexSelectedValue ? dexSelectedValue : null
-  const dexTopMoves = React.useMemo(() => dexSelectedRow ? ((championsUsageTopMoves as Record<string, { moves?: string[] }>)[dexSelectedRow.key]?.moves?.slice(0, 10) ?? []) : [], [dexSelectedRow])
+  const dexTopMoves = React.useMemo(() => dexSelectedRow ? usageTopMovesForKey(dexSelectedRow.key, 10) : [], [asyncDataVersion, dexSelectedRow])
   const dexSelectedMoveDescription = React.useMemo(() => dexSelectedMove ? moveDescriptionFor(dexSelectedMove.name) : null, [dexSelectedMove])
   const dexSelectedAbilityDescription = React.useMemo(() => dexSelectedAbility ? abilityDescriptionFor(dexSelectedAbility.key) : null, [dexSelectedAbility])
   const dexSelectedItemDescription = React.useMemo(() => dexSelectedItem ? itemDescriptionFor(dexSelectedItem) : null, [dexSelectedItem])
