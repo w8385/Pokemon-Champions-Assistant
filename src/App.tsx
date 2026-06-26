@@ -9,7 +9,7 @@ import { getJaName, getJaTypes } from './jaLabels'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
-import { getDexDescriptionsSync, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, usageTopMovesForKey } from './dex/data'
+import { abilityDescriptionFor, getDexDescriptionsSync, getItemIndexSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './dex/data'
 
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
@@ -963,26 +963,9 @@ const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
   Object.entries(MOVE_NAME_ALIASES).map(([name, alias]) => [normalizeSearchText(name), alias] as const),
 )
 
-let itemIndexCache: { byKey: Map<string, DexDescriptionBundle['items'][string]>; byNormalized: Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }> } | null = null
 let ocrMoveIndexCache: { nameKo: string; candidates: string[] }[] | null = null
 let ocrItemIndexCache: { itemKey: string; candidates: string[] }[] | null = null
 let ocrAbilityIndexCache: { abilityKey: string; koLabel: string; candidates: string[] }[] | null = null
-
-function getItemIndexSync() {
-  if (itemIndexCache) return itemIndexCache
-  const bundle = getDexDescriptionsSync()
-  if (!bundle) return null
-  const byKey = new Map<string, DexDescriptionBundle['items'][string]>()
-  const byNormalized = new Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }>()
-  for (const [key, entry] of Object.entries(bundle.items)) {
-    byKey.set(key, entry)
-    for (const candidate of [key, entry.nameKo, entry.nameEn, entry.nameJa]) {
-      byNormalized.set(normalizeSearchText(candidate), { key, entry })
-    }
-  }
-  itemIndexCache = { byKey, byNormalized }
-  return itemIndexCache
-}
 
 function getOcrMoveIndexSync() {
   if (ocrMoveIndexCache) return ocrMoveIndexCache
@@ -2965,29 +2948,6 @@ function displayMoveCategoryName(category: MoveCategory | null | undefined, lang
   if (category === 'special') return translateText(language, '특수')
   if (category === 'status') return translateText(language, '변화')
   return translateText(language, '없음')
-}
-
-function moveDescriptionFor(name: string) {
-  const bundle = getDexDescriptionsSync()
-  return bundle?.moves[name] ?? null
-}
-
-function abilityDescriptionFor(abilityKey: string) {
-  const bundle = getDexDescriptionsSync()
-  return bundle?.abilities[abilityKey] ?? null
-}
-
-function resolveItemInfo(rawItem: string) {
-  if (!rawItem) return null
-  const itemIndex = getItemIndexSync()
-  if (!itemIndex) return null
-  return itemIndex.byKey.has(rawItem)
-    ? { key: rawItem, entry: itemIndex.byKey.get(rawItem)! }
-    : itemIndex.byNormalized.get(normalizeSearchText(rawItem)) ?? null
-}
-
-function itemDescriptionFor(rawItem: string) {
-  return resolveItemInfo(rawItem)?.entry ?? null
 }
 
 function itemEffectSummaryFor(rawItem: string, language: SiteLanguage) {

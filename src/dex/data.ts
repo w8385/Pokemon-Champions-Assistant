@@ -44,3 +44,49 @@ export async function loadSpriteHashIndex() {
     .filter((entry) => typeof entry?.key === 'string' && typeof entry?.hash === 'string')
   return spriteHashIndexCache
 }
+
+
+function normalizeSearchText(value: string) {
+  return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
+}
+
+let itemIndexCache: { byKey: Map<string, DexDescriptionBundle['items'][string]>; byNormalized: Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }> } | null = null
+
+export function getItemIndexSync() {
+  if (itemIndexCache) return itemIndexCache
+  const bundle = getDexDescriptionsSync()
+  if (!bundle) return null
+  const byKey = new Map<string, DexDescriptionBundle['items'][string]>()
+  const byNormalized = new Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }>()
+  for (const [key, entry] of Object.entries(bundle.items)) {
+    byKey.set(key, entry)
+    for (const candidate of [key, entry.nameKo, entry.nameEn, entry.nameJa]) {
+      byNormalized.set(normalizeSearchText(candidate), { key, entry })
+    }
+  }
+  itemIndexCache = { byKey, byNormalized }
+  return itemIndexCache
+}
+
+export function moveDescriptionFor(name: string) {
+  const bundle = getDexDescriptionsSync()
+  return bundle?.moves[name] ?? null
+}
+
+export function abilityDescriptionFor(abilityKey: string) {
+  const bundle = getDexDescriptionsSync()
+  return bundle?.abilities[abilityKey] ?? null
+}
+
+export function resolveItemInfo(rawItem: string) {
+  if (!rawItem) return null
+  const itemIndex = getItemIndexSync()
+  if (!itemIndex) return null
+  return itemIndex.byKey.has(rawItem)
+    ? { key: rawItem, entry: itemIndex.byKey.get(rawItem)! }
+    : itemIndex.byNormalized.get(normalizeSearchText(rawItem)) ?? null
+}
+
+export function itemDescriptionFor(rawItem: string) {
+  return resolveItemInfo(rawItem)?.entry ?? null
+}
