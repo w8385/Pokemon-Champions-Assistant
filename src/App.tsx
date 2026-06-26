@@ -9,6 +9,7 @@ import { getJaName, getJaTypes } from './jaLabels'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
+import { getDexDescriptionsSync, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, usageTopMovesForKey } from './dex/data'
 
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
@@ -954,19 +955,6 @@ function topSuggestedMoves(groups: ReturnType<typeof suggestedMoveGroupsForRow>,
   return mergeMoveGroupLists(groups.core, groups.options, groups.utility).slice(0, limit)
 }
 
-let usageTopMovesByKeyCache: Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }> | null = null
-
-async function loadUsageTopMovesByKey() {
-  if (usageTopMovesByKeyCache) return usageTopMovesByKeyCache
-  const mod = await import('./championsUsageTopMoves.json')
-  usageTopMovesByKeyCache = mod.default as Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }>
-  return usageTopMovesByKeyCache
-}
-
-function usageTopMovesForKey(key: string, limit = 10) {
-  return (usageTopMovesByKeyCache?.[key]?.moves ?? []).slice(0, limit)
-}
-
 const MOVE_NAME_ALIASES: Record<string, string> = {
   '회복': 'HP회복',
   '섀도클로': '섀도크루',
@@ -975,23 +963,10 @@ const MOVE_NAME_ALIASES_BY_NORMALIZED = new Map(
   Object.entries(MOVE_NAME_ALIASES).map(([name, alias]) => [normalizeSearchText(name), alias] as const),
 )
 
-const MOVE_META_BY_NAME: Record<string, MoveMeta> = {}
-let dexDescriptionsCache: DexDescriptionBundle | null = null
 let itemIndexCache: { byKey: Map<string, DexDescriptionBundle['items'][string]>; byNormalized: Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }> } | null = null
 let ocrMoveIndexCache: { nameKo: string; candidates: string[] }[] | null = null
 let ocrItemIndexCache: { itemKey: string; candidates: string[] }[] | null = null
 let ocrAbilityIndexCache: { abilityKey: string; koLabel: string; candidates: string[] }[] | null = null
-
-async function loadDexDescriptions() {
-  if (dexDescriptionsCache) return dexDescriptionsCache
-  const mod = await import('./dexDescriptions.json')
-  dexDescriptionsCache = mod.default as DexDescriptionBundle
-  return dexDescriptionsCache
-}
-
-function getDexDescriptionsSync() {
-  return dexDescriptionsCache
-}
 
 function getItemIndexSync() {
   if (itemIndexCache) return itemIndexCache
@@ -1007,13 +982,6 @@ function getItemIndexSync() {
   }
   itemIndexCache = { byKey, byNormalized }
   return itemIndexCache
-}
-
-async function loadMoveMetaByName() {
-  if (Object.keys(MOVE_META_BY_NAME).length) return MOVE_META_BY_NAME
-  const mod = await import('./championsLearnedMoveMeta.json')
-  Object.assign(MOVE_META_BY_NAME, mod.default as Record<string, MoveMeta>)
-  return MOVE_META_BY_NAME
 }
 
 function getOcrMoveIndexSync() {
@@ -1072,16 +1040,6 @@ const OCR_EFFORT_PATTERNS = Object.fromEntries(
     labels.map((label) => new RegExp(`(?:^|[^a-z])${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:/=-]?\\s*(\\d{1,3})`, 'i')),
   ]),
 ) as Record<OcrStatKey, RegExp[]>
-
-let spriteHashIndexCache: { key: string; hash: string }[] | null = null
-
-async function loadSpriteHashIndex() {
-  if (spriteHashIndexCache) return spriteHashIndexCache
-  const mod = await import('./championSpriteHashes.json')
-  spriteHashIndexCache = (mod.default as { key: string; hash: string }[])
-    .filter((entry) => typeof entry?.key === 'string' && typeof entry?.hash === 'string')
-  return spriteHashIndexCache
-}
 
 const MAX_SPRITE_HASH_DISTANCE = 72
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
