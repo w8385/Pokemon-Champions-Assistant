@@ -130,7 +130,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
-    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '특방+': 'Sp. Def+', '방어+': 'Defense+', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Verdict', '대미지': 'Damage', '비율': 'Percent', '접기': 'Collapse', '펼치기': 'Expand', '세부 조건': 'Detailed conditions', '대미지 계산 불가': 'Damage calc unavailable', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 배틀 도우미': 'Pokémon Champions Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'A Pokémon Champions battle tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'Pokémon Champions Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.',
+    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '특방+': 'Sp. Def+', '방어+': 'Defense+', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Verdict', '대미지': 'Damage', '비율': 'Percent', '접기': 'Collapse', '펼치기': 'Expand', '세부 조건': 'Detailed conditions', '대미지 계산 불가': 'Damage calc unavailable', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 배틀 도우미': 'Pokémon Champions Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'A Pokémon Champions battle tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'Pokémon Champions Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': 'Start from the task you need now instead of dumping every feature at once.', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'This home screen is a routing layer. Pick battle prep, sample tuning, or dex lookup and jump straight in.', '사용 흐름': 'Workflow', '바로 시작': 'Start here', '싱글/더블 배틀 준비': 'Battle prep', '샘플 조정 / 자료 확인': 'Build & reference', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'Keep party, picks, speed, and damage in one flow.', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': 'Tune one Pokémon or look up key dex information quickly.', '싱글 배틀 운영': 'Singles workflow', '더블 배틀 운영': 'Doubles workflow', '샘플 조정': 'Sample tuning', '도감 확인': 'Dex lookup', '추천 시작점': 'Recommended start', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'Only the common workflows sit up front. Detailed controls stay inside each tool.',
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
@@ -162,7 +162,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
-    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。',
+    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
   },
 }
@@ -6396,97 +6396,112 @@ export default function App() {
 
       <main className="grid">
         {mainSection === 'home' ? (
-        <section className="panel wide home-hero-panel">
-          <div className="row-between section-head home-hero-head">
-            <div>
-              <h2>{lt('포켓몬 챔피언스 배틀 도우미')}</h2>
-              <p className="muted">{lt('파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구')}</p>
+        <>
+          <section className="panel wide home-hero-panel home-surface-panel">
+            <div className="home-hero-layout">
+              <div className="home-hero-copy-block">
+                <span className="home-kicker">{lt('바로 시작')}</span>
+                <h2>{lt('포켓몬 챔피언스 배틀 도우미')}</h2>
+                <p className="muted home-hero-lede">{lt('한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.')}</p>
+                <p className="muted home-hero-body">{lt('이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.')}</p>
+              </div>
+              <aside className="home-principles-card">
+                <span className="home-section-label">{lt('사용 흐름')}</span>
+                <ul className="home-principles-list">
+                  <li>
+                    <strong>{lt('추천 시작점')}</strong>
+                    <p>{lt('자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.')}</p>
+                  </li>
+                  <li>
+                    <strong>{lt('싱글/더블 배틀 준비')}</strong>
+                    <p>{lt('파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.')}</p>
+                  </li>
+                  <li>
+                    <strong>{lt('샘플 조정 / 자료 확인')}</strong>
+                    <p>{lt('포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.')}</p>
+                  </li>
+                </ul>
+              </aside>
+            </div>
+          </section>
+
+          <section className="panel wide home-route-panel home-surface-panel">
+            <div className="home-route-groups">
+              <section className="home-route-group">
+                <div className="home-route-group-head">
+                  <span className="home-section-label">{lt('싱글/더블 배틀 준비')}</span>
+                  <p className="muted">{lt('파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.')}</p>
+                </div>
+                <div className="home-route-grid home-route-grid-compact">
+                  <button type="button" className="home-route-card calm" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
+                    <div className="home-route-card-copy">
+                      <span className="home-route-eyebrow">{lt('싱글 배틀 운영')}</span>
+                      <strong>{lt('싱글배틀')}</strong>
+                      <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
+                    </div>
+                  </button>
+                  <button type="button" className="home-route-card calm" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
+                    <div className="home-route-card-copy">
+                      <span className="home-route-eyebrow">{lt('더블 배틀 운영')}</span>
+                      <strong>{lt('더블배틀')}</strong>
+                      <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
+                    </div>
+                  </button>
+                </div>
+              </section>
+
+              <section className="home-route-group">
+                <div className="home-route-group-head">
+                  <span className="home-section-label">{lt('샘플 조정 / 자료 확인')}</span>
+                  <p className="muted">{lt('포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.')}</p>
+                </div>
+                <div className="home-route-grid home-route-grid-compact">
+                  <button type="button" className="home-route-card calm" onClick={() => setMainSection('sample')}>
+                    <div className="home-route-card-copy">
+                      <span className="home-route-eyebrow">{lt('샘플 조정')}</span>
+                      <strong>{lt('포켓몬 샘플 빌더')}</strong>
+                      <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
+                    </div>
+                  </button>
+                  <button type="button" className="home-route-card calm" onClick={() => setMainSection('dex')}>
+                    <div className="home-route-card-copy">
+                      <span className="home-route-eyebrow">{lt('도감 확인')}</span>
+                      <strong>{lt('도감')}</strong>
+                      <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
+                    </div>
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <div className="home-footer-text-block home-footer-text-block-quiet">
+            <div className="home-footer-text-row home-footer-links-quiet">
+              <span className="home-footer-label">{lt('프로젝트 링크')}</span>
+              <div className="home-link-list text-only">
+                <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">GitHub — Pokemon-Champions-Assistant</a>
+                <a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noreferrer">{lt('기능제안/버그제보')}</a>
+                <a href="mailto:me@w8385.dev">me@w8385.dev</a>
+              </div>
+            </div>
+            <div className="home-footer-text-row">
+              <span className="home-footer-label">{lt('저작권 및 안내')}</span>
+              <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
+              <div className="home-reference-list-wrap">
+                <span className="home-reference-label">{lt('참고 데이터베이스')}</span>
+                <div className="home-reference-list">
+                  <span className="pick-badge">PokéAPI</span>
+                  <span className="pick-badge">veekun</span>
+                  <span className="pick-badge">PokemonDB</span>
+                  <span className="pick-badge">Serebii</span>
+                  <span className="pick-badge">Smogon Dex</span>
+                  <span className="pick-badge">Pikalytics</span>
+                  <span className="pick-badge">champs.pokedb.tokyo</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="home-route-grid">
-            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('single'); setActiveTab('party') }}>
-              <div className="home-route-card-copy">
-                <strong>{lt('싱글배틀')}</strong>
-                <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
-              </div>
-            </button>
-            <button type="button" className="home-route-card accent" onClick={() => { setMainSection('double'); setActiveTab('party') }}>
-              <div className="home-route-card-copy">
-                <strong>{lt('더블배틀')}</strong>
-                <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
-              </div>
-            </button>
-            <button type="button" className="home-route-card" onClick={() => setMainSection('sample')}>
-              <div className="home-route-card-copy">
-                <strong>{lt('포켓몬 샘플 빌더')}</strong>
-                <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
-              </div>
-            </button>
-            <button type="button" className="home-route-card" onClick={() => setMainSection('dex')}>
-              <div className="home-route-card-copy">
-                <strong>{lt('도감')}</strong>
-                <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
-              </div>
-            </button>
-          </div>
-        </section>
-        ) : null}
-        {mainSection === 'home' ? (
-        <div className="home-footer-text-block">
-          <div className="home-footer-text-row">
-            <span className="home-footer-label">{lt('프로젝트 링크')}</span>
-            <div className="home-link-list home-link-icon-list">
-              <a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('기능제안/버그제보')} title={lt('기능제안/버그제보')}>
-                <span className="home-link-pill-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" role="img" focusable="false">
-                    <path d="M14 3H6.75A2.75 2.75 0 0 0 4 5.75v12.5A2.75 2.75 0 0 0 6.75 21h10.5A2.75 2.75 0 0 0 20 18.25V9Zm0 1.5 4.5 4.5h-3A1.5 1.5 0 0 1 14 7.5Zm-5 7a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 11.5Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 15Zm0 3.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5A.75.75 0 0 1 9 18.5Z" fill="currentColor"/>
-                  </svg>
-                </span>
-                <span className="home-link-pill-copy">
-                  <strong>{lt('기능제안/버그제보')}</strong>
-                  <span>{lt('폼으로 제보하기')}</span>
-                </span>
-              </a>
-              <a href="mailto:me@w8385.dev" className="home-link-pill" aria-label={`${lt('연락 이메일')} me@w8385.dev`} title="me@w8385.dev">
-                <span className="home-link-pill-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" role="img" focusable="false">
-                    <path d="M3 5.75A2.75 2.75 0 0 1 5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v12.5A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V5.75Zm2 .28v.22l7 5.34 7-5.34v-.22a.75.75 0 0 0-.75-.75H5.75a.75.75 0 0 0-.75.75Zm13 2.73-5.39 4.11a1 1 0 0 1-1.22 0L6 8.76v9.49c0 .41.34.75.75.75h10.5c.41 0 .75-.34.75-.75V8.76Z" fill="currentColor"/>
-                  </svg>
-                </span>
-                <span className="home-link-pill-copy">
-                  <strong>{lt('연락 이메일')}</strong>
-                  <span>me@w8385.dev</span>
-                </span>
-              </a>
-              <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer" className="home-link-pill" aria-label={lt('GitHub 저장소')} title={lt('GitHub 저장소')}>
-                <span className="home-link-pill-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" role="img" focusable="false">
-                    <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.2-3.37-1.2-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .08 1.53 1.05 1.53 1.05.9 1.58 2.35 1.12 2.92.86.09-.67.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.74 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.56 1.43.21 2.48.11 2.74.64.72 1.03 1.63 1.03 2.75 0 3.95-2.33 4.82-4.56 5.07.36.32.67.95.67 1.92 0 1.39-.01 2.5-.01 2.84 0 .28.18.61.69.5A10.24 10.24 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" fill="currentColor"/>
-                  </svg>
-                </span>
-                <span className="home-link-pill-copy">
-                  <strong>{lt('GitHub 저장소')}</strong>
-                </span>
-              </a>
-            </div>
-          </div>
-          <div className="home-footer-text-row">
-            <span className="home-footer-label">{lt('저작권 및 안내')}</span>
-            <p className="muted home-footer-copy">{lt('포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.')}</p>
-            <div className="home-reference-list-wrap">
-              <span className="home-reference-label">{lt('참고 데이터베이스')}</span>
-              <div className="home-reference-list">
-                <span className="pick-badge">PokéAPI</span>
-                <span className="pick-badge">veekun</span>
-                <span className="pick-badge">PokemonDB</span>
-                <span className="pick-badge">Serebii</span>
-                <span className="pick-badge">Smogon Dex</span>
-                <span className="pick-badge">Pikalytics</span>
-                <span className="pick-badge">champs.pokedb.tokyo</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        </>
         ) : null}
         {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide">
           <div className="row-between section-head">
