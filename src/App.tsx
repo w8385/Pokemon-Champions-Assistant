@@ -130,7 +130,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
-    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '특방+': 'Sp. Def+', '방어+': 'Defense+', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Verdict', '대미지': 'Damage', '비율': 'Percent', '접기': 'Collapse', '펼치기': 'Expand', '세부 조건': 'Detailed conditions', '대미지 계산 불가': 'Damage calc unavailable', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 배틀 도우미': 'Pokémon Champions Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'A Pokémon Champions battle tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'Pokémon Champions Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': 'Start from the task you need now instead of dumping every feature at once.', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'This home screen is a routing layer. Pick battle prep, sample tuning, or dex lookup and jump straight in.', '사용 흐름': 'Workflow', '바로 시작': 'Start here', '싱글/더블 배틀 준비': 'Battle prep', '샘플 조정 / 자료 확인': 'Build & reference', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'Keep party, picks, speed, and damage in one flow.', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': 'Tune one Pokémon or look up key dex information quickly.', '싱글 배틀 운영': 'Singles workflow', '더블 배틀 운영': 'Doubles workflow', '샘플 조정': 'Sample tuning', '도감 확인': 'Dex lookup', '추천 시작점': 'Recommended start', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'Only the common workflows sit up front. Detailed controls stay inside each tool.',
+    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '특방+': 'Sp. Def+', '방어+': 'Defense+', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Verdict', '대미지': 'Damage', '비율': 'Percent', '접기': 'Collapse', '펼치기': 'Expand', '세부 조건': 'Detailed conditions', '대미지 계산 불가': 'Damage calc unavailable', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 배틀 도우미': 'Pokémon Champions Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'A Pokémon Champions battle tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'Pokémon Champions Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': 'Start from the task you need now instead of dumping every feature at once.', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'This home screen is a routing layer. Pick battle prep, sample tuning, or dex lookup and jump straight in.', '사용 흐름': 'Workflow', '바로 시작': 'Start here', '싱글/더블 배틀 준비': 'Battle prep', '샘플 조정 / 자료 확인': 'Build & reference', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'Keep party, picks, speed, and damage in one flow.', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': 'Tune one Pokémon or look up key dex information quickly.', '싱글 배틀 운영': 'Singles workflow', '더블 배틀 운영': 'Doubles workflow', '샘플 조정': 'Sample tuning', '도감 확인': 'Dex lookup', '추천 시작점': 'Recommended start', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'Only the common workflows sit up front. Detailed controls stay inside each tool.', '현재 흐름': 'Current workflow', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'Start with your party, record revealed opponent info, then move into the calculators.', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'For doubles, set party and opponent info first, then move into the planner.', '내 포켓몬과 기술 기준을 정리합니다.': 'Set your Pokémon and move baseline first.', '상대 공개 정보와 가정을 정리합니다.': 'Record revealed opponent info and assumptions.', '추월컷과 속도선을 확인합니다.': 'Check cutoffs and speed lines.', '기술 대미지와 조건을 맞춥니다.': 'Check move damage and conditions.', '더블 기준 화력과 행동순을 정리합니다.': 'Review doubles damage and action flow.', '이 화면에서 하는 일': 'What this screen does', '입력 순서': 'Input order', '현재 기준 정보': 'Current context', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': 'The calculator is more stable once party and opponent entry are set first.', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': 'Use the flow: pick your move → confirm the target baseline → adjust battle conditions.', '선택된 기술': 'Selected move',
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
@@ -162,7 +162,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
-    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。',
+    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。', '현재 흐름': '現在のフロー', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'まず自分のパーティを埋め、相手の公開情報を書いてから計算に進む。', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'ダブルはパーティと相手情報を整えたあと、プランナーでターンの流れを見る。', '내 포켓몬과 기술 기준을 정리합니다.': '自分のポケモンと技の基準を整える。', '상대 공개 정보와 가정을 정리합니다.': '相手の公開情報と想定を整理する。', '추월컷과 속도선을 확인합니다.': '抜きラインと素早さ帯を確認する。', '기술 대미지와 조건을 맞춥니다.': '技ダメージと条件を合わせる。', '더블 기준 화력과 행동순을 정리합니다.': 'ダブル基準の火力と行動順を整理する。', '이 화면에서 하는 일': 'この画面でやること', '입력 순서': '入力順', '현재 기준 정보': '現在の基準情報', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': '自分のパーティと相手エントリーを先に整えると計算がぶれにくい。', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': '自分の技選択 → 相手基準確認 → 火力条件調整の順で見ればいい。', '선택된 기술': '選択中の技',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
   },
 }
@@ -6503,24 +6503,56 @@ export default function App() {
           </div>
         </>
         ) : null}
-        {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide">
-          <div className="row-between section-head">
+        {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide workflow-shell-panel">
+          <div className="row-between section-head workflow-shell-head">
             <div>
+              <span className="home-section-label">{lt('현재 흐름')}</span>
               <h2>{mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
-              {mainSection === 'double' ? <p className="muted">{lt('더블 계산 작업 보드')}</p> : null}
+              {mainSection === 'single' ? <p className="muted">{lt('파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.')}</p> : null}
+              {mainSection === 'double' ? <p className="muted">{lt('더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.')}</p> : null}
             </div>
           </div>
           {mainSection === 'single' || mainSection === 'double' ? (
-            <div className={`tab-bar section-menu-tabs ${mainSection === 'single' ? 'section-menu-tabs-single' : ''}`}>
-              <button type="button" className={`tab-chip flow-node ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>{lt('내 파티 관리')}</button>
-              <button type="button" className={`tab-chip flow-node ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>{lt('상대 엔트리')}</button>
+            <div className={`workflow-step-shell ${mainSection === 'single' ? 'single' : 'double'}`}>
+              <button type="button" className={`workflow-step-card ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>
+                <span className="workflow-step-number">01</span>
+                <div className="workflow-step-copy">
+                  <strong>{lt('내 파티 관리')}</strong>
+                  <p>{lt('내 포켓몬과 기술 기준을 정리합니다.')}</p>
+                </div>
+              </button>
+              <button type="button" className={`workflow-step-card ${activeTab === 'pick' ? 'active' : ''}`} onClick={() => setActiveTab('pick')}>
+                <span className="workflow-step-number">02</span>
+                <div className="workflow-step-copy">
+                  <strong>{lt('상대 엔트리')}</strong>
+                  <p>{lt('상대 공개 정보와 가정을 정리합니다.')}</p>
+                </div>
+              </button>
               {mainSection === 'single' ? (
                 <>
-                  <button type="button" className={`tab-chip flow-node ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>{lt('스피드 계산')}</button>
-                  <button type="button" className={`tab-chip flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('대미지 계산')}</button>
+                  <button type="button" className={`workflow-step-card ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>
+                    <span className="workflow-step-number">03</span>
+                    <div className="workflow-step-copy">
+                      <strong>{lt('스피드 계산')}</strong>
+                      <p>{lt('추월컷과 속도선을 확인합니다.')}</p>
+                    </div>
+                  </button>
+                  <button type="button" className={`workflow-step-card ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>
+                    <span className="workflow-step-number">04</span>
+                    <div className="workflow-step-copy">
+                      <strong>{lt('대미지 계산')}</strong>
+                      <p>{lt('기술 대미지와 조건을 맞춥니다.')}</p>
+                    </div>
+                  </button>
                 </>
               ) : (
-                <button type="button" className={`tab-chip flow-node ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>{lt('더블 배틀 플래너')}</button>
+                <button type="button" className={`workflow-step-card ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>
+                  <span className="workflow-step-number">03</span>
+                  <div className="workflow-step-copy">
+                    <strong>{lt('더블 배틀 플래너')}</strong>
+                    <p>{lt('더블 기준 화력과 행동순을 정리합니다.')}</p>
+                  </div>
+                </button>
               )}
             </div>
           ) : mainSection === 'sample' ? (
@@ -8707,7 +8739,10 @@ export default function App() {
         </> : <>
         {(mainSection === 'single' && activeTab === 'speed') ? <section className="panel wide">
           <div className="row-between section-head">
-            <h2>{lt('내 파티 추월컷')}</h2>
+            <div>
+              <h2>{lt('내 파티 추월컷')}</h2>
+              <p className="muted calc-screen-summary">{lt('내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.')}</p>
+            </div>
           </div>
           {oppRow ? <>
             <div className="speed-scenario-ladder">
@@ -8815,7 +8850,28 @@ export default function App() {
 
         {(mainSection === 'single' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
-            <h2>{lt('간단 대미지 계산')}</h2>
+            <div>
+              <h2>{lt('간단 대미지 계산')}</h2>
+              <p className="muted calc-screen-summary">{lt('내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.')}</p>
+            </div>
+          </div>
+          <div className="calc-context-grid">
+            <div className="calc-context-card">
+              <span className="home-section-label">{lt('입력 순서')}</span>
+              <ol className="calc-context-list">
+                <li>{lt('내 파티 관리')}</li>
+                <li>{lt('상대 엔트리')}</li>
+                <li>{lt('대미지 계산')}</li>
+              </ol>
+            </div>
+            <div className="calc-context-card">
+              <span className="home-section-label">{lt('현재 기준 정보')}</span>
+              <div className="calc-context-meta">
+                <span>{lt('공격측')} · {attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</span>
+                <span>{lt('방어측')} · {defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</span>
+                <span>{lt('선택된 기술')} · {activeDamageMove || '-'}</span>
+              </div>
+            </div>
           </div>
           <div className="damage-surface-card damage-result-surface">
             {defenderRow && damage ? <div className="damage-box compact-top">

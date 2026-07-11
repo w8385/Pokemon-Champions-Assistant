@@ -71,12 +71,18 @@ Pokemon Champions Assistant를 단기 미봉이 아니라, 반복적으로 덜 �
 ---
 
 ## Phase 2 — Single / Double workflow shells
-**status:** pending
+**status:** in progress
 
 ### Review targets
 - 싱글배틀 메뉴
 - 더블배틀 메뉴
 - section tabs / chips / flow navigation
+
+### Done
+- 싱글/더블 상단 탭을 단순 칩 나열 대신 **workflow step shell**로 변경함.
+- 각 단계에 짧은 설명을 붙여 "무엇을 먼저 해야 하는지"를 바로 보이게 함.
+- speed / damage 화면 상단에 짧은 usage summary를 추가해 계산 화면의 진입 문장을 정리함.
+- damage calc에 input order / current context 박스를 추가해 계산 기준을 위쪽에서 먼저 읽게 함.
 
 ### Questions
 - 첫 진입 시 사용자가 어디서 시작해야 하는지 명확한가?
@@ -87,6 +93,7 @@ Pokemon Champions Assistant를 단기 미봉이 아니라, 반복적으로 덜 �
 - workflow 순서를 더 분명히 드러낸다.
 - 상위 navigation과 하위 navigation의 시각 톤을 분리한다.
 - 선택되지 않은 칩/탭은 더 조용하게 만든다.
+- speed / damage 내부에서도 결과와 설정의 위계를 더 벌린다.
 
 ---
 
@@ -179,9 +186,9 @@ Example:
 
 ## Immediate Next Pass Recommendation
 
-다음 반복 리뷰는 **싱글배틀 메뉴 + speed/damage calc shell**부터 보는 게 좋다.
+다음 반복 리뷰는 **single damage calc 내부 control density**를 보는 게 좋다.
 
 이유:
-- 실제 사용 빈도가 높다.
-- 홈보다 내부 복잡도가 훨씬 높다.
-- 여기서 정리된 규칙이 더블/샘플에도 재사용된다.
+- 현재 가장 복잡하고 시선 경쟁이 심한 구간이다.
+- workflow shell은 정리됐지만, 실제 입력 패널 안쪽은 아직 과밀하다.
+- 여기서 정리된 규칙이 double planner / sample damage에도 재사용된다.
