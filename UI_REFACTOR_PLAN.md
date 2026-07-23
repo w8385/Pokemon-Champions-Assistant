@@ -117,6 +117,16 @@ Pokemon Champions Assistant를 단기 미봉이 아니라, 반복적으로 덜 �
 - badge/chip/button의 종류 수를 줄인다.
 - "읽는 블록"과 "조작하는 블록"을 분리한다.
 
+### Latest pass — single damage calc control density
+- rubric: clarity 3 / focus 3 / density 2 / consistency 4 / restraint 4
+- reviewed workflow: **내 기술 선택 → 상대 기준 확인 → 화력 조건 조정**
+- changed:
+  - 전장 조건을 기본 접힘 상태로 바꾸고, 현재 적용 중인 조건을 헤더 요약으로 먼저 보이게 함.
+  - 공격측/방어측 카드의 비활성 상태를 더 조용하게 만들어 현재 선택된 면만 더 읽히게 함.
+  - control surface의 gradient/glow를 줄이고, 화력/방어/전장 블록을 내부 section으로 나눠 읽기 순서를 더 분명히 함.
+- note:
+  - 아직 상대 기술 추가 / 사용률 상위 기술 strip은 같은 화면 안에서 시선 점유가 큼.
+
 ---
 
 ## Phase 4 — Visual system unification
@@ -184,11 +194,31 @@ Example:
 
 ---
 
+### Latest pass — single opponent entry move-add flow
+- rubric: clarity 4 / focus 4 / density 3 / consistency 5 / restraint 4
+- reviewed workflow: **상대 공개 기술 확인 → 상위 기술 참고 → 직접 추가**
+- changed:
+  - `공개 기술` 구간에 현재 등록 수 `0~4` 요약을 먼저 두어 현재 상태를 입력 폼보다 앞에서 읽게 함.
+  - `사용률 상위 기술` 목록을 damage calc와 같은 접힘 `<details>` strip로 맞춰, 필요할 때만 펼치게 함.
+  - 이미 공개 기술로 등록된 상위 기술 chip은 quieter confirmed 상태로 낮추고, 직접 추가 입력을 별도 entry block으로 분리해 다음 행동을 더 또렷하게 만듦.
+- note:
+  - single opponent entry와 single damage calc의 move-add 문법은 이제 거의 맞춰졌고, sample damage 쪽 비교 대상 기술 선택은 아직 별도 톤이 남아 있음.
+
+### Latest pass — sample damage compare-target setup
+- rubric: clarity 4 / focus 4 / density 4 / consistency 5 / restraint 4
+- reviewed workflow: **비교 대상 추가 → 내 기술 선택 → 필요할 때만 상대 내구 미세조정**
+- changed:
+  - 비교 대상 추가 카드 상단에 `샘플 기술 n/4` / `비교 포켓몬 n` 요약을 먼저 두고, 등록 기술이 없을 때는 `샘플 기술로 이동` CTA를 바로 붙여 선행 작업을 숨기지 않음.
+  - 비교 대상 카드의 수동 내구 EV 조절을 기본 접힘 `<details>`로 내려서, 기본 흐름에서는 기술 선택과 프리셋 확인이 먼저 읽히게 함.
+  - 접힌 내구 조절 summary에 현재 프리셋과 `체력/방어/특수방어` EV 값을 같이 보여 줘서 펼치지 않아도 현재 가정을 확인할 수 있게 함.
+- note:
+  - sample damage의 진입 문법은 이제 single opponent entry / damage calc와 더 가까워졌지만, 결과 배지 수와 상단 조건 패널 weight는 아직 조금 큰 편임.
+
 ## Immediate Next Pass Recommendation
 
-다음 반복 리뷰는 **single damage calc 내부 control density**를 보는 게 좋다.
+다음 반복 리뷰는 **sample damage 결과 카드의 metric/badge 밀도**를 보는 게 좋다.
 
 이유:
-- 현재 가장 복잡하고 시선 경쟁이 심한 구간이다.
-- workflow shell은 정리됐지만, 실제 입력 패널 안쪽은 아직 과밀하다.
-- 여기서 정리된 규칙이 double planner / sample damage에도 재사용된다.
+- 비교 대상 추가와 내구 미세조정은 이제 요약 → 선택 → 상세 조정 순서로 정리됐지만, 결과 영역은 여전히 badge와 metric box가 동시에 많아 한 번에 읽는 부담이 남아 있다.
+- 특히 `선택 기술 / 공격 수치 / 상대 실수치` 배지 줄과 `판정 / 실대미지 / 체력비율` 박스 사이의 위계를 더 벌리면 핵심 결론이 더 빨리 읽힐 가능성이 크다.
+- 같은 화면 안에서 입력 쪽은 quiet해졌으니, 다음엔 결과 쪽까지 같은 철학으로 맞추는 편이 효율적이다.

@@ -124,7 +124,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '포켓몬 / 기술 / 특성 / 도구 검색': 'Search Pokémon / moves / abilities / items', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '배우는 포켓몬': 'Pokémon that learn this move', '합계': 'Total', '효과': 'Effect',
     '선택 슬롯 비우기': 'Clear selected slot',
     '간단 설명': 'Summary', '상세 설명': 'Details', '설명': 'Description', '이름': 'Name', '설명 데이터 없음': 'No description available yet.',
-    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
+    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'Register at least one sample move to compare here right away.', '샘플 기술로 이동': 'Go to Sample Moves', '세부 내구 조절': 'Detailed bulk tuning', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '비교 포켓몬 추가': 'Add comparison Pokémon', '비교 포켓몬': 'Comparison Pokémon', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '내 스피드 랭크': 'My Speed Stage', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
@@ -156,7 +156,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'ポケモン・技・特性・持ち物をすばやく検索できます。', '포켓몬': 'ポケモン', '기술': '技', '검색 결과': '検索結果', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': '検索結果を選ぶと詳細をすぐ確認できます。', '포켓몬 / 기술 / 특성 / 도구 검색': 'ポケモン / 技 / 特性 / 持ち物を検索', '기술 검색': '技検索', '도구 검색': '持ち物検索', '타입': 'タイプ', '분류': '分類', '명중': '命中', '변화': '変化', '해당 특성 포켓몬': 'この特性のポケモン', '배우는 포켓몬': 'この技を覚えるポケモン', '합계': '合計', '효과': '効果',
     '선택 슬롯 비우기': '選択スロットを空にする',
     '간단 설명': '要約', '상세 설명': '詳細説明', '설명': '説明', '이름': '名前', '설명 데이터 없음': '説明データはまだありません。',
-    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
+    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'サンプル技を1つ以上登録すると、ここですぐ比較できます。', '샘플 기술로 이동': 'サンプル技へ移動', '세부 내구 조절': '耐久の詳細調整', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '비교 포켓몬 추가': '比較ポケモン追加', '비교 포켓몬': '比較ポケモン', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '내 스피드 랭크': '自分の素早さランク', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
@@ -3645,6 +3645,13 @@ export default function App() {
   }, initialOpponentBulkPreset), [initialOpponentBulkPreset, persisted])
   const [calcWeather, setCalcWeather] = React.useState<DamageWeather>(() => persisted?.calcWeather ?? 'none')
   const [calcTerrain, setCalcTerrain] = React.useState<DamageTerrain>(() => persisted?.calcTerrain ?? 'none')
+  const [calcFieldConditionsCollapsed, setCalcFieldConditionsCollapsed] = React.useState(() => !(
+    (persisted?.calcWeather && persisted.calcWeather !== 'none')
+    || (persisted?.calcTerrain && persisted.calcTerrain !== 'none')
+    || persisted?.calcReflect
+    || persisted?.calcLightScreen
+    || persisted?.calcAuroraVeil
+  ))
   const [calcBurned, setCalcBurned] = React.useState(() => Boolean(persisted?.calcBurned))
   const [calcCritical, setCalcCritical] = React.useState(() => Boolean(persisted?.calcCritical))
   const [calcAttackerLowHp, setCalcAttackerLowHp] = React.useState(() => Boolean(persisted?.calcAttackerLowHp))
@@ -5260,6 +5267,13 @@ export default function App() {
     : null
   const damageNoEffect = isNoEffectDamage(damage)
   const damageVerdict = defenderBattleStats && damage ? resolveDamageVerdict(damage, defenderBattleStats.hp, siteLanguage) : null
+  const activeFieldConditionLabels = [
+    calcWeather !== 'none' ? lt(calcWeather === 'sun' ? '쾌청' : calcWeather === 'rain' ? '비' : calcWeather === 'sand' ? '모래바람' : '싸라기눈') : null,
+    calcTerrain !== 'none' ? lt(calcTerrain === 'electric' ? '일렉트릭필드' : calcTerrain === 'grassy' ? '그래스필드' : calcTerrain === 'psychic' ? '사이코필드' : '미스트필드') : null,
+    calcReflect ? lt('리플렉터') : null,
+    calcLightScreen ? lt('빛의장막') : null,
+    calcAuroraVeil ? lt('오로라베일') : null,
+  ].filter((value): value is string => Boolean(value))
   const applyOpponentBulkPresetSelection = (preset: OpponentBulkPreset) => {
     setCalcOpponentBulkPreset(preset)
     if (preset === 'custom') return
@@ -7833,12 +7847,19 @@ export default function App() {
                       )
                     }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
                     <div className="damage-opponent-move-adder opponent-entry-move-adder">
-                      {oppMember.key && oppTopSuggestedMoves.length ? <div className="sample-track-card opponent-top-moves-card">
-                        <div className="row-between sample-track-head compact-gap">
-                          <strong>{lt('사용률 상위 기술')}</strong>
-                          <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
-                        </div>
-                        <div className="move-chip-wrap">
+                      <div className="damage-opponent-move-meta">
+                        <strong>{lt('공개 기술')}</strong>
+                        <span>{oppMember.revealedMoves.length} / 4</span>
+                      </div>
+                      {oppMember.key && oppTopSuggestedMoves.length ? <details className="damage-top-move-strip">
+                        <summary className="damage-top-move-strip-summary">
+                          <span className="damage-top-move-strip-summary-copy">
+                            <strong>{lt('사용률 상위 기술')}</strong>
+                            <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
+                          </span>
+                          <span className="damage-top-move-strip-summary-status muted-inline">{lt('현재')} {oppMember.revealedMoves.length} / 4</span>
+                        </summary>
+                        <div className="move-chip-wrap damage-top-move-strip-chips">
                           {oppTopSuggestedMoves.map((move) => {
                             const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                             const locked = oppMember.revealedMoves.includes(move)
@@ -7846,7 +7867,7 @@ export default function App() {
                               <button
                                 key={`opp-top-move-${oppMember.key}-${move}`}
                                 type="button"
-                                className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`}
+                                className={`move-chip core ${locked ? 'confirmed quiet-confirmed' : ''} ${moveTypeThemeClass(moveType)}`}
                                 onClick={() => addOpponentRevealedMove(move)}
                                 disabled={locked || oppMember.revealedMoves.length >= 4}
                                 {...bindTooltip(moveTooltipData(move, siteLanguage))}
@@ -7856,8 +7877,8 @@ export default function App() {
                             )
                           })}
                         </div>
-                      </div> : null}
-                      <label>
+                      </details> : null}
+                      <label className="damage-opponent-move-entry">
                         <span>{lt('상대 기술 추가')}</span>
                         <div className="damage-opponent-move-input-row">
                           <input
@@ -8520,7 +8541,13 @@ export default function App() {
                 </div>
               </div>
               <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
-                    <span className="sample-workbench-section-label">{lt('비교 포켓몬 추가')}</span>
+                    <div className="row-between compact-gap sample-compare-adder-head">
+                      <span className="sample-workbench-section-label">{lt('비교 포켓몬 추가')}</span>
+                      <div className="pick-summary-badges sample-damage-adder-badges">
+                        <span className="pick-badge">{lt('샘플 기술')} {sampleDamageMoveChoices.length}/4</span>
+                        {sampleDamageCalcs.length ? <span className="pick-badge">{lt('비교 포켓몬')} {sampleDamageCalcs.length}</span> : null}
+                      </div>
+                    </div>
                     <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onBlur={() => { setTimeout(() => setSampleDamageSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-damage-add'), 120) }} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onKeyDown={(e) => {
                       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                         e.preventDefault()
@@ -8538,13 +8565,20 @@ export default function App() {
                     {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
                       {sampleDamageSearchResults.map((option, optionIdx) => <button key={`sample-damage-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
                     </div> : null}
+                    {!sampleDamageMoveChoices.length ? <div className="sample-inline-helper sample-damage-adder-helper">
+                      <span>{lt('샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.')}</span>
+                      <button type="button" className="pick-chip" onClick={() => setSampleWorkbenchTab('builder')}>{lt('샘플 기술로 이동')}</button>
+                    </div> : null}
               </label>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
                 <div className="row-between sample-workbench-section-head">
                   <span className="sample-workbench-section-label">{lt('비교 포켓몬')}</span>
                   {sampleDamageCalcs.length ? <span className="pick-badge">{sampleDamageCalcs.length}</span> : null}
                 </div>
-                {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => (
+                {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => {
+                  const bulkPresetKey = detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })
+                  const bulkPresetLabel = bulkPresetKey === 'custom' ? lt('직접 조절') : OPPONENT_BULK_PRESETS[bulkPresetKey].label
+                  return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     <div className="row-between sample-compare-card-head">
                       <div className="sample-compare-hero sample-compare-hero-compact">
@@ -8565,7 +8599,7 @@ export default function App() {
                           </label>
                           <label>
                             {lt('상대 내구 프리셋')}
-                            <select value={detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })} onChange={(e) => applySampleDamageBulkPresetSelection(entry.idx, e.target.value as OpponentBulkPreset)}>
+                            <select value={bulkPresetKey} onChange={(e) => applySampleDamageBulkPresetSelection(entry.idx, e.target.value as OpponentBulkPreset)}>
                               {Object.entries(OPPONENT_BULK_PRESETS).map(([key, preset]) => <option key={`sample-damage-bulk-preset-${entry.idx}-${key}`} value={key}>{preset.label}</option>)}
                               <option value="custom">{lt('직접 조절')}</option>
                             </select>
@@ -8583,32 +8617,43 @@ export default function App() {
                               : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
                           </label> : null}
                           {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown, resolvedPower: entry.movePower, totalPower: entry.moveHitSummary?.totalPower ?? null })}</div> : null}
-                          <label className="sample-bulk-hp-row">
-                            {lt('체력 EV')}
-                            <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                          </label>
-                          <div className="sample-bulk-split-grid">
-                            <div className="sample-bulk-pair-row">
-                              <label>
-                                {lt('방어')}
-                                <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                          <details className="sample-damage-bulk-details" open={bulkPresetKey === 'custom' ? true : undefined}>
+                            <summary className="sample-damage-bulk-summary">
+                              <span className="sample-damage-bulk-summary-copy">
+                                <strong>{lt('세부 내구 조절')}</strong>
+                                <span className="muted-inline">{bulkPresetLabel}</span>
+                              </span>
+                              <span className="pick-badge">{lt('체력')} {entry.member.hpEv} / {lt('방어')} {entry.member.defenseEv} / {lt('특수방어')} {entry.member.spDefenseEv}</span>
+                            </summary>
+                            <div className="sample-damage-bulk-editor">
+                              <label className="sample-bulk-hp-row">
+                                {lt('체력 EV')}
+                                <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.hpEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { hpEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
                               </label>
-                              <label className="sample-bulk-check-label">
-                                <span>{lt('방어+')}</span>
-                                <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
-                              </label>
+                              <div className="sample-bulk-split-grid">
+                                <div className="sample-bulk-pair-row">
+                                  <label>
+                                    {lt('방어')}
+                                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.defenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                                  </label>
+                                  <label className="sample-bulk-check-label">
+                                    <span>{lt('방어+')}</span>
+                                    <input type="checkbox" checked={entry.member.defenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { defenseNature: e.target.checked ? 1.1 : 1 })} />
+                                  </label>
+                                </div>
+                                <div className="sample-bulk-pair-row">
+                                  <label>
+                                    {lt('특방')}
+                                    <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
+                                  </label>
+                                  <label className="sample-bulk-check-label">
+                                    <span>{lt('특방+')}</span>
+                                    <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
+                                  </label>
+                                </div>
+                              </div>
                             </div>
-                            <div className="sample-bulk-pair-row">
-                              <label>
-                                {lt('특방')}
-                                <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member.spDefenseEv} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseEv: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
-                              </label>
-                              <label className="sample-bulk-check-label">
-                                <span>{lt('특방+')}</span>
-                                <input type="checkbox" checked={entry.member.spDefenseNature > 1} onChange={(e) => updateSampleDamageTarget(entry.idx, { spDefenseNature: e.target.checked ? 1.1 : 1 })} />
-                              </label>
-                            </div>
-                          </div>
+                          </details>
                         </div>
                       </div>
                       <div className="sample-workbench-mainpanel">
@@ -8643,7 +8688,7 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                )) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
+                )}) : <div className="sample-empty-state">{lt('비교 대상 없음')}</div>}
               </div>
             </div>
           </div>}
@@ -8983,20 +9028,27 @@ export default function App() {
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
                 <div className="damage-opponent-move-adder">
-                  {oppMember.key && oppTopSuggestedMoves.length ? <div className="damage-top-move-strip">
-                    <div className="row-between compact-gap damage-top-move-strip-head">
-                      <strong>{lt('사용률 상위 기술')}</strong>
-                      <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
-                    </div>
+                  <div className="damage-opponent-move-meta">
+                    <strong>{lt('공개 기술')}</strong>
+                    <span>{opponentRegisteredDamageMoves.length} / 4</span>
+                  </div>
+                  {oppMember.key && oppTopSuggestedMoves.length ? <details className="damage-top-move-strip">
+                    <summary className="damage-top-move-strip-summary">
+                      <span className="damage-top-move-strip-summary-copy">
+                        <strong>{lt('사용률 상위 기술')}</strong>
+                        <span className="muted-inline">Top {Math.min(10, oppTopSuggestedMoves.length)}</span>
+                      </span>
+                      <span className="damage-top-move-strip-summary-status muted-inline">{lt('현재')} {opponentRegisteredDamageMoves.length} / 4</span>
+                    </summary>
                     <div className="move-chip-wrap damage-top-move-strip-chips">
                       {oppTopSuggestedMoves.map((move) => {
                         const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                         const locked = opponentRegisteredDamageMoves.includes(move)
-                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</button>
+                        return <button key={`damage-top-opp-${oppMember.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed quiet-confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => addOpponentRevealedMove(move)} disabled={locked || opponentRegisteredDamageMoves.length >= 4} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{move}</button>
                       })}
                     </div>
-                  </div> : null}
-                  <label>
+                  </details> : null}
+                  <label className="damage-opponent-move-entry">
                     <span>{lt('상대 기술 추가')}</span>
                     <div className="damage-opponent-move-input-row">
                       <input
@@ -9283,9 +9335,15 @@ export default function App() {
                   </label> : null}
                 </div>
               </div>
-              <div className="damage-control-group">
-                <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                <div className="calc-grid damage-calc-grid compact field-grid">
+              <div className="damage-control-group damage-control-group-secondary">
+                <div className="row-between damage-control-group-head">
+                  <div>
+                    <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                    <p className="damage-control-group-summary">{activeFieldConditionLabels.length ? activeFieldConditionLabels.join(' · ') : lt('없음')}</p>
+                  </div>
+                  <button type="button" className={`pick-chip ${calcFieldConditionsCollapsed ? '' : 'active'}`} onClick={() => setCalcFieldConditionsCollapsed((prev) => !prev)} aria-expanded={!calcFieldConditionsCollapsed}>{calcFieldConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
+                </div>
+                {!calcFieldConditionsCollapsed ? <div className="calc-grid damage-calc-grid compact field-grid">
                   <div className="calc-inline-pair">
                     <label>
                       {lt('날씨')}
@@ -9322,7 +9380,7 @@ export default function App() {
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
                   </label>
-                </div>
+                </div> : null}
               </div>
             </div>
           </div>
