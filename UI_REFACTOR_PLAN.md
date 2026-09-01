@@ -371,3 +371,18 @@ Example:
 - sample speed의 진입, empty state, 결과 카드, 모바일 스캔 순서는 이번 검토까지 안정됐다.
 - Phase 3의 핵심 질문인 primary input / derived result 분리는 single speed calc에서 다시 점검할 가치가 있다.
 - 다음에는 `내 슬롯 선택 → 상대 기준 선택 → 선후공 결과 확인` 한 흐름만 보고 설정이 결과보다 강하게 보이는 지점을 찾는 편이 좋다.
+
+### Latest pass — single damage display / input separation
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **기술 선택 → 자동 계산 기준 확인 → 상황 조건 입력 → 난수 범위 확인**
+- changed:
+  - 수동 분류·수동 위력 fallback과 위력 프리셋을 제거하고, 기술 데이터가 없으면 임의 계산 대신 계산 불가 상태를 사용함.
+  - 타입·분류·위력·특성·자속·상성을 읽기 전용 fact panel로 분리하고, 랭크·급소·화상·기술 고유 조건만 입력 영역에 남김.
+  - 메가폼 선택 시 메가폼의 기본 특성을 명시적으로 다시 해석하고, 실제 적용된 특성/전장 보정을 결과 아래에 표시함.
+  - 파티 포켓몬 선택 후 다음 빈 슬롯 검색창으로 자동 포커스 이동하도록 입력 흐름을 단축함.
+  - 비홈 화면에서 특성 설명 데이터를 로드해 파티·상대·계산기 툴팁에 효과 문구가 빠지지 않게 함.
+- verification:
+  - typecheck / ability damage harness / damage parity harness / production build 통과.
+  - 브라우저 기반 visual harness는 실행 환경에 Chromium이 없어 정적 반응형 규칙과 build로 우선 검증함.
+- next:
+  - ability damage harness가 분류한 미반영 대미지 관련 특성을 상황 입력 필요 여부에 따라 순차 보완한다.

@@ -6382,6 +6382,80 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-auto-badges {
   margin-bottom: 12px;
 }
+.damage-fact-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid rgba(96, 165, 250, 0.34);
+  border-radius: 14px;
+  background: rgba(15, 28, 45, 0.72);
+}
+.damage-fact-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.damage-fact-panel-head span,
+.damage-fact-grid dt {
+  color: #93a4b8;
+  font-size: 11px;
+  font-weight: 700;
+}
+.damage-fact-panel-head strong {
+  color: #f1f5f9;
+  font-size: 15px;
+}
+.damage-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.damage-fact-grid > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: rgba(8, 15, 26, 0.7);
+}
+.damage-fact-grid dt,
+.damage-fact-grid dd {
+  margin: 0;
+}
+.damage-fact-grid dd {
+  overflow: hidden;
+  color: #e5edf6;
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.damage-data-empty {
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px dashed rgba(71, 85, 105, 0.72);
+  border-radius: 12px;
+  color: #93a4b8;
+  text-align: center;
+}
+.damage-applied-modifiers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.damage-applied-modifiers span {
+  padding: 5px 8px;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 8px;
+  background: rgba(30, 58, 95, 0.34);
+  color: #bfdbfe;
+  font-size: 11px;
+  font-weight: 700;
+}
 .damage-control-groups {
   display: grid;
   gap: 12px;
@@ -7172,6 +7246,7 @@ html {
   }
   .calc-toggle-box.span-2 { grid-column: span 2; }
   .damage-summary-grid { grid-template-columns: 1fr; }
+  .damage-fact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .ev-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .modal-grid { grid-template-columns: 1fr; }
   .drag-stat-list { grid-template-columns: 1fr; }
@@ -7336,6 +7411,14 @@ html {
   }
 }
 @media (max-width: 640px) {
+  .damage-fact-panel-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .damage-fact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .app-shell {
     padding: 14px;
   }

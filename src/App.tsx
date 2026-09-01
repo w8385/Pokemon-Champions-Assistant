@@ -2025,14 +2025,14 @@ function variablePowerHint(moveName: string, lt: (key: string) => string, option
     case '풀묶기':
       return typeof options?.resolvedPower === 'number'
         ? `${lt('위력')} ${options.resolvedPower}`
-        : lt(options?.targetWeightKnown ? '상대 무게에 따라 위력이 자동 반영됨' : '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함')
+        : lt('상대 무게에 따라 위력이 자동 반영됨')
     case '스케일샷':
     case '트리플악셀':
       return typeof options?.totalPower === 'number'
         ? `${lt('위력')} ${options.totalPower}`
-        : lt('수동 위력')
+        : lt('대미지 계산 불가')
     default:
-      return lt('수동 위력')
+      return lt('대미지 계산 불가')
   }
 }
 
@@ -3616,8 +3616,6 @@ export default function App() {
   const [doubleActionTargetOppRight, setDoubleActionTargetOppRight] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionTargetOppRight === 'myLeft' || persisted?.doubleActionTargetOppRight === 'myRight' || persisted?.doubleActionTargetOppRight === 'oppLeft' || persisted?.doubleActionTargetOppRight === 'oppRight' ? persisted.doubleActionTargetOppRight : 'myRight')
   const [doubleActionFocusSlot, setDoubleActionFocusSlot] = React.useState<DoubleBoardSlot>(() => persisted?.doubleActionFocusSlot === 'myLeft' || persisted?.doubleActionFocusSlot === 'myRight' || persisted?.doubleActionFocusSlot === 'oppLeft' || persisted?.doubleActionFocusSlot === 'oppRight' ? persisted.doubleActionFocusSlot : 'myLeft')
   const [doubleBulkEditorSlot, setDoubleBulkEditorSlot] = React.useState<DoubleBoardSlot | null>(null)
-  const [movePower, setMovePower] = React.useState(90)
-  const [calcMode, setCalcMode] = React.useState<CalcMode>('special')
   const [calcSwapSides, setCalcSwapSides] = React.useState(() => Boolean(persisted?.calcSwapSides))
   const [calcAttackStage, setCalcAttackStage] = React.useState(() => clampBattleStage(persisted?.calcAttackStage))
   const [calcDefenseStage, setCalcDefenseStage] = React.useState(() => clampBattleStage(persisted?.calcDefenseStage))
@@ -3753,6 +3751,7 @@ export default function App() {
   const partyAbilityEditorRefs = React.useRef<((HTMLInputElement | HTMLSelectElement) | null)[]>([])
   const partyNatureEditorRefs = React.useRef<((HTMLInputElement | HTMLSelectElement) | null)[]>([])
   const partyItemEditorRefs = React.useRef<(HTMLInputElement | null)[]>([])
+  const partySpeciesInputRefs = React.useRef<(HTMLInputElement | null)[]>([])
   const sampleAbilityEditorRef = React.useRef<HTMLSelectElement | null>(null)
   const sampleNatureEditorRef = React.useRef<HTMLSelectElement | null>(null)
   const sampleItemEditorRef = React.useRef<HTMLInputElement | null>(null)
@@ -3761,7 +3760,7 @@ export default function App() {
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
   React.useEffect(() => {
-    if (mainSection !== 'dex') return
+    if (mainSection === 'home') return
     let cancelled = false
     void Promise.all([
       loadMoveMetaByName(),
@@ -4812,8 +4811,10 @@ export default function App() {
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = oppMovePool?.moves?.length ? oppMovePool.moves : moveOptionsForEntry(oppMoveSet)
   const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
-  const selectedMyAbility = resolveSelectedAbility(myRow, myMember.ability, siteLanguage)
-  const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppMember.ability, siteLanguage) : null
+  const myCalcAbility = calcMyKey === myMember.key ? myMember.ability : defaultAbilityForKey(calcMyKey)
+  const oppCalcAbility = calcOppKey === oppMember.key ? oppMember.ability : defaultAbilityForKey(calcOppKey)
+  const selectedMyAbility = resolveSelectedAbility(myRow, myCalcAbility, siteLanguage)
+  const selectedOppAbility = oppRow ? resolveSelectedAbility(oppRow, oppCalcAbility, siteLanguage) : null
   const attackFromOpponent = calcSwapSides && Boolean(oppRow)
   const attackerRow = attackFromOpponent ? oppRow : myRow
   const defenderRow = attackFromOpponent ? myRow : oppRow
@@ -4868,11 +4869,6 @@ export default function App() {
   const activeDamageMovePower = typeof activeDamageMoveMeta?.power === 'number' ? activeDamageMoveMeta.power : null
   const activeDamageMoveAlwaysCrit = Boolean(activeDamageMoveMeta?.alwaysCrit)
   const activeDamageMoveIsStatus = activeDamageMoveMeta?.category === 'status'
-
-  React.useEffect(() => {
-    if (!activeDamageMoveCategory) return
-    setCalcMode((prev) => (prev === activeDamageMoveCategory ? prev : activeDamageMoveCategory))
-  }, [activeDamageMoveCategory])
 
   React.useEffect(() => {
     if (!activeDamageMoveHitOptions?.length) return
@@ -5172,6 +5168,14 @@ export default function App() {
       const nextSearch = [...partySearch]
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setPartySearch(nextSearch)
+      const nextEmptyIdx = next.findIndex((entry, entryIdx) => entryIdx > idx && !entry.key)
+      if (nextEmptyIdx >= 0) {
+        window.setTimeout(() => {
+          setActiveSearchField({ side: 'party', idx: nextEmptyIdx })
+          setAutocompleteMenuOpen(`party-species-${nextEmptyIdx}`)
+          partySpeciesInputRefs.current[nextEmptyIdx]?.focus()
+        }, 0)
+      }
     } else if (side === 'opponent') {
       const member = opponents[idx]
       if (!member) return
@@ -5217,8 +5221,8 @@ export default function App() {
       return { key, row, moveSet, buckets, confirmed: confirmedMovesByKey[key] ?? [] }
     })
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-  const effectiveCalcMode = activeDamageMoveCategory ?? calcMode
-  const effectiveMovePower = activeDamageMovePower ?? movePower
+  const effectiveCalcMode = activeDamageMoveCategory ?? 'special'
+  const effectiveMovePower = activeDamageMovePower ?? 0
   const damageModifiers = resolveDamageModifiers({
     attackerAbility: attackerAbilitySlug,
     attackerItem: attackFromOpponent ? oppMember.item : myMember.item,
@@ -5252,7 +5256,7 @@ export default function App() {
     auroraVeil: calcAuroraVeil,
     friendGuard: false,
   })
-  const damage = attackerBattleStats && defenderBattleStats && defenderRow && !activeDamageMoveIsStatus
+  const damage = attackerBattleStats && defenderBattleStats && defenderRow && activeDamageMoveCategory && activeDamageMovePower !== null && !activeDamageMoveIsStatus
     ? calcDamage(attackerBattleStats, defenderBattleStats, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
     : null
   const damageNoEffect = isNoEffectDamage(damage)
@@ -5532,7 +5536,7 @@ export default function App() {
         : moveMeta?.category === 'status'
           ? lt('변화기는 대미지 계산 대상이 아님')
           : (!movePower || !moveCategory || !moveType)
-            ? lt('수동 위력')
+            ? lt('대미지 계산 불가')
             : null
     const effectiveAttackerTypes = row ? resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain) : sampleRow.types
     const effectiveDefenderTypes = row ? resolveAbilityAdjustedTypes(row.types, defenderAbilityValue, calcWeather, calcTerrain) : []
@@ -5916,8 +5920,6 @@ export default function App() {
     setActivePartyMetaEditor(null)
     setActiveSampleMetaEditor(null)
     setTuningModalIndex(null)
-    setMovePower(90)
-    setCalcMode('special')
     setCalcSwapSides(false)
     setCalcAttackStage(0)
     setCalcDefenseStage(0)
@@ -7301,6 +7303,7 @@ export default function App() {
                             <label className="species-picker party-inline-species-picker">
                               <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
                                 <input
+                                  ref={(element) => { partySpeciesInputRefs.current[idx] = element }}
                                   value={partySearch[idx] ?? ''}
                                   className="party-inline-species-input"
                                   placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
@@ -9012,28 +9015,7 @@ export default function App() {
 
         {(mainSection === 'single' && activeTab === 'power') ? <section className="panel wide">
           <div className="row-between section-head">
-            <div>
-              <h2>{lt('간단 대미지 계산')}</h2>
-              <p className="muted calc-screen-summary">{lt('내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.')}</p>
-            </div>
-          </div>
-          <div className="calc-context-grid">
-            <div className="calc-context-card">
-              <span className="home-section-label">{lt('입력 순서')}</span>
-              <ol className="calc-context-list">
-                <li>{lt('내 파티 관리')}</li>
-                <li>{lt('상대 엔트리')}</li>
-                <li>{lt('대미지 계산')}</li>
-              </ol>
-            </div>
-            <div className="calc-context-card">
-              <span className="home-section-label">{lt('현재 기준 정보')}</span>
-              <div className="calc-context-meta">
-                <span>{lt('공격측')} · {attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</span>
-                <span>{lt('방어측')} · {defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</span>
-                <span>{lt('선택된 기술')} · {activeDamageMove || '-'}</span>
-              </div>
-            </div>
+            <h2>{lt('대미지 계산')}</h2>
           </div>
           <div className="damage-surface-card damage-result-surface">
             {defenderRow && damage ? <div className="damage-box compact-top">
@@ -9057,6 +9039,9 @@ export default function App() {
                   <strong>{damageNoEffect ? lt('무효') : `${damage.minPct}% ~ ${damage.maxPct}%`}</strong>
                 </div>
               </div>
+              {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
+                {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
+              </div> : null}
             </div> : <div className="damage-box empty compact-top"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
           </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
@@ -9242,17 +9227,24 @@ export default function App() {
             {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
             </div> : null}
-            <div className="damage-control-groups">
+            {activeDamageMove ? <div className="damage-fact-panel" aria-label={lt('현재 기준 정보')}>
+              <div className="damage-fact-panel-head">
+                <span>{lt('현재 기술 기준')}</span>
+                <strong>{activeDamageMove}</strong>
+              </div>
+              <dl className="damage-fact-grid">
+                <div><dt>{lt('타입')}</dt><dd>{activeDamageMoveType ? displayTypeName(activeDamageMoveType, siteLanguage) : '—'}</dd></div>
+                <div><dt>{lt('분류')}</dt><dd>{activeDamageMoveCategory ? lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수') : '—'}</dd></div>
+                <div><dt>{lt('위력')}</dt><dd>{activeDamageMovePower ?? '—'}</dd></div>
+                <div><dt>{lt('특성')}</dt><dd>{selectedAttackAbility?.label ?? abilityNoteLabel(attackerAbilitySlug) ?? '—'}</dd></div>
+                <div><dt>{lt('자속')}</dt><dd>{activeDamageMoveType ? autoStab : '—'}</dd></div>
+                <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
+              </dl>
+            </div> : <div className="damage-data-empty">{lt('계산할 기술을 선택해 주세요.')}</div>}
+            {activeDamageMoveMeta ? <div className="damage-control-groups">
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>
                 <div className="calc-grid damage-calc-grid compact offense-grid">
-                  {activeDamageMoveCategory === null ? <label>
-                    {lt('수동 분류')}
-                    <select value={calcMode} onChange={(e) => setCalcMode(e.target.value as CalcMode)}>
-                      <option value="physical">{lt('물리')}</option>
-                      <option value="special">{lt('특수')}</option>
-                    </select>
-                  </label> : <div className="calc-lock-box">{lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수')}</div>}
                   {activeDamageMoveHitOptions?.length ? <label>
                     {lt('타수')}
                     <select value={activeDamageMoveHitCount ?? activeDamageMoveHitOptions[0]} onChange={(e) => setCalcHitCount(Math.max(1, Math.trunc(Number(e.target.value))))} disabled={activeDamageMoveHitOptions.length === 1}>
@@ -9268,31 +9260,11 @@ export default function App() {
                         </>
                       : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(activeDamageMoveConditionValue)} onChange={(e) => setActiveDamageMoveConditionValue(e.target.checked)} /><span>{lt(activeDamageMoveRule.label)}</span></span>}
                     <small>{lt('위력')} {activeDamageMovePower ?? '-'}</small>
-                  </label> : activeDamageMovePower === null ? <label>
-                    {lt('수동 위력')}
-                    <input type="number" value={movePower} onChange={(e) => setMovePower(Number(e.target.value))} />
-                  </label> : <div className="calc-lock-box">{lt('위력')} {activeDamageMovePower}</div>}
-                  {!activeDamageMoveType ? <label>
-                    {lt('자속')}
-                    <select value={stab} onChange={(e) => setStab(Number(e.target.value))}>
-                      <option value={1}>{lt('없음')}</option>
-                      <option value={1.5}>1.5</option>
-                      <option value={2}>2.0</option>
-                    </select>
-                  </label> : usesTypeChangeStabAbility ? <label className="calc-toggle-box">
+                  </label> : null}
+                  {usesTypeChangeStabAbility ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} />
                     <span>{lt('타입변환 자속')} {autoStab}</span>
-                  </label> : <div className="calc-lock-box">{lt('자속')} {autoStab}</div>}
-                  {!activeDamageMoveType ? <label>
-                    {lt('상성')}
-                    <select value={effectiveness} onChange={(e) => setEffectiveness(Number(e.target.value))}>
-                      <option value={0.25}>0.25x</option>
-                      <option value={0.5}>0.5x</option>
-                      <option value={1}>1x</option>
-                      <option value={2}>2x</option>
-                      <option value={4}>4x</option>
-                    </select>
-                  </label> : <div className="calc-lock-box">{lt('상성')} {damageModifiers.effectiveness}x</div>}
+                  </label> : null}
                   <div className="calc-inline-pair">
                     {activeDamageMoveAlwaysCrit ? <div className="calc-lock-box">{lt('급소')}</div> : <label className="calc-toggle-box">
                       <input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} />
@@ -9487,7 +9459,7 @@ export default function App() {
                   </label>
                 </div> : null}
               </div>
-            </div>
+            </div> : null}
           </div>
         </section> : null}
         </>}
