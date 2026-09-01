@@ -214,11 +214,160 @@ Example:
 - note:
   - sample damage의 진입 문법은 이제 single opponent entry / damage calc와 더 가까워졌지만, 결과 배지 수와 상단 조건 패널 weight는 아직 조금 큰 편임.
 
+### Latest pass — sample damage result card metric hierarchy
+- rubric: clarity 4 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상 확인 → 선택 기술 기준 읽기 → 판정/실대미지 확인**
+- changed:
+  - `선택 기술 / 공격 수치 / 상대 실수치`를 pill 나열 대신 **조용한 context card**로 바꿔, 결과를 읽기 전에 기준 정보부터 한 블록으로 확인하게 함.
+  - `판정 / 실대미지 / 체력비율` metric box의 gradient와 강조색을 줄여 verdict만 남기고 나머지 수치는 같은 톤으로 정리함.
+  - 모바일에서도 context grid가 한 줄씩 내려가도록 맞춰, 결과 카드가 좁은 폭에서 덜 끊겨 읽히게 함.
+- note:
+  - sample damage 결과 카드의 상단 badge 경쟁은 많이 줄었지만, 화면 최상단 조건 요약 패널은 아직 약간 넓고 존재감이 큰 편이다.
+
+### Latest pass — sample damage top condition summary weight
+- rubric: clarity 4 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상 추가 전 현재 가정 확인 → 필요할 때만 세부 조건 펼치기**
+- changed:
+  - 상단 `세부 조건` 바로 아래에 **화력 조건 / 전장 조건 요약 strip**을 추가해, 펼치지 않아도 현재 가정을 badge로 먼저 읽게 함.
+  - 활성 조건이 없을 때는 각 구간을 `기본` badge 하나로 정리해 빈 박스처럼 보이지 않게 하고, 비기본 상태만 자연스럽게 드러나게 함.
+  - sample damage 상단 패널과 비교 대상 추가 카드의 gradient/shadow/padding을 줄여 상단 chrome 존재감을 낮춤.
+- note:
+  - 상단은 훨씬 조용해졌지만, 비교 대상 카드 내부의 `기술 구성 / 내구 프리셋 / 세부 내구 조절` control 묶음은 아직 한 덩어리로 보여 다음 밀도 정리 후보로 남아 있다.
+
+### Latest pass — sample damage compare-target control column density
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상 선택 후 내 기술 결정 → 상대 내구 가정 확인 → 필요할 때만 세부 조절**
+- changed:
+  - 좌측 control column 상단에 `기술 구성 / 상대 내구 프리셋` 현재값 요약 strip을 추가해, select를 읽기 전에 지금 비교 기준이 무엇인지 먼저 확인하게 함.
+  - `기술 구성(+위력 조건)`과 `상대 내구 프리셋(+세부 내구 조절)`을 별도 section surface로 분리해, 순서는 유지하면서도 한 덩어리 control wall처럼 보이던 밀도를 낮춤.
+  - variable-power hint를 기존 calc box보다 더 조용한 inline hint로 낮춰서, 필요한 기술에서만 보조 설명 역할을 하게 함.
+- note:
+  - 비교 대상 카드 내부 흐름은 많이 또렷해졌지만, 결과 영역에서 `판정 / 실대미지 / 체력비율` 아래 추가 설명이 길어질 때 카드 높이 차가 커지는 편이다.
+
+### Latest pass — sample damage result metric card vertical rhythm
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상 확인 → 판정 읽기 → 실대미지/체력비율 비교**
+- changed:
+  - `판정` 문구를 `주 결과 / 보조 정보` 2줄 구조로 나눠, `난수 n타 · xx%` 같은 긴 verdict가 한 줄에서 카드 높이를 흔들지 않게 함.
+  - `실대미지 / 체력비율` 카드에 조용한 helper line을 넣어 각각 `총위력(or 위력)` / `상대 체력` 기준을 같은 위치에서 읽게 하고, 값 길이가 달라도 세로 리듬이 유지되게 함.
+  - verdict tone을 guaranteed / possible만 약하게 분기하고, metric box 최소 높이를 맞춰 결과 카드들 높이 차를 줄임.
+- note:
+  - 결과 카드 리듬은 안정됐지만, unavailable 상태와 정상 계산 상태의 레이아웃 문법은 아직 완전히 같지 않다.
+
+### Latest pass — sample damage empty / unavailable state grammar
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상이 없을 때 현재 상태 확인 → 비교 대상 추가 → 계산 불가 상태 해석**
+- changed:
+  - `비교 포켓몬` empty 상태를 단순 한 줄 문구 대신 **상태 설명 + 현재 카운트 badge + 필요 시 CTA**가 있는 조용한 empty card로 바꿔, 왜 비어 있는지와 다음 행동을 같은 문법으로 읽게 함.
+  - sample damage 결과의 unavailable 상태도 정상 계산과 같은 **verdict / damage / percent 3칸 구조**를 유지하도록 바꿔, 상태 전환 때 카드 높이와 정보 위치가 덜 흔들리게 함.
+  - unavailable metric tone을 별도 보조 surface로 낮춰 `대미지 계산 불가`가 보이더라도 화면 전체가 과하게 경고처럼 보이지 않게 정리함.
+- note:
+  - sample damage의 empty/unavailable 문법은 많이 정리됐고, 남은 후보는 상단 `비교 포켓몬 추가` 블록과 아래 결과 리스트 사이의 시각 weight 차이다.
+
+### Latest pass — sample damage compare-adder vs result list weight balance
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **샘플 기술 확인 → 비교 포켓몬 추가 → 아래 결과 리스트 읽기**
+- changed:
+  - `비교 포켓몬 추가` 헤더를 badge wall 대신 **현재 상태 strip + 짧은 안내 문장** 구조로 바꿔, 검색창보다 앞에서 필요한 기준만 먼저 읽히게 함.
+  - `샘플 기술 n/4 / 비교 포켓몬 n` count를 항상 같은 자리의 quieter badge로 고정해, 결과가 0일 때도 상태는 보이되 존재감은 낮추도록 정리함.
+  - adder block의 padding / border / shadow를 한 단계 낮추고, `샘플 기술로 이동` CTA를 별도 얇은 row로 분리해 아래 결과 리스트와 시각 weight 차를 줄임.
+- note:
+  - compare-adder의 시작 톤은 많이 차분해졌고, 다음 후보는 비교 대상 카드 상단 hero와 결과 metric grid 사이의 대비를 조금 더 벌리는 일이다.
+
 ## Immediate Next Pass Recommendation
 
-다음 반복 리뷰는 **sample damage 결과 카드의 metric/badge 밀도**를 보는 게 좋다.
+다음 반복 리뷰는 **sample speed result card hierarchy**를 보는 게 좋다.
 
 이유:
-- 비교 대상 추가와 내구 미세조정은 이제 요약 → 선택 → 상세 조정 순서로 정리됐지만, 결과 영역은 여전히 badge와 metric box가 동시에 많아 한 번에 읽는 부담이 남아 있다.
-- 특히 `선택 기술 / 공격 수치 / 상대 실수치` 배지 줄과 `판정 / 실대미지 / 체력비율` 박스 사이의 위계를 더 벌리면 핵심 결론이 더 빨리 읽힐 가능성이 크다.
-- 같은 화면 안에서 입력 쪽은 quiet해졌으니, 다음엔 결과 쪽까지 같은 철학으로 맞추는 편이 효율적이다.
+- sample damage 카드 내부의 식별 영역과 결과 영역은 이번 패스로 충분히 분리됐다.
+- 같은 sample workflow 안에서 speed 결과 카드는 아직 gradient와 상태 badge가 상대적으로 강해, damage 화면과 restraint 수준을 맞출 여지가 있다.
+- 다음에는 speed 결과의 `상대 확인 → 선후공 판정 → 속도선 비교` 한 흐름만 보고 작은 diff를 고르는 편이 좋다.
+
+### Latest pass — sample damage compare card hero vs metric contrast
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **비교 포켓몬 식별 → 조건 확인 → 판정/대미지 결과 읽기**
+- changed:
+  - 비교 카드 hero 아래에 조용한 divider를 두고 sprite 크기와 drop shadow를 줄여, 포켓몬 식별부가 결과보다 먼저 튀지 않게 함.
+  - metric grid 시작점에 간격과 divider를 추가해 control/context 영역에서 실제 계산 결과로 넘어가는 경계를 분명히 함.
+  - 기본 verdict surface에만 약한 blue tint를 주고 guaranteed/possible 상태색은 그대로 유지해, 정상 결과에서도 첫 시선이 판정에 닿게 함.
+- note:
+  - sample damage 비교 카드의 내부 위계는 안정됐다. 다음 후보는 같은 workflow의 sample speed 결과 카드에서 강한 gradient/badge를 줄이는 일이다.
+
+### Latest pass — sample speed result card hierarchy
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **상대 기준 확인 → 선후공 판정 → 동속/추월 속도선 확인**
+- changed:
+  - 결과를 badge 나열 대신 `기준/현재 속도 → 선후공 판정 → 필요 EV` 순서로 재배치해 첫 시선이 판정에 닿게 함.
+  - ahead/tie/behind 상태 badge를 텍스트 verdict로 바꾸고 카드 색은 약한 tint로 낮춰, 결과 카드 여러 개가 나란히 나와도 색 경쟁이 줄게 함.
+  - `동속컷 / 추월컷`을 하단의 고정된 2열 meta row로 묶어 속도선 비교 위치를 카드마다 맞춤.
+- note:
+  - sample speed 결과는 damage 결과와 비슷한 restraint 수준으로 맞춰졌다. 다음 후보는 speed 화면의 `기준 빌드 / 내 스피드 랭크`가 차지하는 상단 높이와 요약 badge 밀도다.
+
+## Immediate Next Pass Recommendation
+
+다음 반복 리뷰는 **sample speed compare-target entry / empty state**를 보는 게 좋다.
+
+이유:
+- 상단 기준 빌드와 결과 카드의 위계는 이번 패스로 충분히 정리됐다.
+- 비교 포켓몬 검색은 아직 label + input만 있고, 대상이 없을 때도 단순 한 줄 empty 문구만 보여 damage workflow와 상태 문법이 다르다.
+- 다음에는 `대상 없음 → 검색 → 첫 결과 확인` 흐름만 맞추는 편이 좋다.
+
+### Latest pass — sample speed top build summary density
+- rubric: clarity 5 / focus 5 / density 5 / consistency 5 / restraint 5
+- reviewed workflow: **현재 빌드 확인 → 스피드 노력치 조정 → 랭크 설정**
+- changed:
+  - 기준 빌드 하단의 성격/실수치/특성/도구 pill 묶음을 조용한 3열 summary row로 바꿔 상단 badge 경쟁을 줄임.
+  - 노력치 카드에 이미 표시되는 `실수치 스피드` 중복 badge를 제거해 같은 값이 두 번 읽히지 않게 함.
+  - 모바일에서는 summary를 한 열로 내려 긴 특성/도구명도 기준 빌드 안에서 안정적으로 읽히게 함.
+- note:
+  - 상단 흐름은 간결해졌고, 다음 후보는 speed 비교 대상 검색과 empty state를 damage 화면 문법에 맞추는 일이다.
+
+### Latest pass — sample speed compare-target entry / empty state
+- rubric: clarity 5 / focus 5 / density 5 / consistency 5 / restraint 5
+- reviewed workflow: **비교 대상 없음 확인 → 포켓몬 검색 → 첫 결과 확인**
+- changed:
+  - 비교 대상 검색 블록에 현재 대상 수와 짧은 안내를 검색창 앞에 두어, 검색 후 어디에 결과가 나오는지 먼저 읽히게 함.
+  - 대상이 없을 때의 단순 한 줄 문구를 **상태 제목 / 다음 행동 안내 / 0 count** 구조로 바꿔, sample damage empty state와 같은 문법으로 맞춤.
+  - 기존 quiet surface와 count badge를 재사용해 새로운 장식 유형을 추가하지 않음.
+- note:
+  - sample speed의 entry/empty 상태는 damage workflow와 통일됐다. 다음 후보는 결과 카드 좌측의 `랭크` 조작부가 카드별로 만드는 세로 공간을 줄일지 검토하는 일이다.
+
+## Immediate Next Pass Recommendation
+
+다음 반복 리뷰는 **sample speed result card mobile scan order**를 보는 게 좋다.
+
+이유:
+- 상대 랭크 조작은 별도 side panel에서 hero 아래의 얇은 row로 이동해 데스크톱 가로 낭비가 줄었다.
+- 모바일에서는 `상대 확인 → 랭크 → 2개 결과` 순서가 자연스러운지 실제 좁은 폭에서 한 번 더 확인할 가치가 있다.
+- 다음에는 코드 변경을 전제로 하지 말고, 2열 결과가 좁은 폭에서도 비교 가능한지만 먼저 검토하는 편이 좋다.
+
+### Latest pass — sample speed result card rank control placement
+- rubric: clarity 5 / focus 5 / density 5 / consistency 5 / restraint 5
+- reviewed workflow: **상대 확인 → 상대 랭크 조정 → 선후공 판정 확인**
+- changed:
+  - 카드 좌측에서 별도 열 전체를 차지하던 단일 `랭크` select를 포켓몬 hero 바로 아래의 얇은 inline row로 이동함.
+  - 결과 본문을 전체 너비로 확장해 선후공 판정과 속도선 비교가 카드의 주 작업으로 더 크게 읽히게 함.
+  - 기존 select와 quiet surface 문법을 유지해 새 badge나 장식 유형은 추가하지 않음.
+- note:
+  - 데스크톱의 불필요한 빈 side panel은 제거됐다. 다음 후보는 모바일에서 hero / rank / 2열 결과의 실제 스캔 순서 확인이다.
+
+### Latest pass — sample speed result card mobile scan order
+- rubric: clarity 5 / focus 5 / density 5 / consistency 5 / restraint 5
+- reviewed workflow: **모바일에서 상대 확인 → 상대 랭크 조정 → 기본/조건 결과 비교**
+- findings:
+  - DOM 순서가 hero → rank row → result grid로 이미 작업 순서와 일치한다.
+  - 960px 이하에서는 두 결과를 2열로 유지하고, 640px 이하에서는 1열로 전환해 좁은 폭에서 카드 내부 텍스트가 눌리지 않는다.
+  - 각 결과 카드 안의 `기준/현재 속도 → 판정 → 동속컷/추월컷` 순서도 유지되어 별도 모바일 전용 재배치가 필요하지 않다.
+- changed:
+  - 코드 변경 없음. 현재 반응형 규칙이 rubric을 충족해 추가 breakpoint나 장식 유형을 만들지 않았다.
+- note:
+  - 다음 후보는 sample workflow를 벗어나 **single speed calc의 입력/결과 위계**를 확인해, sample speed에서 정리한 문법을 싱글 계산 화면에도 적용할지 검토하는 일이다.
+
+## Immediate Next Pass Recommendation
+
+다음 반복 리뷰는 **single speed calc input / result hierarchy**를 보는 게 좋다.
+
+이유:
+- sample speed의 진입, empty state, 결과 카드, 모바일 스캔 순서는 이번 검토까지 안정됐다.
+- Phase 3의 핵심 질문인 primary input / derived result 분리는 single speed calc에서 다시 점검할 가치가 있다.
+- 다음에는 `내 슬롯 선택 → 상대 기준 선택 → 선후공 결과 확인` 한 흐름만 보고 설정이 결과보다 강하게 보이는 지점을 찾는 편이 좋다.
