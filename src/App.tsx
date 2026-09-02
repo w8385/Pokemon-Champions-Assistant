@@ -1074,20 +1074,31 @@ function moveMatchesTaggedSet(moveName: string, taggedMoves: Set<string>) {
   return moveNameCandidates(moveName).some((candidate) => taggedMoves.has(normalizeSearchText(candidate)))
 }
 
-function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string) {
+function protectionDamageMultiplier(attackerAbility: string, moveName: string, protectionActive: boolean) {
+  if (!protectionActive) return 1
+  return attackerAbility === 'piercing-drill' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES) ? 0.25 : 0
+}
+
+function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string, weather: DamageWeather = 'none') {
   if (!moveMeta) return moveMeta
   const isDamaging = moveMeta.category === 'physical' || moveMeta.category === 'special'
   if (!isDamaging) return moveMeta
-  if (moveMeta.type === 'normal') {
-    if (attackerAbility === 'aerilate') return { ...moveMeta, type: 'flying' }
-    if (attackerAbility === 'pixilate') return { ...moveMeta, type: 'fairy' }
-    if (attackerAbility === 'refrigerate') return { ...moveMeta, type: 'ice' }
-    if (attackerAbility === 'dragonize') return { ...moveMeta, type: 'dragon' }
+  const effectiveWeather = attackerAbility === 'mega-sol' ? 'sun' : weather
+  let adjusted = moveMeta
+  if (normalizeSearchText(moveName) === normalizeSearchText('웨더볼') && effectiveWeather !== 'none') {
+    const weatherType = effectiveWeather === 'sun' ? 'fire' : effectiveWeather === 'rain' ? 'water' : effectiveWeather === 'sand' ? 'rock' : 'ice'
+    adjusted = { ...adjusted, type: weatherType, power: 100 }
+  }
+  if (adjusted.type === 'normal') {
+    if (attackerAbility === 'aerilate') return { ...adjusted, type: 'flying' }
+    if (attackerAbility === 'pixilate') return { ...adjusted, type: 'fairy' }
+    if (attackerAbility === 'refrigerate') return { ...adjusted, type: 'ice' }
+    if (attackerAbility === 'dragonize') return { ...adjusted, type: 'dragon' }
   }
   if (attackerAbility === 'liquid-voice' && moveMatchesTaggedSet(moveName, SOUND_MOVE_NAMES)) {
-    return { ...moveMeta, type: 'water' }
+    return { ...adjusted, type: 'water' }
   }
-  return moveMeta
+  return adjusted
 }
 
 function lookupMoveMeta(name: string) {
@@ -1697,6 +1708,11 @@ function buildOpponentBattleStats(row: Row, bulkConfig: OpponentBulkState, offen
   }
 }
 
+function attackingFormRow(row: Row, ability: string): Row {
+  if (ability !== 'stance-change' || row.key !== 'aegislash') return row
+  return { ...row, attack: 140, spAttack: 140 }
+}
+
 function koChanceForHits(rolls: number[], hp: number, hitCount: number) {
   let states = new Map<number, number>([[0, 1]])
   for (let turn = 0; turn < hitCount; turn += 1) {
@@ -2285,6 +2301,7 @@ function abilityNoteLabel(ability: string) {
     'liquid-voice': '촉촉보이스',
     'merciless': '무도한행동',
     'mega-launcher': '메가런처',
+    'mega-sol': '메가솔',
     'marvel-scale': '이상한비늘',
     'mimicry': '의태',
     'lightning-rod': '피뢰침',
@@ -2313,10 +2330,12 @@ function abilityNoteLabel(ability: string) {
     'strong-jaw': '옹골찬턱',
     'supreme-overlord': '대장군',
     'parental-bond': '부자유친',
+    'piercing-drill': '관통드릴',
     'plus': '플러스',
     'minus': '마이너스',
     'steelworker': '강철술사',
     'steely-spirit': '강철정신',
+    'stance-change': '배틀스위치',
     'storm-drain': '마중물',
     'sword-of-ruin': '재앙의검',
     'technician': '테크니션',
@@ -2385,6 +2404,7 @@ function resolveDamageModifiers(params: {
   let adjustedEffectiveness = effectiveness
   const notes: string[] = []
   let incomingScreenName: string | null = null
+  const offensiveWeather: DamageWeather = attackerAbility === 'mega-sol' ? 'sun' : weather
 
   const typeBoostItems: Partial<Record<string, string>> = {
     'きせきのタネ': 'grass',
@@ -2428,7 +2448,7 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  if (weather === 'sun' && mode === 'special' && attackerAbility === 'solar-power') {
+  if (offensiveWeather === 'sun' && mode === 'special' && attackerAbility === 'solar-power') {
     attackMultiplier *= 1.5
     notes.push(abilityNoteLabel(attackerAbility))
   }
@@ -2457,7 +2477,7 @@ function resolveDamageModifiers(params: {
     }
   }
 
-  if (weather === 'sand' && moveType && ['rock', 'ground', 'steel'].includes(moveType) && attackerAbility === 'sand-force') {
+  if (offensiveWeather === 'sand' && moveType && ['rock', 'ground', 'steel'].includes(moveType) && attackerAbility === 'sand-force') {
     powerMultiplier *= 1.3
     notes.push(abilityNoteLabel(attackerAbility))
   }
@@ -2580,17 +2600,17 @@ function resolveDamageModifiers(params: {
     notes.push(attackerItem)
   }
 
-  if (weather === 'sun') {
+  if (offensiveWeather === 'sun') {
     if (moveType === 'fire') {
       finalMultiplier *= 1.5
-      notes.push('쾌청')
+      notes.push(attackerAbility === 'mega-sol' ? `${abilityNoteLabel(attackerAbility)}(쾌청)` : '쾌청')
     } else if (moveType === 'water') {
       finalMultiplier *= 0.5
-      notes.push('쾌청')
+      notes.push(attackerAbility === 'mega-sol' ? `${abilityNoteLabel(attackerAbility)}(쾌청)` : '쾌청')
     }
   }
 
-  if (weather === 'rain') {
+  if (offensiveWeather === 'rain') {
     if (moveType === 'water') {
       finalMultiplier *= 1.5
       notes.push('비')
@@ -4193,9 +4213,10 @@ export default function App() {
         ? (attackerAllyMeta.option.member.ability || defaultAbilityForKey(attackerAllyMeta.option.member.key))
         : attackerAllyMeta.option.entry.ability)
       : ''
+    const resolvedAttackerRow = attackingFormRow(attackerRow, attackerAbility)
     const attackerStats = attackerMeta.side === 'my'
-      ? buildPartyBattleStats(attackerRow, attackerMeta.option.member)
-      : buildOpponentBattleStats(attackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
+      ? buildPartyBattleStats(resolvedAttackerRow, attackerMeta.option.member)
+      : buildOpponentBattleStats(resolvedAttackerRow, { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1 }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const defenderStats = defenderMeta.side === 'my'
       ? buildPartyBattleStats(defenderRow, defenderMeta.option.member)
       : buildOpponentBattleStats(defenderRow, {
@@ -4208,14 +4229,17 @@ export default function App() {
     const moveOptions = attackerMeta.side === 'my' ? moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.member.key)) : moveOptionsForEntry(sampleMoves.find((entry) => entry.key === attackerMeta.option.entry.key))
     const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
     const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
-    const moveType = resolveMoveType(moveName, moveOptions, movePoolByKey) ?? moveMeta?.type ?? null
+    const moveType = moveMeta?.type ?? resolveMoveType(moveName, moveOptions, movePoolByKey) ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
     const effectiveness = moveType ? abilityAdjustedTypeEffectiveness(moveType, effectiveTypes, defenderAbility, attackerAbility) : 1
     const guardedByWide = spreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
     const protectedTarget = doubleProtectBySlot[defenderSlot]
+    const protectionMultiplier = protectionDamageMultiplier(attackerAbility, moveName, guardedByWide || protectedTarget)
+    const piercesProtection = protectionMultiplier > 0 && protectionMultiplier < 1
+    const blockedByProtection = protectionMultiplier === 0
     const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
-    const modifiers = guardedByWide || protectedTarget ? null : resolveDamageModifiers({
+    const modifiers = blockedByProtection ? null : resolveDamageModifiers({
       attackerAbility,
       attackerAllyAbility,
       attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
@@ -4249,8 +4273,12 @@ export default function App() {
       critical: false,
     })
     if (modifiers && spreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
-    const damage = guardedByWide || protectedTarget ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
-    const reason = guardedByWide ? lt('와이드가드로 차단됨') : protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
+    if (modifiers && piercesProtection) {
+      modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * protectionMultiplier
+      modifiers.notes.push(`${abilityNoteLabel(attackerAbility)}(방어 관통 1/4)`)
+    }
+    const damage = blockedByProtection ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
+    const reason = blockedByProtection && guardedByWide ? lt('와이드가드로 차단됨') : blockedByProtection && protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
     return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
   }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey])
   const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
@@ -4863,7 +4891,9 @@ export default function App() {
     : (selectedOppAbility?.slug ?? sanitizeAbilityForKey(defenderRow?.key ?? oppMember.key, oppMember.ability, false))
   const selectedAttackAbility = attackFromOpponent ? selectedOppAbility : selectedMyAbility
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
-  const attackerBattleStats = attackFromOpponent ? (oppRow ? buildOpponentBattleStats(oppRow, opponentBulkState, opponentOffenseState) : null) : myBattleStats
+  const attackerBattleStats = attackFromOpponent
+    ? (oppRow ? buildOpponentBattleStats(attackingFormRow(oppRow, attackerAbilityValue), opponentBulkState, opponentOffenseState) : null)
+    : buildPartyBattleStats(attackingFormRow(myRow, attackerAbilityValue), myMember)
   const defenderBattleStats = attackFromOpponent ? myBattleStats : oppBattleStats
   const myRegisteredDamageMoves = (confirmedMovesByKey[myMember.key] ?? []).filter(Boolean)
   const opponentRegisteredDamageMoves = oppMember.revealedMoves.filter(Boolean)
@@ -4893,6 +4923,7 @@ export default function App() {
         activeDamageMove,
         resolveMultiHitMeta(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount, attackerAbilityValue),
         attackerAbilityValue,
+        calcWeather,
       ),
       defenderWeightKg,
     ),
@@ -5510,6 +5541,7 @@ export default function App() {
     }
   }, [sampleDamageTargets, weightByKey])
   const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(sampleForge.key, sampleForge.ability, true)) : sampleForge.ability
+  const damageSampleAttackerStats = buildPartyBattleStats(attackingFormRow(sampleRow, sampleAttackerAbilityValue), sampleCalcMember)
   const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
   const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
@@ -5573,6 +5605,7 @@ export default function App() {
           moveName,
           resolveMultiHitMeta(moveName, moveMetaBase, moveHitCount, sampleAttackerAbilityValue),
           sampleAttackerAbilityValue,
+          calcWeather,
         ),
         targetWeightKg,
       ),
@@ -5600,7 +5633,7 @@ export default function App() {
       spDefenseNature: member.spDefenseNature,
     }) : null
     if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
-      return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
+      return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
     const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, attackerAbilityValue)
     const modifierPack = resolveDamageModifiers({
@@ -5637,8 +5670,8 @@ export default function App() {
       friendGuard: calcFriendGuard,
     })
     const attackStatLabel = moveCategory === 'physical' ? '공격' : '특수공격'
-    const attackStatValue = moveCategory === 'physical' ? sampleAttackerStats.attack : sampleAttackerStats.spAttack
-    const damage = calcDamage(sampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
+    const attackStatValue = moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack
+    const damage = calcDamage(damageSampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
     return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel, attackStatValue, defenderStats, damage, verdict: damage ? resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) : lt('대미지 계산 불가'), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason: damage ? null : lt('대미지 계산 불가') }
   })
 

@@ -32,6 +32,8 @@ function extractFunctionBlock(source, name) {
 
 const damageBlock = [
   extractFunctionBlock(appSource, 'resolveAbilityAdjustedMoveMeta'),
+  extractFunctionBlock(appSource, 'protectionDamageMultiplier'),
+  extractFunctionBlock(appSource, 'attackingFormRow'),
   extractFunctionBlock(appSource, 'resolveAbilityAdjustedTypes'),
   extractFunctionBlock(appSource, 'resolveStabMultiplier'),
   extractFunctionBlock(appSource, 'weatherFromAbility'),

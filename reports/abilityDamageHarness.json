@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-02T12:14:08.539Z",
+  "generatedAt": "2026-09-02T12:20:41.731Z",
   "totalAbilities": 200,
-  "implementedCount": 69,
+  "implementedCount": 72,
   "categories": {
     "implemented": {
-      "count": 69,
+      "count": 72,
       "abilities": [
         "adaptability",
         "aerilate",
@@ -37,6 +37,7 @@
         "liquid-voice",
         "marvel-scale",
         "mega-launcher",
+        "mega-sol",
         "merciless",
         "mimicry",
         "minus",
@@ -44,6 +45,7 @@
         "multiscale",
         "overgrow",
         "parental-bond",
+        "piercing-drill",
         "pixilate",
         "plus",
         "protean",
@@ -64,6 +66,7 @@
         "solar-power",
         "solid-rock",
         "soundproof",
+        "stance-change",
         "strong-jaw",
         "supreme-overlord",
         "swarm",
@@ -78,11 +81,8 @@
       ]
     },
     "requiresMoveTags": {
-      "count": 2,
-      "abilities": [
-        "mega-sol",
-        "piercing-drill"
-      ]
+      "count": 0,
+      "abilities": []
     },
     "requiresHpOrStatusContext": {
       "count": 3,
@@ -93,12 +93,11 @@
       ]
     },
     "requiresTurnOrFieldContext": {
-      "count": 5,
+      "count": 4,
       "abilities": [
         "gale-wings",
         "opportunist",
         "quick-draw",
-        "stance-change",
         "super-luck"
       ]
     },
@@ -243,12 +242,8 @@
       "abilities": []
     }
   },
-  "damageRelevantMissingCount": 3,
-  "damageRelevantMissing": [
-    "mega-sol",
-    "piercing-drill",
-    "stance-change"
-  ],
+  "damageRelevantMissingCount": 0,
+  "damageRelevantMissing": [],
   "notableDefenderAbilities": [
     {
       "ability": "dry-skin",
