@@ -1056,6 +1056,7 @@ const OCR_EFFORT_PATTERNS = Object.fromEntries(
 
 const MAX_SPRITE_HASH_DISTANCE = 72
 const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
+  'いのちのたま': { ko: '공격 기술의 대미지 30% 증가. 공격 후 최대 HP의 10%를 잃음.', en: 'Boosts damaging moves by 30%, then costs 10% of max HP after attacking.', ja: '攻撃技のダメージが30%上がり 攻撃後に最大HPの10%を失う。' },
   'おうじゃのしるし': { ko: '공격 기술 명중 시 10% 확률로 상대를 풀죽게 함.', en: 'Damaging moves have a 10% chance to make the target flinch.', ja: '攻撃技が当たると10%の確率で相手をひるませる。' },
   'きあいのタスキ': { ko: 'HP가 가득 찬 상태에서 기절할 공격을 받으면 HP 1로 버팀.', en: 'If at full HP, survives a would-be KO hit with 1 HP.', ja: 'HP満タンのとき ひんしになる攻撃を受けても HP1で耐える。' },
   'きせきのタネ': { ko: '풀 타입 기술 위력 20% 증가.', en: 'Boosts Grass-type move power by 20%.', ja: 'くさタイプの技の威力が20%上がる。' },
@@ -2431,6 +2432,8 @@ function resolveDamageModifiers(params: {
   critical?: boolean
 }) {
   const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const canonicalAttackerItem = canonicalChampionsItemName(attackerItem)
+  const canonicalDefenderItem = canonicalChampionsItemName(defenderItem)
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
   const criticalBlocked = critical && ['battle-armor', 'shell-armor'].includes(defenderAbility)
@@ -2635,9 +2638,14 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel('dark-aura'))
   }
 
-  if (attackerItem && moveType && typeBoostItems[attackerItem] === moveType) {
+  if (canonicalAttackerItem && moveType && typeBoostItems[canonicalAttackerItem] === moveType) {
     finalMultiplier *= 1.2
-    notes.push(attackerItem)
+    notes.push(canonicalAttackerItem)
+  }
+
+  if (canonicalAttackerItem === 'いのちのたま') {
+    finalMultiplier *= 1.3
+    notes.push('생명의구슬')
   }
 
   if (offensiveWeather === 'sun') {
@@ -2753,15 +2761,15 @@ function resolveDamageModifiers(params: {
       finalMultiplier *= 0.75
       notes.push(abilityNoteLabel(defenderAbility))
     }
-    if (defenderItem === 'オッカのみ' && moveType === 'fire') {
+    if (canonicalDefenderItem === 'オッカのみ' && moveType === 'fire') {
       finalMultiplier *= 0.5
       notes.push('オッカのみ')
     }
-    if (defenderItem === 'ヤチェのみ' && moveType === 'ice') {
+    if (canonicalDefenderItem === 'ヤチェのみ' && moveType === 'ice') {
       finalMultiplier *= 0.5
       notes.push('ヤチェのみ')
     }
-    if (defenderItem === 'ロゼルのみ' && moveType === 'fairy') {
+    if (canonicalDefenderItem === 'ロゼルのみ' && moveType === 'fairy') {
       finalMultiplier *= 0.5
       notes.push('ロゼルのみ')
     }
@@ -3037,23 +3045,29 @@ function displayMoveCategoryName(category: MoveCategory | null | undefined, lang
 }
 
 function itemEffectSummaryFor(rawItem: string, language: SiteLanguage) {
-  const info = resolveItemInfo(rawItem)
-  if (!info) return ''
-  const summary = ITEM_EFFECT_SUMMARIES[info.key]
+  const canonicalItem = canonicalChampionsItemName(rawItem)
+  const summary = ITEM_EFFECT_SUMMARIES[canonicalItem]
   if (!summary) return ''
   return summary[language] ?? summary.ko ?? summary.en ?? ''
 }
 
 function itemTooltipData(itemName: string, language: SiteLanguage): HoverTooltipCard | null {
-  const info = resolveItemInfo(itemName)
-  if (!info) return null
-  const title = language === 'ko' ? info.entry.nameKo : language === 'ja' ? info.entry.nameJa : info.entry.nameEn
-  const description = localizedDexText(info.entry, language)
-  const effectSummary = itemEffectSummaryFor(info.key, language)
+  const canonicalItem = canonicalChampionsItemName(itemName)
+  const info = resolveItemInfo(canonicalItem)
+  const knownItem = CHAMPIONS_ITEM_OPTIONS.includes(canonicalItem as ChampionsItem)
+  if (!info && !knownItem) return null
+  const title = info
+    ? language === 'ko' ? info.entry.nameKo : language === 'ja' ? info.entry.nameJa : info.entry.nameEn
+    : localizedChampionsItemLabel(canonicalItem, language)
+  const subtitle = info
+    ? language === 'ko' ? info.entry.nameEn : info.entry.nameKo
+    : language === 'ko' ? localizedChampionsItemLabel(canonicalItem, 'en') : localizedChampionsItemLabel(canonicalItem, 'ko')
+  const description = info ? localizedDexText(info.entry, language) : null
+  const effectSummary = itemEffectSummaryFor(canonicalItem, language)
   return {
     kind: 'item',
     title,
-    subtitle: language === 'ko' ? info.entry.nameEn : info.entry.nameKo,
+    subtitle,
     rows: effectSummary ? [{ label: translateText(language, '효과'), value: effectSummary }] : [],
     description: description?.detail || description?.summary || '',
   }

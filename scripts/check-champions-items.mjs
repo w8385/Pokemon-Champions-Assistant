@@ -60,6 +60,15 @@ if (!appSource.includes('mySpeedNeeds(sampleRow, sampleCalcConfig, sampleCalcMem
 if (!appSource.includes('config.scarf || isChoiceScarfItem(item)')) {
   failures.push('Speed cutoff calculator does not apply the held Choice Scarf')
 }
+if (!appSource.includes("canonicalAttackerItem === 'いのちのたま'")) {
+  failures.push('Damage calculator does not apply Life Orb')
+}
+if (!appSource.includes("finalMultiplier *= 1.3\n    notes.push('생명의구슬')")) {
+  failures.push('Life Orb damage multiplier mismatch')
+}
+if (!appSource.includes("'いのちのたま': { ko: '공격 기술의 대미지 30% 증가.")) {
+  failures.push('Life Orb tooltip summary is missing')
+}
 
 const megaKeys = pokemonData.rows.map((row) => row.key).filter((key) => key.startsWith('mega-'))
 for (const key of megaKeys) {
