@@ -1,8 +1,16 @@
 {
-  "generatedAt": "2026-05-15T12:09:24.063Z",
+  "generatedAt": "2026-09-02T13:56:52.126Z",
   "outputDir": "public/item-sprites",
-  "total": 81,
+  "total": 107,
   "downloaded": [
+    {
+      "kind": "item",
+      "key": "あついいわ",
+      "ref": "heat-rock",
+      "assetName": "heat-rock.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/heat-rock.png",
+      "outputPath": "public/item-sprites/heat-rock.png"
+    },
     {
       "kind": "item",
       "key": "イトケのみ",
@@ -13,11 +21,35 @@
     },
     {
       "kind": "item",
+      "key": "いのちのたま",
+      "ref": "life-orb",
+      "assetName": "life-orb.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/life-orb.png",
+      "outputPath": "public/item-sprites/life-orb.png"
+    },
+    {
+      "kind": "item",
+      "key": "ウタンのみ",
+      "ref": "payapa-berry",
+      "assetName": "payapa-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/payapa-berry.png",
+      "outputPath": "public/item-sprites/payapa-berry.png"
+    },
+    {
+      "kind": "item",
       "key": "おうじゃのしるし",
       "ref": "kings-rock",
       "assetName": "kings-rock.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kings-rock.png",
       "outputPath": "public/item-sprites/kings-rock.png"
+    },
+    {
+      "kind": "item",
+      "key": "おおきなねっこ",
+      "ref": "big-root",
+      "assetName": "big-root.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/big-root.png",
+      "outputPath": "public/item-sprites/big-root.png"
     },
     {
       "kind": "item",
@@ -37,6 +69,22 @@
     },
     {
       "kind": "item",
+      "key": "オレンのみ",
+      "ref": "oran-berry",
+      "assetName": "oran-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/oran-berry.png",
+      "outputPath": "public/item-sprites/oran-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "かいがらのすず",
+      "ref": "shell-bell",
+      "assetName": "shell-bell.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shell-bell.png",
+      "outputPath": "public/item-sprites/shell-bell.png"
+    },
+    {
+      "kind": "item",
       "key": "カゴのみ",
       "ref": "chesto-berry",
       "assetName": "chesto-berry.png",
@@ -53,6 +101,14 @@
     },
     {
       "kind": "item",
+      "key": "かたいいし",
+      "ref": "hard-stone",
+      "assetName": "hard-stone.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hard-stone.png",
+      "outputPath": "public/item-sprites/hard-stone.png"
+    },
+    {
+      "kind": "item",
       "key": "きあいのタスキ",
       "ref": "focus-sash",
       "assetName": "focus-sash.png",
@@ -61,11 +117,51 @@
     },
     {
       "kind": "item",
+      "key": "きあいのハチマキ",
+      "ref": "focus-band",
+      "assetName": "focus-band.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/focus-band.png",
+      "outputPath": "public/item-sprites/focus-band.png"
+    },
+    {
+      "kind": "item",
+      "key": "キーのみ",
+      "ref": "persim-berry",
+      "assetName": "persim-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/persim-berry.png",
+      "outputPath": "public/item-sprites/persim-berry.png"
+    },
+    {
+      "kind": "item",
       "key": "きせきのタネ",
       "ref": "miracle-seed",
       "assetName": "miracle-seed.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/miracle-seed.png",
       "outputPath": "public/item-sprites/miracle-seed.png"
+    },
+    {
+      "kind": "item",
+      "key": "きれいなぬけがら",
+      "ref": "shed-shell",
+      "assetName": "shed-shell.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shed-shell.png",
+      "outputPath": "public/item-sprites/shed-shell.png"
+    },
+    {
+      "kind": "item",
+      "key": "ぎんのこな",
+      "ref": "silver-powder",
+      "assetName": "silver-powder.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/silver-powder.png",
+      "outputPath": "public/item-sprites/silver-powder.png"
+    },
+    {
+      "kind": "item",
+      "key": "くろいてっきゅう",
+      "ref": "iron-ball",
+      "assetName": "iron-ball.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/iron-ball.png",
+      "outputPath": "public/item-sprites/iron-ball.png"
     },
     {
       "kind": "item",
@@ -85,11 +181,43 @@
     },
     {
       "kind": "item",
+      "key": "こうかくレンズ",
+      "ref": "wide-lens",
+      "assetName": "wide-lens.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/wide-lens.png",
+      "outputPath": "public/item-sprites/wide-lens.png"
+    },
+    {
+      "kind": "item",
+      "key": "こだわりスカーフ",
+      "ref": "choice-scarf",
+      "assetName": "choice-scarf.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/choice-scarf.png",
+      "outputPath": "public/item-sprites/choice-scarf.png"
+    },
+    {
+      "kind": "item",
+      "key": "さらさらいわ",
+      "ref": "smooth-rock",
+      "assetName": "smooth-rock.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/smooth-rock.png",
+      "outputPath": "public/item-sprites/smooth-rock.png"
+    },
+    {
+      "kind": "item",
       "key": "じしゃく",
       "ref": "magnet",
       "assetName": "magnet.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/magnet.png",
       "outputPath": "public/item-sprites/magnet.png"
+    },
+    {
+      "kind": "item",
+      "key": "しめったいわ",
+      "ref": "damp-rock",
+      "assetName": "damp-rock.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/damp-rock.png",
+      "outputPath": "public/item-sprites/damp-rock.png"
     },
     {
       "kind": "item",
@@ -149,11 +277,43 @@
     },
     {
       "kind": "item",
+      "key": "たつじんのおび",
+      "ref": "expert-belt",
+      "assetName": "expert-belt.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/expert-belt.png",
+      "outputPath": "public/item-sprites/expert-belt.png"
+    },
+    {
+      "kind": "item",
       "key": "たべのこし",
       "ref": "leftovers",
       "assetName": "leftovers.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leftovers.png",
       "outputPath": "public/item-sprites/leftovers.png"
+    },
+    {
+      "kind": "item",
+      "key": "タンガのみ",
+      "ref": "tanga-berry",
+      "assetName": "tanga-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tanga-berry.png",
+      "outputPath": "public/item-sprites/tanga-berry.png"
+    },
+    {
+      "kind": "item",
+      "key": "ちからのハチマキ",
+      "ref": "muscle-band",
+      "assetName": "muscle-band.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/muscle-band.png",
+      "outputPath": "public/item-sprites/muscle-band.png"
+    },
+    {
+      "kind": "item",
+      "key": "つめたいいわ",
+      "ref": "icy-rock",
+      "assetName": "icy-rock.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/icy-rock.png",
+      "outputPath": "public/item-sprites/icy-rock.png"
     },
     {
       "kind": "item",
@@ -178,6 +338,14 @@
       "assetName": "never-melt-ice.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/never-melt-ice.png",
       "outputPath": "public/item-sprites/never-melt-ice.png"
+    },
+    {
+      "kind": "item",
+      "key": "とつげきチョッキ",
+      "ref": "assault-vest",
+      "assetName": "assault-vest.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/assault-vest.png",
+      "outputPath": "public/item-sprites/assault-vest.png"
     },
     {
       "kind": "item",
@@ -229,11 +397,43 @@
     },
     {
       "kind": "item",
+      "key": "ひかりのねんど",
+      "ref": "light-clay",
+      "assetName": "light-clay.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/light-clay.png",
+      "outputPath": "public/item-sprites/light-clay.png"
+    },
+    {
+      "kind": "item",
+      "key": "ヒメリのみ",
+      "ref": "leppa-berry",
+      "assetName": "leppa-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leppa-berry.png",
+      "outputPath": "public/item-sprites/leppa-berry.png"
+    },
+    {
+      "kind": "item",
       "key": "ピントレンズ",
       "ref": "scope-lens",
       "assetName": "scope-lens.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/scope-lens.png",
       "outputPath": "public/item-sprites/scope-lens.png"
+    },
+    {
+      "kind": "item",
+      "key": "フォーカスレンズ",
+      "ref": "zoom-lens",
+      "assetName": "zoom-lens.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/zoom-lens.png",
+      "outputPath": "public/item-sprites/zoom-lens.png"
+    },
+    {
+      "kind": "item",
+      "key": "ホズのみ",
+      "ref": "chilan-berry",
+      "assetName": "chilan-berry.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chilan-berry.png",
+      "outputPath": "public/item-sprites/chilan-berry.png"
     },
     {
       "kind": "item",
@@ -253,6 +453,14 @@
     },
     {
       "kind": "item",
+      "key": "メトロノーム",
+      "ref": "metronome",
+      "assetName": "metronome.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/metronome.png",
+      "outputPath": "public/item-sprites/metronome.png"
+    },
+    {
+      "kind": "item",
       "key": "メンタルハーブ",
       "ref": "mental-herb",
       "assetName": "mental-herb.png",
@@ -266,6 +474,14 @@
       "assetName": "charcoal.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charcoal.png",
       "outputPath": "public/item-sprites/charcoal.png"
+    },
+    {
+      "kind": "item",
+      "key": "ものしりメガネ",
+      "ref": "wise-glasses",
+      "assetName": "wise-glasses.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/wise-glasses.png",
+      "outputPath": "public/item-sprites/wise-glasses.png"
     },
     {
       "kind": "item",
@@ -631,17 +847,12 @@
   "reusedLocal": [
     {
       "kind": "item",
-      "key": "こだわりスカーフ",
-      "ref": "item-sprites/choice-scarf.png",
-      "assetName": "choice-scarf.png",
-      "outputPath": "public/item-sprites/choice-scarf.png"
-    },
-    {
-      "kind": "item",
       "key": "ようせいのハネ",
-      "ref": "item-sprites/fairy-feather.png",
+      "ref": "fairy-feather",
       "assetName": "fairy-feather.png",
-      "outputPath": "public/item-sprites/fairy-feather.png"
+      "outputPath": "public/item-sprites/fairy-feather.png",
+      "fallback": "existing local asset after fetch failure",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fairy-feather.png"
     },
     {
       "kind": "mega",

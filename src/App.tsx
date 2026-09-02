@@ -505,7 +505,7 @@ function visibleChampionsItem(key: string, item: string) {
 }
 
 function isChoiceScarfItem(item: string) {
-  return canonicalChampionsItemName(item).trim() === '구애스카프'
+  return canonicalChampionsItemName(item).trim() === 'こだわりスカーフ'
 }
 
 function itemSpriteSrc(key: string, item: string) {
@@ -1861,14 +1861,14 @@ function speedAbilityCandidate(row: Row, language: SiteLanguage) {
   return { slug, label }
 }
 
-function mySpeedNeeds(row: Row, config: MemberConfig, targetSpeed: number) {
+function mySpeedNeeds(row: Row, config: MemberConfig, item: string, targetSpeed: number) {
   let tieEffort: number | null = null
   let passEffort: number | null = null
 
   for (let points = 0; points <= CHAMPIONS_EFFORT_PER_STAT_CAP; points += 1) {
     let speed = actualStat(row.speed, points, natureMultiplier(config.nature, 'speed'))
     speed = applySpeedStage(speed, config.speedStage)
-    if (config.scarf) speed = Math.floor(speed * 1.5)
+    if (config.scarf || isChoiceScarfItem(item)) speed = Math.floor(speed * 1.5)
     if (tieEffort === null && speed === targetSpeed) tieEffort = points
     if (passEffort === null && speed > targetSpeed) passEffort = points
     if (tieEffort !== null && passEffort !== null) break
@@ -4935,7 +4935,6 @@ export default function App() {
   const activeDamageMoveCategory = activeDamageMoveMeta?.category === 'physical' || activeDamageMoveMeta?.category === 'special' ? activeDamageMoveMeta.category : null
   const activeDamageMovePower = typeof activeDamageMoveMeta?.power === 'number' ? activeDamageMoveMeta.power : null
   const activeDamageMoveAlwaysCrit = Boolean(activeDamageMoveMeta?.alwaysCrit)
-  const activeDamageMoveIsStatus = activeDamageMoveMeta?.category === 'status'
 
   React.useEffect(() => {
     if (!activeDamageMoveHitOptions?.length) return
@@ -5339,11 +5338,6 @@ export default function App() {
     auroraVeil: calcAuroraVeil,
     friendGuard: false,
   })
-  const damage = attackerBattleStats && defenderBattleStats && defenderRow && activeDamageMoveCategory && activeDamageMovePower !== null && !activeDamageMoveIsStatus
-    ? calcDamage(attackerBattleStats, defenderBattleStats, effectiveMovePower, effectiveCalcMode, activeDamageMoveType ? autoStab : stab, damageModifiers.effectiveness, activeDamageMoveMeta, damageModifiers)
-    : null
-  const damageNoEffect = isNoEffectDamage(damage)
-  const damageVerdict = defenderBattleStats && damage ? resolveDamageVerdict(damage, defenderBattleStats.hp, siteLanguage) : null
   const damageMovePreviews = registeredDamageMoves.map((moveName) => {
     const baseMeta = resolveMoveMeta(moveName, attackerMoveOptions, movePoolByKey)
     const hitOptions = multiHitOptions(moveName)
@@ -5580,7 +5574,7 @@ export default function App() {
     }
     const cutoffs = scenarios.map((scenario) => ({
       ...scenario,
-      needs: mySpeedNeeds(sampleRow, sampleCalcConfig, scenario.speed),
+      needs: mySpeedNeeds(sampleRow, sampleCalcConfig, sampleCalcMember.item, scenario.speed),
       result: sampleSpeedValueNow > scenario.speed ? lt('내가 앞섬') : sampleSpeedValueNow < scenario.speed ? lt('상대가 앞섬') : lt('동속'),
     }))
     return { idx, member, row, cutoffs }
@@ -9190,33 +9184,6 @@ export default function App() {
           <div className="row-between section-head">
             <h2>{lt('대미지 계산')}</h2>
           </div>
-          <div className="damage-surface-card damage-result-surface">
-            {defenderRow && damage ? <div className="damage-box compact-top">
-              <div className="damage-box-head">
-                <strong className={`damage-box-side-name ${attackFromOpponent ? 'enemy' : 'ally'}`}>{attackerRow ? displayName(attackerRow, siteLanguage) : '-'}</strong>
-                <span className="damage-box-arrow">→</span>
-                <strong className={`damage-box-side-name ${attackFromOpponent ? 'ally' : 'enemy'}`}>{defenderRow ? displayName(defenderRow, siteLanguage) : '-'}</strong>
-                {activeDamageMove ? <span className="damage-box-move-name">· {activeDamageMove}</span> : null}
-              </div>
-              <div className="damage-summary-grid">
-                <div className="damage-summary-card verdict">
-                  <span>{lt('판정')}</span>
-                  <strong>{damageVerdict}</strong>
-                </div>
-                <div className="damage-summary-card">
-                  <span>{lt('대미지')}</span>
-                  <strong>{damageNoEffect ? lt('무효') : `${damage.min} ~ ${damage.max}`}</strong>
-                </div>
-                <div className="damage-summary-card accent">
-                  <span>{lt('비율')}</span>
-                  <strong>{damageNoEffect ? lt('무효') : `${damage.minPct}% ~ ${damage.maxPct}%`}</strong>
-                </div>
-              </div>
-              {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
-                {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
-              </div> : null}
-            </div> : <div className="damage-box empty compact-top"><p>{activeDamageMoveIsStatus ? lt('변화기는 대미지 계산 대상이 아님') : lt('상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.')}</p></div>}
-          </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
             <div className={`speed-target-card damage-side-card ${!attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
@@ -9427,6 +9394,9 @@ export default function App() {
                 <div><dt>{lt('자속')}</dt><dd>{activeDamageMoveType ? autoStab : '—'}</dd></div>
                 <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
               </dl>
+              {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
+                {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
+              </div> : null}
             </div> : <div className="damage-data-empty">{lt('계산할 기술을 선택해 주세요.')}</div>}
             {activeDamageMoveMeta ? <div className="damage-control-groups">
               <div className="damage-control-group">
@@ -9543,6 +9513,19 @@ export default function App() {
                   </label>
                 </div>
               </div>
+              <button
+                type="button"
+                className={`damage-advanced-toggle ${calcFieldConditionsCollapsed ? '' : 'active'}`}
+                onClick={() => setCalcFieldConditionsCollapsed((prev) => !prev)}
+                aria-expanded={!calcFieldConditionsCollapsed}
+              >
+                <span>
+                  <strong>{lt('세부 조건')}</strong>
+                  <small>{activeFieldConditionLabels.length ? activeFieldConditionLabels.join(' · ') : lt('상대 내구')} · {calcDefenseStage > 0 ? `+${calcDefenseStage}` : calcDefenseStage}</small>
+                </span>
+                <b>{calcFieldConditionsCollapsed ? '＋' : '－'}</b>
+              </button>
+              {!calcFieldConditionsCollapsed ? <>
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('방어측')}</div>
                 <div className="calc-grid damage-calc-grid compact defender-grid">
@@ -9600,14 +9583,8 @@ export default function App() {
                 </div>
               </div>
               <div className="damage-control-group damage-control-group-secondary">
-                <div className="row-between damage-control-group-head">
-                  <div>
-                    <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                    <p className="damage-control-group-summary">{activeFieldConditionLabels.length ? activeFieldConditionLabels.join(' · ') : lt('없음')}</p>
-                  </div>
-                  <button type="button" className={`pick-chip ${calcFieldConditionsCollapsed ? '' : 'active'}`} onClick={() => setCalcFieldConditionsCollapsed((prev) => !prev)} aria-expanded={!calcFieldConditionsCollapsed}>{calcFieldConditionsCollapsed ? lt('펼치기') : lt('접기')}</button>
-                </div>
-                {!calcFieldConditionsCollapsed ? <div className="calc-grid damage-calc-grid compact field-grid">
+                <div className="damage-control-group-title">{lt('전장 조건')}</div>
+                <div className="calc-grid damage-calc-grid compact field-grid">
                   <div className="calc-inline-pair">
                     <label>
                       {lt('날씨')}
@@ -9644,8 +9621,9 @@ export default function App() {
                     <input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} />
                     <span>{lt('오로라베일')}</span>
                   </label>
-                </div> : null}
+                </div>
               </div>
+              </> : null}
             </div> : null}
           </div>
         </section> : null}

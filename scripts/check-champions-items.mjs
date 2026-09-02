@@ -1,0 +1,55 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
+const source = await fs.readFile(path.join(rootDir, 'src', 'championsItems.ts'), 'utf8')
+const appSource = await fs.readFile(path.join(rootDir, 'src', 'App.tsx'), 'utf8')
+const optionsMatch = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
+if (!optionsMatch) throw new Error('Could not find CHAMPIONS_ITEM_OPTIONS')
+const options = [...optionsMatch[1].matchAll(/["']([^"']+)["']/g)].map((entry) => entry[1])
+
+function parseRecord(name) {
+  const match = source.match(new RegExp(`export const ${name}[^=]*= \\{([\\s\\S]*?)\\n\\}`))
+  if (!match) throw new Error(`Could not find ${name}`)
+  return new Map([...match[1].matchAll(/["']([^"']+)["']:\s*["']([^"']+)["']/g)].map((entry) => [entry[1], entry[2]]))
+}
+
+const ko = parseRecord('CHAMPIONS_ITEM_LABEL_KO')
+const en = parseRecord('CHAMPIONS_ITEM_LABEL_EN')
+const sprites = parseRecord('CHAMPIONS_ITEM_SPRITE_MAP')
+const failures = []
+
+for (const item of options) {
+  if (!ko.get(item)) failures.push(`${item}: missing Korean label`)
+  if (!en.get(item)) failures.push(`${item}: missing English label`)
+  const sprite = sprites.get(item)
+  if (!sprite) {
+    failures.push(`${item}: missing sprite mapping`)
+    continue
+  }
+  const filename = path.basename(sprite.endsWith('.png') ? sprite : `${sprite}.png`)
+  try {
+    await fs.access(path.join(rootDir, 'public', 'item-sprites', filename))
+  } catch {
+    failures.push(`${item}: missing sprite file ${filename}`)
+  }
+}
+
+if (ko.get('こだわりスカーフ') !== '구애스카프') failures.push('Choice Scarf Korean label mismatch')
+if (en.get('こだわりスカーフ') !== 'Choice Scarf') failures.push('Choice Scarf English label mismatch')
+if (sprites.get('こだわりスカーフ') !== 'choice-scarf') failures.push('Choice Scarf sprite mismatch')
+if (!appSource.includes("canonicalChampionsItemName(item).trim() === 'こだわりスカーフ'")) {
+  failures.push('Speed calculator does not detect the canonical Choice Scarf item')
+}
+if (!appSource.includes('mySpeedNeeds(sampleRow, sampleCalcConfig, sampleCalcMember.item, scenario.speed)')) {
+  failures.push('Speed cutoff calculator does not receive the held item')
+}
+if (!appSource.includes('config.scarf || isChoiceScarfItem(item)')) {
+  failures.push('Speed cutoff calculator does not apply the held Choice Scarf')
+}
+
+if (failures.length) {
+  console.error(failures.join('\n'))
+  process.exit(1)
+}
+console.log(`Champions items OK: ${options.length} labels and sprites.`)

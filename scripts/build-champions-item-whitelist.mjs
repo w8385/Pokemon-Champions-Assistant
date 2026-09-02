@@ -21,8 +21,8 @@ const MANUAL_KO_LABELS = {
 }
 
 const MANUAL_SPRITE_PATHS = {
-  'こだわりスカーフ': 'item-sprites/choice-scarf.png',
-  'ようせいのハネ': 'item-sprites/fairy-feather.png',
+  'こだわりスカーフ': 'choice-scarf',
+  'ようせいのハネ': 'fairy-feather',
 }
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
@@ -240,9 +240,9 @@ async function worker() {
 await Promise.all(Array.from({ length: concurrency }, () => worker()))
 
 function detailForItem(item) {
-  const usageEntry = usageItemMap.get(item)
-  const usageKey = usageEntry?.itemKeys?.size ? [...usageEntry.itemKeys][0] : null
-  if (usageKey && detailsById.has(usageKey)) return detailsById.get(usageKey)
+  // Usage-site item_key values are not PokéAPI item IDs. Prefer the exact
+  // Japanese localized name match; treating item_key as a PokéAPI ID shifts
+  // labels and sprites onto unrelated items.
   return detailsByJa.get(item) ?? null
 }
 

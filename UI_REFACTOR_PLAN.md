@@ -398,3 +398,20 @@ Example:
   - typecheck / ability damage harness / damage parity harness / production build 통과.
 - next:
   - 선택 결과 위에 남은 중복 상세 요약의 필요성을 줄이고, 방어측 EV·전장 조건을 하나의 접힌 세부 조건 영역으로 합친다.
+
+### Follow-up — single damage result density and card correction
+- changed:
+  - 기술 카드에 기존 타입별 pill/gradient 스타일이 과하게 상속되던 문제를 제거하고, 동일한 중성 surface + 타입색 왼쪽 선 구조로 교체함.
+  - 기술 카드와 같은 내용을 반복하던 상단 단일 결과 박스를 제거함.
+  - 화력 조건은 바로 유지하고, 방어측 EV와 전장 조건은 하나의 `세부 조건` 토글 아래로 통합함.
+  - 선택 기술의 타입·분류·위력과 실제 적용 보정은 조작부가 아닌 읽기 전용 패널에 유지함.
+- next:
+  - 실제 사용 피드백 기준으로 기술 카드 높이와 모바일 2열 가독성을 재확인한다.
+
+### Data/UI correction — held item identity
+- changed:
+  - 랭킹 사이트의 item key를 PokéAPI ID로 오인해 70개 도구의 이름과 sprite가 서로 밀리던 생성 오류를 수정함.
+  - 일본어 공식명 exact match를 기준으로 한국어·영문 표기와 sprite slug를 전수 복구함.
+  - 구애스카프 판정을 표시 문자열이 아닌 canonical item key로 바꿔 스피드 1.5배가 적용되게 함.
+  - 현재 실속도뿐 아니라 추월컷 역산에도 실제 장착 아이템을 전달해 스카프 기준을 통일함.
+  - 모든 허용 도구에 이름과 실제 sprite 파일이 있는지 검사하는 harness를 추가함.
