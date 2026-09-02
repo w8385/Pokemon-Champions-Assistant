@@ -386,3 +386,15 @@ Example:
   - 브라우저 기반 visual harness는 실행 환경에 Chromium이 없어 정적 반응형 규칙과 build로 우선 검증함.
 - next:
   - ability damage harness가 분류한 미반영 대미지 관련 특성을 상황 입력 필요 여부에 따라 순차 보완한다.
+
+### Latest pass — single damage four-move range comparison
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **현재 대면 확인 → 등록 기술 4개 난수 비교 → 상세 조건 조정**
+- changed:
+  - 현재 공격측의 등록 기술을 각각 독립 계산해 최소~최대 HP 비율, 실대미지, KO 판정을 기술 선택 카드 안에 바로 표시함.
+  - 선택 카드와 기존 상세 결과가 같은 계산 조건을 공유하게 해 기술 전환 시 결과를 다시 찾는 이동을 줄임.
+  - 데스크톱과 모바일 모두 2열 비교를 유지하고 긴 기술명과 수치가 카드 밖으로 넘치지 않게 컴포넌트 규칙을 추가함.
+- verification:
+  - typecheck / ability damage harness / damage parity harness / production build 통과.
+- next:
+  - 선택 결과 위에 남은 중복 상세 요약의 필요성을 줄이고, 방어측 EV·전장 조건을 하나의 접힌 세부 조건 영역으로 합친다.

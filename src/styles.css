@@ -6330,8 +6330,50 @@ textarea { min-height: 72px; resize: vertical; }
 }
 .damage-side-moves .damage-move-chip {
   width: 100%;
-  justify-content: flex-start;
-  min-height: 42px;
+  min-height: 84px;
+  padding: 10px 12px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 9px;
+  text-align: left;
+}
+.damage-move-card-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.damage-move-card-head strong {
+  overflow: hidden;
+  color: #e8eef6;
+  font-size: 12px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.damage-move-card-result {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.damage-move-card-result > strong {
+  color: #f8fafc;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.damage-move-card-result > small,
+.damage-move-card-empty {
+  overflow: hidden;
+  color: #9dabbc;
+  font-size: 10px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.damage-side-moves .damage-move-chip.confirmed .damage-move-card-result > strong {
+  color: #bfdbfe;
 }
 .damage-top-move-strip-chips .move-chip.quiet-confirmed {
   opacity: 0.62;
@@ -7583,7 +7625,7 @@ html {
   }
   .damage-side-moves,
   .damage-side-moves-player {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
   }
   .opponent-revealed-moves-grid {
@@ -7596,7 +7638,7 @@ html {
   }
   .damage-side-moves .damage-move-chip,
   .damage-move-chip-wrap .damage-move-chip {
-    min-height: 44px;
+    min-height: 82px;
     padding-top: 8px;
     padding-bottom: 8px;
   }
@@ -7609,6 +7651,23 @@ html {
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.25;
+  }
+  .damage-move-card-head,
+  .damage-move-card-result {
+    display: flex;
+  }
+  .damage-move-card-head {
+    align-items: center;
+  }
+  .damage-move-card-result {
+    flex-direction: column;
+  }
+  .damage-move-card-head strong,
+  .damage-move-card-result > small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .damage-top-move-strip {
     gap: 6px;

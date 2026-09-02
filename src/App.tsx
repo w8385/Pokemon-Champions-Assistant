@@ -5344,6 +5344,94 @@ export default function App() {
     : null
   const damageNoEffect = isNoEffectDamage(damage)
   const damageVerdict = defenderBattleStats && damage ? resolveDamageVerdict(damage, defenderBattleStats.hp, siteLanguage) : null
+  const damageMovePreviews = registeredDamageMoves.map((moveName) => {
+    const baseMeta = resolveMoveMeta(moveName, attackerMoveOptions, movePoolByKey)
+    const hitOptions = multiHitOptions(moveName)
+    const hitCount = moveName === activeDamageMove && hitOptions?.includes(calcHitCount)
+      ? calcHitCount
+      : (hitOptions?.[0] ?? null)
+    const rule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
+    const conditionValue = rule
+      ? normalizeConditionalPowerValue(
+          rule,
+          moveName === '객기' && calcBurned
+            ? true
+            : (calcConditionalPowerValues[moveName] ?? rule.defaultValue),
+        )
+      : null
+    const moveMeta = applyConditionalMovePower(
+      moveName,
+      applyTargetWeightMovePower(
+        moveName,
+        resolveAbilityAdjustedMoveMeta(
+          moveName,
+          resolveMultiHitMeta(moveName, baseMeta, hitCount, attackerAbilityValue),
+          attackerAbilityValue,
+          calcWeather,
+        ),
+        defenderWeightKg,
+      ),
+      conditionValue,
+    )
+    const moveType = moveMeta?.type ?? null
+    const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
+    const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
+    if (!attackerBattleStats || !defenderBattleStats || !defenderRow || !moveCategory || movePower === null || moveMeta?.category === 'status') {
+      return { moveName, moveType, damage: null, verdict: null }
+    }
+    const moveEffectiveness = moveType ? abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilitySlug, attackerAbilitySlug) : effectiveness
+    const modifiers = resolveDamageModifiers({
+      attackerAbility: attackerAbilitySlug,
+      attackerItem: attackFromOpponent ? oppMember.item : myMember.item,
+      defenderAbility: defenderAbilitySlug,
+      defenderItem: attackFromOpponent ? myMember.item : oppMember.item,
+      moveName,
+      baseMoveType: baseMeta?.type ?? null,
+      moveType,
+      movePower,
+      mode: moveCategory,
+      effectiveness: moveEffectiveness,
+      attackStage: calcAttackStage,
+      defenseStage: calcDefenseStage,
+      defenderTypes: effectiveDefenderTypes,
+      burned: calcBurned,
+      attackerLowHp: calcAttackerLowHp,
+      targetPoisoned: calcTargetPoisoned,
+      defenderFullHp: calcDefenderFullHp,
+      disguiseActive: calcDefenderDisguise,
+      movedAfterTarget: calcMovedAfterTarget,
+      faintedAllies: calcFaintedAllies,
+      rivalryMode: calcRivalryMode,
+      parentalBond: calcParentalBond,
+      defenderStatused: calcDefenderStatused,
+      electromorphosisCharged: calcElectromorphosisCharged,
+      critical: calcCritical || Boolean(moveMeta?.alwaysCrit),
+      weather: calcWeather,
+      terrain: calcTerrain,
+      reflect: calcReflect,
+      lightScreen: calcLightScreen,
+      auroraVeil: calcAuroraVeil,
+      friendGuard: false,
+    })
+    const previewDamage = calcDamage(
+      attackerBattleStats,
+      defenderBattleStats,
+      movePower,
+      moveCategory,
+      moveType ? resolveStabMultiplier(effectiveAttackerTypes, moveType, attackerAbilitySlug, calcTypeChangeStab) : stab,
+      modifiers.effectiveness,
+      moveMeta,
+      modifiers,
+    )
+    if (!previewDamage) return { moveName, moveType, damage: null, verdict: null }
+    return {
+      moveName,
+      moveType,
+      damage: previewDamage,
+      verdict: resolveDamageVerdict(previewDamage, defenderBattleStats.hp, siteLanguage),
+    }
+  })
+  const damageMovePreviewByName = new Map(damageMovePreviews.map((preview) => [preview.moveName, preview]))
   const activeFieldConditionLabels = [
     calcWeather !== 'none' ? lt(calcWeather === 'sun' ? '쾌청' : calcWeather === 'rain' ? '비' : calcWeather === 'sand' ? '모래바람' : '싸라기눈') : null,
     calcTerrain !== 'none' ? lt(calcTerrain === 'electric' ? '일렉트릭필드' : calcTerrain === 'grassy' ? '그래스필드' : calcTerrain === 'psychic' ? '사이코필드' : '미스트필드') : null,
@@ -9148,6 +9236,7 @@ export default function App() {
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
                   const active = !attackFromOpponent && activeDamageMove === move
+                  const preview = !attackFromOpponent ? damageMovePreviewByName.get(move) : null
                   return (
                     <button
                       key={`damage-move-my-${myMember.key}-${move}`}
@@ -9159,8 +9248,14 @@ export default function App() {
                       }}
                       {...bindTooltip(moveTooltipData(move, siteLanguage))}
                     >
-                      {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
-                      <span>{move}</span>
+                      <span className="damage-move-card-head">
+                        {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                        <strong>{move}</strong>
+                      </span>
+                      {preview?.damage ? <span className="damage-move-card-result">
+                        <strong>{isNoEffectDamage(preview.damage) ? lt('무효') : `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`}</strong>
+                        <small>{isNoEffectDamage(preview.damage) ? '0' : `${preview.damage.min} ~ ${preview.damage.max}`} · {preview.verdict}</small>
+                      </span> : <small className="damage-move-card-empty">{active ? lt('대미지 계산 불가') : '—'}</small>}
                     </button>
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
@@ -9184,6 +9279,7 @@ export default function App() {
                 {opponentRegisteredDamageMoves.length ? opponentRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                   const active = attackFromOpponent && activeDamageMove === move
+                  const preview = attackFromOpponent ? damageMovePreviewByName.get(move) : null
                   return (
                     <div
                       key={`damage-move-opp-${oppMember.key}-${move}`}
@@ -9200,8 +9296,14 @@ export default function App() {
                         disabled={!oppRow}
                         {...bindTooltip(moveTooltipData(move, siteLanguage))}
                       >
-                        {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
-                        <span>{move}</span>
+                        <span className="damage-move-card-head">
+                          {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
+                          <strong>{move}</strong>
+                        </span>
+                        {preview?.damage ? <span className="damage-move-card-result">
+                          <strong>{isNoEffectDamage(preview.damage) ? lt('무효') : `${preview.damage.minPct}% ~ ${preview.damage.maxPct}%`}</strong>
+                          <small>{isNoEffectDamage(preview.damage) ? '0' : `${preview.damage.min} ~ ${preview.damage.max}`} · {preview.verdict}</small>
+                        </span> : <small className="damage-move-card-empty">{active ? lt('대미지 계산 불가') : '—'}</small>}
                       </button>
                       <button
                         type="button"
