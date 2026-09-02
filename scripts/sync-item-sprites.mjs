@@ -41,11 +41,20 @@ async function fileExists(target) {
   }
 }
 
-async function fetchBuffer(url) {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
-  const ab = await res.arrayBuffer()
-  return Buffer.from(ab)
+async function fetchBuffer(url, attempts = 3) {
+  let lastError
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const res = await fetch(url, { headers: { 'user-agent': 'Pokemon-Champions-Assistant item sprite sync' } })
+      if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
+      const ab = await res.arrayBuffer()
+      return Buffer.from(ab)
+    } catch (error) {
+      lastError = error
+      if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, attempt * 250))
+    }
+  }
+  throw lastError
 }
 
 const itemsSource = await fs.readFile(itemsTsPath, 'utf8')

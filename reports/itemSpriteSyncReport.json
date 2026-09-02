@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-02T13:56:52.126Z",
+  "generatedAt": "2026-09-02T14:24:21.026Z",
   "outputDir": "public/item-sprites",
-  "total": 107,
+  "total": 146,
   "downloaded": [
     {
       "kind": "item",
@@ -770,6 +770,318 @@
       "assetName": "medichamite.png",
       "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/medichamite.png",
       "outputPath": "public/item-sprites/medichamite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-greninja",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/greninjite.png",
+      "assetName": "greninjite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/greninjite.png",
+      "outputPath": "public/item-sprites/greninjite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-delphox",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/delphoxite.png",
+      "assetName": "delphoxite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/delphoxite.png",
+      "outputPath": "public/item-sprites/delphoxite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-meowstic",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/meowsticite.png",
+      "assetName": "meowsticite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/meowsticite.png",
+      "outputPath": "public/item-sprites/meowsticite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-starmie",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/starminite.png",
+      "assetName": "starminite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/starminite.png",
+      "outputPath": "public/item-sprites/starminite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-froslass",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/froslassite.png",
+      "assetName": "froslassite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/froslassite.png",
+      "outputPath": "public/item-sprites/froslassite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-hawlucha",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/hawluchanite.png",
+      "assetName": "hawluchanite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/hawluchanite.png",
+      "outputPath": "public/item-sprites/hawluchanite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-skarmory",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/skarmorite.png",
+      "assetName": "skarmorite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/skarmorite.png",
+      "outputPath": "public/item-sprites/skarmorite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-excadrill",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/excadrite.png",
+      "assetName": "excadrite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/excadrite.png",
+      "outputPath": "public/item-sprites/excadrite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-glimmora",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/glimmoranite.png",
+      "assetName": "glimmoranite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/glimmoranite.png",
+      "outputPath": "public/item-sprites/glimmoranite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-dragonite",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/dragoninite.png",
+      "assetName": "dragoninite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/dragoninite.png",
+      "outputPath": "public/item-sprites/dragoninite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-chandelure",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/chandelurite.png",
+      "assetName": "chandelurite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/chandelurite.png",
+      "outputPath": "public/item-sprites/chandelurite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-meganium",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/meganiumite.png",
+      "assetName": "meganiumite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/meganiumite.png",
+      "outputPath": "public/item-sprites/meganiumite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-feraligatr",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/feraligite.png",
+      "assetName": "feraligite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/feraligite.png",
+      "outputPath": "public/item-sprites/feraligite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-emboar",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/emboarite.png",
+      "assetName": "emboarite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/emboarite.png",
+      "outputPath": "public/item-sprites/emboarite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-scovillain",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/scovillainite.png",
+      "assetName": "scovillainite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/scovillainite.png",
+      "outputPath": "public/item-sprites/scovillainite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-clefable",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/clefablite.png",
+      "assetName": "clefablite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/clefablite.png",
+      "outputPath": "public/item-sprites/clefablite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-victreebel",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/victreebelite.png",
+      "assetName": "victreebelite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/victreebelite.png",
+      "outputPath": "public/item-sprites/victreebelite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-chimecho",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/chimechite.png",
+      "assetName": "chimechite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/chimechite.png",
+      "outputPath": "public/item-sprites/chimechite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-golurk",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/golurkite.png",
+      "assetName": "golurkite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/golurkite.png",
+      "outputPath": "public/item-sprites/golurkite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-chesnaught",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/chesnaughtite.png",
+      "assetName": "chesnaughtite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/chesnaughtite.png",
+      "outputPath": "public/item-sprites/chesnaughtite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-drampa",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/drampanite.png",
+      "assetName": "drampanite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/drampanite.png",
+      "outputPath": "public/item-sprites/drampanite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-crabominable",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/crabominite.png",
+      "assetName": "crabominite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/crabominite.png",
+      "outputPath": "public/item-sprites/crabominite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-staraptor",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/staraptite.png",
+      "assetName": "staraptite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/staraptite.png",
+      "outputPath": "public/item-sprites/staraptite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-metagross",
+      "ref": "metagrossite",
+      "assetName": "metagrossite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/metagrossite.png",
+      "outputPath": "public/item-sprites/metagrossite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-scolipede",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/scolipite.png",
+      "assetName": "scolipite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/scolipite.png",
+      "outputPath": "public/item-sprites/scolipite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-scrafty",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/scraftinite.png",
+      "assetName": "scraftinite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/scraftinite.png",
+      "outputPath": "public/item-sprites/scraftinite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-eelektross",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/eelektrossite.png",
+      "assetName": "eelektrossite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/eelektrossite.png",
+      "outputPath": "public/item-sprites/eelektrossite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-pyroar",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/pyroarite.png",
+      "assetName": "pyroarite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/pyroarite.png",
+      "outputPath": "public/item-sprites/pyroarite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-malamar",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/malamarite.png",
+      "assetName": "malamarite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/malamarite.png",
+      "outputPath": "public/item-sprites/malamarite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-barbaracle",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/barbaracite.png",
+      "assetName": "barbaracite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/barbaracite.png",
+      "outputPath": "public/item-sprites/barbaracite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-dragalge",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/dragalgite.png",
+      "assetName": "dragalgite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/dragalgite.png",
+      "outputPath": "public/item-sprites/dragalgite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-falinks",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/falinksite.png",
+      "assetName": "falinksite.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/falinksite.png",
+      "outputPath": "public/item-sprites/falinksite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-raichu-x",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/raichunitex.png",
+      "assetName": "raichunitex.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/raichunitex.png",
+      "outputPath": "public/item-sprites/raichunitex.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-raichu-y",
+      "ref": "https://www.serebii.net/itemdex/sprites/za/raichunitey.png",
+      "assetName": "raichunitey.png",
+      "remoteUrl": "https://www.serebii.net/itemdex/sprites/za/raichunitey.png",
+      "outputPath": "public/item-sprites/raichunitey.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-sceptile",
+      "ref": "sceptilite",
+      "assetName": "sceptilite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sceptilite.png",
+      "outputPath": "public/item-sprites/sceptilite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-blaziken",
+      "ref": "blazikenite",
+      "assetName": "blazikenite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/blazikenite.png",
+      "outputPath": "public/item-sprites/blazikenite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-swampert",
+      "ref": "swampertite",
+      "assetName": "swampertite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/swampertite.png",
+      "outputPath": "public/item-sprites/swampertite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-mawile",
+      "ref": "mawilite",
+      "assetName": "mawilite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/mawilite.png",
+      "outputPath": "public/item-sprites/mawilite.png"
+    },
+    {
+      "kind": "mega",
+      "key": "mega-salamence",
+      "ref": "salamencite",
+      "assetName": "salamencite.png",
+      "remoteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/salamencite.png",
+      "outputPath": "public/item-sprites/salamencite.png"
     },
     {
       "kind": "mega",
