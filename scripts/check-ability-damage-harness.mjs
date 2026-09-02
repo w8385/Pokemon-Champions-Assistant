@@ -32,7 +32,10 @@ function extractFunctionBlock(source, name) {
 
 const damageBlock = [
   extractFunctionBlock(appSource, 'resolveAbilityAdjustedMoveMeta'),
+  extractFunctionBlock(appSource, 'resolveAbilityAdjustedTypes'),
   extractFunctionBlock(appSource, 'resolveStabMultiplier'),
+  extractFunctionBlock(appSource, 'weatherFromAbility'),
+  extractFunctionBlock(appSource, 'terrainFromAbility'),
   extractFunctionBlock(appSource, 'resolveDamageModifiers'),
 ].join('\n')
 const slugMatches = [...damageBlock.matchAll(/'([a-z][a-z-]+)'/g)].map((m) => m[1])
@@ -48,13 +51,13 @@ const requiresTurnOrFieldContext = new Set([
   'analytic', 'electromorphosis', 'gale-wings', 'minus', 'opportunist', 'parental-bond', 'plus', 'power-spot', 'quick-draw', 'reckless', 'rivalry', 'sand-force', 'sheer-force', 'skill-link', 'solar-power', 'stance-change', 'super-luck', 'supreme-overlord', 'transistor',
 ])
 const manualBattleState = new Set([
-  'anger-point', 'competitive', 'contrary', 'defiant', 'gooey', 'intimidate', 'moxie', 'speed-boost', 'stamina', 'weak-armor',
+  'anger-point', 'berserk', 'competitive', 'contrary', 'defiant', 'gooey', 'intimidate', 'moxie', 'opportunist', 'speed-boost', 'stamina', 'weak-armor',
 ])
 const weatherOrTerrainDriven = new Set([
   'chlorophyll', 'drizzle', 'drought', 'forecast', 'hydration', 'ice-body', 'leaf-guard', 'mimicry', 'rain-dish', 'sand-rush', 'sand-spit', 'sand-stream', 'sand-veil', 'slush-rush', 'snow-cloak', 'snow-warning', 'surge-surfer', 'swift-swim',
 ])
 const indirectOrNonDamage = new Set([
-  'aftermath', 'anticipation', 'armor-tail', 'aroma-veil', 'big-pecks', 'bulletproof', 'cheek-pouch', 'clear-body', 'cloud-nine', 'compoundeyes', 'corrosion', 'cud-chew', 'curious-medicine', 'cursed-body', 'cute-charm', 'damp', 'disguise', 'early-bird', 'flame-body', 'flower-veil', 'friend-guard', 'frisk', 'gluttony', 'harvest', 'healer', 'heavy-metal', 'hospitality', 'hunger-switch', 'hyper-cutter', 'illuminate', 'illusion', 'immunity', 'imposter', 'infiltrator', 'innards-out', 'inner-focus', 'insomnia', 'justified', 'keen-eye', 'klutz', 'levitate', 'light-metal', 'limber', 'long-reach', 'magic-bounce', 'magic-guard', 'magician', 'magma-armor', 'minus', 'mirror-armor', 'mold-breaker', 'moody', 'mummy', 'natural-cure', 'no-guard', 'oblivious', 'overcoat', 'own-tempo', 'pickpocket', 'pickup', 'poison-point', 'poison-touch', 'prankster', 'pressure', 'purifying-salt', 'queenly-majesty', 'receiver', 'regenerator', 'ripen', 'rock-head', 'rough-skin', 'scrappy', 'screen-cleaner', 'shadow-tag', 'shed-skin', 'shell-armor', 'shield-dust', 'soundproof', 'spicy-spray', 'stall', 'stalwart', 'static', 'steadfast', 'stench', 'sticky-hold', 'sturdy', 'supersweet-syrup', 'sweet-veil', 'symbiosis', 'synchronize', 'tangled-feet', 'telepathy', 'toxic-debris', 'trace', 'unburden', 'unnerve', 'unseen-fist', 'wandering-spirit', 'white-smoke', 'zero-to-hero'
+  'aftermath', 'anticipation', 'armor-tail', 'aroma-veil', 'big-pecks', 'bulletproof', 'cheek-pouch', 'chlorophyll', 'clear-body', 'cloud-nine', 'compoundeyes', 'corrosion', 'cud-chew', 'curious-medicine', 'cursed-body', 'cute-charm', 'damp', 'disguise', 'early-bird', 'effect-spore', 'flame-body', 'flower-veil', 'forewarn', 'friend-guard', 'frisk', 'gale-wings', 'gluttony', 'good-as-gold', 'harvest', 'healer', 'heavy-metal', 'hospitality', 'hunger-switch', 'hydration', 'hyper-cutter', 'ice-body', 'illuminate', 'illusion', 'immunity', 'imposter', 'infiltrator', 'innards-out', 'inner-focus', 'insomnia', 'justified', 'keen-eye', 'klutz', 'leaf-guard', 'levitate', 'light-metal', 'limber', 'long-reach', 'magic-bounce', 'magic-guard', 'magician', 'magma-armor', 'minus', 'mirror-armor', 'mold-breaker', 'moody', 'mummy', 'natural-cure', 'no-guard', 'oblivious', 'overcoat', 'own-tempo', 'pickpocket', 'pickup', 'poison-heal', 'poison-point', 'poison-touch', 'prankster', 'pressure', 'purifying-salt', 'queenly-majesty', 'quick-draw', 'quick-feet', 'rain-dish', 'receiver', 'regenerator', 'ripen', 'rock-head', 'rough-skin', 'sand-rush', 'sand-spit', 'sand-veil', 'scrappy', 'screen-cleaner', 'shadow-tag', 'shed-skin', 'shield-dust', 'slush-rush', 'snow-cloak', 'soundproof', 'spicy-spray', 'stall', 'stalwart', 'static', 'steadfast', 'stench', 'sticky-hold', 'sturdy', 'suction-cups', 'super-luck', 'supersweet-syrup', 'surge-surfer', 'sweet-veil', 'swift-swim', 'symbiosis', 'synchronize', 'tangled-feet', 'telepathy', 'toxic-debris', 'trace', 'unburden', 'unnerve', 'unseen-fist', 'vital-spirit', 'wandering-spirit', 'white-smoke', 'zero-to-hero'
 ])
 const defenderDamageRelevant = new Set([
   'dry-skin', 'earth-eater', 'fairy-aura', 'filter', 'flash-fire', 'friend-guard', 'fur-coat', 'heatproof', 'ice-scales', 'levitate', 'lightning-rod', 'motor-drive', 'multiscale', 'prism-armor', 'purifying-salt', 'sap-sipper', 'shadow-shield', 'solid-rock', 'soundproof', 'thick-fat', 'volt-absorb', 'water-absorb', 'water-bubble'

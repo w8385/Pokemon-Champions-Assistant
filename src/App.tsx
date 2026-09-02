@@ -2237,6 +2237,19 @@ function deriveAutoWeatherFromAbilities(...abilities: string[]) {
   return 'none' as DamageWeather
 }
 
+function terrainFromAbility(ability: string): DamageTerrain {
+  if (ability === 'electric-surge' || ability === '일렉트릭메이커') return 'electric'
+  return 'none'
+}
+
+function deriveAutoTerrainFromAbilities(...abilities: string[]) {
+  for (const ability of abilities) {
+    const resolved = terrainFromAbility(ability)
+    if (resolved !== 'none') return resolved
+  }
+  return 'none' as DamageTerrain
+}
+
 function abilityNoteLabel(ability: string) {
   const labels: Record<string, string> = {
     'adaptability': '적응력',
@@ -2252,10 +2265,14 @@ function abilityNoteLabel(ability: string) {
     'disguise': '탈',
     'dry-skin': '건조피부',
     'earth-eater': '대지먹기',
+    'electric-surge': '일렉트릭메이커',
+    'eelevate': '일렉트리베이트',
     'fairy-aura': '페어리오라',
     'filter': '필터',
     'flash-fire': '타오르는불꽃',
     'fluffy': '복슬복슬',
+    'fire-mane': '불꽃의갈기',
+    'battle-armor': '전투무장',
     'friend-guard': '프렌드가드',
     'fur-coat': '퍼코트',
     'guts': '근성',
@@ -2291,6 +2308,7 @@ function abilityNoteLabel(ability: string) {
     'sniper': '스나이퍼',
     'solar-power': '선파워',
     'soundproof': '방음',
+    'shell-armor': '조가비갑옷',
     'solid-rock': '하드록',
     'strong-jaw': '옹골찬턱',
     'supreme-overlord': '대장군',
@@ -2356,7 +2374,8 @@ function resolveDamageModifiers(params: {
   const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
-  const effectiveCritical = Boolean(critical || (attackerAbility === 'merciless' && targetPoisoned))
+  const criticalBlocked = critical && ['battle-armor', 'shell-armor'].includes(defenderAbility)
+  const effectiveCritical = Boolean(!criticalBlocked && (critical || (attackerAbility === 'merciless' && targetPoisoned)))
   const effectiveAttackStage = defenderIgnoresAttackStage ? 0 : effectiveCritical && attackStage < 0 ? 0 : attackStage
   const effectiveDefenseStage = attackerIgnoresDefenseStage ? 0 : effectiveCritical && defenseStage > 0 ? 0 : defenseStage
   let attackMultiplier = battleStageMultiplier(effectiveAttackStage)
@@ -2397,6 +2416,7 @@ function resolveDamageModifiers(params: {
   if (burnApplies) notes.push('화상')
 
   if (effectiveCritical) notes.push(attackerAbility === 'merciless' && targetPoisoned && !critical ? `${abilityNoteLabel(attackerAbility)}(급소)` : '급소')
+  if (criticalBlocked) notes.push(`${abilityNoteLabel(defenderAbility)}(급소 방지)`)
 
   if (mode === 'physical' && (attackerAbility === 'huge-power' || attackerAbility === 'pure-power')) {
     attackMultiplier *= 2
@@ -2530,6 +2550,11 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
+  if (moveType === 'fire' && attackerAbility === 'fire-mane') {
+    attackMultiplier *= 1.5
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
   if (moveType === 'electric' && attackerAbility === 'transistor') {
     powerMultiplier *= 1.3
     notes.push(abilityNoteLabel(attackerAbility))
@@ -2597,9 +2622,9 @@ function resolveDamageModifiers(params: {
     notes.push('미스트필드')
   }
 
-  if (moveType === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) {
+  if (moveType === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유' || defenderAbility === 'eelevate')) {
     adjustedEffectiveness = 0
-    notes.push(abilityNoteLabel('levitate'))
+    notes.push(abilityNoteLabel(defenderAbility === 'eelevate' ? defenderAbility : 'levitate'))
   }
 
   if (moveType === 'water' && ['water-absorb', 'storm-drain', 'dry-skin'].includes(defenderAbility)) {
@@ -2645,6 +2670,17 @@ function resolveDamageModifiers(params: {
   if (adjustedEffectiveness > 0 && moveType === 'fire' && defenderAbility === 'heatproof') {
     finalMultiplier *= 0.5
     notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (adjustedEffectiveness > 0 && defenderAbility === 'fluffy') {
+    if (moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+      finalMultiplier *= 0.5
+      notes.push(`${abilityNoteLabel(defenderAbility)}(접촉 반감)`)
+    }
+    if (moveType === 'fire') {
+      finalMultiplier *= 2
+      notes.push(`${abilityNoteLabel(defenderAbility)}(불꽃 약점)`)
+    }
   }
 
   if (adjustedEffectiveness > 0 && moveType === 'ghost' && defenderAbility === 'purifying-salt') {
@@ -4877,6 +4913,7 @@ export default function App() {
   const attackerAbilitySlug = attackerAbilityValue
   const defenderAbilitySlug = defenderAbilityValue
   const autoWeatherFromAbilities = React.useMemo(() => deriveAutoWeatherFromAbilities(attackerAbilitySlug, defenderAbilitySlug), [attackerAbilitySlug, defenderAbilitySlug])
+  const autoTerrainFromAbilities = React.useMemo(() => deriveAutoTerrainFromAbilities(attackerAbilitySlug, defenderAbilitySlug), [attackerAbilitySlug, defenderAbilitySlug])
   const autoWeatherRef = React.useRef<DamageWeather>('none')
   React.useEffect(() => {
     const previousAutoWeather = autoWeatherRef.current
@@ -4892,6 +4929,21 @@ export default function App() {
     }
     autoWeatherRef.current = autoWeatherFromAbilities
   }, [autoWeatherFromAbilities, calcWeather])
+  const autoTerrainRef = React.useRef<DamageTerrain>('none')
+  React.useEffect(() => {
+    const previousAutoTerrain = autoTerrainRef.current
+    if (autoTerrainFromAbilities === 'none') {
+      if (calcTerrain === previousAutoTerrain && previousAutoTerrain !== 'none') setCalcTerrain('none')
+      autoTerrainRef.current = 'none'
+      return
+    }
+    if (calcTerrain === 'none' || calcTerrain === previousAutoTerrain) {
+      if (calcTerrain !== autoTerrainFromAbilities) setCalcTerrain(autoTerrainFromAbilities)
+      autoTerrainRef.current = autoTerrainFromAbilities
+      return
+    }
+    autoTerrainRef.current = autoTerrainFromAbilities
+  }, [autoTerrainFromAbilities, calcTerrain])
   const effectiveAttackerTypes = attackerRow ? resolveAbilityAdjustedTypes(attackerRow.types, attackerAbilitySlug, calcWeather, calcTerrain) : []
   const effectiveDefenderTypes = defenderRow ? resolveAbilityAdjustedTypes(defenderRow.types, defenderAbilitySlug, calcWeather, calcTerrain) : []
   const usesTypeChangeStabAbility = ['libero', 'protean', '변환자재'].includes(attackerAbilitySlug)
