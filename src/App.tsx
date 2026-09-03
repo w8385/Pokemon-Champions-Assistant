@@ -124,7 +124,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '포켓몬 / 기술 / 특성 / 도구 검색': 'Search Pokémon / moves / abilities / items', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '배우는 포켓몬': 'Pokémon that learn this move', '합계': 'Total', '효과': 'Effect',
     '선택 슬롯 비우기': 'Clear selected slot',
     '간단 설명': 'Summary', '상세 설명': 'Details', '설명': 'Description', '이름': 'Name', '설명 데이터 없음': 'No description available yet.',
-    '비교 상대 선택': 'Choose opponent', '비교 상대 교체': 'Change opponent', '비교 상대': 'Opponent', '1:1 비교': '1:1 comparison', '가장 경계할 상대 한 마리를 선택합니다.': 'Choose the one opponent you need to prepare for.',
+    '비교 상대 선택': 'Choose opponent', '비교 상대 교체': 'Change opponent', '비교 상대': 'Opponent', '1:1 비교': '1:1 comparison', '가장 경계할 상대 한 마리를 선택합니다.': 'Choose the one opponent you need to prepare for.', '결정력': 'Power index', '물리 내구력': 'Physical bulk', '특수 내구력': 'Special bulk', '상대 영향 제외': 'Excludes target', '기본 조건': 'Baseline', '계산 기준': 'Formula', '상대 의존': 'Target-dependent', '상시 보정': 'Always-on modifiers',
     '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'Register at least one sample move to compare here right away.', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': 'Add a comparison Pokémon from the search field above to show results here.', '샘플 기술로 이동': 'Go to Sample Moves', '세부 내구 조절': 'Detailed bulk tuning', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
     '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '비교 포켓몬 추가': 'Add comparison Pokémon', '비교 포켓몬': 'Comparison Pokémon', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '내 스피드 랭크': 'My Speed Stage', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
@@ -157,7 +157,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'ポケモン・技・特性・持ち物をすばやく検索できます。', '포켓몬': 'ポケモン', '기술': '技', '검색 결과': '検索結果', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': '検索結果を選ぶと詳細をすぐ確認できます。', '포켓몬 / 기술 / 특성 / 도구 검색': 'ポケモン / 技 / 特性 / 持ち物を検索', '기술 검색': '技検索', '도구 검색': '持ち物検索', '타입': 'タイプ', '분류': '分類', '명중': '命中', '변화': '変化', '해당 특성 포켓몬': 'この特性のポケモン', '배우는 포켓몬': 'この技を覚えるポケモン', '합계': '合計', '효과': '効果',
     '선택 슬롯 비우기': '選択スロットを空にする',
     '간단 설명': '要約', '상세 설명': '詳細説明', '설명': '説明', '이름': '名前', '설명 데이터 없음': '説明データはまだありません。',
-    '비교 상대 선택': '比較相手を選択', '비교 상대 교체': '比較相手を変更', '비교 상대': '比較相手', '1:1 비교': '1対1比較', '가장 경계할 상대 한 마리를 선택합니다.': '最も警戒する相手を1匹選択します。',
+    '비교 상대 선택': '比較相手を選択', '비교 상대 교체': '比較相手を変更', '비교 상대': '比較相手', '1:1 비교': '1対1比較', '가장 경계할 상대 한 마리를 선택합니다.': '最も警戒する相手を1匹選択します。', '결정력': '火力指数', '물리 내구력': '物理耐久', '특수 내구력': '特殊耐久', '상대 영향 제외': '相手補正を除外', '기본 조건': '基本条件', '계산 기준': '計算式', '상대 의존': '相手依存', '상시 보정': '常時補正',
     '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'サンプル技を1つ以上登録すると、ここですぐ比較できます。', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': '上の検索欄から比較ポケモンを追加すると、結果がここに表示されます。', '샘플 기술로 이동': 'サンプル技へ移動', '세부 내구 조절': '耐久の詳細調整', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
     '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '비교 포켓몬 추가': '比較ポケモン追加', '비교 포켓몬': '比較ポケモン', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '내 스피드 랭크': '自分の素早さランク', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
@@ -2867,6 +2867,72 @@ function resolveDamageModifiers(params: {
     burned: burnApplies,
     ignoreFirstHitDamage: defenderHasActiveDisguise,
     notes,
+  }
+}
+
+function formatBattleIndex(value: number, language: SiteLanguage) {
+  const locale = language === 'ja' ? 'ja-JP' : language === 'en' ? 'en-US' : 'ko-KR'
+  return Math.round(value).toLocaleString(locale)
+}
+
+function durabilityIndices(stats: BattleStatBlock) {
+  return {
+    physical: stats.hp * stats.defense,
+    special: stats.hp * stats.spDefense,
+  }
+}
+
+function decisionPowerIndex(stats: BattleStatBlock, moveMeta: MoveMeta, stab: number, modifiers: DamageCalcModifiers) {
+  if (moveMeta.category !== 'physical' && moveMeta.category !== 'special') return null
+  const attackStat = moveMeta.usesDefenseAsAttack
+    ? stats.defense
+    : moveMeta.category === 'physical'
+      ? stats.attack
+      : stats.spAttack
+  const totalPower = moveMeta.hitPowers?.length
+    ? moveMeta.hitPowers.reduce((sum, power) => sum + power, 0)
+    : (moveMeta.power ?? 0) * Math.max(1, moveMeta.hits ?? 1)
+  if (!totalPower) return null
+  return Math.round(
+    attackStat
+    * totalPower
+    * stab
+    * (modifiers.attackMultiplier ?? 1)
+    * (modifiers.powerMultiplier ?? 1)
+    * (modifiers.finalMultiplier ?? 1)
+    / Math.max(0.01, modifiers.defenseMultiplier ?? 1)
+  )
+}
+
+function battleIndexTooltipData(kind: 'power' | 'physical-bulk' | 'special-bulk', language: SiteLanguage, rows: HoverTooltipCard['rows']): HoverTooltipCard {
+  const labels = language === 'ja'
+    ? {
+        powerTitle: '火力指数',
+        physicalTitle: '物理耐久指数',
+        specialTitle: '特殊耐久指数',
+        powerDescription: '相手のタイプ相性と耐久を除き、実数値・技威力・一致補正・常時発動する特性と持ち物を反映した比較指数です。',
+        bulkDescription: '現在のサンプル実数値による HP × 防御（特防）の比較指数です。',
+      }
+    : language === 'en'
+      ? {
+          powerTitle: 'Power index',
+          physicalTitle: 'Physical bulk index',
+          specialTitle: 'Special bulk index',
+          powerDescription: 'A comparison index using the actual stat, move power, STAB, and always-on ability/item modifiers; target typing and bulk are excluded.',
+          bulkDescription: 'A comparison index using the current sample stats: HP × Defense (or Sp. Def).',
+        }
+      : {
+          powerTitle: '결정력',
+          physicalTitle: '물리 내구력',
+          specialTitle: '특수 내구력',
+          powerDescription: '상대 상성과 내구를 제외하고 실수치·기술 위력·자속·상시 특성/도구 보정을 반영한 비교 지수입니다.',
+          bulkDescription: '현재 샘플 실수치의 HP × 방어(특수방어) 비교 지수입니다.',
+        }
+  return {
+    kind: 'index',
+    title: kind === 'power' ? labels.powerTitle : kind === 'physical-bulk' ? labels.physicalTitle : labels.specialTitle,
+    rows,
+    description: kind === 'power' ? labels.powerDescription : labels.bulkDescription,
   }
 }
 
@@ -5668,6 +5734,74 @@ export default function App() {
   }, [sampleDamageTargets, weightByKey])
   const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(sampleForge.key, sampleForge.ability, true)) : sampleForge.ability
   const damageSampleAttackerStats = buildPartyBattleStats(attackingFormRow(sampleRow, sampleAttackerAbilityValue), sampleCalcMember)
+  const sampleBulkIndices = durabilityIndices(buildPartyBattleStats(sampleRow, sampleCalcMember))
+  const sampleBaselineWeather = deriveAutoWeatherFromAbilities(sampleAttackerAbilityValue)
+  const sampleBaselineTerrain = deriveAutoTerrainFromAbilities(sampleAttackerAbilityValue)
+  const sampleDecisionPowerIndices = sampleDamageMoveChoices.map((moveName) => {
+    const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
+    const defaultHitCount = multiHitOptions(moveName)?.[0] ?? null
+    const moveRule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
+    const moveMeta = applyConditionalMovePower(
+      moveName,
+      resolveAbilityAdjustedMoveMeta(
+        moveName,
+        resolveMultiHitMeta(moveName, moveMetaBase, defaultHitCount, sampleAttackerAbilityValue),
+        sampleAttackerAbilityValue,
+        sampleBaselineWeather,
+      ),
+      moveRule?.defaultValue,
+    )
+    if (!moveMeta || (moveMeta.category !== 'physical' && moveMeta.category !== 'special') || !moveMeta.type) {
+      return { moveName, moveMeta, value: null, attackStat: null, stab: 1, notes: [] as string[] }
+    }
+    const attackerTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, sampleBaselineWeather, sampleBaselineTerrain)
+    const stab = resolveStabMultiplier(attackerTypes, moveMeta.type, sampleAttackerAbilityValue, true)
+    const modifiers = resolveDamageModifiers({
+      attackerAbility: sampleAttackerAbilityValue,
+      attackerItem: sampleCalcMember.item,
+      defenderAbility: '',
+      defenderItem: '',
+      moveName,
+      baseMoveType: moveMetaBase?.type ?? moveMeta.type,
+      moveType: moveMeta.type,
+      movePower: moveMeta.power ?? null,
+      mode: moveMeta.category,
+      effectiveness: 1,
+      attackStage: 0,
+      defenseStage: 0,
+      defenderTypes: [],
+      burned: false,
+      attackerLowHp: false,
+      targetPoisoned: false,
+      defenderFullHp: false,
+      movedAfterTarget: false,
+      faintedAllies: 0,
+      rivalryMode: 'neutral',
+      parentalBond: sampleAttackerAbilityValue === 'parental-bond',
+      defenderStatused: false,
+      electromorphosisCharged: false,
+      weather: sampleBaselineWeather,
+      terrain: sampleBaselineTerrain,
+      reflect: false,
+      lightScreen: false,
+      auroraVeil: false,
+      friendGuard: false,
+      critical: false,
+    })
+    const attackStat = moveMeta.usesDefenseAsAttack
+      ? damageSampleAttackerStats.defense
+      : moveMeta.category === 'physical'
+        ? damageSampleAttackerStats.attack
+        : damageSampleAttackerStats.spAttack
+    return {
+      moveName,
+      moveMeta,
+      value: decisionPowerIndex(damageSampleAttackerStats, moveMeta, stab, modifiers),
+      attackStat,
+      stab,
+      notes: modifiers.notes,
+    }
+  })
   const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
   const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
@@ -8600,6 +8734,14 @@ export default function App() {
                         <span><small>{lt('특성')}</small><strong>{sampleAbility || lt('미지정')}</strong></span>
                         <span {...bindTooltip(sampleCurrentItem ? itemTooltipData(sampleCurrentItem, siteLanguage) : null)}><small>{lt('도구')}</small><strong>{sampleCurrentItem ? displayItemLabel(sampleCurrentItem, siteLanguage) : lt('도구 미선택')}</strong></span>
                       </div>
+                      <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
+                        <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
+                          <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.physical, siteLanguage)}</strong>
+                        </span>
+                        <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('special-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.spDefense}` }]))}>
+                          <small>{lt('특수 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.special, siteLanguage)}</strong>
+                        </span>
+                      </div>
                     </div>
                     <label className="sample-speed-slider-field sample-speed-stage-inline-card sample-workbench-section-block">
                       <span className="sample-workbench-section-label">{lt('내 스피드 랭크')}</span>
@@ -8715,7 +8857,45 @@ export default function App() {
                       <span className="pick-badge">{lt('공격')} {sampleAttackerStats.attack}</span>
                       <span className="pick-badge">{lt('특수공격')} {sampleAttackerStats.spAttack}</span>
                     </div>
+                    <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
+                      <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
+                        <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.physical, siteLanguage)}</strong>
+                      </span>
+                      <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('special-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.spDefense}` }]))}>
+                        <small>{lt('특수 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.special, siteLanguage)}</strong>
+                      </span>
+                    </div>
                   </div>
+                  </div>
+                </div>
+                <div className="sample-power-index-panel sample-workbench-wide-card sample-workbench-section">
+                  <div className="row-between sample-workbench-section-head">
+                    <strong>{lt('결정력')}</strong>
+                    <span className="muted-inline">{lt('상대 영향 제외')} · {lt('기본 조건')}</span>
+                  </div>
+                  <div className="sample-power-index-grid">
+                    {sampleDecisionPowerIndices.length ? sampleDecisionPowerIndices.map((entry) => {
+                      const totalPower = entry.moveMeta?.hitPowers?.length
+                        ? entry.moveMeta.hitPowers.reduce((sum, power) => sum + power, 0)
+                        : (entry.moveMeta?.power ?? 0) * Math.max(1, entry.moveMeta?.hits ?? 1)
+                      const formula = entry.attackStat && totalPower
+                        ? `${entry.attackStat} × ${totalPower} × ${entry.stab}`
+                        : '—'
+                      return <div
+                        key={`sample-power-index-${entry.moveName}`}
+                        className="sample-power-index-card"
+                        tabIndex={0}
+                        {...bindTooltip(battleIndexTooltipData('power', siteLanguage, [
+                          { label: lt('기술'), value: entry.moveName },
+                          { label: lt('계산 기준'), value: formula },
+                          ...(entry.notes.length ? [{ label: lt('상시 보정'), value: entry.notes.join(' · ') }] : []),
+                        ]))}
+                      >
+                        <span className="sample-power-index-name">{entry.moveName}</span>
+                        <strong>{entry.value == null ? lt('상대 의존') : formatBattleIndex(entry.value, siteLanguage)}</strong>
+                        <small>{entry.moveMeta ? `${lt('위력')} ${totalPower || '—'} · ${displayMoveCategoryName(entry.moveMeta.category, siteLanguage)}` : lt('대미지 계산 불가')}</small>
+                      </div>
+                    }) : <div className="sample-empty-state">{lt('등록 기술 없음')}</div>}
                   </div>
                 </div>
                 <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel sample-workbench-section sample-damage-top-conditions">
@@ -8865,6 +9045,14 @@ export default function App() {
                       </div>
                       <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
+                    {entry.defenderStats ? <div className="combat-index-strip opponent-combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
+                      <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${entry.defenderStats.hp} × ${entry.defenderStats.defense}` }]))}>
+                        <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(durabilityIndices(entry.defenderStats).physical, siteLanguage)}</strong>
+                      </span>
+                      <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('special-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${entry.defenderStats.hp} × ${entry.defenderStats.spDefense}` }]))}>
+                        <small>{lt('특수 내구력')}</small><strong>{formatBattleIndex(durabilityIndices(entry.defenderStats).special, siteLanguage)}</strong>
+                      </span>
+                    </div> : null}
                     <div className="sample-workbench-card-body sample-damage-card-body">
                       <div className="sample-workbench-sidepanel">
                         <div className="sample-damage-target-summary-strip">

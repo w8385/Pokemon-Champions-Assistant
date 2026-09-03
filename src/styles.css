@@ -3689,6 +3689,87 @@ header p {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.combat-index-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid rgba(71, 85, 105, 0.48);
+  border-radius: 10px;
+  background: rgba(71, 85, 105, 0.48);
+}
+.combat-index-strip > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 10px;
+  background: rgba(11, 18, 32, 0.82);
+  cursor: help;
+}
+.combat-index-strip small {
+  overflow: hidden;
+  color: #8395aa;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.combat-index-strip strong {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.opponent-combat-index-strip {
+  margin: 10px 0 2px;
+}
+.sample-power-index-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(71, 85, 105, 0.48);
+  border-radius: 14px;
+  background: rgba(11, 18, 32, 0.46);
+}
+.sample-power-index-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid rgba(71, 85, 105, 0.48);
+  border-radius: 10px;
+  background: rgba(71, 85, 105, 0.48);
+}
+.sample-power-index-card {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  cursor: help;
+}
+.sample-power-index-name {
+  overflow: hidden;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sample-power-index-card > strong {
+  color: #f8fafc;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.sample-power-index-card > small {
+  overflow: hidden;
+  color: #8293a8;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .sample-current-build-card-embedded .drag-stat-list {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 12px;
@@ -7457,6 +7538,7 @@ html {
   .sample-damage-conditions-summary-grid,
   .sample-damage-context-grid,
   .sample-damage-metric-grid { grid-template-columns: 1fr; }
+  .sample-power-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sample-bulk-split-grid { grid-template-columns: 1fr; }
   .sample-bulk-pair-row { grid-template-columns: 1fr; }
   .sample-overview-inline-save { grid-template-columns: 1fr; }

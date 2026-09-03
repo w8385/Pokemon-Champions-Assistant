@@ -439,3 +439,14 @@ Example:
   - 단일 상대 저장/교체 harness, 아이템 harness, typecheck, ability damage harness, damage parity harness, production build 통과.
 - next:
   - 기술의 절대 결정력과 포켓몬의 물리/특수 내구력을 같은 기준값으로 비교할 수 있는 상시 지표를 설계한다.
+
+### Product change — persistent power and bulk indices
+- changed:
+  - 샘플 대미지 화면에 등록 기술별 결정력을 4열(모바일 2열) 비교 컴포넌트로 추가함.
+  - 결정력은 실공격/특공 × 총위력 × 자속 × 상시 특성·도구 보정을 기준으로 하며, 상대 상성·내구·일시적 상황 조건은 제외함.
+  - 현재 샘플과 대미지 비교 상대에 물리 내구력(HP × 방어), 특수 내구력(HP × 특수방어)을 상시 표시함.
+  - 핵심 숫자는 모바일에서도 바로 보이고, 산식과 적용 보정은 hover/focus 툴팁으로 분리함.
+- rationale:
+  - 실전 비교 지표를 hover 전용으로 숨기면 터치 환경에서 발견성과 비교 속도가 떨어진다. 상시 숫자 + 근거 툴팁 구조를 공용 문법으로 사용한다.
+- verification:
+  - 결정력/내구력 산식 harness, typecheck, ability damage harness, damage parity harness, production build를 실행한다.

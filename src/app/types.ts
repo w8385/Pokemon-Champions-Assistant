@@ -130,7 +130,7 @@ export type MoveMeta = {
 }
 
 export type HoverTooltipCard = {
-  kind: 'move' | 'ability' | 'item'
+  kind: 'move' | 'ability' | 'item' | 'index'
   title: string
   subtitle?: string
   accentType?: string | null
