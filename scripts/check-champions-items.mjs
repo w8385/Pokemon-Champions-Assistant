@@ -57,8 +57,14 @@ if (!appSource.includes("canonicalChampionsItemName(item).trim() === 'こだわ�
 if (!appSource.includes('mySpeedNeeds(sampleRow, sampleCalcConfig, sampleCalcMember.item, scenario.speed)')) {
   failures.push('Speed cutoff calculator does not receive the held item')
 }
-if (!appSource.includes('config.scarf || isChoiceScarfItem(item)')) {
+if (!appSource.includes('if (isChoiceScarfItem(item)) speed = Math.floor(speed * 1.5)')) {
   failures.push('Speed cutoff calculator does not apply the held Choice Scarf')
+}
+if (appSource.includes('member.config.scarf || isChoiceScarfItem(member.item)') || appSource.includes('config.scarf || isChoiceScarfItem(item)')) {
+  failures.push('Player speed calculator still accepts the hidden legacy scarf flag')
+}
+if (!appSource.includes('scarf: false,\n    speedStage: clampSpeedStage(config.speedStage)')) {
+  failures.push('Saved player builds do not discard the hidden legacy scarf flag')
 }
 if (!appSource.includes("canonicalAttackerItem === 'いのちのたま'")) {
   failures.push('Damage calculator does not apply Life Orb')

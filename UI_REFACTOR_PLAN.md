@@ -418,3 +418,24 @@ Example:
   - 후속 감사에서 신규 메가를 포함한 76종 중 39종의 메가스톤 아이콘 매핑이 빠진 것을 확인해 전수 보완함.
   - harness 범위를 일반 도구 70개뿐 아니라 메가스톤 76개까지 확장함.
   - 생명의구슬은 이름·아이콘만 있고 효과 설명과 계산 보정이 빠져 있던 문제를 수정해, 공격 기술 1.3배와 툴팁 효과를 함께 반영함.
+
+### Latest pass — single speed calc input / result hierarchy
+- rubric: clarity 5 / focus 5 / density 4 / consistency 5 / restraint 5
+- reviewed workflow: **내 슬롯 선택 → 상대 기준 확인 → 속도 범위 읽기**
+- changed:
+  - 그래프 앞의 내 포켓몬/상대 포켓몬 카드를 같은 중성 surface로 통일하고 gradient와 shadow를 제거해 입력 맥락이 결과보다 강하게 보이지 않게 함.
+  - 역할 배지를 작은 overline으로 바꾸고, 내 실수치와 상대 준속–최속 범위를 각각 한 줄 fact로 노출해 그래프에 들어가기 전 비교 기준을 바로 읽게 함.
+  - 날씨·지형 특성 발동 속도도 별도 badge 대신 같은 fact row에 합쳐 상단 badge 경쟁을 줄임.
+- next:
+  - 다음 패스는 single speed graph의 범위 label과 축 legend가 모바일 640px 이하에서 겹치지 않는지 확인한다.
+
+### Product change — sample calculators as one-on-one tuning
+- changed:
+  - 샘플 스피드와 샘플 대미지의 비교 상대를 각각 한 마리로 제한하고, 새 상대 선택 시 기존 상대를 교체하도록 변경함.
+  - 기존 저장 데이터에 여러 비교 상대가 있으면 첫 상대만 유지해 현재 작업을 안전하게 마이그레이션함.
+  - 다중 대상 개수 배지를 제거하고 `1:1 비교` 상태와 단일 상대 선택/교체 문법으로 통일함.
+  - 내 포켓몬과 샘플의 스피드 계산에서 숨은 구버전 스카프 플래그를 폐기하고 실제 장착 도구만 판정하도록 통일함.
+- verification:
+  - 단일 상대 저장/교체 harness, 아이템 harness, typecheck, ability damage harness, damage parity harness, production build 통과.
+- next:
+  - 기술의 절대 결정력과 포켓몬의 물리/특수 내구력을 같은 기준값으로 비교할 수 있는 상시 지표를 설계한다.
