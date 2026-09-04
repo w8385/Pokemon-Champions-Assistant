@@ -8234,3 +8234,11 @@ html {
 .party-preset-controls .pick-chip.disabled {
   opacity: 0.45;
 }
+
+@media (max-width: 374px) {
+  .damage-side-moves,
+  .damage-side-moves-player,
+  .damage-side-moves-opponent {
+    grid-template-columns: 1fr;
+  }
+}
