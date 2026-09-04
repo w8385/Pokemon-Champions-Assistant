@@ -9655,23 +9655,32 @@ export default function App() {
             {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
             </div> : null}
-            {activeDamageMove ? <div className="damage-fact-panel" aria-label={lt('현재 기준 정보')}>
-              <div className="damage-fact-panel-head">
-                <span>{lt('현재 기술 기준')}</span>
-                <strong>{activeDamageMove}</strong>
+            {activeDamageMove ? <details className="damage-fact-panel damage-fact-details">
+              <summary className="damage-fact-summary">
+                <span className="damage-fact-summary-title">
+                  <small>{lt('현재 기술 기준')}</small>
+                  <strong>{activeDamageMove}</strong>
+                </span>
+                <span className="damage-fact-summary-meta">
+                  {activeDamageMoveType ? displayTypeName(activeDamageMoveType, siteLanguage) : '—'}
+                  {' · '}{activeDamageMoveCategory ? lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수') : '—'}
+                  {' · '}{lt('위력')} {activeDamageMovePower ?? '—'}
+                </span>
+              </summary>
+              <div className="damage-fact-detail-body" aria-label={lt('현재 기준 정보')}>
+                <dl className="damage-fact-grid">
+                  <div><dt>{lt('타입')}</dt><dd>{activeDamageMoveType ? displayTypeName(activeDamageMoveType, siteLanguage) : '—'}</dd></div>
+                  <div><dt>{lt('분류')}</dt><dd>{activeDamageMoveCategory ? lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수') : '—'}</dd></div>
+                  <div><dt>{lt('위력')}</dt><dd>{activeDamageMovePower ?? '—'}</dd></div>
+                  <div><dt>{lt('특성')}</dt><dd>{selectedAttackAbility?.label ?? abilityNoteLabel(attackerAbilitySlug) ?? '—'}</dd></div>
+                  <div><dt>{lt('자속')}</dt><dd>{activeDamageMoveType ? autoStab : '—'}</dd></div>
+                  <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
+                </dl>
+                {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
+                  {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
+                </div> : null}
               </div>
-              <dl className="damage-fact-grid">
-                <div><dt>{lt('타입')}</dt><dd>{activeDamageMoveType ? displayTypeName(activeDamageMoveType, siteLanguage) : '—'}</dd></div>
-                <div><dt>{lt('분류')}</dt><dd>{activeDamageMoveCategory ? lt(activeDamageMoveCategory === 'physical' ? '물리' : '특수') : '—'}</dd></div>
-                <div><dt>{lt('위력')}</dt><dd>{activeDamageMovePower ?? '—'}</dd></div>
-                <div><dt>{lt('특성')}</dt><dd>{selectedAttackAbility?.label ?? abilityNoteLabel(attackerAbilitySlug) ?? '—'}</dd></div>
-                <div><dt>{lt('자속')}</dt><dd>{activeDamageMoveType ? autoStab : '—'}</dd></div>
-                <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
-              </dl>
-              {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
-                {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
-              </div> : null}
-            </div> : <div className="damage-data-empty">{lt('계산할 기술을 선택해 주세요.')}</div>}
+            </details> : <div className="damage-data-empty">{lt('계산할 기술을 선택해 주세요.')}</div>}
             {activeDamageMoveMeta ? <div className="damage-control-groups">
               <div className="damage-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>

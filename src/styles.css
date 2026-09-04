@@ -6675,6 +6675,60 @@ textarea { min-height: 72px; resize: vertical; }
   border-radius: 14px;
   background: rgba(15, 28, 45, 0.72);
 }
+.damage-fact-details {
+  padding: 0;
+}
+.damage-fact-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.damage-fact-summary::-webkit-details-marker {
+  display: none;
+}
+.damage-fact-summary::after {
+  content: '＋';
+  flex: 0 0 auto;
+  color: #7f93ab;
+  font-weight: 800;
+}
+.damage-fact-details[open] .damage-fact-summary::after {
+  content: '－';
+}
+.damage-fact-summary-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.damage-fact-summary-title small {
+  color: #8ea3bb;
+  font-size: 11px;
+  font-weight: 800;
+}
+.damage-fact-summary-title strong {
+  overflow: hidden;
+  color: #edf4fc;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.damage-fact-summary-meta {
+  margin-left: auto;
+  color: #a9b7c8;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.damage-fact-detail-body {
+  display: grid;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
 .damage-fact-panel-head {
   display: flex;
   align-items: baseline;
@@ -7738,6 +7792,20 @@ html {
   }
 }
 @media (max-width: 640px) {
+  .damage-fact-summary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .damage-fact-summary-title {
+    width: calc(100% - 24px);
+  }
+  .damage-fact-summary-meta {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    white-space: normal;
+  }
   .damage-fact-panel-head {
     align-items: flex-start;
     flex-direction: column;
