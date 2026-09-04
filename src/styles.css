@@ -8004,7 +8004,11 @@ html {
     margin-right: 0;
   }
   .damage-compare-panel {
+    grid-template-columns: 1fr;
     gap: 10px;
+  }
+  .damage-compare-panel .damage-side-card.active-side {
+    order: -1;
   }
   .damage-side-card {
     min-width: 0;
