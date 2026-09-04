@@ -6865,6 +6865,59 @@ textarea { min-height: 72px; resize: vertical; }
   font-size: 12px;
   line-height: 1.5;
 }
+.damage-offense-control-group {
+  gap: 10px;
+}
+.damage-quick-control-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.damage-quick-control-row > label,
+.damage-quick-status {
+  min-height: 40px;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 10px;
+  background: rgba(11, 18, 32, 0.78);
+}
+.damage-quick-control-row > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 7px 5px 10px;
+  color: #a9b7c8;
+  font-size: 12px;
+  font-weight: 700;
+}
+.damage-quick-control-row select {
+  width: auto;
+  min-width: 58px;
+  min-height: 30px;
+  padding: 4px 26px 4px 8px;
+}
+.damage-quick-control-row .damage-quick-toggle {
+  cursor: pointer;
+  padding-right: 10px;
+}
+.damage-quick-toggle input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #60a5fa;
+}
+.damage-quick-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  color: #bfdbfe;
+  font-size: 12px;
+  font-weight: 800;
+}
+.damage-contextual-offense-grid {
+  padding-top: 10px;
+  border-top: 1px solid rgba(51, 65, 85, 0.48);
+}
 .damage-calc-grid.compact.offense-grid,
 .damage-calc-grid.compact.defender-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));

@@ -5102,6 +5102,20 @@ export default function App() {
   const showDefenderStatusedToggle = defenderAbilitySlug === 'marvel-scale'
   const showDefenderFullHpToggle = ['multiscale', 'shadow-shield'].includes(defenderAbilitySlug)
   const showDefenderDisguiseToggle = defenderAbilitySlug === 'disguise' || defenderAbilitySlug === '탈'
+  const hasContextualOffenseControls = Boolean(
+    activeDamageMoveHitOptions?.length
+    || activeDamageMoveRule
+    || usesTypeChangeStabAbility
+    || attackFromOpponent
+    || showAttackerLowHpToggle
+    || showTargetPoisonedToggle
+    || showMovedAfterTargetToggle
+    || showDefenderStatusedToggle
+    || showFaintedAlliesInput
+    || showRivalryModeInput
+    || showParentalBondToggle
+    || showElectromorphosisToggle
+  )
   React.useEffect(() => {
     if (showDefenderDisguiseToggle) {
       setCalcDefenderDisguise(true)
@@ -9682,9 +9696,25 @@ export default function App() {
               </div>
             </details> : <div className="damage-data-empty">{lt('계산할 기술을 선택해 주세요.')}</div>}
             {activeDamageMoveMeta ? <div className="damage-control-groups">
-              <div className="damage-control-group">
+              <div className="damage-control-group damage-offense-control-group">
                 <div className="damage-control-group-title">{lt('화력 조건')}</div>
-                <div className="calc-grid damage-calc-grid compact offense-grid">
+                <div className="damage-quick-control-row">
+                  <label>
+                    <span>{lt('공격측 화력 랭크')}</span>
+                    <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
+                      {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                    </select>
+                  </label>
+                  {activeDamageMoveAlwaysCrit ? <span className="damage-quick-status">{lt('급소')}</span> : <label className="damage-quick-toggle">
+                    <input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} />
+                    <span>{lt('급소')}</span>
+                  </label>}
+                  {activeDamageMoveCategory === 'physical' ? <label className="damage-quick-toggle">
+                    <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
+                    <span>{lt('화상')}</span>
+                  </label> : null}
+                </div>
+                {hasContextualOffenseControls ? <div className="calc-grid damage-calc-grid compact offense-grid damage-contextual-offense-grid">
                   {activeDamageMoveHitOptions?.length ? <label>
                     {lt('타수')}
                     <select value={activeDamageMoveHitCount ?? activeDamageMoveHitOptions[0]} onChange={(e) => setCalcHitCount(Math.max(1, Math.trunc(Number(e.target.value))))} disabled={activeDamageMoveHitOptions.length === 1}>
@@ -9705,16 +9735,6 @@ export default function App() {
                     <input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} />
                     <span>{lt('타입변환 자속')} {autoStab}</span>
                   </label> : null}
-                  <div className="calc-inline-pair">
-                    {activeDamageMoveAlwaysCrit ? <div className="calc-lock-box">{lt('급소')}</div> : <label className="calc-toggle-box">
-                      <input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} />
-                      <span>{lt('급소')}</span>
-                    </label>}
-                    <label className="calc-toggle-box">
-                      <input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} />
-                      <span>{lt('화상')}</span>
-                    </label>
-                  </div>
                   {attackFromOpponent ? <>
                     <label>
                       {lt('상대 화력 프리셋')}
@@ -9788,13 +9808,7 @@ export default function App() {
                       <span>{lt('일렉트릭 차지됨')}</span>
                     </label> : null}
                   </div> : null}
-                  <label>
-                    {lt('공격측 화력 랭크')}
-                    <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
-                      {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
-                    </select>
-                  </label>
-                </div>
+                </div> : null}
               </div>
               <button
                 type="button"
