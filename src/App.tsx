@@ -9743,7 +9743,7 @@ export default function App() {
                         <option value="custom">{lt('직접 조절')}</option>
                       </select>
                     </label>
-                    <div className="calc-inline-pair calc-stat-pair">
+                    {calcOpponentOffensePreset === 'custom' ? <><div className="calc-inline-pair calc-stat-pair">
                       <label>
                         {lt('상대 공격')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentAttackEv} onChange={(e) => updateOpponentOffenseState({ attackEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -9762,7 +9762,7 @@ export default function App() {
                         <input type="checkbox" checked={calcOpponentSpAttackNature > 1} onChange={(e) => updateOpponentOffenseState({ spAttackNature: e.target.checked ? 1.1 : 1 })} />
                         <span>{lt('+특수공격 성격')}</span>
                       </label>
-                    </div>
+                    </div></> : null}
                   </> : null}
                   {showAttackerLowHpToggle || showTargetPoisonedToggle ? <div className="calc-inline-pair">
                     {showAttackerLowHpToggle ? <label className="calc-toggle-box">
@@ -9842,7 +9842,7 @@ export default function App() {
                         </select>
                       </label>
                     </div>
-                    <div className="calc-inline-pair">
+                    {calcOpponentBulkPreset === 'custom' ? <><div className="calc-inline-pair">
                       <label>
                         {lt('상대 체력')}
                         <input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={calcOpponentHpEv} onChange={(e) => updateOpponentBulkState({ hpEv: clampEv(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} />
@@ -9871,7 +9871,10 @@ export default function App() {
                         <input type="checkbox" checked={calcOpponentSpDefenseNature > 1} onChange={(e) => updateOpponentBulkState({ spDefenseNature: e.target.checked ? 1.1 : 1 })} />
                         <span>{lt('+특수방어 성격')}</span>
                       </label>
-                    </div>
+                    </div></> : showDefenderFullHpToggle ? <label className="calc-toggle-box">
+                      <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
+                      <span>{lt('상대 HP 만땅')}</span>
+                    </label> : null}
                   </>}
                   {showDefenderDisguiseToggle ? <label className="calc-toggle-box">
                     <input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} />
