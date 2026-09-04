@@ -4031,6 +4031,56 @@ header p {
   background: rgba(15, 23, 42, 0.58);
   box-shadow: 0 12px 24px rgba(2, 6, 23, 0.16);
 }
+.sample-calculator-split {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.88fr) minmax(460px, 1.12fr);
+  gap: 16px;
+  align-items: start;
+}
+.sample-calculator-side {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.sample-calculator-side-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+  padding: 0 4px 8px;
+  border-bottom: 2px solid rgba(96, 165, 250, 0.48);
+}
+.sample-calculator-side-heading.enemy {
+  border-bottom-color: rgba(248, 113, 113, 0.42);
+}
+.sample-calculator-side-heading span {
+  color: #8ea3bb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sample-calculator-side-heading strong {
+  overflow: hidden;
+  color: #e5edf7;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sample-calculator-split .sample-damage-compare-adder-standalone,
+.sample-calculator-split .sample-compare-targets-section {
+  margin-top: 0;
+}
+.sample-calculator-split .sample-damage-top-panel {
+  grid-template-columns: 1fr;
+}
+.sample-calculator-target .sample-damage-compare-card {
+  margin: 0;
+}
+.sample-calculator-target .sample-workbench-card-body {
+  grid-template-columns: minmax(0, 1fr);
+}
 .sample-workbench-wide-card {
   padding: 0;
 }
@@ -6243,6 +6293,57 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
 }
+.damage-direction-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: min(100%, 520px);
+  margin-bottom: 10px;
+  padding: 4px;
+  border: 1px solid #2f3b49;
+  border-radius: 12px;
+  background: #0c131c;
+}
+.damage-direction-switch button {
+  appearance: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #91a0b2;
+  cursor: pointer;
+}
+.damage-direction-switch button strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.damage-direction-switch button span {
+  color: #718196;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.damage-direction-switch button.active {
+  border-color: #4b78ac;
+  background: #172538;
+  color: #e8f2ff;
+}
+.damage-direction-switch button.active.enemy {
+  border-color: rgba(248, 113, 113, 0.48);
+  background: rgba(69, 26, 31, 0.48);
+  color: #fee2e2;
+}
+.damage-direction-switch button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 .damage-side-card {
   display: grid;
   gap: 12px;
@@ -7328,6 +7429,9 @@ textarea { min-height: 72px; resize: vertical; }
   font-weight: 700;
 }
 @media (max-width: 960px) {
+  .sample-calculator-split {
+    grid-template-columns: 1fr;
+  }
   .sample-builder-grid > .sample-main-card {
     position: static;
   }

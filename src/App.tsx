@@ -8716,6 +8716,12 @@ export default function App() {
           </div>
           </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
+              <div className="sample-calculator-split sample-speed-calculator-split">
+                <div className="sample-calculator-side sample-calculator-source">
+                  <div className="sample-calculator-side-heading">
+                    <span>{lt('내 포켓몬')}</span>
+                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                  </div>
               <div className="sample-damage-top-panel sample-speed-top-panel">
                 <div className="sample-speed-toolbar sample-workbench-toolbar">
                   <div className="sample-speed-inline-controls sample-current-build-toolbar sample-current-build-toolbar-speed">
@@ -8752,6 +8758,12 @@ export default function App() {
                   </div>
                 </div>
               </div>
+                </div>
+                <div className="sample-calculator-side sample-calculator-target">
+                  <div className="sample-calculator-side-heading enemy">
+                    <span>{lt('상대 포켓몬')}</span>
+                    <strong>{sampleSpeedCalcs[0]?.row ? displayName(sampleSpeedCalcs[0].row, siteLanguage) : lt('비교 대상 없음')}</strong>
+                  </div>
               <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                 <div className="sample-compare-adder-head">
                   <span className="sample-workbench-section-label">{lt(sampleSpeedCalcs.length ? '비교 상대 교체' : '비교 상대 선택')}</span>
@@ -8834,9 +8846,17 @@ export default function App() {
                   </div>
                 </div>}
               </div>
+                </div>
+              </div>
             </div>
           </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
+              <div className="sample-calculator-split sample-damage-calculator-split">
+                <div className="sample-calculator-side sample-calculator-source">
+                  <div className="sample-calculator-side-heading">
+                    <span>{lt('내 포켓몬')}</span>
+                    <strong>{displayName(sampleRow, siteLanguage)}</strong>
+                  </div>
               <div className="sample-damage-top-panel">
                 <div className="sample-damage-adder sample-workbench-toolbar">
                   <div className="sample-speed-inline-controls sample-current-build-toolbar">
@@ -8976,6 +8996,12 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
+                </div>
+                <div className="sample-calculator-side sample-calculator-target">
+                  <div className="sample-calculator-side-heading enemy">
+                    <span>{lt('상대 포켓몬')}</span>
+                    <strong>{sampleDamageCalcs[0]?.row ? displayName(sampleDamageCalcs[0].row, siteLanguage) : lt('비교 대상 없음')}</strong>
+                  </div>
               <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                     <div className="sample-compare-adder-head">
                       <span className="sample-workbench-section-label">{lt(sampleDamageCalcs.length ? '비교 상대 교체' : '비교 상대 선택')}</span>
@@ -9201,6 +9227,8 @@ export default function App() {
                   {!sampleDamageMoveChoices.length ? <button type="button" className="pick-chip" onClick={() => setSampleWorkbenchTab('builder')}>{lt('샘플 기술로 이동')}</button> : null}
                 </div>}
               </div>
+                </div>
+              </div>
             </div>
           </div>}
           </div>
@@ -9409,6 +9437,27 @@ export default function App() {
           <div className="row-between section-head">
             <h2>{lt('대미지 계산')}</h2>
           </div>
+          <div className="damage-direction-switch" role="group" aria-label={lt('공수전환')}>
+            <button
+              type="button"
+              className={!attackFromOpponent ? 'active' : ''}
+              aria-pressed={!attackFromOpponent}
+              onClick={() => setCalcSwapSides(false)}
+            >
+              <strong>{lt('내 포켓몬')}</strong>
+              <span>→ {lt('상대 포켓몬')}</span>
+            </button>
+            <button
+              type="button"
+              className={attackFromOpponent ? 'active enemy' : ''}
+              aria-pressed={attackFromOpponent}
+              disabled={!oppRow}
+              onClick={() => setCalcSwapSides(true)}
+            >
+              <strong>{lt('상대 포켓몬')}</strong>
+              <span>→ {lt('내 포켓몬')}</span>
+            </button>
+          </div>
           <div className="speed-target-panel compare-target-panel damage-compare-panel">
             <div className={`speed-target-card damage-side-card ${!attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
@@ -9424,7 +9473,7 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              <div className="damage-side-moves damage-side-moves-player">
+              {!attackFromOpponent ? <div className="damage-side-moves damage-side-moves-player">
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
                   const active = !attackFromOpponent && activeDamageMove === move
@@ -9451,7 +9500,7 @@ export default function App() {
                     </button>
                   )
                 }) : <div className="damage-side-empty">{lt('등록 기술 없음')}</div>}
-              </div>
+              </div> : null}
             </div>
             <div className={`speed-target-card enemy damage-side-card ${attackFromOpponent ? 'active-side' : ''}`}>
               <div className="speed-target-head">
@@ -9467,7 +9516,7 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              <div className="damage-side-moves damage-side-moves-opponent">
+              {attackFromOpponent ? <div className="damage-side-moves damage-side-moves-opponent">
                 {opponentRegisteredDamageMoves.length ? opponentRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
                   const active = attackFromOpponent && activeDamageMove === move
@@ -9599,7 +9648,7 @@ export default function App() {
                       ))}
                   </div> : null}
                 </div>
-              </div>
+              </div> : null}
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface separated">
