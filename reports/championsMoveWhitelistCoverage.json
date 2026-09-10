@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-25T03:29:41.839Z",
+  "generatedAt": "2026-09-10T14:04:32.329Z",
   "totals": {
-    "species": 298,
+    "species": 332,
     "seededFromBaseline": 237,
-    "seededFromApiAlias": 61,
+    "seededFromApiAlias": 95,
     "missing": 0,
-    "untranslatedMoveLabels": 6
+    "untranslatedMoveLabels": 3
   },
   "missingKeys": [],
   "seededFromApiAliasKeys": [
@@ -69,15 +69,46 @@
     "mega-blaziken",
     "mega-swampert",
     "mega-mawile",
-    "mega-salamence"
+    "mega-salamence",
+    "wigglytuff",
+    "persian",
+    "farfetchd",
+    "mr-mime",
+    "swalot",
+    "salamence",
+    "gogoat",
+    "golisopod",
+    "rillaboom",
+    "cinderace",
+    "inteleon",
+    "thievul",
+    "toxtricity",
+    "grapploct",
+    "perrserker",
+    "sirfetchd",
+    "pincurchin",
+    "indeedee-male",
+    "pawmot",
+    "arboliva",
+    "squawkabilly",
+    "mabosstiff",
+    "baxcalibur",
+    "persian-alolan",
+    "toxtricity-low-key",
+    "indeedee-female",
+    "squawkabilly-blue-plumage",
+    "squawkabilly-yellow-plumage",
+    "squawkabilly-white-plumage",
+    "mega-absol-z",
+    "mega-garchomp-z",
+    "mega-lucario-z",
+    "mega-golisopod",
+    "mega-baxcalibur"
   ],
   "untranslatedMoveLabels": [
-    "Barb Barrage",
     "DD래리어트",
     "G의힘",
-    "HP회복",
-    "Make It Rain",
-    "Rage Fist"
+    "HP회복"
   ],
   "seededKeysSample": [
     "mega-alakazam",

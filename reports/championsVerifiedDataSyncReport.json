@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T03:15:03.647Z",
+  "generatedAt": "2026-09-10T13:57:01.160Z",
   "currentListBaseIds": [
     3,
     6,
@@ -11,15 +11,19 @@
     26,
     36,
     38,
+    40,
     45,
+    53,
     59,
     65,
     68,
     71,
     80,
+    83,
     94,
     115,
     121,
+    122,
     127,
     128,
     130,
@@ -58,6 +62,7 @@
     306,
     308,
     310,
+    317,
     319,
     323,
     324,
@@ -68,6 +73,7 @@
     358,
     359,
     362,
+    373,
     376,
     389,
     392,
@@ -129,6 +135,7 @@
     663,
     668,
     671,
+    673,
     675,
     676,
     678,
@@ -164,20 +171,31 @@
     763,
     765,
     766,
+    768,
     778,
     780,
     784,
+    812,
+    815,
+    818,
     823,
+    828,
     841,
     842,
     844,
+    849,
+    853,
     855,
     858,
     861,
+    863,
+    865,
     866,
     867,
     869,
     870,
+    871,
+    876,
     877,
     887,
     899,
@@ -188,11 +206,14 @@
     908,
     911,
     914,
-    925,
+    923,
+    930,
+    931,
     934,
     936,
     937,
     939,
+    943,
     952,
     956,
     959,
@@ -203,15 +224,472 @@
     979,
     981,
     983,
+    998,
     1000,
     1013,
     1018,
     1019
   ],
-  "missingBaseIds": [],
-  "addedCount": 0,
-  "added": [],
+  "missingBaseIds": [
+    40,
+    53,
+    83,
+    122,
+    317,
+    373,
+    673,
+    768,
+    812,
+    815,
+    818,
+    828,
+    849,
+    853,
+    863,
+    865,
+    871,
+    876,
+    923,
+    930,
+    931,
+    943,
+    998
+  ],
+  "addedCount": 34,
+  "added": [
+    {
+      "source": "current-list-base",
+      "id": 40,
+      "key": "wigglytuff",
+      "canonicalFormSlug": "base",
+      "name_ko": "푸크린",
+      "name_en": "Wigglytuff",
+      "abilities": [
+        "cute-charm",
+        "competitive",
+        "frisk"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 53,
+      "key": "persian",
+      "canonicalFormSlug": "base",
+      "name_ko": "페르시온",
+      "name_en": "Persian",
+      "abilities": [
+        "limber",
+        "technician",
+        "unnerve"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 83,
+      "key": "farfetchd",
+      "canonicalFormSlug": "base",
+      "name_ko": "파오리",
+      "name_en": "Farfetchd",
+      "abilities": [
+        "keen-eye",
+        "inner-focus",
+        "defiant"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 122,
+      "key": "mr-mime",
+      "canonicalFormSlug": "base",
+      "name_ko": "마임맨",
+      "name_en": "Mr-mime",
+      "abilities": [
+        "soundproof",
+        "filter",
+        "technician"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 317,
+      "key": "swalot",
+      "canonicalFormSlug": "base",
+      "name_ko": "꿀꺽몬",
+      "name_en": "Swalot",
+      "abilities": [
+        "liquid-ooze",
+        "sticky-hold",
+        "gluttony"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 373,
+      "key": "salamence",
+      "canonicalFormSlug": "base",
+      "name_ko": "보만다",
+      "name_en": "Salamence",
+      "abilities": [
+        "intimidate",
+        "moxie"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 673,
+      "key": "gogoat",
+      "canonicalFormSlug": "base",
+      "name_ko": "고고트",
+      "name_en": "Gogoat",
+      "abilities": [
+        "sap-sipper",
+        "grass-pelt"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 768,
+      "key": "golisopod",
+      "canonicalFormSlug": "base",
+      "name_ko": "갑주무사",
+      "name_en": "Golisopod",
+      "abilities": [
+        "emergency-exit"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 812,
+      "key": "rillaboom",
+      "canonicalFormSlug": "base",
+      "name_ko": "고릴타",
+      "name_en": "Rillaboom",
+      "abilities": [
+        "overgrow",
+        "grassy-surge"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 815,
+      "key": "cinderace",
+      "canonicalFormSlug": "base",
+      "name_ko": "에이스번",
+      "name_en": "Cinderace",
+      "abilities": [
+        "blaze",
+        "libero"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 818,
+      "key": "inteleon",
+      "canonicalFormSlug": "base",
+      "name_ko": "인텔리레온",
+      "name_en": "Inteleon",
+      "abilities": [
+        "torrent",
+        "sniper"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 828,
+      "key": "thievul",
+      "canonicalFormSlug": "base",
+      "name_ko": "폭슬라이",
+      "name_en": "Thievul",
+      "abilities": [
+        "run-away",
+        "unburden",
+        "stakeout"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 849,
+      "key": "toxtricity",
+      "canonicalFormSlug": "base",
+      "name_ko": "스트린더",
+      "name_en": "Toxtricity",
+      "abilities": [
+        "punk-rock",
+        "plus",
+        "technician"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 853,
+      "key": "grapploct",
+      "canonicalFormSlug": "base",
+      "name_ko": "케오퍼스",
+      "name_en": "Grapploct",
+      "abilities": [
+        "limber",
+        "technician"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 863,
+      "key": "perrserker",
+      "canonicalFormSlug": "base",
+      "name_ko": "나이킹",
+      "name_en": "Perrserker",
+      "abilities": [
+        "battle-armor",
+        "tough-claws",
+        "steely-spirit"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 865,
+      "key": "sirfetchd",
+      "canonicalFormSlug": "base",
+      "name_ko": "창파나이트",
+      "name_en": "Sirfetchd",
+      "abilities": [
+        "steadfast",
+        "scrappy"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 871,
+      "key": "pincurchin",
+      "canonicalFormSlug": "base",
+      "name_ko": "찌르성게",
+      "name_en": "Pincurchin",
+      "abilities": [
+        "lightning-rod",
+        "electric-surge"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 876,
+      "key": "indeedee-male",
+      "canonicalFormSlug": "base",
+      "name_ko": "에써르",
+      "name_en": "Indeedee-male",
+      "abilities": [
+        "inner-focus",
+        "synchronize",
+        "psychic-surge"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 923,
+      "key": "pawmot",
+      "canonicalFormSlug": "base",
+      "name_ko": "빠르모트",
+      "name_en": "Pawmot",
+      "abilities": [
+        "volt-absorb",
+        "natural-cure",
+        "iron-fist"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 930,
+      "key": "arboliva",
+      "canonicalFormSlug": "base",
+      "name_ko": "올리르바",
+      "name_en": "Arboliva",
+      "abilities": [
+        "seed-sower",
+        "harvest"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 931,
+      "key": "squawkabilly",
+      "canonicalFormSlug": "base",
+      "name_ko": "시비꼬",
+      "name_en": "Squawkabilly",
+      "abilities": [
+        "intimidate",
+        "hustle",
+        "guts"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 943,
+      "key": "mabosstiff",
+      "canonicalFormSlug": "base",
+      "name_ko": "마피티프",
+      "name_en": "Mabosstiff",
+      "abilities": [
+        "intimidate",
+        "guard-dog",
+        "stakeout"
+      ]
+    },
+    {
+      "source": "current-list-base",
+      "id": 998,
+      "key": "baxcalibur",
+      "canonicalFormSlug": "base",
+      "name_ko": "드닐레이브",
+      "name_en": "Baxcalibur",
+      "abilities": [
+        "thermal-exchange",
+        "ice-body"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10108,
+      "key": "persian-alolan",
+      "canonicalFormSlug": "persian-alolan",
+      "name_ko": "페르시온 (알로라)",
+      "name_en": "Alolan Persian",
+      "abilities": [
+        "fur-coat",
+        "technician",
+        "rattled"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10184,
+      "key": "toxtricity-low-key",
+      "canonicalFormSlug": "toxtricity-low-key",
+      "name_ko": "스트린더 (로우한 모습)",
+      "name_en": "Toxtricity (Low Key Form)",
+      "abilities": [
+        "punk-rock",
+        "minus",
+        "technician"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10186,
+      "key": "indeedee-female",
+      "canonicalFormSlug": "indeedee-female",
+      "name_ko": "에써르 (암컷의 모습)",
+      "name_en": "Indeedee (Female)",
+      "abilities": [
+        "own-tempo",
+        "synchronize",
+        "psychic-surge"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10260,
+      "key": "squawkabilly-blue-plumage",
+      "canonicalFormSlug": "squawkabilly-blue-plumage",
+      "name_ko": "시비꼬 (블루 페더)",
+      "name_en": "Squawkabilly (Blue Plumage)",
+      "abilities": [
+        "intimidate",
+        "hustle",
+        "guts"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10261,
+      "key": "squawkabilly-yellow-plumage",
+      "canonicalFormSlug": "squawkabilly-yellow-plumage",
+      "name_ko": "시비꼬 (옐로 페더)",
+      "name_en": "Squawkabilly (Yellow Plumage)",
+      "abilities": [
+        "intimidate",
+        "hustle",
+        "sheer-force"
+      ]
+    },
+    {
+      "source": "regulation-m-c-form",
+      "id": 10262,
+      "key": "squawkabilly-white-plumage",
+      "canonicalFormSlug": "squawkabilly-white-plumage",
+      "name_ko": "시비꼬 (화이트 페더)",
+      "name_en": "Squawkabilly (White Plumage)",
+      "abilities": [
+        "intimidate",
+        "hustle",
+        "sheer-force"
+      ]
+    },
+    {
+      "source": "regulation-m-c-mega",
+      "id": 359,
+      "key": "mega-absol-z",
+      "canonicalFormSlug": "mega-absol-z",
+      "name_ko": "메가앱솔Z",
+      "name_en": "Mega Absol Z",
+      "abilities": [
+        "sharpness"
+      ]
+    },
+    {
+      "source": "regulation-m-c-mega",
+      "id": 445,
+      "key": "mega-garchomp-z",
+      "canonicalFormSlug": "mega-garchomp-z",
+      "name_ko": "메가한카리아스Z",
+      "name_en": "Mega Garchomp Z",
+      "abilities": [
+        "levitate"
+      ]
+    },
+    {
+      "source": "regulation-m-c-mega",
+      "id": 448,
+      "key": "mega-lucario-z",
+      "canonicalFormSlug": "mega-lucario-z",
+      "name_ko": "메가루카리오Z",
+      "name_en": "Mega Lucario Z",
+      "abilities": [
+        "aura-guard"
+      ]
+    },
+    {
+      "source": "regulation-m-c-mega",
+      "id": 768,
+      "key": "mega-golisopod",
+      "canonicalFormSlug": "mega-golisopod",
+      "name_ko": "메가갑주무사",
+      "name_en": "Mega Golisopod",
+      "abilities": [
+        "tough-claws"
+      ]
+    },
+    {
+      "source": "regulation-m-c-mega",
+      "id": 998,
+      "key": "mega-baxcalibur",
+      "canonicalFormSlug": "mega-baxcalibur",
+      "name_ko": "메가드닐레이브",
+      "name_en": "Mega Baxcalibur",
+      "abilities": [
+        "thermal-exchange"
+      ]
+    }
+  ],
   "manualFormsConfigured": [
+    "persian-alolan",
+    "toxtricity-low-key",
+    "indeedee-female",
+    "squawkabilly-blue-plumage",
+    "squawkabilly-yellow-plumage",
+    "squawkabilly-white-plumage",
+    "mega-absol-z",
+    "mega-garchomp-z",
+    "mega-lucario-z",
+    "mega-golisopod",
+    "mega-baxcalibur",
     "mega-staraptor",
     "mega-metagross",
     "mega-scolipede",
@@ -224,6 +702,17 @@
     "mega-falinks"
   ],
   "manualFormsPresent": [
+    "persian-alolan",
+    "toxtricity-low-key",
+    "indeedee-female",
+    "squawkabilly-blue-plumage",
+    "squawkabilly-yellow-plumage",
+    "squawkabilly-white-plumage",
+    "mega-absol-z",
+    "mega-garchomp-z",
+    "mega-lucario-z",
+    "mega-golisopod",
+    "mega-baxcalibur",
     "mega-staraptor",
     "mega-metagross",
     "mega-scolipede",
@@ -235,5 +724,5 @@
     "mega-dragalge",
     "mega-falinks"
   ],
-  "totalRows": 298
+  "totalRows": 332
 }

@@ -231,6 +231,7 @@ const STAT_GAUGE_MAX = 255
 const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-abomasnow': 'abomasite',
   'mega-absol': 'absolite',
+  'mega-absol-z': 'absolitez',
   'mega-aerodactyl': 'aerodactylite',
   'mega-aggron': 'aggronite',
   'mega-alakazam': 'alakazite',
@@ -245,6 +246,7 @@ const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-charizard-y': 'charizardite-y',
   'mega-gallade': 'galladite',
   'mega-garchomp': 'garchompite',
+  'mega-garchomp-z': 'garchompitez',
   'mega-gardevoir': 'gardevoirite',
   'mega-gengar': 'gengarite',
   'mega-glalie': 'glalitite',
@@ -254,6 +256,9 @@ const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-kangaskhan': 'kangaskhanite',
   'mega-lopunny': 'lopunnite',
   'mega-lucario': 'lucarionite',
+  'mega-lucario-z': 'lucarionitez',
+  'mega-golisopod': 'golisopite',
+  'mega-baxcalibur': 'baxcalibrite',
   'mega-manectric': 'manectite',
   'mega-medicham': 'medichamite',
   'mega-floette': 'item-sprites/floettite.png',
@@ -522,10 +527,10 @@ function megaStoneForKey(key: string) {
   const row = indexByKey.get(key)
   if (!row) return null
   const koName = row.name_ko.replace(/^메가/, '').trim()
-  const suffixMatch = koName.match(/\s*([XY])$/i)
+  const suffixMatch = koName.match(/\s*([XYZ])$/i)
   if (suffixMatch) {
     const suffix = suffixMatch[1].toUpperCase()
-    const baseName = koName.replace(/\s*[XY]$/i, '').trim()
+    const baseName = koName.replace(/\s*[XYZ]$/i, '').trim()
     return `${baseName}나이트${suffix}`
   }
   return `${koName}나이트`
@@ -1102,6 +1107,18 @@ const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'リリバのみ': { ko: '효과가 굉장한 강철 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Steel-type hit, then is consumed.', ja: '効果抜群の はがね技を一度だけ半減して消費される。' },
   'リンドのみ': { ko: '효과가 굉장한 풀 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Grass-type hit, then is consumed.', ja: '効果抜群の くさ技を一度だけ半減して消費される。' },
   'ロゼルのみ': { ko: '효과가 굉장한 페어리 타입 공격을 한 번 반감하고 소모됨.', en: 'Weakens one super-effective Fairy-type hit, then is consumed.', ja: '効果抜群の フェアリー技を一度だけ半減して消費される。' },
+  'ながねぎ': { ko: '파오리와 창파나이트가 지니면 급소율이 2단계 상승.', en: 'Raises Farfetch’d and Sirfetch’d’s critical-hit ratio by 2 stages.', ja: 'カモネギとネギガナイトが持つと 急所ランクが2段階上がる。' },
+  'ゴツゴツメット': { ko: '접촉기를 맞으면 공격자에게 최대 HP의 1/6 대미지.', en: 'Damages contact attackers for 1/6 of their max HP.', ja: '接触技を受けると 攻撃した相手に最大HPの1/6のダメージ。' },
+  'ふうせん': { ko: '땅에 있지 않은 상태가 되어 땅 기술을 무효화. 공격을 받으면 사라짐.', en: 'Grants Ground immunity until the holder is hit.', ja: '地面にいない状態になり じめん技を無効化。攻撃を受けると割れる。' },
+  'レッドカード': { ko: '공격을 받으면 상대를 강제 교체시키고 소모됨.', en: 'Forces the attacker to switch out when hit, then is consumed.', ja: '攻撃を受けると 相手を強制交代させて消費される。' },
+  'しめつけバンド': { ko: '구속 기술의 턴 대미지를 최대 HP의 1/6로 증가.', en: 'Raises binding-move residual damage to 1/6 of max HP.', ja: 'しめつける技の毎ターンダメージが 最大HPの1/6になる。' },
+  'だっしゅつボタン': { ko: '공격을 받으면 자신이 교체되고 소모됨.', en: 'Switches the holder out when hit, then is consumed.', ja: '攻撃を受けると 自分が交代して消費される。' },
+  'ノーマルジュエル': { ko: '노말 타입 기술 위력 30% 증가. 한 번 발동 후 소모됨.', en: 'Boosts one Normal-type move by 30%, then is consumed.', ja: 'ノーマルタイプの技の威力が一度だけ30%上がり 消費される。' },
+  'グランドコート': { ko: '자신이 전개한 필드 지속 시간을 5턴에서 8턴으로 연장.', en: 'Extends terrain set by the holder from 5 to 8 turns.', ja: '自分が張ったフィールドの効果を 5ターンから8ターンに延ばす。' },
+  'エレキシード': { ko: '일렉트릭필드에서 방어가 1단계 상승하고 소모됨.', en: 'Raises Defense by 1 stage in Electric Terrain, then is consumed.', ja: 'エレキフィールドで 防御が1段階上がり消費される。' },
+  'サイコシード': { ko: '사이코필드에서 특수방어가 1단계 상승하고 소모됨.', en: 'Raises Special Defense by 1 stage in Psychic Terrain, then is consumed.', ja: 'サイコフィールドで 特防が1段階上がり消費される。' },
+  'ミストシード': { ko: '미스트필드에서 특수방어가 1단계 상승하고 소모됨.', en: 'Raises Special Defense by 1 stage in Misty Terrain, then is consumed.', ja: 'ミストフィールドで 特防が1段階上がり消費される。' },
+  'グラスシード': { ko: '그래스필드에서 방어가 1단계 상승하고 소모됨.', en: 'Raises Defense by 1 stage in Grassy Terrain, then is consumed.', ja: 'グラスフィールドで 防御が1段階上がり消費される。' },
 }
 const MOVE_META_BY_NORMALIZED = new Map(
   Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => [normalizeSearchText(name), meta] as const),
@@ -2291,6 +2308,8 @@ function deriveAutoWeatherFromAbilities(...abilities: string[]) {
 
 function terrainFromAbility(ability: string): DamageTerrain {
   if (ability === 'electric-surge' || ability === '일렉트릭메이커') return 'electric'
+  if (ability === 'grassy-surge' || ability === '그래스메이커') return 'grassy'
+  if (ability === 'psychic-surge' || ability === '사이코메이커') return 'psychic'
   return 'none'
 }
 
@@ -2307,6 +2326,7 @@ function abilityNoteLabel(ability: string) {
     'adaptability': '적응력',
     'aerilate': '스카이스킨',
     'analytic': '애널라이즈',
+    'aura-guard': '파동의방호',
     'blaze': '맹화',
     'electromorphosis': '전기로바꾸기',
     'forecast': '기분파',
@@ -2327,6 +2347,8 @@ function abilityNoteLabel(ability: string) {
     'battle-armor': '전투무장',
     'friend-guard': '프렌드가드',
     'fur-coat': '퍼코트',
+    'grass-pelt': '그래스펠트',
+    'grassy-surge': '그래스메이커',
     'guts': '근성',
     'heatproof': '내열',
     'huge-power': '천하장사',
@@ -2348,6 +2370,8 @@ function abilityNoteLabel(ability: string) {
     'neuroforce': '브레인포스',
     'pixilate': '페어리스킨',
     'prism-armor': '프리즘아머',
+    'psychic-surge': '사이코메이커',
+    'punk-rock': '펑크록',
     'protean': '변환자재',
     'pure-power': '순수한힘',
     'purifying-salt': '정화의소금',
@@ -2534,6 +2558,11 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
+  if (attackerAbility === 'punk-rock' && moveMatchesTaggedSet(moveName, SOUND_MOVE_NAMES)) {
+    powerMultiplier *= 1.3
+    notes.push(abilityNoteLabel(attackerAbility))
+  }
+
   if (attackerAbility === 'iron-fist' && moveMatchesTaggedSet(moveName, PUNCH_MOVE_NAMES)) {
     powerMultiplier *= 1.2
     notes.push(abilityNoteLabel(attackerAbility))
@@ -2643,6 +2672,11 @@ function resolveDamageModifiers(params: {
     notes.push('생명의구슬')
   }
 
+  if (canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal') {
+    finalMultiplier *= 1.3
+    notes.push('노말주얼')
+  }
+
   if (offensiveWeather === 'sun') {
     if (moveType === 'fire') {
       finalMultiplier *= 1.5
@@ -2690,6 +2724,11 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(defenderAbility === 'eelevate' ? defenderAbility : 'levitate'))
   }
 
+  if (moveType === 'ground' && canonicalDefenderItem === 'ふうせん') {
+    adjustedEffectiveness = 0
+    notes.push('풍선')
+  }
+
   if (moveType === 'water' && ['water-absorb', 'storm-drain', 'dry-skin'].includes(defenderAbility)) {
     adjustedEffectiveness = 0
     notes.push(abilityNoteLabel(defenderAbility))
@@ -2713,6 +2752,11 @@ function resolveDamageModifiers(params: {
   if (moveMatchesTaggedSet(moveName, SOUND_MOVE_NAMES) && defenderAbility === 'soundproof') {
     adjustedEffectiveness = 0
     notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (adjustedEffectiveness > 0 && defenderAbility === 'punk-rock' && moveMatchesTaggedSet(moveName, SOUND_MOVE_NAMES)) {
+    finalMultiplier *= 0.5
+    notes.push(`${abilityNoteLabel(defenderAbility)}(소리 반감)`)
   }
 
   if (moveType === 'ground' && defenderAbility === 'earth-eater') {
@@ -2746,6 +2790,11 @@ function resolveDamageModifiers(params: {
     }
   }
 
+  if (adjustedEffectiveness > 0 && defenderAbility === 'aura-guard' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+    finalMultiplier *= 0.5
+    notes.push(`${abilityNoteLabel(defenderAbility)}(접촉 반감)`)
+  }
+
   if (adjustedEffectiveness > 0 && moveType === 'ghost' && defenderAbility === 'purifying-salt') {
     finalMultiplier *= 0.5
     notes.push(abilityNoteLabel(defenderAbility))
@@ -2775,8 +2824,23 @@ function resolveDamageModifiers(params: {
     notes.push('싸라기눈')
   }
 
+  if (mode === 'physical' && ((terrain === 'electric' && canonicalDefenderItem === 'エレキシード') || (terrain === 'grassy' && canonicalDefenderItem === 'グラスシード'))) {
+    defenseMultiplier *= 1.5
+    notes.push(canonicalDefenderItem === 'エレキシード' ? '일렉트릭시드' : '그래스시드')
+  }
+
+  if (mode === 'special' && ((terrain === 'psychic' && canonicalDefenderItem === 'サイコシード') || (terrain === 'misty' && canonicalDefenderItem === 'ミストシード'))) {
+    defenseMultiplier *= 1.5
+    notes.push(canonicalDefenderItem === 'サイコシード' ? '사이코시드' : '미스트시드')
+  }
+
   if (mode === 'physical' && defenderAbility === 'fur-coat') {
     defenseMultiplier *= 2
+    notes.push(abilityNoteLabel(defenderAbility))
+  }
+
+  if (mode === 'physical' && terrain === 'grassy' && defenderAbility === 'grass-pelt') {
+    defenseMultiplier *= 1.5
     notes.push(abilityNoteLabel(defenderAbility))
   }
 

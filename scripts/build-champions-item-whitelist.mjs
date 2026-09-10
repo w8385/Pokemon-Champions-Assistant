@@ -5,6 +5,11 @@ const GUIDE_URL = 'https://champs.pokedb.tokyo/guide/opendata'
 const ROOT_URL = 'https://champs.pokedb.tokyo'
 const POKEMON_LIST_URL = `${ROOT_URL}/pokemon/list`
 const POKEAPI_ITEM_LIST_URL = 'https://pokeapi.co/api/v2/item?limit=2200'
+const REGULATION_MC_SOURCE_URL = 'https://www.pokesuku.com/champions/regulation/m-c'
+const REGULATION_MC_GENERAL_ITEMS = [
+  'ながねぎ', 'ゴツゴツメット', 'ふうせん', 'レッドカード', 'しめつけバンド', 'だっしゅつボタン',
+  'ノーマルジュエル', 'グランドコート', 'エレキシード', 'サイコシード', 'ミストシード', 'グラスシード',
+]
 
 const MANUAL_SHORT_ALIASES = {
   'きあいのタスキ': ['기띠', '띠'],
@@ -45,16 +50,27 @@ function toTsStringArray(items, indent = '  ') {
   return items.map((item) => `${indent}${JSON.stringify(item)},`).join('\n')
 }
 
+async function fetchWithRetry(url, attempts = 3) {
+  let lastError
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
+      return res
+    } catch (error) {
+      lastError = error
+      if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, attempt * 300))
+    }
+  }
+  throw lastError
+}
+
 async function getJson(url) {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
-  return res.json()
+  return (await fetchWithRetry(url)).json()
 }
 
 async function getText(url) {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
-  return res.text()
+  return (await fetchWithRetry(url)).text()
 }
 
 function getLocalizedName(names, lang) {
@@ -109,18 +125,24 @@ async function mapWithConcurrency(items, limit, worker) {
   return results
 }
 
-const guideHtml = await getText(GUIDE_URL)
-const listHtmlCurrentSingle = await getText(`${POKEMON_LIST_URL}?rule=0`)
-const currentSeasonNumber = parseCurrentSeasonNumber(listHtmlCurrentSingle)
+let guideHtml = ''
+let listHtmlCurrentSingle = ''
+let currentSeasonNumber = null
+try {
+  guideHtml = await getText(GUIDE_URL)
+  listHtmlCurrentSingle = await getText(`${POKEMON_LIST_URL}?rule=0`)
+  currentSeasonNumber = parseCurrentSeasonNumber(listHtmlCurrentSingle)
+} catch {
+  // The historical community source can become unavailable. Preserve the
+  // existing whitelist and still merge the independently verified M-C items.
+}
 
 const jsonUrls = uniqueSorted(
   [...guideHtml.matchAll(/href="(\/opendata\/[^\"]+\.json)"/g)].map((match) => absoluteUrl(match[1])),
 )
 
-if (!jsonUrls.length) throw new Error('No opendata JSON URLs found on guide page')
-
 const usageListPages = []
-for (let season = 1; season <= currentSeasonNumber; season += 1) {
+for (let season = 1; season <= (currentSeasonNumber ?? 0); season += 1) {
   for (const rule of [0, 1]) {
     const url = `${POKEMON_LIST_URL}?season=${season}&rule=${rule}`
     const html = season === currentSeasonNumber && rule === 0 ? listHtmlCurrentSingle : await getText(url)
@@ -198,9 +220,14 @@ for (const record of usagePageRecords) {
   }
 }
 
+const currentSource = await fs.readFile(srcPath, 'utf8')
+const currentOptionsMatch = currentSource.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
+const existingItems = currentOptionsMatch
+  ? [...currentOptionsMatch[1].matchAll(/["']([^"']+)["']/g)].map((match) => match[1])
+  : []
 const usageItems = uniqueSorted([...usageItemMap.keys()])
 const opendataUniqueItems = uniqueSorted(opendataItems)
-const combinedItems = uniqueSorted([...usageItems, ...opendataUniqueItems])
+const combinedItems = uniqueSorted([...existingItems, ...usageItems, ...opendataUniqueItems, ...REGULATION_MC_GENERAL_ITEMS])
 const excludedMegaStones = combinedItems.filter(isMegaStone)
 const excludedNoItem = combinedItems.filter((item) => item === '持ち物なし')
 const whitelistItems = combinedItems.filter((item) => item !== '持ち物なし' && !isMegaStone(item))
@@ -282,6 +309,7 @@ const report = {
   sourceJsonUrls: jsonUrls,
   sourcePokemonListBaseUrl: POKEMON_LIST_URL,
   sourcePokeApiItemListUrl: POKEAPI_ITEM_LIST_URL,
+  regulationMcSourceUrl: REGULATION_MC_SOURCE_URL,
   datasets,
   usageListPages: usageListPages.map((page) => ({
     url: page.url,

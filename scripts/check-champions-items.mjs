@@ -75,6 +75,16 @@ if (!appSource.includes("finalMultiplier *= 1.3\n    notes.push('생명의구슬
 if (!appSource.includes("'いのちのたま': { ko: '공격 기술의 대미지 30% 증가.")) {
   failures.push('Life Orb tooltip summary is missing')
 }
+if (options.length !== 82) failures.push(`M-C held-item count mismatch: expected 82, got ${options.length}`)
+if (!appSource.includes("canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal'")) {
+  failures.push('Damage calculator does not apply Normal Gem')
+}
+if (!appSource.includes("moveType === 'ground' && canonicalDefenderItem === 'ふうせん'")) {
+  failures.push('Damage calculator does not apply Air Balloon Ground immunity')
+}
+for (const seed of ['エレキシード', 'サイコシード', 'ミストシード', 'グラスシード']) {
+  if (!appSource.includes(`canonicalDefenderItem === '${seed}'`)) failures.push(`Damage calculator does not apply ${seed}`)
+}
 
 const megaKeys = pokemonData.rows.map((row) => row.key).filter((key) => key.startsWith('mega-'))
 for (const key of megaKeys) {

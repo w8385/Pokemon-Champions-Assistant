@@ -7,6 +7,13 @@ const root = path.resolve(__dirname, '..')
 const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
 const allPokemonPath = path.resolve(root, '..', 'pokemon-data', 'pkmnchamps_allPokemon.json')
 const reportPath = path.join(root, 'reports', 'championsVerifiedDataSyncReport.json')
+const OFFICIAL_REGULATION_ROSTER_URL = 'https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/ja/pokemon.html'
+const CURRENT_REGULATION = {
+  id: 'M-C',
+  startsAt: '2026-09-09T02:00:00.000Z',
+  endsAt: '2026-12-02T01:59:00.000Z',
+  rosterUrl: OFFICIAL_REGULATION_ROSTER_URL,
+}
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const TYPE_KO_BY_KEY = {
   normal: '노말', fire: '불꽃', water: '물', electric: '전기', grass: '풀', ice: '얼음',
@@ -14,6 +21,65 @@ const TYPE_KO_BY_KEY = {
   rock: '바위', ghost: '고스트', dragon: '드래곤', dark: '악', steel: '강철', fairy: '페어리',
 }
 const MANUAL_FORMS = [
+  {
+    key: 'persian-alolan', apiName: 'persian-alola', canonicalFormSlug: 'persian-alolan', source: 'regulation-m-c-form',
+    name_ko: '페르시온 (알로라)', name_en: 'Alolan Persian', name_ja: 'ペルシアン (アローラのすがた)',
+  },
+  {
+    key: 'toxtricity-low-key', apiName: 'toxtricity-low-key', canonicalFormSlug: 'toxtricity-low-key', source: 'regulation-m-c-form',
+    name_ko: '스트린더 (로우한 모습)', name_en: 'Toxtricity (Low Key Form)', name_ja: 'ストリンダー (ローなすがた)',
+  },
+  {
+    key: 'indeedee-female', apiName: 'indeedee-female', canonicalFormSlug: 'indeedee-female', source: 'regulation-m-c-form',
+    name_ko: '에써르 (암컷의 모습)', name_en: 'Indeedee (Female)', name_ja: 'イエッサン (メスのすがた)',
+  },
+  {
+    key: 'squawkabilly-blue-plumage', apiName: 'squawkabilly-blue-plumage', canonicalFormSlug: 'squawkabilly-blue-plumage', source: 'regulation-m-c-form',
+    name_ko: '시비꼬 (블루 페더)', name_en: 'Squawkabilly (Blue Plumage)', name_ja: 'イキリンコ (ブルーフェザー)',
+  },
+  {
+    key: 'squawkabilly-yellow-plumage', apiName: 'squawkabilly-yellow-plumage', canonicalFormSlug: 'squawkabilly-yellow-plumage', source: 'regulation-m-c-form',
+    name_ko: '시비꼬 (옐로 페더)', name_en: 'Squawkabilly (Yellow Plumage)', name_ja: 'イキリンコ (イエローフェザー)',
+  },
+  {
+    key: 'squawkabilly-white-plumage', apiName: 'squawkabilly-white-plumage', canonicalFormSlug: 'squawkabilly-white-plumage', source: 'regulation-m-c-form',
+    name_ko: '시비꼬 (화이트 페더)', name_en: 'Squawkabilly (White Plumage)', name_ja: 'イキリンコ (ホワイトフェザー)',
+  },
+  {
+    key: 'mega-absol-z', baseApiName: 'absol', canonicalFormSlug: 'mega-absol-z', source: 'regulation-m-c-mega',
+    name_ko: '메가앱솔Z', name_en: 'Mega Absol Z', name_ja: 'メガアブソルZ',
+    types: ['dark', 'ghost'], abilityNames: ['sharpness'], abilityNamesKo: ['예리함'],
+    stats: { hp: 65, attack: 154, defense: 60, spAttack: 75, spDefense: 60, speed: 151 },
+    sprite: 'https://www.serebii.net/pokemon/art/359-mz.png',
+  },
+  {
+    key: 'mega-garchomp-z', baseApiName: 'garchomp', canonicalFormSlug: 'mega-garchomp-z', source: 'regulation-m-c-mega',
+    name_ko: '메가한카리아스Z', name_en: 'Mega Garchomp Z', name_ja: 'メガガブリアスZ',
+    types: ['dragon'], abilityNames: ['levitate'], abilityNamesKo: ['부유'],
+    stats: { hp: 108, attack: 130, defense: 85, spAttack: 141, spDefense: 85, speed: 151 },
+    sprite: 'https://www.serebii.net/pokemon/art/445-mz.png',
+  },
+  {
+    key: 'mega-lucario-z', baseApiName: 'lucario', canonicalFormSlug: 'mega-lucario-z', source: 'regulation-m-c-mega',
+    name_ko: '메가루카리오Z', name_en: 'Mega Lucario Z', name_ja: 'メガルカリオZ',
+    types: ['fighting', 'steel'], abilityNames: ['aura-guard'], abilityNamesKo: ['파동의방호'],
+    stats: { hp: 70, attack: 100, defense: 70, spAttack: 164, spDefense: 70, speed: 151 },
+    sprite: 'https://www.serebii.net/pokemon/art/448-mz.png',
+  },
+  {
+    key: 'mega-golisopod', baseApiName: 'golisopod', canonicalFormSlug: 'mega-golisopod', source: 'regulation-m-c-mega',
+    name_ko: '메가갑주무사', name_en: 'Mega Golisopod', name_ja: 'メガグソクムシャ',
+    types: ['bug', 'steel'], abilityNames: ['tough-claws'], abilityNamesKo: ['단단한발톱'],
+    stats: { hp: 75, attack: 150, defense: 175, spAttack: 70, spDefense: 120, speed: 40 },
+    sprite: 'https://www.serebii.net/pokemon/art/768-m.png',
+  },
+  {
+    key: 'mega-baxcalibur', baseApiName: 'baxcalibur', canonicalFormSlug: 'mega-baxcalibur', source: 'regulation-m-c-mega',
+    name_ko: '메가드닐레이브', name_en: 'Mega Baxcalibur', name_ja: 'メガセグレイブ',
+    types: ['dragon', 'ice'], abilityNames: ['thermal-exchange'], abilityNamesKo: ['열교환'],
+    stats: { hp: 115, attack: 175, defense: 117, spAttack: 105, spDefense: 101, speed: 87 },
+    sprite: 'https://www.serebii.net/pokemon/art/998-m.png',
+  },
   {
     key: 'mega-staraptor',
     apiName: 'staraptor-mega',
@@ -182,15 +248,15 @@ async function main() {
   const verifiedData = JSON.parse(await fs.readFile(verifiedDataPath, 'utf8'))
   const allPokemon = JSON.parse(await fs.readFile(allPokemonPath, 'utf8'))
 
-  const currentListBaseIds = new Set()
-  for (const rule of [0, 1]) {
-    const html = await fetchText(`https://champs.pokedb.tokyo/pokemon/list?rule=${rule}`)
-    const pattern = new RegExp(String.raw`/pokemon/show/(\d{4})-(\d{2})\?season=\d+&rule=${rule}`, 'g')
-    const matches = html.matchAll(pattern)
-    for (const match of matches) {
-      if (match[2] === '00') currentListBaseIds.add(Number(match[1]))
-    }
-  }
+  const rosterHtml = await fetchText(OFFICIAL_REGULATION_ROSTER_URL)
+  const rosterMatch = rosterHtml.match(/const pokemons = (\[[\s\S]*?\]);/)
+  if (!rosterMatch) throw new Error('Failed to parse official regulation roster')
+  const officialRoster = JSON.parse(rosterMatch[1])
+  const currentListBaseIds = new Set(
+    officialRoster
+      .filter(([code]) => typeof code === 'string' && code.endsWith('-000'))
+      .map(([code]) => Number(code.slice(0, 4))),
+  )
 
   const baseEntryById = new Map(
     allPokemon
@@ -234,7 +300,8 @@ async function main() {
   const currentKeys = new Set(currentRows.map((row) => row.key))
 
   async function buildBaseRow(baseEntry) {
-    const { pokemon, species } = await getPokemonBundle(baseEntry.nameEn)
+    const apiName = ({ 849: 'toxtricity-amped', 931: 'squawkabilly-green-plumage' })[baseEntry.id] ?? baseEntry.nameEn
+    const { pokemon, species } = await getPokemonBundle(apiName)
     const stats = {
       hp: baseEntry.stats.hp,
       attack: baseEntry.stats.atk,
@@ -265,12 +332,14 @@ async function main() {
   }
 
   async function buildManualFormRow(config) {
-    const { pokemon } = await getPokemonBundle(config.apiName ?? config.key)
+    const { pokemon } = await getPokemonBundle(config.apiName ?? config.baseApiName ?? config.key)
     const statsByName = Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
     const abilities = config.abilityNames?.length
       ? config.abilityNames
       : pokemon.abilities.map((entry) => entry.ability.name)
-    const abilities_ko = await Promise.all(abilities.map(getAbilityKo))
+    const abilities_ko = config.abilityNamesKo?.length
+      ? config.abilityNamesKo
+      : await Promise.all(abilities.map(getAbilityKo))
     return buildRow({
       id: pokemon.id,
       key: config.key,
@@ -278,10 +347,10 @@ async function main() {
       name_ko: config.name_ko,
       name_en: config.name_en,
       name_ja: config.name_ja,
-      types: pokemon.types.map((entry) => entry.type.name),
+      types: config.types ?? pokemon.types.map((entry) => entry.type.name),
       abilities,
       abilities_ko,
-      stats: {
+      stats: config.stats ?? {
         hp: statsByName.hp,
         attack: statsByName.attack,
         defense: statsByName.defense,
@@ -289,8 +358,8 @@ async function main() {
         spDefense: statsByName['special-defense'],
         speed: statsByName.speed,
       },
-      sprite: pokemon.sprites.other['official-artwork'].front_default,
-      sprite_status: 'pokeapi-official-artwork',
+      sprite: config.sprite ?? pokemon.sprites.other['official-artwork'].front_default,
+      sprite_status: config.sprite ? 'regulation-m-c-verified-artwork' : 'pokeapi-official-artwork',
     })
   }
 
@@ -368,6 +437,9 @@ async function main() {
 
   const nextRows = [...currentRows, ...addedRows.map((entry) => entry.row)]
   verifiedData.rows = nextRows
+  verifiedData.regulation = CURRENT_REGULATION
+  verifiedData.verified_sprite_count = nextRows.filter((row) => row.sprite).length
+  verifiedData.total = nextRows.length
   await fs.writeFile(verifiedDataPath, JSON.stringify(verifiedData, null, 2) + '\n')
 
   const report = {

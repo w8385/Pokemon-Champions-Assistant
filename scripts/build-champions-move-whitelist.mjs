@@ -17,6 +17,12 @@ const sampleMovesPath = path.join(root, 'src', 'sampleMoves.ts')
 const recommendationAuditOverridesPath = path.join(root, 'src', 'championsRecommendationAuditOverrides.json')
 
 const POKEMON_ALIAS_CANDIDATES = {
+  'persian-alolan': ['persian-alola'],
+  toxtricity: ['toxtricity-amped', 'toxtricity-low-key'],
+  squawkabilly: ['squawkabilly-green-plumage', 'squawkabilly-blue-plumage', 'squawkabilly-yellow-plumage', 'squawkabilly-white-plumage'],
+  'mega-absol-z': ['absol'],
+  'mega-garchomp-z': ['garchomp'],
+  'mega-lucario-z': ['lucario'],
   'mega-meowstic': ['meowstic-male', 'meowstic-female'],
   lycanroc: ['lycanroc-midday', 'lycanroc-midnight', 'lycanroc-dusk'],
   maushold: ['maushold-family-of-four', 'maushold-family-of-three'],

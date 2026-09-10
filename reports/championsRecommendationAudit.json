@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T03:29:41.840Z",
+  "generatedAt": "2026-09-10T14:04:32.329Z",
   "totals": {
     "speciesTracked": 11,
     "recommendedMoves": 59,
-    "presentInWhitelist": 57,
-    "missingFromWhitelist": 2,
+    "presentInWhitelist": 56,
+    "missingFromWhitelist": 3,
     "untranslatedRecommendedMoves": 1
   },
   "species": {
@@ -787,9 +787,9 @@
           {
             "move": "섀도크루",
             "canonicalMove": "섀도크루",
-            "presentInWhitelist": true,
-            "status": "verified_in_whitelist",
-            "confidence": "high",
+            "presentInWhitelist": false,
+            "status": "missing_from_whitelist",
+            "confidence": "conflict",
             "validationCount": 2,
             "sampleCount": 1,
             "note": null
@@ -808,7 +808,9 @@
           }
         ]
       },
-      "missingMoves": []
+      "missingMoves": [
+        "섀도크루"
+      ]
     },
     "meowscarada": {
       "source": {
@@ -892,6 +894,9 @@
   "missingBySpecies": {
     "mega-lopunny": [
       "칼춤"
+    ],
+    "mimikyu": [
+      "섀도크루"
     ],
     "meowscarada": [
       "기습"

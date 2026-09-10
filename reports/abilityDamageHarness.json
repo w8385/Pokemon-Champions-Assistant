@@ -1,14 +1,15 @@
 {
-  "generatedAt": "2026-09-02T14:01:02.935Z",
-  "totalAbilities": 200,
-  "implementedCount": 72,
+  "generatedAt": "2026-09-10T14:11:56.780Z",
+  "totalAbilities": 215,
+  "implementedCount": 79,
   "categories": {
     "implemented": {
-      "count": 72,
+      "count": 79,
       "abilities": [
         "adaptability",
         "aerilate",
         "analytic",
+        "aura-guard",
         "battle-armor",
         "blaze",
         "disguise",
@@ -27,12 +28,15 @@
         "fluffy",
         "forecast",
         "fur-coat",
+        "grass-pelt",
+        "grassy-surge",
         "guts",
         "heatproof",
         "huge-power",
         "hustle",
         "iron-fist",
         "levitate",
+        "libero",
         "lightning-rod",
         "liquid-voice",
         "marvel-scale",
@@ -49,6 +53,8 @@
         "pixilate",
         "plus",
         "protean",
+        "psychic-surge",
+        "punk-rock",
         "pure-power",
         "purifying-salt",
         "reckless",
@@ -67,6 +73,7 @@
         "solid-rock",
         "soundproof",
         "stance-change",
+        "steely-spirit",
         "strong-jaw",
         "supreme-overlord",
         "swarm",
@@ -102,17 +109,21 @@
       ]
     },
     "manualBattleState": {
-      "count": 10,
+      "count": 14,
       "abilities": [
         "anger-point",
         "competitive",
         "contrary",
         "defiant",
         "gooey",
+        "guard-dog",
         "intimidate",
         "moxie",
+        "rattled",
         "speed-boost",
+        "stakeout",
         "stamina",
+        "thermal-exchange",
         "weak-armor"
       ]
     },
@@ -134,7 +145,7 @@
       ]
     },
     "indirectOrNonDamage": {
-      "count": 99,
+      "count": 103,
       "abilities": [
         "aftermath",
         "anticipation",
@@ -154,6 +165,7 @@
         "damp",
         "early-bird",
         "effect-spore",
+        "emergency-exit",
         "flame-body",
         "flower-veil",
         "forewarn",
@@ -180,6 +192,7 @@
         "klutz",
         "light-metal",
         "limber",
+        "liquid-ooze",
         "long-reach",
         "magic-bounce",
         "magic-guard",
@@ -206,8 +219,10 @@
         "ripen",
         "rock-head",
         "rough-skin",
+        "run-away",
         "scrappy",
         "screen-cleaner",
+        "seed-sower",
         "shadow-tag",
         "shed-skin",
         "shield-dust",
@@ -245,6 +260,10 @@
   "damageRelevantMissingCount": 0,
   "damageRelevantMissing": [],
   "notableDefenderAbilities": [
+    {
+      "ability": "aura-guard",
+      "implemented": true
+    },
     {
       "ability": "dry-skin",
       "implemented": true
