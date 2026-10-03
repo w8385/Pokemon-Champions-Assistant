@@ -264,7 +264,9 @@ export const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = 
   "おうじゃのしるし": ["왕의징표석", "King’s Rock"],
   "おおきなねっこ": ["큰뿌리", "Big Root"],
   "オッカのみ": ["오카열매", "Occa Berry"],
-  "オボンのみ": ["자뭉열매", "Sitrus Berry"],
+  // Original Mono rental screen spells this 자몽열매; its icon is Sitrus Berry.
+  // Keep the source token intact and recognize it explicitly for supported-item rendering.
+  "オボンのみ": ["자뭉열매", "자몽열매", "Sitrus Berry"],
   "オレンのみ": ["오랭열매", "Oran Berry"],
   "かいがらのすず": ["조개껍질방울", "Shell Bell"],
   "カゴのみ": ["유루열매", "Chesto Berry"],

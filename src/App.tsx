@@ -4,10 +4,12 @@ import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, isVerifiedRankerSample, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { prepareCreatorParty } from './creatorPartyImport'
+import { normalizeRoute, routeGroups } from './navigation'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
 import { validateBackup } from './backupValidation'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
@@ -1661,6 +1663,7 @@ function parseViewStateFromUrl(): ViewState | null {
     const rawHash = window.location.hash.replace(/^#/, '').trim()
     const normalizedHash = rawHash || '/'
     const routeUrl = new URL(normalizedHash.startsWith('/') ? normalizedHash : `/${normalizedHash}`, 'https://openclaw.local')
+    const normalizedRoute = normalizeRoute(window.location.hash)
     const routePath = routeUrl.pathname.replace(/\/+$/, '') || '/'
     const mainSection: MainSection | undefined = routePath === '/single'
       ? 'single'
@@ -1693,7 +1696,9 @@ function parseViewStateFromUrl(): ViewState | null {
     const dexSelectedValue = routeUrl.searchParams.get('sel') ?? undefined
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
-    return { mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
+    return { mainSection: mainSection ?? normalizedRoute.section, activeTab: mainSection === 'single' || mainSection === 'double' ? normalizedRoute.tab as MainTab : activeTab,
+      sampleWorkbenchTab: mainSection === 'sample' ? normalizedRoute.tab as SampleWorkbenchTab : sampleWorkbenchTab,
+      dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
   } catch {
     return null
   }
@@ -3967,12 +3972,15 @@ export default function App() {
   const [partyImageImportStatus, setPartyImageImportStatus] = React.useState('')
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
   const [activePartyPresetId, setActivePartyPresetId] = React.useState<string | null>(null)
-  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? persisted?.sampleWorkbenchTab ?? 'builder')
+  const [creatorPartyImportError, setCreatorPartyImportError] = React.useState('')
+  const [mobileNavOpen, setMobileNavOpen] = React.useState(false)
+  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? (['builder','speed','damage','library','rankers'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
   const [libraryLanguage, setLibraryLanguage] = React.useState<LibraryLanguage>('ko')
   const [libraryFormat, setLibraryFormat] = React.useState<LibraryFormat | 'all'>('all')
   const [libraryContentKind, setLibraryContentKind] = React.useState<ContentKind>('party')
   const [draftFormat, setDraftFormat] = React.useState<LibraryFormat>('singles')
   const [libraryQuery, setLibraryQuery] = React.useState('')
+  const [creatorMegaSelection, setCreatorMegaSelection] = React.useState<Record<string, boolean>>({})
   const [linkDraftInput, setLinkDraftInput] = React.useState('')
   const [linkDraftError, setLinkDraftError] = React.useState(false)
   const [creatorLinkDrafts, setCreatorLinkDrafts] = React.useState<LinkDraft[]>(() => sanitizeLinkDrafts(persisted?.creatorLinkDrafts))
@@ -4896,6 +4904,22 @@ export default function App() {
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcDefenderDisguise, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, sampleLockedMoves, savedSamples, savedPartyPresets, sampleWorkbenchTab, creatorLinkDrafts, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
+
+  React.useEffect(() => {
+    const restoreRoute = () => {
+      const route = parseViewStateFromUrl()
+      if (!route) return
+      if (route.mainSection) setMainSection(route.mainSection)
+      if (route.activeTab) setActiveTab(route.activeTab)
+      if (route.sampleWorkbenchTab) setSampleWorkbenchTab(route.sampleWorkbenchTab)
+      if (route.dexSearchMode) setDexSearchMode(route.dexSearchMode)
+      if (route.selectedMy !== undefined) setSelectedMy(sanitizeSelectedIndex(route.selectedMy, party.length))
+      if (route.selectedOpp !== undefined) setSelectedOpp(sanitizeSelectedIndex(route.selectedOpp, opponents.length))
+    }
+    window.addEventListener('hashchange', restoreRoute)
+    window.addEventListener('popstate', restoreRoute)
+    return () => { window.removeEventListener('hashchange', restoreRoute); window.removeEventListener('popstate', restoreRoute) }
+  }, [party.length, opponents.length])
 
   React.useEffect(() => {
     syncViewStateToUrl({
@@ -6135,6 +6159,27 @@ export default function App() {
     setActivePartyPresetId(presetId ?? null)
   }
 
+  const confirmAndApplyPartyPreset = (preset: SavedPartyPreset) => {
+    if (!window.confirm(lt('현재 파티를 교체하고 저장한 파티를 적용할까요?'))) return
+    applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)
+  }
+
+  const importCreatorParty = (source: ReturnType<typeof groupCreatorSources>[number]) => {
+    // Validate every slot and resolve form-specific abilities before touching state.
+    const prepared = prepareCreatorParty(source, key => indexByKey.get(key)?.abilities_ko ?? null)
+    if (!prepared) { setCreatorPartyImportError(lt('여섯 슬롯의 검증된 구성을 확인할 수 없습니다.')); return }
+    const preset: SavedPartyPreset = {
+      id: `creator-${source.sourceId}-${Date.now()}`,
+      label: `${source.creator ?? lt('크리에이터')} · ${source.title}`,
+      party: prepared.party,
+      lockedMovesBySlot: prepared.lockedMovesBySlot,
+    }
+    setSavedPartyPresets(prev => [preset, ...prev])
+    setCreatorPartyImportError('')
+    setMainSection('single')
+    setActiveTab('party')
+  }
+
   const buildPartyPresetLockedMoves = () => party.map((member) => {
     if (!member.key) return []
     return (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4)
@@ -6655,31 +6700,49 @@ export default function App() {
     ? source.members.some(isVerifiedRankerSample)
     : source.confirmedMemberCount > 0)
 
+  const pendingCreatorLeads = filterCreatorSamples(catalog.filter(entry => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery })
+  const moveSlotLabels = { slot: lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, siteLanguage),
+    power: lt('위력'), accuracy: lt('명중'), pp: 'PP', unknown: lt('미확인') }
   const creatorCard = (entry: CreatorSample) => {
-    const row = indexByKey.get(entry.pokemonKey) // No substitute species for unsupported forms.
+    const megaKey = entry.pokemonKey.startsWith('mega-') ? entry.pokemonKey : null
+    const baseKey = megaKey ? megaBaseKey(megaKey) : null
+    const canToggle = Boolean(baseKey && indexByKey.has(baseKey) && indexByKey.has(megaKey!))
+    const formKey = canToggle && creatorMegaSelection[entry.id] === false ? baseKey! : entry.pokemonKey
+    const row = indexByKey.get(formKey) // No substitute species for unsupported forms.
     const build = entry.build ?? entry.partialBuild
-    const member: PartyMember | null = row && baseIndexByKey.has(entry.pokemonKey) && build?.nature && build.evs ? {
-      key: entry.pokemonKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
-      picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: build.ability ?? '',
+    const member: PartyMember | null = row && build?.nature && build.evs ? {
+      key: formKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
+      picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: '',
     } : null
     const stats: CardStat[] = createReadonlyCardStats(EFFORT_STAT_OPTIONS.map(stat => ({
       key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
-    })), build, statKey => row && member ? partyStatValue(row, member, statKey) : null)
+    })), build, statKey => row && member ? partyStatValue(row, member, statKey) : null, formKey)
     const name = row ? displayName(row, siteLanguage) : entry.title.split(' — ').pop() || entry.pokemonKey
     const recordedForm = entry.partialBuild?.actualStatsForm
-    const statsLabel = entry.partialBuild?.actualStats
-      ? recordedForm === 'scizor' && entry.pokemonKey === 'mega-scizor'
-        ? lt('원본 핫삼(메가진화 전) 실수치 · 메가핫삼 수치 아님')
-        : lt('원본 이미지에 기록된 실수치')
-      : lt('계산 실수치 · 원본 실수치 미기록')
+    const sourceStatsShown = Boolean(entry.partialBuild?.actualStats && recordedForm === formKey)
+    const statsLabel = sourceStatsShown ? lt('원본 이미지에 기록된 실수치') : member ? lt('계산 실수치 · 원본 실수치 미기록') : lt('실수치 미기록')
+    // The Mega ability is not evidence of a pre-Mega ability. Use only source-backed choices.
+    const preMegaAbilities = entry.partialBuild?.preMegaAbilities
+    const ability = megaKey && formKey === megaKey && row?.abilities_ko?.length === 1
+      ? row.abilities_ko[0]
+      : !megaKey || formKey === entry.pokemonKey ? build?.ability
+      : preMegaAbilities?.length ? preMegaAbilities.join(' / ')
+      : recordedForm === formKey ? build?.ability : undefined
     return <ReadonlyPokemonCard name={name} sprite={row?.sprite} types={row?.types}
-      ability={build?.ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
+      ability={ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
       item={build?.item ? displayItemLabel(build.item, siteLanguage) : undefined}
       itemSprite={build?.item ? itemSpriteSrc(entry.pokemonKey, build.item) : undefined}
       stats={stats} statsLabel={statsLabel} statsUnknown={lt('실수치 미기록')}
       labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
-      calculationNote={!entry.partialBuild?.actualStats && !baseIndexByKey.has(entry.pokemonKey) ? lt('실수치 계산 불가(지원되지 않는 포켓몬). 노력치·기술은 원본 확인') : undefined}>
-      {build?.moves ? <div className="creator-library-moves" aria-label={lt('기술 구성')}><strong>{lt('기술 구성')}</strong><div>{build.moves.map(move => <span key={move}>{move}</span>)}</div></div> : null}
+      calculationNote={!sourceStatsShown && !member ? row ? lt('성격·노력 포인트 미확인으로 실수치를 계산하지 않습니다.') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.') : undefined}>
+      {canToggle ? <div className="creator-form-toggle" role="group" aria-label={lt('메가진화 전후')}>
+        <button type="button" aria-pressed={formKey === baseKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: false }))}>{lt('일반')} · {displayName(indexByKey.get(baseKey!)!, siteLanguage)}</button>
+        <button type="button" aria-pressed={formKey === megaKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: true }))}>{lt('메가')} · {displayName(indexByKey.get(megaKey!)!, siteLanguage)}</button>
+      </div> : null}
+      {build?.moves ? <div className="move-card inline-move-card creator-library-moves" aria-label={lt('기술 구성')}><strong>{lt('기술 구성')}</strong><div className="registered-move-grid">{build.moves.map((move, moveIdx) => {
+        const meta = resolveMoveMeta(move, [], movePoolByKey)
+        return <RegisteredMoveSlot key={`${entry.id}-${moveIdx}`} number={moveIdx + 1} name={move} type={meta?.type} meta={meta} className={moveTypeThemeClass(meta?.type)} labels={moveSlotLabels} />
+      })}</div></div> : null}
     </ReadonlyPokemonCard>
   }
 
@@ -6735,14 +6798,20 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <div className="header-primary-tabs" role="tablist" aria-label={lt('모드 선택')}>
-                <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab !== 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('builder') }}>{lt('포켓몬 샘플 깎기')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab === 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('rankers') }}>{lt('랭커 샘플')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'speedLine' ? 'active' : ''}`} onClick={() => setMainSection('speedLine')}>{lt('실능 스피드라인')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
+              <div className={`header-route-menu ${mobileNavOpen ? 'open' : ''}`}>
+                <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '크리에이터 라이브러리' : sampleWorkbenchTab === 'rankers' ? '랭커 샘플' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : lt('도감')}</button>
+                <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
+                  <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" onClick={() => setMobileNavOpen(false)} aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
+                  {routeGroups.map(group => {
+                    const active = group.section === 'battle' ? mainSection === 'single' || mainSection === 'double' : group.section === 'tools' ? mainSection === 'speedLine' || mainSection === 'dex' : mainSection === 'sample'
+                    return <details key={group.section} className={`header-route-group ${active ? 'active' : ''}`}>
+                      <summary className="header-primary-tab">{lt(group.label)}</summary>
+                      <div className="header-route-links">{group.links.map(link => <a key={link.href} href={link.href}
+                        onClick={() => setMobileNavOpen(false)}
+                        aria-current={mainSection === link.section && (!link.tab || sampleWorkbenchTab === link.tab || activeTab === link.tab) ? 'page' : undefined}>{lt(link.label)}</a>)}</div>
+                    </details>
+                  })}
+                </nav>
               </div>
             </div>
           </div>
@@ -7089,7 +7158,7 @@ export default function App() {
               )}
             </div>
           ) : mainSection === 'sample' ? (
-            <div className="tab-bar section-menu-tabs">
+            <div className="tab-bar section-menu-tabs" role="navigation" aria-label={lt('샘플')}>
               {([
                 ['builder', lt('샘플 빌드')],
                 ['speed', lt('샘플 스피드')],
@@ -7097,7 +7166,7 @@ export default function App() {
                 ['library', lt('크리에이터 샘플 라이브러리')],
                 ['rankers', lt('랭커 샘플')],
               ] as const).map(([value, label]) => (
-                <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
+                <a key={`sample-workbench-tab-${value}`} href={`#/sample-builder?sampleTab=${value}`} aria-current={sampleWorkbenchTab === value ? 'page' : undefined} className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`}>{label}</a>
               ))}
             </div>
           ) : null}
@@ -7778,7 +7847,7 @@ export default function App() {
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
                   const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
                   return <div key={preset.id} className={`party-preset-card ${activePartyPresetId === preset.id ? 'active' : ''}`}>
-                    <button type="button" className="party-preset-card-main" onClick={() => applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)}>
+                    <button type="button" className="party-preset-card-main" onClick={() => confirmAndApplyPartyPreset(preset)}>
                       <div className="party-preset-sprite-row">
                         {leadMembers.length ? leadMembers.map((member, idx) => {
                           const row = indexByKey.get(member.key) ?? rows[0]
@@ -7789,7 +7858,7 @@ export default function App() {
                       <span className="muted-inline">{leadMembers.length}/6</span>
                     </button>
                     <div className="party-preset-card-actions">
-                      <button type="button" className="pick-chip" onClick={() => applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)}>{lt('파티 적용')}</button>
+                      <button type="button" className="pick-chip" onClick={() => confirmAndApplyPartyPreset(preset)}>{lt('파티 적용')}</button>
                       <button type="button" className="pick-chip" onClick={() => renamePartyPreset(preset)}>{lt('이름 변경')}</button>
                       <button type="button" className="pick-chip" onClick={() => {
                         setSavedPartyPresets((prev) => prev.filter((entry) => entry.id !== preset.id))
@@ -8023,11 +8092,7 @@ export default function App() {
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => {
                           const moveType = findMoveType(move)
-                          return <label key={`registered-move-${member.key}-${moveIdx}`} className={`registered-move-slot ${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                            <div className="registered-move-slot-head">
-                              <span>{moveIdx + 1}번</span>
-                              {moveType ? <SmallTypeBadgeImage type={moveType} /> : null}
-                            </div>
+                          return <RegisteredMoveSlot key={`registered-move-${member.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={moveType} meta={resolveMoveMeta(move, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
                             <input
                               value={move}
                               {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
@@ -8074,7 +8139,7 @@ export default function App() {
                                 ))}
                               </div>
                             ) : null}
-                          </label>
+                          </RegisteredMoveSlot>
                         })}
                       </div>
                       {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
@@ -8546,19 +8611,27 @@ export default function App() {
                 <strong>{source.title}</strong> <span className="pick-badge">{source.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')}</span>
                 <p>{source.creator ?? lt('제작자 미확인')} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {source.platform}</p>
                 {source.contentKind === 'party' ? <>
-                  <div className="creator-library-lineup" aria-label={`${lt('구성 일부 확인')}: ${source.confirmedMemberCount}`}>
+                  <div className="creator-library-lineup" aria-label={`${lt('구성 확인')}: ${source.confirmedMemberCount}`}>
                     {source.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}
                   </div>
-                  <div className="creator-library-completeness"><span>{lt('구성 일부 확인')} {source.confirmedMemberCount}</span><span>{lt('전체 파티 구성 미확인')}</span></div>
+                  <div className="creator-library-completeness"><span>{lt('구성 확인')} {source.confirmedMemberCount}/{source.partySize ?? 6}</span><span>{source.completeMemberCount === source.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div>
                 </> : <div className="creator-library-individual-card">{source.members[0] ? creatorCard(source.members[0]) : null}</div>}
+                {source.contentKind === 'party' && source.partySize === 6 && source.completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(source)}>{lt('여섯 마리 저장한 파티로 가져오기')}</button> : null}
+                {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
                 <a href={source.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
                 {source.members.map((entry) => <details key={entry.id} className="creator-library-member">
                 <summary>{source.contentKind === 'party' ? (indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title) : lt('구성')} <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span></summary>
                 {entry.rank ? <p>{entry.rank}</p> : null}
+                {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
                 {entry.partialBuild ? <a href={entry.provenance.fields['partialBuild.moves']?.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a> : null}
                 {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
                   if (!canImportCreatorSample(entry)) return
-                  setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: entry.build.ability, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
+                  const formAbilities = indexByKey.get(entry.pokemonKey)?.abilities_ko ?? []
+                  const sourceAbility = entry.build.ability
+                  const resolvedAbility = formAbilities.includes(sourceAbility) ? sourceAbility :
+                    entry.pokemonKey.startsWith('mega-') && entry.partialBuild?.preMegaAbilities?.includes(sourceAbility) && formAbilities.length === 1 ? formAbilities[0] : null
+                  if (!resolvedAbility) return
+                  setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
                   setSampleLockedMoves([...entry.build.moves])
                   setSampleSearch(searchDisplayLabel(entry.pokemonKey, siteLanguage))
                   setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
@@ -8568,7 +8641,7 @@ export default function App() {
               </article>)}
               {!visibleSources.length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
             </div>
-            {sampleWorkbenchTab === 'library' ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{filterCreatorSamples(catalog.filter((entry) => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
+            {sampleWorkbenchTab === 'library' && pendingCreatorLeads.length > 0 ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{pendingCreatorLeads.map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, libraryLanguage, draftFormat)
@@ -8790,8 +8863,7 @@ export default function App() {
                           </div>
                           <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
                             {sampleRegisteredMoves.map((move, moveIdx) => (
-                              <label key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} className={`registered-move-slot sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                                <span>{moveIdx + 1}번</span>
+                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
                                 <input
                                   value={move}
                                   {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
@@ -8842,7 +8914,7 @@ export default function App() {
                                     ))}
                                   </div>
                                 ) : null}
-                              </label>
+                              </RegisteredMoveSlot>
                             ))}
                           </div>
                           {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
@@ -9471,7 +9543,7 @@ export default function App() {
             <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
           </div>
         </section> : null}
-        <section id="sample-saved-card" className="panel wide">
+        {['builder', 'speed', 'damage'].includes(sampleWorkbenchTab) ? <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">
               <span>{lt('저장한 샘플')}</span>
@@ -9525,7 +9597,7 @@ export default function App() {
             }) : <p className="muted">{lt('아직 저장한 샘플이 없습니다.')}</p>}
             </div>
           </details>
-        </section>
+        </section> : null}
         </> : <>
         {(mainSection === 'single' && activeTab === 'speed') ? <section className="panel wide">
           <div className="row-between section-head">

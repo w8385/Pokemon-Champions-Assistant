@@ -16,19 +16,22 @@ test('link entry is explicitly partial and import is gated', () => {
 test('ranker samples have a distinct menu and direct route', () => {
   assert.match(app, /sampleTabParam === 'rankers'/)
   assert.match(app, /\['rankers', lt\('랭커 샘플'\)\]/)
-  assert.match(app, /header-primary-tab[^\n]*setSampleWorkbenchTab\('rankers'\)/)
+  assert.match(app, /routeGroups\.map\(group =>/)
+  assert.match(app, /href=\{link\.href\}/)
 })
 test('sample cards show verified partial fields and separate source-only leads', () => {
   assert.match(app, /stats=\{stats\}/)
-  assert.match(app, /build\?\.moves\s*\?\s*<div className="creator-library-moves"/)
-  assert.match(app, /catalog\.filter\(\(entry\) => !entry\.partialBuild && entry\.contentKind === 'unknown'\)/)
+  assert.match(app, /build\?\.moves\s*\?\s*<div className="move-card inline-move-card creator-library-moves"/)
+  assert.match(app, /catalog\.filter\(entry => !entry\.partialBuild && entry\.contentKind === 'unknown'\)/)
+  assert.match(app, /pendingCreatorLeads\.length > 0/)
+  assert.match(app, /성격·노력 포인트 미확인으로 실수치를 계산하지 않습니다\./)
   assert.match(app, /형식 미확인: 원본에 싱글\/더블 표기 없음/)
 })
 
 test('creator cards prefer recorded actual stats while retaining effort and moves independently of roster support', () => {
   assert.match(app, /createReadonlyCardStats\(EFFORT_STAT_OPTIONS/)
   assert.match(app, /statsLabel=\{/)
-  assert.match(app, /build\?\.moves\s*\?\s*<div className="creator-library-moves"/)
+  assert.match(app, /build\?\.moves\s*\?\s*<div className="move-card inline-move-card creator-library-moves"/)
 })
 
 test('library has separate party and individual tabs with one document card and member details', () => {
