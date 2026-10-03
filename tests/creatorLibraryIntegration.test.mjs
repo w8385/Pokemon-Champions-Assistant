@@ -13,3 +13,8 @@ test('link entry is explicitly partial and import is gated', () => {
   assert.match(app, /canImportCreatorSample\(entry\)/)
   assert.match(app, /setSampleForge\(.*entry\.build/s)
 })
+test('ranker samples have a distinct menu and direct route', () => {
+  assert.match(app, /sampleTabParam === 'rankers'/)
+  assert.match(app, /\['rankers', lt\('랭커 샘플'\)\]/)
+  assert.match(app, /header-primary-tab[^\n]*setSampleWorkbenchTab\('rankers'\)/)
+})

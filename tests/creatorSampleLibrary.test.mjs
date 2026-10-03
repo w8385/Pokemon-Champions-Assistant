@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, filterCreatorSamples, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts } from '../src/creatorSampleLibrary.ts'
+import { catalog, filterCreatorSamples, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
 
 // Synthetic fixtures exercise the schema; they are never shown as real creator/rank entries.
 const complete = {
@@ -23,6 +23,12 @@ test('catalog contains only original uploads from the three approved KR creators
     assert.equal(entry.provenance.collectedAt, '2026-10-03')
     assert.equal(canImportCreatorSample(entry), false)
   }
+})
+
+test('ranker menu requires independently recorded rank evidence', () => {
+  assert.equal(catalog.some(isVerifiedRankerSample), false)
+  assert.equal(isVerifiedRankerSample({ ...complete, rank: '1위' }), false)
+  assert.equal(isVerifiedRankerSample({ ...complete, rank: '1위', provenance: { ...complete.provenance, fields: { rank: { sourceUrl: 'https://example.org/ranking', location: 'season results', checkedAt: '2026-10-03' } } } }), true)
 })
 
 test('filters by region, format, Pokémon and free text', () => {

@@ -4,7 +4,7 @@ import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_M
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
-import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, sanitizeLinkDrafts, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, isVerifiedRankerSample, sanitizeLinkDrafts, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 
@@ -103,6 +103,7 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '랭커 샘플': 'Ranker samples', '순위 근거가 확인된 자료만 모읍니다.': 'Only samples with verified ranking evidence appear here.', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': 'No ranker samples with verified ranking evidence yet. A ranking claim in a video title is not enough.',
     '크리에이터 샘플 라이브러리': 'Creator sample library', '자료 확인': 'Browse sources', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': 'Browse verified builds or save source links.', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': 'Only source-verified builds can be imported. Saved links are not verified or automatically collected.', '지역': 'Region', '배틀 형식': 'Battle format', '포켓몬 / 텍스트 검색': 'Pokémon / text search', '검증 완료': 'Verified', '부분 확인': 'Partial', '제작자 미확인': 'Creator unconfirmed', '원본 출처': 'Original source', '빌더로 가져오기': 'Import to builder', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': 'No verified creator builds match. Usage presets are not source-verified creator builds.', '출처 링크 보관': 'Save a source link', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'Saved only in this browser as partial. Creator, rank and build are not inferred.', '출처 URL': 'Source URL', '링크 추가': 'Save link', 'http 또는 https 주소를 입력하세요.': 'Enter an HTTP or HTTPS URL.', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': 'To suggest a public entry, send its source and build evidence using the project feedback form.', '제보 폼 열기': 'Open feedback form', '부분 확인 · 개인 링크': 'Partial · personal link',
     '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '대미지 계산': 'Damage Calc',
@@ -137,6 +138,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '랭커 샘플': '上位ランカーのサンプル', '순위 근거가 확인된 자료만 모읍니다.': '順位の根拠を確認できた資料だけ表示します。', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': '順位の根拠を確認できたサンプルはまだありません。動画タイトルの主張だけでは掲載しません。',
     '크리에이터 샘플 라이브러리': 'クリエイターサンプルライブラリ', '자료 확인': '資料を見る', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': '検証済みの構成を探すか、元リンクを保存します。', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': '原典で確認できた構成だけ取り込めます。リンク保存は検証・自動収集ではありません。', '지역': '地域', '배틀 형식': '対戦形式', '포켓몬 / 텍스트 검색': 'ポケモン / テキスト検索', '검증 완료': '検証済み', '부분 확인': '一部確認', '제작자 미확인': '投稿者未確認', '원본 출처': '元の出典', '빌더로 가져오기': 'ビルダーに取り込む', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': '該当する検証済み構成はありません。採用率プリセットは出典確認済みの投稿者構成ではありません。', '출처 링크 보관': '出典リンクを保存', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'このブラウザだけに一部確認として保存します。投稿者・順位・構成は自動判定しません。', '출처 URL': '出典URL', '링크 추가': 'リンクを追加', 'http 또는 https 주소를 입력하세요.': 'HTTPかHTTPSのURLを入力してください。', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': '公開リストへの提案は原典と構成の根拠をフォームから送ってください。', '제보 폼 열기': 'フォームを開く', '부분 확인 · 개인 링크': '一部確認 · 個人リンク',
     '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '대미지 계산': '火力計算',
@@ -1679,7 +1681,7 @@ function parseViewStateFromUrl(): ViewState | null {
       ? activeTabParam
       : undefined
     const sampleTabParam = routeUrl.searchParams.get('sampleTab')
-    const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage' || sampleTabParam === 'library'
+    const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage' || sampleTabParam === 'library' || sampleTabParam === 'rankers'
       ? sampleTabParam
       : undefined
     const dexTabParam = routeUrl.searchParams.get('dexTab')
@@ -6679,7 +6681,8 @@ export default function App() {
                 <button type="button" className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} onClick={() => setMainSection('home')}>{lt('홈')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'single' ? 'active' : ''}`} onClick={() => { setMainSection('single'); if (!['party', 'pick', 'speed', 'power'].includes(activeTab)) setActiveTab('party') }}>{lt('싱글배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
-                <button type="button" className={`header-primary-tab ${mainSection === 'sample' ? 'active' : ''}`} onClick={() => setMainSection('sample')}>{lt('포켓몬 샘플 깎기')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab !== 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('builder') }}>{lt('포켓몬 샘플 깎기')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab === 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('rankers') }}>{lt('랭커 샘플')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
             </div>
@@ -6935,6 +6938,9 @@ export default function App() {
                   <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('library') }}>
                     <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('크리에이터 샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
                   </button>
+                  <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('rankers') }}>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('랭커 샘플')}</strong><p>{lt('순위 근거가 확인된 자료만 모읍니다.')}</p></div>
+                  </button>
                 </div>
               </section>
             </div>
@@ -7027,6 +7033,7 @@ export default function App() {
                 ['speed', lt('샘플 스피드')],
                 ['damage', lt('샘플 대미지 계산')],
                 ['library', lt('크리에이터 샘플 라이브러리')],
+                ['rankers', lt('랭커 샘플')],
               ] as const).map(([value, label]) => (
                 <button key={`sample-workbench-tab-${value}`} type="button" className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`} onClick={() => setSampleWorkbenchTab(value)}>{label}</button>
               ))}
@@ -8463,15 +8470,15 @@ export default function App() {
         </> : mainSection === 'sample' ? <>
         <section className="panel wide sample-workbench-panel">
           <div className="sample-content-panel">
-          {sampleWorkbenchTab === 'library' ? <div className="creator-library">
-            <div className="section-head"><div><h2>{lt('크리에이터 샘플 라이브러리')}</h2><p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
+          {sampleWorkbenchTab === 'library' || sampleWorkbenchTab === 'rankers' ? <div className="creator-library">
+            <div className="section-head"><div><h2>{sampleWorkbenchTab === 'rankers' ? lt('랭커 샘플') : lt('크리에이터 샘플 라이브러리')}</h2><p className="muted">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 자료만 모읍니다.') : lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
             <div className="creator-library-filters">
               <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select></label>
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <div className="creator-library-list">
-              {filterCreatorSamples(catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <article key={entry.id} className="creator-library-card">
+              {filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <article key={entry.id} className="creator-library-card">
                 <strong>{entry.title}</strong> <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span>
                 <p>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.pokemonKey || lt('포켓몬 미확인')} · {entry.creator ?? lt('제작자 미확인')}{entry.rank ? ` · ${entry.rank}` : ''} · {entry.format ?? lt('형식 미확인')} · {entry.platform}</p>
                 <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
@@ -8484,9 +8491,9 @@ export default function App() {
                   setSampleWorkbenchTab('builder')
                 }}>{lt('빌더로 가져오기')}</button> : null}
               </article>)}
-              {!filterCreatorSamples(catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).length ? <p className="muted" role="status">{lt('이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.')}</p> : null}
+              {!filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.')}</p> : null}
             </div>
-            <form className="creator-library-submit" onSubmit={(event) => {
+            {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, libraryLanguage, draftFormat)
               if (!draft) { setLinkDraftError(true); return }
@@ -8498,8 +8505,8 @@ export default function App() {
               <div className="creator-library-submit-row"><select aria-label={lt('링크 형식')} value={draftFormat} onChange={(e) => setDraftFormat(e.target.value as LibraryFormat)}><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select><input aria-label={lt('출처 URL')} type="url" value={linkDraftInput} onChange={(e) => { setLinkDraftInput(e.target.value); setLinkDraftError(false) }} placeholder="https://…" required /><button type="submit" className="action-button">{lt('링크 추가')}</button></div>
               {linkDraftError ? <p role="alert">{lt('http 또는 https 주소를 입력하세요.')}</p> : null}
               <p className="muted">{lt('공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.')}{' '}<a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noopener noreferrer">{lt('제보 폼 열기')}</a></p>
-            </form>
-            {creatorLinkDrafts.filter((entry) => entry.language === libraryLanguage && (libraryFormat === 'all' || entry.format === libraryFormat)).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('삭제')}</button></div>)}
+            </form> : null}
+            {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => entry.language === libraryLanguage && (libraryFormat === 'all' || entry.format === libraryFormat)).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('삭제')}</button></div>) : null}
           </div> : sampleWorkbenchTab === 'builder' ? <>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">

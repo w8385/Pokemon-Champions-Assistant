@@ -54,6 +54,11 @@ export const catalog: CreatorSample[] = [
   youtubeLead('ihwnR8FJWtM', '눈파티', 'UCd6CX2LiQE2dEAPXwk2N0jg', '벌레 타입의 왕좌를 노리는 사슴벌레 포켓몬 메가 쁘사이저 사용법을 알아보자! [포켓몬 챔피언스]', 'mega-pinsir'),
 ]
 
+export function isVerifiedRankerSample(entry: CreatorSample): boolean {
+  const evidence = entry.provenance.fields?.rank
+  return Boolean(entry.rank?.trim() && evidence?.location?.trim() && evidence.checkedAt && safeSourceUrl(evidence.sourceUrl))
+}
+
 export function safeSourceUrl(value: unknown): string | null {
   if (typeof value !== 'string') return null
   try {
