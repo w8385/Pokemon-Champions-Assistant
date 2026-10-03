@@ -1,4 +1,5 @@
 import type { EffortValues } from '../myPartyChampionsSamples'
+import type { LinkDraft } from '../creatorSampleLibrary'
 
 export type Row = {
   id: number
@@ -106,7 +107,7 @@ export type RivalryMode = 'neutral' | 'same' | 'opposite'
 export type DoubleBoardSlot = 'myLeft' | 'myRight' | 'oppLeft' | 'oppRight'
 export type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 export type MainSection = 'home' | 'single' | 'double' | 'sample' | 'dex'
-export type SampleWorkbenchTab = 'builder' | 'speed' | 'damage'
+export type SampleWorkbenchTab = 'builder' | 'speed' | 'damage' | 'library'
 export type MainTab = 'party' | 'pick' | 'speed' | 'power'
 export type SiteLanguage = 'ko' | 'en' | 'ja'
 export type MoveCategory = CalcMode | 'status'
@@ -194,6 +195,7 @@ export type PersistedState = {
   savedSamples?: SavedSample[]
   savedPartyPresets?: SavedPartyPreset[]
   sampleWorkbenchTab?: SampleWorkbenchTab
+  creatorLinkDrafts?: LinkDraft[]
   sampleSpeedTargets?: SampleSpeedTarget[]
   sampleDamageTargets?: SampleDamageTarget[]
   doubleMyLeft?: number
