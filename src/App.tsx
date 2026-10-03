@@ -7,6 +7,8 @@ import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, isVerifiedRankerSample, sanitizeLinkDrafts, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
+import { actualStat } from './statMechanics'
+import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
@@ -103,6 +105,8 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '형식 미확인: 원본에 싱글/더블 표기 없음': 'Format unknown: source does not specify singles or doubles', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': 'Only confirmed fields are shown. Incomplete builds cannot be imported.', '구성 근거 이미지': 'Build evidence image', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': 'No confirmed builds match. Video sources below await build review.', '구성 확인 대기 · 영상 자료': 'Videos awaiting build review', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': 'Only video titles are confirmed; these cannot be used or imported as builds.',
+    '실능 스피드라인': 'Actual Speed Line', '빠른 순 → 느린 순': 'Fastest → Slowest', '검색 · 이름/폼': 'Search Pokémon or form', '메가폼 포함': 'All forms', '메가폼 제외': 'Exclude Mega', '메가폼만': 'Mega only', '성격 보정 +10%': 'Speed +10%', '성격 보정 없음': 'Neutral nature', '성격 보정 -10%': 'Speed −10%', '챔피언스 노력 포인트': 'Champions Speed effort points', '검색 결과 없음': 'No matching Pokémon', '실능 스피드라인 안내': 'Level 50 · IV 31 · Champions effort 0–32 added before nature · no item, ability, stages, or field effects. Speed ties share a value; listed by key.', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': 'Browse verified Pokémon and forms sorted by actual Speed.', '포켓몬 수': 'Pokémon shown', '기본 스피드': 'Base Speed',
     '랭커 샘플': 'Ranker samples', '순위 근거가 확인된 자료만 모읍니다.': 'Only samples with verified ranking evidence appear here.', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': 'No ranker samples with verified ranking evidence yet. A ranking claim in a video title is not enough.',
     '크리에이터 샘플 라이브러리': 'Creator sample library', '자료 확인': 'Browse sources', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': 'Browse verified builds or save source links.', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': 'Only source-verified builds can be imported. Saved links are not verified or automatically collected.', '지역': 'Region', '배틀 형식': 'Battle format', '포켓몬 / 텍스트 검색': 'Pokémon / text search', '검증 완료': 'Verified', '부분 확인': 'Partial', '제작자 미확인': 'Creator unconfirmed', '원본 출처': 'Original source', '빌더로 가져오기': 'Import to builder', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': 'No verified creator builds match. Usage presets are not source-verified creator builds.', '출처 링크 보관': 'Save a source link', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'Saved only in this browser as partial. Creator, rank and build are not inferred.', '출처 URL': 'Source URL', '링크 추가': 'Save link', 'http 또는 https 주소를 입력하세요.': 'Enter an HTTP or HTTPS URL.', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': 'To suggest a public entry, send its source and build evidence using the project feedback form.', '제보 폼 열기': 'Open feedback form', '부분 확인 · 개인 링크': 'Partial · personal link',
     '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
@@ -138,6 +142,8 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '형식 미확인: 원본에 싱글/더블 표기 없음': '形式未確認：原典にシングル・ダブルの記載なし', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': '確認済みの項目のみ表示します。未完成の構成は取り込めません。', '구성 근거 이미지': '構成の根拠画像', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': '該当する確認済み構成はありません。下の動画は構成確認待ちです。', '구성 확인 대기 · 영상 자료': '構成確認待ちの動画', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': '動画のタイトルのみ確認済みです。構成として利用・取込はできません。',
+    '실능 스피드라인': '実数値素早さライン', '빠른 순 → 느린 순': '速い順 → 遅い順', '검색 · 이름/폼': 'ポケモン・フォルム検索', '메가폼 포함': '全フォルム', '메가폼 제외': 'メガを除外', '메가폼만': 'メガのみ', '성격 보정 +10%': '素早さ+10%', '성격 보정 없음': '性格補正なし', '성격 보정 -10%': '素早さ−10%', '챔피언스 노력 포인트': 'チャンピオンズ素早さ努力ポイント', '검색 결과 없음': '該当ポケモンなし', '실능 스피드라인 안내': 'Lv.50・個体値31・チャンピオンズ努力ポイント0～32を性格補正前に加算。道具・特性・ランク・場の効果なし。同速はキー順。', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': '確認済みポケモンとフォルムを実数値素早さ順に表示。', '포켓몬 수': '表示数', '기본 스피드': '種族値素早さ',
     '랭커 샘플': '上位ランカーのサンプル', '순위 근거가 확인된 자료만 모읍니다.': '順位の根拠を確認できた資料だけ表示します。', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': '順位の根拠を確認できたサンプルはまだありません。動画タイトルの主張だけでは掲載しません。',
     '크리에이터 샘플 라이브러리': 'クリエイターサンプルライブラリ', '자료 확인': '資料を見る', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': '検証済みの構成を探すか、元リンクを保存します。', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': '原典で確認できた構成だけ取り込めます。リンク保存は検証・自動収集ではありません。', '지역': '地域', '배틀 형식': '対戦形式', '포켓몬 / 텍스트 검색': 'ポケモン / テキスト検索', '검증 완료': '検証済み', '부분 확인': '一部確認', '제작자 미확인': '投稿者未確認', '원본 출처': '元の出典', '빌더로 가져오기': 'ビルダーに取り込む', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': '該当する検証済み構成はありません。採用率プリセットは出典確認済みの投稿者構成ではありません。', '출처 링크 보관': '出典リンクを保存', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'このブラウザだけに一部確認として保存します。投稿者・順位・構成は自動判定しません。', '출처 URL': '出典URL', '링크 추가': 'リンクを追加', 'http 또는 https 주소를 입력하세요.': 'HTTPかHTTPSのURLを入力してください。', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': '公開リストへの提案は原典と構成の根拠をフォームから送ってください。', '제보 폼 열기': 'フォームを開く', '부분 확인 · 개인 링크': '一部確認 · 個人リンク',
     '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
@@ -1667,6 +1673,8 @@ function parseViewStateFromUrl(): ViewState | null {
     const routePath = routeUrl.pathname.replace(/\/+$/, '') || '/'
     const mainSection: MainSection | undefined = routePath === '/single'
       ? 'single'
+      : routePath === '/speed-line'
+        ? 'speedLine'
       : routePath === '/sample-builder'
         ? 'sample'
         : routePath === '/dex'
@@ -1702,7 +1710,7 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : '/'
+  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
   if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
@@ -1716,13 +1724,6 @@ function syncViewStateToUrl(viewState: ViewState) {
   const url = new URL(window.location.href)
   url.hash = nextHash
   window.history.replaceState(null, '', url)
-}
-
-function actualStat(base: number, ev: number, natureMultiplierValue = 1, hp = false) {
-  const evContribution = Math.max(0, Math.trunc(ev))
-  if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + evContribution
-  const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + evContribution
-  return Math.floor(raw * natureMultiplierValue)
 }
 
 function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'item'>) {
@@ -3773,6 +3774,7 @@ function menuLabelForTab(tab: MainTab, language: SiteLanguage = 'ko') {
 function menuLabelForSection(section: MainSection, activeTab: MainTab, language: SiteLanguage = 'ko') {
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
+  if (section === 'speedLine') return translateText(language, '실능 스피드라인')
   if (section === 'dex') return translateText(language, '도감')
   if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
@@ -3921,6 +3923,10 @@ export default function App() {
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
   const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
+  const [speedLineQuery, setSpeedLineQuery] = React.useState('')
+  const [speedLineEffort, setSpeedLineEffort] = React.useState(32)
+  const [speedLineNature, setSpeedLineNature] = React.useState<SpeedNature>('boost')
+  const [speedLineForms, setSpeedLineForms] = React.useState<SpeedLineOptions['forms']>('all')
   const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? persisted?.activeTab ?? 'party')
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [calcMyMegaKey, setCalcMyMegaKey] = React.useState<string | null>(null)
@@ -4917,6 +4923,7 @@ export default function App() {
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
+  const speedLineRows = React.useMemo(() => buildSpeedLine(rows, { effort: speedLineEffort, nature: speedLineNature, query: speedLineQuery, forms: speedLineForms }), [speedLineEffort, speedLineNature, speedLineQuery, speedLineForms])
   const sampleMagicCandidate = sampleRow ? findMagicNumberCandidate(sampleRow, sampleForge) : null
   const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaKey)
   const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaKey) : ''
@@ -6683,6 +6690,7 @@ export default function App() {
                 <button type="button" className={`header-primary-tab ${mainSection === 'double' ? 'active' : ''}`} onClick={() => { setMainSection('double'); if (!['party', 'pick', 'power'].includes(activeTab)) setActiveTab('party'); if (activeTab === 'speed') setActiveTab('power') }}>{lt('더블배틀 메뉴')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab !== 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('builder') }}>{lt('포켓몬 샘플 깎기')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'sample' && sampleWorkbenchTab === 'rankers' ? 'active' : ''}`} onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('rankers') }}>{lt('랭커 샘플')}</button>
+                <button type="button" className={`header-primary-tab ${mainSection === 'speedLine' ? 'active' : ''}`} onClick={() => setMainSection('speedLine')}>{lt('실능 스피드라인')}</button>
                 <button type="button" className={`header-primary-tab ${mainSection === 'dex' ? 'active' : ''}`} onClick={() => setMainSection('dex')}>{lt('도감')}</button>
               </div>
             </div>
@@ -6935,6 +6943,9 @@ export default function App() {
                       <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
                     </div>
                   </button>
+                  <button type="button" className="home-route-card calm" onClick={() => setMainSection('speedLine')}>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('빠른 순 → 느린 순')}</span><strong>{lt('실능 스피드라인')}</strong><p>{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div>
+                  </button>
                   <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('library') }}>
                     <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('크리에이터 샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
                   </button>
@@ -6974,7 +6985,7 @@ export default function App() {
           </div>
         </>
         ) : null}
-        {mainSection !== 'home' && mainSection !== 'dex' ? <section className="panel wide workflow-shell-panel">
+        {mainSection !== 'home' && mainSection !== 'dex' && mainSection !== 'speedLine' ? <section className="panel wide workflow-shell-panel">
           <div className="row-between section-head workflow-shell-head">
             <div>
               <span className="home-section-label">{lt('현재 흐름')}</span>
@@ -7039,6 +7050,28 @@ export default function App() {
               ))}
             </div>
           ) : null}
+        </section> : null}
+
+        {mainSection === 'speedLine' ? <section className="panel wide speed-line-panel">
+          <div className="section-head"><div><h2>{lt('실능 스피드라인')}</h2><p className="muted">{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div></div>
+          <p className="muted speed-line-assumptions">{siteLanguage === 'ko' ? '레벨 50 · 개체값 31 · 챔피언스 노력 포인트 0~32를 성격 보정 전에 가산 · 도구/특성/랭크/필드 효과 제외 · 동속은 키순' : lt('실능 스피드라인 안내')}</p>
+          <div className="speed-line-controls">
+            <label>{lt('검색 · 이름/폼')}<input type="search" value={speedLineQuery} onChange={(e) => setSpeedLineQuery(e.target.value)} placeholder={lt('검색 · 이름/폼')} /></label>
+            <label>{lt('챔피언스 노력 포인트')}<input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={speedLineEffort} onChange={(e) => setSpeedLineEffort(clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP))} /></label>
+            <label>{lt('성격')}<select value={speedLineNature} onChange={(e) => setSpeedLineNature(e.target.value as SpeedNature)}>
+              <option value="boost">{lt('성격 보정 +10%')}</option><option value="neutral">{lt('성격 보정 없음')}</option><option value="lower">{lt('성격 보정 -10%')}</option>
+            </select></label>
+            <label>{lt('메가폼 포함')}<select value={speedLineForms} onChange={(e) => setSpeedLineForms(e.target.value as SpeedLineOptions['forms'])}>
+              <option value="all">{lt('메가폼 포함')}</option><option value="nonMega">{lt('메가폼 제외')}</option><option value="mega">{lt('메가폼만')}</option>
+            </select></label>
+          </div>
+          <p className="muted">{lt('빠른 순 → 느린 순')} · {lt('포켓몬 수')}: {speedLineRows.length}</p>
+          {speedLineRows.length ? <div className="speed-line-list" role="table" aria-label={lt('실능 스피드라인')}>
+            <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{lt('포켓몬')}</span><span role="columnheader">{lt('기본 스피드')}</span><span role="columnheader">{lt('실수치 스피드')}</span></div>
+            {speedLineRows.map(({ row, speed }, idx) => <div className="speed-line-row" role="row" key={row.key}>
+              <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{row.sprite ? <img src={row.sprite} alt="" loading="lazy" /> : null}<span>{displayName(row, siteLanguage)}<small>{row.name_en}</small></span></span><span role="cell">{row.speed}</span><strong role="cell">{speed}</strong>
+            </div>)}
+          </div> : <p className="muted">{lt('검색 결과 없음')}</p>}
         </section> : null}
 
         {mainSection === 'dex' ? <>
@@ -8478,10 +8511,19 @@ export default function App() {
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <div className="creator-library-list">
-              {filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <article key={entry.id} className="creator-library-card">
+              {filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog.filter((entry) => Boolean(entry.partialBuild)), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <article key={entry.id} className="creator-library-card">
                 <strong>{entry.title}</strong> <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span>
-                <p>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.pokemonKey || lt('포켓몬 미확인')} · {entry.creator ?? lt('제작자 미확인')}{entry.rank ? ` · ${entry.rank}` : ''} · {entry.format ?? lt('형식 미확인')} · {entry.platform}</p>
+                <p>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title.split(' — ').slice(-1)[0] || lt('포켓몬 미확인')} · {entry.creator ?? lt('제작자 미확인')}{entry.rank ? ` · ${entry.rank}` : ''} · {entry.format === 'singles' ? lt('싱글배틀') : entry.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {entry.platform}</p>
+                {entry.partialBuild ? <div className="creator-library-build">
+                  <span>{lt('성격')}: {entry.partialBuild.nature ? natureLabel(entry.partialBuild.nature, siteLanguage) : lt('미확인')}</span>
+                  <span>{lt('도구')}: {entry.partialBuild.item ?? lt('미확인')}</span>
+                  <span>{lt('특성')}: {entry.partialBuild.ability ?? lt('미확인')}</span>
+                  {entry.partialBuild.evs ? <span>{lt('노력치 보정')}: {(['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const).map((stat) => `${lt(({ hp: '체력', attack: '공격', defense: '방어', spAttack: '특공', spDefense: '특방', speed: '스피드' })[stat])} ${entry.partialBuild!.evs![stat]}`).join(' · ')}</span> : null}
+                  {entry.partialBuild?.moves ? <span>{lt('기술 구성')}: {entry.partialBuild.moves.join(' · ')}</span> : null}
+                  <small>{lt('확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.')}</small>
+                </div> : null}
                 <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
+                {entry.partialBuild ? <a href={entry.provenance.fields['partialBuild.moves']?.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a> : null}
                 {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
                   if (!canImportCreatorSample(entry)) return
                   setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: entry.build.ability, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
@@ -8491,8 +8533,9 @@ export default function App() {
                   setSampleWorkbenchTab('builder')
                 }}>{lt('빌더로 가져오기')}</button> : null}
               </article>)}
-              {!filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog, { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.')}</p> : null}
+              {!filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog.filter((entry) => Boolean(entry.partialBuild)), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
             </div>
+            {sampleWorkbenchTab === 'library' ? <div className="creator-library-leads"><h3>{lt('구성 확인 대기 · 영상 자료')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{filterCreatorSamples(catalog.filter((entry) => !entry.partialBuild), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, libraryLanguage, draftFormat)

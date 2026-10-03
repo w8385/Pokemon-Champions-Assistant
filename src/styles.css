@@ -1429,6 +1429,10 @@ header p {
 .creator-library-card, .creator-library-submit { border: 1px solid #42536a; border-radius: 12px; padding: 16px; background: #101d2c; overflow-wrap: anywhere; }
 .creator-library-card { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .creator-library-card p { flex-basis: 100%; margin: 0; }
+.creator-library-build { display: grid; gap: 6px; flex-basis: 100%; border-top: 1px solid #42536a; padding-top: 10px; line-height: 1.5; }
+.creator-library-build small { color: #a9b9cd; }
+.creator-library-leads { border: 1px dashed #42536a; border-radius: 12px; padding: 16px; overflow-wrap: anywhere; }
+.creator-library-leads h3 { margin-top: 0; }
 .creator-library-card a, .creator-library-submit a { color: #9dcbff; }
 .creator-library-submit h3 { margin-top: 0; }
 .creator-library-submit-row { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -8255,4 +8259,20 @@ html {
   .damage-side-moves-opponent {
     grid-template-columns: 1fr;
   }
+}
+.speed-line-assumptions { margin: .4rem 0 1.2rem; line-height: 1.6; }
+.speed-line-controls { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(140px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.speed-line-controls label { display: grid; gap: .35rem; font-weight: 600; font-size: .9rem; }
+.speed-line-controls input, .speed-line-controls select { width: 100%; min-width: 0; }
+.speed-line-list { margin-top: 1rem; max-height: 68vh; overflow: auto; border: 1px solid #2b3540; border-radius: 12px; }
+.speed-line-row { display: grid; grid-template-columns: 3rem minmax(140px, 1fr) 7rem 8rem; align-items: center; gap: .6rem; padding: .4rem .8rem; border-bottom: 1px solid #2b3540; }
+.speed-line-row:last-child { border-bottom: 0; }
+.speed-line-heading { position: sticky; top: 0; z-index: 1; background: #1b2633; font-weight: 700; }
+.speed-line-species { display: flex; align-items: center; gap: .55rem; min-width: 0; }
+.speed-line-species img { width: 42px; height: 42px; object-fit: contain; }
+.speed-line-species small { display: block; color: var(--muted, #777); }
+@media (max-width: 760px) {
+  .speed-line-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .speed-line-row { grid-template-columns: 2rem minmax(105px, 1fr) 4rem 5rem; gap: .35rem; padding: .35rem; font-size: .85rem; }
+  .speed-line-species img { width: 32px; height: 32px; }
 }

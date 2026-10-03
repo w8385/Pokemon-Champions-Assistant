@@ -12,6 +12,9 @@ export type LibraryBuild = {
   evs: EffortValues
   moves: [string, string, string, string]
 }
+// Display-only evidence: never use this as an importable LibraryBuild.
+export type PartialLibraryBuild = Partial<LibraryBuild> & { preMegaAbilities?: string[] }
+export type PartialBuildField = `partialBuild.${keyof PartialLibraryBuild}`
 export type CreatorSample = {
   id: string
   language: LibraryLanguage
@@ -23,11 +26,12 @@ export type CreatorSample = {
   rank: string | null
   provenance: {
     sourceUrl: string; canonicalUrl: string; sourceId: string; publishedAt: string | null; collectedAt: string
-    channelId?: string; fields: Partial<Record<'creator' | 'title' | 'pokemonKey' | 'format' | 'rank' | 'build', FieldEvidence>>
+    channelId?: string; fields: Partial<Record<'creator' | 'title' | 'pokemonKey' | 'format' | 'rank' | 'build' | PartialBuildField, FieldEvidence>>
     verifiedAt: string; evidence: string
   }
   status: 'verified' | 'partial'
   build: LibraryBuild | null
+  partialBuild?: PartialLibraryBuild
 }
 export type LinkDraft = {
   sourceUrl: string
@@ -48,10 +52,63 @@ const youtubeLead = (id: string, creator: string, channelId: string, title: stri
     provenance: { sourceUrl, canonicalUrl: sourceUrl, sourceId: id, publishedAt: null, collectedAt: '2026-10-03', channelId,
       fields: { creator: evidence, title: evidence, ...(pokemonKey ? { pokemonKey: evidence } : {}) }, verifiedAt: '', evidence: '' } }
 }
+const pinsirLead = youtubeLead('ihwnR8FJWtM', '눈파티', 'UCd6CX2LiQE2dEAPXwk2N0jg', '벌레 타입의 왕좌를 노리는 사슴벌레 포켓몬 메가 쁘사이저 사용법을 알아보자! [포켓몬 챔피언스]', 'mega-pinsir')
 export const catalog: CreatorSample[] = [
   youtubeLead('Ix8nrNnmTUk', '모노', 'UCfKTcDDUzjMpPmV4KuOhkFg', '노자속기 메갸라. 갸라도스의 새로운 패러다임 "HAS 메가갸라도스 샘플"', 'mega-gyarados'),
   youtubeLead('HQDEZg-Zgv8', '케미쨩', 'UCUBpFJAibM1fmqqDE3FP_tQ', '"세계 1위"', ''),
-  youtubeLead('ihwnR8FJWtM', '눈파티', 'UCd6CX2LiQE2dEAPXwk2N0jg', '벌레 타입의 왕좌를 노리는 사슴벌레 포켓몬 메가 쁘사이저 사용법을 알아보자! [포켓몬 챔피언스]', 'mega-pinsir'),
+  {
+    ...pinsirLead,
+    // The linked blog embeds a sample image. The video itself is still only a source lead.
+    partialBuild: {
+      nature: 'adamant', item: '쁘사이저나이트', ability: '스카이스킨',
+      preMegaAbilities: ['자기과신', '괴력집게'],
+      evs: { hp: 19, attack: 32, defense: 0, spAttack: 0, spDefense: 1, speed: 14 },
+      moves: ['전광석화', '누르기', '칼춤', '업어후리기'],
+    },
+    provenance: {
+      ...pinsirLead.provenance,
+      fields: {
+        ...pinsirLead.provenance.fields,
+        ...Object.fromEntries(['nature', 'item', 'ability', 'preMegaAbilities', 'evs', 'moves'].map(field => [
+          `partialBuild.${field}`, {
+            sourceUrl: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA0MzBfMjM2/MDAxNzc3NDkzMzA0NjE1.J_lacZxX9NonBt_qclnxEDjYQ4I2_bfeuoO8h58cDVcg.Roz1gjc1I4YP455znmaHfIxrtH04aT1Kdjyr-xTPMR0g.JPEG/%EB%A9%94%EA%B0%80_%EC%81%98%EC%82%AC%EC%9D%B4%EC%A0%80_%ED%98%95%ED%83%9C.jpg?type=w800',
+            location: `눈파티 블로그 (https://m.blog.naver.com/1209sung/224269941061) 메가 쁘사이저 형태 이미지, ${field}`,
+            checkedAt: '2026-10-03',
+          },
+        ])),
+      },
+    },
+  },
+  ...([
+    {
+      pokemonKey: 'rotom-wash', title: '시즌2 싱글 파티 — 워시로토무', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '로토무',
+      partialBuild: { item: '구애스카프', ability: '부유', evs: { hp: 6, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 28 }, moves: ['하이드로펌프', '10만볼트', '볼트체인지', '트릭'] },
+    },
+    {
+      pokemonKey: 'mega-scizor', title: '시즌2 싱글 파티 — 메가핫삼', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '핫삼',
+      partialBuild: { item: '핫삼나이트', ability: '테크니션', evs: { hp: 32, attack: 24, defense: 10, spAttack: 0, spDefense: 0, speed: 0 }, moves: ['칼춤', '불릿펀치', '탁쳐서떨구기', '인파이트'] },
+    },
+  ] as const).map(({ pokemonKey, title, image, label, partialBuild }): CreatorSample => {
+    const sourceUrl = 'https://m.blog.naver.com/2tjqja/224319761655'
+    const postEvidence: FieldEvidence = { sourceUrl, location: '모노 블로그 게시물 제목: 시즌2 싱글 파티', checkedAt: '2026-10-03' }
+    return {
+      id: `blog-224319761655-${pokemonKey}`, language: 'ko', format: 'singles', platform: 'blog', pokemonKey,
+      title, creator: '모노', rank: null, status: 'partial', build: null,
+      partialBuild: { ...partialBuild, moves: [...partialBuild.moves] as [string, string, string, string] },
+      provenance: {
+        sourceUrl, canonicalUrl: sourceUrl, sourceId: '224319761655', publishedAt: null, collectedAt: '2026-10-03',
+        verifiedAt: '', evidence: '', fields: {
+          creator: postEvidence, title: postEvidence, pokemonKey: { sourceUrl: image, location: `파티 이미지의 ${label} 항목`, checkedAt: '2026-10-03' }, format: postEvidence,
+          ...Object.fromEntries(['item', 'ability', 'evs', 'moves'].map(field => [`partialBuild.${field}`, {
+            sourceUrl: field === 'evs'
+              ? 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMTU2/MDAxNzgxNzU2MDU1NDc1.6eoq1V8VxWiVh4OjCl_z24IFYZsOa3dStFUaPw3DQGgg.CP20xlnDNXYPDKTZMvnLqpik5phS0U04oqSTfizSXqog.JPEG/%ED%8C%8C%ED%8B%B0_2.jpg?type=w800'
+              : image,
+            location: `모노 블로그 ${label} ${field === 'evs' ? '스테이터스' : '능력'} 이미지, ${field}`, checkedAt: '2026-10-03',
+          }])),
+        },
+      },
+    }
+  }),
 ]
 
 export function isVerifiedRankerSample(entry: CreatorSample): boolean {
@@ -98,6 +155,7 @@ export function filterCreatorSamples<T extends { language: LibraryLanguage; form
 const stats = ['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const
 export function canImportCreatorSample(entry: CreatorSample | LinkDraft): entry is CreatorSample & { build: LibraryBuild } {
   if (!('build' in entry) || entry.status !== 'verified' || !entry.build || !entry.pokemonKey || !entry.creator ||
+    (entry.format !== 'singles' && entry.format !== 'doubles') ||
     !entry.provenance.verifiedAt || !entry.provenance.evidence || !safeSourceUrl(entry.provenance.sourceUrl)) return false
   const build = entry.build
   if (!build.nature || !build.item?.trim() || !build.ability?.trim() || !Array.isArray(build.moves) ||
