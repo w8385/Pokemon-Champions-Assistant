@@ -1,5 +1,5 @@
 import type { EffortValues } from './myPartyChampionsSamples'
-import type { NatureId } from './app/types'
+import type { NatureId, EffortStatKey } from './app/types'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -14,7 +14,11 @@ export type LibraryBuild = {
   moves: [string, string, string, string]
 }
 // Display-only evidence: never use this as an importable LibraryBuild.
-export type PartialLibraryBuild = Partial<LibraryBuild> & { preMegaAbilities?: string[] }
+export type PartialLibraryBuild = Partial<LibraryBuild> & {
+  preMegaAbilities?: string[]
+  actualStats?: Record<EffortStatKey, number> // Values transcribed from the source image, not inferred from nature.
+  actualStatsForm?: string // Distinguishes a pre-Mega party screen from the selected Mega species.
+}
 export type PartialBuildField = `partialBuild.${keyof PartialLibraryBuild}`
 export type CreatorSample = {
   id: string
@@ -85,14 +89,14 @@ export const catalog: CreatorSample[] = [
   },
   ...([
     {
-      pokemonKey: 'rotom-wash', title: '시즌2 싱글 파티 — 워시로토무', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '로토무',
-      partialBuild: { item: '구애스카프', ability: '부유', evs: { hp: 6, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 28 }, moves: ['하이드로펌프', '10만볼트', '볼트체인지', '트릭'] },
+      pokemonKey: 'rotom-wash', title: '시즌2 싱글 파티 — 워시로토무', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '로토무', arrows: '스피드↑ 공격↓',
+      partialBuild: { nature: 'timid', item: '구애스카프', ability: '부유', evs: { hp: 6, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 28 }, moves: ['하이드로펌프', '10만볼트', '볼트체인지', '트릭'], actualStats: { hp: 131, attack: 76, defense: 127, spAttack: 157, spDefense: 127, speed: 147 }, actualStatsForm: 'rotom-wash' },
     },
     {
-      pokemonKey: 'mega-scizor', title: '시즌2 싱글 파티 — 메가핫삼', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '핫삼',
-      partialBuild: { item: '핫삼나이트', ability: '테크니션', evs: { hp: 32, attack: 24, defense: 10, spAttack: 0, spDefense: 0, speed: 0 }, moves: ['칼춤', '불릿펀치', '탁쳐서떨구기', '인파이트'] },
+      pokemonKey: 'mega-scizor', title: '시즌2 싱글 파티 — 메가핫삼', image: 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMjk2/MDAxNzgxNzU2MDU1NDc0.IoTF0od7Y1UuSXs4t9RQe0R6wAhuqz38lAZEuFRqaZMg.WfcaIiuXWPfAYCyel-HiJqxEE5ITvSkHtD2iB_AAeZwg.JPEG/%ED%8C%8C%ED%8B%B0_1.jpg?type=w800', label: '핫삼', arrows: '공격↑ 특수공격↓',
+      partialBuild: { nature: 'adamant', item: '핫삼나이트', ability: '테크니션', evs: { hp: 32, attack: 24, defense: 10, spAttack: 0, spDefense: 0, speed: 0 }, moves: ['칼춤', '불릿펀치', '탁쳐서떨구기', '인파이트'], actualStats: { hp: 177, attack: 191, defense: 130, spAttack: 67, spDefense: 100, speed: 85 }, actualStatsForm: 'scizor' },
     },
-  ] as const).map(({ pokemonKey, title, image, label, partialBuild }): CreatorSample => {
+  ] as const).map(({ pokemonKey, title, image, label, arrows, partialBuild }): CreatorSample => {
     const sourceUrl = 'https://m.blog.naver.com/2tjqja/224319761655'
     const postEvidence: FieldEvidence = { sourceUrl, location: '모노 블로그 게시물 제목: 시즌2 싱글 파티', checkedAt: '2026-10-03' }
     return {
@@ -103,11 +107,11 @@ export const catalog: CreatorSample[] = [
         sourceUrl, canonicalUrl: sourceUrl, sourceId: '224319761655', publishedAt: null, collectedAt: '2026-10-03',
         verifiedAt: '', evidence: '', fields: {
           creator: postEvidence, title: postEvidence, pokemonKey: { sourceUrl: image, location: `파티 이미지의 ${label} 항목`, checkedAt: '2026-10-03' }, format: postEvidence,
-          ...Object.fromEntries(['item', 'ability', 'evs', 'moves'].map(field => [`partialBuild.${field}`, {
-            sourceUrl: field === 'evs'
+          ...Object.fromEntries(['item', 'ability', 'evs', 'moves', 'nature', 'actualStats', 'actualStatsForm'].map(field => [`partialBuild.${field}`, {
+            sourceUrl: ['evs', 'nature', 'actualStats', 'actualStatsForm'].includes(field)
               ? 'https://mblogthumb-phinf.pstatic.net/MjAyNjA2MThfMTU2/MDAxNzgxNzU2MDU1NDc1.6eoq1V8VxWiVh4OjCl_z24IFYZsOa3dStFUaPw3DQGgg.CP20xlnDNXYPDKTZMvnLqpik5phS0U04oqSTfizSXqog.JPEG/%ED%8C%8C%ED%8B%B0_2.jpg?type=w800'
               : image,
-            location: `모노 블로그 ${label} ${field === 'evs' ? '스테이터스' : '능력'} 이미지, ${field}`, checkedAt: '2026-10-03',
+            location: `모노 블로그 ${label} ${['evs', 'nature', 'actualStats', 'actualStatsForm'].includes(field) ? '스테이터스' : '능력'} 이미지, ${field}${field === 'nature' ? ` (${arrows})` : ''}${field === 'actualStatsForm' ? ` (스테이터스 화면 표시 폼: ${partialBuild.actualStatsForm === 'scizor' ? '메가진화 전 핫삼' : '워시로토무'})` : ''}`, checkedAt: '2026-10-03',
           }])),
         },
       },

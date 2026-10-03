@@ -8,7 +8,7 @@ import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples,
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, type CardStat } from './PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
@@ -6643,19 +6643,24 @@ export default function App() {
       key: entry.pokemonKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
       picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: build.ability ?? '',
     } : null
-    const stats: CardStat[] = EFFORT_STAT_OPTIONS.map(stat => ({
+    const stats: CardStat[] = createReadonlyCardStats(EFFORT_STAT_OPTIONS.map(stat => ({
       key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
-      value: row && member ? partyStatValue(row, member, stat.key) : null,
-      ev: build?.evs?.[stat.key] ?? null,
-    }))
+    })), build, statKey => row && member ? partyStatValue(row, member, statKey) : null)
     const name = row ? displayName(row, siteLanguage) : entry.title.split(' — ').pop() || entry.pokemonKey
+    const recordedForm = entry.partialBuild?.actualStatsForm
+    const statsLabel = entry.partialBuild?.actualStats
+      ? recordedForm === 'scizor' && entry.pokemonKey === 'mega-scizor'
+        ? lt('원본 핫삼(메가진화 전) 실수치 · 메가핫삼 수치 아님')
+        : lt('원본 이미지에 기록된 실수치')
+      : lt('계산 실수치 · 원본 실수치 미기록')
     return <ReadonlyPokemonCard name={name} sprite={row?.sprite} types={row?.types}
       ability={build?.ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
       item={build?.item ? displayItemLabel(build.item, siteLanguage) : undefined}
       itemSprite={build?.item ? itemSpriteSrc(entry.pokemonKey, build.item) : undefined}
-      stats={stats} labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
-      calculationNote={!baseIndexByKey.has(entry.pokemonKey) ? lt('지원되지 않는 포켓몬: 실수치 계산 불가') : undefined}>
-      {build?.moves ? <div className="creator-library-moves" aria-label={lt('기술 구성')}>{build.moves.map(move => <span key={move}>{move}</span>)}</div> : null}
+      stats={stats} statsLabel={statsLabel} statsUnknown={lt('실수치 미기록')}
+      labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
+      calculationNote={!entry.partialBuild?.actualStats && !baseIndexByKey.has(entry.pokemonKey) ? lt('실수치 계산 불가(지원되지 않는 포켓몬). 노력치·기술은 원본 확인') : undefined}>
+      {build?.moves ? <div className="creator-library-moves" aria-label={lt('기술 구성')}><strong>{lt('기술 구성')}</strong><div>{build.moves.map(move => <span key={move}>{move}</span>)}</div></div> : null}
     </ReadonlyPokemonCard>
   }
 

@@ -40,7 +40,7 @@ test('document taxonomy groups the blog party once with two evidenced members, w
   assert.equal(party.confirmedMemberCount, 2)
   assert.equal(party.completeMemberCount, 0)
   assert.equal(party.partySize, null)
-  assert.equal(party.members.every(member => member.partialBuild?.nature === undefined), true)
+  assert.deepEqual(party.members.map(member => member.partialBuild?.nature), ['timid', 'adamant'])
   assert.equal(sources.find(source => source.sourceId === 'ihwnR8FJWtM').contentKind, 'pokemon')
   assert.deepEqual(sources.filter(source => source.platform === 'youtube' && source.sourceId !== 'ihwnR8FJWtM').map(source => source.contentKind), ['unknown', 'unknown'])
 })
@@ -79,18 +79,19 @@ test('모노 season-two singles blog has distinct image-backed Rotom-W and Scizo
   assert.equal(rotom.format, 'singles')
   assert.equal(scizor.format, 'singles')
   assert.deepEqual(rotom.partialBuild, {
-    item: '구애스카프', ability: '부유',
+    nature: 'timid', item: '구애스카프', ability: '부유',
     evs: { hp: 6, attack: 0, defense: 0, spAttack: 32, spDefense: 0, speed: 28 },
     moves: ['하이드로펌프', '10만볼트', '볼트체인지', '트릭'],
+    actualStats: { hp: 131, attack: 76, defense: 127, spAttack: 157, spDefense: 127, speed: 147 }, actualStatsForm: 'rotom-wash',
   })
   assert.deepEqual(scizor.partialBuild, {
-    item: '핫삼나이트', ability: '테크니션',
+    nature: 'adamant', item: '핫삼나이트', ability: '테크니션',
     evs: { hp: 32, attack: 24, defense: 10, spAttack: 0, spDefense: 0, speed: 0 },
     moves: ['칼춤', '불릿펀치', '탁쳐서떨구기', '인파이트'],
+    actualStats: { hp: 177, attack: 191, defense: 130, spAttack: 67, spDefense: 100, speed: 85 }, actualStatsForm: 'scizor',
   })
   for (const entry of [rotom, scizor]) {
-    assert.equal(entry.partialBuild.nature, undefined)
-    assert.equal(entry.provenance.fields['partialBuild.nature'], undefined)
+    assert.ok(entry.partialBuild.nature)
     for (const field of ['item', 'ability', 'evs', 'moves']) {
       const evidence = entry.provenance.fields[`partialBuild.${field}`]
       assert.match(evidence.sourceUrl, /^https:\/\/mblogthumb-phinf\.pstatic\.net\/.*%ED%8C%8C%ED%8B%B0_/)
@@ -99,7 +100,20 @@ test('모노 season-two singles blog has distinct image-backed Rotom-W and Scizo
       assert.equal(evidence.checkedAt, '2026-10-03')
     }
     assert.equal(entry.provenance.fields.format.sourceUrl, entry.provenance.sourceUrl)
-    assert.equal(canImportCreatorSample({ ...entry, status: 'verified', build: entry.partialBuild, provenance: { ...entry.provenance, verifiedAt: '2026-10-03', evidence: 'blog image' } }), false)
+    assert.equal(canImportCreatorSample(entry), false) // Evidence-backed partial display is not automatically an import approval.
+  }
+})
+
+test('source stat arrows establish nature and recorded actual stats without substituting Mega Scizor stats', () => {
+  const [rotom, scizor] = ['rotom-wash', 'mega-scizor'].map(key => catalog.find(e => e.pokemonKey === key))
+  assert.equal(rotom.partialBuild.nature, 'timid') // speed ↑, attack ↓
+  assert.equal(scizor.partialBuild.nature, 'adamant') // attack ↑, special attack ↓
+  assert.deepEqual(rotom.partialBuild.actualStats, { hp: 131, attack: 76, defense: 127, spAttack: 157, spDefense: 127, speed: 147 })
+  assert.deepEqual(scizor.partialBuild.actualStats, { hp: 177, attack: 191, defense: 130, spAttack: 67, spDefense: 100, speed: 85 })
+  assert.equal(scizor.partialBuild.actualStatsForm, 'scizor')
+  for (const entry of [rotom, scizor]) {
+    assert.match(entry.provenance.fields['partialBuild.nature'].location, /↑.*↓/)
+    assert.match(entry.provenance.fields['partialBuild.actualStats'].sourceUrl, /%ED%8C%8C%ED%8B%B0_2/)
   }
 })
 

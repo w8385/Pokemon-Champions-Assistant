@@ -25,6 +25,12 @@ test('sample cards show verified partial fields and separate source-only leads',
   assert.match(app, /형식 미확인: 원본에 싱글\/더블 표기 없음/)
 })
 
+test('creator cards prefer recorded actual stats while retaining effort and moves independently of roster support', () => {
+  assert.match(app, /createReadonlyCardStats\(EFFORT_STAT_OPTIONS/)
+  assert.match(app, /statsLabel=\{/)
+  assert.match(app, /build\?\.moves\s*\?\s*<div className="creator-library-moves"/)
+})
+
 test('library has separate party and individual tabs with one document card and member details', () => {
   assert.match(app, /lt\('파티 소개'\)/)
   assert.match(app, /lt\('개별 포켓몬 샘플'\)/)

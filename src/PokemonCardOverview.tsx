@@ -1,8 +1,20 @@
 import type { ReactNode } from 'react'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import type { EffortStatKey } from './app/types'
+import type { PartialLibraryBuild } from './creatorSampleLibrary'
 
 export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null }
+
+/** Source-recorded values take priority; missing nature/roster never erases confirmed efforts. */
+export function createReadonlyCardStats(
+  labels: Pick<CardStat, 'key' | 'label' | 'theme'>[], build?: PartialLibraryBuild | null,
+  calculatedValue?: (key: EffortStatKey) => number | null,
+): CardStat[] {
+  return labels.map(stat => ({ ...stat,
+    value: build?.actualStats?.[stat.key] ?? (build?.nature ? calculatedValue?.(stat.key) : null) ?? null,
+    ev: build?.evs?.[stat.key] ?? null,
+  }))
+}
 
 /** The party editor and source library share the same card heading, icons and stat tiles. */
 export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '' }: { name: ReactNode; sprite?: string; types?: string[]; spriteAlt?: string }) {
@@ -31,8 +43,8 @@ export function PokemonStatGrid({ stats, onTune, unknown = '미확인', classNam
   })}</div>
 }
 
-export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item, itemSprite, stats, labels, calculationNote, children }: {
-  name: string; sprite?: string; types?: string[]; ability?: string; nature?: string; item?: string; itemSprite?: string; calculationNote?: string
+export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item, itemSprite, stats, labels, statsLabel, statsUnknown, calculationNote, children }: {
+  name: string; sprite?: string; types?: string[]; ability?: string; nature?: string; item?: string; itemSprite?: string; calculationNote?: string; statsLabel?: string; statsUnknown?: string
   stats: CardStat[]; labels: { ability: string; nature: string; item: string; unknown: string }
   children?: ReactNode
 }) {
@@ -46,7 +58,8 @@ export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item
         <strong>{item || labels.unknown}</strong>
       </div></div>
     </div>
-    <PokemonStatGrid stats={stats} unknown={labels.unknown} />
+    {statsLabel ? <strong className="creator-library-stats-label">{statsLabel}</strong> : null}
+    <PokemonStatGrid stats={stats} unknown={statsUnknown ?? labels.unknown} />
     {children}
     {calculationNote ? <small className="creator-library-calculation-note">{calculationNote}</small> : null}
   </div>

@@ -1438,6 +1438,11 @@ header p {
 .creator-library-member-card, .creator-library-individual-card { flex-basis: 100%; min-width: 0; }
 .creator-library-individual-card { max-width: 620px; }
 .creator-library-pokemon-card { height: 100%; box-sizing: border-box; }
+.creator-library-stats-label { display: block; margin: 12px 0 8px; font-size: 13px; color: #d6e7fb; }
+.creator-library-moves { margin-top: 14px; border-top: 1px solid #42536a; padding-top: 12px; }
+.creator-library-moves > strong { display: block; margin-bottom: 9px; font-size: 13px; color: #d6e7fb; }
+.creator-library-moves > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.creator-library-moves span { display: block; padding: 8px 10px; border: 1px solid #42536a; border-radius: 8px; background: #203248; color: #f3f7fc; font-weight: 600; overflow-wrap: anywhere; }
 .creator-library-pokemon-card .stat-preview-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 600px) { .creator-library-pokemon-card .stat-preview-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .creator-library-completeness { display: flex; gap: 8px; flex-wrap: wrap; flex-basis: 100%; color: #b4c4d7; font-size: 12px; }
