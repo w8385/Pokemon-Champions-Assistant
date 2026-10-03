@@ -4,6 +4,7 @@ import type { NatureId } from './app/types'
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
 export type SourcePlatform = 'youtube' | 'blog' | 'x'
+export type ContentKind = 'party' | 'pokemon' | 'unknown'
 export type FieldEvidence = { sourceUrl: string; location: string; checkedAt: string }
 export type LibraryBuild = {
   nature: NatureId
@@ -17,6 +18,7 @@ export type PartialLibraryBuild = Partial<LibraryBuild> & { preMegaAbilities?: s
 export type PartialBuildField = `partialBuild.${keyof PartialLibraryBuild}`
 export type CreatorSample = {
   id: string
+  contentKind: ContentKind
   language: LibraryLanguage
   format: LibraryFormat | null
   platform: SourcePlatform
@@ -35,6 +37,7 @@ export type CreatorSample = {
 }
 export type LinkDraft = {
   sourceUrl: string
+  contentKind: 'unknown'
   platform: SourcePlatform
   language: LibraryLanguage
   format: LibraryFormat
@@ -48,7 +51,7 @@ export type LinkDraft = {
 const youtubeLead = (id: string, creator: string, channelId: string, title: string, pokemonKey: string): CreatorSample => {
   const sourceUrl = `https://www.youtube.com/watch?v=${id}`
   const evidence = { sourceUrl, location: 'YouTube videoDetails title / author / channelId', checkedAt: '2026-10-03' }
-  return { id: `youtube-${id}`, language: 'ko', format: null, platform: 'youtube', pokemonKey, title, creator, rank: null, status: 'partial', build: null,
+  return { id: `youtube-${id}`, contentKind: 'unknown', language: 'ko', format: null, platform: 'youtube', pokemonKey, title, creator, rank: null, status: 'partial', build: null,
     provenance: { sourceUrl, canonicalUrl: sourceUrl, sourceId: id, publishedAt: null, collectedAt: '2026-10-03', channelId,
       fields: { creator: evidence, title: evidence, ...(pokemonKey ? { pokemonKey: evidence } : {}) }, verifiedAt: '', evidence: '' } }
 }
@@ -58,6 +61,7 @@ export const catalog: CreatorSample[] = [
   youtubeLead('HQDEZg-Zgv8', '케미쨩', 'UCUBpFJAibM1fmqqDE3FP_tQ', '"세계 1위"', ''),
   {
     ...pinsirLead,
+    contentKind: 'pokemon',
     // The linked blog embeds a sample image. The video itself is still only a source lead.
     partialBuild: {
       nature: 'adamant', item: '쁘사이저나이트', ability: '스카이스킨',
@@ -92,7 +96,7 @@ export const catalog: CreatorSample[] = [
     const sourceUrl = 'https://m.blog.naver.com/2tjqja/224319761655'
     const postEvidence: FieldEvidence = { sourceUrl, location: '모노 블로그 게시물 제목: 시즌2 싱글 파티', checkedAt: '2026-10-03' }
     return {
-      id: `blog-224319761655-${pokemonKey}`, language: 'ko', format: 'singles', platform: 'blog', pokemonKey,
+      id: `blog-224319761655-${pokemonKey}`, contentKind: 'party', language: 'ko', format: 'singles', platform: 'blog', pokemonKey,
       title, creator: '모노', rank: null, status: 'partial', build: null,
       partialBuild: { ...partialBuild, moves: [...partialBuild.moves] as [string, string, string, string] },
       provenance: {
@@ -130,7 +134,7 @@ export function createLinkDraft(url: string, language: LibraryLanguage, format: 
   const hostname = new URL(sourceUrl).hostname.toLowerCase()
   const platform: SourcePlatform = hostname === 'youtube.com' || hostname.endsWith('.youtube.com') || hostname === 'youtu.be'
     ? 'youtube' : hostname === 'x.com' || hostname === 'twitter.com' ? 'x' : 'blog'
-  return { sourceUrl, platform, language, format, status: 'partial', creator: null, rank: null }
+  return { sourceUrl, platform, language, format, contentKind: 'unknown', status: 'partial', creator: null, rank: null }
 }
 
 export function sanitizeLinkDrafts(value: unknown): LinkDraft[] {
@@ -142,6 +146,45 @@ export function sanitizeLinkDrafts(value: unknown): LinkDraft[] {
     const draft = createLinkDraft(raw.sourceUrl ?? '', raw.language, raw.format)
     return draft ? [draft] : []
   })
+}
+
+// Document-level identity keeps a party post as one source with distinct member builds.
+export type CreatorSource = {
+  id: string; platform: SourcePlatform; sourceId: string; canonicalUrl: string
+  title: string; creator: string | null; language: LibraryLanguage; format: LibraryFormat | null
+  contentKind: ContentKind; partySize: number | null
+  members: CreatorSample[]; confirmedMemberCount: number; completeMemberCount: number
+}
+
+export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
+  const sources = new Map<string, CreatorSource>()
+  for (const entry of entries) {
+    const { sourceId, canonicalUrl } = entry.provenance
+    const id = `${entry.platform}:${canonicalUrl}`
+    let source = sources.get(id)
+    if (!source) {
+      source = { id, platform: entry.platform, sourceId, canonicalUrl,
+        title: entry.contentKind === 'party' ? entry.title.split(' — ')[0] : entry.title,
+        creator: entry.creator, language: entry.language, format: entry.format, contentKind: entry.contentKind,
+        partySize: null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
+      sources.set(id, source)
+    }
+    if (source.contentKind !== entry.contentKind) throw new Error(`Conflicting source content kinds: ${id}`)
+    source.members.push(entry)
+    if (entry.partialBuild || entry.build) source.confirmedMemberCount += 1
+    if (canImportCreatorSample(entry)) source.completeMemberCount += 1
+  }
+  return [...sources.values()]
+}
+
+export function filterCreatorSources(sources: CreatorSource[], filters: {
+  language: LibraryLanguage; format: LibraryFormat | 'all'; query: string; contentKind: ContentKind | 'all'
+}): CreatorSource[] {
+  const query = filters.query.trim().toLocaleLowerCase()
+  return sources.filter(source => (filters.contentKind === 'all' || source.contentKind === filters.contentKind) && source.language === filters.language &&
+    (filters.format === 'all' || source.format === filters.format) &&
+    (!query || [source.title, source.creator ?? '', ...source.members.flatMap(member => [member.pokemonKey, member.title])]
+      .some(text => text.toLocaleLowerCase().includes(query))))
 }
 
 export function filterCreatorSamples<T extends { language: LibraryLanguage; format: LibraryFormat | null; pokemonKey: string; title: string; creator: string | null }>(

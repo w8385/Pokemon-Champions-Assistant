@@ -4,7 +4,7 @@ import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_M
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
-import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, isVerifiedRankerSample, sanitizeLinkDrafts, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, isVerifiedRankerSample, sanitizeLinkDrafts, type ContentKind, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
@@ -105,6 +105,7 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '파티 소개': 'Party introductions', '개별 포켓몬 샘플': 'Individual Pokémon samples', '확인 대기': 'Pending classification', '전체 파티 구성 미확인': 'Full party details unconfirmed', '구성 일부 확인': 'Members with partial details', '분류·구성 확인 대기': 'Classification and build pending',
     '형식 미확인: 원본에 싱글/더블 표기 없음': 'Format unknown: source does not specify singles or doubles', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': 'Only confirmed fields are shown. Incomplete builds cannot be imported.', '구성 근거 이미지': 'Build evidence image', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': 'No confirmed builds match. Video sources below await build review.', '구성 확인 대기 · 영상 자료': 'Videos awaiting build review', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': 'Only video titles are confirmed; these cannot be used or imported as builds.',
     '실능 스피드라인': 'Actual Speed Line', '빠른 순 → 느린 순': 'Fastest → Slowest', '검색 · 이름/폼': 'Search Pokémon or form', '메가폼 포함': 'All forms', '메가폼 제외': 'Exclude Mega', '메가폼만': 'Mega only', '성격 보정 +10%': 'Speed +10%', '성격 보정 없음': 'Neutral nature', '성격 보정 -10%': 'Speed −10%', '챔피언스 노력 포인트': 'Champions Speed effort points', '검색 결과 없음': 'No matching Pokémon', '실능 스피드라인 안내': 'Level 50 · IV 31 · Champions effort 0–32 added before nature · no item, ability, stages, or field effects. Speed ties share a value; listed by key.', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': 'Browse verified Pokémon and forms sorted by actual Speed.', '포켓몬 수': 'Pokémon shown', '기본 스피드': 'Base Speed',
     '랭커 샘플': 'Ranker samples', '순위 근거가 확인된 자료만 모읍니다.': 'Only samples with verified ranking evidence appear here.', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': 'No ranker samples with verified ranking evidence yet. A ranking claim in a video title is not enough.',
@@ -142,6 +143,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '파티 소개': 'パーティ紹介', '개별 포켓몬 샘플': '個別ポケモンサンプル', '확인 대기': '分類待ち', '전체 파티 구성 미확인': 'パーティ全体の構成は未確認', '구성 일부 확인': '一部構成を確認したメンバー', '분류·구성 확인 대기': '分類・構成の確認待ち',
     '형식 미확인: 원본에 싱글/더블 표기 없음': '形式未確認：原典にシングル・ダブルの記載なし', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': '確認済みの項目のみ表示します。未完成の構成は取り込めません。', '구성 근거 이미지': '構成の根拠画像', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': '該当する確認済み構成はありません。下の動画は構成確認待ちです。', '구성 확인 대기 · 영상 자료': '構成確認待ちの動画', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': '動画のタイトルのみ確認済みです。構成として利用・取込はできません。',
     '실능 스피드라인': '実数値素早さライン', '빠른 순 → 느린 순': '速い順 → 遅い順', '검색 · 이름/폼': 'ポケモン・フォルム検索', '메가폼 포함': '全フォルム', '메가폼 제외': 'メガを除外', '메가폼만': 'メガのみ', '성격 보정 +10%': '素早さ+10%', '성격 보정 없음': '性格補正なし', '성격 보정 -10%': '素早さ−10%', '챔피언스 노력 포인트': 'チャンピオンズ素早さ努力ポイント', '검색 결과 없음': '該当ポケモンなし', '실능 스피드라인 안내': 'Lv.50・個体値31・チャンピオンズ努力ポイント0～32を性格補正前に加算。道具・特性・ランク・場の効果なし。同速はキー順。', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': '確認済みポケモンとフォルムを実数値素早さ順に表示。', '포켓몬 수': '表示数', '기본 스피드': '種族値素早さ',
     '랭커 샘플': '上位ランカーのサンプル', '순위 근거가 확인된 자료만 모읍니다.': '順位の根拠を確認できた資料だけ表示します。', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': '順位の根拠を確認できたサンプルはまだありません。動画タイトルの主張だけでは掲載しません。',
@@ -3975,6 +3977,7 @@ export default function App() {
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? persisted?.sampleWorkbenchTab ?? 'builder')
   const [libraryLanguage, setLibraryLanguage] = React.useState<LibraryLanguage>('ko')
   const [libraryFormat, setLibraryFormat] = React.useState<LibraryFormat | 'all'>('all')
+  const [libraryContentKind, setLibraryContentKind] = React.useState<ContentKind>('party')
   const [draftFormat, setDraftFormat] = React.useState<LibraryFormat>('singles')
   const [libraryQuery, setLibraryQuery] = React.useState('')
   const [linkDraftInput, setLinkDraftInput] = React.useState('')
@@ -8505,24 +8508,45 @@ export default function App() {
           <div className="sample-content-panel">
           {sampleWorkbenchTab === 'library' || sampleWorkbenchTab === 'rankers' ? <div className="creator-library">
             <div className="section-head"><div><h2>{sampleWorkbenchTab === 'rankers' ? lt('랭커 샘플') : lt('크리에이터 샘플 라이브러리')}</h2><p className="muted">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 자료만 모읍니다.') : lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
+            {sampleWorkbenchTab === 'library' ? <div className="creator-library-kind-tabs" role="group" aria-label={lt('크리에이터 샘플 라이브러리')}>
+              <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><span aria-hidden="true">◈ ◈ ◈</span> {lt('파티 소개')}</button>
+              <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><span aria-hidden="true">◉</span> {lt('개별 포켓몬 샘플')}</button>
+            </div> : null}
             <div className="creator-library-filters">
               <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select></label>
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <div className="creator-library-list">
-              {filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog.filter((entry) => Boolean(entry.partialBuild)), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <article key={entry.id} className="creator-library-card">
-                <strong>{entry.title}</strong> <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span>
-                <p>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title.split(' — ').slice(-1)[0] || lt('포켓몬 미확인')} · {entry.creator ?? lt('제작자 미확인')}{entry.rank ? ` · ${entry.rank}` : ''} · {entry.format === 'singles' ? lt('싱글배틀') : entry.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {entry.platform}</p>
+              {filterCreatorSources(groupCreatorSources(catalog), { language: libraryLanguage, format: libraryFormat, query: libraryQuery, contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind }).filter(source => sampleWorkbenchTab === 'rankers' ? source.members.some(isVerifiedRankerSample) : source.confirmedMemberCount > 0).map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
+                <strong>{source.title}</strong> <span className="pick-badge">{source.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')}</span>
+                <p>{source.creator ?? lt('제작자 미확인')} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {source.platform}</p>
+                {source.contentKind === 'party' ? <>
+                  <div className="creator-library-lineup" aria-label={`${lt('구성 일부 확인')}: ${source.confirmedMemberCount}`}>
+                    {source.members.map(member => <div key={member.id} className="creator-library-slot">
+                      {indexByKey.get(member.pokemonKey)?.sprite ? <img src={indexByKey.get(member.pokemonKey)!.sprite} alt="" loading="lazy" /> : <span aria-hidden="true">?</span>}
+                      <small>{indexByKey.get(member.pokemonKey) ? displayName(indexByKey.get(member.pokemonKey)!, siteLanguage) : member.pokemonKey}</small>
+                    </div>)}
+                  </div>
+                  <div className="creator-library-completeness"><span>{lt('구성 일부 확인')} {source.confirmedMemberCount}</span><span>{lt('전체 파티 구성 미확인')}</span></div>
+                </> : <div className="creator-library-individual-hero">
+                  {indexByKey.get(source.members[0]?.pokemonKey)?.sprite ? <img src={indexByKey.get(source.members[0].pokemonKey)!.sprite} alt={displayName(indexByKey.get(source.members[0].pokemonKey)!, siteLanguage)} loading="lazy" /> : <span aria-hidden="true">?</span>}
+                  <div><strong>{indexByKey.get(source.members[0]?.pokemonKey) ? displayName(indexByKey.get(source.members[0].pokemonKey)!, siteLanguage) : lt('포켓몬 미확인')}</strong>
+                    <div className="creator-library-chips"><span>{lt('도구')}: {source.members[0]?.partialBuild?.item ?? '—'}</span><span>{lt('성격')}: {source.members[0]?.partialBuild?.nature ? natureChipLabel(source.members[0].partialBuild.nature, siteLanguage) : '—'}</span><span>{lt('특성')}: {source.members[0]?.partialBuild?.ability ?? '—'}</span><span>{lt('노력치 보정')}: {source.members[0]?.partialBuild?.evs ? Object.values(source.members[0].partialBuild.evs).reduce((sum, value) => sum + value, 0) : '—'}</span>{source.members[0]?.partialBuild?.moves ? source.members[0].partialBuild.moves.map(move => <span key={move}>{move}</span>) : <span>{lt('기술')}: —</span>}</div>
+                  </div>
+                </div>}
+                <a href={source.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
+                {source.members.map((entry) => <details key={entry.id} className="creator-library-member">
+                <summary>{source.contentKind === 'party' ? (indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title) : lt('구성')} <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span></summary>
+                {entry.rank ? <p>{entry.rank}</p> : null}
                 {entry.partialBuild ? <div className="creator-library-build">
                   <span>{lt('성격')}: {entry.partialBuild.nature ? natureLabel(entry.partialBuild.nature, siteLanguage) : lt('미확인')}</span>
                   <span>{lt('도구')}: {entry.partialBuild.item ?? lt('미확인')}</span>
                   <span>{lt('특성')}: {entry.partialBuild.ability ?? lt('미확인')}</span>
                   {entry.partialBuild.evs ? <span>{lt('노력치 보정')}: {(['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const).map((stat) => `${lt(({ hp: '체력', attack: '공격', defense: '방어', spAttack: '특공', spDefense: '특방', speed: '스피드' })[stat])} ${entry.partialBuild!.evs![stat]}`).join(' · ')}</span> : null}
                   {entry.partialBuild?.moves ? <span>{lt('기술 구성')}: {entry.partialBuild.moves.join(' · ')}</span> : null}
-                  <small>{lt('확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.')}</small>
+
                 </div> : null}
-                <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
                 {entry.partialBuild ? <a href={entry.provenance.fields['partialBuild.moves']?.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a> : null}
                 {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
                   if (!canImportCreatorSample(entry)) return
@@ -8532,10 +8556,11 @@ export default function App() {
                   setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
                   setSampleWorkbenchTab('builder')
                 }}>{lt('빌더로 가져오기')}</button> : null}
+                </details>)}
               </article>)}
-              {!filterCreatorSamples(sampleWorkbenchTab === 'rankers' ? catalog.filter(isVerifiedRankerSample) : catalog.filter((entry) => Boolean(entry.partialBuild)), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
+              {!filterCreatorSources(groupCreatorSources(catalog), { language: libraryLanguage, format: libraryFormat, query: libraryQuery, contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind }).some(source => sampleWorkbenchTab === 'rankers' ? source.members.some(isVerifiedRankerSample) : source.confirmedMemberCount > 0) ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
             </div>
-            {sampleWorkbenchTab === 'library' ? <div className="creator-library-leads"><h3>{lt('구성 확인 대기 · 영상 자료')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{filterCreatorSamples(catalog.filter((entry) => !entry.partialBuild), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
+            {sampleWorkbenchTab === 'library' ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{filterCreatorSamples(catalog.filter((entry) => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, libraryLanguage, draftFormat)

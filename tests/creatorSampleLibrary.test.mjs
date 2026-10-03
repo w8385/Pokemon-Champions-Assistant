@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, filterCreatorSamples, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
+import { catalog, filterCreatorSamples, filterCreatorSources, groupCreatorSources, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
 
 // Synthetic fixtures exercise the schema; they are never shown as real creator/rank entries.
 const complete = {
@@ -27,6 +27,31 @@ test('catalog keeps the three original uploads and separately identifies two blo
     assert.equal(entry.provenance.collectedAt, '2026-10-03')
     assert.equal(canImportCreatorSample(entry), false)
   }
+})
+
+test('document taxonomy groups the blog party once with two evidenced members, without asserting six complete builds', () => {
+  const sources = groupCreatorSources(catalog)
+  const party = sources.find(source => source.sourceId === '224319761655')
+  assert.equal(sources.length, 4)
+  assert.equal(party.contentKind, 'party')
+  assert.equal(party.platform, 'blog')
+  assert.equal(party.canonicalUrl, 'https://m.blog.naver.com/2tjqja/224319761655')
+  assert.deepEqual(party.members.map(member => member.pokemonKey).sort(), ['mega-scizor', 'rotom-wash'])
+  assert.equal(party.confirmedMemberCount, 2)
+  assert.equal(party.completeMemberCount, 0)
+  assert.equal(party.partySize, null)
+  assert.equal(party.members.every(member => member.partialBuild?.nature === undefined), true)
+  assert.equal(sources.find(source => source.sourceId === 'ihwnR8FJWtM').contentKind, 'pokemon')
+  assert.deepEqual(sources.filter(source => source.platform === 'youtube' && source.sourceId !== 'ihwnR8FJWtM').map(source => source.contentKind), ['unknown', 'unknown'])
+})
+
+test('content-kind filter matches member search yet retains all members in one party document', () => {
+  const matches = filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'singles', query: 'rotom-wash', contentKind: 'party' })
+  assert.equal(matches.length, 1)
+  assert.deepEqual(matches[0].members.map(member => member.pokemonKey).sort(), ['mega-scizor', 'rotom-wash'])
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'all', query: '', contentKind: 'pokemon' }).map(source => source.sourceId), ['ihwnR8FJWtM'])
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'all', query: '', contentKind: 'unknown' }).map(source => source.sourceId), ['Ix8nrNnmTUk', 'HQDEZg-Zgv8'])
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'singles', query: '', contentKind: 'pokemon' }), [])
 })
 
 test('눈파티 image-backed Pinsir details cite each field without inferring battle format', () => {
