@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-REPO="/home/w8385/.openclaw/workspace/pokemon-champions-assistant"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$REPO/logs"
 LOG_FILE="$LOG_DIR/double-battle-cron.log"
 mkdir -p "$LOG_DIR"
