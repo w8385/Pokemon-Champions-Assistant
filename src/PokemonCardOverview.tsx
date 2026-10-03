@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { InputHTMLAttributes, ReactNode } from 'react'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import type { EffortStatKey, MoveMeta } from './app/types'
 import type { PartialLibraryBuild } from './creatorSampleLibrary'
@@ -13,20 +13,23 @@ export function createReadonlyCardStats(
 ): CardStat[] {
   return labels.map(stat => ({ ...stat,
     value: (build?.actualStatsForm === formKey ? build?.actualStats?.[stat.key] : null) ?? (build?.nature ? calculatedValue?.(stat.key) : null) ?? null,
-    ev: build?.evs?.[stat.key] ?? null,
+    ev: build?.evsKnown ? (build.evsKnown[stat.key] ?? null) : (build?.evs?.[stat.key] ?? null),
   }))
 }
 
 /** Shared registered slot for party, sample builder and read-only creator builds. */
-export function RegisteredMoveSlot({ number, name, type, meta, children, className = '', labels }: {
-  number: number; name: string; type?: string | null; meta?: MoveMeta | null; children?: ReactNode; className?: string
+export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels }: {
+  number: number; name: string; type?: string | null; meta?: MoveMeta | null; inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>; tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; children?: ReactNode; className?: string
   labels: { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
 }) {
   return <label className={`registered-move-slot ${className}`.trim()}>
     <div className="registered-move-slot-head"><span>{number}{labels.slot}</span>
       {type ? <img src={getTypeBadgeSrc(type)} alt={getTypeBadgeLabel(type)} title={getTypeBadgeLabel(type)} className="type-badge-image-small" /> : null}
     </div>
-    {children ?? <strong className="registered-move-name">{name}</strong>}
+    <input {...inputProps} {...tooltipProps} value={name}
+      onFocus={event => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) }}
+      onBlur={event => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) }} />
+    {children}
     {name ? <small className="registered-move-meta">
       {meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}
     </small> : null}

@@ -30,7 +30,7 @@ test('unknown nature or effort displays species/form base stats, not calculated 
   assert.match(app, /row\?\.\[stat\.key\]/)
   assert.match(app, /lt\('종족값'\)/)
   assert.match(card, /showEffort/)
-  assert.match(app, /showEffort=\{Boolean\(build\?\.evs\)\}/)
+  assert.match(app, /showEffort=\{Boolean\(build\?\.evs \|\| entry\.partialBuild\?\.evsKnown\)\}/)
 })
 test('every confirmed member can appear in individual index without changing party source taxonomy', () => {
   assert.match(app, /libraryContentKind === 'pokemon' \? individualCreatorSources\(catalog\) : groupCreatorSources\(catalog\)/)

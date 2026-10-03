@@ -1,5 +1,6 @@
 import type { EffortValues } from './myPartyChampionsSamples'
 import type { NatureId, EffortStatKey } from './app/types'
+import { additionalCreatorSamples } from './additionalCreatorSamples.ts'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -15,6 +16,7 @@ export type LibraryBuild = {
 }
 // Display-only evidence: never use this as an importable LibraryBuild.
 export type PartialLibraryBuild = Partial<LibraryBuild> & {
+  evsKnown?: Partial<EffortValues> // Sparse, source-confirmed investment; unknown fields stay absent.
   preMegaAbilities?: string[]
   actualStats?: Record<EffortStatKey, number> // Values transcribed from the source image, not inferred from nature.
   actualStatsForm?: string // Distinguishes a pre-Mega party screen from the selected Mega species.
@@ -25,6 +27,8 @@ export type CreatorSample = {
   contentKind: ContentKind
   /** Whether this individual build is the subject of its source presentation. */
   featuredSample?: boolean
+  /** Source explicitly presents a party of this size; never infer from an ID. */
+  partySize?: number
   language: LibraryLanguage
   format: LibraryFormat | null
   platform: SourcePlatform
@@ -149,6 +153,7 @@ function videoPartyMembers(id: 'Ix8nrNnmTUk' | 'HQDEZg-Zgv8'): CreatorSample[] {
     return {
       ...lead,
       id: `youtube-${id}-${member.pokemonKey}`, contentKind: mono ? 'pokemon' : 'party',
+      ...(!mono ? { partySize: 6 } : {}),
       ...(mono ? { featuredSample: member.pokemonKey === 'mega-gyarados' } : {}), pokemonKey: member.pokemonKey,
       title: `${lead.title} — ${member.label}`, format: mono ? 'singles' : null,
       status: complete ? 'verified' : 'partial', build, partialBuild,
@@ -197,7 +202,7 @@ export const catalog: CreatorSample[] = [
       checkedAt: '2026-10-03',
     })
     return {
-      id: `blog-224319761655-${pokemonKey}`, contentKind: 'party', language: 'ko', format: 'singles', platform: 'blog', pokemonKey,
+      id: `blog-224319761655-${pokemonKey}`, contentKind: 'party', partySize: 6, language: 'ko', format: 'singles', platform: 'blog', pokemonKey,
       title: `시즌2 싱글 파티 — ${label}`, creator: '모노', rank: null, status: 'verified', build,
       partialBuild: { ...build, actualStats, actualStatsForm, ...(preMegaAbility ? { preMegaAbilities: [build.ability] } : {}) },
       provenance: {
@@ -213,6 +218,7 @@ export const catalog: CreatorSample[] = [
       },
     }
   }),
+  ...additionalCreatorSamples,
 ]
 
 export function isVerifiedRankerSample(entry: CreatorSample): boolean {
@@ -267,10 +273,11 @@ export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
       source = { id, platform: entry.platform, sourceId, canonicalUrl,
         title: entry.contentKind === 'party' ? entry.title.split(' — ')[0] : entry.title,
         creator: entry.creator, language: entry.language, format: entry.format, contentKind: entry.contentKind,
-        partySize: entry.contentKind === 'party' && (sourceId === '224319761655' || sourceId === 'HQDEZg-Zgv8') ? 6 : null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
+        partySize: entry.contentKind === 'party' ? entry.partySize ?? null : null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
       sources.set(id, source)
     }
     if (source.contentKind !== entry.contentKind) throw new Error(`Conflicting source content kinds: ${id}`)
+    if (entry.contentKind === 'party' && source.partySize !== (entry.partySize ?? null)) throw new Error(`Conflicting party sizes: ${id}`)
     source.members.push(entry)
     if (entry.partialBuild || entry.build) source.confirmedMemberCount += 1
     if (canImportCreatorSample(entry)) source.completeMemberCount += 1
@@ -298,6 +305,18 @@ export const relatedCreatorParties: Record<string, CreatorSource> = {
     const members = catalog.filter(entry => entry.provenance.sourceId === 'Ix8nrNnmTUk').map(entry => ({ ...entry, contentKind: 'party' as const }))
     const featured = members.find(entry => entry.featuredSample)
     if (!featured) throw new Error('Missing featured Mono sample')
+    return {
+      id: `related-party:${featured.id}`, platform: featured.platform, sourceId: featured.provenance.sourceId,
+      canonicalUrl: featured.provenance.canonicalUrl, title: `${featured.title.split(' — ')[0]} — 영상 속 보조 렌탈 파티`,
+      creator: featured.creator, language: featured.language, format: featured.format, contentKind: 'party',
+      partySize: 6, members, confirmedMemberCount: members.filter(entry => entry.partialBuild || entry.build).length,
+      completeMemberCount: members.filter(canImportCreatorSample).length,
+    }
+  })(),
+  ZWp7MKpjp1M: (() => {
+    const members = catalog.filter(entry => entry.provenance.sourceId === 'ZWp7MKpjp1M').map(entry => ({ ...entry, contentKind: 'party' as const }))
+    const featured = members.find(entry => entry.featuredSample)
+    if (!featured || members.length !== 6) throw new Error('Missing Mono Lucario rental composition')
     return {
       id: `related-party:${featured.id}`, platform: featured.platform, sourceId: featured.provenance.sourceId,
       canonicalUrl: featured.provenance.canonicalUrl, title: `${featured.title.split(' — ')[0]} — 영상 속 보조 렌탈 파티`,

@@ -6723,7 +6723,7 @@ export default function App() {
     const formKey = canToggle && creatorMegaSelection[entry.id] === false ? baseKey! : entry.pokemonKey
     const row = indexByKey.get(formKey) // No substitute species for unsupported forms.
     const build = entry.build ?? entry.partialBuild
-    const member: PartyMember | null = row && build?.nature && build.evs ? {
+    const member: PartyMember | null = row && build?.nature && build.evs && !entry.partialBuild?.evsKnown ? {
       key: formKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
       picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: '',
     } : null
@@ -6747,16 +6747,18 @@ export default function App() {
       ability={ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
       item={build?.item ? displayItemLabel(build.item, siteLanguage) : undefined}
       itemSprite={build?.item ? itemSpriteSrc(entry.pokemonKey, build.item) : undefined}
-      stats={stats} statsLabel={statsLabel} statsUnknown={lt('실수치 미기록')} showEffort={Boolean(build?.evs)}
+      stats={stats} statsLabel={statsLabel} statsUnknown={lt('미확인')} showEffort={Boolean(build?.evs || entry.partialBuild?.evsKnown)}
       labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
-      calculationNote={!sourceStatsShown && !member ? row ? lt('성격·노력 포인트 미확인으로 실수치를 계산하지 않습니다.') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.') : undefined}>
+      calculationNote={!sourceStatsShown && !member ? row ? lt('노력 포인트 일부 또는 성격이 미확인되어 실수치를 계산하지 않습니다.') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.') : undefined}>
       {canToggle ? <div className="creator-form-toggle" role="group" aria-label={lt('메가진화 전후')}>
         <button type="button" aria-pressed={formKey === baseKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: false }))}>{lt('일반')} · {displayName(indexByKey.get(baseKey!)!, siteLanguage)}</button>
         <button type="button" aria-pressed={formKey === megaKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: true }))}>{lt('메가')} · {displayName(indexByKey.get(megaKey!)!, siteLanguage)}</button>
       </div> : null}
       {build?.moves ? <div className="move-card inline-move-card creator-library-moves" aria-label={lt('기술 구성')}><strong>{lt('기술 구성')}</strong><div className="registered-move-grid">{build.moves.map((move, moveIdx) => {
         const meta = resolveMoveMeta(move, [], movePoolByKey)
-        return <RegisteredMoveSlot key={`${entry.id}-${moveIdx}`} number={moveIdx + 1} name={move} type={meta?.type} meta={meta} className={moveTypeThemeClass(meta?.type)} labels={moveSlotLabels} />
+        return <RegisteredMoveSlot key={`${entry.id}-${moveIdx}`} number={moveIdx + 1} name={move} type={meta?.type} meta={meta} className={moveTypeThemeClass(meta?.type)} labels={moveSlotLabels}
+          tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+          inputProps={{ readOnly: true, 'aria-label': `${lt('기술')} ${moveIdx + 1}` }} />
       })}</div></div> : null}
     </ReadonlyPokemonCard>
   }
@@ -8103,25 +8105,24 @@ export default function App() {
                       <div className="registered-move-grid">
                         {registeredMoves.map((move, moveIdx) => {
                           const moveType = findMoveType(move)
-                          return <RegisteredMoveSlot key={`registered-move-${member.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={moveType} meta={resolveMoveMeta(move, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                            <input
-                              value={move}
-                              {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                              placeholder={memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                              onFocus={() => {
+                          return <RegisteredMoveSlot key={`registered-move-${member.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={moveType} meta={resolveMoveMeta(move, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
+                            tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                            inputProps={{
+                              placeholder: memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
+                              onFocus: () => {
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
                                 setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
-                              }}
-                              onBlur={() => {
+                              },
+                              onBlur: () => {
                                 setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)
                                 setTimeout(() => closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`), 120)
-                              }}
-                              onChange={(e) => {
+                              },
+                              onChange: (e) => {
                                 setConfirmedMoveSlot(member.key, moveIdx, e.target.value)
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
                                 setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
-                              }}
-                              onKeyDown={(e) => {
+                              },
+                              onKeyDown: (e) => {
                                 const moveSuggestions = filterMoveOptions(move, memberMoveOptions).slice(0, 8)
                                 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                                   e.preventDefault()
@@ -8136,8 +8137,8 @@ export default function App() {
                                   setActiveMoveField(null)
                                   closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`)
                                 }
-                              }}
-                            />
+                              },
+                            }}>
                             {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
                               <div className="move-autocomplete-menu unified-dropdown-menu">
                                 {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option, optionIdx) => (
@@ -8890,20 +8891,19 @@ export default function App() {
                           </div>
                           <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
                             {sampleRegisteredMoves.map((move, moveIdx) => (
-                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}>
-                                <input
-                                  value={move}
-                                  {...bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                                  placeholder={sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력')}
-                                  onFocus={() => {
+                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
+                                tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                                inputProps={{
+                                  placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
+                                  onFocus: () => {
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
                                     setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
-                                  }}
-                                  onBlur={() => {
+                                  },
+                                  onBlur: () => {
                                     setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)
                                     setTimeout(() => closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`), 120)
-                                  }}
-                                  onChange={(e) => {
+                                  },
+                                  onChange: (e) => {
                                     setSampleLockedMoves((prev) => {
                                       const current = [...prev]
                                       while (current.length < 4) current.push('')
@@ -8912,8 +8912,8 @@ export default function App() {
                                     })
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
                                     setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
-                                  }}
-                                  onKeyDown={(e) => {
+                                  },
+                                  onKeyDown: (e) => {
                                     const moveSuggestions = filterMoveOptions(move, sampleMoveOptions).slice(0, 8)
                                     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                                       e.preventDefault()
@@ -8927,8 +8927,8 @@ export default function App() {
                                       e.preventDefault()
                                       closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`)
                                     }
-                                  }}
-                                />
+                                  },
+                                }}>
                                 {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
                                   <div className="move-autocomplete-menu unified-dropdown-menu">
                                     {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
