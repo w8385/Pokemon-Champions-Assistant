@@ -23,6 +23,8 @@ export type PartialBuildField = `partialBuild.${keyof PartialLibraryBuild}`
 export type CreatorSample = {
   id: string
   contentKind: ContentKind
+  /** Whether this individual build is the subject of its source presentation. */
+  featuredSample?: boolean
   language: LibraryLanguage
   format: LibraryFormat | null
   platform: SourcePlatform
@@ -93,7 +95,7 @@ const monoSeasonTwoMembers: MonoMember[] = [
     actualStats: { hp: 137, attack: 139, defense: 105, spAttack: 108, spDefense: 105, speed: 167 }, preMegaAbility: true },
 ]
 
-// Transcribed from the original rental screens, NOT the separate Mono season-two blog.
+// Mono focuses on Mega Gyarados; all six recorded slots remain individual samples.
 // Investment figures are Champions screen units (0–32), not conventional 252-point EVs.
 type VideoMember = { pokemonKey: string; label: string; ability: string; item: string; moves: [string, string, string, string]; preMegaForm?: string }
 type CompleteVideoMember = VideoMember & { nature: NatureId; arrows: string; evs: EffortValues; actualStats: Record<EffortStatKey, number> }
@@ -146,11 +148,14 @@ function videoPartyMembers(id: 'Ix8nrNnmTUk' | 'HQDEZg-Zgv8'): CreatorSample[] {
     }
     return {
       ...lead,
-      id: `youtube-${id}-${member.pokemonKey}`, contentKind: 'party', pokemonKey: member.pokemonKey,
+      id: `youtube-${id}-${member.pokemonKey}`, contentKind: mono ? 'pokemon' : 'party',
+      ...(mono ? { featuredSample: member.pokemonKey === 'mega-gyarados' } : {}), pokemonKey: member.pokemonKey,
       title: `${lead.title} — ${member.label}`, format: mono ? 'singles' : null,
       status: complete ? 'verified' : 'partial', build, partialBuild,
       provenance: { ...lead.provenance, verifiedAt: '2026-10-03', fields,
-        evidence: `${time} ${image} 원본 영상 여섯 슬롯, 렌탈 코드 ${rentalCode} (현재 사용 가능 여부 미확인). ${mono ? '02:55 mono-t175.png 실수치/노력치와 ↑↓ 성격 추론; 싱글 분류는 영상 맥락의 추정으로 렌탈 화면에 모드 표기 없음. 브리두라스 도구는 화면 표기 자몽열매를 그대로 기록(도구 목록의 자뭉열매로 자동 교정하지 않음). 블로그 224319761655와 별도 파티.' : '스테이터스 탭 미표시: 성격/노력치/실수치 불명, 완성형 가져오기 불가. 영상 제목의 1위 주장은 별도 랭킹 검증으로 취급하지 않음.'} ${member.preMegaForm ? `표시 특성은 메가진화 전 ${member.preMegaForm}의 특성.` : ''}`,
+        evidence: mono
+          ? `02:52 mono-t172.png 슬롯 ${index + 1} ${member.label} 도구·화면 표시 특성·기술; 02:55 mono-t175.png 슬롯 ${index + 1} 실수치/노력치와 ↑↓ 성격 추론. 영상은 메가갸라도스 개별 샘플 소개이며 ${member.pokemonKey === 'mega-gyarados' ? '주인공 샘플' : '동반 렌탈 슬롯에서 추출한 개별 샘플'}; 여섯 슬롯의 보조 렌탈 파티는 주 파티소개 출처와 별도로 제공. 렌탈 코드 ${rentalCode} (현재 사용 가능 여부 미확인). 싱글 분류는 영상 맥락의 추정으로 렌탈 화면에 모드 표기 없음. ${member.pokemonKey === 'archaludon' ? '브리두라스 도구는 화면 표기 자몽열매 그대로 기록하며 목록 표기 자뭉열매로 자동 교정하지 않음. ' : ''}${member.preMegaForm ? `표시 특성은 메가진화 전 ${member.preMegaForm}의 특성.` : ''}`
+          : `${time} ${image} 원본 영상 여섯 슬롯, 렌탈 코드 ${rentalCode} (현재 사용 가능 여부 미확인). 스테이터스 탭 미표시: 성격/노력치/실수치 불명, 완성형 가져오기 불가. 영상 제목의 1위 주장은 별도 랭킹 검증으로 취급하지 않음. ${member.preMegaForm ? `표시 특성은 메가진화 전 ${member.preMegaForm}의 특성.` : ''}`,
       },
     }
   })
@@ -254,6 +259,7 @@ export type CreatorSource = {
 export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
   const sources = new Map<string, CreatorSource>()
   for (const entry of entries) {
+    if (entry.contentKind === 'pokemon' && entry.featuredSample === false) continue
     const { sourceId, canonicalUrl } = entry.provenance
     const id = `${entry.platform}:${canonicalUrl}`
     let source = sources.get(id)
@@ -261,7 +267,7 @@ export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
       source = { id, platform: entry.platform, sourceId, canonicalUrl,
         title: entry.contentKind === 'party' ? entry.title.split(' — ')[0] : entry.title,
         creator: entry.creator, language: entry.language, format: entry.format, contentKind: entry.contentKind,
-        partySize: entry.contentKind === 'party' && (sourceId === '224319761655' || sourceId === 'Ix8nrNnmTUk' || sourceId === 'HQDEZg-Zgv8') ? 6 : null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
+        partySize: entry.contentKind === 'party' && (sourceId === '224319761655' || sourceId === 'HQDEZg-Zgv8') ? 6 : null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
       sources.set(id, source)
     }
     if (source.contentKind !== entry.contentKind) throw new Error(`Conflicting source content kinds: ${id}`)
@@ -270,6 +276,36 @@ export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
     if (canImportCreatorSample(entry)) source.completeMemberCount += 1
   }
   return [...sources.values()]
+}
+
+/** Member-level index, independent of whether the source introduces a whole party. */
+export function individualCreatorSources(entries: CreatorSample[]): CreatorSource[] {
+  return entries.filter(entry => entry.partialBuild || entry.build)
+    .sort((a, b) => Number(b.featuredSample === true) - Number(a.featuredSample === true))
+    .map(entry => ({
+    id: `individual:${entry.id}`, platform: entry.platform, sourceId: entry.provenance.sourceId,
+    canonicalUrl: entry.provenance.canonicalUrl, title: entry.title, creator: entry.creator,
+    language: entry.language, format: entry.format, contentKind: 'pokemon' as const, partySize: null,
+    members: [entry], confirmedMemberCount: 1, completeMemberCount: Number(canImportCreatorSample(entry)),
+  }))
+}
+
+const stats = ['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const
+
+/** Optional supporting rental composition, not part of the party-introduction index. */
+export const relatedCreatorParties: Record<string, CreatorSource> = {
+  Ix8nrNnmTUk: (() => {
+    const members = catalog.filter(entry => entry.provenance.sourceId === 'Ix8nrNnmTUk').map(entry => ({ ...entry, contentKind: 'party' as const }))
+    const featured = members.find(entry => entry.featuredSample)
+    if (!featured) throw new Error('Missing featured Mono sample')
+    return {
+      id: `related-party:${featured.id}`, platform: featured.platform, sourceId: featured.provenance.sourceId,
+      canonicalUrl: featured.provenance.canonicalUrl, title: `${featured.title.split(' — ')[0]} — 영상 속 보조 렌탈 파티`,
+      creator: featured.creator, language: featured.language, format: featured.format, contentKind: 'party',
+      partySize: 6, members, confirmedMemberCount: members.filter(entry => entry.partialBuild || entry.build).length,
+      completeMemberCount: members.filter(canImportCreatorSample).length,
+    }
+  })(),
 }
 
 export function filterCreatorSources(sources: CreatorSource[], filters: {
@@ -290,7 +326,6 @@ export function filterCreatorSamples<T extends { language: LibraryLanguage; form
     (!query || [entry.pokemonKey, entry.title, entry.creator ?? ''].some((text) => text.toLocaleLowerCase().includes(query))))
 }
 
-const stats = ['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const
 export function canImportCreatorSample(entry: CreatorSample | LinkDraft): entry is CreatorSample & { build: LibraryBuild } {
   if (!('build' in entry) || entry.status !== 'verified' || !entry.build || !entry.pokemonKey || !entry.creator ||
     (entry.format !== 'singles' && entry.format !== 'doubles') ||

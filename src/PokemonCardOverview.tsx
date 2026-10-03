@@ -47,12 +47,12 @@ export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '' }:
   </div>
 }
 
-export function PokemonStatGrid({ stats, onTune, unknown = '미확인', className = '', sampleStyle = false }: { stats: CardStat[]; onTune?: () => void; unknown?: string; className?: string; sampleStyle?: boolean }) {
+export function PokemonStatGrid({ stats, onTune, unknown = '미확인', className = '', sampleStyle = false, showEffort = true }: { stats: CardStat[]; onTune?: () => void; unknown?: string; className?: string; sampleStyle?: boolean; showEffort?: boolean }) {
   return <div className={`stat-preview-list ${className}`.trim()}>{stats.map(stat => {
     const content = <>
       <div className={`stat-preview-topline ${sampleStyle ? 'sample-stat-topline' : ''}`.trim()}><span>{stat.label}</span><strong>{stat.value ?? unknown}</strong></div>
       <div className="stat-preview-bar"><span style={{ width: stat.value === null ? '0%' : `${Math.max(0, Math.min(100, (stat.value / 255) * 100))}%` }} /></div>
-      <div className="stat-preview-meta"><span className={`stat-preview-ev ${sampleStyle ? 'sample-stat-ev' : ''}`.trim()}>{stat.ev === null ? unknown : `EV +${stat.ev}`}</span></div>
+      {showEffort ? <div className="stat-preview-meta"><span className={`stat-preview-ev ${sampleStyle ? 'sample-stat-ev' : ''}`.trim()}>{stat.ev === null ? unknown : `EV +${stat.ev}`}</span></div> : null}
     </>
     const rowClass = `stat-preview-row ${onTune ? 'stat-preview-button ' : ''}${sampleStyle ? 'sample-stat-preview-row ' : ''}${stat.theme}`
     return onTune
@@ -61,9 +61,9 @@ export function PokemonStatGrid({ stats, onTune, unknown = '미확인', classNam
   })}</div>
 }
 
-export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item, itemSprite, stats, labels, statsLabel, statsUnknown, calculationNote, children }: {
+export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item, itemSprite, stats, labels, statsLabel, statsUnknown, calculationNote, showEffort = true, children }: {
   name: string; sprite?: string; types?: string[]; ability?: string; nature?: string; item?: string; itemSprite?: string; calculationNote?: string; statsLabel?: string; statsUnknown?: string
-  stats: CardStat[]; labels: { ability: string; nature: string; item: string; unknown: string }
+  stats: CardStat[]; showEffort?: boolean; labels: { ability: string; nature: string; item: string; unknown: string }
   children?: ReactNode
 }) {
   return <div className="card entry-card creator-library-pokemon-card">
@@ -77,7 +77,7 @@ export function ReadonlyPokemonCard({ name, sprite, types, ability, nature, item
       </div></div>
     </div>
     {statsLabel ? <strong className="creator-library-stats-label">{statsLabel}</strong> : null}
-    <PokemonStatGrid stats={stats} unknown={statsUnknown ?? labels.unknown} />
+    <PokemonStatGrid stats={stats} unknown={statsUnknown ?? labels.unknown} showEffort={showEffort} />
     {children}
     {calculationNote ? <small className="creator-library-calculation-note">{calculationNote}</small> : null}
   </div>

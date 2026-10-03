@@ -3,7 +3,7 @@ import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_M
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
-import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, isVerifiedRankerSample, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
@@ -1685,7 +1685,7 @@ function parseViewStateFromUrl(): ViewState | null {
         : undefined
     const sampleTabParam = routeUrl.searchParams.get('sampleTab')
     const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage' || sampleTabParam === 'library' || sampleTabParam === 'rankers'
-      ? sampleTabParam
+      ? sampleTabParam === 'rankers' ? 'library' : sampleTabParam
       : undefined
     const dexTabParam = routeUrl.searchParams.get('dexTab')
     const dexSearchMode = dexTabParam === 'pokemon' || dexTabParam === 'move' || dexTabParam === 'ability' || dexTabParam === 'item'
@@ -1696,8 +1696,10 @@ function parseViewStateFromUrl(): ViewState | null {
     const dexSelectedValue = routeUrl.searchParams.get('sel') ?? undefined
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
+    const librarySourceId = routePath.startsWith('/sample-library/') ? decodeURIComponent(routePath.slice('/sample-library/'.length)) : null
     return { mainSection: mainSection ?? normalizedRoute.section, activeTab: mainSection === 'single' || mainSection === 'double' ? normalizedRoute.tab as MainTab : activeTab,
       sampleWorkbenchTab: mainSection === 'sample' ? normalizedRoute.tab as SampleWorkbenchTab : sampleWorkbenchTab,
+      librarySourceId,
       dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
   } catch {
     return null
@@ -1707,9 +1709,9 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
+  const routePath = viewState.mainSection === 'sample' ? viewState.sampleWorkbenchTab === 'library' && viewState.librarySourceId ? `/sample-library/${encodeURIComponent(viewState.librarySourceId)}` : '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
   if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
-  if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab) params.set('sampleTab', viewState.sampleWorkbenchTab)
+  if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab && !viewState.librarySourceId) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
   if (viewState.mainSection === 'dex' && viewState.dexSearch) params.set('q', viewState.dexSearch)
   if (viewState.mainSection === 'dex' && viewState.dexUnifiedSearch) params.set('uq', viewState.dexUnifiedSearch)
@@ -3974,10 +3976,12 @@ export default function App() {
   const [activePartyPresetId, setActivePartyPresetId] = React.useState<string | null>(null)
   const [creatorPartyImportError, setCreatorPartyImportError] = React.useState('')
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false)
-  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? (['builder','speed','damage','library','rankers'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
+  const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? ((persisted?.sampleWorkbenchTab as string) === 'rankers' ? 'library' : ['builder','speed','damage','library'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
+  const [librarySourceId, setLibrarySourceId] = React.useState<string | null>(() => viewState?.librarySourceId ?? null)
+  const libraryScrollRef = React.useRef<number | null>(null)
   const [libraryLanguage, setLibraryLanguage] = React.useState<LibraryLanguage>('ko')
   const [libraryFormat, setLibraryFormat] = React.useState<LibraryFormat | 'all'>('all')
-  const [libraryContentKind, setLibraryContentKind] = React.useState<ContentKind>('party')
+  const [libraryContentKind, setLibraryContentKind] = React.useState<ContentKind>(() => viewState?.librarySourceId?.startsWith('individual:') ? 'pokemon' : 'party')
   const [draftFormat, setDraftFormat] = React.useState<LibraryFormat>('singles')
   const [libraryQuery, setLibraryQuery] = React.useState('')
   const [creatorMegaSelection, setCreatorMegaSelection] = React.useState<Record<string, boolean>>({})
@@ -4912,6 +4916,7 @@ export default function App() {
       if (route.mainSection) setMainSection(route.mainSection)
       if (route.activeTab) setActiveTab(route.activeTab)
       if (route.sampleWorkbenchTab) setSampleWorkbenchTab(route.sampleWorkbenchTab)
+      setLibrarySourceId(route.librarySourceId ?? null)
       if (route.dexSearchMode) setDexSearchMode(route.dexSearchMode)
       if (route.selectedMy !== undefined) setSelectedMy(sanitizeSelectedIndex(route.selectedMy, party.length))
       if (route.selectedOpp !== undefined) setSelectedOpp(sanitizeSelectedIndex(route.selectedOpp, opponents.length))
@@ -4926,6 +4931,7 @@ export default function App() {
       mainSection,
       activeTab: mainSection === 'single' || mainSection === 'double' ? activeTab : undefined,
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
+      librarySourceId: mainSection === 'sample' && sampleWorkbenchTab === 'library' ? librarySourceId : null,
       dexSearchMode: mainSection === 'dex' ? dexSearchMode : undefined,
       dexSearch: mainSection === 'dex' ? deferredDexSearch.trim() : undefined,
       dexUnifiedSearch: mainSection === 'dex' ? deferredDexUnifiedSearch.trim() : undefined,
@@ -4933,12 +4939,20 @@ export default function App() {
       selectedMy,
       selectedOpp,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, librarySourceId, dexSearchMode, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode])
+  React.useEffect(() => {
+    if (librarySourceId) window.scrollTo({ top: 0, behavior: 'auto' })
+    else if (libraryScrollRef.current !== null) {
+      const previous = libraryScrollRef.current
+      libraryScrollRef.current = null
+      requestAnimationFrame(() => window.scrollTo({ top: previous, behavior: 'auto' }))
+    }
+  }, [librarySourceId])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
@@ -6693,12 +6707,11 @@ export default function App() {
     }
   }
 
-  const visibleSources = filterCreatorSources(groupCreatorSources(catalog), {
+  const librarySource = librarySourceId ? [...groupCreatorSources(catalog), ...individualCreatorSources(catalog)].find(source => source.id === librarySourceId) : null
+  const visibleSources = filterCreatorSources(libraryContentKind === 'pokemon' ? individualCreatorSources(catalog) : groupCreatorSources(catalog), {
     language: libraryLanguage, format: libraryFormat, query: libraryQuery,
-    contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind,
-  }).filter(source => sampleWorkbenchTab === 'rankers'
-    ? source.members.some(isVerifiedRankerSample)
-    : source.confirmedMemberCount > 0)
+    contentKind: libraryContentKind,
+  }).filter(source => source.confirmedMemberCount > 0)
 
   const pendingCreatorLeads = filterCreatorSamples(catalog.filter(entry => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery })
   const moveSlotLabels = { slot: lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, siteLanguage),
@@ -6714,13 +6727,15 @@ export default function App() {
       key: formKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
       picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: '',
     } : null
-    const stats: CardStat[] = createReadonlyCardStats(EFFORT_STAT_OPTIONS.map(stat => ({
+    const actualStats: CardStat[] = createReadonlyCardStats(EFFORT_STAT_OPTIONS.map(stat => ({
       key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
     })), build, statKey => row && member ? partyStatValue(row, member, statKey) : null, formKey)
     const name = row ? displayName(row, siteLanguage) : entry.title.split(' — ').pop() || entry.pokemonKey
     const recordedForm = entry.partialBuild?.actualStatsForm
     const sourceStatsShown = Boolean(entry.partialBuild?.actualStats && recordedForm === formKey)
-    const statsLabel = sourceStatsShown ? lt('원본 이미지에 기록된 실수치') : member ? lt('계산 실수치 · 원본 실수치 미기록') : lt('실수치 미기록')
+    const showActualStats = sourceStatsShown || Boolean(member)
+    const stats: CardStat[] = showActualStats ? actualStats : actualStats.map(stat => ({ ...stat, value: row?.[stat.key] ?? null }))
+    const statsLabel = sourceStatsShown ? lt('원본 이미지에 기록된 실수치') : member ? lt('계산 실수치 · 원본 실수치 미기록') : row ? lt('종족값') : lt('실수치 미기록')
     // The Mega ability is not evidence of a pre-Mega ability. Use only source-backed choices.
     const preMegaAbilities = entry.partialBuild?.preMegaAbilities
     const ability = megaKey && formKey === megaKey && row?.abilities_ko?.length === 1
@@ -6732,7 +6747,7 @@ export default function App() {
       ability={ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
       item={build?.item ? displayItemLabel(build.item, siteLanguage) : undefined}
       itemSprite={build?.item ? itemSpriteSrc(entry.pokemonKey, build.item) : undefined}
-      stats={stats} statsLabel={statsLabel} statsUnknown={lt('실수치 미기록')}
+      stats={stats} statsLabel={statsLabel} statsUnknown={lt('실수치 미기록')} showEffort={Boolean(build?.evs)}
       labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
       calculationNote={!sourceStatsShown && !member ? row ? lt('성격·노력 포인트 미확인으로 실수치를 계산하지 않습니다.') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.') : undefined}>
       {canToggle ? <div className="creator-form-toggle" role="group" aria-label={lt('메가진화 전후')}>
@@ -6799,7 +6814,7 @@ export default function App() {
                 </div>
               </div>
               <div className={`header-route-menu ${mobileNavOpen ? 'open' : ''}`}>
-                <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '크리에이터 라이브러리' : sampleWorkbenchTab === 'rankers' ? '랭커 샘플' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : lt('도감')}</button>
+                <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : lt('도감')}</button>
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
                   <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" onClick={() => setMobileNavOpen(false)} aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
                   {routeGroups.map(group => {
@@ -7067,10 +7082,7 @@ export default function App() {
                     <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('빠른 순 → 느린 순')}</span><strong>{lt('실능 스피드라인')}</strong><p>{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div>
                   </button>
                   <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('library') }}>
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('크리에이터 샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
-                  </button>
-                  <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('rankers') }}>
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('랭커 샘플')}</strong><p>{lt('순위 근거가 확인된 자료만 모읍니다.')}</p></div>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
                   </button>
                 </div>
               </section>
@@ -7163,8 +7175,7 @@ export default function App() {
                 ['builder', lt('샘플 빌드')],
                 ['speed', lt('샘플 스피드')],
                 ['damage', lt('샘플 대미지 계산')],
-                ['library', lt('크리에이터 샘플 라이브러리')],
-                ['rankers', lt('랭커 샘플')],
+                ['library', lt('샘플 라이브러리')],
               ] as const).map(([value, label]) => (
                 <a key={`sample-workbench-tab-${value}`} href={`#/sample-builder?sampleTab=${value}`} aria-current={sampleWorkbenchTab === value ? 'page' : undefined} className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`}>{label}</a>
               ))}
@@ -8595,12 +8606,53 @@ export default function App() {
         </> : mainSection === 'sample' ? <>
         <section className="panel wide sample-workbench-panel">
           <div className="sample-content-panel">
-          {sampleWorkbenchTab === 'library' || sampleWorkbenchTab === 'rankers' ? <div className="creator-library">
-            <div className="section-head"><div><h2>{sampleWorkbenchTab === 'rankers' ? lt('랭커 샘플') : lt('크리에이터 샘플 라이브러리')}</h2><p className="muted">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 자료만 모읍니다.') : lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
-            {sampleWorkbenchTab === 'library' ? <div className="creator-library-kind-tabs" role="group" aria-label={lt('크리에이터 샘플 라이브러리')}>
+          {sampleWorkbenchTab === 'library' ? <div className="creator-library">
+            {librarySourceId ? <div className="creator-library-detail">
+              <a className="creator-library-back" href="#/sample-builder?sampleTab=library">← {lt('샘플 라이브러리')} · {lt('목록으로')}</a>
+              {librarySource ? <>
+                <div className="section-head"><div><h2>{librarySource.title}</h2><p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
+                <div className="creator-library-lineup">{librarySource.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}</div>
+                {librarySource.contentKind === 'party' ? <div className="creator-library-completeness"><span>{lt('구성 확인')} {librarySource.confirmedMemberCount}/{librarySource.partySize ?? 6}</span><span>{librarySource.completeMemberCount === librarySource.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div> : null}
+                {librarySource.contentKind === 'party' && librarySource.partySize === 6 && librarySource.completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(librarySource)}>{lt('여섯 마리 저장한 파티로 가져오기')}</button> : null}
+                {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
+                <a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
+                <details className="creator-library-provenance"><summary>{lt('출처 및 확인 기록')}</summary><p>{lt('원본 ID')}: {librarySource.sourceId}</p>{librarySource.members.map(entry => <div key={entry.id}>
+                  <h3>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title}</h3>
+                  <p>{lt('게시')}: {entry.provenance.publishedAt ?? lt('미확인')} · {lt('수집')}: {entry.provenance.collectedAt} · {lt('확인')}: {entry.provenance.verifiedAt || lt('미확인')}</p>
+                  <p>{entry.provenance.evidence}</p>
+                  {Object.entries(entry.provenance.fields).map(([field, evidence]) => evidence ? <p key={field}>{field} · {evidence.location} · {evidence.checkedAt} · <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a></p> : null)}
+                </div>)}</details>
+                {librarySource.contentKind === 'party' ? librarySource.members.map(entry => <a key={entry.id} href={`#/sample-library/${encodeURIComponent(`individual:${entry.id}`)}`}>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title} · {lt('개별 포켓몬 샘플')}</a>) : null}
+                {librarySource.members.map(entry => <div key={entry.id} className="creator-library-member-actions">
+                  {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
+                  {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
+                    if (!canImportCreatorSample(entry)) return
+                    const formAbilities = indexByKey.get(entry.pokemonKey)?.abilities_ko ?? []
+                    const sourceAbility = entry.build.ability
+                    const resolvedAbility = formAbilities.includes(sourceAbility) ? sourceAbility :
+                      entry.pokemonKey.startsWith('mega-') && entry.partialBuild?.preMegaAbilities?.includes(sourceAbility) && formAbilities.length === 1 ? formAbilities[0] : null
+                    if (!resolvedAbility) return
+                    setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
+                    setSampleLockedMoves([...entry.build.moves])
+                    setSampleSearch(searchDisplayLabel(entry.pokemonKey, siteLanguage))
+                    setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
+                    setLibrarySourceId(null)
+                    setSampleWorkbenchTab('builder')
+                  }}>{lt('빌더로 가져오기')}</button> : null}
+                </div>)}
+                {relatedCreatorParties[librarySource.sourceId] && librarySource.contentKind === 'pokemon' ? <details className="creator-library-companion-party">
+                  <summary>{lt('영상에 나온 사용 파티')}</summary>
+                  <div className="creator-library-lineup">{relatedCreatorParties[librarySource.sourceId].members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}</div>
+                  {relatedCreatorParties[librarySource.sourceId].completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(relatedCreatorParties[librarySource.sourceId])}>{lt('여섯 마리 저장한 파티로 가져오기')}</button> : null}
+                  {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
+                </details> : null}
+              </> : <p role="status">{lt('출처를 찾을 수 없습니다.')}</p>}
+            </div> : <>
+            <div className="section-head"><div><h2>{lt('샘플 라이브러리')}</h2><p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
+            <div className="creator-library-kind-tabs" role="group" aria-label={lt('샘플 라이브러리')}>
               <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><span aria-hidden="true">◈ ◈ ◈</span> {lt('파티 소개')}</button>
               <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><span aria-hidden="true">◉</span> {lt('개별 포켓몬 샘플')}</button>
-            </div> : null}
+            </div>
             <div className="creator-library-filters">
               <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select></label>
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
@@ -8608,38 +8660,12 @@ export default function App() {
             </div>
             <div className="creator-library-list">
               {visibleSources.map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
-                <strong>{source.title}</strong> <span className="pick-badge">{source.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')}</span>
-                <p>{source.creator ?? lt('제작자 미확인')} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {source.platform}</p>
-                {source.contentKind === 'party' ? <>
-                  <div className="creator-library-lineup" aria-label={`${lt('구성 확인')}: ${source.confirmedMemberCount}`}>
-                    {source.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}
-                  </div>
-                  <div className="creator-library-completeness"><span>{lt('구성 확인')} {source.confirmedMemberCount}/{source.partySize ?? 6}</span><span>{source.completeMemberCount === source.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div>
-                </> : <div className="creator-library-individual-card">{source.members[0] ? creatorCard(source.members[0]) : null}</div>}
-                {source.contentKind === 'party' && source.partySize === 6 && source.completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(source)}>{lt('여섯 마리 저장한 파티로 가져오기')}</button> : null}
-                {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
-                <a href={source.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
-                {source.members.map((entry) => <details key={entry.id} className="creator-library-member">
-                <summary>{source.contentKind === 'party' ? (indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title) : lt('구성')} <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span></summary>
-                {entry.rank ? <p>{entry.rank}</p> : null}
-                {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
-                {entry.partialBuild ? <a href={entry.provenance.fields['partialBuild.moves']?.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a> : null}
-                {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
-                  if (!canImportCreatorSample(entry)) return
-                  const formAbilities = indexByKey.get(entry.pokemonKey)?.abilities_ko ?? []
-                  const sourceAbility = entry.build.ability
-                  const resolvedAbility = formAbilities.includes(sourceAbility) ? sourceAbility :
-                    entry.pokemonKey.startsWith('mega-') && entry.partialBuild?.preMegaAbilities?.includes(sourceAbility) && formAbilities.length === 1 ? formAbilities[0] : null
-                  if (!resolvedAbility) return
-                  setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
-                  setSampleLockedMoves([...entry.build.moves])
-                  setSampleSearch(searchDisplayLabel(entry.pokemonKey, siteLanguage))
-                  setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
-                  setSampleWorkbenchTab('builder')
-                }}>{lt('빌더로 가져오기')}</button> : null}
-                </details>)}
+                <a className="creator-library-source-link" href={`#/sample-library/${encodeURIComponent(source.id)}`} onClick={() => { libraryScrollRef.current = window.scrollY; setLibrarySourceId(source.id) }}>
+                  <span className="creator-library-sprites">{source.members.map(member => { const row = indexByKey.get(member.pokemonKey); return row?.sprite ? <img key={member.id} src={row.sprite} alt="" /> : null })}</span>
+                  <strong>{source.title}</strong>
+                </a>
               </article>)}
-              {!visibleSources.length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
+              {!visibleSources.length ? <p className="muted" role="status">{lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
             </div>
             {sampleWorkbenchTab === 'library' && pendingCreatorLeads.length > 0 ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{pendingCreatorLeads.map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
@@ -8656,6 +8682,7 @@ export default function App() {
               <p className="muted">{lt('공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.')}{' '}<a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noopener noreferrer">{lt('제보 폼 열기')}</a></p>
             </form> : null}
             {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => entry.language === libraryLanguage && (libraryFormat === 'all' || entry.format === libraryFormat)).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('삭제')}</button></div>) : null}
+            </>}
           </div> : sampleWorkbenchTab === 'builder' ? <>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">

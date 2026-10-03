@@ -107,7 +107,7 @@ export type RivalryMode = 'neutral' | 'same' | 'opposite'
 export type DoubleBoardSlot = 'myLeft' | 'myRight' | 'oppLeft' | 'oppRight'
 export type MoveFilter = 'all' | 'core' | 'options' | 'utility'
 export type MainSection = 'home' | 'single' | 'double' | 'sample' | 'dex' | 'speedLine'
-export type SampleWorkbenchTab = 'builder' | 'speed' | 'damage' | 'library' | 'rankers'
+export type SampleWorkbenchTab = 'builder' | 'speed' | 'damage' | 'library'
 export type MainTab = 'party' | 'pick' | 'speed' | 'power'
 export type SiteLanguage = 'ko' | 'en' | 'ja'
 export type MoveCategory = CalcMode | 'status'
@@ -255,6 +255,7 @@ export type ViewState = {
   mainSection?: MainSection
   activeTab?: MainTab
   sampleWorkbenchTab?: SampleWorkbenchTab
+  librarySourceId?: string | null
   dexSearchMode?: DexSearchMode
   dexSearch?: string
   dexUnifiedSearch?: string

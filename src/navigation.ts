@@ -5,8 +5,7 @@ export const routeGroups = [
   ] },
   { label: '샘플', section: 'sample', links: [
     { label: '샘플 빌더', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder' },
-    { label: '크리에이터 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
-    { label: '랭커 샘플', href: '#/sample-builder?sampleTab=rankers', section: 'sample', tab: 'rankers' },
+    { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
   ] },
   { label: '도구/자료', section: 'tools', links: [
     { label: '실능 스피드라인', href: '#/speed-line', section: 'speedLine', tab: '' },
@@ -24,8 +23,9 @@ export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'do
   }
   if (path === '/sample-builder') {
     const value = route.searchParams.get('sampleTab')
-    return { section: 'sample', tab: value === 'speed' || value === 'damage' || value === 'library' || value === 'rankers' ? value : 'builder' }
+    return { section: 'sample', tab: value === 'rankers' ? 'library' : value === 'speed' || value === 'damage' || value === 'library' ? value : 'builder' }
   }
+  if (path.startsWith('/sample-library/')) return { section: 'sample', tab: 'library' }
   if (path === '/speed-line') return { section: 'speedLine', tab: '' }
   if (path === '/dex') return { section: 'dex', tab: '' }
   return { section: 'home', tab: '' }

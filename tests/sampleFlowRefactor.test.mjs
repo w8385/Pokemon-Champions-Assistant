@@ -14,11 +14,11 @@ test('builder reuses shared six-tile grid with editable sample styling', () => {
   assert.match(card, /sample-stat-ev/)
 })
 
-test('library and rankers share one grouped filtered visible source list and empty state', () => {
-  assert.ok(/const visibleSources = filterCreatorSources\(groupCreatorSources\(catalog\)/.test(app))
+test('library uses one filtered visible list and a separate source detail', () => {
+  assert.ok(/const visibleSources = filterCreatorSources\(/.test(app))
   assert.ok(/visibleSources\.map\(\(source\)/.test(app))
   assert.ok(/!visibleSources\.length/.test(app))
-  assert.equal((app.match(/filterCreatorSources\(groupCreatorSources\(catalog\)/g) ?? []).length, 1)
+  assert.ok(/librarySourceId/.test(app))
 })
 
 test('only builder, speed and damage render save and apply actions', () => {
@@ -36,11 +36,11 @@ test('English and Japanese translate link format and unrecorded actual stats', (
   }
 })
 
-test('details omit repeated card facts while retaining rank, evidence and import gate', () => {
-  const details = app.split('<details key={entry.id} className="creator-library-member">')[1]?.split('</details>')[0]
+test('source provenance is on detail only while retaining evidence and import gate', () => {
+  const details = app.split('<details className="creator-library-provenance">')[1]?.split('</details>')[0]
   assert.ok(details)
   assert.ok(!details.includes('creator-library-build'))
-  assert.ok(details.includes('entry.rank'))
+  assert.ok(details.includes('entry.provenance'))
   assert.ok(details.includes('구성 근거 이미지'))
-  assert.ok(details.includes('canImportCreatorSample(entry)'))
+  assert.ok(app.includes('canImportCreatorSample(entry)'))
 })

@@ -49,6 +49,6 @@ test('independent speed-line route and navigation retain existing menus and shar
   assert.match(app, /buildSpeedLine\(rows,/)
   assert.match(app, /import \{ actualStat \} from '\.\/statMechanics'/)
   assert.doesNotMatch(app, /function actualStat\(/)
-  assert.match(app, /setSampleWorkbenchTab\('rankers'\)/)
+  assert.doesNotMatch(app, /setSampleWorkbenchTab\('rankers'\)/)
   assert.match(app, /setMainSection\('dex'\)/)
 })

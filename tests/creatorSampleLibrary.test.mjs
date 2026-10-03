@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, filterCreatorSamples, filterCreatorSources, groupCreatorSources, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
-import { championsData, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
+import { catalog, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
+import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
 import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
 
 const monoKeys = ['mega-scizor', 'ceruledge', 'garchomp', 'mega-floette', 'rotom-wash', 'mega-starmie']
@@ -53,16 +53,16 @@ test('document taxonomy groups the original six under one party and all are impo
   assert.equal(party.partySize, 6)
   assert.deepEqual(party.members.map(member => member.partialBuild.nature), ['adamant', 'adamant', 'impish', 'timid', 'timid', 'adamant'])
   assert.equal(sources.find(source => source.sourceId === 'ihwnR8FJWtM').contentKind, 'pokemon')
-  assert.deepEqual(sources.filter(source => source.platform === 'youtube' && source.sourceId !== 'ihwnR8FJWtM').map(source => source.contentKind), ['party', 'party'])
+  assert.deepEqual(sources.filter(source => source.platform === 'youtube' && source.sourceId !== 'ihwnR8FJWtM').map(source => source.contentKind), ['pokemon', 'party'])
 })
 
 test('content-kind filter matches member search yet retains all members in one party document', () => {
   const matches = filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'singles', query: 'rotom-wash', contentKind: 'party' })
   assert.equal(matches.length, 1)
   assert.deepEqual(matches[0].members.map(member => member.pokemonKey), monoKeys)
-  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'all', query: '', contentKind: 'pokemon' }).map(source => source.sourceId), ['ihwnR8FJWtM'])
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'all', query: '', contentKind: 'pokemon' }).map(source => source.sourceId), ['Ix8nrNnmTUk', 'ihwnR8FJWtM'])
   assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'all', query: '', contentKind: 'unknown' }), [])
-  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'singles', query: '', contentKind: 'pokemon' }), [])
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), { language: 'ko', format: 'singles', query: '', contentKind: 'pokemon' }).map(source => source.sourceId), ['Ix8nrNnmTUk'])
 })
 
 test('눈파티 image-backed Pinsir details cite each field without inferring battle format', () => {
@@ -134,44 +134,77 @@ test('source stat arrows establish nature and recorded actual stats without subs
   }
 })
 
-test('original Mono video forms a separate six-member importable party with every field at its own frame', () => {
+test('Mono HAS Mega Gyarados is one individual source, not an importable rental party', () => {
   const source = groupCreatorSources(catalog).find(s => s.sourceId === 'Ix8nrNnmTUk')
-  const expected = [
-    ['hydreigon','modest','구애스카프','부유',[2,0,0,32,0,32],['용성군','악의파동','불대문자','유턴'],[169,112,110,194,110,150],'hydreigon'],
-    ['mega-gyarados','adamant','갸라도스나이트','위협',[5,32,10,0,0,19],['얼음엄니','지진','파워휩','용의춤'],[175,194,109,72,120,120],'gyarados'],
-    ['archaludon','careful','자몽열매','지구력',[32,0,5,0,25,4],['스텔스록','드래곤테일','아이언헤드','전기자석파'],[197,125,155,130,121,109],'archaludon'],
-    ['mega-lopunny','adamant','이어롭나이트','유연',[1,32,1,0,0,32],['칼춤','마하펀치','인파이트','트리플악셀'],[141,140,105,66,116,157],'lopunny'],
-    ['hippowdon','impish','먹다남은음식','모래날림',[32,0,32,0,2,0],['지진','방어','하품','게으름피우기'],[215,132,187,79,94,67],'hippowdon'],
-    ['gholdengo','modest','생명의구슬','황금몸',[25,0,0,30,0,11],['골드러시','섀도볼','나쁜음모','HP회복'],[187,72,115,201,111,115],'gholdengo'],
-  ]
-  const stats = ['hp','attack','defense','spAttack','spDefense','speed']
-  assert.equal(source.partySize, 6)
-  assert.equal(source.confirmedMemberCount, 6)
-  assert.equal(source.completeMemberCount, 6)
-  assert.equal(source.members.length, 6)
+  assert.equal(source.contentKind, 'pokemon')
+  assert.equal(source.partySize, null)
+  assert.equal(source.confirmedMemberCount, 1)
+  assert.equal(source.completeMemberCount, 1)
+  assert.deepEqual(source.members.map(m => m.pokemonKey), ['mega-gyarados'])
   assert.equal(source.canonicalUrl, 'https://www.youtube.com/watch?v=Ix8nrNnmTUk')
-  for (const [index, [key,nature,item,ability,evs,moves,actual,form]] of expected.entries()) {
-    const entry = source.members[index]
-    assert.equal(entry.id, `youtube-Ix8nrNnmTUk-${key}`)
-    assert.equal(entry.pokemonKey, key)
-    assert.equal(supportedSpeciesKeys.has(key), true)
-    assert.equal(supportedSpeciesKeys.has(form), true)
-    assert.deepEqual([entry.build.nature,entry.build.item,entry.build.ability],[nature,item,ability])
-    assert.deepEqual(stats.map(stat => entry.build.evs[stat]),evs)
-    assert.deepEqual(entry.build.moves,moves)
-    assert.deepEqual(stats.map(stat => entry.partialBuild.actualStats[stat]),actual)
-    assert.equal(entry.partialBuild.actualStatsForm,form)
-    assert.equal(canImportCreatorSample(entry),true)
-    for (const field of ['item','ability','moves','evs','nature','actualStats','actualStatsForm']) {
-      const evidence = entry.provenance.fields[`partialBuild.${field}`]
-      assert.equal(evidence.sourceUrl,source.canonicalUrl)
-      assert.match(evidence.location, new RegExp(['nature','evs','actualStats','actualStatsForm'].includes(field) ? '02:55.*mono-t175.png' : '02:52.*mono-t172.png'))
-    }
-    assert.match(entry.provenance.fields['partialBuild.nature'].location,/↑.*↓/)
-    if (key.startsWith('mega-')) assert.deepEqual(entry.partialBuild.preMegaAbilities,[ability])
-    assert.equal(entry.rank,null)
+  const entry = source.members[0]
+  assert.equal(entry.id, 'youtube-Ix8nrNnmTUk-mega-gyarados')
+  assert.equal(canImportCreatorSample(entry), true)
+  assert.deepEqual([entry.build.nature,entry.build.item,entry.build.ability], ['adamant','갸라도스나이트','위협'])
+  assert.deepEqual(entry.build.moves, ['얼음엄니','지진','파워휩','용의춤'])
+  assert.deepEqual(entry.build.evs, { hp: 5, attack: 32, defense: 10, spAttack: 0, spDefense: 0, speed: 19 })
+  assert.deepEqual(entry.partialBuild.actualStats, { hp: 175, attack: 194, defense: 109, spAttack: 72, spDefense: 120, speed: 120 })
+  assert.equal(entry.partialBuild.actualStatsForm, 'gyarados')
+  for (const field of ['item','ability','moves','evs','nature','actualStats','actualStatsForm']) {
+    const evidence = entry.provenance.fields[`partialBuild.${field}`]
+    assert.equal(evidence.sourceUrl,source.canonicalUrl)
+    assert.match(evidence.location, new RegExp(['nature','evs','actualStats','actualStatsForm'].includes(field) ? '02:55.*mono-t175.png' : '02:52.*mono-t172.png'))
   }
-  assert.match(source.members[0].provenance.evidence,/9YGJB9NFJL.*not|9YGJB9NFJL.*미확인/)
+  assert.match(entry.provenance.fields['partialBuild.nature'].location,/↑.*↓/)
+  assert.deepEqual(entry.partialBuild.preMegaAbilities,['위협'])
+  assert.match(entry.provenance.fields['partialBuild.nature'].location,/슬롯 2/)
+  assert.match(entry.provenance.evidence,/개별 샘플/)
+  assert.equal(prepareCreatorParty(source, key => championsData.rows.find(row => row.key === key)?.abilities_ko ?? null), null)
+})
+
+test('Mono six recorded slots remain individually findable, with only Gyarados featured in the presentation', () => {
+  const members = catalog.filter(e => e.provenance.sourceId === 'Ix8nrNnmTUk')
+  assert.deepEqual(members.map(e => e.pokemonKey), ['hydreigon','mega-gyarados','archaludon','mega-lopunny','hippowdon','gholdengo'])
+  assert.deepEqual(members.map(e => e.featuredSample), [false,true,false,false,false,false])
+  assert.ok(members.every(e => e.contentKind === 'pokemon' && e.creator === '모노' && canImportCreatorSample(e)))
+  assert.deepEqual(groupCreatorSources(catalog).find(s => s.sourceId === 'Ix8nrNnmTUk').members, [members[1]])
+  for (const [index, entry] of members.entries()) {
+    assert.equal(entry.provenance.sourceUrl, 'https://www.youtube.com/watch?v=Ix8nrNnmTUk')
+    assert.match(entry.provenance.fields['partialBuild.item'].location, new RegExp(`슬롯 ${index + 1}`))
+    assert.match(entry.provenance.fields['partialBuild.actualStats'].location, new RegExp(`02:55.*슬롯 ${index + 1}`))
+    assert.match(entry.provenance.evidence, /메가갸라도스 개별 샘플/)
+  }
+})
+
+test('individual index contains every recorded member once regardless of source presentation', () => {
+  const individuals = individualCreatorSources(catalog)
+  assert.equal(individuals.length, 19)
+  assert.equal(new Set(individuals.map(s => s.id)).size, 19)
+  assert.deepEqual(individuals.map(s => s.members[0].id).sort(), catalog.map(e => e.id).sort())
+  assert.equal(individuals[0].members[0].pokemonKey, 'mega-gyarados')
+  assert.equal(individuals[0].members[0].featuredSample, true)
+  assert.ok(individuals.every(s => s.id === `individual:${s.members[0].id}` && s.members.length === 1 && s.partySize === null && s.contentKind === 'pokemon' && s.confirmedMemberCount === 1))
+  assert.ok(individuals.every(s => s.canonicalUrl === s.members[0].provenance.canonicalUrl && s.creator === s.members[0].creator && s.sourceId === s.members[0].provenance.sourceId))
+  assert.equal(individuals.filter(s => s.completeMemberCount === 1).length, 12)
+  assert.equal(individuals.filter(s => s.completeMemberCount === 0).length, 7)
+  assert.equal(filterCreatorSources(individuals, { language: 'ko', format: 'singles', query: 'hydreigon', contentKind: 'pokemon' }).length, 1)
+  assert.equal(individuals.filter(s => s.sourceId === 'Ix8nrNnmTUk').length, 6)
+  assert.equal(groupCreatorSources(catalog).filter(s => s.contentKind === 'party').length, 2)
+})
+
+test('related Mono rental six can prepare a separate party without changing catalog taxonomy or entries', () => {
+  const before = JSON.stringify(catalog.filter(e => e.provenance.sourceId === 'Ix8nrNnmTUk'))
+  const source = relatedCreatorParties.Ix8nrNnmTUk
+  assert.equal(source.contentKind, 'party')
+  assert.equal(source.partySize, 6)
+  assert.equal(source.completeMemberCount, 6)
+  assert.deepEqual(source.members.map(m => m.pokemonKey), ['hydreigon','mega-gyarados','archaludon','mega-lopunny','hippowdon','gholdengo'])
+  assert.ok(source.members.every(m => m.contentKind === 'party' && m !== catalog.find(e => e.id === m.id)))
+  const abilities = key => [...championsData.rows, ...additionalFormSpecs].find(row => row.key === key)?.abilities_ko ?? null
+  const prepared = prepareCreatorParty(source, abilities)
+  assert.ok(prepared)
+  assert.deepEqual(prepared.party.map(p => p.key), source.members.map(m => m.pokemonKey))
+  assert.equal(JSON.stringify(catalog.filter(e => e.provenance.sourceId === 'Ix8nrNnmTUk')), before)
 })
 
 test('original Chemie video has six detailed partial cards with unknown nature and effort, never importable', () => {
@@ -209,16 +242,15 @@ test('original Chemie video has six detailed partial cards with unknown nature a
   assert.match(source.members[0].provenance.evidence,/ABADTP47YC.*미확인/)
 })
 
-test('the real roster prepares Mono video as a six-party preset without replacing source pre-Mega abilities', () => {
+test('only the six-member blog prepares a Mono party, not the individual Mono video', () => {
   const sources = groupCreatorSources(catalog)
-  const abilities = key => championsData.rows.find(row => row.key === key)?.abilities_ko ?? null
+  const blogParty = sources.find(source => source.sourceId === '224319761655')
+  const abilities = key => [...championsData.rows, ...additionalFormSpecs].find(row => row.key === key)?.abilities_ko
+    ?? [blogParty.members.find(member => member.pokemonKey === key).build.ability]
   const monoVideo = sources.find(source => source.sourceId === 'Ix8nrNnmTUk')
-  const prepared = prepareCreatorParty(monoVideo, abilities)
-  assert.deepEqual(prepared.party.map(member => member.key), monoVideo.members.map(member => member.pokemonKey))
-  assert.equal(prepared.party.find(member => member.key === 'mega-gyarados').ability, '틀깨기')
-  assert.equal(prepared.party.find(member => member.key === 'mega-lopunny').ability, '배짱')
-  assert.equal(prepared.party.find(member => member.key === 'archaludon').item, '자몽열매')
-  assert.deepEqual(prepared.lockedMovesBySlot, monoVideo.members.map(member => member.build.moves))
+  assert.equal(prepareCreatorParty(monoVideo, abilities), null)
+  const prepared = prepareCreatorParty(sources.find(source => source.sourceId === '224319761655'), abilities)
+  assert.equal(prepared.party.length, 6)
   assert.equal(prepareCreatorParty(sources.find(source => source.sourceId === 'HQDEZg-Zgv8'), abilities), null)
 })
 
