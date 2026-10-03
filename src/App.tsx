@@ -4,10 +4,11 @@ import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_M
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
-import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, isVerifiedRankerSample, sanitizeLinkDrafts, type ContentKind, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, isVerifiedRankerSample, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, type CardStat } from './PokemonCardOverview'
 import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
@@ -6635,6 +6636,29 @@ export default function App() {
     }
   }
 
+  const creatorCard = (entry: CreatorSample) => {
+    const row = indexByKey.get(entry.pokemonKey) // No substitute species for unsupported forms.
+    const build = entry.build ?? entry.partialBuild
+    const member: PartyMember | null = row && baseIndexByKey.has(entry.pokemonKey) && build?.nature && build.evs ? {
+      key: entry.pokemonKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
+      picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: build.ability ?? '',
+    } : null
+    const stats: CardStat[] = EFFORT_STAT_OPTIONS.map(stat => ({
+      key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
+      value: row && member ? partyStatValue(row, member, stat.key) : null,
+      ev: build?.evs?.[stat.key] ?? null,
+    }))
+    const name = row ? displayName(row, siteLanguage) : entry.title.split(' — ').pop() || entry.pokemonKey
+    return <ReadonlyPokemonCard name={name} sprite={row?.sprite} types={row?.types}
+      ability={build?.ability} nature={build?.nature ? natureChipLabel(build.nature, siteLanguage) : undefined}
+      item={build?.item ? displayItemLabel(build.item, siteLanguage) : undefined}
+      itemSprite={build?.item ? itemSpriteSrc(entry.pokemonKey, build.item) : undefined}
+      stats={stats} labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), unknown: lt('미확인') }}
+      calculationNote={!baseIndexByKey.has(entry.pokemonKey) ? lt('지원되지 않는 포켓몬: 실수치 계산 불가') : undefined}>
+      {build?.moves ? <div className="creator-library-moves" aria-label={lt('기술 구성')}>{build.moves.map(move => <span key={move}>{move}</span>)}</div> : null}
+    </ReadonlyPokemonCard>
+  }
+
   return (
     <div className="app-shell">
       <header>
@@ -7772,12 +7796,8 @@ export default function App() {
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
-                    <div className="entry-card-top">
-                      {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
-                      {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="entry-sprite" /> : null}
-                      <div className="entry-card-head">
-                        <div className="party-card-header">
-                          <div className="party-card-title-block">
+                    {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
+                    <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types} name={
                             <label className="species-picker party-inline-species-picker">
                               <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
                                 <input
@@ -7826,13 +7846,7 @@ export default function App() {
                                 ) : null}
                               </div>
                             </label>
-                            {row ? <div className="type-line">
-                              <span className="type-badge-wrap">{row.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                            </div> : null}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    } />
                     {row ? <div className="party-meta-grid" onClick={(e) => e.stopPropagation()}>
                       <div className="party-meta-chip party-meta-chip-editor">
                         <button type="button" className="party-meta-chip-button" onClick={() => setActivePartyMetaEditor((prev) => prev?.idx === idx && prev.field === 'ability' ? null : { idx, field: 'ability' })}>
@@ -7975,23 +7989,7 @@ export default function App() {
                       </div>
                       {memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                     </div> : null}
-                    {row ? <div className="stat-preview-list">
-                      {EFFORT_STAT_OPTIONS.map((stat) => (
-                        <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button ${statThemeClass(stat.key)}`} onClick={(e) => {
-                          e.stopPropagation()
-                          setTuningModalIndex(idx)
-                        }}>
-                          <div className="stat-preview-topline">
-                            <span>{lt(stat.label)}</span>
-                            <strong>{partyStatValue(row, member, stat.key)}</strong>
-                          </div>
-                          <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(row, member, stat.key)) }} /></div>
-                          <div className="stat-preview-meta">
-                            <span className="stat-preview-ev">EV +{member.evs[stat.key]}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div> : null}
+                    {row ? <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))} onTune={() => setTuningModalIndex(idx)} /> : null}
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>{lt('기술 배치')}</strong>
@@ -8523,18 +8521,10 @@ export default function App() {
                 <p>{source.creator ?? lt('제작자 미확인')} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {source.platform}</p>
                 {source.contentKind === 'party' ? <>
                   <div className="creator-library-lineup" aria-label={`${lt('구성 일부 확인')}: ${source.confirmedMemberCount}`}>
-                    {source.members.map(member => <div key={member.id} className="creator-library-slot">
-                      {indexByKey.get(member.pokemonKey)?.sprite ? <img src={indexByKey.get(member.pokemonKey)!.sprite} alt="" loading="lazy" /> : <span aria-hidden="true">?</span>}
-                      <small>{indexByKey.get(member.pokemonKey) ? displayName(indexByKey.get(member.pokemonKey)!, siteLanguage) : member.pokemonKey}</small>
-                    </div>)}
+                    {source.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}
                   </div>
                   <div className="creator-library-completeness"><span>{lt('구성 일부 확인')} {source.confirmedMemberCount}</span><span>{lt('전체 파티 구성 미확인')}</span></div>
-                </> : <div className="creator-library-individual-hero">
-                  {indexByKey.get(source.members[0]?.pokemonKey)?.sprite ? <img src={indexByKey.get(source.members[0].pokemonKey)!.sprite} alt={displayName(indexByKey.get(source.members[0].pokemonKey)!, siteLanguage)} loading="lazy" /> : <span aria-hidden="true">?</span>}
-                  <div><strong>{indexByKey.get(source.members[0]?.pokemonKey) ? displayName(indexByKey.get(source.members[0].pokemonKey)!, siteLanguage) : lt('포켓몬 미확인')}</strong>
-                    <div className="creator-library-chips"><span>{lt('도구')}: {source.members[0]?.partialBuild?.item ?? '—'}</span><span>{lt('성격')}: {source.members[0]?.partialBuild?.nature ? natureChipLabel(source.members[0].partialBuild.nature, siteLanguage) : '—'}</span><span>{lt('특성')}: {source.members[0]?.partialBuild?.ability ?? '—'}</span><span>{lt('노력치 보정')}: {source.members[0]?.partialBuild?.evs ? Object.values(source.members[0].partialBuild.evs).reduce((sum, value) => sum + value, 0) : '—'}</span>{source.members[0]?.partialBuild?.moves ? source.members[0].partialBuild.moves.map(move => <span key={move}>{move}</span>) : <span>{lt('기술')}: —</span>}</div>
-                  </div>
-                </div>}
+                </> : <div className="creator-library-individual-card">{source.members[0] ? creatorCard(source.members[0]) : null}</div>}
                 <a href={source.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
                 {source.members.map((entry) => <details key={entry.id} className="creator-library-member">
                 <summary>{source.contentKind === 'party' ? (indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title) : lt('구성')} <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span></summary>
