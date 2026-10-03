@@ -1,0 +1,536 @@
+{
+  "version": 1,
+  "party": [
+    {
+      "key": "mega-lopunny",
+      "config": {
+        "nature": "jolly",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "이어롭나이트",
+      "ability": "배짱"
+    },
+    {
+      "key": "mega-delphox",
+      "config": {
+        "nature": "timid",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "마폭시나이트",
+      "ability": "부유"
+    },
+    {
+      "key": "garchomp",
+      "config": {
+        "nature": "jolly",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "",
+      "ability": "모래숨기"
+    },
+    {
+      "key": "toxapex",
+      "config": {
+        "nature": "bold",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "",
+      "ability": "무도한행동"
+    },
+    {
+      "key": "corviknight",
+      "config": {
+        "nature": "impish",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "",
+      "ability": "프레셔"
+    },
+    {
+      "key": "kingambit",
+      "config": {
+        "nature": "adamant",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "",
+      "ability": "오기"
+    }
+  ],
+  "opponents": [
+    {
+      "key": "rotom",
+      "item": "",
+      "ability": "부유",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    },
+    {
+      "key": "garchomp",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    },
+    {
+      "key": "primarina",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    },
+    {
+      "key": "dragapult",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    },
+    {
+      "key": "mimikyu",
+      "item": "",
+      "ability": "탈",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    },
+    {
+      "key": "meowscarada",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    }
+  ],
+  "selectedMy": 0,
+  "selectedOpp": 0,
+  "calcSwapSides": false,
+  "calcAttackStage": 0,
+  "calcDefenseStage": 0,
+  "calcHitCount": 3,
+  "calcWeather": "none",
+  "calcTerrain": "none",
+  "calcBurned": false,
+  "calcCritical": false,
+  "calcAttackerLowHp": false,
+  "calcTargetPoisoned": false,
+  "calcDefenderFullHp": false,
+  "calcDefenderDisguise": false,
+  "calcMovedAfterTarget": false,
+  "calcFaintedAllies": 0,
+  "calcRivalryMode": "neutral",
+  "calcParentalBond": false,
+  "calcDefenderStatused": false,
+  "calcElectromorphosisCharged": false,
+  "calcReflect": false,
+  "calcLightScreen": false,
+  "calcAuroraVeil": false,
+  "calcFriendGuard": false,
+  "calcTypeChangeStab": true,
+  "calcConditionalPowerValues": {},
+  "calcOpponentBulkPreset": "neutral-0",
+  "calcOpponentHpEv": 0,
+  "calcOpponentDefenseEv": 0,
+  "calcOpponentSpDefenseEv": 0,
+  "calcOpponentDefenseNature": 1,
+  "calcOpponentSpDefenseNature": 1,
+  "calcOpponentOffensePreset": "neutral-0",
+  "calcOpponentAttackEv": 0,
+  "calcOpponentSpAttackEv": 0,
+  "calcOpponentAttackNature": 1,
+  "calcOpponentSpAttackNature": 1,
+  "battleNote": "",
+  "confirmedMovesByKey": {},
+  "mainSection": "single",
+  "sampleForge": {
+    "key": "mega-lopunny",
+    "config": {
+      "nature": "jolly",
+      "scarf": false,
+      "speedStage": 0
+    },
+    "picked": false,
+    "evs": {
+      "hp": 0,
+      "attack": 0,
+      "defense": 0,
+      "spAttack": 0,
+      "spDefense": 0,
+      "speed": 0
+    },
+    "tuning": {
+      "magicNumber": 0,
+      "maxValue": 0
+    },
+    "item": "이어롭나이트",
+    "ability": "배짱"
+  },
+  "sampleLockedMoves": [],
+  "savedSamples": [
+    {
+      "id": "sample-1791034792504",
+      "label": "메가이어롭 · 명랑 (스피드↑ 특수공격↓)",
+      "member": {
+        "key": "mega-lopunny",
+        "config": {
+          "nature": "jolly",
+          "scarf": false,
+          "speedStage": 0
+        },
+        "picked": false,
+        "evs": {
+          "hp": 0,
+          "attack": 0,
+          "defense": 0,
+          "spAttack": 0,
+          "spDefense": 0,
+          "speed": 0
+        },
+        "tuning": {
+          "magicNumber": 0,
+          "maxValue": 0
+        },
+        "item": "이어롭나이트",
+        "ability": "배짱"
+      },
+      "lockedMoves": []
+    }
+  ],
+  "savedPartyPresets": [
+    {
+      "id": "party-1791034800500",
+      "label": "파티 이름 1",
+      "party": [
+        {
+          "key": "mega-lopunny",
+          "config": {
+            "nature": "jolly",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "이어롭나이트",
+          "ability": "배짱"
+        },
+        {
+          "key": "mega-delphox",
+          "config": {
+            "nature": "timid",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "마폭시나이트",
+          "ability": "부유"
+        },
+        {
+          "key": "garchomp",
+          "config": {
+            "nature": "jolly",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "",
+          "ability": "모래숨기"
+        },
+        {
+          "key": "toxapex",
+          "config": {
+            "nature": "bold",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "",
+          "ability": "무도한행동"
+        },
+        {
+          "key": "corviknight",
+          "config": {
+            "nature": "impish",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "",
+          "ability": "프레셔"
+        },
+        {
+          "key": "kingambit",
+          "config": {
+            "nature": "adamant",
+            "scarf": false,
+            "speedStage": 0
+          },
+          "picked": false,
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "tuning": {
+            "magicNumber": 0,
+            "maxValue": 0
+          },
+          "item": "",
+          "ability": "오기"
+        }
+      ],
+      "lockedMovesBySlot": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    }
+  ],
+  "sampleWorkbenchTab": "builder",
+  "creatorLinkDrafts": [],
+  "sampleSpeedTargets": [
+    {
+      "key": "garchomp",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": true,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1
+    }
+  ],
+  "sampleDamageTargets": [
+    {
+      "key": "garchomp",
+      "item": "",
+      "ability": "",
+      "notes": "",
+      "revealedMoves": [],
+      "natureBoost": false,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 0,
+      "defenseEv": 0,
+      "spDefenseEv": 0,
+      "speedEv": 32,
+      "defenseNature": 1,
+      "spDefenseNature": 1,
+      "moveName": ""
+    }
+  ]
+}

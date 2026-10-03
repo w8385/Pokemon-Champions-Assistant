@@ -1,5 +1,4 @@
 import React from 'react'
-import championsData from './pokemon_champions_verified_data.json'
 import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
@@ -10,6 +9,8 @@ import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
+import { validateBackup } from './backupValidation'
+import { additionalFormSpecs, championsData } from './effectiveRoster'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MetaListField, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
@@ -106,6 +107,7 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '링크 형식': 'Link format', '실수치 미기록': 'Actual stats not recorded',
     '파티 소개': 'Party introductions', '개별 포켓몬 샘플': 'Individual Pokémon samples', '확인 대기': 'Pending classification', '전체 파티 구성 미확인': 'Full party details unconfirmed', '구성 일부 확인': 'Members with partial details', '분류·구성 확인 대기': 'Classification and build pending',
     '형식 미확인: 원본에 싱글/더블 표기 없음': 'Format unknown: source does not specify singles or doubles', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': 'Only confirmed fields are shown. Incomplete builds cannot be imported.', '구성 근거 이미지': 'Build evidence image', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': 'No confirmed builds match. Video sources below await build review.', '구성 확인 대기 · 영상 자료': 'Videos awaiting build review', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': 'Only video titles are confirmed; these cannot be used or imported as builds.',
     '실능 스피드라인': 'Actual Speed Line', '빠른 순 → 느린 순': 'Fastest → Slowest', '검색 · 이름/폼': 'Search Pokémon or form', '메가폼 포함': 'All forms', '메가폼 제외': 'Exclude Mega', '메가폼만': 'Mega only', '성격 보정 +10%': 'Speed +10%', '성격 보정 없음': 'Neutral nature', '성격 보정 -10%': 'Speed −10%', '챔피언스 노력 포인트': 'Champions Speed effort points', '검색 결과 없음': 'No matching Pokémon', '실능 스피드라인 안내': 'Level 50 · IV 31 · Champions effort 0–32 added before nature · no item, ability, stages, or field effects. Speed ties share a value; listed by key.', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': 'Browse verified Pokémon and forms sorted by actual Speed.', '포켓몬 수': 'Pokémon shown', '기본 스피드': 'Base Speed',
@@ -144,6 +146,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '링크 형식': 'リンクの形式', '실수치 미기록': '実数値の記録なし',
     '파티 소개': 'パーティ紹介', '개별 포켓몬 샘플': '個別ポケモンサンプル', '확인 대기': '分類待ち', '전체 파티 구성 미확인': 'パーティ全体の構成は未確認', '구성 일부 확인': '一部構成を確認したメンバー', '분류·구성 확인 대기': '分類・構成の確認待ち',
     '형식 미확인: 원본에 싱글/더블 표기 없음': '形式未確認：原典にシングル・ダブルの記載なし', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': '確認済みの項目のみ表示します。未完成の構成は取り込めません。', '구성 근거 이미지': '構成の根拠画像', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': '該当する確認済み構成はありません。下の動画は構成確認待ちです。', '구성 확인 대기 · 영상 자료': '構成確認待ちの動画', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': '動画のタイトルのみ確認済みです。構成として利用・取込はできません。',
     '실능 스피드라인': '実数値素早さライン', '빠른 순 → 느린 순': '速い順 → 遅い順', '검색 · 이름/폼': 'ポケモン・フォルム検索', '메가폼 포함': '全フォルム', '메가폼 제외': 'メガを除外', '메가폼만': 'メガのみ', '성격 보정 +10%': '素早さ+10%', '성격 보정 없음': '性格補正なし', '성격 보정 -10%': '素早さ−10%', '챔피언스 노력 포인트': 'チャンピオンズ素早さ努力ポイント', '검색 결과 없음': '該当ポケモンなし', '실능 스피드라인 안내': 'Lv.50・個体値31・チャンピオンズ努力ポイント0～32を性格補正前に加算。道具・特性・ランク・場の効果なし。同速はキー順。', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': '確認済みポケモンとフォルムを実数値素早さ順に表示。', '포켓몬 수': '表示数', '기본 스피드': '種族値素早さ',
@@ -241,7 +244,6 @@ const MAX_OPPONENTS = 6
 const CHAMPIONS_EFFORT_CAP = 66
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
-const STAT_GAUGE_MAX = 255
 const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-abomasnow': 'abomasite',
   'mega-absol': 'absolite',
@@ -498,17 +500,7 @@ function makeFormRow(base: Row, form: {
 
 const baseRows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
 const baseIndexByKey = new Map(baseRows.map((row) => [row.key, row]))
-const extraFormRows: Row[] = [
-  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10008, key: 'rotom-heat', name_ko: '히트로토무', name_en: 'Rotom Heat', name_ja: 'ヒートロトム', types: ['electric', 'fire'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10008 }),
-  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10009, key: 'rotom-wash', name_ko: '워시로토무', name_en: 'Rotom Wash', name_ja: 'ウォッシュロトム', types: ['electric', 'water'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10009 }),
-  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10010, key: 'rotom-frost', name_ko: '프로스트로토무', name_en: 'Rotom Frost', name_ja: 'フロストロトム', types: ['electric', 'ice'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10010 }),
-  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10011, key: 'rotom-fan', name_ko: '스핀로토무', name_en: 'Rotom Fan', name_ja: 'スピンロトム', types: ['electric', 'flying'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10011 }),
-  makeFormRow(baseIndexByKey.get('rotom')!, { id: 10012, key: 'rotom-mow', name_ko: '커트로토무', name_en: 'Rotom Mow', name_ja: 'カットロトム', types: ['electric', 'grass'], hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86, spriteId: 10012 }),
-  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10030, key: 'gourgeist-small', name_ko: '소형 호바귀', name_en: 'Gourgeist Small', name_ja: 'パンプジン(スモール)', types: ['ghost', 'grass'], hp: 55, attack: 85, defense: 122, spAttack: 58, spDefense: 75, speed: 99, spriteId: 10030 }),
-  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 711, key: 'gourgeist-average', name_ko: '보통 호바귀', name_en: 'Gourgeist Average', name_ja: 'パンプジン', types: ['ghost', 'grass'], hp: 65, attack: 90, defense: 122, spAttack: 58, spDefense: 75, speed: 84, spriteId: 711 }),
-  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10031, key: 'gourgeist-large', name_ko: '대형 호바귀', name_en: 'Gourgeist Large', name_ja: 'パンプジン(ラージ)', types: ['ghost', 'grass'], hp: 75, attack: 95, defense: 122, spAttack: 58, spDefense: 75, speed: 69, spriteId: 10031 }),
-  makeFormRow(baseIndexByKey.get('gourgeist')!, { id: 10032, key: 'gourgeist-super', name_ko: '특대형 호바귀', name_en: 'Gourgeist Super', name_ja: 'パンプジン(スーパー)', types: ['ghost', 'grass'], hp: 85, attack: 100, defense: 122, spAttack: 58, spDefense: 75, speed: 54, spriteId: 10032 }),
-]
+const extraFormRows: Row[] = additionalFormSpecs.map(form => makeFormRow(baseIndexByKey.get(form.key.split('-')[0])!, form))
 
 const rows = [...baseRows, ...extraFormRows]
 const indexByKey = new Map(rows.map((row) => [row.key, row]))
@@ -867,10 +859,6 @@ function statThemeClass(stat: EffortStatKey) {
     case 'spDefense': return 'stat-theme-sp-defense'
     case 'speed': return 'stat-theme-speed'
   }
-}
-
-function statGaugePercent(value: number) {
-  return `${Math.max(0, Math.min(100, (value / STAT_GAUGE_MAX) * 100))}%`
 }
 
 function moveTypeThemeClass(type: string | null | undefined) {
@@ -1688,9 +1676,10 @@ function parseViewStateFromUrl(): ViewState | null {
           ? 'home'
           : undefined
     const activeTabParam = routeUrl.searchParams.get('tab')
-    const activeTab = activeTabParam === 'party' || activeTabParam === 'pick' || activeTabParam === 'speed' || activeTabParam === 'power'
-      ? activeTabParam
-      : undefined
+    const activeTab = mainSection === 'double' && activeTabParam === 'speed' ? 'power'
+      : activeTabParam === 'party' || activeTabParam === 'pick' || activeTabParam === 'speed' || activeTabParam === 'power'
+        ? activeTabParam
+        : undefined
     const sampleTabParam = routeUrl.searchParams.get('sampleTab')
     const sampleWorkbenchTab = sampleTabParam === 'builder' || sampleTabParam === 'speed' || sampleTabParam === 'damage' || sampleTabParam === 'library' || sampleTabParam === 'rankers'
       ? sampleTabParam
@@ -2193,10 +2182,10 @@ function matchupHints(attacker: Row, defender: Row) {
   return { bestAttack, worstDefense, resistAttack }
 }
 
-function togglePicked<T extends { picked: boolean }>(list: T[], idx: number, maxPicks = 3) {
+function togglePicked<T extends { key: string; picked: boolean }>(list: T[], idx: number, maxPicks = 3) {
   const next = [...list]
   const current = next[idx]
-  if (!current) return list
+  if (!current || !current.key) return list
   const pickedCount = next.filter((item) => item.picked).length
   if (!current.picked && pickedCount >= maxPicks) return list
   next[idx] = { ...current, picked: !current.picked }
@@ -3930,7 +3919,10 @@ export default function App() {
   const [speedLineEffort, setSpeedLineEffort] = React.useState(32)
   const [speedLineNature, setSpeedLineNature] = React.useState<SpeedNature>('boost')
   const [speedLineForms, setSpeedLineForms] = React.useState<SpeedLineOptions['forms']>('all')
-  const [activeTab, setActiveTab] = React.useState<MainTab>(() => viewState?.activeTab ?? persisted?.activeTab ?? 'party')
+  const [activeTab, setActiveTab] = React.useState<MainTab>(() => {
+    const resolvedTab = viewState?.activeTab ?? persisted?.activeTab ?? 'party'
+    return (viewState?.mainSection ?? persisted?.mainSection) === 'double' && resolvedTab === 'speed' ? 'power' : resolvedTab
+  })
   const [selectedDamageMove, setSelectedDamageMove] = React.useState<DamageMoveSelection | null>(null)
   const [calcMyMegaKey, setCalcMyMegaKey] = React.useState<string | null>(null)
   const [calcOppMegaKey, setCalcOppMegaKey] = React.useState<string | null>(null)
@@ -6483,22 +6475,59 @@ export default function App() {
     if (!file) return
     try {
       const text = await file.text()
-      const parsed = JSON.parse(text) as ImportExportPayload
+      const parsed = validateBackup(JSON.parse(text))
+      // Prepare the complete import before any setter: a failed conversion must not partially apply it.
       const nextParty = sanitizeParty(parsed.party)
-      setParty(nextParty)
-      setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
       const nextOpponents = sanitizeOpponents(parsed.opponents)
+      const nextSavedSamples = sanitizeSavedSamples(parsed.savedSamples)
+      const nextSavedPartyPresets = sanitizeSavedPartyPresets(parsed.savedPartyPresets)
+      const nextCreatorLinkDrafts = sanitizeLinkDrafts(parsed.creatorLinkDrafts)
+      const nextSampleSpeedTargets = sanitizeSampleSpeedTargets(parsed.sampleSpeedTargets)
+      const nextSampleDamageTargets = sanitizeSampleDamageTargets(parsed.sampleDamageTargets)
+      const nextConfirmedMovesByKey = sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey)
+      const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
+      const nextSampleLockedMoves = parsed.sampleLockedMoves ? sanitizeMoveSlotList(parsed.sampleLockedMoves) : nextConfirmedMovesByKey[nextSampleForge.key] ?? []
+      const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
+      const nextBulkState = sanitizeOpponentBulkState({
+        hpEv: parsed.calcOpponentHpEv,
+        defenseEv: parsed.calcOpponentDefenseEv,
+        spDefenseEv: parsed.calcOpponentSpDefenseEv,
+        defenseNature: parsed.calcOpponentDefenseNature,
+        spDefenseNature: parsed.calcOpponentSpDefenseNature,
+      }, nextBulkPreset)
+      const nextOffensePreset = sanitizeOpponentOffensePreset(parsed.calcOpponentOffensePreset)
+      const nextOffenseState = sanitizeOpponentOffenseState({
+        attackEv: parsed.calcOpponentAttackEv,
+        spAttackEv: parsed.calcOpponentSpAttackEv,
+        attackNature: parsed.calcOpponentAttackNature,
+        spAttackNature: parsed.calcOpponentSpAttackNature,
+      }, nextOffensePreset)
+      const nextPartyItemDrafts = nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage))
+      const nextOpponentItemDrafts = nextOpponents.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage))
+      const nextPartySearch = nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage))
+      const nextOpponentSearch = nextOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage))
+      const nextSampleItemDraft = displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage)
+      const nextSampleSearch = searchDisplayLabel(nextSampleForge.key, siteLanguage)
+      const nextHitCount = Number.isFinite(Number(parsed.calcHitCount)) ? Math.max(1, Math.trunc(Number(parsed.calcHitCount))) : 3
+      const nextFaintedAllies = Number.isFinite(Number(parsed.calcFaintedAllies)) ? Math.max(0, Math.min(5, Math.trunc(Number(parsed.calcFaintedAllies)))) : 0
+      const nextAttackStage = clampBattleStage(parsed.calcAttackStage)
+      const nextDefenseStage = clampBattleStage(parsed.calcDefenseStage)
+      const nextSelectedMy = sanitizeSelectedIndex(parsed.selectedMy, nextParty.length)
+      const nextSelectedOpp = sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length)
+
+      setParty(nextParty)
+      setPartyItemDrafts(nextPartyItemDrafts)
       setOpponents(nextOpponents)
-      setOpponentItemDrafts(nextOpponents.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+      setOpponentItemDrafts(nextOpponentItemDrafts)
       setOpponentAbilityDrafts(nextOpponents.map((member) => member.ability ?? ''))
-      setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
-      setOpponentSearch(nextOpponents.map((member) => searchDisplayLabel(member.key, siteLanguage)))
-      setSelectedMy(sanitizeSelectedIndex(parsed.selectedMy, nextParty.length))
-      setSelectedOpp(sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length))
+      setPartySearch(nextPartySearch)
+      setOpponentSearch(nextOpponentSearch)
+      setSelectedMy(nextSelectedMy)
+      setSelectedOpp(nextSelectedOpp)
       setCalcSwapSides(Boolean(parsed.calcSwapSides))
-      setCalcAttackStage(clampBattleStage(parsed.calcAttackStage))
-      setCalcDefenseStage(clampBattleStage(parsed.calcDefenseStage))
-      setCalcHitCount(Number.isFinite(Number(parsed.calcHitCount)) ? Math.max(1, Math.trunc(Number(parsed.calcHitCount))) : 3)
+      setCalcAttackStage(nextAttackStage)
+      setCalcDefenseStage(nextDefenseStage)
+      setCalcHitCount(nextHitCount)
       setCalcWeather(parsed.calcWeather ?? 'none')
       setCalcTerrain(parsed.calcTerrain ?? 'none')
       setCalcBurned(Boolean(parsed.calcBurned))
@@ -6508,7 +6537,7 @@ export default function App() {
       setCalcDefenderFullHp(Boolean(parsed.calcDefenderFullHp))
       setCalcDefenderDisguise(Boolean(parsed.calcDefenderDisguise))
       setCalcMovedAfterTarget(Boolean(parsed.calcMovedAfterTarget))
-      setCalcFaintedAllies(Number.isFinite(Number(parsed.calcFaintedAllies)) ? Math.max(0, Math.min(5, Math.trunc(Number(parsed.calcFaintedAllies)))) : 0)
+      setCalcFaintedAllies(nextFaintedAllies)
       setCalcRivalryMode(parsed.calcRivalryMode === 'same' || parsed.calcRivalryMode === 'opposite' ? parsed.calcRivalryMode : 'neutral')
       setCalcParentalBond(Boolean(parsed.calcParentalBond))
       setCalcDefenderStatused(Boolean(parsed.calcDefenderStatused))
@@ -6519,47 +6548,30 @@ export default function App() {
       setCalcFriendGuard(Boolean(parsed.calcFriendGuard))
       setCalcTypeChangeStab(parsed.calcTypeChangeStab !== false)
       setSampleWorkbenchTab(parsed.sampleWorkbenchTab ?? 'builder')
-      setCreatorLinkDrafts(sanitizeLinkDrafts(parsed.creatorLinkDrafts))
-      setSampleSpeedTargets(sanitizeSampleSpeedTargets(parsed.sampleSpeedTargets))
-      setSampleDamageTargets(sanitizeSampleDamageTargets(parsed.sampleDamageTargets))
+      setCreatorLinkDrafts(nextCreatorLinkDrafts)
+      setSampleSpeedTargets(nextSampleSpeedTargets)
+      setSampleDamageTargets(nextSampleDamageTargets)
       setCalcConditionalPowerValues((parsed.calcConditionalPowerValues && typeof parsed.calcConditionalPowerValues === 'object') ? parsed.calcConditionalPowerValues as Record<string, ConditionalPowerValue> : {})
-      const nextBulkPreset = sanitizeOpponentBulkPreset(parsed.calcOpponentBulkPreset)
-      const nextBulkState = sanitizeOpponentBulkState({
-        hpEv: parsed.calcOpponentHpEv,
-        defenseEv: parsed.calcOpponentDefenseEv,
-        spDefenseEv: parsed.calcOpponentSpDefenseEv,
-        defenseNature: parsed.calcOpponentDefenseNature,
-        spDefenseNature: parsed.calcOpponentSpDefenseNature,
-      }, nextBulkPreset)
       setCalcOpponentBulkPreset(nextBulkPreset)
       setCalcOpponentHpEv(nextBulkState.hpEv)
       setCalcOpponentDefenseEv(nextBulkState.defenseEv)
       setCalcOpponentSpDefenseEv(nextBulkState.spDefenseEv)
       setCalcOpponentDefenseNature(nextBulkState.defenseNature)
       setCalcOpponentSpDefenseNature(nextBulkState.spDefenseNature)
-      const nextOffensePreset = sanitizeOpponentOffensePreset(parsed.calcOpponentOffensePreset)
-      const nextOffenseState = sanitizeOpponentOffenseState({
-        attackEv: parsed.calcOpponentAttackEv,
-        spAttackEv: parsed.calcOpponentSpAttackEv,
-        attackNature: parsed.calcOpponentAttackNature,
-        spAttackNature: parsed.calcOpponentSpAttackNature,
-      }, nextOffensePreset)
       setCalcOpponentOffensePreset(nextOffensePreset)
       setCalcOpponentAttackEv(nextOffenseState.attackEv)
       setCalcOpponentSpAttackEv(nextOffenseState.spAttackEv)
       setCalcOpponentAttackNature(nextOffenseState.attackNature)
       setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
-      const nextConfirmedMovesByKey = sanitizeConfirmedMovesByKey(parsed.confirmedMovesByKey)
       setConfirmedMovesByKey(nextConfirmedMovesByKey)
       setMainSection(parsed.mainSection ?? 'home')
-      const nextSampleForge = parsed.sampleForge ? sanitizeParty([parsed.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()
       setSampleForge(nextSampleForge)
-      setSampleLockedMoves(parsed.sampleLockedMoves ? sanitizeMoveSlotList(parsed.sampleLockedMoves) : nextConfirmedMovesByKey[nextSampleForge.key] ?? [])
-      setSampleItemDraft(displayItemLabel(visibleChampionsItem(nextSampleForge.key, nextSampleForge.item), siteLanguage))
-      setSampleSearch(searchDisplayLabel(nextSampleForge.key, siteLanguage))
-      setSavedSamples(sanitizeSavedSamples(parsed.savedSamples))
-      setSavedPartyPresets(sanitizeSavedPartyPresets(parsed.savedPartyPresets))
+      setSampleLockedMoves(nextSampleLockedMoves)
+      setSampleItemDraft(nextSampleItemDraft)
+      setSampleSearch(nextSampleSearch)
+      setSavedSamples(nextSavedSamples)
+      setSavedPartyPresets(nextSavedPartyPresets)
       setActivePartyPresetId(null)
       setSampleLabelDraft('')
     } catch {
@@ -6635,6 +6647,13 @@ export default function App() {
       event.target.value = ''
     }
   }
+
+  const visibleSources = filterCreatorSources(groupCreatorSources(catalog), {
+    language: libraryLanguage, format: libraryFormat, query: libraryQuery,
+    contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind,
+  }).filter(source => sampleWorkbenchTab === 'rankers'
+    ? source.members.some(isVerifiedRankerSample)
+    : source.confirmedMemberCount > 0)
 
   const creatorCard = (entry: CreatorSample) => {
     const row = indexByKey.get(entry.pokemonKey) // No substitute species for unsupported forms.
@@ -6961,7 +6980,7 @@ export default function App() {
                   <p className="muted">{lt('포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.')}</p>
                 </div>
                 <div className="home-route-grid home-route-grid-compact">
-                  <button type="button" className="home-route-card calm" onClick={() => setMainSection('sample')}>
+                  <button type="button" className="home-route-card calm" onClick={() => { setMainSection('sample'); setSampleWorkbenchTab('builder') }}>
                     <div className="home-route-card-copy">
                       <span className="home-route-eyebrow">{lt('샘플 조정')}</span>
                       <strong>{lt('포켓몬 샘플 빌더')}</strong>
@@ -7802,6 +7821,7 @@ export default function App() {
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
                     {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
+                    <button type="button" className={`pick-chip ${member.picked ? 'confirmed' : ''}`} disabled={!member.key || (!member.picked && pickedParty.length >= 3)} aria-pressed={member.picked} onClick={() => setParty((prev) => togglePicked(prev, idx))}>{lt(member.picked ? '선출 추정 해제' : '선출 추정 체크')}</button>
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types} name={
                             <label className="species-picker party-inline-species-picker">
                               <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
@@ -8186,6 +8206,7 @@ export default function App() {
                 <div className="entry-card-head">
                   <div className="row-between compact-gap">
                     <strong>{oppMember.key && oppRow ? displayName(oppRow, siteLanguage) : emptySlotLabel(selectedOpp, siteLanguage)}</strong>
+                    <button type="button" className={`pick-chip ${oppMember.picked ? 'confirmed' : ''}`} disabled={!oppMember.key || (!oppMember.picked && pickedOpponents.length >= 3)} aria-pressed={oppMember.picked} onClick={() => setOpponents((prev) => togglePicked(prev, selectedOpp))}>{lt(oppMember.picked ? '선출 추정 해제' : '선출 추정 체크')}</button>
                   </div>
                   {oppMember.key && oppRow ? <div className="type-badge-wrap">{oppRow.types.map((type) => <TypeBadgeImage key={`${oppRow.key}-${type}`} type={type} />)}</div> : null}
                 </div>
@@ -8521,7 +8542,7 @@ export default function App() {
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <div className="creator-library-list">
-              {filterCreatorSources(groupCreatorSources(catalog), { language: libraryLanguage, format: libraryFormat, query: libraryQuery, contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind }).filter(source => sampleWorkbenchTab === 'rankers' ? source.members.some(isVerifiedRankerSample) : source.confirmedMemberCount > 0).map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
+              {visibleSources.map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
                 <strong>{source.title}</strong> <span className="pick-badge">{source.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')}</span>
                 <p>{source.creator ?? lt('제작자 미확인')} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')} · {source.platform}</p>
                 {source.contentKind === 'party' ? <>
@@ -8534,14 +8555,6 @@ export default function App() {
                 {source.members.map((entry) => <details key={entry.id} className="creator-library-member">
                 <summary>{source.contentKind === 'party' ? (indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title) : lt('구성')} <span className="pick-badge">{canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? lt('검증 완료') : lt('부분 확인')}</span></summary>
                 {entry.rank ? <p>{entry.rank}</p> : null}
-                {entry.partialBuild ? <div className="creator-library-build">
-                  <span>{lt('성격')}: {entry.partialBuild.nature ? natureLabel(entry.partialBuild.nature, siteLanguage) : lt('미확인')}</span>
-                  <span>{lt('도구')}: {entry.partialBuild.item ?? lt('미확인')}</span>
-                  <span>{lt('특성')}: {entry.partialBuild.ability ?? lt('미확인')}</span>
-                  {entry.partialBuild.evs ? <span>{lt('노력치 보정')}: {(['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const).map((stat) => `${lt(({ hp: '체력', attack: '공격', defense: '방어', spAttack: '특공', spDefense: '특방', speed: '스피드' })[stat])} ${entry.partialBuild!.evs![stat]}`).join(' · ')}</span> : null}
-                  {entry.partialBuild?.moves ? <span>{lt('기술 구성')}: {entry.partialBuild.moves.join(' · ')}</span> : null}
-
-                </div> : null}
                 {entry.partialBuild ? <a href={entry.provenance.fields['partialBuild.moves']?.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a> : null}
                 {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
                   if (!canImportCreatorSample(entry)) return
@@ -8553,7 +8566,7 @@ export default function App() {
                 }}>{lt('빌더로 가져오기')}</button> : null}
                 </details>)}
               </article>)}
-              {!filterCreatorSources(groupCreatorSources(catalog), { language: libraryLanguage, format: libraryFormat, query: libraryQuery, contentKind: sampleWorkbenchTab === 'rankers' ? 'all' : libraryContentKind }).some(source => sampleWorkbenchTab === 'rankers' ? source.members.some(isVerifiedRankerSample) : source.confirmedMemberCount > 0) ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
+              {!visibleSources.length ? <p className="muted" role="status">{sampleWorkbenchTab === 'rankers' ? lt('순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.') : lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
             </div>
             {sampleWorkbenchTab === 'library' ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{filterCreatorSamples(catalog.filter((entry) => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery }).map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
@@ -8751,20 +8764,10 @@ export default function App() {
                   </div> : null}
                 </div>
               </div>
-              <div className="stat-preview-list sample-stat-preview-list">
-                {EFFORT_STAT_OPTIONS.map((stat) => (
-                  <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button sample-stat-preview-row ${statThemeClass(stat.key)}`} onClick={() => setSampleTuningModalOpen(true)}>
-                    <div className="stat-preview-topline sample-stat-topline">
-                      <span>{lt(stat.label)}</span>
-                      <strong>{partyStatValue(sampleRow, sampleForge, stat.key)}</strong>
-                    </div>
-                    <div className="stat-preview-bar"><span style={{ width: statGaugePercent(partyStatValue(sampleRow, sampleForge, stat.key)) }} /></div>
-                    <div className="stat-preview-meta">
-                      <span className="stat-preview-ev sample-stat-ev">EV +{sampleForge.evs[stat.key]}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({
+                key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
+                value: partyStatValue(sampleRow, sampleForge, stat.key), ev: sampleForge.evs[stat.key],
+              }))} className="sample-stat-preview-list" sampleStyle onTune={() => setSampleTuningModalOpen(true)} />
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <>
@@ -9436,7 +9439,7 @@ export default function App() {
           </div>}
           </div>
         </section>
-        <section className="panel wide">
+        {['builder', 'speed', 'damage'].includes(sampleWorkbenchTab) ? <section className="panel wide">
           <div className="sample-builder-action-card">
             <div className="sample-builder-action-head">
               <strong>{lt('저장/적용')}</strong>
@@ -9467,7 +9470,7 @@ export default function App() {
             </div>
             <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{applyToSlotLabel(selectedMy, siteLanguage)}</button>
           </div>
-        </section>
+        </section> : null}
         <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">

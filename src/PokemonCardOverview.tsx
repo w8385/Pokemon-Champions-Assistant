@@ -30,16 +30,17 @@ export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '' }:
   </div>
 }
 
-export function PokemonStatGrid({ stats, onTune, unknown = '미확인', className = '' }: { stats: CardStat[]; onTune?: () => void; unknown?: string; className?: string }) {
+export function PokemonStatGrid({ stats, onTune, unknown = '미확인', className = '', sampleStyle = false }: { stats: CardStat[]; onTune?: () => void; unknown?: string; className?: string; sampleStyle?: boolean }) {
   return <div className={`stat-preview-list ${className}`.trim()}>{stats.map(stat => {
     const content = <>
-      <div className="stat-preview-topline"><span>{stat.label}</span><strong>{stat.value ?? unknown}</strong></div>
+      <div className={`stat-preview-topline ${sampleStyle ? 'sample-stat-topline' : ''}`.trim()}><span>{stat.label}</span><strong>{stat.value ?? unknown}</strong></div>
       <div className="stat-preview-bar"><span style={{ width: stat.value === null ? '0%' : `${Math.max(0, Math.min(100, (stat.value / 255) * 100))}%` }} /></div>
-      <div className="stat-preview-meta"><span className="stat-preview-ev">{stat.ev === null ? unknown : `EV +${stat.ev}`}</span></div>
+      <div className="stat-preview-meta"><span className={`stat-preview-ev ${sampleStyle ? 'sample-stat-ev' : ''}`.trim()}>{stat.ev === null ? unknown : `EV +${stat.ev}`}</span></div>
     </>
+    const rowClass = `stat-preview-row ${onTune ? 'stat-preview-button ' : ''}${sampleStyle ? 'sample-stat-preview-row ' : ''}${stat.theme}`
     return onTune
-      ? <button key={stat.key} type="button" className={`stat-preview-row stat-preview-button ${stat.theme}`} onClick={e => { e.stopPropagation(); onTune() }}>{content}</button>
-      : <div key={stat.key} className={`stat-preview-row ${stat.theme}`}>{content}</div>
+      ? <button key={stat.key} type="button" className={rowClass} onClick={e => { e.stopPropagation(); onTune() }}>{content}</button>
+      : <div key={stat.key} className={rowClass}>{content}</div>
   })}</div>
 }
 

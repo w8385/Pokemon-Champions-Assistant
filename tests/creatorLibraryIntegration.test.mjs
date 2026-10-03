@@ -19,8 +19,8 @@ test('ranker samples have a distinct menu and direct route', () => {
   assert.match(app, /header-primary-tab[^\n]*setSampleWorkbenchTab\('rankers'\)/)
 })
 test('sample cards show verified partial fields and separate source-only leads', () => {
-  assert.match(app, /entry\.partialBuild\?\.moves/)
-  assert.match(app, /entry\.partialBuild\.evs/)
+  assert.match(app, /stats=\{stats\}/)
+  assert.match(app, /build\?\.moves\s*\?\s*<div className="creator-library-moves"/)
   assert.match(app, /catalog\.filter\(\(entry\) => !entry\.partialBuild && entry\.contentKind === 'unknown'\)/)
   assert.match(app, /형식 미확인: 원본에 싱글\/더블 표기 없음/)
 })
