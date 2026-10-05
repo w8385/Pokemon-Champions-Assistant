@@ -41,7 +41,7 @@ test('unselected and unknown references do not invent comparisons, but retain sc
 test('investment enumerates normal tie and strict pass with predecessor', () => {
   const target = buildSpeedScenario(charizard, 32, 'boost', 'normal')
   const result = calculateSpeedInvestment(garchomp, 'boost', 31, target)
-  assert.deepEqual(result, { targetSpeed: 167, tieEffort: 30, passEffort: 31, currentSpeed: 168, maxSpeed: 169, alreadyAhead: true, additionalEffort: 0, tieSpeed: 167, passSpeed: 168, previousPassSpeed: 167 })
+  assert.deepEqual(result, { targetSpeed: 167, tieEffort: 30, passEffort: 31, currentActualSpeed: 168, currentSpeed: 168, maxActualSpeed: 169, maxSpeed: 169, alreadyAhead: true, additionalEffort: 0, tieSpeed: 167, passSpeed: 168, previousPassSpeed: 167 })
 })
 test('investment uses target scarf effective speed and independently fixed reference nature', () => {
   const base150 = { ...garchomp, speed: 150 }

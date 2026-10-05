@@ -29,11 +29,11 @@ test('v1 omitted items remains normal; absent and v2 default both', () => {
   assert.equal(parseSpeedLineState(new URLSearchParams('my=0&opp=1')).state.items, 'both')
   assert.equal(parseSpeedLineState(new URLSearchParams('slv=2')).state.items, 'both')
 })
-test('v2 roundtrip persists committed target identity and item but never drafts or affects slots', () => {
+test('v3 roundtrip persists committed target identity and item but never drafts or affects slots', () => {
   const params = new URLSearchParams('my=0&opp=1&other=keep')
   const state = { ...defaultSpeedLineState, referenceKey: 'unknown-reference', targetKey: 'unknown-target', targetItem: 'scarf', items: 'scarf', query: '리자몽' }
   writeSpeedLineState(params, state)
-  assert.deepEqual([params.get('slv'), params.get('items'), params.get('target'), params.get('targetItem'), params.get('my'), params.get('opp'), params.get('other')], ['2', 'scarf', 'unknown-target', 'scarf', '0', '1', 'keep'])
+  assert.deepEqual([params.get('slv'), params.get('items'), params.get('target'), params.get('targetItem'), params.get('my'), params.get('opp'), params.get('other')], ['3', 'scarf', 'unknown-target', 'scarf', '0', '1', 'keep'])
   assert.equal(params.has('refSearch'), false)
   assert.deepEqual(parseSpeedLineState(params), { state, warnings: [] })
   writeSpeedLineState(params, { ...state, targetKey: null })
@@ -45,7 +45,7 @@ test('invalid values warn and default without discarding unknown keys', () => {
   assert.deepEqual([state.items, state.targetKey, state.targetItem, state.referenceKey, state.referenceEffort, state.gap], ['both', 'missing', 'normal', 'missing-ref', 32, 10])
   assert.deepEqual(warnings, ['refEp', 'gap', 'items', 'targetItem'])
   assert.equal(parseSpeedLineState(new URLSearchParams('slv=2&target=missing')).state.targetItem, 'normal')
-  assert.deepEqual(parseSpeedLineState(new URLSearchParams('slv=3&items=scarf&target=missing')).state, defaultSpeedLineState)
+  assert.deepEqual(parseSpeedLineState(new URLSearchParams('slv=4&items=scarf&target=missing')).state, defaultSpeedLineState)
 })
 test('orphan invalid target item warns but does not select a target', () => {
   const parsed = parseSpeedLineState(new URLSearchParams('slv=2&targetItem=invalid'))

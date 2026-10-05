@@ -13,8 +13,9 @@ import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMov
 import SpeedLinePanel from './SpeedLinePanel'
 import PokemonSearchField from './PokemonSearchField'
 import { normalizeSearchText, speciesSearchCandidates, searchPokemon } from './pokemonSearch'
-import { applyChoiceScarf } from './speedModifiers'
+import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './speedModifiers'
 import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from './speedLineState'
+import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './speedLineRouteRestore'
 import { validateBackup } from './backupValidation'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 
@@ -1741,17 +1742,11 @@ function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'na
 
 function partySpeedValue(row: Row, member: PartyMember) {
   let value = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
-  if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
-  else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
+  value = applySpeedStage(value, member.config.speedStage)
   if (isChoiceScarfItem(member.item)) value = applyChoiceScarf(value)
   return value
 }
 
-function applySpeedStage(value: number, speedStage: number) {
-  if (speedStage > 0) return Math.floor(value * ((2 + speedStage) / 2))
-  if (speedStage < 0) return Math.floor(value * (2 / (2 + Math.abs(speedStage))))
-  return value
-}
 
 function buildPartyBattleStats(row: Row, member: PartyMember): BattleStatBlock {
   return {
@@ -1905,12 +1900,11 @@ function mySpeedAbilityMarker(row: Row, member: PartyMember, language: SiteLangu
   if (!ability) return null
   const effect = MY_SPEED_ABILITY_MARKERS[ability.slug]
   if (!effect) return null
+  if (ability.slug === 'unburden' && isChoiceScarfItem(member.item)) return null
   if (effect.type === 'multiplier' && !isSpeedAbilityConditionActive(ability.slug, weather, terrain)) return null
   const baseSpeed = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   const totalStage = effect.type === 'stage' ? member.config.speedStage + effect.value : member.config.speedStage
-  let speed = applySpeedStage(baseSpeed, totalStage)
-  if (isChoiceScarfItem(member.item)) speed = Math.floor(speed * 1.5)
-  if (effect.type === 'multiplier') speed = Math.floor(speed * effect.value)
+  const speed = applySpeedModifiers(applySpeedStage(baseSpeed, totalStage), { scarf: isChoiceScarfItem(member.item), abilityMultiplier: effect.type === 'multiplier' ? effect.value as 1.5 | 2 : 1 })
   return {
     label: ability.label,
     speed,
@@ -3895,6 +3889,9 @@ export default function App() {
   const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
   const [speedLineState, setSpeedLineState] = React.useState(() => viewState?.speedLineState ?? { ...defaultSpeedLineState })
   const [speedLineWarnings, setSpeedLineWarnings] = React.useState(() => viewState?.speedLineWarnings ?? [])
+  const lastSpeedLineRoute = React.useRef(viewState?.speedLineState
+    ? { state: viewState.speedLineState, warnings: viewState.speedLineWarnings ?? [] }
+    : null)
   const [activeTab, setActiveTab] = React.useState<MainTab>(() => {
     const resolvedTab = viewState?.activeTab ?? persisted?.activeTab ?? 'party'
     return (viewState?.mainSection ?? persisted?.mainSection) === 'double' && resolvedTab === 'speed' ? 'power' : resolvedTab
@@ -4883,7 +4880,12 @@ export default function App() {
       const route = parseViewStateFromUrl()
       if (!route) return
       if (route.mainSection) setMainSection(route.mainSection)
-      if (route.speedLineState) { setSpeedLineState(route.speedLineState); setSpeedLineWarnings(route.speedLineWarnings ?? []) }
+      if (route.speedLineState) {
+        const next = mergeSpeedLineRoute(lastSpeedLineRoute.current, { state: route.speedLineState, warnings: route.speedLineWarnings ?? [] })
+        lastSpeedLineRoute.current = next
+        setSpeedLineState(route.speedLineState)
+        setSpeedLineWarnings(next.warnings)
+      } else lastSpeedLineRoute.current = null
       if (route.activeTab) setActiveTab(route.activeTab)
       if (route.sampleWorkbenchTab) setSampleWorkbenchTab(route.sampleWorkbenchTab)
       setLibrarySourceId(route.librarySourceId ?? null)
@@ -7156,7 +7158,7 @@ export default function App() {
           ) : null}
         </section> : null}
 
-        {mainSection === 'speedLine' ? <SpeedLinePanel rows={rows} state={speedLineState} warnings={speedLineWarnings} onChange={next => { setSpeedLineState(next); setSpeedLineWarnings([]) }} language={siteLanguage} translate={lt} displayName={row => displayName(row, siteLanguage)} /> : null}
+        {mainSection === 'speedLine' ? <SpeedLinePanel rows={rows} state={speedLineState} warnings={speedLineWarnings} onChange={next => { lastSpeedLineRoute.current = speedLineRouteAfterEdit(next); setSpeedLineState(next); setSpeedLineWarnings([]) }} language={siteLanguage} translate={lt} displayName={row => displayName(row, siteLanguage)} /> : null}
 
         {mainSection === 'dex' ? <>
           <section className="panel wide">
