@@ -1,4 +1,4 @@
-import { jaNameByKey } from './jaNames'
+import { jaNameByKey } from './jaNames.ts'
 
 const typeJaByKey: Record<string, string> = {
   normal: 'ノーマル',

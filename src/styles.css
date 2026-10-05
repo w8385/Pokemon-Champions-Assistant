@@ -8299,6 +8299,7 @@ html {
     grid-template-columns: 1fr;
   }
 }
+.speed-line-row[data-variant] { content-visibility: auto; contain-intrinsic-size: auto 120px; }
 .speed-line-assumptions { margin: .4rem 0 1.2rem; line-height: 1.6; }
 .speed-line-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: .8rem; margin: 1rem 0; }
 .speed-line-controls label { display: grid; gap: .35rem; font-weight: 600; font-size: .9rem; }
@@ -8323,6 +8324,20 @@ html {
 .speed-line-panel { min-width: 0; }
 .speed-line-panel label input[aria-invalid="true"] { border-color: #ff7c7c; }
 .speed-line-panel label small[role="alert"] { color: #ffaaaa; }
+.speed-line-investment { padding: 1rem; margin: 1rem 0; line-height: 1.55; overflow-wrap: anywhere; }
+.speed-line-investment h3 { margin-top: 0; }
+.speed-line-hypothetical { display: inline-block; color: #ffd68b; font-style: normal; border: 1px solid currentColor; border-radius: 4px; padding: 0 .3rem; }
+.speed-line-species > span { min-width: 0; }
+.speed-line-species button { display: block; margin-top: .3rem; font-size: .77rem; padding: .22rem .4rem; }
+.speed-line-species button[aria-pressed="true"] { outline: 2px solid #8dceff; }
+.pokemon-search-field { min-width: 0; position: relative; display: grid; gap: .35rem; }
+.pokemon-search-field input { width: 100%; min-width: 0; }
+.pokemon-search-field .autocomplete-menu { left: 0; right: 0; z-index: 15; max-height: 20rem; overflow-y: auto; }
+.pokemon-search-field .autocomplete-item { display: flex; align-items: center; gap: .4rem; width: 100%; text-align: left; }
+.pokemon-search-field .autocomplete-item img { width: 32px; height: 32px; object-fit: contain; }
+.pokemon-search-empty { display: block; padding: .6rem; }
+.speed-line-reference .pokemon-search-field { z-index: 5; }
+.speed-line-row strong[role="cell"] { white-space: normal; font-variant-numeric: tabular-nums; }
 @media (max-width: 680px) {
   .speed-line-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .speed-line-list { overflow-x: hidden; }

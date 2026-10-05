@@ -9,7 +9,7 @@ const roster = [
   { id: 2, key: 'slow', name_ko: '느림', name_en: 'Slow', name_ja: 'おそい', speed: 50, types: ['water'] },
   { id: 3, key: 'mega-fast', name_ko: '메가빠름', name_en: 'Mega Fast', speed: 130, types: ['electric'] },
 ]
-const state = { referenceKey: 'slow', referenceEffort: 0, referenceNature: 'neutral', listEffort: 32, listNature: 'boost', query: '', forms: 'all', comparison: 'all', sort: 'desc', rangeMode: 'all', gap: 10 }
+const state = { referenceKey: 'slow', referenceEffort: 0, referenceNature: 'neutral', listEffort: 32, listNature: 'boost', query: '', forms: 'all', comparison: 'all', sort: 'desc', rangeMode: 'all', gap: 10, items: 'normal', targetKey: null, targetItem: 'normal' }
 let server
 let Panel
 
@@ -25,7 +25,8 @@ const render = (overrides = {}, properties = {}) => renderToStaticMarkup(React.c
 
 test('reference picker uses full roster while results filters hide it; condition summary and computed comparison remain', () => {
   const html = render({ forms: 'mega', query: 'mega', comparison: 'slower' })
-  assert.match(html, /<option value="slow" selected="">Slow<\/option>/)
+  assert.match(html, /<strong>Slow<\/strong>/)
+  assert.match(html, /role="combobox"/)
   assert.match(html, /Reference Speed/)
   assert.match(html, /Comparison conditions/)
   assert.match(html, /mega-fast/)
@@ -71,7 +72,7 @@ test('invalid URL fields are surfaced as a localized repair notice', () => {
 
 test('unknown reference key stays visibly selected rather than pretending it was cleared', () => {
   const html = render({ referenceKey: 'nonexistent' })
-  assert.match(html, /<option value="nonexistent" selected="">Unknown reference: nonexistent<\/option>/)
+  assert.match(html, /role="combobox"/)
   assert.match(html, /<strong>Unknown reference: nonexistent<\/strong>/)
   assert.match(html, /Reference is not in the verified roster/)
   assert.doesNotMatch(html, /reference-marker/)

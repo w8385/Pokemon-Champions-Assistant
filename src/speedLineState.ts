@@ -12,6 +12,9 @@ export interface SpeedLineState {
   sort: 'desc' | 'asc'
   rangeMode: 'all' | 'around'
   gap: number
+  items: 'both' | 'normal' | 'scarf'
+  targetKey: string | null
+  targetItem: 'normal' | 'scarf'
 }
 
 export const defaultSpeedLineState: SpeedLineState = {
@@ -26,9 +29,12 @@ export const defaultSpeedLineState: SpeedLineState = {
   sort: 'desc',
   rangeMode: 'all',
   gap: 10,
+  items: 'both',
+  targetKey: null,
+  targetItem: 'normal',
 }
 
-type EnumField = 'refNature' | 'listNature' | 'forms' | 'cmp' | 'sort' | 'range'
+type EnumField = 'refNature' | 'listNature' | 'forms' | 'cmp' | 'sort' | 'range' | 'items' | 'targetItem'
 const allowed: Record<EnumField, readonly string[]> = {
   refNature: ['boost', 'neutral', 'lower'],
   listNature: ['boost', 'neutral', 'lower'],
@@ -36,13 +42,16 @@ const allowed: Record<EnumField, readonly string[]> = {
   cmp: ['all', 'faster', 'equal', 'slower'],
   sort: ['desc', 'asc'],
   range: ['all', 'around'],
+  items: ['both', 'normal', 'scarf'],
+  targetItem: ['normal', 'scarf'],
 }
 
 export function parseSpeedLineState(params: URLSearchParams): { state: SpeedLineState; warnings: string[] } {
   const state = { ...defaultSpeedLineState }
   const warnings: string[] = []
   const version = params.get('slv')
-  if (version !== null && version !== '1') return { state, warnings: ['slv'] }
+  if (version !== null && version !== '1' && version !== '2') return { state, warnings: ['slv'] }
+  if (version === '1' && !params.has('items')) state.items = 'normal'
 
   state.referenceKey = params.get('ref') || null
   const numeric = (field: string, fallback: number): number => {
@@ -76,11 +85,15 @@ export function parseSpeedLineState(params: URLSearchParams): { state: SpeedLine
   state.sort = select('sort', state.sort)
   state.rangeMode = select('range', state.rangeMode)
   state.gap = numeric('gap', state.gap)
+  state.items = select('items', state.items)
+  state.targetKey = params.get('target') || null
+  state.targetItem = select('targetItem', state.targetItem)
+  if (state.targetKey === null) state.targetItem = 'normal'
   return { state, warnings }
 }
 
 export function writeSpeedLineState(params: URLSearchParams, state: SpeedLineState): void {
-  params.set('slv', '1')
+  params.set('slv', '2')
   if (state.referenceKey === null) params.delete('ref')
   else params.set('ref', state.referenceKey)
   params.set('refEp', String(state.referenceEffort))
@@ -93,4 +106,12 @@ export function writeSpeedLineState(params: URLSearchParams, state: SpeedLineSta
   params.set('sort', state.sort)
   params.set('range', state.rangeMode)
   params.set('gap', String(state.gap))
+  params.set('items', state.items)
+  if (state.targetKey === null) {
+    params.delete('target')
+    params.delete('targetItem')
+  } else {
+    params.set('target', state.targetKey)
+    params.set('targetItem', state.targetItem)
+  }
 }

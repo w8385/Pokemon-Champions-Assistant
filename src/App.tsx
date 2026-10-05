@@ -11,6 +11,9 @@ import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import SpeedLinePanel from './SpeedLinePanel'
+import PokemonSearchField from './PokemonSearchField'
+import { normalizeSearchText, speciesSearchCandidates, searchPokemon } from './pokemonSearch'
+import { applyChoiceScarf } from './speedModifiers'
 import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from './speedLineState'
 import { validateBackup } from './backupValidation'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
@@ -458,7 +461,7 @@ function opponentOffenseLabel(state: OpponentOffenseState, preset: OpponentOffen
 
 function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
   let value = actualStat(base, CHAMPIONS_EFFORT_PER_STAT_CAP, boosted ? 1.1 : 1)
-  if (scarf) value = Math.floor(value * 1.5)
+  if (scarf) value = applyChoiceScarf(value)
   return value
 }
 
@@ -1732,7 +1735,7 @@ function syncViewStateToUrl(viewState: ViewState) {
 function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'item'>) {
   let value = actualStat(row.speed, entry.speedEv, entry.natureBoost ? natureMultiplier('jolly', 'speed') : 1)
   value = applySpeedStage(value, entry.speedStage)
-  if (entry.scarf || isChoiceScarfItem(entry.item)) value = Math.floor(value * 1.5)
+  if (entry.scarf || isChoiceScarfItem(entry.item)) value = applyChoiceScarf(value)
   return value
 }
 
@@ -1740,7 +1743,7 @@ function partySpeedValue(row: Row, member: PartyMember) {
   let value = actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
   if (member.config.speedStage > 0) value = Math.floor(value * ((2 + member.config.speedStage) / 2))
   else if (member.config.speedStage < 0) value = Math.floor(value * (2 / (2 + Math.abs(member.config.speedStage))))
-  if (isChoiceScarfItem(member.item)) value = Math.floor(value * 1.5)
+  if (isChoiceScarfItem(member.item)) value = applyChoiceScarf(value)
   return value
 }
 
@@ -1838,7 +1841,7 @@ function battleStageMultiplier(stage: number) {
 function opponentScenarioSpeed(row: Row, speedPoints: number, boosted: boolean, scarf: boolean, speedStage: number) {
   let value = actualStat(row.speed, speedPoints, boosted ? 1.1 : 1)
   value = applySpeedStage(value, speedStage)
-  if (scarf) value = Math.floor(value * 1.5)
+  if (scarf) value = applyChoiceScarf(value)
   return value
 }
 
@@ -3020,46 +3023,10 @@ function matchesLooseQuery(source: string, query: string) {
   return false
 }
 
-function normalizeSearchText(value: string) {
-  return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
-}
-
-function speciesSearchCandidates(row: Row) {
-  const base = [row.name_ko, row.name_en, row.name_ja, row.key].filter(Boolean) as string[]
-  const extra: string[] = []
-  if (row.name_ko.startsWith('메가')) extra.push(row.name_ko.replace(/^메가/, ''))
-  if (row.name_en.toLowerCase().startsWith('mega ')) extra.push(row.name_en.replace(/^Mega\s+/i, ''))
-  if (row.key.startsWith('mega-')) extra.push(row.key.slice(5))
-  if (row.key.startsWith('rotom-')) extra.push(`로토무${row.name_ko.replace(/로토무$/, '')}`)
-  if (row.key.startsWith('gourgeist-')) extra.push(row.name_ko.replace(/^보통\s*/, ''), row.name_en.replace(/^Gourgeist\s*/, 'Gourgeist '))
-  if (row.key === 'basculegion') extra.push('대쓰여너', '대쓰여너수컷', 'Basculegion', 'Basculegion Male')
-  if (row.key === 'basculegion-female') extra.push('대쓰여너', '대쓰여너암컷', 'Basculegion', 'Basculegion Female')
-  if (row.key === 'floette-eternal-flower') extra.push('영원의 꽃 플라엣테', '영원의꽃 플라엣테', '영원의꽃플라엣테', 'Eternal Flower Floette')
-  return Array.from(new Set([...base, ...extra].flatMap((entry) => [entry, normalizeSearchText(entry)])))
-}
-
 const SPECIES_SEARCH_INDEX = rows.map((row) => ({ row, candidates: speciesSearchCandidates(row) }))
 
 function filterSpeciesOptions(query: string, options?: { includeMega?: boolean; allowLoose?: boolean }) {
-  const includeMega = options?.includeMega ?? true
-  const allowLoose = options?.allowLoose ?? true
-  const normalized = normalizeSearchText(query.trim())
-  const candidateEntries = includeMega ? SPECIES_SEARCH_INDEX : SPECIES_SEARCH_INDEX.filter(({ row }) => !row.key.startsWith('mega-'))
-  if (!normalized) return candidateEntries.map(({ row }) => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
-  return candidateEntries
-    .map(({ row, candidates }) => {
-      const score = candidates.reduce((best, candidate) => {
-        if (candidate === normalized) return Math.min(best, 0)
-        if (candidate.startsWith(normalized)) return Math.min(best, 1)
-        if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
-        return best
-      }, Number.POSITIVE_INFINITY)
-      return Number.isFinite(score) ? { row, score } : null
-    })
-    .filter((entry): entry is { row: Row; score: number } => Boolean(entry))
-    .sort((a, b) => a.score - b.score || a.row.name_ko.localeCompare(b.row.name_ko, 'ko'))
-    .map((entry) => ({ key: entry.row.key, label: `${entry.row.name_ko} (${entry.row.name_en})` }))
+  return searchPokemon(rows, query, options).map(row => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
 }
 
 function displayItemLabel(item: string, language: SiteLanguage) {
@@ -3993,7 +3960,7 @@ export default function App() {
   const [sampleSpeedTargets, setSampleSpeedTargets] = React.useState<SampleSpeedTarget[]>(() => sanitizeSampleSpeedTargets(persisted?.sampleSpeedTargets))
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
-  const [sampleSpeedSearchOpen, setSampleSpeedSearchOpen] = React.useState(false)
+
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
@@ -6074,7 +6041,7 @@ export default function App() {
   const addSampleSpeedTarget = (key: string) => {
     setSampleSpeedTargets([{ ...blankSampleSpeedTarget(), key }])
     setSampleSpeedSearch('')
-    setSampleSpeedSearchOpen(false)
+
   }
 
   const updateSampleSpeedTarget = (idx: number, patch: Partial<SampleSpeedTarget>) => {
@@ -9066,23 +9033,7 @@ export default function App() {
                   </div>
                   <p className="sample-compare-adder-copy">{lt('가장 경계할 상대 한 마리를 선택합니다.')}</p>
                 </div>
-                <input value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onBlur={() => { setTimeout(() => setSampleSpeedSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-speed-add'), 120) }} onChange={(e) => { setSampleSpeedSearch(e.target.value); setSampleSpeedSearchOpen(true); setAutocompleteMenuOpen('sample-speed-add') }} onKeyDown={(e) => {
-                  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                    e.preventDefault()
-                    moveAutocompleteMenuHighlight('sample-speed-add', sampleSpeedSearchResults.length, e.key === 'ArrowDown' ? 1 : -1)
-                    return
-                  }
-                  if (e.key !== 'Enter') return
-                  const highlightedOption = sampleSpeedSearchResults[highlightedAutocompleteIndex(autocompleteHighlight, 'sample-speed-add')]
-                  if (highlightedOption) {
-                    e.preventDefault()
-                    addSampleSpeedTarget(highlightedOption.key)
-                    closeAutocompleteMenu('sample-speed-add')
-                  }
-                }} />
-                {sampleSpeedSearchOpen && sampleSpeedSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
-                  {sampleSpeedSearchResults.map((option, optionIdx) => <button key={`sample-speed-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-speed-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleSpeedTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
-                </div> : null}
+                <PokemonSearchField id="sample-speed-add" value={sampleSpeedSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleSpeedSearch} onSelect={addSampleSpeedTarget} options={sampleSpeedSearchResults.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} menuClassName="sample-damage-search-menu" />
               </label>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
                 <div className="row-between sample-workbench-section-head">

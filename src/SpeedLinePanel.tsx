@@ -1,5 +1,9 @@
 import React from 'react'
-import { buildSpeedComparison } from './speedLine'
+import { buildSpeedComparison, buildSpeedScenario } from './speedLine'
+import { calculateSpeedInvestment } from './speedLineInvestment'
+import { searchPokemon } from './pokemonSearch'
+import PokemonSearchField from './PokemonSearchField'
+import { localizedChampionsItemLabel } from './championsItems'
 import type { SpeedLineState } from './speedLineState'
 import { PokemonCardHeading } from './PokemonCardOverview'
 import { getJaName } from './jaLabels'
@@ -22,9 +26,20 @@ const labels: Record<SiteLanguage, Record<string, string>> = {
 }
 
 export default function SpeedLinePanel({ rows, state, onChange, language, translate, displayName, warnings = [] }: Props) {
-  const l = (key: string) => key === 'around' ? labels[language][key].replace('±10', `±${state.gap}`) : labels[language][key]
+  const extra = {
+    en: { searchReference: 'Reference Pokémon search', items: 'Item scenarios', both: 'Normal + Choice Scarf', normal: 'Normal only', scarf: 'Choice Scarf only', normalBadge: 'Normal', hypothetical: 'Hypothetical condition', investment: 'Investment against selected target', selectTarget: 'Select target', targetMissing: 'Unknown target', targetNone: 'Select a row to calculate investment.', targetSpeed: 'Target effective Speed', tie: 'Minimum effort for exact tie', pass: 'Minimum effort to strictly pass', noTie: 'No exact tie', noPass: 'Cannot pass even at 32 points', maximum: 'Maximum actual Speed', current: 'Current actual Speed', already: 'Already ahead', extra: 'Additional effort from current setting', previous: 'Speed at previous effort', noSearch: 'No matching Pokémon.' },
+    ko: { searchReference: '기준 포켓몬 검색', items: '도구 조건', both: '일반+스카프', normal: '일반만', scarf: '스카프만', normalBadge: '일반', hypothetical: '가상 조건', investment: '선택 상대 최소 투자 역산', selectTarget: '역산 상대 선택', targetMissing: '미확인 상대', targetNone: '역산할 상대 행을 선택하세요.', targetSpeed: '상대 유효 스피드', tie: '정확한 동속 최소 노력', pass: '엄격한 추월 최소 노력', noTie: '정확한 동속 없음', noPass: '32포인트로도 추월 불가', maximum: '최대 실수치', current: '현재 실수치', already: '이미 추월', extra: '현재 설정 대비 추가 투자량', previous: '직전 노력의 실수치', noSearch: '검색 결과가 없습니다.' },
+    ja: { searchReference: '基準ポケモン検索', items: '持ち物条件', both: '通常+スカーフ', normal: '通常のみ', scarf: 'スカーフのみ', normalBadge: '通常', hypothetical: '仮定の条件', investment: '選択相手への最小投資', selectTarget: '相手を選択', targetMissing: '不明な相手', targetNone: '計算する行を選んでください。', targetSpeed: '相手の有効素早さ', tie: '同速の最小ポイント', pass: '追い越す最小ポイント', noTie: '正確な同速なし', noPass: '32ポイントでも追い越せません', maximum: '最大実数値', current: '現在の実数値', already: '既に速い', extra: '現設定からの追加ポイント', previous: '直前の実数値', noSearch: '検索結果なし' },
+  }
+  const overrides = {
+    en: { base: 'Base Speed', actual: 'Actual → effective Speed', count: 'Forms · condition rows', search: 'Comparison list search · name/form', notes: 'Level 50 · IV 31 · Champions effort points 0–32 before nature · Choice Scarf only; excludes abilities, stages and field effects · ties ordered by key' },
+    ko: { base: '스피드 종족값', actual: '실수치 → 유효 스피드', count: '폼 · 조건행', search: '비교 목록 검색 · 이름/폼', notes: '레벨 50 · 개체값 31 · 챔피언스 노력 포인트 0~32를 성격 보정 전에 가산 · 도구는 구애스카프만 반영 · 특성/랭크/필드 효과 제외 · 동속은 키순' },
+    ja: { base: '素早さ種族値', actual: '実数値 → 有効素早さ', count: 'フォルム · 条件行', search: '比較一覧検索 · 名前/フォルム', notes: 'レベル50 · 個体値31 · 努力ポイント0～32（性格補正前）· 道具はこだわりスカーフのみ · 特性/ランク/場の効果なし · 同速はキー順' },
+  }
+  const l = (key: string): string => key === 'around' ? labels[language][key].replace('±10', `±${state.gap}`) : extra[language][key as keyof typeof extra.en] ?? overrides[language][key as keyof typeof overrides.en] ?? labels[language][key] ?? key
   const [referenceDraft, setReferenceDraft] = React.useState(String(state.referenceEffort))
   const [listDraft, setListDraft] = React.useState(String(state.listEffort))
+  const [searchDraft, setSearchDraft] = React.useState('')
   const [copyFailed, setCopyFailed] = React.useState(false)
   const markerRef = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => setReferenceDraft(String(state.referenceEffort)), [state.referenceEffort])
@@ -38,22 +53,31 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     if (valid(draft)) update({ [field]: Number(draft) })
   }
   const roster = React.useMemo(() => rows.map(row => ({ ...row, name_ja: row.name_ja || getJaName(row.key, row.name_ko, row.name_en) })), [rows])
+  const suggestions = React.useMemo(() => searchDraft.trim() ? searchPokemon(roster, searchDraft, { includeMega: true, limit: 12 }).map(row => ({ key: row.key, label: `${displayName(row)} (${row.name_en})`, sprite: row.sprite })) : [], [roster, searchDraft, displayName])
   const result = draftsValid ? buildSpeedComparison(roster, state.referenceKey ? state : { ...state, comparison: 'all', rangeMode: 'all' }) : null
   const reference = result?.reference ?? null
   const unknownReference = state.referenceKey && !roster.some(row => row.key === state.referenceKey)
     ? `${language === 'ko' ? '미확인 기준' : language === 'ja' ? '不明な基準' : 'Unknown reference'}: ${state.referenceKey}` : null
   const referenceSpeed = reference?.speed ?? null
   const entries = result?.entries ?? []
+  const selectedRow = state.targetKey ? roster.find(row => row.key === state.targetKey) : undefined
+  const selectedTarget = draftsValid && selectedRow ? buildSpeedScenario(selectedRow, state.listEffort, state.listNature, state.targetItem, referenceSpeed) : null
+  const investment = draftsValid && reference && selectedTarget ? calculateSpeedInvestment(reference.row, state.referenceNature, state.referenceEffort, selectedTarget) : null
+  const itemLabel = (variant: 'normal' | 'scarf') => variant === 'scarf' ? localizedChampionsItemLabel('こだわりスカーフ', language) : l('normalBadge')
   const markerAt = reference && entries.length ? (state.sort === 'asc'
-    ? entries.findIndex(entry => entry.speed >= reference.speed)
-    : entries.findIndex(entry => entry.speed <= reference.speed)) : -1
+    ? entries.findIndex(entry => entry.effectiveSpeed >= reference.speed)
+    : entries.findIndex(entry => entry.effectiveSpeed <= reference.speed)) : -1
   const markerIndex = markerAt < 0 ? entries.length : markerAt
   const referenceMarker = reference ? <div ref={markerRef} tabIndex={-1} className="speed-line-row speed-line-reference-marker" role="row" aria-label={`${l('marker')}: ${displayName(reference.row)} ${reference.speed}`}>
     <span role="cell">◆</span><span role="cell">{l('marker')} · {displayName(reference.row)} <small>{l('refEffort')} {state.referenceEffort} · {l(state.referenceNature)}</small></span><span role="cell">{reference.row.speed}</span><strong role="cell">{reference.speed}</strong><span role="cell">—</span>
   </div> : null
   const select = (label: string, value: string, choices: [string, string][], change: (value: string) => void, disabled = false) => <label>{label}<select value={value} onChange={e => change(e.target.value)} disabled={disabled}>{choices.map(([key, name]) => <option value={key} key={key}>{name}</option>)}</select></label>
   const numeric = (label: string, field: 'referenceEffort' | 'listEffort', draft: string) => <label>{label}<input type="number" min="0" max="32" step="1" value={draft} aria-invalid={!valid(draft)} aria-describedby={!valid(draft) ? `${field}-error` : undefined} onChange={e => effort(field, e.target.value)} />{!valid(draft) ? <small role="alert" id={`${field}-error`}>{l('invalid')}</small> : null}</label>
-  const jump = () => { markerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); markerRef.current?.focus({ preventScroll: true }) }
+  const jump = () => {
+    markerRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
+    markerRef.current?.focus({ preventScroll: true })
+    requestAnimationFrame(() => requestAnimationFrame(() => markerRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })))
+  }
   const share = async () => {
     try { await navigator.clipboard.writeText(window.location.href); setCopyFailed(false) }
     catch { setCopyFailed(true) }
@@ -64,32 +88,36 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     <div className="speed-line-reference card entry-card">
       <PokemonCardHeading name={<strong>{reference ? displayName(reference.row) : unknownReference ?? l('none')}</strong>} sprite={reference?.row.sprite} spriteAlt={reference ? displayName(reference.row) : ''} types={reference?.row.types} />
       <div className="speed-line-controls">
-        {select(l('reference'), state.referenceKey ?? '', [['', l('none')], ...(unknownReference ? [[state.referenceKey!, unknownReference] as [string, string]] : []), ...roster.map(row => [row.key, displayName(row)] as [string, string])], value => update({ referenceKey: value || null }))}
+        <PokemonSearchField id="speed-line-reference-search" label={l('searchReference')} placeholder={l('reference')} value={searchDraft} onChange={setSearchDraft} disabled={!draftsValid} onSelect={key => { update({ referenceKey: key }); setSearchDraft('') }} options={suggestions} noResults={l('noSearch')} showEmpty />
         {numeric(l('refEffort'), 'referenceEffort', referenceDraft)}
         {select(l('refNature'), state.referenceNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ referenceNature: value as SpeedLineState['referenceNature'] }))}
       </div>
       <div className="speed-line-reference-stat"><span>{l('referenceSpeed')}</span><strong>{draftsValid ? referenceSpeed ?? '—' : '—'}</strong></div>
       {result?.referenceMissing ? <p role="alert">{l('missing')}</p> : null}
-      <div className="speed-line-actions"><button type="button" disabled={!reference || !draftsValid} onClick={jump}>{l('jump')}</button><button type="button" onClick={() => update({ referenceKey: null, comparison: 'all', rangeMode: 'all' })}>{l('clear')}</button><button type="button" disabled={!draftsValid} onClick={share}>{l('share')}</button></div>
+      <div className="speed-line-actions"><button type="button" disabled={!reference || !draftsValid} onClick={jump}>{l('jump')}</button><button type="button" onClick={() => { update({ referenceKey: null, comparison: 'all', rangeMode: 'all' }); setSearchDraft('') }}>{l('clear')}</button><button type="button" disabled={!draftsValid} onClick={share}>{l('share')}</button></div>
       {copyFailed ? <label>{l('fallback')}<input readOnly onFocus={e => e.currentTarget.select()} value={typeof window !== 'undefined' ? window.location.href : ''} /></label> : null}
     </div>
     <div className="speed-line-controls">
       <label>{l('search')}<input type="search" value={state.query} onChange={e => update({ query: e.target.value })} /></label>
       {numeric(l('listEffort'), 'listEffort', listDraft)}
       {select(l('listNature'), state.listNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ listNature: value as SpeedLineState['listNature'] }))}
+      {select(l('items'), state.items, [['both', l('both')], ['normal', l('normal')], ['scarf', l('scarf')]], value => update({ items: value as SpeedLineState['items'] }))}
       {select(l('forms'), state.forms, ['all', 'nonMega', 'mega'].map(key => [key, l(key)]), value => update({ forms: value as SpeedLineState['forms'] }))}
       {select(l('comparison'), state.comparison, ['all', 'faster', 'equal', 'slower'].map(key => [key, l(key)]), value => update({ comparison: value as SpeedLineState['comparison'] }), !reference)}
       {select(l('sort'), state.sort, ['desc', 'asc'].map(key => [key, l(key)]), value => update({ sort: value as SpeedLineState['sort'] }))}
       {select(l('range'), state.rangeMode, [['all', l('allRange')], ['around', l('around')]], value => update({ rangeMode: value as SpeedLineState['rangeMode'], gap: 10 }), !reference)}
     </div>
-    {draftsValid ? <div className="speed-line-condition-summary" role="status"><strong>{l('conditions')}</strong>: {l('referenceSpeed')} {referenceSpeed ?? '—'} · {l('refEffort')} {state.referenceEffort} {l(state.referenceNature)} · {l('listEffort')} {state.listEffort} {l(state.listNature)} · {l(state.forms)} · {l(state.comparison)} · {l(state.sort)} · {state.rangeMode === 'around' ? l('around') : l('allRange')}</div> : null}
-    {!draftsValid ? <p role="alert">{l('invalid')}</p> : <><p className="muted">{l('count')}: {entries.length}</p>
+    {draftsValid ? <div className="speed-line-condition-summary" role="status"><strong>{l('conditions')}</strong>: {l('referenceSpeed')} {referenceSpeed ?? '—'} · {l('refEffort')} {state.referenceEffort} {l(state.referenceNature)} · {l('listEffort')} {state.listEffort} {l(state.listNature)} · {l('items')}: {l(state.items)} · {l(state.forms)} · {l(state.comparison)} · {l(state.sort)} · {state.rangeMode === 'around' ? l('around') : l('allRange')}</div> : null}
+    <div className="speed-line-investment card" aria-label={l('investment')}><h3>{l('investment')}</h3>
+      {!draftsValid ? <p role="alert">{l('invalid')}</p> : state.targetKey && !selectedRow ? <p role="alert">{l('targetMissing')}: {state.targetKey}</p> : selectedTarget ? <><p><strong>{displayName(selectedTarget.row)}</strong> · {itemLabel(selectedTarget.variant)} {selectedTarget.hypothetical ? <em className="speed-line-hypothetical">{l('hypothetical')}</em> : null} · {l('listEffort')} {state.listEffort} · {l(state.listNature)} · {l('actual')} {selectedTarget.actualSpeed} → {selectedTarget.effectiveSpeed}</p><p>{l('targetSpeed')}: <strong>{selectedTarget.effectiveSpeed}</strong></p>{investment && reference ? <><p>{l('current')}: {investment.currentSpeed}{investment.alreadyAhead ? ` · ${l('already')}` : ''}</p><p>{l('tie')}: {investment.tieEffort === null ? l('noTie') : `${investment.tieEffort} → ${investment.tieSpeed}`}</p><p>{l('pass')}: {investment.passEffort === null ? `${l('noPass')} · ${l('maximum')} ${investment.maxSpeed}` : `${investment.passEffort} → ${investment.passSpeed}`}</p><p>{l('extra')}: {investment.additionalEffort === null ? '—' : investment.additionalEffort}{investment.previousPassSpeed !== null ? ` · ${l('previous')}: ${investment.previousPassSpeed}` : ''}</p></> : <p>{reference ? l('invalid') : l('none')}</p>}</> : <p>{l('targetNone')}</p>}
+    </div>
+    {!draftsValid ? <p role="alert">{l('invalid')}</p> : <><p className="muted">{l('count')}: {new Set(entries.map(entry => entry.row.key)).size} · {entries.length}</p>
       {entries.length ? <div className="speed-line-list" role="table" aria-label={language === 'en' ? 'Actual Speed Line' : '실능 스피드라인'}>
         <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{l('pokemon')}</span><span role="columnheader">{l('base')}</span><span role="columnheader">{l('actual')}</span><span role="columnheader">{l('difference')}</span></div>
-        {entries.map((entry, idx) => <React.Fragment key={entry.row.key}>
+        {entries.map((entry, idx) => <React.Fragment key={entry.id}>
           {idx === markerIndex ? referenceMarker : null}
-          <div className="speed-line-row" role="row" data-key={entry.row.key}>
-            <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{entry.row.sprite ? <img src={entry.row.sprite} alt="" loading="lazy" /> : null}<span>{displayName(entry.row)}<small>{entry.row.name_en}</small></span></span><span role="cell">{entry.row.speed}</span><strong role="cell">{entry.speed}</strong><span role="cell">{entry.difference === null ? '—' : `${entry.difference > 0 ? '+' : ''}${entry.difference} · ${l(entry.relation!)}`}</span>
+          <div className="speed-line-row" role="row" data-key={entry.row.key} data-variant={entry.variant}>
+            <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{entry.row.sprite ? <img src={entry.row.sprite} alt="" loading="lazy" /> : null}<span>{displayName(entry.row)}<small>{entry.row.name_en}</small><small>{itemLabel(entry.variant)} {entry.hypothetical ? <em className="speed-line-hypothetical">{l('hypothetical')}</em> : null}</small><button type="button" aria-label={`${l('selectTarget')}: ${displayName(entry.row)} ${itemLabel(entry.variant)}`} aria-pressed={state.targetKey === entry.row.key && state.targetItem === entry.variant} onClick={() => update({ targetKey: entry.row.key, targetItem: entry.variant })}>{l('selectTarget')}</button></span></span><span role="cell">{entry.row.speed}</span><strong role="cell">{entry.actualSpeed} → {entry.effectiveSpeed}</strong><span role="cell">{entry.difference === null ? '—' : `${entry.difference > 0 ? '+' : ''}${entry.difference} · ${l(entry.relation!)}`}</span>
           </div>
         </React.Fragment>)}
         {markerIndex === entries.length ? referenceMarker : null}
