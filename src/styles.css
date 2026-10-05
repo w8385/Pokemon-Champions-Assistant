@@ -8300,21 +8300,41 @@ html {
   }
 }
 .speed-line-assumptions { margin: .4rem 0 1.2rem; line-height: 1.6; }
-.speed-line-controls { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(140px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.speed-line-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: .8rem; margin: 1rem 0; }
 .speed-line-controls label { display: grid; gap: .35rem; font-weight: 600; font-size: .9rem; }
 .speed-line-controls input, .speed-line-controls select { width: 100%; min-width: 0; }
 .speed-line-list { margin-top: 1rem; max-height: 68vh; overflow: auto; border: 1px solid #2b3540; border-radius: 12px; }
-.speed-line-row { display: grid; grid-template-columns: 3rem minmax(140px, 1fr) 7rem 8rem; align-items: center; gap: .6rem; padding: .4rem .8rem; border-bottom: 1px solid #2b3540; }
+.speed-line-row { display: grid; grid-template-columns: 3rem minmax(140px, 1fr) 7rem 8rem minmax(8rem, 1fr); align-items: center; gap: .6rem; padding: .4rem .8rem; border-bottom: 1px solid #2b3540; }
 .speed-line-row:last-child { border-bottom: 0; }
 .speed-line-heading { position: sticky; top: 0; z-index: 1; background: #1b2633; font-weight: 700; }
 .speed-line-species { display: flex; align-items: center; gap: .55rem; min-width: 0; }
 .speed-line-species img { width: 42px; height: 42px; object-fit: contain; }
 .speed-line-species small { display: block; color: var(--muted, #777); }
-@media (max-width: 760px) {
+.speed-line-reference { padding: 1rem; min-width: 0; }
+.speed-line-reference-stat { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; }
+.speed-line-reference-stat strong { font-size: clamp(2rem, 7vw, 3.2rem); line-height: 1.1; }
+.speed-line-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .8rem; }
+.speed-line-condition-summary { position: sticky; top: 0; z-index: 3; padding: .55rem .8rem; border: 1px solid #42536a; border-radius: 8px; background: #1b2633; line-height: 1.5; overflow-wrap: anywhere; }
+.speed-line-reference-marker { background: #203b54; border-block: 2px solid #8dceff; scroll-margin-top: 5rem; }
+.speed-line-reference-marker:focus { outline: 3px solid #fff; outline-offset: -4px; }
+.speed-line-empty { padding: 1rem; border: 1px solid #42536a; border-radius: 12px; }
+.speed-line-list { width: 100%; }
+.speed-line-row > * { min-width: 0; overflow-wrap: anywhere; }
+.speed-line-panel { min-width: 0; }
+.speed-line-panel label input[aria-invalid="true"] { border-color: #ff7c7c; }
+.speed-line-panel label small[role="alert"] { color: #ffaaaa; }
+@media (max-width: 680px) {
   .speed-line-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .speed-line-row { grid-template-columns: 2rem minmax(105px, 1fr) 4rem 5rem; gap: .35rem; padding: .35rem; font-size: .85rem; }
+  .speed-line-list { overflow-x: hidden; }
+  .speed-line-row { min-width: 0; grid-template-columns: 1.6rem minmax(0, 1fr) 5rem; grid-template-areas: "rank species actual" "rank base comparison"; gap: .35rem; padding: .35rem; font-size: .85rem; }
+  .speed-line-row > :nth-child(1) { grid-area: rank; }
+  .speed-line-row > :nth-child(2) { grid-area: species; }
+  .speed-line-row > :nth-child(3) { grid-area: base; }
+  .speed-line-row > :nth-child(4) { grid-area: actual; }
+  .speed-line-row > :nth-child(5) { grid-area: comparison; }
   .speed-line-species img { width: 32px; height: 32px; }
 }
+@media (max-width: 350px) { .speed-line-controls { grid-template-columns: 1fr; } }
 
 .header-route-menu { width: 100%; }
 .header-route-toggle { display: none; }

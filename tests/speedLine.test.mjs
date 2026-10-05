@@ -46,7 +46,7 @@ test('independent speed-line route and navigation retain existing menus and shar
   assert.match(types, /'speedLine'/)
   assert.match(app, /routePath === '\/speed-line'/)
   assert.match(app, /setMainSection\('speedLine'\)/)
-  assert.match(app, /buildSpeedLine\(rows,/)
+  assert.match(app, /<SpeedLinePanel rows=\{rows\} state=\{speedLineState\}/)
   assert.match(app, /import \{ actualStat \} from '\.\/statMechanics'/)
   assert.doesNotMatch(app, /function actualStat\(/)
   assert.doesNotMatch(app, /setSampleWorkbenchTab\('rankers'\)/)

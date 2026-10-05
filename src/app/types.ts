@@ -1,5 +1,6 @@
 import type { EffortValues } from '../myPartyChampionsSamples'
 import type { LinkDraft } from '../creatorSampleLibrary'
+import type { SpeedLineState } from '../speedLineState'
 
 export type Row = {
   id: number
@@ -252,6 +253,8 @@ export type MoveFieldTarget = { key: string; slotIdx: number; scope: 'party' | '
 export type ItemFieldTarget = { scope: 'party'; idx: number } | { scope: 'sample'; idx: 0 } | { scope: 'opponent'; idx: number } | null
 export type MetaListField = { scope: 'party'; idx: number; field: 'ability' | 'nature' } | { scope: 'sample'; field: 'ability' | 'nature' } | null
 export type ViewState = {
+  speedLineWarnings?: string[]
+  speedLineState?: SpeedLineState
   mainSection?: MainSection
   activeTab?: MainTab
   sampleWorkbenchTab?: SampleWorkbenchTab

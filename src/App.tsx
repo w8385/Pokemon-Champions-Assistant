@@ -10,7 +10,8 @@ import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
-import { buildSpeedLine, type SpeedNature, type SpeedLineOptions } from './speedLine'
+import SpeedLinePanel from './SpeedLinePanel'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from './speedLineState'
 import { validateBackup } from './backupValidation'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 
@@ -1697,7 +1698,9 @@ function parseViewStateFromUrl(): ViewState | null {
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
     const librarySourceId = routePath.startsWith('/sample-library/') ? decodeURIComponent(routePath.slice('/sample-library/'.length)) : null
+    const speedLineUrl = routePath === '/speed-line' ? parseSpeedLineState(routeUrl.searchParams) : undefined
     return { mainSection: mainSection ?? normalizedRoute.section, activeTab: mainSection === 'single' || mainSection === 'double' ? normalizedRoute.tab as MainTab : activeTab,
+      speedLineState: speedLineUrl?.state, speedLineWarnings: speedLineUrl?.warnings,
       sampleWorkbenchTab: mainSection === 'sample' ? normalizedRoute.tab as SampleWorkbenchTab : sampleWorkbenchTab,
       librarySourceId,
       dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
@@ -1718,6 +1721,7 @@ function syncViewStateToUrl(viewState: ViewState) {
   if (viewState.mainSection === 'dex' && viewState.dexSelectedValue) params.set('sel', viewState.dexSelectedValue)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
+  if (viewState.mainSection === 'speedLine' && viewState.speedLineState) writeSpeedLineState(params, viewState.speedLineState)
   const nextHash = `${routePath}${params.toString() ? `?${params.toString()}` : ''}`
   if ((window.location.hash.replace(/^#/, '') || '/') === nextHash) return
   const url = new URL(window.location.href)
@@ -3922,10 +3926,8 @@ export default function App() {
   const [effectiveness, setEffectiveness] = React.useState(1)
   const [battleNote, setBattleNote] = React.useState(() => typeof persisted?.battleNote === 'string' ? persisted.battleNote : '')
   const [mainSection, setMainSection] = React.useState<MainSection>(() => viewState?.mainSection ?? persisted?.mainSection ?? 'home')
-  const [speedLineQuery, setSpeedLineQuery] = React.useState('')
-  const [speedLineEffort, setSpeedLineEffort] = React.useState(32)
-  const [speedLineNature, setSpeedLineNature] = React.useState<SpeedNature>('boost')
-  const [speedLineForms, setSpeedLineForms] = React.useState<SpeedLineOptions['forms']>('all')
+  const [speedLineState, setSpeedLineState] = React.useState(() => viewState?.speedLineState ?? { ...defaultSpeedLineState })
+  const [speedLineWarnings, setSpeedLineWarnings] = React.useState(() => viewState?.speedLineWarnings ?? [])
   const [activeTab, setActiveTab] = React.useState<MainTab>(() => {
     const resolvedTab = viewState?.activeTab ?? persisted?.activeTab ?? 'party'
     return (viewState?.mainSection ?? persisted?.mainSection) === 'double' && resolvedTab === 'speed' ? 'power' : resolvedTab
@@ -4914,6 +4916,7 @@ export default function App() {
       const route = parseViewStateFromUrl()
       if (!route) return
       if (route.mainSection) setMainSection(route.mainSection)
+      if (route.speedLineState) { setSpeedLineState(route.speedLineState); setSpeedLineWarnings(route.speedLineWarnings ?? []) }
       if (route.activeTab) setActiveTab(route.activeTab)
       if (route.sampleWorkbenchTab) setSampleWorkbenchTab(route.sampleWorkbenchTab)
       setLibrarySourceId(route.librarySourceId ?? null)
@@ -4938,8 +4941,9 @@ export default function App() {
       dexSelectedValue: mainSection === 'dex' ? dexSelectedValue ?? undefined : undefined,
       selectedMy,
       selectedOpp,
+      speedLineState: mainSection === 'speedLine' ? speedLineState : undefined,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, librarySourceId, dexSearchMode, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp])
+  }, [mainSection, activeTab, sampleWorkbenchTab, librarySourceId, dexSearchMode, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp, speedLineState])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
@@ -4957,7 +4961,7 @@ export default function App() {
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
   const sampleRow = indexByKey.get(sampleForge.key) ?? rows[0]
-  const speedLineRows = React.useMemo(() => buildSpeedLine(rows, { effort: speedLineEffort, nature: speedLineNature, query: speedLineQuery, forms: speedLineForms }), [speedLineEffort, speedLineNature, speedLineQuery, speedLineForms])
+
   const sampleMagicCandidate = sampleRow ? findMagicNumberCandidate(sampleRow, sampleForge) : null
   const calcMyKey = resolveCalcKeyWithMega(myMember.key, calcMyMegaKey)
   const calcOppKey = oppMember.key ? resolveCalcKeyWithMega(oppMember.key, calcOppMegaKey) : ''
@@ -7185,27 +7189,7 @@ export default function App() {
           ) : null}
         </section> : null}
 
-        {mainSection === 'speedLine' ? <section className="panel wide speed-line-panel">
-          <div className="section-head"><div><h2>{lt('실능 스피드라인')}</h2><p className="muted">{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div></div>
-          <p className="muted speed-line-assumptions">{siteLanguage === 'ko' ? '레벨 50 · 개체값 31 · 챔피언스 노력 포인트 0~32를 성격 보정 전에 가산 · 도구/특성/랭크/필드 효과 제외 · 동속은 키순' : lt('실능 스피드라인 안내')}</p>
-          <div className="speed-line-controls">
-            <label>{lt('검색 · 이름/폼')}<input type="search" value={speedLineQuery} onChange={(e) => setSpeedLineQuery(e.target.value)} placeholder={lt('검색 · 이름/폼')} /></label>
-            <label>{lt('챔피언스 노력 포인트')}<input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={speedLineEffort} onChange={(e) => setSpeedLineEffort(clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP))} /></label>
-            <label>{lt('성격')}<select value={speedLineNature} onChange={(e) => setSpeedLineNature(e.target.value as SpeedNature)}>
-              <option value="boost">{lt('성격 보정 +10%')}</option><option value="neutral">{lt('성격 보정 없음')}</option><option value="lower">{lt('성격 보정 -10%')}</option>
-            </select></label>
-            <label>{lt('메가폼 포함')}<select value={speedLineForms} onChange={(e) => setSpeedLineForms(e.target.value as SpeedLineOptions['forms'])}>
-              <option value="all">{lt('메가폼 포함')}</option><option value="nonMega">{lt('메가폼 제외')}</option><option value="mega">{lt('메가폼만')}</option>
-            </select></label>
-          </div>
-          <p className="muted">{lt('빠른 순 → 느린 순')} · {lt('포켓몬 수')}: {speedLineRows.length}</p>
-          {speedLineRows.length ? <div className="speed-line-list" role="table" aria-label={lt('실능 스피드라인')}>
-            <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{lt('포켓몬')}</span><span role="columnheader">{lt('기본 스피드')}</span><span role="columnheader">{lt('실수치 스피드')}</span></div>
-            {speedLineRows.map(({ row, speed }, idx) => <div className="speed-line-row" role="row" key={row.key}>
-              <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{row.sprite ? <img src={row.sprite} alt="" loading="lazy" /> : null}<span>{displayName(row, siteLanguage)}<small>{row.name_en}</small></span></span><span role="cell">{row.speed}</span><strong role="cell">{speed}</strong>
-            </div>)}
-          </div> : <p className="muted">{lt('검색 결과 없음')}</p>}
-        </section> : null}
+        {mainSection === 'speedLine' ? <SpeedLinePanel rows={rows} state={speedLineState} warnings={speedLineWarnings} onChange={next => { setSpeedLineState(next); setSpeedLineWarnings([]) }} language={siteLanguage} translate={lt} displayName={row => displayName(row, siteLanguage)} /> : null}
 
         {mainSection === 'dex' ? <>
           <section className="panel wide">
