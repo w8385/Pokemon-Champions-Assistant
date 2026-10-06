@@ -10,6 +10,7 @@ import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
+import { closeHeaderMenu } from './headerNavigation'
 import SpeedLinePanel from './SpeedLinePanel'
 import PokemonSearchField from './PokemonSearchField'
 import { normalizeSearchText, speciesSearchCandidates, searchPokemon } from './pokemonSearch'
@@ -6791,13 +6792,13 @@ export default function App() {
               <div className={`header-route-menu ${mobileNavOpen ? 'open' : ''}`}>
                 <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : lt('도감')}</button>
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
-                  <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" onClick={() => setMobileNavOpen(false)} aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
+                  <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" onClick={event => { closeHeaderMenu(event.currentTarget); setMobileNavOpen(false) }} aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
                   {routeGroups.map(group => {
                     const active = group.section === 'battle' ? mainSection === 'single' || mainSection === 'double' : group.section === 'tools' ? mainSection === 'speedLine' || mainSection === 'dex' : mainSection === 'sample'
                     return <details key={group.section} className={`header-route-group ${active ? 'active' : ''}`}>
                       <summary className="header-primary-tab">{lt(group.label)}</summary>
                       <div className="header-route-links">{group.links.map(link => <a key={link.href} href={link.href}
-                        onClick={() => setMobileNavOpen(false)}
+                        onClick={event => { closeHeaderMenu(event.currentTarget); setMobileNavOpen(false) }}
                         aria-current={mainSection === link.section && (!link.tab || sampleWorkbenchTab === link.tab || activeTab === link.tab) ? 'page' : undefined}>{lt(link.label)}</a>)}</div>
                     </details>
                   })}
