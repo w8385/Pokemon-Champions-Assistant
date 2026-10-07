@@ -5918,6 +5918,21 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+.single-speed-result {
+  padding: 16px;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  background: #111827;
+  display: grid;
+  gap: 10px;
+}
+.single-speed-assumptions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.single-speed-assumptions > span { min-width: 104px; color: #cbd5e1; font-weight: 700; }
+.single-speed-verdict { display: grid; gap: 6px; padding: 14px; border-radius: 12px; background: #17263b; }
+.single-speed-verdict > strong { font-size: 1.45rem; color: #f8fafc; }
+.single-speed-verdict small { color: #a9bdd2; }
+.speed-plane-details > summary { cursor: pointer; padding: 10px 4px; font-weight: 700; }
+.speed-plane-details > summary:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
 .speed-plane-card {
   border: 1px solid #334155;
   border-radius: 18px;
