@@ -60,3 +60,33 @@ test('every single speed screen string has English and Japanese parity', () => {
     assert.ok(ja.includes(`'${label}':`), `JA missing: ${label}`)
   }
 })
+
+test('both existing cards show matching at-a-glance speed rows and card-local assumptions', () => {
+  const cards = [...speedScreen.matchAll(/className="[^"]*speed-context-card[^"]*"/g)].slice(0, 2)
+  assert.equal(cards.length, 2)
+  const first = speedScreen.slice(cards[0].index, cards[1].index)
+  const second = speedScreen.slice(cards[1].index, speedScreen.indexOf('className="speed-context-card single-speed-result"'))
+  const labels = ['스피드 종족값', '성격 보정', '스피드 노력', '스피드 랭크', '스카프 가정', '실수치 스피드', '최종 스피드']
+  for (const card of [first, second]) {
+    let last = -1
+    for (const label of labels) {
+      const next = card.indexOf(`lt('${label}')`)
+      assert.ok(next > last, `${label} must appear in matching order in each card`)
+      last = next
+    }
+  }
+  assert.match(first, /aria-label=\{lt\('내 스카프 가정'\)\}/)
+  assert.match(second, /aria-label=\{lt\('상대 성격 가정'\)\}/)
+  assert.match(second, /aria-label=\{lt\('상대 도구 가정'\)\}/)
+  const result = speedScreen.slice(speedScreen.indexOf('className="speed-context-card single-speed-result"'))
+  assert.doesNotMatch(result, /aria-label=\{lt\('상대 성격 가정'\)\}|aria-label=\{lt\('상대 도구 가정'\)\}/)
+})
+
+test('own screen-only scarf choice drives comparison and graph and resets on slot, form and route', () => {
+  assert.match(app, /singleSpeedOwnIdentity = `\$\{selectedMy\}:\$\{myMember\.key\}:\$\{myRow\.key/)
+  assert.match(app, /setSingleSpeedOwnScarf\(null\)/)
+  assert.match(app, /scarf: singleSpeedOwnScarf/)
+  assert.match(speedScreen, /speedAxisTop\(singleSpeedComparison\.currentSpeed!\)/)
+  assert.doesNotMatch(speedScreen, /speedAxisTop\(mySpeed\)/)
+  assert.doesNotMatch(speedScreen, /setParty\(|updatePartyMember\(/)
+})

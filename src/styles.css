@@ -5918,6 +5918,30 @@ textarea { min-height: 72px; resize: vertical; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+.speed-compare-head-grid > .speed-context-card {
+  min-width: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.speed-at-glance { display: grid; gap: 0; min-width: 0; }
+.speed-at-glance > div {
+  display: grid;
+  grid-template-columns: minmax(105px, 38%) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 0;
+  border-top: 1px solid #334155;
+}
+.speed-at-glance > div > span { color: #a9bdd2; font-size: 12px; }
+.speed-at-glance > div > strong { color: #f8fafc; }
+.speed-at-glance-controls { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.speed-at-glance-controls .pick-chip { white-space: normal; text-align: center; }
+.speed-at-glance-final { background: #17263b; border-radius: 8px; padding: 9px !important; }
+.speed-at-glance-final strong { font-size: 1.3rem; }
+.speed-assumption-note { color: #93a4b8; }
 .single-speed-result {
   padding: 16px;
   border: 1px solid #334155;

@@ -117,6 +117,7 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
     '가정': 'Assumed', '내 스피드': 'My Speed', '내 특성 발동은 이 비교에 미적용': 'My ability activation is not included in this comparison', '내가 느림': 'I am slower', '내가 빠름': 'I am faster', '동속 최소 스피드 노력': 'Minimum effort to tie', '동속은 추월이 아닙니다.': 'A tie is not a strict pass.', '미발동': 'Inactive', '발동 가정': 'Assume active', '보정 없음': 'No nature modifier', '상대 가정 스피드': 'Assumed opponent Speed', '상대 도구 가정': 'Opponent item assumption', '상대 성격 가정': 'Opponent nature assumption', '상대 스피드 랭크': 'Opponent Speed stage', '상대 특성 발동 가정': 'Opponent ability activation assumption', '스피드 노력': 'Speed effort', '스피드 비교 그래프 자세히 보기': 'Show speed comparison graph', '엄격히 추월할 최소 스피드 노력': 'Minimum effort to strictly pass', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': 'Neutral = no Speed nature boost · Fast = Speed nature +10% · both assume 32/32 Champions Speed effort. Opponent records are unchanged.', '현재 성격·도구로 추월 불가': 'Cannot pass with current nature and item', '현재 스피드': 'Current Speed', '현재 투자로 이미 추월': 'Already passing with current effort', '현재보다 추가': 'Additional from current', '비가 내릴 때': 'During rain', '모래바람일 때': 'During sandstorm', '쾌청일 때': 'During sun', '눈이 내릴 때': 'During snow', '일렉트릭필드일 때': 'During Electric Terrain', '도구를 소비하거나 잃은 뒤': 'After losing or consuming the held item', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'My Mega form requires a Mega Stone and cannot hold Scarf.', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'The opponent Mega form requires a Mega Stone and cannot hold Scarf.', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'Unburden activates after losing the item and cannot combine with a held Scarf.', '이 폼에 없는 특성은 발동할 수 없습니다.': 'This form cannot activate an ability it does not have.',
     '링크 형식': 'Link format', '실수치 미기록': 'Actual stats not recorded',
     '파티 소개': 'Party introductions', '개별 포켓몬 샘플': 'Individual Pokémon samples', '확인 대기': 'Pending classification', '전체 파티 구성 미확인': 'Full party details unconfirmed', '구성 일부 확인': 'Members with partial details', '분류·구성 확인 대기': 'Classification and build pending',
@@ -157,6 +158,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
     '가정': '想定', '내 스피드': '自分の素早さ', '내 특성 발동은 이 비교에 미적용': '自分の特性発動はこの比較に含めません', '내가 느림': '自分が遅い', '내가 빠름': '自分が速い', '동속 최소 스피드 노력': '同速に必要な最小努力', '동속은 추월이 아닙니다.': '同速は追い抜きではありません。', '미발동': '未発動', '발동 가정': '発動を想定', '보정 없음': '性格補正なし', '상대 가정 스피드': '相手の想定素早さ', '상대 도구 가정': '相手の持ち物想定', '상대 성격 가정': '相手の性格想定', '상대 스피드 랭크': '相手の素早さランク', '상대 특성 발동 가정': '相手の特性発動想定', '스피드 노력': '素早さ努力', '스피드 비교 그래프 자세히 보기': '素早さ比較グラフを表示', '엄격히 추월할 최소 스피드 노력': '追い抜くための最小努力', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': '準速＝素早さ性格補正なし・最速＝素早さ性格＋10％。どちらもチャンピオンズ素早さ努力32/32を想定。相手の記録は変更しません。', '현재 성격·도구로 추월 불가': '現在の性格・持ち物では抜けません', '현재 스피드': '現在の素早さ', '현재 투자로 이미 추월': '現在の努力で追い抜いています', '현재보다 추가': '現在から追加', '비가 내릴 때': '雨のとき', '모래바람일 때': '砂嵐のとき', '쾌청일 때': '晴れのとき', '눈이 내릴 때': '雪のとき', '일렉트릭필드일 때': 'エレキフィールドのとき', '도구를 소비하거나 잃은 뒤': '持ち物を消費・喪失した後', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '自分のメガフォルムはメガストーンが必要なためスカーフを持てません。', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '相手のメガフォルムはメガストーンが必要なためスカーフを持てません。', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'かるわざは持ち物を失った後に発動するため、スカーフを持った状態と併用できません。', '이 폼에 없는 특성은 발동할 수 없습니다.': 'このフォルムにない特性は発動できません。',
     '링크 형식': 'リンクの形式', '실수치 미기록': '実数値の記録なし',
     '파티 소개': 'パーティ紹介', '개별 포켓몬 샘플': '個別ポケモンサンプル', '확인 대기': '分類待ち', '전체 파티 구성 미확인': 'パーティ全体の構成は未確認', '구성 일부 확인': '一部構成を確認したメンバー', '분류·구성 확인 대기': '分類・構成の確認待ち',
@@ -3906,6 +3908,7 @@ export default function App() {
   const [calcMyMegaKey, setCalcMyMegaKey] = React.useState<string | null>(null)
   const [calcOppMegaKey, setCalcOppMegaKey] = React.useState<string | null>(null)
   const [singleSpeedAssumption, setSingleSpeedAssumption] = React.useState<{ identity: string; nature: SingleSpeedNature; item: SingleSpeedItem; abilityActive: boolean } | null>(null)
+  const [singleSpeedOwnScarfChoice, setSingleSpeedOwnScarf] = React.useState<{ identity: string; scarf: boolean } | null>(null)
   const [siteLanguage, setSiteLanguage] = React.useState<SiteLanguage>('ko')
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [sampleMoveFilter, setSampleMoveFilter] = React.useState<MoveFilter>('core')
@@ -5022,20 +5025,25 @@ export default function App() {
   const pickedOpponents = opponents.filter((member) => member.picked)
   // Assumptions belong to this screen only; an opponent slot/form switch starts fresh.
   const singleSpeedIdentity = `${selectedOpp}:${oppMember.key}:${oppRow?.key ?? ''}`
+  const singleSpeedOwnIdentity = `${selectedMy}:${myMember.key}:${myRow.key}`
   React.useEffect(() => {
     setSingleSpeedAssumption(null)
   }, [singleSpeedIdentity, mainSection, activeTab])
+  React.useEffect(() => {
+    setSingleSpeedOwnScarf(null)
+  }, [singleSpeedOwnIdentity, mainSection, activeTab])
+  const singleSpeedOwnScarf = singleSpeedOwnScarfChoice?.identity === singleSpeedOwnIdentity ? singleSpeedOwnScarfChoice.scarf : isChoiceScarfItem(myMember.item)
   const singleSpeedNature: SingleSpeedNature = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.nature : 'fast'
   const singleSpeedItem: SingleSpeedItem = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.item : 'normal'
   const singleSpeedAbilityActive = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.abilityActive : false
   const singleSpeedAbility = oppRow ? speedAbilityCandidate(oppRow, siteLanguage) : null
   const singleSpeedComparison = oppRow ? compareSingleSpeed(
-    { row: myRow, effort: myMember.evs.speed, nature: natureMultiplier(myMember.config.nature, 'speed'), stage: myMember.config.speedStage, scarf: isChoiceScarfItem(myMember.item) },
+    { row: myRow, effort: myMember.evs.speed, nature: natureMultiplier(myMember.config.nature, 'speed'), stage: myMember.config.speedStage, scarf: singleSpeedOwnScarf },
     oppRow, singleSpeedNature, singleSpeedItem, oppMember.speedStage,
     singleSpeedAbility ? { slug: singleSpeedAbility.slug, active: singleSpeedAbilityActive } : undefined,
   ) : null
   const speedAxisMin = 40
-  const speedAxisMax = Math.max(340, (singleSpeedComparison?.targetSpeed ?? 0) + 20, mySpeed + 20)
+  const speedAxisMax = Math.max(340, (singleSpeedComparison?.targetSpeed ?? 0) + 20, (singleSpeedComparison?.currentSpeed ?? 0) + 20)
   const speedAxisTicks = [40, 100, 160, 220, 280, 340].filter(tick => tick <= speedAxisMax)
   const speedAxisTop = (speed: number) => {
     const clamped = Math.max(speedAxisMin, Math.min(speedAxisMax, speed))
@@ -9553,17 +9561,25 @@ export default function App() {
                     <div>
                       <span className="speed-context-role">{lt('내 포켓몬')}</span>
                       <strong>{displayName(myRow, siteLanguage)}</strong>
-                      <div className="speed-context-meta">
-                        <span>{lt('현재 스피드')} <strong>{mySpeed}</strong> · {lt('스피드 노력')} {myMember.evs.speed}/32 · {lt('성격')} {natureMultiplier(myMember.config.nature, 'speed') === 1.1 ? '+10%' : natureMultiplier(myMember.config.nature, 'speed') === 0.9 ? '-10%' : lt('보정 없음')}</span>
-                        {isChoiceScarfItem(myMember.item) ? <span className="pick-badge icon-badge"><img src={itemSpriteSrc(myMember.key, '구애스카프')} alt={lt('스카프')} className="pick-badge-item-icon" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} /></span> : null}
-                        {mySpeedAbilityLine ? <span>{mySpeedAbilityLine.label} · {lt('내 특성 발동은 이 비교에 미적용')}</span> : null}
-                      </div>
                       {myMegaCandidates.length ? <div className="calc-toggle-row">
                         <button type="button" className={`pick-chip ${!calcMyMegaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(null)}>{lt('일반')}</button>
                         {myMegaCandidates.map((megaKey) => <button key={`my-speed-mega-${megaKey}`} type="button" className={`pick-chip ${calcMyMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcMyMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                       </div> : null}
                     </div>
                   </div>
+                  <div className="speed-at-glance">
+                    <div><span>{lt('스피드 종족값')}</span><strong>{myRow.speed}</strong></div>
+                    <div><span>{lt('성격 보정')}</span><strong>{natureMultiplier(myMember.config.nature, 'speed') === 1.1 ? '+10%' : natureMultiplier(myMember.config.nature, 'speed') === 0.9 ? '-10%' : lt('보정 없음')}</strong></div>
+                    <div><span>{lt('스피드 노력')}</span><strong>{myMember.evs.speed}/32</strong></div>
+                    <div><span>{lt('스피드 랭크')}</span><strong>{myMember.config.speedStage >= 0 ? '+' : ''}{myMember.config.speedStage}</strong></div>
+                    <div><span>{lt('스카프 가정')}</span><div className="speed-at-glance-controls" role="group" aria-label={lt('내 스카프 가정')}>
+                      {([false, true] as const).map(scarf => <button key={String(scarf)} type="button" className={`pick-chip ${singleSpeedOwnScarf === scarf ? 'active' : ''}`} aria-pressed={singleSpeedOwnScarf === scarf} onClick={() => setSingleSpeedOwnScarf({ identity: singleSpeedOwnIdentity, scarf })}>{scarf ? lt('스카프') : lt('일반')} {scarf ? '×1.5' : '×1'}</button>)}
+                    </div></div>
+                    <div><span>{lt('실수치 스피드')}</span><strong>{actualStat(myRow.speed, myMember.evs.speed, natureMultiplier(myMember.config.nature, 'speed'))}</strong></div>
+                    <div className="speed-at-glance-final"><span>{lt('최종 스피드')}</span><strong>{singleSpeedComparison?.currentSpeed ?? '—'}</strong></div>
+                  </div>
+                  <small className="speed-assumption-note">{singleSpeedOwnScarfChoice?.identity === singleSpeedOwnIdentity ? lt('화면 가정 · 파티 도구 변경 없음') : lt('파티 도구 기준')}</small>
+                  {mySpeedAbilityLine ? <small className="muted">{mySpeedAbilityLine.label} · {lt('내 특성 발동은 이 비교에 미적용')}</small> : null}
                 </div>
                 <div className="speed-ladder-head speed-target-card enemy speed-context-card">
                   <div className="speed-target-head">
@@ -9571,39 +9587,40 @@ export default function App() {
                     <div>
                       <span className="speed-context-role">{lt('상대 포켓몬')}</span>
                       <strong>{displayName(oppRow, siteLanguage)}</strong>
-                      <div className="speed-context-meta">
-                        <span>{lt('가정')} · {singleSpeedNature === 'fast' ? lt('최속') : lt('준속')} · {singleSpeedItem === 'scarf' ? lt('스카프') : lt('일반')} · {lt('스피드 노력')} 32/32</span>
-                      </div>
                       {oppMegaCandidates.length ? <div className="calc-toggle-row">
                         <button type="button" className={`pick-chip ${!calcOppMegaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(null)}>{lt('일반')}</button>
                         {oppMegaCandidates.map((megaKey) => <button key={`opp-speed-mega-${megaKey}`} type="button" className={`pick-chip ${calcOppMegaKey === megaKey ? 'active' : ''}`} onClick={() => setCalcOppMegaKey(megaKey)}>{megaToggleLabel(megaKey, siteLanguage)}</button>)}
                       </div> : null}
                     </div>
                   </div>
+                  <div className="speed-at-glance">
+                    <div><span>{lt('스피드 종족값')}</span><strong>{oppRow.speed}</strong></div>
+                    <div><span>{lt('성격 보정')}</span><div className="speed-at-glance-controls" role="group" aria-label={lt('상대 성격 가정')}>
+                      {(['neutral', 'fast'] as const).map(nature => <button key={nature} type="button" className={`pick-chip ${singleSpeedNature === nature ? 'active' : ''}`} aria-pressed={singleSpeedNature === nature} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature, item: singleSpeedItem, abilityActive: singleSpeedAbilityActive })}>{nature === 'fast' ? `${lt('최속')} +10%` : `${lt('준속')} ${lt('보정 없음')}`}</button>)}
+                    </div></div>
+                    <div><span>{lt('스피드 노력')}</span><strong>32/32</strong></div>
+                    <div><span>{lt('스피드 랭크')}</span><strong>{oppMember.speedStage >= 0 ? '+' : ''}{oppMember.speedStage}</strong></div>
+                    <div><span>{lt('스카프 가정')}</span><div className="speed-at-glance-controls" role="group" aria-label={lt('상대 도구 가정')}>
+                      {(['normal', 'scarf'] as const).map(item => <button key={item} type="button" className={`pick-chip ${singleSpeedItem === item ? 'active' : ''}`} aria-pressed={singleSpeedItem === item} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item, abilityActive: singleSpeedAbilityActive })}>{item === 'scarf' ? lt('스카프') : lt('일반')} {item === 'scarf' ? '×1.5' : '×1'}</button>)}
+                    </div></div>
+                    <div><span>{lt('실수치 스피드')}</span><strong>{actualStat(oppRow.speed, 32, singleSpeedNature === 'fast' ? 1.1 : 1)}</strong></div>
+                    <div className="speed-at-glance-final"><span>{lt('최종 스피드')}</span><strong>{singleSpeedComparison?.targetSpeed ?? '—'}</strong></div>
+                  </div>
+                  <small className="speed-assumption-note">{lt('상대 가정 · 엔트리 변경 없음')}</small>
+                  {singleSpeedAbility ? <div className="single-speed-assumptions" role="group" aria-label={lt('상대 특성 발동 가정')}>
+                    <span>{lt('상대 특성 발동 가정')} · {singleSpeedAbility.label} · {lt(({ 'swift-swim': '비가 내릴 때', 'sand-rush': '모래바람일 때', 'chlorophyll': '쾌청일 때', 'slush-rush': '눈이 내릴 때', 'surge-surfer': '일렉트릭필드일 때', unburden: '도구를 소비하거나 잃은 뒤' } as Record<string, string>)[singleSpeedAbility.slug])}</span>
+                    <button type="button" className={`pick-chip ${!singleSpeedAbilityActive ? 'active' : ''}`} aria-pressed={!singleSpeedAbilityActive} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item: singleSpeedItem, abilityActive: false })}>{lt('미발동')}</button>
+                    <button type="button" className={`pick-chip ${singleSpeedAbilityActive ? 'active' : ''}`} aria-pressed={singleSpeedAbilityActive} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item: singleSpeedItem, abilityActive: true })}>{lt('발동 가정')}</button>
+                  </div> : null}
                 </div>
               </div>
                 <div className="speed-context-card single-speed-result">
-                <div className="single-speed-assumptions" role="group" aria-label={lt('상대 성격 가정')}>
-                 <span>{lt('상대 성격 가정')}</span>
-                 {(['neutral', 'fast'] as const).map(nature => <button key={nature} type="button" className={`pick-chip ${singleSpeedNature === nature ? 'active' : ''}`} aria-pressed={singleSpeedNature === nature} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature, item: singleSpeedItem, abilityActive: singleSpeedAbilityActive })}>{nature === 'fast' ? lt('최속') : lt('준속')}</button>)}
-                </div>
-                <div className="single-speed-assumptions" role="group" aria-label={lt('상대 도구 가정')}>
-                 <span>{lt('상대 도구 가정')}</span>
-                 {(['normal', 'scarf'] as const).map(item => <button key={item} type="button" className={`pick-chip ${singleSpeedItem === item ? 'active' : ''}`} aria-pressed={singleSpeedItem === item} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item, abilityActive: singleSpeedAbilityActive })}>{item === 'scarf' ? lt('스카프') : lt('일반')}</button>)}
-                </div>
-                {singleSpeedAbility ? <div className="single-speed-assumptions" role="group" aria-label={lt('상대 특성 발동 가정')}>
-                  <span>{lt('상대 특성 발동 가정')} · {singleSpeedAbility.label} · {lt(({ 'swift-swim': '비가 내릴 때', 'sand-rush': '모래바람일 때', 'chlorophyll': '쾌청일 때', 'slush-rush': '눈이 내릴 때', 'surge-surfer': '일렉트릭필드일 때', unburden: '도구를 소비하거나 잃은 뒤' } as Record<string, string>)[singleSpeedAbility.slug])}</span>
-                  <button type="button" className={`pick-chip ${!singleSpeedAbilityActive ? 'active' : ''}`} aria-pressed={!singleSpeedAbilityActive} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item: singleSpeedItem, abilityActive: false })}>{lt('미발동')}</button>
-                  <button type="button" className={`pick-chip ${singleSpeedAbilityActive ? 'active' : ''}`} aria-pressed={singleSpeedAbilityActive} onClick={() => setSingleSpeedAssumption({ identity: singleSpeedIdentity, nature: singleSpeedNature, item: singleSpeedItem, abilityActive: true })}>{lt('발동 가정')}</button>
-                </div> : null}
-                <p className="muted">{lt('준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.')}</p>
                 {singleSpeedComparison?.unavailableReason ? <p role="status">{lt(singleSpeedComparison.unavailableReason === 'own-mega-scarf' ? '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'unburden-scarf' ? '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'ability-unavailable' ? '이 폼에 없는 특성은 발동할 수 없습니다.' : '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.')}</p> : singleSpeedComparison ? <div className="single-speed-verdict" role="status">
                  <strong>{singleSpeedComparison.verdict === 'faster' ? lt('내가 빠름') : singleSpeedComparison.verdict === 'equal' ? lt('동속') : lt('내가 느림')}</strong>
                  <span>{lt('내 스피드')} {singleSpeedComparison.currentSpeed} · {lt('상대 가정 스피드')} {singleSpeedComparison.targetSpeed}</span>
                  <span>{singleSpeedComparison.verdict === 'faster' ? `${lt('현재 투자로 이미 추월')} · ${lt('엄격히 추월할 최소 스피드 노력')} ${singleSpeedComparison.passEffort}/32 · ${lt('추가')} 0pt` : singleSpeedComparison.passEffort === null ? `${lt('현재 성격·도구로 추월 불가')} · ${lt('최대')} ${singleSpeedComparison.maxSpeed} (${lt('스피드 노력')} 32/32)` : `${lt('엄격히 추월할 최소 스피드 노력')} ${singleSpeedComparison.passEffort}/32 · ${lt('현재보다 추가')} ${singleSpeedComparison.additionalEffort}pt`}</span>
                  {singleSpeedComparison.tieEffort !== null ? <small>{lt('동속 최소 스피드 노력')} {singleSpeedComparison.tieEffort}/32 · {lt('동속은 추월이 아닙니다.')}</small> : null}
                 </div> : null}
-                <p className="muted">{lt('상대 스피드 랭크')} {oppMember.speedStage >= 0 ? '+' : ''}{oppMember.speedStage} · {lt('내 스피드 랭크')} {myMember.config.speedStage >= 0 ? '+' : ''}{myMember.config.speedStage} · {lt('내 특성 발동은 이 비교에 미적용')}</p>
                 </div>
                 {!singleSpeedComparison?.unavailableReason && singleSpeedComparison ? <details className="speed-plane-details">
                 <summary>{lt('스피드 비교 그래프 자세히 보기')}</summary>
@@ -9631,10 +9648,10 @@ export default function App() {
                         const minTop = speedAxisTop(minScenario.speedAtMax)
                         const maxTop = speedAxisTop(maxScenario.speedAtMax)
                         const left = 50
-                        const guideTop = Math.min(maxTop, speedAxisTop(mySpeed))
-                        const guideBottom = Math.max(minTop, speedAxisTop(mySpeed))
+                        const guideTop = Math.min(maxTop, speedAxisTop(singleSpeedComparison.currentSpeed!))
+                        const guideBottom = Math.max(minTop, speedAxisTop(singleSpeedComparison.currentSpeed!))
                         const guideHeight = Math.max(0, guideBottom - guideTop)
-                        const rangeClass = maxScenario.speedAtMax < mySpeed ? 'below' : minScenario.speedAtMax > mySpeed ? 'above' : 'cross'
+                        const rangeClass = maxScenario.speedAtMax < singleSpeedComparison.currentSpeed! ? 'below' : minScenario.speedAtMax > singleSpeedComparison.currentSpeed! ? 'above' : 'cross'
                         const labelSideClass = speedBandLabelSideClass(idx, 1, left)
                         return (
                           <div key={`speed-band-${band.id}`} className="speed-plane-band-wrap" style={{ left: `${left}%` }}>
