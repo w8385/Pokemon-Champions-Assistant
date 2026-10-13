@@ -8418,3 +8418,33 @@ html {
   .header-route-menu .header-primary-tab { width: 100%; justify-content: flex-start; }
   .header-route-links { position: static; min-width: 0; box-shadow: none; margin: 4px 0 6px 12px; }
 }
+/* Independent quick damage: native party cards, stat tiles and move chips. */
+.quick-damage { min-width: 0; display: grid; gap: 16px; }
+.quick-damage .row-between { gap: 12px; flex-wrap: wrap; }
+.quick-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.quick-sides { order: 1; }
+.quick-result { order: 2; }
+.quick-moves { order: 3; }
+.quick-conditions { order: 4; }
+.quick-side-card { min-width: 0; display: grid; gap: 12px; }
+.quick-side-card .pokemon-search-field { position: relative; min-width: 0; }
+.quick-side-card .pokemon-search-field input { width: 100%; }
+.quick-side-card .stat-preview-list { margin: 0; }
+.quick-meta-grid, .quick-condition-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.quick-meta-grid label, .quick-stat-control label, .quick-condition-grid label, .quick-moves label { min-width: 0; display: grid; gap: 4px; }
+.quick-meta-grid select, .quick-stat-control input, .quick-condition-grid select, .quick-moves input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; }
+.quick-stat-controls { display: grid; gap: 8px; }
+.quick-stat-control { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.quick-moves { min-width: 0; display: grid; gap: 10px; }
+.quick-moves .move-chip-wrap { max-height: 210px; overflow-y: auto; }
+.quick-moves .move-chip[aria-pressed='true'] { outline: 2px solid currentColor; outline-offset: -2px; }
+.quick-result { min-width: 0; overflow-wrap: anywhere; }
+.quick-result h3 { font-size: clamp(1.25rem, 3vw, 1.9rem); margin: 8px 0; }
+.quick-result small { display: block; line-height: 1.6; }
+.quick-conditions { min-width: 0; }
+.quick-conditions summary { cursor: pointer; font-weight: 700; }
+.quick-condition-grid { margin-top: 12px; }
+.quick-condition-grid .quick-check { display: flex; align-items: center; gap: 8px; }
+.quick-stat-control [aria-invalid='true'] { border-color: #e45858; }
+@media (max-width: 760px) { .quick-sides { grid-template-columns: minmax(0, 1fr); } .quick-meta-grid, .quick-condition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 350px) { .quick-meta-grid, .quick-condition-grid { grid-template-columns: minmax(0, 1fr); } }

@@ -8,12 +8,13 @@ export const routeGroups = [
     { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
   ] },
   { label: '도구/자료', section: 'tools', links: [
+    { label: '간단 대미지', href: '#/damage', section: 'quickDamage', tab: '' },
     { label: '실능 스피드라인', href: '#/speed-line', section: 'speedLine', tab: '' },
     { label: '도감', href: '#/dex', section: 'dex', tab: '' },
   ] },
 ] as const
 
-export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'double' | 'sample' | 'speedLine' | 'dex'; tab: string } {
+export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'double' | 'sample' | 'speedLine' | 'dex' | 'quickDamage'; tab: string } {
   const route = new URL((hash.replace(/^#/, '') || '/'), 'https://route.local')
   const path = route.pathname
   if (path === '/single' || path === '/double') {
@@ -27,6 +28,7 @@ export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'do
   }
   if (path.startsWith('/sample-library/')) return { section: 'sample', tab: 'library' }
   if (path === '/speed-line') return { section: 'speedLine', tab: '' }
+  if (path === '/damage') return { section: 'quickDamage', tab: '' }
   if (path === '/dex') return { section: 'dex', tab: '' }
   return { section: 'home', tab: '' }
 }

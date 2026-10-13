@@ -6,8 +6,12 @@ test('compact navigation exposes the unified library without a ranker entry', ()
   assert.deepEqual(routeGroups.map(g => g.label), ['배틀 준비', '샘플', '도구/자료'])
   assert.deepEqual(routeGroups.flatMap(g => g.links.map(l => l.href)), [
     '#/single?tab=party', '#/double?tab=party', '#/sample-builder?sampleTab=builder',
-    '#/sample-builder?sampleTab=library', '#/speed-line', '#/dex',
+    '#/sample-builder?sampleTab=library', '#/damage', '#/speed-line', '#/dex',
   ])
+})
+
+test('quick damage deep link resolves independently', () => {
+  assert.deepEqual(normalizeRoute('#/damage'), { section: 'quickDamage', tab: '' })
 })
 
 test('invalid deep-link tabs normalize to visible default content', () => {

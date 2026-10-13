@@ -6,6 +6,7 @@ import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
+import { quickItem, quickMoveSupported, readQuickSaved } from './quickDamageState'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
@@ -117,6 +118,7 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error'; moves: Mo
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
     '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
     '가정': 'Assumed', '내 스피드': 'My Speed', '내 특성 발동은 이 비교에 미적용': 'My ability activation is not included in this comparison', '내가 느림': 'I am slower', '내가 빠름': 'I am faster', '동속 최소 스피드 노력': 'Minimum effort to tie', '동속은 추월이 아닙니다.': 'A tie is not a strict pass.', '미발동': 'Inactive', '발동 가정': 'Assume active', '보정 없음': 'No nature modifier', '상대 가정 스피드': 'Assumed opponent Speed', '상대 도구 가정': 'Opponent item assumption', '상대 성격 가정': 'Opponent nature assumption', '상대 스피드 랭크': 'Opponent Speed stage', '상대 특성 발동 가정': 'Opponent ability activation assumption', '스피드 노력': 'Speed effort', '스피드 비교 그래프 자세히 보기': 'Show speed comparison graph', '엄격히 추월할 최소 스피드 노력': 'Minimum effort to strictly pass', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': 'Neutral = no Speed nature boost · Fast = Speed nature +10% · both assume 32/32 Champions Speed effort. Opponent records are unchanged.', '현재 성격·도구로 추월 불가': 'Cannot pass with current nature and item', '현재 스피드': 'Current Speed', '현재 투자로 이미 추월': 'Already passing with current effort', '현재보다 추가': 'Additional from current', '비가 내릴 때': 'During rain', '모래바람일 때': 'During sandstorm', '쾌청일 때': 'During sun', '눈이 내릴 때': 'During snow', '일렉트릭필드일 때': 'During Electric Terrain', '도구를 소비하거나 잃은 뒤': 'After losing or consuming the held item', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'My Mega form requires a Mega Stone and cannot hold Scarf.', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'The opponent Mega form requires a Mega Stone and cannot hold Scarf.', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'Unburden activates after losing the item and cannot combine with a held Scarf.', '이 폼에 없는 특성은 발동할 수 없습니다.': 'This form cannot activate an ability it does not have.',
     '링크 형식': 'Link format', '실수치 미기록': 'Actual stats not recorded',
@@ -158,6 +160,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '연속기는 기절 확률 계산 제외': '連続技のひんし確率は計算対象外', '간단 대미지': '簡易ダメージ', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': '攻撃側と防御側を選んで技のダメージをすぐ比較します。', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'パーティと相手エントリーを変更しない独立した計算です。', '공수 교체': '攻守を交換', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Lv.50・個体値31・性格補正なし・チャンピオンズ努力0/32・持ち物と特性なし。実数値入力は計算値を上書きします。', '포켓몬을 선택하세요.': 'ポケモンを選択してください。', '특성 없음': '特性なし', '노력 포인트': '努力ポイント', '사용 가능 공격 기술': '使用可能な攻撃技', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': '確認済みの攻撃技データがありません。推測技は表示しません。', '대미지 결과': 'ダメージ結果', '1타 확률': '一撃確率', '16개 난수 피해': '16個の乱数ダメージ', '실수치는 1~999의 정수로 입력하세요.': '実数値には1～999の整数を入力してください。', '공격측·방어측과 기술을 선택하세요.': '攻撃側・防御側と技を選んでください。', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': '選択していない発動条件・変動威力・回復・命中率は計算しません。連続技の乱数は既存エンジンで同じ乱数を各ヒットに使用します。',
     '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
     '가정': '想定', '내 스피드': '自分の素早さ', '내 특성 발동은 이 비교에 미적용': '自分の特性発動はこの比較に含めません', '내가 느림': '自分が遅い', '내가 빠름': '自分が速い', '동속 최소 스피드 노력': '同速に必要な最小努力', '동속은 추월이 아닙니다.': '同速は追い抜きではありません。', '미발동': '未発動', '발동 가정': '発動を想定', '보정 없음': '性格補正なし', '상대 가정 스피드': '相手の想定素早さ', '상대 도구 가정': '相手の持ち物想定', '상대 성격 가정': '相手の性格想定', '상대 스피드 랭크': '相手の素早さランク', '상대 특성 발동 가정': '相手の特性発動想定', '스피드 노력': '素早さ努力', '스피드 비교 그래프 자세히 보기': '素早さ比較グラフを表示', '엄격히 추월할 최소 스피드 노력': '追い抜くための最小努力', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': '準速＝素早さ性格補正なし・最速＝素早さ性格＋10％。どちらもチャンピオンズ素早さ努力32/32を想定。相手の記録は変更しません。', '현재 성격·도구로 추월 불가': '現在の性格・持ち物では抜けません', '현재 스피드': '現在の素早さ', '현재 투자로 이미 추월': '現在の努力で追い抜いています', '현재보다 추가': '現在から追加', '비가 내릴 때': '雨のとき', '모래바람일 때': '砂嵐のとき', '쾌청일 때': '晴れのとき', '눈이 내릴 때': '雪のとき', '일렉트릭필드일 때': 'エレキフィールドのとき', '도구를 소비하거나 잃은 뒤': '持ち物を消費・喪失した後', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '自分のメガフォルムはメガストーンが必要なためスカーフを持てません。', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '相手のメガフォルムはメガストーンが必要なためスカーフを持てません。', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'かるわざは持ち物を失った後に発動するため、スカーフを持った状態と併用できません。', '이 폼에 없는 특성은 발동할 수 없습니다.': 'このフォルムにない特性は発動できません。',
     '링크 형식': 'リンクの形式', '실수치 미기록': '実数値の記録なし',
@@ -1677,7 +1680,7 @@ function parseViewStateFromUrl(): ViewState | null {
     const routeUrl = new URL(normalizedHash.startsWith('/') ? normalizedHash : `/${normalizedHash}`, 'https://openclaw.local')
     const normalizedRoute = normalizeRoute(window.location.hash)
     const routePath = routeUrl.pathname.replace(/\/+$/, '') || '/'
-    const mainSection: MainSection | undefined = routePath === '/single'
+    const mainSection: MainSection | undefined = routePath === '/damage' ? 'quickDamage' : routePath === '/single'
       ? 'single'
       : routePath === '/speed-line'
         ? 'speedLine'
@@ -1723,7 +1726,7 @@ function parseViewStateFromUrl(): ViewState | null {
 function syncViewStateToUrl(viewState: ViewState) {
   if (typeof window === 'undefined') return
   const params = new URLSearchParams()
-  const routePath = viewState.mainSection === 'sample' ? viewState.sampleWorkbenchTab === 'library' && viewState.librarySourceId ? `/sample-library/${encodeURIComponent(viewState.librarySourceId)}` : '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
+  const routePath = viewState.mainSection === 'quickDamage' ? '/damage' : viewState.mainSection === 'sample' ? viewState.sampleWorkbenchTab === 'library' && viewState.librarySourceId ? `/sample-library/${encodeURIComponent(viewState.librarySourceId)}` : '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
   if ((viewState.mainSection === 'single' || viewState.mainSection === 'double') && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab && !viewState.librarySourceId) params.set('sampleTab', viewState.sampleWorkbenchTab)
   if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
@@ -3747,6 +3750,7 @@ function menuLabelForSection(section: MainSection, activeTab: MainTab, language:
   if (section === 'home') return translateText(language, '홈')
   if (section === 'sample') return translateText(language, '포켓몬 샘플 깎기')
   if (section === 'speedLine') return translateText(language, '실능 스피드라인')
+  if (section === 'quickDamage') return translateText(language, '간단 대미지')
   if (section === 'dex') return translateText(language, '도감')
   if (section === 'double') return translateText(language, '더블배틀 메뉴')
   return menuLabelForTab(activeTab, language)
@@ -3770,6 +3774,112 @@ function itemAutocompleteSecondaryLabel(item: string, language: SiteLanguage) {
 function itemAutocompletePrimaryLabel(item: string, language: SiteLanguage) {
   const localized = displayItemLabel(item, language)
   return localized && localized.trim() ? localized : item
+}
+
+type QuickSide = { key: string; ability: string; item: string; nature: NatureId; evs: EffortValues; actual: Partial<Record<EffortStatKey, string>> }
+type QuickConditions = { attackStage: number; defenseStage: number; weather: DamageWeather; terrain: DamageTerrain; burned: boolean; critical: boolean; reflect: boolean; lightScreen: boolean; auroraVeil: boolean; friendGuard: boolean; typeChangeStab: boolean; lowHp: boolean; targetPoisoned: boolean; defenderFullHp: boolean; hits: number }
+const QUICK_KEY = 'pokemon-champions-quick-damage:v1'
+const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {} })
+const quickDefaultConditions = (): QuickConditions => ({ attackStage: 0, defenseStage: 0, weather: 'none', terrain: 'none', burned: false, critical: false, reflect: false, lightScreen: false, auroraVeil: false, friendGuard: false, typeChangeStab: true, lowHp: false, targetPoisoned: false, defenderFullHp: false, hits: 2 })
+function quickSide(input: unknown): QuickSide {
+  const value = input && typeof input === 'object' && !Array.isArray(input) ? input as Partial<QuickSide> : {}
+  const key = typeof value.key === 'string' && indexByKey.has(value.key) ? value.key : ''
+  const item = quickItem(value.item, megaStoneForKey(key), CHAMPIONS_ITEM_OPTIONS)
+  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: key && typeof value.ability === 'string' && abilityMatchesKey(key, value.ability) ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {} }
+}
+function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
+  const override = side.actual[key]
+  if (override !== undefined) return /^\d+$/.test(override) && Number(override) >= 1 && Number(override) <= 999 ? Number(override) : null
+  return actualStat(row[key], side.evs[key], key === 'hp' ? 1 : natureMultiplier(side.nature, key), key === 'hp')
+}
+
+function QuickDamagePanel({ language }: { language: SiteLanguage }) {
+  const lt = (text: string) => translateText(language, text)
+  const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
+  const [attacker, setAttacker] = React.useState(() => quickSide(saved.attacker))
+  const [defender, setDefender] = React.useState(() => quickSide(saved.defender))
+  const [conditions, setConditions] = React.useState<QuickConditions>(() => {
+    const input = saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
+    const defaults = quickDefaultConditions()
+    return { ...defaults, attackStage: clampBattleStage(input.attackStage), defenseStage: clampBattleStage(input.defenseStage), weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: [1,2,3,4,5].includes(Number(input.hits)) ? Number(input.hits) : 2, ...Object.fromEntries((['burned','critical','reflect','lightScreen','auroraVeil','friendGuard','typeChangeStab','lowHp','targetPoisoned','defenderFullHp'] as const).map(key => [key, typeof input[key] === 'boolean' ? input[key] : defaults[key]])) }
+  })
+  const [move, setMove] = React.useState(() => typeof saved.move === 'string' ? saved.move : '')
+  const [attackerSearch, setAttackerSearch] = React.useState('')
+  const [defenderSearch, setDefenderSearch] = React.useState('')
+  const [moveSearch, setMoveSearch] = React.useState('')
+  const [pool, setPool] = React.useState<MoveOption[]>([])
+  const [poolStatus, setPoolStatus] = React.useState<'idle' | 'loading' | 'ready'>('idle')
+  const [, refreshMeta] = React.useState(0)
+  React.useEffect(() => { localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions, move })) }, [attacker, defender, conditions, move])
+  React.useEffect(() => {
+    if (!attacker.key) { setPool([]); setPoolStatus('idle'); return }
+    let active = true
+    setPool([]); setPoolStatus('loading')
+    void embeddedMovePoolForKey(attacker.key).then(options => { if (active) { setPool(options.length ? options : moveOptionsForEntry(sampleMoves.find(entry => entry.key === attacker.key))); setPoolStatus('ready') } }).catch(() => { if (active) { setPool(moveOptionsForEntry(sampleMoves.find(entry => entry.key === attacker.key))); setPoolStatus('ready') } })
+    return () => { active = false }
+  }, [attacker.key])
+  React.useEffect(() => { let active = true; void loadMoveMetaByName().then(() => { if (active) refreshMeta(n => n + 1) }); return () => { active = false } }, [])
+  const attackingRow = indexByKey.get(attacker.key)
+  const defendingRow = indexByKey.get(defender.key)
+  const movePools: Record<string, MovePoolState> = { [attacker.key]: { status: 'ready', moves: pool } }
+  const moveLabel = (name: string) => language === 'ko' ? name : language === 'en' ? moveDescriptionFor(name)?.nameEn || name : moveDescriptionFor(name)?.nameJa || name
+  const moves = pool.filter(option => quickMoveSupported(option.name, resolveMoveMeta(option.name, pool, movePools), Boolean(CONDITIONAL_MOVE_POWER_RULES[option.name])))
+  const currentMove = moves.some(option => option.name === move) ? move : moves[0]?.name ?? ''
+  const baseMeta = currentMove ? resolveMoveMeta(currentMove, pool, movePools) : null
+  const attackerAbility = attacker.ability
+  const defenderAbility = defender.ability
+  const hits = multiHitOptions(currentMove)
+  const moveMeta = currentMove && baseMeta ? applyTargetWeightMovePower(currentMove, resolveAbilityAdjustedMoveMeta(currentMove, resolveMultiHitMeta(currentMove, baseMeta, hits?.includes(conditions.hits) ? conditions.hits : hits?.[0] ?? null, attackerAbility), attackerAbility, conditions.weather), defendingRow?.weightKg ?? null) : null
+  const moveType = moveMeta?.type ?? null
+  const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
+  const statKeys = ['hp', 'attack', 'defense', 'spAttack', 'spDefense'] as const
+  const toStats = (side: QuickSide, row: Row): BattleStatBlock | null => {
+    const stats = Object.fromEntries(statKeys.map(key => [key, quickStat(side, row, key)])) as Record<typeof statKeys[number], number | null>
+    return statKeys.every(key => stats[key] !== null) ? stats as BattleStatBlock : null
+  }
+  const attackStats = attackingRow ? toStats(attacker, attackingRow) : null
+  const defenseStats = defendingRow ? toStats(defender, defendingRow) : null
+  const effectiveAttackerTypes = attackingRow ? resolveAbilityAdjustedTypes(attackingRow.types, attackerAbility, conditions.weather, conditions.terrain) : []
+  const effectiveDefenderTypes = defendingRow ? resolveAbilityAdjustedTypes(defendingRow.types, defenderAbility, conditions.weather, conditions.terrain) : []
+  const quickModifiers = attackStats && defenseStats && mode && moveType && moveMeta?.power ? resolveDamageModifiers({ attackerAbility, attackerItem: attacker.item, defenderAbility, defenderItem: defender.item, moveName: currentMove, baseMoveType: baseMeta?.type ?? moveType, moveType, movePower: moveMeta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbility, attackerAbility), attackStage: conditions.attackStage, defenseStage: conditions.defenseStage, defenderTypes: effectiveDefenderTypes, burned: conditions.burned, attackerLowHp: conditions.lowHp, targetPoisoned: conditions.targetPoisoned, defenderFullHp: conditions.defenderFullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: conditions.targetPoisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: conditions.reflect, lightScreen: conditions.lightScreen, auroraVeil: conditions.auroraVeil, friendGuard: conditions.friendGuard, critical: conditions.critical }) : null
+  const quickDamage = attackStats && defenseStats && mode && moveType && moveMeta?.power && quickModifiers ? calcDamage(attackStats, defenseStats, moveMeta.power, mode, resolveStabMultiplier(effectiveAttackerTypes, moveType, attackerAbility, conditions.typeChangeStab), quickModifiers.effectiveness, moveMeta, quickModifiers) : null
+  const selectSide = (side: 'attacker' | 'defender', key: string) => {
+    const next = { ...quickBlank(), key, item: megaStoneForKey(key) ?? '' }
+    if (side === 'attacker') { setAttacker(next); setAttackerSearch(''); setMove(''); setMoveSearch('') }
+    else { setDefender(next); setDefenderSearch('') }
+  }
+  const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
+  const sideCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined, setEntry: React.Dispatch<React.SetStateAction<QuickSide>>) => {
+    const search = side === 'attacker' ? attackerSearch : defenderSearch
+    const setSearch = side === 'attacker' ? setAttackerSearch : setDefenderSearch
+    const shownStats = ['hp', 'attack', 'defense', 'spAttack', 'spDefense'] as EffortStatKey[]
+    return <section className="card entry-card quick-side-card">
+      <strong>{lt(side === 'attacker' ? '공격측' : '방어측')}</strong>
+      <PokemonSearchField id={`quick-${side}`} label={lt('포켓몬 검색')} value={search} onChange={setSearch} onSelect={key => selectSide(side, key)} options={searchOptions(search)} placeholder={lt('포켓몬 검색')} menuClassName="sample-damage-search-menu" />
+      {row ? <>
+        <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
+        <div className="quick-meta-grid">
+          <label>{lt('특성')}<select aria-label={`${lt(side === 'attacker' ? '공격측' : '방어측')} ${lt('특성')}`} value={entry.ability} onChange={event => setEntry(prev => ({ ...prev, ability: event.target.value }))}><option value="">{lt('특성 없음')}</option>{row.abilities.map((slug, index) => <option key={slug} value={slug}>{language === 'ja' ? abilityDescriptionFor(slug)?.nameJa || displayAbilities(row, language)[index] : displayAbilities(row, language)[index]}</option>)}</select></label>
+          <label>{lt('도구')}<select aria-label={`${lt(side === 'attacker' ? '공격측' : '방어측')} ${lt('도구')}`} value={entry.item} onChange={event => setEntry(prev => ({ ...prev, item: quickItem(event.target.value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) }))} disabled={Boolean(megaStoneForKey(row.key))}>{megaStoneForKey(row.key) ? <option value={megaStoneForKey(row.key)!}>{displayItemLabel(megaStoneForKey(row.key)!, language)}</option> : <><option value="">{lt('도구 없음')}</option>{CHAMPIONS_ITEM_OPTIONS.filter(item => isAllowedChampionsItem(row.key, item)).map(item => <option key={item} value={item}>{displayItemLabel(item, language)}</option>)}</>}</select></label>
+          <label>{lt('성격')}<select value={entry.nature} onChange={event => setEntry(prev => ({ ...prev, nature: event.target.value as NatureId }))}>{NATURES.map(n => <option key={n.id} value={n.id}>{natureLabel(n.id, language)}</option>)}</select></label>
+        </div>
+        <PokemonStatGrid showEffort stats={shownStats.map(key => ({ key, label: lt(EFFORT_STAT_OPTIONS.find(stat => stat.key === key)!.label), theme: statThemeClass(key), value: quickStat(entry, row, key), ev: entry.evs[key] }))} />
+        <div className="quick-stat-controls">{shownStats.map(key => <div key={key} className="quick-stat-control">
+          <label>{lt(EFFORT_STAT_OPTIONS.find(stat => stat.key === key)!.label)} · {lt('노력 포인트')}<input type="number" min="0" max="32" value={entry.evs[key]} onChange={event => setEntry(prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, event.target.value) }))} /></label>
+          <label>{lt('실수치')}<input type="number" min="1" max="999" placeholder={String(actualStat(row[key], entry.evs[key], key === 'hp' ? 1 : natureMultiplier(entry.nature, key), key === 'hp'))} value={entry.actual[key] ?? ''} onChange={event => setEntry(prev => { const actual = { ...prev.actual }; if (event.target.value === '') delete actual[key]; else actual[key] = event.target.value; return { ...prev, actual } })} aria-invalid={entry.actual[key] !== undefined && quickStat(entry, row, key) === null} /></label>
+        </div>)}</div>
+      </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
+    </section>
+  }
+  const toggle = (key: keyof QuickConditions, label: string) => <label className="quick-check"><input type="checkbox" checked={Boolean(conditions[key])} onChange={event => setConditions(prev => ({ ...prev, [key]: event.target.checked }))} />{lt(label)}</label>
+  return <section className="panel wide quick-damage" aria-label={lt('간단 대미지')}>
+    <div className="row-between"><div><h2>{lt('간단 대미지')}</h2><p className="muted">{lt('파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.')}</p></div><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setMove('') }}>{lt('공수 교체')}</button></div>
+    <p className="muted">{lt('레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.')}</p>
+    <section className="sample-overview-card quick-result" aria-live="polite"><strong>{lt('대미지 결과')}</strong>{quickDamage && defenseStats ? <><h3>{quickDamage.min}–{quickDamage.max} ({quickDamage.minPct}–{quickDamage.maxPct}%)</h3><p>{moveLabel(currentMove)} · {lt('상대 체력')} {defenseStats.hp} · {lt('상성')} ×{quickModifiers?.effectiveness}</p>{(moveMeta?.hits ?? 1) > 1 ? <p>{lt('연속기는 기절 확률 계산 제외')}</p> : <p>{lt('1타 확률')} {quickDamage.rolls.filter(roll => roll >= defenseStats.hp).length}/16 ({(quickDamage.rolls.filter(roll => roll >= defenseStats.hp).length / 16 * 100).toFixed(1)}%)</p>}<small>{lt('16개 난수 피해')} {quickDamage.rolls.join(', ')}</small></> : <p>{attackStats === null && attackingRow || defenseStats === null && defendingRow ? lt('실수치는 1~999의 정수로 입력하세요.') : lt('공격측·방어측과 기술을 선택하세요.')}</p>}</section>
+    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
+    {attackingRow ? <section className="sample-track-card quick-moves"><strong>{lt('사용 가능 공격 기술')}</strong>{poolStatus === 'loading' ? <p>{lt('기술풀 불러오는 중…')}</p> : moves.length ? <><label>{lt('기술 검색')}<input type="search" value={moveSearch} onChange={event => setMoveSearch(event.target.value)} /></label><div className="move-chip-wrap">{moves.filter(option => !moveSearch || [option.name, moveLabel(option.name)].some(name => normalizeSearchText(name).includes(normalizeSearchText(moveSearch)))).map(option => <button type="button" key={option.name} className={`move-chip core ${moveTypeThemeClass(option.type)}`} aria-pressed={currentMove === option.name} onClick={() => { setMove(option.name); setMoveSearch('') }}>{moveLabel(option.name)}</button>)}</div></> : <p className="muted">{lt('확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.')}</p>}</section> : null}
+    <details className="quick-conditions"><summary>{lt('세부 조건')}</summary><div className="quick-condition-grid"><label>{lt('공격측 화력 랭크')}<select value={conditions.attackStage} onChange={event => setConditions(prev => ({ ...prev, attackStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label><label>{lt('방어측 내구 랭크')}<select value={conditions.defenseStage} onChange={event => setConditions(prev => ({ ...prev, defenseStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label><label>{lt('날씨')}<select value={conditions.weather} onChange={event => setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather }))}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label><label>{lt('필드')}<select value={conditions.terrain} onChange={event => setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain }))}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>{toggle('burned','화상')}{toggle('critical','급소')}{toggle('reflect','리플렉터')}{toggle('lightScreen','빛의장막')}{toggle('auroraVeil','오로라베일')}{toggle('friendGuard','프렌드가드')}{toggle('typeChangeStab','타입변환 자속')}{toggle('lowHp','공격측 HP 1/3 이하')}{toggle('targetPoisoned','상대 독/맹독')}{toggle('defenderFullHp','상대 HP 만땅')}{hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}</div><p className="muted">{lt('선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.')}</p></details>
+  </section>
 }
 
 function LanguageIcon() {
@@ -6771,11 +6881,11 @@ export default function App() {
                 </div>
               </div>
               <div className={`header-route-menu ${mobileNavOpen ? 'open' : ''}`}>
-                <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : lt('도감')}</button>
+                <button type="button" className="header-route-toggle" aria-expanded={mobileNavOpen} aria-controls="primary-navigation" onClick={() => setMobileNavOpen(open => !open)}>{lt('메뉴')} · {mainSection === 'home' ? lt('홈') : mainSection === 'sample' ? `${lt('샘플')} / ${lt(sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 빌더')}` : mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'speedLine' ? lt('실능 스피드라인') : mainSection === 'quickDamage' ? lt('간단 대미지') : lt('도감')}</button>
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
                   <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" onClick={event => { closeHeaderMenu(event.currentTarget); setMobileNavOpen(false) }} aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
                   {routeGroups.map(group => {
-                    const active = group.section === 'battle' ? mainSection === 'single' || mainSection === 'double' : group.section === 'tools' ? mainSection === 'speedLine' || mainSection === 'dex' : mainSection === 'sample'
+                    const active = group.section === 'battle' ? mainSection === 'single' || mainSection === 'double' : group.section === 'tools' ? mainSection === 'speedLine' || mainSection === 'dex' || mainSection === 'quickDamage' : mainSection === 'sample'
                     return <details key={group.section} className={`header-route-group ${active ? 'active' : ''}`}>
                       <summary className="header-primary-tab">{lt(group.label)}</summary>
                       <div className="header-route-links">{group.links.map(link => <a key={link.href} href={link.href}
@@ -6960,6 +7070,7 @@ export default function App() {
       ) : null}
 
       <main className="grid">
+        {mainSection === 'quickDamage' ? <QuickDamagePanel language={siteLanguage} /> : null}
         {mainSection === 'home' ? (
         <>
           <section className="panel wide home-hero-panel home-surface-panel">
@@ -7011,6 +7122,9 @@ export default function App() {
                       <strong>{lt('더블배틀')}</strong>
                       <p>{lt('더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.')}</p>
                     </div>
+                  </button>
+                  <button type="button" className="home-route-card calm" onClick={() => setMainSection('quickDamage')}>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('바로 시작')}</span><strong>{lt('간단 대미지')}</strong><p>{lt('공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.')}</p></div>
                   </button>
                 </div>
               </section>
