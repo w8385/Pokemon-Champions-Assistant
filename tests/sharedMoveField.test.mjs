@@ -13,7 +13,12 @@ test('one shared field owns the input; all three callers supply tooltip-bound pr
   assert.match(card, /export function RegisteredMoveSlot/)
   assert.match(card, /<input\b[^>]*\{\.\.\.inputProps\}/s)
   assert.doesNotMatch(card, /children \?\? <strong/)
-  assert.equal((app.match(/<RegisteredMoveSlot/g) ?? []).length, 3)
+  assert.equal((app.match(/<RegisteredMoveSlot/g) ?? []).length, 4)
+  const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
+  assert.match(quick, /<RegisteredMoveSlot[^]*inputProps=\{\{/)
+  assert.match(quick, /tooltipProps=\{tooltipForMove\(name\)\}/)
+  assert.match(app, /tooltipForMove=\{name => bindTooltip\(name \? moveTooltipData\(name, siteLanguage\) : null\)\}/)
+  assert.match(quick, /Array.from\(\{ length: 4 \}/)
   for (const section of sections) {
     assert.match(section, /inputProps=\{\{/)
     assert.match(section, /bindTooltip\(move \? moveTooltipData\(move, siteLanguage\) : null\)/)

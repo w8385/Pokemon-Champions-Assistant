@@ -45,6 +45,17 @@ export function getSpeedAbility(slug: string | null | undefined): SpeedAbilityDe
   return SPEED_ABILITIES.find(ability => ability.slug === slug) ?? null
 }
 
+export function speedActivationAllowed(slug: string, state: { weather: string; terrain: string; item: string; scarf: boolean; statused: boolean }): boolean {
+  const ability = getSpeedAbility(slug)
+  if (!ability) return false
+  switch (ability.activation) {
+    case 'rain': case 'sun': case 'sand': case 'snow': return state.weather === ability.activation
+    case 'electric': return state.terrain === 'electric'
+    case 'item-lost': return !state.item && !state.scarf
+    case 'status': return state.statused
+  }
+}
+
 export function speedAbilitiesFor(row: { abilities?: readonly string[] }): SpeedAbilityDescriptor[] {
   return SPEED_ABILITIES.filter(ability => row.abilities?.includes(ability.slug))
 }

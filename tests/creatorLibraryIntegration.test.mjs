@@ -16,7 +16,7 @@ test('link entry is explicitly partial and import is gated', () => {
 test('ranker legacy links normalize but no ranker menu remains', () => {
   assert.match(app, /sampleTabParam === 'rankers'/)
   assert.doesNotMatch(app, /\['rankers', lt\('랭커 샘플'\)\]/)
-  assert.match(app, /routeGroups\.map\(group =>/)
+  assert.match(app, /routeGroups\.flatMap\(group => \[\.\.\.group\.links\]\)/)
   assert.match(app, /href=\{link\.href\}/)
 })
 test('sample cards show verified partial fields and separate source-only leads', () => {

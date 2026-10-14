@@ -47,3 +47,13 @@ export function searchPokemon<T extends SpeedLineSpecies>(rows: readonly T[], qu
     .sort((a, b) => a.score - b.score || a.row.name_ko.localeCompare(b.row.name_ko, 'ko'))
     .slice(0, limit).map(entry => entry.row)
 }
+
+// Only the builder picker promotes a form's own exact name/key above a Mega alias.
+export function prioritizeExactSpecies<T extends SpeedLineSpecies>(matched: readonly T[], query: string): T[] {
+  const normalized = normalizeSearchText(query.trim())
+  if (!normalized) return [...matched]
+  return [...matched].sort((a, b) => {
+    const exact = (row: T) => [row.name_ko, row.name_en, row.name_ja, row.key].some(name => name && normalizeSearchText(name) === normalized)
+    return Number(exact(b)) - Number(exact(a))
+  })
+}

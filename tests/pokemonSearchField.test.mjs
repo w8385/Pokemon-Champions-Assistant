@@ -31,6 +31,40 @@ test('Escape prevents native search clearing from reopening the dropdown', () =>
  input.props.onKeyDown({ key: 'Escape', nativeEvent: {}, keyCode: 27, preventDefault(){ prevented = true } })
  assert.equal(prevented, true)
 })
+test('Enter selects the first available result without arrow navigation', () => {
+ let tree, selected = null, prevented = false
+ function Capture() { tree = Field({ id: 'enter-search', value: 'Gar', onChange(){}, onSelect(key){ selected = key }, options: [{ key: 'garchomp', label: 'Garchomp' }, { key: 'mega-garchomp', label: 'Mega Garchomp' }] }); return tree }
+ renderToStaticMarkup(React.createElement(Capture))
+ const input = tree.props.children.find(child => child?.type === 'input')
+ input.props.onFocus()
+ input.props.onKeyDown({ key: 'Enter', nativeEvent: {}, keyCode: 13, preventDefault(){ prevented = true } })
+ assert.equal(selected, 'garchomp')
+ assert.equal(prevented, true)
+})
+
+test('Enter does not select during composition, for empty results, blank input or disabled fields', () => {
+ for (const scenario of [{ value:'Gar', isComposing:true }, { value:'Gar', keyCode:229 }, { value:'Gar', disabled:true }, { value:'Gar', options:[] }, { value:' ' }]) {
+  let tree, selected = null
+  function Capture() { tree = Field({ id:'guarded-enter', value:scenario.value, disabled:scenario.disabled, onChange(){}, onSelect(key){ selected=key }, options:scenario.options ?? [{ key:'garchomp', label:'Garchomp' }] }); return tree }
+  renderToStaticMarkup(React.createElement(Capture))
+  const input = tree.props.children.find(child => child?.type === 'input')
+  input.props.onFocus()
+  input.props.onKeyDown({ key:'Enter', nativeEvent:{ isComposing:scenario.isComposing }, keyCode:scenario.keyCode ?? 13, preventDefault(){} })
+  assert.equal(selected, null)
+ }
+})
+
+test('Escape followed by Enter cannot select a hidden search result', () => {
+ let tree, selected = null
+ function Capture() { tree = Field({ id:'dismissed-enter', value:'Gar', onChange(){}, onSelect(key){ selected=key }, options:[{key:'garchomp',label:'Garchomp'}] }); return tree }
+ renderToStaticMarkup(React.createElement(Capture))
+ const input = tree.props.children.find(child => child?.type === 'input')
+ input.props.onFocus()
+ input.props.onKeyDown({ key:'Escape', nativeEvent:{}, keyCode:27, preventDefault(){} })
+ input.props.onKeyDown({ key:'Enter', nativeEvent:{}, keyCode:13, preventDefault(){} })
+ assert.equal(selected, null)
+})
+
 test('invalid numeric draft can disable selection without changing query', () => {
  const html = renderToStaticMarkup(React.createElement(Field, { id:'disabled-search', value:'Gar', disabled:true, onChange(){}, onSelect(){}, options:[{key:'garchomp',label:'Garchomp'}] }))
  assert.match(html, /disabled=""/)

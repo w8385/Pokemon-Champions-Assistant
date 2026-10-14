@@ -1,0 +1,51 @@
+{
+  "party": [
+    {
+      "key": "cinderace",
+      "config": {
+        "nature": "adamant",
+        "scarf": false,
+        "speedStage": 0
+      },
+      "picked": false,
+      "evs": {
+        "hp": 0,
+        "attack": 32,
+        "defense": 0,
+        "spAttack": 0,
+        "spDefense": 0,
+        "speed": 0
+      },
+      "tuning": {
+        "magicNumber": 0,
+        "maxValue": 0
+      },
+      "item": "",
+      "ability": "리베로"
+    }
+  ],
+  "opponents": [
+    {
+      "key": "garchomp",
+      "item": "",
+      "ability": "모래숨기",
+      "notes": "",
+      "revealedMoves": [
+        "지진",
+        "드래곤크루",
+        "스케일샷",
+        "스톤에지"
+      ],
+      "natureBoost": false,
+      "scarf": false,
+      "speedStage": 0,
+      "picked": false,
+      "hpEv": 18,
+      "defenseEv": 32,
+      "spDefenseEv": 0,
+      "speedEv": 16,
+      "defenseNature": 1.1,
+      "spDefenseNature": 1
+    }
+  ]
+}

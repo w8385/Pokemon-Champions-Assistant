@@ -1,0 +1,954 @@
+{
+  "target": "http://127.0.0.1:5200/Pokemon-Champions-Assistant/",
+  "scope": "Read-only mounted advanced QA; isolated browser localStorage only",
+  "cases": [
+    {
+      "id": "rank-attacker-attack",
+      "expected": "Attack +2 changes physical damage but not special damage",
+      "status": "pass",
+      "actual": {
+        "baseline": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "changed": {
+          "physical": "224–264 · 111.4–131.3%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "123–145 · 61.2–72.1%"
+        },
+        "checks": {
+          "changed": true,
+          "independent": true
+        }
+      }
+    },
+    {
+      "id": "rank-attacker-spattack",
+      "expected": "Special Attack +2 changes special damage but not physical damage",
+      "status": "pass",
+      "actual": {
+        "baseline": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "changed": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "136–162 · 67.7–80.6%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "checks": {
+          "changed": true,
+          "independent": true
+        }
+      }
+    },
+    {
+      "id": "rank-target-defense",
+      "expected": "Target Defense +2 changes physical damage but not special damage",
+      "status": "pass",
+      "actual": {
+        "baseline": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "changed": {
+          "physical": "56–68 · 27.9–33.8%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "checks": {
+          "changed": true,
+          "independent": true
+        }
+      }
+    },
+    {
+      "id": "rank-target-spdefense",
+      "expected": "Target Special Defense +2 changes special damage but not physical damage",
+      "status": "pass",
+      "actual": {
+        "baseline": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "changed": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "34–42 · 16.9–20.9%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "checks": {
+          "changed": true,
+          "independent": true
+        }
+      }
+    },
+    {
+      "id": "rank-body-press",
+      "expected": "Body Press uses source Defense stage, not Attack stage",
+      "status": "pass",
+      "actual": {
+        "baseline": "15–18 · 7.5–9.0%",
+        "sourceAttackPlus2": "15–18 · 7.5–9.0%",
+        "sourceDefensePlus2": "30–36 · 14.9–17.9%",
+        "fixture": {
+          "source": "corviknight",
+          "target": "dragonite",
+          "sourceAttack": 184,
+          "sourceDefense": 161,
+          "targetHp": 201,
+          "targetDefense": 161
+        }
+      }
+    },
+    {
+      "id": "rank-foul-play",
+      "expected": "Foul Play uses target Attack stage, not source Attack stage",
+      "status": "pass",
+      "actual": {
+        "baseline": "61–73 · 30.3–36.3%",
+        "sourceAttackPlus2": "61–73 · 30.3–36.3%",
+        "targetAttackPlus2": "123–145 · 61.2–72.1%"
+      }
+    },
+    {
+      "id": "condition-burn-both",
+      "expected": "Burn on acting side reduces its physical move, not opposite side's move",
+      "status": "pass",
+      "actual": {
+        "baselinePhysical": "112–134 · 55.7–66.7%",
+        "baselineFoul": "61–73 · 30.3–36.3%",
+        "burnAttacker": {
+          "physical": "56–67 · 27.9–33.3%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "burnDefender": {
+          "physical": "112–134 · 55.7–66.7%",
+          "foul": "30–36 · 14.9–17.9%"
+        }
+      }
+    },
+    {
+      "id": "condition-lowhp-blaze-both",
+      "expected": "Blaze plus low HP on acting side boosts its Fire move only",
+      "status": "pass",
+      "actual": {
+        "baseline": [
+          "34–41 · 16.9–20.4%",
+          "34–41 · 16.9–20.4%"
+        ],
+        "lowHpAttacker": [
+          "51–61 · 25.4–30.3%",
+          "34–41 · 16.9–20.4%"
+        ],
+        "lowHpDefender": [
+          "34–41 · 16.9–20.4%",
+          "51–61 · 25.4–30.3%"
+        ],
+        "fixture": {
+          "species": [
+            "cinderace",
+            "cinderace"
+          ],
+          "ability": "blaze",
+          "move": "오버히트",
+          "spAttack": 140,
+          "targetSpDefense": 150,
+          "hp": 201
+        }
+      }
+    },
+    {
+      "id": "condition-fullhp-multiscale-both",
+      "expected": "Multiscale plus full HP on receiving side reduces incoming damage only",
+      "status": "pass",
+      "actual": {
+        "fixture": "Corviknight Body Press -> Multiscale Dragonite and Dragonite Dragon Claw reverse",
+        "baseline": {
+          "incoming": "15–18 · 7.5–9.0%",
+          "outgoing": "26–31 · 12.9–15.4%"
+        },
+        "dragoniteFullHp": {
+          "incoming": "7–9 · 3.5–4.5%",
+          "outgoing": "26–31 · 12.9–15.4%"
+        },
+        "corviknightFullHp": {
+          "incoming": "15–18 · 7.5–9.0%",
+          "outgoing": "26–31 · 12.9–15.4%"
+        },
+        "note": "Reverse orientation after swap tested next; only Dragonite has Multiscale.",
+        "afterSwap": {
+          "dragoniteOutgoing": {
+            "fullHp": "26–31 · 12.9–15.4%",
+            "notFullHp": "26–31 · 12.9–15.4%"
+          },
+          "corviknightIncoming": {
+            "fullHp": "3–4 · 1.5–2.0%",
+            "notFullHp": "7–9 · 3.5–4.5%"
+          }
+        }
+      }
+    },
+    {
+      "id": "condition-screens-both",
+      "expected": "Screens on receiving side reduce appropriate incoming category, not its outgoing damage",
+      "status": "pass",
+      "actual": {
+        "baseline": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "targetReflect": {
+          "physical": "56–67 · 27.9–33.3%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "targetLightScreen": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "34–41 · 16.9–20.4%",
+          "foul": "61–73 · 30.3–36.3%"
+        },
+        "sourceReflect": {
+          "physical": "112–134 · 55.7–66.7%",
+          "special": "69–82 · 34.3–40.8%",
+          "foul": "30–36 · 14.9–17.9%"
+        }
+      }
+    },
+    {
+      "id": "condition-swap-reload",
+      "expected": "Swap carries species-linked per-side conditions and reload preserves quick conditions",
+      "status": "pass",
+      "actual": {
+        "before": [
+          [
+            "corviknight",
+            {
+              "attackStage": 0,
+              "spAttackStage": 0,
+              "defenseStage": 0,
+              "spDefenseStage": 0,
+              "burned": true,
+              "lowHp": false,
+              "poisoned": false,
+              "fullHp": false,
+              "reflect": false,
+              "lightScreen": false,
+              "auroraVeil": false,
+              "friendGuard": false
+            }
+          ],
+          [
+            "dragonite",
+            {
+              "attackStage": 0,
+              "spAttackStage": 0,
+              "defenseStage": 0,
+              "spDefenseStage": 0,
+              "burned": false,
+              "lowHp": false,
+              "poisoned": false,
+              "fullHp": true,
+              "reflect": false,
+              "lightScreen": false,
+              "auroraVeil": false,
+              "friendGuard": false
+            }
+          ]
+        ],
+        "after": [
+          [
+            "dragonite",
+            {
+              "attackStage": 0,
+              "spAttackStage": 0,
+              "defenseStage": 0,
+              "spDefenseStage": 0,
+              "burned": false,
+              "lowHp": false,
+              "poisoned": false,
+              "fullHp": true,
+              "reflect": false,
+              "lightScreen": false,
+              "auroraVeil": false,
+              "friendGuard": false
+            }
+          ],
+          [
+            "corviknight",
+            {
+              "attackStage": 0,
+              "spAttackStage": 0,
+              "defenseStage": 0,
+              "spDefenseStage": 0,
+              "burned": true,
+              "lowHp": false,
+              "poisoned": false,
+              "fullHp": false,
+              "reflect": false,
+              "lightScreen": false,
+              "auroraVeil": false,
+              "friendGuard": false
+            }
+          ]
+        ],
+        "reloadedMatches": true,
+        "mounted": {
+          "heads": [
+            "망나뇽",
+            "아머까오"
+          ],
+          "battle": [
+            [
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ],
+            [
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "single-quick-parity",
+      "expected": "Same actual stats and conditions yield equal range, percentages and rolls in mounted Single and Quick",
+      "status": "pass",
+      "actual": {
+        "fixture": {
+          "party": "cinderace",
+          "opponent": "umbreon",
+          "moves": [
+            "무릎차기",
+            "오버히트",
+            "속임수"
+          ],
+          "evs": {
+            "hp": 0,
+            "attack": 0,
+            "defense": 0,
+            "spAttack": 0,
+            "spDefense": 0,
+            "speed": 0
+          },
+          "nature": "hardy",
+          "ability": "",
+          "item": "",
+          "stage": 0,
+          "weather": "none"
+        },
+        "single": {
+          "heads": [
+            "에이스번",
+            "블래키"
+          ],
+          "stats": [
+            [
+              "체력\n155",
+              "특수공격\n85",
+              "공격\n136",
+              "특수방어\n95",
+              "방어\n95",
+              "스피드\n139"
+            ],
+            [
+              "체력\n170",
+              "특수공격\n80",
+              "공격\n85",
+              "특수방어\n150",
+              "방어\n130",
+              "스피드\n85"
+            ]
+          ],
+          "result": "대미지 결과 · 공격측 → 방어측\n102–122 (60.0–71.8%)\n\n무릎차기 · 상대 체력 170 · 상성 ×2\n\n1타 확률 0/16 (0.0%)\n\n16개 난수 피해 102, 104, 106, 106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122",
+          "previews": [
+            "102–122 · 60.0–71.8%",
+            "42–51 · 24.7–30.0%",
+            "—",
+            "—",
+            "76–91 · 49.0–58.7%",
+            "—",
+            "—",
+            "—"
+          ]
+        },
+        "quick": {
+          "heads": [
+            "에이스번",
+            "블래키"
+          ],
+          "stats": [
+            [
+              "체력\n155",
+              "특수공격\n85",
+              "공격\n136",
+              "특수방어\n95",
+              "방어\n95",
+              "스피드\n139"
+            ],
+            [
+              "체력\n170",
+              "특수공격\n80",
+              "공격\n85",
+              "특수방어\n150",
+              "방어\n130",
+              "스피드\n85"
+            ]
+          ],
+          "result": "대미지 결과 · 공격측 → 방어측\n102–122 (60.0–71.8%)\n\n무릎차기 · 상대 체력 170 · 상성 ×2\n\n1타 확률 0/16 (0.0%)\n\n16개 난수 피해 102, 104, 106, 106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122",
+          "previews": [
+            "102–122 · 60.0–71.8%",
+            "42–51 · 24.7–30.0%",
+            "—",
+            "—",
+            "76–91 · 49.0–58.7%",
+            "—",
+            "—",
+            "—"
+          ]
+        },
+        "nonDefault": {
+          "quick": {
+            "stats": [
+              [
+                "체력\n155",
+                "특수공격\n85",
+                "공격\n136",
+                "특수방어\n95",
+                "방어\n95",
+                "스피드\n139"
+              ],
+              [
+                "체력\n170",
+                "특수공격\n80",
+                "공격\n85",
+                "특수방어\n150",
+                "방어\n130",
+                "스피드\n85"
+              ]
+            ],
+            "result": "대미지 결과 · 공격측 → 방어측\n25–30 (14.7–17.6%)\n\n무릎차기 · 상대 체력 170 · 상성 ×2\n\n1타 확률 0/16 (0.0%)\n\n16개 난수 피해 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 30, 30",
+            "previews": [
+              "25–30 · 14.7–17.6%",
+              "42–51 · 24.7–30.0%",
+              "—",
+              "—",
+              "153–181 · 98.7–116.8%",
+              "—",
+              "—",
+              "—"
+            ],
+            "conditions": [
+              {
+                "stages": [
+                  "2",
+                  "0",
+                  "0",
+                  "0"
+                ],
+                "flags": [
+                  true,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "stages": [
+                  "0",
+                  "0",
+                  "2",
+                  "0"
+                ],
+                "flags": [
+                  false,
+                  false,
+                  false,
+                  false,
+                  true,
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          "single": {
+            "stats": [
+              [
+                "체력\n155",
+                "특수공격\n85",
+                "공격\n136",
+                "특수방어\n95",
+                "방어\n95",
+                "스피드\n139"
+              ],
+              [
+                "체력\n170",
+                "특수공격\n80",
+                "공격\n85",
+                "특수방어\n150",
+                "방어\n130",
+                "스피드\n85"
+              ]
+            ],
+            "result": "대미지 결과 · 공격측 → 방어측\n25–30 (14.7–17.6%)\n\n무릎차기 · 상대 체력 170 · 상성 ×2\n\n1타 확률 0/16 (0.0%)\n\n16개 난수 피해 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 30, 30",
+            "previews": [
+              "25–30 · 14.7–17.6%",
+              "42–51 · 24.7–30.0%",
+              "—",
+              "—",
+              "153–181 · 98.7–116.8%",
+              "—",
+              "—",
+              "—"
+            ],
+            "conditions": [
+              {
+                "stages": [
+                  "2",
+                  "0",
+                  "0",
+                  "0"
+                ],
+                "flags": [
+                  true,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "stages": [
+                  "0",
+                  "0",
+                  "2",
+                  "0"
+                ],
+                "flags": [
+                  false,
+                  false,
+                  false,
+                  false,
+                  true,
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "party-modal-magic",
+      "expected": "Party modal shows 11-multiple feedback and magic candidate markers",
+      "status": "partial",
+      "actual": {
+        "candidateMarks": [
+          {
+            "i": 5,
+            "label": "스피드",
+            "magic": [
+              5,
+              15,
+              25
+            ]
+          }
+        ],
+        "targetClicked": {
+          "value": "0",
+          "actual": "170",
+          "magic": false,
+          "feedback": "목표 5칸"
+        },
+        "reachedMarker": {
+          "total": "노력치 합 5/66",
+          "value": "5",
+          "actual": "176",
+          "magic": true,
+          "feedback": "목표 5칸"
+        }
+      }
+    },
+    {
+      "id": "party-modal-boundaries",
+      "expected": "Party modal min/max and pointer/keyboard movement obey 32 per-stat and 66 total caps",
+      "status": "pass",
+      "actual": {
+        "initial": {
+          "dialog": "노력치 보정",
+          "focus": "닫기",
+          "magic": [
+            "목표"
+          ],
+          "candidate": 1,
+          "marks": 3,
+          "total": "노력치 합 0/66"
+        },
+        "observed66": {
+          "values": [
+            "32 HP",
+            "32 spAttack",
+            "2 Attack"
+          ],
+          "total": "66/66"
+        },
+        "keyboardAfterMin": "1",
+        "pointerFromOne": "24"
+      }
+    },
+    {
+      "id": "party-modal-accessibility",
+      "expected": "Party modal initial focus, Tab trap, Escape close, opener focus restore",
+      "status": "pass",
+      "actual": {
+        "initialFocus": "닫기",
+        "tabWrap": "닫기",
+        "Escape": {
+          "open": false,
+          "focused": true,
+          "tag": "BUTTON"
+        }
+      }
+    },
+    {
+      "id": "quick-modal-controls",
+      "expected": "Quick uses shared modal with slider keyboard ±1, min/max, pointer cap 66",
+      "status": "pass",
+      "actual": {
+        "initialFocus": "닫기",
+        "capsBeforeClearing": {
+          "total": "노력치 합 66/66",
+          "values": [
+            "32",
+            "32",
+            "2",
+            "0"
+          ]
+        },
+        "arrowRightAfterMin": "1",
+        "plusOne": "2",
+        "capsAfter": {
+          "total": "노력치 합 36/66",
+          "values": [
+            {
+              "value": "2",
+              "max": "32"
+            },
+            {
+              "value": "32",
+              "max": "32"
+            },
+            {
+              "value": "2",
+              "max": "32"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            }
+          ]
+        },
+        "tabWrap": "닫기",
+        "afterEscape": {
+          "open": false,
+          "focused": "",
+          "focusedText": "\n    포켓몬 챔피언스 배틀 도우미간단 대미지홈싱글배틀더블배틀샘플 빌더샘플 라이브러리간단 대미지실능 스피드라인도감간단 대미지파티와 상대 엔트리"
+        },
+        "note": "Max/min, keyboard ±1 and total cap measured; pointer gesture not yet exercised.",
+        "pointerFromZero": "20",
+        "pointerBox": {
+          "x": 377,
+          "y": 231,
+          "w": 221.5,
+          "h": 22
+        }
+      }
+    },
+    {
+      "id": "quick-modal-accessibility",
+      "expected": "Quick modal initial focus, Tab trap, Escape close, opener focus restore",
+      "status": "pass",
+      "actual": {
+        "initialFocus": "닫기",
+        "capsBeforeClearing": {
+          "total": "노력치 합 66/66",
+          "values": [
+            "32",
+            "32",
+            "2",
+            "0"
+          ]
+        },
+        "arrowRightAfterMin": "1",
+        "plusOne": "2",
+        "capsAfter": {
+          "total": "노력치 합 36/66",
+          "values": [
+            {
+              "value": "2",
+              "max": "32"
+            },
+            {
+              "value": "32",
+              "max": "32"
+            },
+            {
+              "value": "2",
+              "max": "32"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            },
+            {
+              "value": "0",
+              "max": "30"
+            }
+          ]
+        },
+        "tabWrap": "닫기",
+        "afterEscape": {
+          "open": false,
+          "focused": "",
+          "focusedText": "\n    포켓몬 챔피언스 배틀 도우미간단 대미지홈싱글배틀더블배틀샘플 빌더샘플 라이브러리간단 대미지실능 스피드라인도감간단 대미지파티와 상대 엔트리"
+        },
+        "retry": {
+          "before": {
+            "focus": "<button type=\"button\" class=\"action-button\">닫기</button>",
+            "opener": "<button type=\"button\" class=\"stat-preview-row stat-preview-button stat-theme-hp\"><div class=\"stat-preview-topline\"><span>체력</span>"
+          },
+          "after": {
+            "tag": "BUTTON",
+            "outer": "<button type=\"button\" class=\"stat-preview-row stat-preview-button stat-theme-hp\"><div class=\"stat-preview-topline\"><span>체력</span><strong>201</strong></div><div class=\"stat-preview-bar\"><span style=\"w",
+            "same": true,
+            "hasFocus": true
+          }
+        }
+      }
+    },
+    {
+      "id": "move-tooltip-style",
+      "expected": "Registered move focus and hover show floating tooltip; idle computed input styles match party and Quick",
+      "status": "pass",
+      "actual": {
+        "idleComputedStyles": {
+          "quick": {
+            "fontFamily": "\"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans JP\", \"Droid Sans Fallback Local\", Inter, system-ui, sans-serif",
+            "fontSize": "13px",
+            "fontWeight": "400",
+            "color": "rgb(229, 238, 247)",
+            "backgroundColor": "color(srgb 0.0839216 0.11851 0.179529)",
+            "borderColor": "color(srgb 0.243137 0.298039 0.376471)",
+            "borderWidth": "1px",
+            "borderRadius": "8px",
+            "padding": "8px 10px",
+            "height": "35px",
+            "boxSizing": "border-box",
+            "outlineStyle": "none"
+          },
+          "party": {
+            "fontFamily": "\"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans JP\", \"Droid Sans Fallback Local\", Inter, system-ui, sans-serif",
+            "fontSize": "13px",
+            "fontWeight": "400",
+            "color": "rgb(229, 238, 247)",
+            "backgroundColor": "color(srgb 0.0839216 0.11851 0.179529)",
+            "borderColor": "color(srgb 0.243137 0.298039 0.376471)",
+            "borderWidth": "1px",
+            "borderRadius": "8px",
+            "padding": "8px 10px",
+            "height": "35px",
+            "boxSizing": "border-box",
+            "outlineStyle": "none"
+          }
+        },
+        "equal": true,
+        "focusTooltip": {
+          "active": false
+        },
+        "note": "Pending registered value and mouse-hover tooltip.",
+        "registered": "무릎차기",
+        "focus": {
+          "focused": true,
+          "tooltip": [
+            {
+              "cls": "floating-hover-tooltip-body ",
+              "text": "타입\n격투\n분류\n물리\n위력\n130\n명중\n90%"
+            },
+            {
+              "cls": "floating-hover-tooltip-row",
+              "text": "타입\n격투"
+            },
+            {
+              "cls": "floating-hover-tooltip-row",
+              "text": "분류\n물리"
+            },
+            {
+              "cls": "floating-hover-tooltip-row",
+              "text": "위력\n130"
+            },
+            {
+              "cls": "floating-hover-tooltip-row",
+              "text": "명중\n90%"
+            },
+            {
+              "cls": "floating-hover-tooltip-description",
+              "text": "효과\n\n점프해서 무릎차기로 상대를 공격한다. 빗나가면 자신이 데미지를 입는다."
+            }
+          ]
+        },
+        "hover": [
+          {
+            "cls": "floating-hover-tooltip-body ",
+            "text": "타입\n격투\n분류\n물리\n위력\n130\n명중\n90%"
+          },
+          {
+            "cls": "floating-hover-tooltip-row",
+            "text": "타입\n격투"
+          },
+          {
+            "cls": "floating-hover-tooltip-row",
+            "text": "분류\n물리"
+          },
+          {
+            "cls": "floating-hover-tooltip-row",
+            "text": "위력\n130"
+          },
+          {
+            "cls": "floating-hover-tooltip-row",
+            "text": "명중\n90%"
+          },
+          {
+            "cls": "floating-hover-tooltip-description",
+            "text": "효과\n\n점프해서 무릎차기로 상대를 공격한다. 빗나가면 자신이 데미지를 입는다."
+          }
+        ],
+        "quick": {
+          "options": [
+            "무릎차기"
+          ],
+          "registered": "무릎차기",
+          "focus": {
+            "focused": true,
+            "tooltip": "무릎차기\n타입\n격투\n분류\n물리\n위력\n130\n명중\n90%\n효과\n\n점프해서 무릎차기로 상대를 공격한다. 빗나가면 자신이 데미지를 입는다."
+          },
+          "hover": null,
+          "hoverRetried": {
+            "tip": "무릎차기\n타입\n격투\n분류\n물리\n위력\n130\n명중\n90%\n효과\n\n점프해서 무릎차기로 상대를 공격한다. 빗나가면 자신이 데미지를 입는다.",
+            "pos": "<input aria-label=\"공격측 1 기술\" placeholder=\"사용 가능 기술 검색\" value=\"무릎차기\">",
+            "active": "<body>\n    <div id=\"root\"><div class=\"app-shell\"><header><div class=\"header-top-row\"><div "
+          }
+        }
+      }
+    },
+    {
+      "id": "move-input-focus",
+      "expected": "Editing registered move retains native input focus and typed value",
+      "status": "pass",
+      "actual": {
+        "focus": {
+          "focused": true,
+          "hasFocus": true,
+          "menus": 1,
+          "tooltips": []
+        },
+        "typing": {
+          "focused": true,
+          "value": "무릎",
+          "options": [
+            "무릎차기"
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-empty-enter",
+      "expected": "Empty search and Enter do not select an unavailable species",
+      "status": "pass",
+      "actual": {
+        "key": "cinderace",
+        "open": "true"
+      }
+    },
+    {
+      "id": "search-enter-arrow",
+      "expected": "Enter selects first visible result; Arrow selection selects highlighted result",
+      "status": "pass",
+      "actual": {
+        "firstOptions": [
+          "피카츄"
+        ],
+        "firstSelected": {
+          "name": "피카츄",
+          "key": "pikachu"
+        },
+        "arrowOptions": [
+          "리자몽",
+          "메가리자몽 X",
+          "메가리자몽 Y",
+          "일레도리자드"
+        ],
+        "highlight": "quick-attacker-option-1",
+        "arrowSelected": "메가리자몽 X"
+      }
+    },
+    {
+      "id": "search-escape-disabled-ime",
+      "expected": "Escape closes list, disabled selection blocked and IME composing Enter does not select",
+      "status": "partial",
+      "actual": {
+        "escape": {
+          "expanded": "false",
+          "species": "메가리자몽 X"
+        },
+        "imeSpeciesDuringComposition": "메가리자몽 X",
+        "disabled": "not mounted in Quick; component disabled branch not exercised"
+      }
+    },
+    {
+      "id": "runtime-errors",
+      "expected": "No captured post-instrumentation exception or unhandled rejection during QA",
+      "status": "not-tested",
+      "actual": null
+    }
+  ]
+}

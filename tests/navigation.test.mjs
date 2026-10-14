@@ -2,8 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { normalizeRoute, routeGroups } from '../src/navigation.ts'
 
-test('compact navigation exposes the unified library without a ranker entry', () => {
-  assert.deepEqual(routeGroups.map(g => g.label), ['배틀 준비', '샘플', '도구/자료'])
+test('navigation enumerates seven destinations without a ranker entry', () => {
   assert.deepEqual(routeGroups.flatMap(g => g.links.map(l => l.href)), [
     '#/single?tab=party', '#/double?tab=party', '#/sample-builder?sampleTab=builder',
     '#/sample-builder?sampleTab=library', '#/damage', '#/speed-line', '#/dex',
