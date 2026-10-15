@@ -70,7 +70,7 @@ export function validateBackup(value: unknown): ImportExportPayload {
     sampleLockedMoves: strings,
     confirmedMovesByKey: stringMap,
     calcConditionalPowerValues: powerMap,
-    mainSection: input => ['home', 'single', 'double', 'sample', 'dex', 'speedLine'].includes(input as string),
+    mainSection: input => ['home', 'single', 'party', 'double', 'sample', 'dex', 'speedLine', 'quickDamage'].includes(input as string),
     activeTab: input => ['party', 'pick', 'speed', 'power'].includes(input as string),
     sampleWorkbenchTab: input => ['builder', 'speed', 'damage', 'library', 'rankers'].includes(input as string),
   }

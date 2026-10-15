@@ -1,7 +1,7 @@
 export const routeGroups = [
   { label: '배틀 준비', section: 'battle', links: [
     { label: '싱글배틀', href: '#/single?tab=party', section: 'single', tab: 'party' },
-    { label: '더블배틀', href: '#/double?tab=party', section: 'double', tab: 'party' },
+    { label: '내 파티 관리', href: '#/party', section: 'party', tab: '' },
   ] },
   { label: '샘플', section: 'sample', links: [
     { label: '샘플 빌더', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder' },
@@ -14,9 +14,10 @@ export const routeGroups = [
   ] },
 ] as const
 
-export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'double' | 'sample' | 'speedLine' | 'dex' | 'quickDamage'; tab: string } {
+export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'party' | 'double' | 'sample' | 'speedLine' | 'dex' | 'quickDamage'; tab: string } {
   const route = new URL((hash.replace(/^#/, '') || '/'), 'https://route.local')
   const path = route.pathname
+  if (path === '/party') return { section: 'party', tab: '' }
   if (path === '/single' || path === '/double') {
     const value = route.searchParams.get('tab')
     return { section: path.slice(1) as 'single' | 'double', tab: value === 'speed' && path === '/double' ? 'power' :

@@ -2,11 +2,16 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { normalizeRoute, routeGroups } from '../src/navigation.ts'
 
-test('navigation enumerates seven destinations without a ranker entry', () => {
+test('navigation exposes eight direct destinations including home and party, without doubles', () => {
   assert.deepEqual(routeGroups.flatMap(g => g.links.map(l => l.href)), [
-    '#/single?tab=party', '#/double?tab=party', '#/sample-builder?sampleTab=builder',
+    '#/single?tab=party', '#/party', '#/sample-builder?sampleTab=builder',
     '#/sample-builder?sampleTab=library', '#/damage', '#/speed-line', '#/dex',
   ])
+})
+
+test('party is its own route while old double links remain loadable', () => {
+  assert.deepEqual(normalizeRoute('#/party'), { section: 'party', tab: '' })
+  assert.deepEqual(normalizeRoute('#/double?tab=party'), { section: 'double', tab: 'party' })
 })
 
 test('quick damage deep link resolves independently', () => {
