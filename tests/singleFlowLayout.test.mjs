@@ -12,16 +12,18 @@ test('single pair has no saved-record editing detour', () => {
   assert.match(panel, /onSaveEntry\?:/)
   assert.match(panel, /className="single-entry-commit"/)
 })
-test('speed, rolls, provenance and battle conditions are expanded by default', () => {
-  assert.match(panel, /className="quick-speed-cards"/)
+test('one Speed comparison, compact provenance and battle conditions are expanded by default', () => {
+  assert.match(panel, /className="quick-speed-summary"/)
+  assert.match(panel, /className="quick-speed-card"/)
   assert.match(panel, /className="quick-rolls"/)
   assert.match(panel, /className="quick-condition-grid"/)
-  assert.match(panel, /className="quick-source"/)
+  assert.match(panel, /className="quick-source-badges"/)
   assert.doesNotMatch(panel, /<details|conditionsOpen|speedOpen|detailHref/)
 })
 test('same card contains shared build, effort and 2x2 move inputs', () => {
   assert.match(panel, /className="registered-move-grid quick-registered-moves"/)
   assert.match(panel, /\{statCard\(side, entry, row\)\}/)
+  assert.match(panel, /className="quick-build-sides"/)
   assert.match(panel, /<PokemonBuildFields/)
   assert.match(panel, /<PokemonStatGrid/)
   assert.match(css, /\.quick-registered-moves\s*\{[^}]*grid-template-columns:\s*repeat\(2/)

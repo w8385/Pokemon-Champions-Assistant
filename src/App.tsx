@@ -3822,7 +3822,7 @@ function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
 
 function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
-  const assumptionSummary = { ko: '계산 기준 · 가정 확인', en: 'Calculation baseline & assumptions', ja: '計算の基準・条件' }
+
   const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
   const [attacker, setAttacker] = React.useState(() => {
     const side = initialSides?.[0] ?? quickSide(saved.attacker, saved.conditions as Record<string, unknown> ?? {}, true)
@@ -3972,21 +3972,19 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
   const opponentSource = comparisonMode ? initialSides?.[1] : undefined
   const sourceLabels = {
-    ko: { nature: '상대 전체 성격', attack: '공격 노력', spAttack: '특수공격 노력', known: '기록됨', draft: '저장 전 변경', unknown: '미확인·0 노력 가정', natureUnknown: '미확인·기록된 방어/특방 보정 적용', temporary: '전투 상태·랭크·실수치 덮어쓰기는 이 대면에서만 적용됩니다.' },
-    en: { nature: 'Opponent full nature', attack: 'Attack effort', spAttack: 'Sp. Attack effort', known: 'recorded', draft: 'unsaved edit', unknown: 'unknown · assumed 0', natureUnknown: 'unknown · recorded Def/Sp. Def modifiers apply', temporary: 'Battle status, stages and actual-stat overrides apply only to this matchup.' },
-    ja: { nature: '相手の性格全体', attack: '攻撃努力値', spAttack: '特攻努力値', known: '記録済み', draft: '保存前の変更', unknown: '未確認・0と想定', natureUnknown: '未確認・記録済みの防御/特防補正を適用', temporary: '状態・ランク・実数値の上書きはこの対面のみ適用されます。' },
+    ko: { saved: '저장됨', shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '미저장', unknown: '미확인 · 0 가정', natureUnknown: '성격 미확인', modifier: '기록 보정' },
+    en: { saved: 'Saved', shared: 'Moves shared by same-species slots · edits apply to all', condition: 'Calculation conditions · this matchup only', battle: 'Battle conditions', draft: 'Unsaved', unknown: 'Unknown · assumed 0', natureUnknown: 'Nature unknown', modifier: 'Recorded modifier' },
+    ja: { saved: '保存済み', shared: '同じ種の枠で技を共有 · 変更は全枠に反映', condition: '計算条件 · この対面のみ', battle: '戦闘条件', draft: '未保存', unknown: '未確認 · 0と想定', natureUnknown: '性格未確認', modifier: '記録補正' },
   }[language]
-  const sourceStatus = (field: 'nature' | 'attack' | 'spAttack') => dirty.defender.has('key') || dirty.defender.has(field) ? dirty.defender.has(field) ? sourceLabels.draft : field === 'nature' ? sourceLabels.natureUnknown : sourceLabels.unknown : field === 'nature' ? opponentSource?.speedNatureKnown ? sourceLabels.known : sourceLabels.natureUnknown : opponentSource?.knownOffense?.[field] ? sourceLabels.known : sourceLabels.unknown
+  const sourceStatus = (field: 'nature' | 'attack' | 'spAttack') => {
+    if (dirty.defender.has(field)) return sourceLabels.draft
+    if (field === 'nature') return opponentSource?.speedNatureKnown && !dirty.defender.has('key') ? null : sourceLabels.natureUnknown
+    return opponentSource?.knownOffense?.[field] && !dirty.defender.has('key') ? null : sourceLabels.unknown
+  }
   const speedCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row) => {
-    const speed = side === 'attacker' ? mySpeedResult : oppSpeedResult
-    const fraction = side === 'attacker' ? speedVisual.ownFraction : speedVisual.opponentFraction
     const scarf = scarfFor(entry), ability = abilityFor(entry, row)
-    const label = `${lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · ${displayName(row, language)}`
     return <div className="quick-speed-card">
-      <div className="quick-speed-card-value"><span>{lt('최종 스피드')}</span><strong>{speed?.value ?? '—'}</strong></div>
-      {speedVisual.valid && fraction !== null ? <div className="quick-speed-track" role="img" aria-label={`${label} ${lt('최종 스피드')} ${speed!.value} / ${speedVisual.maximum}`}><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${fraction * 100}%` }} /></div> : null}
-      {speed?.reason ? <small role="alert">{lt(speed.reason)}</small> : null}
-      <div className="quick-speed-chips"><span>{lt('스피드 종족값')} {row.speed}</span><span>{lt('성격 보정')} {entry.speedNatureKnown ? natureLabel(entry.nature, language) : `${entry.speedNatureMultiplier === 0.9 ? '-10%' : entry.speedNatureMultiplier === 1.1 ? '+10%' : '0%'} (${lt('상대 기록의 속도 보정 · 나머지 성격 미확인')})`}</span><span>{lt('스피드 노력')} {entry.evs.speed}/32</span><span>{lt('스피드 랭크')} {entry.speedStage > 0 ? '+' : ''}{entry.speedStage}</span><span>{lt('스카프')} {scarf ? '×1.5' : '×1'}</span><span>{lt('특성')} {ability && entry.speedAbilityActive && abilityPermitted(entry, row) ? `×${ability.multiplier}` : '×1'}</span></div>
+      <div className="quick-speed-chips"><span>{lt('스피드 종족값')} {row.speed}</span><span>{lt('성격 보정')} {entry.speedNatureKnown ? natureLabel(entry.nature, language) : `${entry.speedNatureMultiplier}×`}</span><span>{lt('스피드 노력')} {entry.evs.speed}/32</span><span>{lt('스피드 랭크')} {entry.speedStage > 0 ? '+' : ''}{entry.speedStage}</span><span>{lt('스카프')} {scarf ? '×1.5' : '×1'}</span><span>{lt('특성')} {ability && entry.speedAbilityActive && abilityPermitted(entry, row) ? `×${ability.multiplier}` : '×1'}</span></div>
       <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{lt('속도 성격 가정')}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{lt('스카프 시나리오')}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{lt('일반')}</option><option value="scarf">{lt('스카프 가정')}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
     </div>
   }
@@ -4005,9 +4003,10 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     return <section className="card entry-card quick-side-card">
       <strong>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')}</strong>
       <PokemonSearchField id={`quick-${side}`} label={lt('포켓몬 검색')} value={search} onChange={setSearch} onSelect={key => selectSide(side, key)} options={searchOptions(search)} placeholder={lt('종·폼 검색')} menuClassName="sample-damage-search-menu" />
-      {comparisonMode ? <div className="single-entry-commit"><span role="status">{dirty[side].size ? lt('저장 전 변경 · 대면 가정은 저장되지 않음') : lt('저장된 엔트리 · 전투 가정은 임시')}</span>{side === 'attacker' && sharedMoveSpecies?.(entry.key) ? <small>{lt('같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.')}</small> : null}<button type="button" className="action-button" disabled={!dirty[side].size || !entry.key} onClick={() => { onSaveEntry?.(side, entry, dirty[side]); setDirty(prev => ({ ...prev, [side]: new Set() })) }}>{lt('엔트리 저장')}</button><button type="button" className="action-button" disabled={!dirty[side].size} onClick={() => { clearSideUI(side); setEntry(initialSides![side === 'attacker' ? 0 : 1]); setDirty(prev => ({ ...prev, [side]: new Set() })); onDraftIdentity?.(side, '') }}>{lt('변경 취소')}</button></div> : null}
+      {comparisonMode ? <div className="single-entry-commit"><span role="status">{dirty[side].size ? sourceLabels.draft : sourceLabels.saved}</span><button type="button" className="action-button" disabled={!dirty[side].size || !entry.key} onClick={() => { onSaveEntry?.(side, entry, dirty[side]); setDirty(prev => ({ ...prev, [side]: new Set() })) }}>{lt('엔트리 저장')}</button><button type="button" className="action-button" disabled={!dirty[side].size} onClick={() => { clearSideUI(side); setEntry(initialSides![side === 'attacker' ? 0 : 1]); setDirty(prev => ({ ...prev, [side]: new Set() })); onDraftIdentity?.(side, '') }}>{lt('변경 취소')}</button></div> : null}
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
+        {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}
         <div className="registered-move-grid quick-registered-moves">{Array.from({ length: 4 }, (_, index) => {
           const name = entry.moves[index] ?? ''
           const draftKey = `${side}-${index}`
@@ -4024,13 +4023,21 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
             <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
         })}</div>
-        {statCard(side, entry, row)}
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
     </section>
   }
+  const buildCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => <section className="card entry-card quick-build-card">
+    <strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {row ? displayName(row, language) : '—'} · {lt('능력·노력치')}</strong>
+    {row ? <>{statCard(side, entry, row)}{speedCard(side, entry, row)}</> : null}
+  </section>
   const statCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
     const setEntry = side === 'attacker' ? setAttacker : setDefender
-    return row ? <div className="quick-stat-card" key={side}><h3>{displayName(row, language)} · {lt('능력·노력치')}</h3>        <PokemonBuildFields key={`${side}-${entry.key}`} identity={`${side}-${entry.key}`} className="quick-build-fields"
+    return row ? <div className="quick-stat-card" key={side}>{side === 'defender' && comparisonMode ? <div className="quick-source-badges">
+      {sourceStatus('nature') ? <small>{sourceStatus('nature') === sourceLabels.draft ? `${lt('성격')} · ${sourceLabels.draft}` : sourceStatus('nature')}</small> : null}
+      {sourceStatus('attack') ? <small>{lt('공격 노력')}: {sourceStatus('attack')}</small> : null}
+      {sourceStatus('spAttack') ? <small>{lt('특수공격 노력')}: {sourceStatus('spAttack')}</small> : null}
+      {(['defense', 'spDefense'] as const).map(key => entry.statNatureMultipliers[key] !== undefined ? <small key={key}>{lt(key === 'defense' ? '방어' : '특수방어')} {sourceLabels.modifier} ×{entry.statNatureMultipliers[key]}</small> : null)}
+    </div> : null}<PokemonBuildFields key={`${side}-${entry.key}`} identity={`${side}-${entry.key}`} className="quick-build-fields"
           ability={entry.ability} nature={entry.nature} item={entry.item}
           abilities={row.abilities.map((value, index) => ({ value, label: language === 'ja' ? abilityDescriptionFor(value)?.nameJa || displayAbilities(row, language)[index] : displayAbilities(row, language)[index] }))}
           natures={NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
@@ -4046,39 +4053,31 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
 
   const speedStrip = <div className="quick-speed-summary" aria-label={lt('스피드 비교')}>
     <strong>{lt('스피드 비교')} · {speedVisual.valid ? `${speedVisual.delta! > 0 ? lt('내가 빠름') : speedVisual.delta! < 0 ? lt('내가 느림') : lt('동속')} ${speedVisual.delta! > 0 ? '+' : ''}${speedVisual.delta}` : lt('비교 불가')}</strong>
-    {speedVisual.valid ? <div className="quick-speed-overview-bars">{(['attacker', 'defender'] as const).map((side, index) => { const fraction = index === 0 ? speedVisual.ownFraction : speedVisual.opponentFraction; return <div key={side}><span>{index === 0 ? attackingRow ? displayName(attackingRow, language) : lt('내 포켓몬') : defendingRow ? displayName(defendingRow, language) : lt('상대 포켓몬')}</span><div className="quick-speed-track"><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${(fraction ?? 0) * 100}%` }} /></div><strong>{index === 0 ? mySpeedResult?.value : oppSpeedResult?.value}</strong></div> })}</div> : null}
-    <div className="quick-speed-current">{([attacker, defender] as const).map((entry, index) => {
-      const row = index === 0 ? attackingRow : defendingRow
-      const ability = row ? abilityFor(entry, row) : null
-      return <small key={index}>{lt(index === 0 ? '내 포켓몬' : '상대 포켓몬')} · {entry.speedNatureKnown ? natureLabel(entry.nature, language) : `${lt('성격 보정')} ${entry.speedNatureMultiplier}×`} · {lt('스피드 노력')} {entry.evs.speed}/32 · {lt('스피드 랭크')} {entry.speedStage > 0 ? '+' : ''}{entry.speedStage}{scarfFor(entry) ? ` · ${lt('스카프')} ×1.5` : ''}{ability && entry.speedAbilityActive && row ? ` · ${lt(ability.labelKo)} ${abilityPermitted(entry, row) ? `×${ability.multiplier}` : lt('(전제 조건 미충족 · 미적용)')}` : ''}</small>
-    })}</div>
+    {speedVisual.valid ? <div className="quick-speed-overview-bars">{(['attacker', 'defender'] as const).map((side, index) => { const fraction = index === 0 ? speedVisual.ownFraction : speedVisual.opponentFraction; const row = index === 0 ? attackingRow : defendingRow; const label = `${lt(index === 0 ? '내 포켓몬' : '상대 포켓몬')} · ${row ? displayName(row, language) : '—'}`; const value = index === 0 ? mySpeedResult?.value : oppSpeedResult?.value; return <div key={side}><span>{label}</span><div className="quick-speed-track" role="img" aria-label={`${label} ${lt('최종 스피드')} ${value} / ${speedVisual.maximum}`}><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${(fraction ?? 0) * 100}%` }} /></div><strong>{value}</strong></div> })}</div> : null}
     {([mySpeedResult, oppSpeedResult] as const).map((speed, index) => speed?.reason ? <small key={index} role="alert">{lt(index === 0 ? '내 포켓몬' : '상대 포켓몬')} · {lt(speed.reason)}</small> : null)}
-    <div className="quick-speed-source"><strong>{lt('속도 보정 기준')}</strong><small>{lt('스피드 랭크')} {attacker.speedStage > 0 ? '+' : ''}{attacker.speedStage} / {defender.speedStage > 0 ? '+' : ''}{defender.speedStage} · {lt('스카프')} {scarfFor(attacker) ? '×1.5' : '×1'} / {scarfFor(defender) ? '×1.5' : '×1'} · {lt('성격 보정')} {attacker.speedNatureKnown ? natureLabel(attacker.nature, language) : `${attacker.speedNatureMultiplier}×`} / {defender.speedNatureKnown ? natureLabel(defender.nature, language) : `${defender.speedNatureMultiplier}× (${lt('상대 기록의 속도 보정 · 나머지 성격 미확인')})`}</small></div>
-    <div className="quick-speed-cards">{attackingRow ? speedCard('attacker', attacker, attackingRow) : null}{defendingRow ? speedCard('defender', defender, defendingRow) : null}</div>
   </div>
   const sideBattleControls = (side: 'attacker' | 'defender') => {
     const battle = (side === 'attacker' ? attacker : defender).battle
     const setBattle = (patch: Partial<QuickBattle>) => setSide(side, prev => ({ ...prev, battle: { ...prev.battle, ...patch } }))
-    return <fieldset className="quick-side-battle"><legend>{lt(side === 'attacker' ? '공격측' : '방어측')} · {lt('상태·랭크·장막')}</legend>
+    return <fieldset className="quick-side-battle"><legend>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {sourceLabels.battle}</legend>
       {([['attackStage','공격 랭크'], ['spAttackStage','특수공격 랭크'], ['defenseStage','방어 랭크'], ['spDefenseStage','특수방어 랭크']] as const).map(([key,label]) => <label key={key}>{lt(label)}<select value={battle[key]} onChange={event => setBattle({ [key]: Number(event.target.value) })}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label>)}
       {([['burned','화상'],['lowHp','HP 1/3 이하'],['poisoned','독/맹독'],['fullHp','HP 만땅'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일'],['friendGuard','프렌드가드']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
     </fieldset>
   }
-  const battleLabels: Record<string, string> = { attackStage: '공격 랭크', spAttackStage: '특수공격 랭크', defenseStage: '방어 랭크', spDefenseStage: '특수방어 랭크', burned: '화상', lowHp: 'HP 1/3 이하', poisoned: '독/맹독', fullHp: 'HP 만땅', reflect: '리플렉터', lightScreen: '빛의장막', auroraVeil: '오로라베일', friendGuard: '프렌드가드' }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면비교' : '간단 대미지')}>
-    <div className="row-between"><div><h2>{lt(comparisonMode ? '대면비교' : '간단 대미지')}</h2><p className="muted">{lt(comparisonMode ? '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영' : '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.')}</p></div>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
+    <div className="row-between"><h2>{lt(comparisonMode ? '대면비교' : '간단 대미지')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
     {entrySelectors}
-    <div className="quick-assumptions"><strong>{assumptionSummary[language]}</strong><span>{lt('대면 가정 · 저장 기록 미변경')}</span><div className="quick-source"><strong>{lt('가정의 출처와 한계')}</strong><p className="muted">{comparisonMode ? `${sourceLabels.nature}: ${sourceStatus('nature')} · ${sourceLabels.attack}: ${sourceStatus('attack')} · ${sourceLabels.spAttack}: ${sourceStatus('spAttack')}. ${sourceLabels.temporary}` : lt('레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.')}</p><small>{lt('속도 관계는 선공·승리 확정이 아닙니다. 가정은 저장된 엔트리/도구를 바꾸지 않습니다.')}</small></div></div>
     {speedStrip}
+    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
     <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt('공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt('방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
-    <div className="quick-conditions"><div className="quick-condition-summary"><strong>{lt('계산 조건')} · {lt('날씨')} {lt(({ none: '없음', sun: '쾌청', rain: '비', sand: '모래바람', snow: '싸라기눈' } as const)[conditions.weather])} · {lt('필드')} {lt(({ none: '없음', electric: '일렉트릭필드', grassy: '그래스필드', psychic: '사이코필드', misty: '미스트필드' } as const)[conditions.terrain])} · {lt('급소')} {conditions.critical ? '✓' : '—'} · {lt('타입변환 자속')} {conditions.typeChangeStab ? '✓' : '—'}</strong><span>{(['attacker', 'defender'] as const).map(side => { const battle = (side === 'attacker' ? attacker : defender).battle; const active = Object.entries(battle).filter(([, value]) => value !== false && value !== 0).map(([key, value]) => `${lt(battleLabels[key] ?? key)}${typeof value === 'number' ? ` ${value > 0 ? '+' : ''}${value}` : ''}`); return active.length ? `${lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')}: ${active.join(', ')}` : '' }).filter(Boolean).join(' · ') || lt('양쪽 상태·랭크·장막 없음')}</span></div><div className="quick-condition-grid">
-      {sideBattleControls('attacker')}{sideBattleControls('defender')}
+    <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
       <label>{lt('날씨')}<select value={conditions.weather} onChange={event => setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather }))}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
       <label>{lt('필드')}<select value={conditions.terrain} onChange={event => setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain }))}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
       {toggle('critical','급소')}{toggle('typeChangeStab','타입변환 자속')}
       {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
-    </div><div className="quick-source"><strong>{lt('계산 한계')}</strong><p className="muted">{lt('선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.')}</p></div></div>
-    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
+    </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}
+    </div></div>
+    <div className="quick-build-sides">{buildCard('attacker', attacker, attackingRow)}{buildCard('defender', defender, defendingRow)}</div>
     {modalSide && modalKey === (modalSide === 'attacker' ? attacker : defender).key && indexByKey.get(modalKey) ? (() => {
       const entry = modalSide === 'attacker' ? attacker : defender
       const row = indexByKey.get(entry.key)!

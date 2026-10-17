@@ -16,20 +16,20 @@ test('entry selectors render inside the actual comparison panel and disable inde
   assert.match(single, /entrySelectors=\{/)
 })
 
-test('current assumptions are visible, localized and never imply a saved edit', () => {
-  assert.match(quick, /<div className="quick-assumptions"/)
-  assert.match(quick, /<strong>\{assumptionSummary\[language\]\}<\/strong>/)
+test('unknown sources are localized beside build values and temporary battle controls remain visible', () => {
+  assert.match(quick, /className="quick-source-badges"/)
+  assert.match(quick, /sourceLabels = \{/)
   const speedSummary = quick.slice(quick.indexOf('const speedStrip ='), quick.indexOf('const sideBattleControls ='))
-  assert.doesNotMatch(speedSummary, /속도 관계는 선공·승리 확정/)
+  assert.doesNotMatch(speedSummary, /quick-speed-current|quick-speed-source/)
   assert.match(quick, /sourceStatus\('nature'\)/)
   assert.match(quick, /sourceStatus\('attack'\)/)
   assert.match(quick, /sourceStatus\('spAttack'\)/)
   assert.match(quick, /opponentSource\?\.knownOffense/)
   assert.match(quick, /sourceLabels\.natureUnknown/)
-  assert.match(quick, /속도 관계는 선공·승리 확정/)
+  assert.match(quick, /계산 조건 · 이 대면만/)
 })
 
-test('single speed shares one scale and each card holds its own speed details; roll details are secondary', () => {
+test('single speed shares one scale and build cards hold speed controls; rolls remain visible', () => {
   assert.match(quick, /quick-speed-summary/)
   assert.match(quick, /quick-speed-card/)
   assert.match(quick, /className="quick-speed-assumptions"/)
