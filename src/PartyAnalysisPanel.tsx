@@ -17,6 +17,7 @@ const types = ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting'
 const tone = (value: number | null) => value === null ? 'unknown' : value >= 2 ? 'weak' : value === 0 ? 'immune' : value < 1 ? 'resist' : 'neutral'
 const display = (value: number | null) => value === null ? '—' : `${value}×`
 const displayCell = (value: number | null, incomplete = false, loading = false) => loading ? '?' : incomplete ? value === null ? '?' : `≥${display(value)}` : display(value)
+export const partyTotalClass = (tone: 'risk' | 'support', count: number | null) => count === null ? 'party-analysis-total' : `party-analysis-total total-${tone} total-count-${count}`
 
 export function PartyAnalysisPanel({ analysis, language, loading }: { analysis: Result; language: SiteLanguage; loading: boolean }) {
   const [selected, setSelected] = React.useState<string | null>(null)
@@ -42,8 +43,8 @@ export function PartyAnalysisPanel({ analysis, language, loading }: { analysis: 
           </button> : <span className="party-analysis-blank" aria-label={description}>—</span>}
         </td>
       })}
-      {kind === 'defense' ? <><td className="party-analysis-total">{(row as Result['defense'][number]).weakCount}</td><td className="party-analysis-total">{(row as Result['defense'][number]).resistCount + (row as Result['defense'][number]).immuneCount}</td></>
-        : <><td className="party-analysis-total" title={partial ? text.partial : undefined}>{loading ? '?' : !(row as Result['offense'][number]).knownCount ? partial ? '?' : '—' : `${partial ? '≥' : ''}${(row as Result['offense'][number]).count}`}</td><td className="party-analysis-total" title={text.confirmedResist}>{loading ? '?' : !(row as Result['offense'][number]).knownCount ? partial ? '?' : '—' : (row as Result['offense'][number]).resistCount}</td></>}
+      {kind === 'defense' ? <><td className={partyTotalClass('risk', (row as Result['defense'][number]).weakCount)}>{(row as Result['defense'][number]).weakCount}</td><td className={partyTotalClass('support', (row as Result['defense'][number]).resistCount + (row as Result['defense'][number]).immuneCount)}>{(row as Result['defense'][number]).resistCount + (row as Result['defense'][number]).immuneCount}</td></>
+        : <><td className={partyTotalClass('support', !loading && (row as Result['offense'][number]).knownCount ? (row as Result['offense'][number]).count : null)} title={partial ? text.partial : undefined}>{loading ? '?' : !(row as Result['offense'][number]).knownCount ? partial ? '?' : '—' : `${partial ? '≥' : ''}${(row as Result['offense'][number]).count}`}</td><td className={partyTotalClass('risk', !loading && (row as Result['offense'][number]).knownCount ? (row as Result['offense'][number]).resistCount : null)} title={text.confirmedResist}>{loading ? '?' : !(row as Result['offense'][number]).knownCount ? partial ? '?' : '—' : (row as Result['offense'][number]).resistCount}</td></>}
     </tr>
   })
   return <section className="party-analysis" aria-label={text.title}>

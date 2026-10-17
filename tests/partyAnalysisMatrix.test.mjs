@@ -43,8 +43,8 @@ test('pure matchup cells preserve actual slots, abilities, dual types and best v
   assert.equal(row(updated, 'dragon', 'offense').count, 1)
 })
 
-let server, Panel
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/PartyAnalysisPanel.tsx')).PartyAnalysisPanel })
+let server, Panel, totalClass
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); const module = await server.ssrLoadModule('/src/PartyAnalysisPanel.tsx'); Panel = module.PartyAnalysisPanel; totalClass = module.partyTotalClass })
 test.after(async () => { await server?.close() })
 test('SSR renders two semantic 18-row tables, six fixed slot headings and numeric cells', () => {
   const html = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze(members), language: 'ko', loading: false }))
@@ -68,6 +68,27 @@ test('SSR renders two semantic 18-row tables, six fixed slot headings and numeri
   assert.match(unknownHtml, />\?</)
   const emptyHtml = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze([member('no-attacks', 4, ['water'])]), language: 'ko', loading: false }))
   assert.match(emptyHtml, /<td class="party-analysis-total">—<\/td><td class="party-analysis-total"[^>]*>—<\/td>/)
+})
+
+test('count colors distinguish 0–6 and invert meaning between defensive weakness and offensive coverage', () => {
+  assert.equal(typeof totalClass, 'function')
+  for (const tone of ['risk', 'support']) {
+    const classes = Array.from({ length: 7 }, (_, count) => totalClass(tone, count))
+    assert.equal(new Set(classes).size, 7)
+    classes.forEach((value, count) => assert.ok(value.includes(`total-${tone}`) && value.includes(`total-count-${count}`)))
+    assert.equal(totalClass(tone, null), 'party-analysis-total')
+  }
+  const six = Array.from({ length: 6 }, (_, slot) => member(`normal-${slot}`, slot, ['normal'], '', [move('무릎차기', 'fighting', 'physical')]))
+  const html = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze(six), language: 'ko', loading: false }))
+  const bodies = [...html.matchAll(/<tbody>(.*?)<\/tbody>/gs)].map(match => match[1])
+  const defenseFighting = bodies[0].match(/격투<\/th>(.*?)<\/tr>/s)[1]
+  const offenseNormal = bodies[1].match(/노말<\/th>(.*?)<\/tr>/s)[1]
+  const offenseGhost = bodies[1].match(/고스트<\/th>(.*?)<\/tr>/s)[1]
+  assert.ok(defenseFighting.includes('party-analysis-total total-risk total-count-6'))
+  assert.ok(offenseNormal.includes('party-analysis-total total-support total-count-6'))
+  assert.ok(offenseGhost.includes('party-analysis-total total-risk total-count-6'))
+  const pending = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze(six), language: 'ko', loading: true })).split('<tbody>')[2]
+  assert.doesNotMatch(pending, /class="party-analysis-total total-(?:risk|support)/)
 })
 
 test('selected partial and loading offense details retain the matrix uncertainty markers', () => {

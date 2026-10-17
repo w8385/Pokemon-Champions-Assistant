@@ -8604,6 +8604,19 @@ html {
 .party-analysis-value.neutral { background: #273447; color: #dfe9f5; }
 .party-analysis-value.unknown { background: #303b49; color: #d4dfeb; }
 .party-analysis-total { width: 58px; background: #34445b; color: #fff; font-weight: 800; }
+.party-analysis-total.total-count-0 { background: #273447; color: #c4d3e2; }
+.party-analysis-total.total-risk.total-count-1 { background: #40303b; }
+.party-analysis-total.total-risk.total-count-2 { background: #51313e; }
+.party-analysis-total.total-risk.total-count-3 { background: #653446; }
+.party-analysis-total.total-risk.total-count-4 { background: #79384d; }
+.party-analysis-total.total-risk.total-count-5 { background: #8d3b54; }
+.party-analysis-total.total-risk.total-count-6 { background: #a03f5b; }
+.party-analysis-total.total-support.total-count-1 { background: #253e3e; }
+.party-analysis-total.total-support.total-count-2 { background: #254d47; }
+.party-analysis-total.total-support.total-count-3 { background: #245c50; }
+.party-analysis-total.total-support.total-count-4 { background: #226b57; }
+.party-analysis-total.total-support.total-count-5 { background: #207a5e; }
+.party-analysis-total.total-support.total-count-6 { background: #1d8463; }
 .party-analysis-blank { color: #c4d3e2; }
 .party-analysis-detail { margin: .8rem 0; padding: .65rem; border: 1px solid #697d93; border-radius: .45rem; background: #213247; overflow-wrap: anywhere; }
 .party-analysis-detail p { margin: .35rem 0; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
