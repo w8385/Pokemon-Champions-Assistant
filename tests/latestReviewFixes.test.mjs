@@ -49,7 +49,10 @@ test('party route owns the original editor and real callbacks, not a copied comp
  assert.doesNotMatch(app.slice(app.indexOf('mainSection === \'home\' ? ('),app.indexOf('mainSection !== \'home\' && mainSection')), /setMainSection\('double'\)/)
 })
 test('empty Singles comparison guides registration through the party route instead of embedding editor',()=>{
- const pair=app.slice(app.indexOf('className="unified-single-pair"'),app.indexOf('comparisonMode />',app.indexOf('className="unified-single-pair"')))
+ const start=app.indexOf('className="unified-single-pair"')
+ const end=app.indexOf("{(mainSection === 'party' ||",start)
+ assert.ok(start>=0 && end>start, 'bound the actual single workspace before the separate party editor')
+ const pair=app.slice(start,end)
  assert.match(pair,/party\.every\(member => !member\.key\)/)
  assert.match(pair,/href="#\/party"/)
  assert.doesNotMatch(pair,/manage-entry-grid|RegisteredMoveSlot/)

@@ -27,18 +27,24 @@ export function analyzePartyMatchups(members: AnalysisMember[], chart: AnalysisC
     if (!known) warnings.push(`미확인 포켓몬/타입: ${member.key || '빈 슬롯'}`)
     return known
   }).slice(0, 6)
-  const attackMoves = valid.map(member => ({ member, moves: member.moves.filter(move => {
-    if (move.category === 'status') return false
-    if (CONDITIONAL_TYPE_MOVES.has(normalizeMove(move.name))) {
-      warnings.push(`조건부/특수 상성 제외: ${member.name} · ${move.name}`)
-      return false
-    }
-    if (!move.type || !PARTY_TYPES.includes(move.type as PartyType) || !['physical', 'special'].includes(move.category ?? '')) {
-      warnings.push(`기술 타입/분류 미확인: ${member.name} · ${move.name}`)
-      return false
-    }
-    return true
-  }) }))
+  const attackMoves = valid.map(member => {
+    let incomplete = false
+    const moves = member.moves.filter(move => {
+      if (move.category === 'status') return false
+      if (CONDITIONAL_TYPE_MOVES.has(normalizeMove(move.name))) {
+        warnings.push(`조건부/특수 상성 제외: ${member.name} · ${move.name}`)
+        incomplete = true
+        return false
+      }
+      if (!move.type || !PARTY_TYPES.includes(move.type as PartyType) || !['physical', 'special'].includes(move.category ?? '')) {
+        warnings.push(`기술 타입/분류 미확인: ${member.name} · ${move.name}`)
+        incomplete = true
+        return false
+      }
+      return true
+    })
+    return { member, moves, incomplete }
+  })
   const offensiveMultiplier = (move: AnalysisMove, targetType: string, ability: string) => {
     // Freeze-Dry has a fixed Water exception, not an unresolved activation condition.
     // Other targets still use the application's existing type/ability resolver.
@@ -47,12 +53,17 @@ export function analyzePartyMatchups(members: AnalysisMember[], chart: AnalysisC
     return options.offensiveEffectiveness?.(move.type!, targetType, ability) ?? effectiveness(move.type!, [targetType], chart)
   }
   const offense = PARTY_TYPES.map(type => {
+    const cells = attackMoves.map(({ member, moves, incomplete }) => {
+      const verified = moves.map(move => ({ name: move.name, multiplier: offensiveMultiplier(move, type, member.ability) }))
+      const multiplier = verified.length ? Math.max(...verified.map(move => move.multiplier)) : null
+      return { key: member.key, name: member.name, sprite: member.sprite, slot: member.slot, multiplier, moves: verified.filter(move => move.multiplier === multiplier).map(move => move.name), incomplete }
+    })
     const hits = attackMoves.flatMap(({ member, moves }) => {
       const effective = moves.map(move => ({ name: move.name, multiplier: offensiveMultiplier(move, type, member.ability) })).filter(move => move.multiplier > 1)
       return effective.length ? [{ key: member.key, name: member.name, sprite: member.sprite, slot: member.slot, moves: effective }] : []
     })
     const immune = attackMoves.flatMap(({ member, moves }) => moves.filter(move => offensiveMultiplier(move, type, member.ability) === 0).map(move => ({ key: member.key, name: member.name, slot: member.slot, move: move.name })))
-    return { type, hits, count: hits.length, immune }
+    return { type, hits, count: hits.length, immune, cells, resistCount: cells.filter(cell => !cell.incomplete && cell.multiplier !== null && cell.multiplier < 1).length, knownCount: cells.filter(cell => cell.multiplier !== null).length, incompleteCount: cells.filter(cell => cell.incomplete).length }
   })
   const defense = PARTY_TYPES.map(type => {
     const entries = valid.map(member => {

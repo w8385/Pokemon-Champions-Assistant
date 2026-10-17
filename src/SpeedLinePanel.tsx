@@ -116,6 +116,9 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
       <div className="speed-line-actions"><button type="button" disabled={!reference || !draftsValid} onClick={jump}>{l('jump')}</button><button type="button" onClick={() => { update({ referenceKey: null, referenceAbility: null, comparison: 'all', rangeMode: 'all' }); setSearchDraft('') }}>{l('clear')}</button><button type="button" disabled={!draftsValid} onClick={share}>{l('share')}</button></div>
       {copyFailed ? <label>{l('fallback')}<input readOnly onFocus={e => e.currentTarget.select()} value={typeof window !== 'undefined' ? window.location.href : ''} /></label> : null}
     </div>
+    {draftsValid ? <div className="speed-line-condition-summary" role="status"><strong>{l('conditions')}</strong>: {l('referenceSpeed')} {referenceSpeed ?? '—'} ({l('actualReference')} {reference?.actualSpeed ?? '—'} · {l('stage')} {referenceStage > 0 ? '+' : ''}{referenceStage}{state.referenceAbility ? ` · ${abilityLabel(state.referenceAbility)}` : ''}) · {l('refEffort')} {state.referenceEffort} {l(state.referenceNature)} · {l('listEffort')} {state.listEffort} {l(state.listNature)} · {l('items')}: {l(state.items)} · {abilityText[state.abilityMode ?? 'off']} · {l(state.forms)} · {l(state.comparison)} · {l(state.sort)} · {state.rangeMode === 'around' ? l('around') : l('allRange')}</div> : null}
+    <p className="muted speed-line-ability-note">{abilityText.separate}</p>
+    <details className="speed-line-secondary-filters"><summary>{l('extraOptions')} · {l('search')} / {l('conditions')}</summary>
     <div className="speed-line-controls">
       <label>{l('search')}<input type="search" value={state.query} onChange={e => update({ query: e.target.value })} /></label>
       {numeric(l('listEffort'), 'listEffort', listDraft)}
@@ -127,9 +130,8 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
       {select(l('sort'), state.sort, ['desc', 'asc'].map(key => [key, l(key)]), value => update({ sort: value as SpeedLineState['sort'] }))}
       {select(l('range'), state.rangeMode, [['all', l('allRange')], ['around', l('around')]], value => update({ rangeMode: value as SpeedLineState['rangeMode'], gap: 10 }), !reference)}
     </div>
-    {draftsValid ? <div className="speed-line-condition-summary" role="status"><strong>{l('conditions')}</strong>: {l('referenceSpeed')} {referenceSpeed ?? '—'} ({l('actualReference')} {reference?.actualSpeed ?? '—'} · {l('stage')} {referenceStage > 0 ? '+' : ''}{referenceStage}{state.referenceAbility ? ` · ${abilityLabel(state.referenceAbility)}` : ''}) · {l('refEffort')} {state.referenceEffort} {l(state.referenceNature)} · {l('listEffort')} {state.listEffort} {l(state.listNature)} · {l('items')}: {l(state.items)} · {abilityText[state.abilityMode ?? 'off']} · {l(state.forms)} · {l(state.comparison)} · {l(state.sort)} · {state.rangeMode === 'around' ? l('around') : l('allRange')}</div> : null}
-    <p className="muted speed-line-ability-note">{abilityText.separate}</p>
-    <details className="speed-line-additional"><summary>{l('extraOptions')}</summary><label><input type="checkbox" checked={showHypothetical} onChange={event => setShowHypothetical(event.target.checked)} /> {l('showHypothetical')}</label></details>
+    <label><input type="checkbox" checked={showHypothetical} onChange={event => setShowHypothetical(event.target.checked)} /> {l('showHypothetical')}</label>
+    </details>
     {!draftsValid ? <p role="alert">{l('invalid')}</p> : <><p className="muted">{l('count')}: {new Set(entries.map(entry => entry.row.key)).size} · {entries.length}</p>
       {entries.length ? <div className="speed-line-list" role="table" aria-label={language === 'en' ? 'Actual Speed Line' : '실능 스피드라인'}>
         <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{l('pokemon')}</span><span role="columnheader">{l('base')}</span><span role="columnheader">{l('actual')}</span><span role="columnheader">{l('difference')}</span></div>

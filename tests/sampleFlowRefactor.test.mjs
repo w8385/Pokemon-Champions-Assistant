@@ -26,7 +26,7 @@ test('only builder, speed and damage render save and apply actions', () => {
 })
 
 test('home sample builder card explicitly selects builder tab', () => {
-  assert.ok(/onClick=\{\(\) => \{ setMainSection\('sample'\); setSampleWorkbenchTab\('builder'\) \}\}>\s*<div className="home-route-card-copy">\s*<span className="home-route-eyebrow">\{lt\('샘플 조정'\)\}/.test(app))
+  assert.ok(/<a className="home-route-card calm" href="#\/sample-builder\?sampleTab=builder">\s*<div className="home-route-card-copy">\s*<span className="home-route-eyebrow">\{lt\('샘플 조정'\)\}/.test(app))
 })
 
 test('English and Japanese translate link format and unrecorded actual stats', () => {
