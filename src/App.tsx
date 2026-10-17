@@ -8039,7 +8039,6 @@ export default function App() {
                 }) : <p className="muted">{lt('아직 저장한 파티가 없습니다.')}</p>}
               </div>
             </div>
-            <PartyAnalysisPanel analysis={partyAnalysis} language={siteLanguage} loading={partyAnalysisLoading} />
             <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
@@ -8330,6 +8329,7 @@ export default function App() {
                 )
               })}
             </div>
+            <PartyAnalysisPanel analysis={partyAnalysis} language={siteLanguage} loading={partyAnalysisLoading} />
           </div>
         </section> : null}
 
