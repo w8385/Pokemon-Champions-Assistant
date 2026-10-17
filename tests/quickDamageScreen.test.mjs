@@ -18,6 +18,6 @@ test('both swapped cards keep every damage-relevant stat visible and repairable'
 })
 
 test('multihit summed rolls cannot be presented as exact KO probability', () => {
-  assert.match(screen, /result\.hits > 1 \? <p>\{lt\('연속기는 기절 확률 계산 제외'\)\}/)
+  assert.match(screen, /result\.hits > 1 \? lt\('연속기는 기절 확률 계산 제외'\) :/)
   for (const label of ['KO probability is not calculated for multihit moves', '連続技のひんし確率は計算対象外']) assert.ok(app.includes(label))
 })

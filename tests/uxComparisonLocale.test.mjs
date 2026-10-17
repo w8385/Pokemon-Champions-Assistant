@@ -17,4 +17,8 @@ test('new comparison disclosures use the actual English and Japanese dictionary'
   assert.equal(context.translate('ja', '선택 기술 상세'), '選択した技の詳細')
   assert.equal(context.translate('en', '속도 가정 조정'), 'Adjust Speed assumptions')
   assert.equal(context.translate('ja', '속도 가정 조정'), '素早さの計算条件')
+  for (const text of ['내 속도 조정', '상대 속도 조정', '속도 보정 기준', '양쪽 상태·랭크·장막 없음']) {
+    assert.notEqual(context.translate('en', text), text)
+    assert.notEqual(context.translate('ja', text), text)
+  }
 })

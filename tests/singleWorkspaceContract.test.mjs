@@ -16,9 +16,9 @@ test('entry selectors render inside the actual comparison panel and disable inde
   assert.match(single, /entrySelectors=\{/)
 })
 
-test('long calculation assumptions are retained in one localized disclosure instead of pushing cards down', () => {
-  assert.match(quick, /<details className="quick-assumptions"/)
-  assert.match(quick, /<summary>\{assumptionSummary\[language\]\}<\/summary>/)
+test('current assumptions are visible, localized and never imply a saved edit', () => {
+  assert.match(quick, /<div className="quick-assumptions"/)
+  assert.match(quick, /<strong>\{assumptionSummary\[language\]\}<\/strong>/)
   const speedSummary = quick.slice(quick.indexOf('const speedStrip ='), quick.indexOf('const sideBattleControls ='))
   assert.doesNotMatch(speedSummary, /속도 관계는 선공·승리 확정/)
   assert.match(quick, /상대 성격 전체·공격 노력은 미확인/)
@@ -28,7 +28,8 @@ test('long calculation assumptions are retained in one localized disclosure inst
 test('single speed shares one scale and each card holds its own speed details; roll details are secondary', () => {
   assert.match(quick, /quick-speed-summary/)
   assert.match(quick, /quick-speed-card/)
-  assert.match(quick, /<details className="quick-speed-details"/)
-  assert.match(quick, /<details className="quick-result"/)
+  assert.match(quick, /className="quick-speed-details"><button[^]*?aria-expanded=\{speedOpen === side\}/)
+  assert.match(quick, /<div className="quick-result" aria-live="polite"/)
+  assert.match(quick, /<details><summary>\{lt\('16개 난수 피해'\)\}/)
   assert.match(css, /\.single-workspace/)
 })

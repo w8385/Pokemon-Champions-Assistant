@@ -50,7 +50,7 @@ test('single matchup does not announce a removed selection-estimate flow', () =>
   const start = source.indexOf("mainSection === 'single' && activeTab === 'party' ? <div")
   const matchup = source.slice(start, source.indexOf("mainSection === 'party' ||", start))
   assert.doesNotMatch(matchup, /선출 추정 없이/)
-  assert.match(matchup, /comparisonMode entrySelectors=/)
+  assert.match(matchup, /comparisonMode comparisonSlots=\{\[selectedMy, selectedOpp\]\} entrySelectors=/)
   assert.doesNotMatch(matchup, /<h2>/, 'the entry selectors do not add a second workspace title')
   const shared = source.slice(source.indexOf('function QuickDamagePanel('), source.indexOf('function LanguageIcon('))
   assert.match(shared, /<h2>\{lt\(comparisonMode \? '대면비교' : '간단 대미지'\)\}<\/h2>/)
