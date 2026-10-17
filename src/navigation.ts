@@ -20,6 +20,7 @@ export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'pa
   const route = new URL((hash.replace(/^#/, '') || '/'), 'https://route.local')
   const path = route.pathname
   if (path === '/party') return { section: 'party', tab: '' }
+  if (path === '/single') return { section: 'single', tab: 'party' }
   if (path === '/single' || path === '/double') {
     const value = route.searchParams.get('tab')
     return { section: path.slice(1) as 'single' | 'double', tab: value === 'speed' && path === '/double' ? 'power' :

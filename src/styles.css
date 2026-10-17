@@ -8484,6 +8484,13 @@ html {
 .quick-speed-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
 .quick-speed-summary > .quick-speed-card { flex-basis: 100%; border-top: 1px solid var(--border, #66758b); padding-top: .4rem; }
 .quick-speed-card { min-width: 0; display: grid; gap: .3rem; }
+.quick-speed-cards { flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.quick-speed-cards > .quick-speed-card { border-top: 1px solid var(--border, #66758b); padding-top: .45rem; }
+.quick-speed-source, .quick-rolls, .quick-source { display: grid; gap: .2rem; min-width: 0; }
+.quick-speed-source { flex-basis: 100%; }
+.single-entry-commit { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.single-entry-commit span { flex-basis: 100%; font-size: .8rem; }
+.quick-side-card > .quick-stat-card { border-top: 1px solid var(--border, #66758b); padding-top: .75rem; min-width: 0; }
 .single-workspace .quick-side-card { gap: 7px; }
 .single-workspace .quick-side-card .quick-registered-moves { margin-top: .2rem; }
 .single-workspace .quick-speed-chips { font-size: .7rem; gap: .15rem; }
@@ -8531,7 +8538,7 @@ html {
 .quick-sides { order: 3; }
 .quick-result { order: 1; }
 .quick-moves { order: 3; }
-.quick-conditions { order: 2; border: 1px solid var(--border, #66758b); border-radius: .5rem; padding: .5rem .7rem; }
+.quick-conditions { order: 4; border: 1px solid var(--border, #66758b); border-radius: .5rem; padding: .5rem .7rem; }
 .quick-conditions > p { margin: .25rem 0 0; font-size: .72rem; }
 .quick-side-card { min-width: 0; display: grid; gap: 12px; }
 .quick-side-card .pokemon-search-field { position: relative; min-width: 0; }
@@ -8555,6 +8562,7 @@ html {
 .quick-condition-grid .quick-check { display: flex; align-items: center; gap: 8px; }
 .quick-stat-control [aria-invalid='true'] { border-color: #e45858; }
 @media (max-width: 760px) { .quick-sides, .quick-stat-sides { grid-template-columns: minmax(0, 1fr); } .quick-meta-grid, .quick-condition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .quick-speed-cards { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 350px) { .quick-meta-grid, .quick-condition-grid { grid-template-columns: minmax(0, 1fr); } }
 .quick-registered-moves { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-items: start; }
 .quick-move-row { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 4px; position: relative; }

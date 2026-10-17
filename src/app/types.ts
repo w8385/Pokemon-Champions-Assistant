@@ -59,6 +59,10 @@ export type PartyMember = {
 
 export type OpponentState = {
   key: string
+  /** Absent means the whole nature/offensive investment is unknown. */
+  nature?: NatureId
+  attackEv?: number
+  spAttackEv?: number
   item: string
   ability: string
   notes: string

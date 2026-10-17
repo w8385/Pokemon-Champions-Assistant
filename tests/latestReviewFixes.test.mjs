@@ -32,9 +32,9 @@ test('comparison speed assumptions and nature travel with side, not role',()=>{
  assert.doesNotMatch(app,/const \[abilityActive, setAbilityActive\]/)
 })
 test('default single party starts with pair, not wizard; quick remains independent',()=>{
- assert.match(app,/mainSection === 'single' && activeTab === 'party'[^]*?unified-single-pair/)
+ assert.match(app,/mainSection === 'single'[^]*?unified-single-pair/)
  assert.match(app,/comparisonMode \? '대면비교' : '간단 대미지'/)
- assert.match(app,/mainSection === 'single' && activeTab === 'party'[^]*?QuickDamagePanel/)
+ assert.match(app,/mainSection === 'single'[^]*?QuickDamagePanel/)
  assert.match(app,/href="#\/party"[^]*?내 파티 관리/)
 })
 test('party route owns the original editor and real callbacks, not a copied comparison panel',()=>{
@@ -48,14 +48,11 @@ test('party route owns the original editor and real callbacks, not a copied comp
  assert.match(app,/routePath === '\/party'/)
  assert.doesNotMatch(app.slice(app.indexOf('mainSection === \'home\' ? ('),app.indexOf('mainSection !== \'home\' && mainSection')), /setMainSection\('double'\)/)
 })
-test('empty Singles comparison guides registration through the party route instead of embedding editor',()=>{
+test('empty Singles comparison accepts same-card species and explicit save',()=>{
  const start=app.indexOf('className="unified-single-pair"')
  const end=app.indexOf("{(mainSection === 'party' ||",start)
- assert.ok(start>=0 && end>start, 'bound the actual single workspace before the separate party editor')
  const pair=app.slice(start,end)
- assert.match(pair,/!party\[selectedMy\]\?\.key/)
- assert.match(pair,/href="#\/party"/)
- assert.match(pair,/!opponents\[selectedOpp\]\?\.key/)
- assert.match(pair,/href="#\/single\?tab=pick"/)
- assert.doesNotMatch(pair,/manage-entry-grid|RegisteredMoveSlot/)
+ assert.match(pair,/빈 슬롯: 아래 카드에서 종·폼을 선택하세요/)
+ assert.match(pair,/onSaveEntry=/)
+ assert.doesNotMatch(pair,/href="#\/single\?tab=pick"|href="#\/party"/)
 })

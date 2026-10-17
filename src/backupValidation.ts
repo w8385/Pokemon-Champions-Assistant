@@ -30,9 +30,9 @@ const completeMember = (input: unknown): boolean => member(input) && record(inpu
   tuning: value => record(value) && requiredFields(value, numericFields(['magicNumber', 'maxValue'])),
 })
 const opponent = (input: unknown): boolean => record(input) && speciesKey(input.key) && optionalFields(input, {
-  ...textFields(['item', 'ability', 'notes', 'moveName']), revealedMoves: strings,
+  ...textFields(['item', 'ability', 'notes', 'moveName']), nature: (value: unknown) => typeof value === 'string' && ['hardy','lonely','brave','adamant','naughty','bold','docile','relaxed','impish','lax','timid','hasty','serious','jolly','naive','modest','mild','quiet','bashful','rash','calm','gentle','sassy','careful','quirky'].includes(value), revealedMoves: strings,
   ...boolFields(['natureBoost', 'scarf', 'picked']),
-  ...numericFields(['speedStage', 'hpEv', 'defenseEv', 'spDefenseEv', 'speedEv', 'defenseNature', 'spDefenseNature']),
+  ...numericFields(['speedStage', 'hpEv', 'attackEv', 'defenseEv', 'spAttackEv', 'spDefenseEv', 'speedEv', 'defenseNature', 'spDefenseNature']),
 })
 const roster = (input: unknown, check: (value: unknown) => boolean): input is Record<string, unknown>[] =>
   Array.isArray(input) && input.every(check) && input.filter(entry => entry.picked === true).length <= 3
