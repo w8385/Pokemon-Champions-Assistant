@@ -5,9 +5,9 @@ import { readFileSync } from 'node:fs'
 const panel = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').split('function QuickDamagePanel(')[1].split('function LanguageIcon(')[0]
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 
-test('one comparison scale precedes both move cards, result, conditions, then inline builds in DOM order', () => {
+test('adjacent Speed and damage results precede primary inline editing cards and battle conditions', () => {
   const view = panel.slice(panel.indexOf('return <section className={`panel wide quick-damage'))
-  const order = ['{entrySelectors}', '{speedStrip}', 'className="quick-sides"', 'className="quick-result"', 'className="quick-conditions"', 'className="quick-build-sides"']
+  const order = ['{entrySelectors?.(', 'className="quick-comparison-results"', '{speedStrip}', 'className="quick-result"', 'className="quick-sides"', 'className="quick-conditions"']
   let previous = -1
   for (const marker of order) { const position = view.indexOf(marker); assert.ok(position > previous, `${marker} must follow previous region`); previous = position }
   assert.match(panel, /<PokemonBuildFields/)
@@ -25,7 +25,8 @@ test('Speed values and source uncertainty render once beside their real controls
   assert.match(panel, /\['defense', 'spDefense'\]/)
   assert.match(panel, /entry\.statNatureMultipliers\[key\]/)
   assert.match(panel, /quick-speed-assumptions/)
-  assert.match(panel, /className="single-entry-commit"/)
+  assert.match(panel, /className="quick-record-actions"/)
+  assert.doesNotMatch(panel, /single-entry-commit/)
   assert.match(panel, /sharedMoveSpecies\?\./)
 })
 
@@ -38,10 +39,13 @@ test('common speed tracks use equal label and numeric lanes rather than intrinsi
 
 test('new concise state and condition labels have explicit English and Japanese text', () => {
   for (const language of ['ko', 'en', 'ja']) {
-    assert.match(panel, new RegExp(`${language}: \\{[^\\n]*saved: [^\\n]*shared: [^\\n]*condition: [^\\n]*battle:`))
+    assert.match(panel, new RegExp(`${language}: \\{[^\\n]*shared: [^\\n]*condition: [^\\n]*battle:`))
   }
-  assert.match(panel, /sourceLabels\.saved/)
+  assert.doesNotMatch(panel, /sourceLabels\.saved/)
   assert.match(panel, /sourceLabels\.shared/)
   assert.match(panel, /sourceLabels\.condition/)
   assert.match(panel, /sourceLabels\.battle/)
+  assert.match(panel, /draft: '비교 초안'/)
+  assert.match(panel, /draft: 'Comparison draft'/)
+  assert.match(panel, /draft: '比較下書き'/)
 })

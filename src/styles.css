@@ -14,6 +14,20 @@
   --muted: #a9b9cd;
   --link: #9dcbff;
   --placeholder: #a9b9cd;
+  --border: #334155;
+  --border-subtle: #27323d;
+  --surface-panel: #121923;
+  --surface-card: #111827;
+  --control-bg: #0b1220;
+  --control-hover: #172554;
+  --control-text: #eef2f7;
+  --focus-ring: #9dcbff;
+  --control-height: 40px;
+  --space-panel: 16px;
+  --space-card: 12px;
+  --radius-panel: 14px;
+  --radius-card: 12px;
+  --radius-control: 10px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -98,10 +112,10 @@ header {
   max-width: 100%;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  min-height: var(--control-height);
   padding: 8px 12px;
-  border: 1px solid #2b3540;
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
   background: #111821;
   color: #c2ccd8;
   cursor: pointer;
@@ -583,7 +597,7 @@ header p {
 }
 .flow-node {
   appearance: none;
-  border: 1px solid #2e3945;
+  border: 1px solid var(--border);
   background: #111821;
   color: #c3ced9;
   border-radius: 10px;
@@ -642,10 +656,11 @@ header p {
 }
 .action-button {
   appearance: none;
-  border: 1px solid #334155;
-  background: #0b1220;
-  color: #eef2f7;
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  border-radius: var(--radius-control);
+  min-height: var(--control-height);
   padding: 9px 12px;
   cursor: pointer;
 }
@@ -3504,10 +3519,10 @@ header p {
 }
 .panel {
   min-width: 0;
-  background: #121923;
-  border: 1px solid #27323d;
-  border-radius: 14px;
-  padding: 16px;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
+  padding: var(--space-panel);
   box-shadow: none;
 }
 .panel.wide { grid-column: span 2; }
@@ -4989,9 +5004,6 @@ header p {
 .party-inline-species-picker {
   margin-top: 0;
 }
-.party-inline-species-picker .autocomplete input {
-  width: 100%;
-}
 .party-inline-species-input {
   min-height: 0;
   padding: 0;
@@ -5005,7 +5017,7 @@ header p {
   color: #eef2f7;
 }
 .party-inline-species-input::placeholder {
-  color: #64748b;
+  color: var(--placeholder);
   opacity: 1;
 }
 .party-inline-species-input:focus {
@@ -5274,12 +5286,12 @@ header p {
   border-color: #4b5563;
 }
 .card {
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-card);
   margin-bottom: 10px;
   cursor: pointer;
-  background: #111827;
+  background: var(--surface-card);
 }
 .card.active { border-color: #60a5fa; background: #132034; }
 .row-between {
@@ -5354,9 +5366,9 @@ label {
   flex-direction: column;
   gap: 4px;
   padding: 6px;
-  border: 1px solid #334155;
-  border-radius: 10px;
-  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--control-bg);
   box-shadow: 0 12px 30px rgba(0,0,0,0.35);
   max-height: 240px;
   overflow-y: auto;
@@ -5442,7 +5454,7 @@ label {
 .dex-results-list {
   display: grid;
   gap: 8px;
-  max-height: 70vh;
+  max-height: min(440px, 48svh);
   overflow-y: auto;
   padding-right: 2px;
   scrollbar-gutter: stable;
@@ -5856,9 +5868,9 @@ label {
 }
 input, select, textarea {
   width: 100%;
-  background: #0b1220;
-  color: #eef2f7;
-  border: 1px solid #334155;
+  background: var(--control-bg);
+  color: var(--control-text);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 10px;
   color-scheme: dark;
@@ -7365,9 +7377,9 @@ textarea { min-height: 72px; resize: vertical; }
   align-items: center;
   justify-content: center;
   min-height: 34px;
-  border: 1px solid #475569;
-  background: #0b1220;
-  color: #d5deea;
+  border: 1px solid var(--border);
+  background: var(--control-bg);
+  color: var(--control-text);
   border-radius: 999px;
   padding: 7px 12px;
   font-size: 13px;
@@ -8409,7 +8421,8 @@ html {
 .speed-line-additional input { width: auto; }
 .speed-line-investment summary { cursor: pointer; font-weight: 700; }
 .pokemon-search-field { min-width: 0; position: relative; display: grid; gap: .35rem; }
-.pokemon-search-field input { width: 100%; min-width: 0; }
+.pokemon-search-field input { width: 100%; min-width: 0; min-height: var(--control-height); background: var(--control-bg); border-color: var(--border); color: var(--control-text); }
+.pokemon-search-field .party-inline-species-input { border: 0; padding: 0; background: transparent; font-size: 21px; font-weight: 800; }
 .pokemon-search-field .autocomplete-menu { left: 0; right: 0; z-index: 15; max-height: 20rem; overflow-y: auto; }
 .pokemon-search-field .autocomplete-item { display: flex; align-items: center; gap: .4rem; width: 100%; text-align: left; }
 .pokemon-search-field .autocomplete-item img { width: 32px; height: 32px; object-fit: contain; }
@@ -8661,3 +8674,15 @@ html {
 .party-analysis details summary { cursor: pointer; }
 .party-analysis > small { display: block; margin-top: .7rem; }
 @media (max-width: 720px) { .party-analysis { padding: .65rem; } }
+
+/* Shared control behavior; semantic type/stat surfaces keep their own palette. */
+:is(.header-primary-tab, .tab-chip, .action-button, .pick-chip, .icon-button, .autocomplete-item, .stat-preview-button, .home-route-card):focus-visible,
+:is(.pokemon-search-field input, .party-meta-chip input, .registered-move-slot input, .modal-card select):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+:where(.action-button, .pick-chip, .autocomplete-item):hover:not(:disabled):not(.active) { border-color: var(--focus-ring); background: var(--control-hover); }
+:where(.action-button, .pick-chip, .tab-chip, .autocomplete-item):disabled { cursor: not-allowed; opacity: .55; }
+:where(.pokemon-search-field input, .registered-move-slot input):disabled { cursor: not-allowed; opacity: .55; }
+.pokemon-search-field .autocomplete-item[aria-selected="true"] { border-color: var(--focus-ring); background: var(--control-hover); }
+:where(.panel, .card) > :where(h2, h3, .section-head):first-child { margin-top: 0; }

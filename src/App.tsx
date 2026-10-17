@@ -9,6 +9,8 @@ import { normalizeRoute, routeGroups } from './navigation'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickMoveSuggestions, quickBattleStages, quickStagePair } from './quickDamageState'
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
+import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
+import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
 import { compareSpeedVisual } from './speedVisual'
 import { EffortTuningModal } from './EffortTuningModal'
@@ -578,6 +580,14 @@ function megaStoneForKey(key: string) {
 
 function normalizeItemForKey(key: string, item: string) {
   return megaStoneForKey(key) ?? canonicalChampionsItemName(item)
+}
+
+// Explicit species changes discard an old species' stone; restored records are untouched.
+function itemForSpeciesSelection(key: string, item: string) {
+  const fixed = megaStoneForKey(key)
+  if (fixed) return fixed
+  const canonical = canonicalChampionsItemName(item)
+  return canonical && CHAMPIONS_ITEM_OPTIONS.includes(canonical as ChampionsItem) ? canonical : ''
 }
 
 function isAllowedChampionsItem(key: string, item: string) {
@@ -1752,6 +1762,17 @@ function syncViewStateToUrl(viewState: ViewState) {
   const url = new URL(window.location.href)
   url.hash = nextHash
   window.history.replaceState(null, '', url)
+}
+
+function pushDexDetailHistory(mode: DexSearchMode, query: string, selection: string) {
+  const url = new URL(window.location.href)
+  const route = new URL(url.hash.replace(/^#/, '') || '/dex', url)
+  route.searchParams.set('dexTab', mode)
+  route.searchParams.set('q', query)
+  route.searchParams.set('uq', query)
+  route.searchParams.set('sel', selection)
+  url.hash = `${route.pathname}${route.search}`
+  if (url.href !== window.location.href) window.history.pushState(null, '', url)
 }
 
 function opponentSpeedValue(row: Row, entry: Pick<OpponentState, 'speedEv' | 'natureBoost' | 'scarf' | 'speedStage' | 'item'>) {
@@ -3814,22 +3835,39 @@ function quickSide(input: unknown, legacy: Record<string, unknown> = {}, origina
   const battle = { ...quickBattleStages(source as Partial<QuickBattle>, legacy, originalAttacker), ...Object.fromEntries((['burned','lowHp','poisoned','fullHp','reflect','lightScreen','auroraVeil','friendGuard'] as const).map(flag => [flag, source[flag] === true])) } as QuickBattle
   return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: key && typeof value.ability === 'string' && abilityMatchesKey(key, value.ability) ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
 }
+function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
+  const saved = readDraft(localStorage, side, slot, seed)
+  if (!saved) return { side: seed as QuickSide, dirty: new Set<string>() }
+  const next = saved.side
+  if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
+  if (next.key && next.ability && !abilityMatchesKey(next.key, next.ability)) return { side: seed as QuickSide, dirty: new Set<string>() }
+  if (!NATURES.some(nature => nature.id === next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
+  if (next.key && quickItem(next.item, megaStoneForKey(next.key), CHAMPIONS_ITEM_OPTIONS) !== next.item) return { side: seed as QuickSide, dirty: new Set<string>() }
+  const speciesChanged = saved.dirty.has('key') && next.key !== seed.key
+  return { dirty: saved.dirty, side: { ...next, actual: {}, battle: quickBlankBattle(), speedStage: speciesChanged ? 0 : seed.speedStage,
+    speedNatureKnown: saved.dirty.has('nature') || speciesChanged ? true : seed.speedNatureKnown,
+    speedNatureMultiplier: speciesChanged ? 1 : seed.speedNatureMultiplier,
+    statNatureMultipliers: saved.dirty.has('nature') || speciesChanged ? {} : seed.statNatureMultipliers,
+    speedScarfOverride: speciesChanged ? null : seed.speedScarfOverride,
+    speedAbilityActive: false, knownOffense: speciesChanged ? { attack: false, spAttack: false } : seed.knownOffense } as QuickSide }
+}
 function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
   const override = side.actual[key]
   if (override !== undefined) return /^\d+$/.test(override) && Number(override) >= 1 && Number(override) <= 999 ? Number(override) : null
   return actualStat(row[key], side.evs[key], quickStatNature(side, key, key === 'hp' ? 1 : natureMultiplier(side.nature, key)), key === 'hp')
 }
 
-function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
+function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
 
   const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
   const [attacker, setAttacker] = React.useState(() => {
-    const side = initialSides?.[0] ?? quickSide(saved.attacker, saved.conditions as Record<string, unknown> ?? {}, true)
+    const seed = initialSides?.[0]
+    const side = seed ? restoredComparisonSide(seed, 'attacker', comparisonSlots?.[0] ?? 0).side : quickSide(saved.attacker, saved.conditions as Record<string, unknown> ?? {}, true)
     if (!comparisonMode && typeof saved.move === 'string' && !(saved.attacker && typeof saved.attacker === 'object' && 'moves' in saved.attacker)) side.moves[0] = saved.move
     return side
   })
-  const [defender, setDefender] = React.useState(() => initialSides?.[1] ?? quickSide(saved.defender, saved.conditions as Record<string, unknown> ?? {}))
+  const [defender, setDefender] = React.useState(() => initialSides?.[1] ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).side : quickSide(saved.defender, saved.conditions as Record<string, unknown> ?? {}))
   const [conditions, setConditions] = React.useState<QuickConditions>(() => {
     const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
     const defaults = quickDefaultConditions()
@@ -3847,13 +3885,15 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   })
   const [modalSide, setModalSide] = React.useState<'attacker' | 'defender' | null>(null)
   const [modalKey, setModalKey] = React.useState('')
-  const [dirty, setDirty] = React.useState<Record<'attacker' | 'defender', ReadonlySet<string>>>(() => ({ attacker: new Set(), defender: new Set() }))
+  const [dirty, setDirty] = React.useState<Record<'attacker' | 'defender', ReadonlySet<string>>>(() => ({ attacker: initialSides ? restoredComparisonSide(initialSides[0], 'attacker', comparisonSlots?.[0] ?? 0).dirty : new Set(), defender: initialSides ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).dirty : new Set() }))
+  const [draftStorageFailed, setDraftStorageFailed] = React.useState(false)
   const markDirty = (side: 'attacker' | 'defender', field: string) => setDirty(prev => ({ ...prev, [side]: new Set([...prev[side], field]) }))
   // A saved seed or slot change belongs to one card; never remount both cards.
   const seedFingerprint = initialSides?.map((seed, index) => `${comparisonSlots?.[index] ?? 0}:${JSON.stringify(seed)}`) as [string, string] | undefined
   const seed0 = seedFingerprint?.[0], seed1 = seedFingerprint?.[1]
   const previousSeeds = React.useRef<[string | undefined, string | undefined]>([seed0, seed1])
-  const previousSlots = React.useRef<[number | undefined, number | undefined]>([comparisonSlots?.[0], comparisonSlots?.[1]])
+  const previousTargets = React.useRef<[string, string]>([pairTarget(comparisonSlots?.[0] ?? 0, attacker), pairTarget(comparisonSlots?.[1] ?? 0, defender)])
+  const skipDraftWrite = React.useRef(false)
   const clearSideUI = (side: 'attacker' | 'defender') => {
     setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => !key.startsWith(`${side}-`))))
     setActiveSlot(prev => prev?.side === side ? null : prev)
@@ -3861,23 +3901,49 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   }
   React.useEffect(() => {
     if (!comparisonMode || !initialSides) return
+    const changed = (['attacker', 'defender'] as const).map((side, index) => previousSeeds.current[index] === (index === 0 ? seed0 : seed1) ? null : restoredComparisonSide(initialSides[index], side, comparisonSlots?.[index] ?? 0))
+    const targets = (['attacker', 'defender'] as const).map((side, index) => pairTarget(comparisonSlots?.[index] ?? 0, changed[index]?.side ?? (side === 'attacker' ? attacker : defender))) as [string, string]
+    const pairChanged = targets.some((target, index) => target !== previousTargets.current[index])
+    if (pairChanged) {
+      setConditions(quickDefaultConditions())
+      setModalSide(null)
+      setAttacker(prev => resetPairAssumptions(prev, initialSides[0], dirty.attacker))
+      setDefender(prev => resetPairAssumptions(prev, initialSides[1], dirty.defender))
+    }
+    previousTargets.current = targets
     for (const [index, side] of (['attacker', 'defender'] as const).entries()) {
       const fingerprint = index === 0 ? seed0 : seed1
       if (previousSeeds.current[index] === fingerprint) continue
-      if (previousSlots.current[index] !== comparisonSlots?.[index]) setConditions(quickDefaultConditions())
-      previousSlots.current[index] = comparisonSlots?.[index]
+      skipDraftWrite.current = true
       previousSeeds.current[index] = fingerprint
-      if (side === 'attacker') setAttacker(initialSides[0]); else setDefender(initialSides[1])
-      setDirty(prev => ({ ...prev, [side]: new Set() }))
+      const restored = changed[index]!
+      const next = pairChanged ? resetPairAssumptions(restored.side as QuickSide, initialSides[index], restored.dirty) : restored.side
+      if (side === 'attacker') setAttacker(next as QuickSide); else setDefender(next as QuickSide)
+      setDirty(prev => ({ ...prev, [side]: restored.dirty }))
+      onDraftIdentity?.(side, restored.dirty.has('key') ? next.key : '')
       if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')
       clearSideUI(side)
       setSelected(prev => prev.side === side ? { side, index: Math.max(0, initialSides[index].moves.findIndex(Boolean)) } : prev)
     }
   }, [comparisonMode, seed0, seed1])
+  React.useEffect(() => {
+    if (!comparisonMode || !initialSides) return
+    for (const [index, side] of (['attacker', 'defender'] as const).entries()) {
+      const restored = restoredComparisonSide(initialSides[index], side, comparisonSlots?.[index] ?? 0)
+      if (restored.dirty.has('key')) onDraftIdentity?.(side, restored.side.key)
+    }
+  }, [])
 
   const opener = React.useRef<HTMLElement | null>(null)
   const [, refreshMeta] = React.useState(0)
   React.useEffect(() => { if (!comparisonMode) localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions })) }, [attacker, defender, conditions, comparisonMode])
+  React.useEffect(() => {
+    if (!comparisonMode || !initialSides || !comparisonSlots) return
+    if (skipDraftWrite.current) { skipDraftWrite.current = false; return }
+    const ownKept = writeDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
+    const otherKept = writeDraft(localStorage, 'defender', comparisonSlots[1], initialSides[1], defender, dirty.defender)
+    setDraftStorageFailed(!(ownKept && otherKept))
+  }, [comparisonMode, seed0, seed1, attacker, defender, dirty])
   React.useEffect(() => {
     for (const key of [attacker.key, defender.key]) {
       if (!key || pools[key]) continue
@@ -3954,7 +4020,12 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     if (key === (side === 'attacker' ? attacker.key : defender.key)) return
     setModalSide(null)
     clearSideUI(side)
-    if (comparisonMode) setConditions(quickDefaultConditions())
+    if (comparisonMode) {
+      setConditions(quickDefaultConditions())
+      setAttacker(prev => resetPairAssumptions(prev, initialSides![0], dirty.attacker))
+      setDefender(prev => resetPairAssumptions(prev, initialSides![1], dirty.defender))
+      previousTargets.current[side === 'attacker' ? 0 : 1] = pairTarget(comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0, { key })
+    }
     if (comparisonMode && key === initialSides?.[side === 'attacker' ? 0 : 1].key) {
       if (side === 'attacker') setAttacker(initialSides![0]); else setDefender(initialSides![1])
       setDirty(prev => ({ ...prev, [side]: new Set() }))
@@ -3969,12 +4040,13 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     else { setDefender(next); setDefenderSearch('') }
   }
   const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
+  const speciesSearch = (side: 'attacker' | 'defender', label: string) => <PokemonSearchField id={`quick-${side}`} label={label} value={side === 'attacker' ? attackerSearch : defenderSearch} onChange={side === 'attacker' ? setAttackerSearch : setDefenderSearch} onSelect={key => selectSide(side, key)} options={searchOptions(side === 'attacker' ? attackerSearch : defenderSearch)} placeholder={lt('종·폼 검색')} menuClassName="sample-damage-search-menu" />
   const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
   const opponentSource = comparisonMode ? initialSides?.[1] : undefined
   const sourceLabels = {
-    ko: { saved: '저장됨', shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '미저장', unknown: '미확인 · 0 가정', natureUnknown: '성격 미확인', modifier: '기록 보정' },
-    en: { saved: 'Saved', shared: 'Moves shared by same-species slots · edits apply to all', condition: 'Calculation conditions · this matchup only', battle: 'Battle conditions', draft: 'Unsaved', unknown: 'Unknown · assumed 0', natureUnknown: 'Nature unknown', modifier: 'Recorded modifier' },
-    ja: { saved: '保存済み', shared: '同じ種の枠で技を共有 · 変更は全枠に反映', condition: '計算条件 · この対面のみ', battle: '戦闘条件', draft: '未保存', unknown: '未確認 · 0と想定', natureUnknown: '性格未確認', modifier: '記録補正' },
+    ko: { shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '비교 초안', unknown: '미확인 · 0 가정', natureUnknown: '성격 미확인', modifier: '기록 보정' },
+    en: { shared: 'Moves shared by same-species slots · edits apply to all', condition: 'Calculation conditions · this matchup only', battle: 'Battle conditions', draft: 'Comparison draft', unknown: 'Unknown · assumed 0', natureUnknown: 'Nature unknown', modifier: 'Recorded modifier' },
+    ja: { shared: '同じ種の枠で技を共有 · 変更は全枠に反映', condition: '計算条件 · この対面のみ', battle: '戦闘条件', draft: '比較下書き', unknown: '未確認 · 0と想定', natureUnknown: '性格未確認', modifier: '記録補正' },
   }[language]
   const sourceStatus = (field: 'nature' | 'attack' | 'spAttack') => {
     if (dirty.defender.has(field)) return sourceLabels.draft
@@ -4002,10 +4074,11 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     }
     return <section className="card entry-card quick-side-card">
       <strong>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')}</strong>
-      <PokemonSearchField id={`quick-${side}`} label={lt('포켓몬 검색')} value={search} onChange={setSearch} onSelect={key => selectSide(side, key)} options={searchOptions(search)} placeholder={lt('종·폼 검색')} menuClassName="sample-damage-search-menu" />
-      {comparisonMode ? <div className="single-entry-commit"><span role="status">{dirty[side].size ? sourceLabels.draft : sourceLabels.saved}</span><button type="button" className="action-button" disabled={!dirty[side].size || !entry.key} onClick={() => { onSaveEntry?.(side, entry, dirty[side]); setDirty(prev => ({ ...prev, [side]: new Set() })) }}>{lt('엔트리 저장')}</button><button type="button" className="action-button" disabled={!dirty[side].size} onClick={() => { clearSideUI(side); setEntry(initialSides![side === 'attacker' ? 0 : 1]); setDirty(prev => ({ ...prev, [side]: new Set() })); onDraftIdentity?.(side, '') }}>{lt('변경 취소')}</button></div> : null}
+      {comparisonMode && side === 'defender' ? null : speciesSearch(side, lt(comparisonMode ? '내 파티 포켓몬 입력' : side === 'attacker' ? '공격측 포켓몬 검색' : '방어측 포켓몬 검색'))}
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
+        {statCard(side, entry, row)}
+        {speedCard(side, entry, row)}
         {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}
         <div className="registered-move-grid quick-registered-moves">{Array.from({ length: 4 }, (_, index) => {
           const name = entry.moves[index] ?? ''
@@ -4017,7 +4090,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
           return <div key={index} className={`quick-move-row ${selected.side === side && selected.index === index ? 'selected' : ''}`}>
             <RegisteredMoveSlot number={index + 1} name={activeSlot?.side === side && activeSlot.index === index ? draft : name} type={meta?.type} meta={meta} labels={labels} className={moveTypeThemeClass(meta?.type)}
               tooltipProps={tooltipForMove(name)}
-              inputProps={{ 'aria-label': `${lt(side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: pool.length ? lt('사용 가능 기술 검색') : lt('기술풀 불러오는 중…'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onKeyDown: event => { if (event.key === 'Escape') { setActiveSlot(null); return } if (event.key === 'Enter' && !event.nativeEvent.isComposing && options[0]) { event.preventDefault(); commit(index, options[0]) } }, onBlur: () => setTimeout(() => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev), 150) }}>
+              inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: pool.length ? lt('사용 가능 기술 검색') : lt('기술풀 불러오는 중…'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onKeyDown: event => { if (event.key === 'Escape') { setActiveSlot(null); return } if (event.key === 'Enter' && !event.nativeEvent.isComposing && options[0]) { event.preventDefault(); commit(index, options[0]) } }, onBlur: () => setTimeout(() => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev), 150) }}>
               {activeSlot?.side === side && activeSlot.index === index && options.length ? <div className="move-autocomplete-menu unified-dropdown-menu">{options.map(option => <button key={option.name} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={event => { event.preventDefault(); commit(index, option) }}>{option.name}</button>)}</div> : null}
             </RegisteredMoveSlot>
             <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
@@ -4026,10 +4099,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
     </section>
   }
-  const buildCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => <section className="card entry-card quick-build-card">
-    <strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {row ? displayName(row, language) : '—'} · {lt('능력·노력치')}</strong>
-    {row ? <>{statCard(side, entry, row)}{speedCard(side, entry, row)}</> : null}
-  </section>
+
   const statCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
     const setEntry = side === 'attacker' ? setAttacker : setDefender
     return row ? <div className="quick-stat-card" key={side}>{side === 'defender' && comparisonMode ? <div className="quick-source-badges">
@@ -4066,10 +4136,12 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면비교' : '간단 대미지')}>
     <div className="row-between"><h2>{lt(comparisonMode ? '대면비교' : '간단 대미지')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
-    {entrySelectors}
-    {speedStrip}
+    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')))}
+    <div className="quick-comparison-results">
+      {speedStrip}
+      <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
+    </div>
     <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
-    <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt('공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt('방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
     <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
       <label>{lt('날씨')}<select value={conditions.weather} onChange={event => setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather }))}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
       <label>{lt('필드')}<select value={conditions.terrain} onChange={event => setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain }))}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
@@ -4077,7 +4149,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
     </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}
     </div></div>
-    <div className="quick-build-sides">{buildCard('attacker', attacker, attackingRow)}{buildCard('defender', defender, defendingRow)}</div>
+    {comparisonMode && (dirty.attacker.size || dirty.defender.size || draftStorageFailed) ? <div className="quick-record-actions" aria-label={lt('기록에 반영')}><span role="status">{draftStorageFailed ? language === 'en' ? 'Comparison draft · automatic storage failed; edits remain on screen' : language === 'ja' ? '比較下書き · 自動保存できません · 編集内容は画面上のみ' : '비교 초안 · 자동 보관 실패 · 변경은 현재 화면에만 유지' : language === 'en' ? 'Comparison draft · kept automatically' : language === 'ja' ? '比較下書き · 自動保存' : '비교 초안 · 자동 보관'}</span>{(['attacker','defender'] as const).map(side => dirty[side].size ? <button key={side} type="button" className="action-button" disabled={!(side === 'attacker' ? attacker.key : defender.key)} onClick={() => { const slot = comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0; const entry = side === 'attacker' ? attacker : defender; if (side === 'attacker' && dirty[side].has('moves') && sharedMoveSpecies?.(entry.key) && !window.confirm(language === 'en' ? 'Apply these moves to all slots of this species?' : language === 'ja' ? 'この種のすべての枠に技を反映しますか？' : '같은 종의 모든 슬롯에 기술을 반영할까요?')) return; onSaveEntry?.(side, entry, dirty[side]); if (!forgetDraft(localStorage, side, slot)) setDraftStorageFailed(true); setDirty(prev => ({ ...prev, [side]: new Set() })) }}>{language === 'en' ? side === 'attacker' ? 'Apply to my party' : 'Apply to opponent entry' : language === 'ja' ? side === 'attacker' ? '自分のパーティに反映' : '相手エントリーに反映' : side === 'attacker' ? '내 파티에 반영' : '상대 엔트리에 반영'}</button> : null)}</div> : null}
     {modalSide && modalKey === (modalSide === 'attacker' ? attacker : defender).key && indexByKey.get(modalKey) ? (() => {
       const entry = modalSide === 'attacker' ? attacker : defender
       const row = indexByKey.get(entry.key)!
@@ -4289,6 +4361,11 @@ export default function App() {
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
   const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
+  const [sampleTuningIdentity, setSampleTuningIdentity] = React.useState<string | null>(null)
+  const sampleTuningOpener = React.useRef<HTMLElement | null>(null)
+  React.useEffect(() => {
+    setSampleTuningModalOpen(false)
+  }, [mainSection, sampleWorkbenchTab, sampleForge.key])
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [sampleDamageConditionsCollapsed, setSampleDamageConditionsCollapsed] = React.useState(true)
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
@@ -4301,7 +4378,6 @@ export default function App() {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const partyImageInputRef = React.useRef<HTMLInputElement | null>(null)
   const opponentQuickInputRef = React.useRef<HTMLInputElement | null>(null)
-  const partySpeciesInputRefs = React.useRef<(HTMLInputElement | null)[]>([])
   const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
   const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
   const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
@@ -4535,6 +4611,8 @@ export default function App() {
   const openDexPokemonDetail = React.useCallback((key: string) => {
     hideHoverTooltip()
     const nextLabel = searchDisplayLabel(key, siteLanguage)
+    restoringDexRoute.current = { mode: 'pokemon', query: nextLabel, selection: dexSelectionId('pokemon', key) }
+    pushDexDetailHistory('pokemon', nextLabel, dexSelectionId('pokemon', key))
     setDexSearchMode('pokemon')
     setDexUnifiedSearchDraft(nextLabel)
     setDexUnifiedSearch(nextLabel)
@@ -4544,6 +4622,8 @@ export default function App() {
 
   const openDexMoveDetail = React.useCallback((name: string) => {
     hideHoverTooltip()
+    restoringDexRoute.current = { mode: 'move', query: name, selection: dexSelectionId('move', name) }
+    pushDexDetailHistory('move', name, dexSelectionId('move', name))
     setDexSearchMode('move')
     setDexUnifiedSearchDraft(name)
     setDexUnifiedSearch(name)
@@ -4555,6 +4635,8 @@ export default function App() {
     const resolved = resolveAbilityInfo(ability, row)
     if (!resolved) return
     hideHoverTooltip()
+    restoringDexRoute.current = { mode: 'ability', query: resolved.koLabel, selection: dexSelectionId('ability', resolved.key) }
+    pushDexDetailHistory('ability', resolved.koLabel, dexSelectionId('ability', resolved.key))
     setDexSearchMode('ability')
     setDexUnifiedSearchDraft(resolved.koLabel)
     setDexUnifiedSearch(resolved.koLabel)
@@ -5745,7 +5827,7 @@ export default function App() {
         window.setTimeout(() => {
           setActiveSearchField({ side: 'party', idx: nextEmptyIdx })
           setAutocompleteMenuOpen(`party-species-${nextEmptyIdx}`)
-          partySpeciesInputRefs.current[nextEmptyIdx]?.focus()
+          document.getElementById(`party-species-${nextEmptyIdx}`)?.focus()
         }, 0)
       }
     } else if (side === 'opponent') {
@@ -5770,9 +5852,10 @@ export default function App() {
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
     } else {
-      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
+      setSampleTuningModalOpen(false)
+      setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: itemForSpeciesSelection(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
       setSampleLockedMoves(confirmedMovesByKey[key] ?? [])
-      setSampleItemDraft(displayItemLabel(visibleChampionsItem(key, normalizeItemForKey(key, sampleForge.item)), siteLanguage))
+      setSampleItemDraft(displayItemLabel(itemForSpeciesSelection(key, sampleForge.item), siteLanguage))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
     }
     setActiveSearchField(null)
@@ -5961,7 +6044,6 @@ export default function App() {
   const sampleMoveSet = sampleMoves.find((entry) => entry.key === sampleForge.key)
   const sampleMovePool = movePoolByKey[sampleForge.key]
   const sampleMoveOptions = sampleMovePool?.moves?.length ? sampleMovePool.moves : moveOptionsForEntry(sampleMoveSet)
-  const sampleSpeciesMenuId = 'sample-species-0'
   const sampleSpeciesOptions = prioritizeExactSpecies(searchPokemon(rows, sampleSearch ?? '', { includeMega: true }), sampleSearch ?? '').slice(0, 8).map(row => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
   const sampleMoveType = (moveName: string) => resolveMoveType(moveName, sampleMoveOptions, movePoolByKey)
   const sampleRegisteredMoves = [...sampleLockedMoves]
@@ -7153,47 +7235,16 @@ export default function App() {
         onNature={nature => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], config: { ...next[tuningModalIndex].config, nature } }; setParty(next) }}
         onClose={() => setTuningModalIndex(null)} translate={lt} statTheme={statThemeClass} opener={partyTuningOpener.current} magicCandidate={magicCandidate} magicPoints={key => magicEffortPoints(tuningRow, tuningMember, key)} /> : null}
 
-      {sampleTuningModalOpen ? (
-        <div className="modal-backdrop" onClick={() => setSampleTuningModalOpen(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="row-between modal-header">
-              <h2>{lt('노력치 보정')}</h2>
-              <button type="button" className="action-button" onClick={() => setSampleTuningModalOpen(false)}>{lt('닫기')}</button>
-            </div>
-            <div className="modal-grid">
-              <label>
-                {lt('성격')}
-                <select value={sampleForge.config.nature} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, nature: e.target.value as NatureId } }))}>
-                  {NATURES.map((nature) => <option key={`sample-modal-nature-${nature.id}`} value={nature.id}>{natureLabel(nature.id, siteLanguage)}</option>)}
-                </select>
-              </label>
-            </div>
-            <div className="drag-stat-list">
-              {EFFORT_STAT_OPTIONS.map((stat) => {
-                const currentEffort = sampleForge.evs[stat.key]
-                const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(sampleForge.evs, stat.key))
-                const additionalAvailable = Math.max(0, availableCap - currentEffort)
-                const actualValue = partyStatValue(sampleRow, sampleForge, stat.key)
-                const isMagicStat = sampleMagicCandidate?.stat === stat.key && actualValue % 11 === 0
-                const targetEffort = sampleMagicCandidate?.stat === stat.key ? sampleMagicCandidate.nextEffort : null
-                const magicPoints = magicEffortPoints(sampleRow, sampleForge, stat.key)
-                return <div key={`sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
-                  <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
-                  <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-                    <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
-                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
-                      <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
-                    </div>
-                    <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => { const checkpointValue = partyStatValue(sampleRow, { ...sampleForge, evs: { ...sampleForge.evs, [stat.key]: checkpoint } }, stat.key); return <div key={`sample-effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{stat.key === sampleMagicCandidate?.stat ? checkpointValue : ''}</small></div> })}</div>
-                  </div>
-                  <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.max(0, currentEffort - 1)) }))} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, 0) }))} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, availableCap) }))} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.min(availableCap, currentEffort + 1)) }))} disabled={currentEffort >= availableCap}>+1</button></div>
-                  <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>{sampleMagicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}</div>
-                </div>
-              })}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab === 'builder' && sampleTuningIdentity === sampleForge.key ? <EffortTuningModal
+        evs={sampleForge.evs} nature={sampleForge.config.nature}
+        natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
+        actualValue={(key, effort) => partyStatValue(sampleRow, effort === undefined ? sampleForge : { ...sampleForge, evs: { ...sampleForge.evs, [key]: effort } }, key)}
+        onEffort={(key, value) => setSampleForge(prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) }))}
+        onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature } }))}
+        onClose={() => setSampleTuningModalOpen(false)} translate={lt} statTheme={statThemeClass}
+        title={`${displayName(sampleRow, siteLanguage)} · ${lt('노력치 보정')}`}
+        opener={sampleTuningOpener.current} magicCandidate={sampleMagicCandidate}
+        magicPoints={key => magicEffortPoints(sampleRow, sampleForge, key)} /> : null}
 
       <main className="grid">
         {mainSection === 'quickDamage' ? <QuickDamagePanel language={siteLanguage} tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} /> : null}
@@ -7288,17 +7339,16 @@ export default function App() {
           </details>
         </>
         ) : null}
-        {mainSection !== 'home' && mainSection !== 'party' && mainSection !== 'dex' && mainSection !== 'speedLine' && !(['home', 'party', 'dex', 'speedLine', 'single'] as MainSection[]).includes(mainSection) ? <section className="panel wide workflow-shell-panel">
-          <div className="row-between section-head workflow-shell-head">
+        {(mainSection === 'double' || mainSection === 'sample') ? <section className="panel wide workflow-shell-panel">
+          {mainSection === 'double' ? <div className="row-between section-head workflow-shell-head">
             <div>
               <span className="home-section-label">{lt('현재 흐름')}</span>
-              <h2>{mainSection === 'single' ? lt('싱글배틀') : mainSection === 'double' ? lt('더블배틀') : mainSection === 'sample' ? lt('포켓몬 샘플 깎기') : lt('도감')}</h2>
-              {mainSection === 'single' ? <p className="muted">{lt('파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.')}</p> : null}
-              {mainSection === 'double' ? <p className="muted">{lt('더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.')}</p> : null}
+              <h2>{lt('더블배틀')}</h2>
+              <p className="muted">{lt('더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.')}</p>
             </div>
-          </div>
-          {mainSection === 'single' || mainSection === 'double' ? (
-            <div className={`workflow-step-shell ${mainSection === 'single' ? 'single' : 'double'}`}>
+          </div> : null}
+          {mainSection === 'double' ? (
+            <div className="workflow-step-shell double">
               <button type="button" className={`workflow-step-card ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>
                 <span className="workflow-step-number">01</span>
                 <div className="workflow-step-copy">
@@ -7313,32 +7363,13 @@ export default function App() {
                   <p>{lt('상대 공개 정보와 가정을 정리합니다.')}</p>
                 </div>
               </button>
-              {mainSection === 'single' ? (
-                <>
-                  <button type="button" className={`workflow-step-card ${activeTab === 'speed' ? 'active' : ''}`} onClick={() => setActiveTab('speed')}>
-                    <span className="workflow-step-number">03</span>
-                    <div className="workflow-step-copy">
-                      <strong>{lt('스피드 계산')}</strong>
-                      <p>{lt('추월컷과 속도선을 확인합니다.')}</p>
-                    </div>
-                  </button>
-                  <button type="button" className={`workflow-step-card ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>
-                    <span className="workflow-step-number">04</span>
-                    <div className="workflow-step-copy">
-                      <strong>{lt('대미지 계산')}</strong>
-                      <p>{lt('기술 대미지와 조건을 맞춥니다.')}</p>
-                    </div>
-                  </button>
-                </>
-              ) : (
-                <button type="button" className={`workflow-step-card ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>
-                  <span className="workflow-step-number">03</span>
-                  <div className="workflow-step-copy">
-                    <strong>{lt('더블 배틀 플래너')}</strong>
-                    <p>{lt('더블 기준 화력과 행동순을 정리합니다.')}</p>
-                  </div>
-                </button>
-              )}
+              <button type="button" className={`workflow-step-card ${activeTab === 'power' ? 'active' : ''}`} onClick={() => setActiveTab('power')}>
+                <span className="workflow-step-number">03</span>
+                <div className="workflow-step-copy">
+                  <strong>{lt('더블 배틀 플래너')}</strong>
+                  <p>{lt('더블 기준 화력과 행동순을 정리합니다.')}</p>
+                </div>
+              </button>
             </div>
           ) : mainSection === 'sample' ? (
             <div className="tab-bar section-menu-tabs" role="navigation" aria-label={lt('샘플')}>
@@ -7990,8 +8021,8 @@ export default function App() {
               setOpponents(prev => prev.map((entry, slot) => slot === selectedOpp ? commitComparisonEntry('opponent', entry, draft, dirty) : entry))
             }
             setSingleDraftIdentity(prev => ({ ...prev, [side]: '' }))
-          }} entrySelectors={<div className="single-entry-selectors">
-            <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(idx === selectedMy ? singleDraftIdentity.attacker || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setSingleDraftIdentity(prev => ({ ...prev, attacker: '' })); setSelectedMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key && !singleDraftIdentity.attacker ? <small>{lt('빈 슬롯: 아래 카드에서 종·폼을 선택하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong></div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(idx === selectedOpp ? singleDraftIdentity.defender || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setSingleDraftIdentity(prev => ({ ...prev, defender: '' })); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!opponents[selectedOpp]?.key && !singleDraftIdentity.defender ? <small>{lt('빈 슬롯: 아래 카드에서 종·폼을 선택하세요.')}</small> : null}</div></div>
+          }} entrySelectors={opponentSearch => <div className="single-entry-selectors">
+            <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(idx === selectedMy ? singleDraftIdentity.attacker || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setSingleDraftIdentity(prev => ({ ...prev, attacker: '' })); setSelectedMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key && !singleDraftIdentity.attacker ? <small>{lt('빈 슬롯: 아래 카드에서 종·폼을 선택하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong></div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(idx === selectedOpp ? singleDraftIdentity.defender || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setSingleDraftIdentity(prev => ({ ...prev, defender: '' })); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div><div className="selected-opponent-search">{opponentSearch}</div></div></div>
           </div>} />
         </div> : null}
         {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
@@ -8015,7 +8046,7 @@ export default function App() {
                   placeholder={lt('파티 이름')}
                 />
                 <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('새 파티 저장')}</button>
-                <button type="button" className={`pick-chip ${activePartyPresetId ? '' : 'disabled'}`} onClick={overwriteActivePartyPreset} disabled={!activePartyPresetId}>{lt('현재 파티 덮어쓰기')}</button>
+                {activePartyPresetId && savedPartyPresets.some(preset => preset.id === activePartyPresetId) ? <button type="button" className="pick-chip" onClick={overwriteActivePartyPreset}>{lt('현재 파티 덮어쓰기')}</button> : null}
               </div>
               <span className="muted-inline">{lt('여러 스크린샷의 이름/상세 영역을 합쳐 종·도구·특성·기술·성격·노력치를 최대한 복원합니다.')}</span>
               {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
@@ -8054,7 +8085,6 @@ export default function App() {
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = memberMovePool?.moves?.length ? memberMovePool.moves : moveOptionsForEntry(memberMoveSet)
                 const memberTopSuggestedMoves = usageTopMovesForKey(member.key)
-                const partySpeciesMenuId = `party-species-${idx}`
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
@@ -8064,54 +8094,12 @@ export default function App() {
                     {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
 
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types} name={
-                            <label className="species-picker party-inline-species-picker">
-                              <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  ref={(element) => { partySpeciesInputRefs.current[idx] = element }}
-                                  value={partySearch[idx] ?? ''}
-                                  className="party-inline-species-input"
-                                  placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
-                                  onFocus={() => {
-                                    setActiveSearchField({ side: 'party', idx })
-                                    setAutocompleteMenuOpen(partySpeciesMenuId)
-                                  }}
-                                  onBlur={() => {
-                                    setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'party', idx) ? null : prev), 120)
-                                    setTimeout(() => closeAutocompleteMenu(partySpeciesMenuId), 120)
-                                  }}
-                                  onChange={(e) => {
-                                    const next = [...partySearch]
-                                    next[idx] = e.target.value
-                                    setPartySearch(next)
-                                    setActiveSearchField({ side: 'party', idx })
-                                    setAutocompleteMenuOpen(partySpeciesMenuId)
-                                  }}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                                      e.preventDefault()
-                                      moveAutocompleteMenuHighlight(partySpeciesMenuId, partySpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
-                                      return
-                                    }
-                                    if (e.key !== 'Enter') return
-                                    const highlightedOption = partySpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId)]
-                                    const committed = highlightedOption ? (selectSpecies('party', idx, highlightedOption.key), true) : commitTopSpeciesOption('party', idx, partySearch[idx] ?? '')
-                                    if (committed) {
-                                      e.preventDefault()
-                                      closeAutocompleteMenu(partySpeciesMenuId)
-                                    }
-                                  }}
-                                />
-                                {sameSearchTarget(activeSearchField, 'party', idx) ? (
-                                  <div className="autocomplete-menu unified-dropdown-menu">
-                                    {partySpeciesOptions.map((option, optionIdx) => (
-                                      <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, partySpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('party', idx, option.key)}>
-                                        {searchDisplayLabel(option.key, siteLanguage)}
-                                      </button>
-                                    ))}
-                                  </div>
-                                ) : null}
-                              </div>
-                            </label>
+                            <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"
+                              inputClassName="party-inline-species-input" value={partySearch[idx] ?? ''}
+                              placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
+                              onChange={value => setPartySearch(prev => prev.map((text, slot) => slot === idx ? value : text))}
+                              onSelect={key => selectSpecies('party', idx, key)}
+                              options={partySpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
                     } />
                     {row ? <><PokemonBuildFields key={`${idx}-${member.key}`} identity={`${idx}-${member.key}`}
                       ability={member.ability} nature={member.config.nature} item={member.item}
@@ -8722,49 +8710,11 @@ export default function App() {
               <div className="sample-hero sample-hero-attached">
                 {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
                 <div className="sample-hero-copy">
-                  <div className="autocomplete sample-species-search sample-hero-search">
-                    <input
-                      className="sample-species-search-input sample-hero-search-input"
-                      value={sampleSearch}
-                      placeholder={lt('포켓몬 검색')}
-                      onFocus={() => {
-                        setActiveSearchField({ side: 'sample', idx: 0 })
-                        setAutocompleteMenuOpen(sampleSpeciesMenuId)
-                      }}
-                      onBlur={() => {
-                        setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'sample', 0) ? null : prev), 120)
-                        setTimeout(() => closeAutocompleteMenu(sampleSpeciesMenuId), 120)
-                      }}
-                      onChange={(e) => {
-                        setSampleSearch(e.target.value)
-                        setActiveSearchField({ side: 'sample', idx: 0 })
-                        setAutocompleteMenuOpen(sampleSpeciesMenuId)
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                          e.preventDefault()
-                          moveAutocompleteMenuHighlight(sampleSpeciesMenuId, sampleSpeciesOptions.length, e.key === 'ArrowDown' ? 1 : -1)
-                          return
-                        }
-                        if (e.key !== 'Enter') return
-                        const highlightedOption = sampleSpeciesOptions[highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId)]
-                        const committed = highlightedOption ? (selectSpecies('sample', 0, highlightedOption.key), true) : commitTopSpeciesOption('sample', 0, sampleSearch)
-                        if (committed) {
-                          e.preventDefault()
-                          closeAutocompleteMenu(sampleSpeciesMenuId)
-                        }
-                      }}
-                    />
-                    {sameSearchTarget(activeSearchField, 'sample', 0) ? (
-                      <div className="autocomplete-menu unified-dropdown-menu">
-                        {sampleSpeciesOptions.map((option, optionIdx) => (
-                          <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, sampleSpeciesMenuId) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('sample', 0, option.key)}>
-                            {searchDisplayLabel(option.key, siteLanguage)}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
+                  <PokemonSearchField id="sample-species-0" className="sample-species-search sample-hero-search"
+                    inputClassName="sample-species-search-input sample-hero-search-input"
+                    value={sampleSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleSearch}
+                    onSelect={key => selectSpecies('sample', 0, key)}
+                    options={sampleSpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
                   <div className="summary-line sample-type-line">
                     <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
                   </div>
@@ -8787,7 +8737,7 @@ export default function App() {
               <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({
                 key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
                 value: partyStatValue(sampleRow, sampleForge, stat.key), ev: sampleForge.evs[stat.key],
-              }))} className="sample-stat-preview-list" sampleStyle onTune={() => setSampleTuningModalOpen(true)} />
+              }))} className="sample-stat-preview-list" sampleStyle onTune={() => { sampleTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setSampleTuningIdentity(sampleForge.key); setSampleTuningModalOpen(true) }} />
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <>

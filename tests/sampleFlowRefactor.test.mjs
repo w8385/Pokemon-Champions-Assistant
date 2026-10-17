@@ -8,7 +8,8 @@ const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.
 test('builder reuses shared six-tile grid with editable sample styling', () => {
   assert.match(app, /<PokemonStatGrid\s+stats=\{EFFORT_STAT_OPTIONS\.map\(/)
   assert.match(app, /className="sample-stat-preview-list"/)
-  assert.match(app, /onTune=\{\(\) => setSampleTuningModalOpen\(true\)\}/)
+  assert.match(app, /onTune=\{\(\) => \{ sampleTuningOpener\.current = document\.activeElement/)
+  assert.match(app, /sampleTuningIdentity === sampleForge\.key \? <EffortTuningModal/)
   assert.match(card, /sample-stat-preview-row/)
   assert.match(card, /sample-stat-topline/)
   assert.match(card, /sample-stat-ev/)

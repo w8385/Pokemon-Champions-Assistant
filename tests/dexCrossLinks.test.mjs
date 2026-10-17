@@ -15,7 +15,7 @@ visit(ast)
 function invoke(name,arg) {
   const state={mode:'pokemon',draft:'pika',committed:'pika',search:'pika',selection:'pokemon:pikachu'}
   const set=key=>value=>{state[key]=typeof value==='function'?value(state[key]):value}
-  const context=vm.createContext({hasDexUnifiedSearch:true,siteLanguage:'ko',hideHoverTooltip(){},searchDisplayLabel:key=>key==='pikachu'?'피카츄':key,resolveAbilityInfo:()=>({key:'levitate',koLabel:'부유'}),dexSelectionId,setDexUnifiedSearchDraft:set('draft'),setDexUnifiedSearch:set('committed'),setDexSearch:set('search'),setDexSearchMode:set('mode'),setDexSelectedValue:set('selection')})
+  const context=vm.createContext({hasDexUnifiedSearch:true,siteLanguage:'ko',hideHoverTooltip(){},searchDisplayLabel:key=>key==='pikachu'?'피카츄':key,resolveAbilityInfo:()=>({key:'levitate',koLabel:'부유'}),dexSelectionId,restoringDexRoute:{current:null},pushDexDetailHistory(){},setDexUnifiedSearchDraft:set('draft'),setDexUnifiedSearch:set('committed'),setDexSearch:set('search'),setDexSearchMode:set('mode'),setDexSelectedValue:set('selection')})
   const code=ts.transpileModule(`globalThis.navigate = ${callbacks.get(name)}`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText
   vm.runInContext(code,context);context.navigate(arg)
   return state
