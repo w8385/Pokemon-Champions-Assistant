@@ -2,10 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { normalizeRoute, routeGroups } from '../src/navigation.ts'
 
-test('navigation exposes eight direct destinations including home and party, without doubles', () => {
+test('navigation exposes the exact party-first flat menu order, while doubles remain deep-link only', () => {
   assert.deepEqual(routeGroups.flatMap(g => g.links.map(l => l.href)), [
-    '#/single?tab=party', '#/party', '#/sample-builder?sampleTab=builder',
-    '#/sample-builder?sampleTab=library', '#/damage', '#/speed-line', '#/dex',
+    '#/party', '#/single?tab=party', '#/damage', '#/speed-line',
+    '#/sample-builder?sampleTab=library', '#/sample-builder?sampleTab=builder', '#/dex',
   ])
 })
 

@@ -1,15 +1,17 @@
 export const routeGroups = [
   { label: '배틀 준비', section: 'battle', links: [
-    { label: '싱글배틀', href: '#/single?tab=party', section: 'single', tab: 'party' },
     { label: '내 파티 관리', href: '#/party', section: 'party', tab: '' },
-  ] },
-  { label: '샘플', section: 'sample', links: [
-    { label: '샘플 빌더', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder' },
-    { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
+    { label: '싱글배틀', href: '#/single?tab=party', section: 'single', tab: 'party' },
   ] },
   { label: '도구/자료', section: 'tools', links: [
     { label: '간단 대미지', href: '#/damage', section: 'quickDamage', tab: '' },
     { label: '실능 스피드라인', href: '#/speed-line', section: 'speedLine', tab: '' },
+  ] },
+  { label: '샘플', section: 'sample', links: [
+    { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
+    { label: '샘플 빌더', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder' },
+  ] },
+  { label: '도감', section: 'dex', links: [
     { label: '도감', href: '#/dex', section: 'dex', tab: '' },
   ] },
 ] as const

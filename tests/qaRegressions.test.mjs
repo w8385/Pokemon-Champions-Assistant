@@ -117,8 +117,10 @@ test('double speed deep link resolves to planner power before rendering', () => 
   assert.match(app, /\(viewState\?\.mainSection \?\? persisted\?\.mainSection\) === 'double' && resolvedTab === 'speed' \? 'power'/)
 })
 
-test('picked toggles for both rosters use three-pick limiter and disallow empty entries', () => {
-  assert.match(app, /setParty\(\(prev\) => togglePicked\(prev, idx\)\)/)
+test('own-party management has no pick toggle while opponent picks retain their limiter', () => {
+  const partyManagement = app.split("{(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ?")[1]?.split("{mainSection === 'single' && activeTab === 'pick'")[0]
+  assert.ok(partyManagement, 'party management route renders')
+  assert.doesNotMatch(partyManagement, /setParty\(\(prev\) => togglePicked\(prev, idx\)\)/)
   assert.match(app, /setOpponents\(\(prev\) => togglePicked\(prev, selectedOpp\)\)/)
   assert.match(app, /if \(!current \|\| !current\.key\) return list/)
 })

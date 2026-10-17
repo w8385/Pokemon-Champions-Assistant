@@ -12,6 +12,8 @@ import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
 import { compareSpeedVisual } from './speedVisual'
 import { EffortTuningModal } from './EffortTuningModal'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
+import { analyzePartyMatchups } from './partyAnalysis'
+import { PartyAnalysisPanel } from './PartyAnalysisPanel'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { getSpeedAbility, speedActivationAllowed, SPEED_ABILITIES } from './speedAbilities'
@@ -122,7 +124,7 @@ type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
     '대면비교': 'Matchup Comparison', '비교 불가': 'Cannot compare', '원본 특성 미확인': 'Unresolved source ability', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': 'Opponent full nature and offense effort unknown; recorded Def/Sp. Def modifiers apply. Modal edits affect only this matchup.', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': 'Full nature is a matchup assumption, not the saved entry; offense effort unknown and assumed zero.', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'Entry-backed · changes to assumptions do not edit saved entries', '속도 성격 가정': 'Speed nature assumption', '스카프 시나리오': 'Scarf scenario', '(전제 조건 미충족 · 미적용)': '(Prerequisite unmet · not applied)', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'Unburden requires no currently held item.',
-    '샘플 라이브러리': 'Sample Library',
+    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information',
     '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
     '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
     '가정': 'Assumed', '내 스피드': 'My Speed', '내 특성 발동은 이 비교에 미적용': 'My ability activation is not included in this comparison', '내가 느림': 'I am slower', '내가 빠름': 'I am faster', '동속 최소 스피드 노력': 'Minimum effort to tie', '동속은 추월이 아닙니다.': 'A tie is not a strict pass.', '미발동': 'Inactive', '발동 가정': 'Assume active', '보정 없음': 'No nature modifier', '상대 가정 스피드': 'Assumed opponent Speed', '상대 도구 가정': 'Opponent item assumption', '상대 성격 가정': 'Opponent nature assumption', '상대 스피드 랭크': 'Opponent Speed stage', '상대 특성 발동 가정': 'Opponent ability activation assumption', '스피드 노력': 'Speed effort', '스피드 비교 그래프 자세히 보기': 'Show speed comparison graph', '엄격히 추월할 최소 스피드 노력': 'Minimum effort to strictly pass', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': 'Neutral = no Speed nature boost · Fast = Speed nature +10% · both assume 32/32 Champions Speed effort. Opponent records are unchanged.', '현재 성격·도구로 추월 불가': 'Cannot pass with current nature and item', '현재 스피드': 'Current Speed', '현재 투자로 이미 추월': 'Already passing with current effort', '현재보다 추가': 'Additional from current', '비가 내릴 때': 'During rain', '모래바람일 때': 'During sandstorm', '쾌청일 때': 'During sun', '눈이 내릴 때': 'During snow', '일렉트릭필드일 때': 'During Electric Terrain', '도구를 소비하거나 잃은 뒤': 'After losing or consuming the held item', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'My Mega form requires a Mega Stone and cannot hold Scarf.', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'The opponent Mega form requires a Mega Stone and cannot hold Scarf.', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'Unburden activates after losing the item and cannot combine with a held Scarf.', '이 폼에 없는 특성은 발동할 수 없습니다.': 'This form cannot activate an ability it does not have.',
@@ -166,7 +168,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   },
   ja: {
     '대면비교': '対面比較', '비교 불가': '比較不可', '원본 특성 미확인': '原典の特性未解決', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': '相手の性格全体と攻撃努力は不明。記録された防御・特防補正を適用し、モーダルの変更はこの対面のみに反映します。', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': '性格全体は対面上の想定で、保存済みエントリーとは異なります。攻撃努力は不明で0と想定します。', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'エントリーに基づく・想定の変更は保存済みエントリーに反映されません', '속도 성격 가정': '素早さ性格の想定', '스카프 시나리오': 'スカーフ想定', '(전제 조건 미충족 · 미적용)': '（発動条件を満たさず・適用なし）', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'かるわざ発動には現在持ち物がない必要があります。',
-    '샘플 라이브러리': 'サンプルライブラリ',
+    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報',
     '연속기는 기절 확률 계산 제외': '連続技のひんし確率は計算対象外', '간단 대미지': '簡易ダメージ', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': '攻撃側と防御側を選んで技のダメージをすぐ比較します。', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'パーティと相手エントリーを変更しない独立した計算です。', '공수 교체': '攻守を交換', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Lv.50・個体値31・性格補正なし・チャンピオンズ努力0/32・持ち物と特性なし。実数値入力は計算値を上書きします。', '포켓몬을 선택하세요.': 'ポケモンを選択してください。', '특성 없음': '特性なし', '노력 포인트': '努力ポイント', '사용 가능 공격 기술': '使用可能な攻撃技', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': '確認済みの攻撃技データがありません。推測技は表示しません。', '대미지 결과': 'ダメージ結果', '1타 확률': '一撃確率', '16개 난수 피해': '16個の乱数ダメージ', '실수치는 1~999의 정수로 입력하세요.': '実数値には1～999の整数を入力してください。', '공격측·방어측과 기술을 선택하세요.': '攻撃側・防御側と技を選んでください。', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': '選択していない発動条件・変動威力・回復・命中率は計算しません。連続技の乱数は既存エンジンで同じ乱数を各ヒットに使用します。',
     '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
     '가정': '想定', '내 스피드': '自分の素早さ', '내 특성 발동은 이 비교에 미적용': '自分の特性発動はこの比較に含めません', '내가 느림': '自分が遅い', '내가 빠름': '自分が速い', '동속 최소 스피드 노력': '同速に必要な最小努力', '동속은 추월이 아닙니다.': '同速は追い抜きではありません。', '미발동': '未発動', '발동 가정': '発動を想定', '보정 없음': '性格補正なし', '상대 가정 스피드': '相手の想定素早さ', '상대 도구 가정': '相手の持ち物想定', '상대 성격 가정': '相手の性格想定', '상대 스피드 랭크': '相手の素早さランク', '상대 특성 발동 가정': '相手の特性発動想定', '스피드 노력': '素早さ努力', '스피드 비교 그래프 자세히 보기': '素早さ比較グラフを表示', '엄격히 추월할 최소 스피드 노력': '追い抜くための最小努力', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': '準速＝素早さ性格補正なし・最速＝素早さ性格＋10％。どちらもチャンピオンズ素早さ努力32/32を想定。相手の記録は変更しません。', '현재 성격·도구로 추월 불가': '現在の性格・持ち物では抜けません', '현재 스피드': '現在の素早さ', '현재 투자로 이미 추월': '現在の努力で追い抜いています', '현재보다 추가': '現在から追加', '비가 내릴 때': '雨のとき', '모래바람일 때': '砂嵐のとき', '쾌청일 때': '晴れのとき', '눈이 내릴 때': '雪のとき', '일렉트릭필드일 때': 'エレキフィールドのとき', '도구를 소비하거나 잃은 뒤': '持ち物を消費・喪失した後', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '自分のメガフォルムはメガストーンが必要なためスカーフを持てません。', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '相手のメガフォルムはメガストーンが必要なためスカーフを持てません。', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'かるわざは持ち物を失った後に発動するため、スカーフを持った状態と併用できません。', '이 폼에 없는 특성은 발동할 수 없습니다.': 'このフォルムにない特性は発動できません。',
@@ -5260,7 +5262,26 @@ export default function App() {
   const mySpeed = partySpeedValue(myRow, myMember)
   const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage, calcWeather, calcTerrain) : null
   const oppSpeed = oppRow ? opponentSpeedValue(oppRow, oppMember) : null
-  const pickedParty = party.filter((member) => member.picked)
+  const partyAnalysisLoading = Object.keys(MOVE_META_BY_NAME).length === 0
+  const partyAnalysis = React.useMemo(() => {
+    const unknownKeys: string[] = []
+    const members = party.flatMap((member, slot) => {
+      if (!member.key) return []
+      const row = indexByKey.get(member.key)
+      if (!row) { unknownKeys.push(member.key); return [] }
+      const selectedAbility = member.ability ? resolveSelectedAbility(row, member.ability, siteLanguage) : null
+      if (member.ability && !selectedAbility) unknownKeys.push(`${member.key} · 특성 원본: ${member.ability}`)
+      const ability = selectedAbility?.slug ?? member.ability ?? ''
+      const moves = (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4).map(name => {
+        const base = moveNameCandidates(name).map(candidate => lookupMoveMeta(candidate)).find(Boolean) ?? null
+        const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability)
+        return { name, type: adjusted?.type ?? null, category: adjusted?.category ?? null }
+      })
+      return [{ key: member.key, name: displayName(row, siteLanguage), sprite: row.sprite, types: row.types, ability, moves, slot }]
+    })
+    return analyzePartyMatchups(members, normalizedTypeChart, { unknownKeys, offensiveEffectiveness: (type, target, ability) => abilityAdjustedTypeEffectiveness(type, [target], '', ability) })
+  }, [party, confirmedMovesByKey, asyncDataVersion, siteLanguage])
+
   const pickedOpponents = opponents.filter((member) => member.picked)
   // Assumptions belong to this screen only; an opponent slot/form switch starts fresh.
   const singleSpeedIdentity = `${selectedOpp}:${oppMember.key}:${oppRow?.key ?? ''}`
@@ -6970,10 +6991,7 @@ export default function App() {
           <div className="header-title-row">
             <div className="header-title-stack">
               <div className="header-main-row">
-                <div>
-                  <h1>{lt('포켓몬 챔피언스 배틀 도우미')}</h1>
-                  <p>{mainSection === 'home' ? lt('포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.') : menuLabelForSection(mainSection, activeTab, siteLanguage)}</p>
-                </div>
+                <h1 className="visually-hidden">{lt('포켓몬 챔피언스 배틀 도우미')}</h1>
                 <div className="header-utility-row">
                   <div className="header-icon-actions">
                   <div className="language-menu-wrap header-language-wrap">
@@ -7241,7 +7259,8 @@ export default function App() {
             </div>
           </section>
 
-          <div className="home-footer-text-block home-footer-text-block-quiet">
+          <details className="home-footer-text-block home-footer-text-block-quiet">
+            <summary>{lt('프로젝트 정보')}</summary>
             <div className="home-footer-text-row home-footer-links-quiet">
               <span className="home-footer-label">{lt('프로젝트 링크')}</span>
               <div className="home-link-list text-only">
@@ -7266,7 +7285,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
+          </details>
         </>
         ) : null}
         {mainSection !== 'home' && mainSection !== 'party' && mainSection !== 'dex' && mainSection !== 'speedLine' && !(mainSection === 'single' && activeTab === 'party') ? <section className="panel wide workflow-shell-panel">
@@ -7962,7 +7981,7 @@ export default function App() {
         </section> : null}
 
         {mainSection === 'single' && activeTab === 'party' ? <div className="unified-single-pair">
-          <section className="panel wide"><h2>{lt('내 포켓몬 ↔ 상대 포켓몬')}</h2><p className="muted">{lt('선출 추정 없이 두 슬롯을 선택하세요. 빈 슬롯은 대면 검색에서 임시로 입력할 수 있습니다.')}</p>
+          <section className="panel wide"><h2>{lt('내 포켓몬 ↔ 상대 포켓몬')}</h2>
             {party.every(member => !member.key) ? <p className="muted">{lt('포켓몬을 검색해서 추가하세요.')} <a href="#/party">{lt('내 파티 관리')}</a></p> : null}
             <div className="unified-pair-pickers"><div><strong>{lt('내 파티')}</strong><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => setSelectedMy(idx)}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div></div><div><strong>{lt('상대 엔트리')}</strong><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => setSelectedOpp(idx)}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div></div></div>
             <div className="inline-controls"><a href="#/party">{lt('내 파티 관리')}</a><a href="#/single?tab=speed">{lt('상세 스피드')}</a><a href="#/single?tab=power">{lt('상세 대미지')}</a><a href="#/single?tab=pick">{lt('상대 엔트리 편집')}</a></div>
@@ -8020,6 +8039,7 @@ export default function App() {
                 }) : <p className="muted">{lt('아직 저장한 파티가 없습니다.')}</p>}
               </div>
             </div>
+            <PartyAnalysisPanel analysis={partyAnalysis} language={siteLanguage} loading={partyAnalysisLoading} />
             <div className="entry-grid manage-entry-grid">
               {party.map((member, idx) => {
                 const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
@@ -8041,7 +8061,7 @@ export default function App() {
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
                     {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
-                    <button type="button" className={`pick-chip ${member.picked ? 'confirmed' : ''}`} disabled={!member.key || (!member.picked && pickedParty.length >= 3)} aria-pressed={member.picked} onClick={() => setParty((prev) => togglePicked(prev, idx))}>{lt(member.picked ? '선출 추정 해제' : '선출 추정 체크')}</button>
+
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types} name={
                             <label className="species-picker party-inline-species-picker">
                               <div className="autocomplete" onClick={(e) => e.stopPropagation()}>
