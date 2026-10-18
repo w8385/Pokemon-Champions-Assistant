@@ -43,7 +43,7 @@ test('catalog keeps the three original uploads and all six blog party members', 
 test('document taxonomy groups the original six under one party and all are importable', () => {
   const sources = groupCreatorSources(catalog)
   const party = sources.find(source => source.sourceId === '224319761655')
-  assert.equal(sources.length, 10)
+  assert.equal(sources.length, 17)
   assert.equal(party.contentKind, 'party')
   assert.equal(party.platform, 'blog')
   assert.equal(party.canonicalUrl, 'https://m.blog.naver.com/2tjqja/224319761655')
@@ -178,18 +178,18 @@ test('Mono six recorded slots remain individually findable, with only Gyarados f
 
 test('individual index contains every recorded member once regardless of source presentation', () => {
   const individuals = individualCreatorSources(catalog)
-  assert.equal(individuals.length, 50)
-  assert.equal(new Set(individuals.map(s => s.id)).size, 50)
+  assert.equal(individuals.length, 92)
+  assert.equal(new Set(individuals.map(s => s.id)).size, 92)
   assert.deepEqual(individuals.map(s => s.members[0].id).sort(), catalog.map(e => e.id).sort())
   assert.equal(individuals[0].members[0].pokemonKey, 'mega-gyarados')
   assert.equal(individuals[0].members[0].featuredSample, true)
   assert.ok(individuals.every(s => s.id === `individual:${s.members[0].id}` && s.members.length === 1 && s.partySize === null && s.contentKind === 'pokemon' && s.confirmedMemberCount === 1))
   assert.ok(individuals.every(s => s.canonicalUrl === s.members[0].provenance.canonicalUrl && s.creator === s.members[0].creator && s.sourceId === s.members[0].provenance.sourceId))
-  assert.equal(individuals.filter(s => s.completeMemberCount === 1).length, 19)
-  assert.equal(individuals.filter(s => s.completeMemberCount === 0).length, 31)
+  assert.equal(individuals.filter(s => s.completeMemberCount === 1).length, 35)
+  assert.equal(individuals.filter(s => s.completeMemberCount === 0).length, 57)
   assert.equal(filterCreatorSources(individuals, { language: 'ko', format: 'singles', query: 'hydreigon', contentKind: 'pokemon' }).length, 1)
   assert.equal(individuals.filter(s => s.sourceId === 'Ix8nrNnmTUk').length, 6)
-  assert.equal(groupCreatorSources(catalog).filter(s => s.contentKind === 'party').length, 6)
+  assert.equal(groupCreatorSources(catalog).filter(s => s.contentKind === 'party').length, 13)
 })
 
 test('related Mono rental six can prepare a separate party without changing catalog taxonomy or entries', () => {

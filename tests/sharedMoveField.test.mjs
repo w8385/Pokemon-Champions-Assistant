@@ -69,7 +69,8 @@ test('shared move input composes focus and blur tooltips with editor handlers', 
 
 test('creator card does not calculate actual stats or invent zero EV from incomplete evidence', () => {
   assert.match(app, /evsKnown/)
-  assert.match(sections[0], /!entry\.partialBuild\?\.evsKnown/)
+  assert.match(sections[0], /confirmedCreatorEfforts\(entry\.build, entry\.partialBuild\)/)
+  assert.match(sections[0], /row && build\?\.nature && confirmedEvs/)
   assert.match(app, /showEffort=\{Boolean\(build\?\.evs \|\| entry\.partialBuild\?\.evsKnown\)\}/)
   assert.match(sections[0], /statsUnknown=\{lt\('미확인'\)\}/)
 })

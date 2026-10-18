@@ -2,6 +2,7 @@ import type { EffortValues } from './myPartyChampionsSamples'
 import type { NatureId, EffortStatKey } from './app/types'
 import { additionalCreatorSamples } from './additionalCreatorSamples.ts'
 import { previousSeasonRankerSamples } from './previousSeasonRankerSamples.ts'
+import { m6TopTenSamples } from './m6TopTenSamples.ts'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -221,6 +222,7 @@ export const catalog: CreatorSample[] = [
   }),
   ...additionalCreatorSamples,
   ...previousSeasonRankerSamples,
+  ...m6TopTenSamples,
 ]
 
 export function isVerifiedRankerSample(entry: CreatorSample): boolean {

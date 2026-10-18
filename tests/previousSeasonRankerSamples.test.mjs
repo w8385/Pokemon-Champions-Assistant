@@ -10,18 +10,19 @@ const baseline = JSON.parse(readFileSync(new URL('./fixtures/catalogBeforeM6.jso
 const statKeys = ['hp','attack','defense','spAttack','spDefense','speed']
 const ids = ['blog-eFF4DcKeQM1cwSf-20261010-081058','blog-ebapoke-20261008-223301','blog-pkmn-ys1224-20261008-180309']
 const groups = ids.map(id => groupCreatorSources(catalog).find(s => s.sourceId === id))
+const originalCatalog = catalog.filter(entry => !entry.id.startsWith('blog-m6-'))
 const abilities = key => championsData.rows.find(row => row.key === key)?.abilities_ko ?? null
 
 test('append exactly three M-6 original documents with six source-ordered members each', () => {
-  assert.equal(catalog.length, baseline.entries.length + 18)
+  assert.equal(originalCatalog.length, baseline.entries.length + 18)
   assert.equal(new Set(catalog.map(e => e.id)).size, catalog.length)
-  assert.equal(groupCreatorSources(catalog).length, baseline.sourceCount + 3)
+  assert.equal(groupCreatorSources(originalCatalog).length, baseline.sourceCount + 3)
   assert.deepEqual(groups.map(g => g?.members.length), [6,6,6])
   assert.ok(groups.every(g => g.contentKind === 'party' && g.partySize === 6 && g.language === 'ja' && g.format === 'singles' && g.platform === 'blog'))
   assert.deepEqual(groups[0].members.map(m => m.pokemonKey), ['mega-lucario-z','hippowdon','mega-dragonite','aegislash','basculegion','mimikyu'])
   assert.deepEqual(groups[1].members.map(m => m.pokemonKey), ['mega-gengar','bellibolt','umbreon','mega-salamence','archaludon','primarina'])
   assert.deepEqual(groups[2].members.map(m => m.pokemonKey), ['mega-lucario-z','mega-absol-z','garchomp','gyarados','ninetales-alolan','glimmora'])
-  assert.deepEqual(filterCreatorSources(groupCreatorSources(catalog), {language:'ja', format:'singles', contentKind:'party', query:'시즌 M-6'}).map(g => g.sourceId), ids)
+  assert.deepEqual(filterCreatorSources(groupCreatorSources(originalCatalog), {language:'ja', format:'singles', contentKind:'party', query:'시즌 M-6'}).map(g => g.sourceId), ids)
 })
 
 test('all old records remain byte-equivalent as JSON objects', () => {

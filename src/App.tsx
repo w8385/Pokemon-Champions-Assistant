@@ -29,6 +29,8 @@ import PokemonSearchField from './PokemonSearchField'
 import SearchCombobox from './SearchCombobox'
 import { searchMoves } from './moveSearch'
 import { resolveFormAwareMovePool } from './formAwareMovePool'
+import { sourceBackedCardAbility } from './creatorCardAbility'
+import { confirmedCreatorEfforts } from './creatorConfirmedEfforts'
 import { PokemonBuildFields } from './PokemonBuildFields'
 import { normalizeSearchText, speciesSearchCandidates, searchPokemon, prioritizeExactSpecies } from './pokemonSearch'
 import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './speedModifiers'
@@ -1268,7 +1270,7 @@ function sanitizeMoveSlotList(input: unknown) {
 function megaRawBaseKey(key: string) {
   if (!key.startsWith('mega-')) return key
   const raw = key.slice(5)
-  if (raw.endsWith('-x') || raw.endsWith('-y')) return raw.slice(0, -2)
+  if (raw.endsWith('-x') || raw.endsWith('-y') || raw.endsWith('-z')) return raw.slice(0, -2)
   return raw
 }
 
@@ -1278,8 +1280,8 @@ function megaBaseKey(key: string) {
   if (indexByKey.has(rawBaseKey)) return rawBaseKey
   const row = indexByKey.get(key)
   if (!row) return rawBaseKey
-  const koBaseName = row.name_ko.replace(/^메가/, '').replace(/\s*[XY]$/i, '').trim()
-  const enBaseName = row.name_en.replace(/^Mega\s+/i, '').replace(/\s+[XY]$/i, '').trim().toLowerCase()
+  const koBaseName = row.name_ko.replace(/^메가/, '').replace(/\s*[XYZ]$/i, '').trim()
+  const enBaseName = row.name_en.replace(/^Mega\s+/i, '').replace(/\s+[XYZ]$/i, '').trim().toLowerCase()
   const matched = rows.find((candidate) => !candidate.key.startsWith('mega-') && (
     candidate.name_ko.trim() === koBaseName
     || candidate.name_en.trim().toLowerCase() === enBaseName
@@ -7079,8 +7081,9 @@ export default function App() {
     const formKey = canToggle && creatorMegaSelection[entry.id] === false ? baseKey! : entry.pokemonKey
     const row = indexByKey.get(formKey) // No substitute species for unsupported forms.
     const build = entry.build ? { ...entry.partialBuild, ...entry.build } : entry.partialBuild
-    const member: PartyMember | null = row && build?.nature && build.evs && (entry.build || !entry.partialBuild?.evsKnown) ? {
-      key: formKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
+    const confirmedEvs = confirmedCreatorEfforts(entry.build, entry.partialBuild)
+    const member: PartyMember | null = row && build?.nature && confirmedEvs ? {
+      key: formKey, evs: confirmedEvs, config: { nature: build.nature, scarf: false, speedStage: 0 },
       picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: '',
     } : null
     const actualStats: CardStat[] = createReadonlyCardStats(EFFORT_STAT_OPTIONS.map(stat => ({
@@ -7094,11 +7097,8 @@ export default function App() {
     const statsLabel = sourceStatsShown ? lt('원본 이미지에 기록된 실수치') : member ? lt('계산 실수치 · 원본 실수치 미기록') : row ? lt('종족값') : lt('실수치 미기록')
     // The Mega ability is not evidence of a pre-Mega ability. Use only source-backed choices.
     const preMegaAbilities = entry.partialBuild?.preMegaAbilities
-    const ability = megaKey && formKey === megaKey && row?.abilities_ko?.length === 1
-      ? row.abilities_ko[0]
-      : !megaKey || formKey === entry.pokemonKey ? build?.ability
-      : preMegaAbilities?.length ? preMegaAbilities.join(' / ')
-      : recordedForm === formKey ? build?.ability : undefined
+    const ability = sourceBackedCardAbility({ megaKey, formKey, rowAbilities: row?.abilities_ko,
+      ability: build?.ability, preMegaAbilities, actualStatsForm: recordedForm })
     const localizedAbility = ability?.split(' / ').map(value => {
       const info = resolveAbilityInfo(value, row)
       return info ? (siteLanguage === 'ja' ? abilityDescriptionFor(info.key)?.nameJa || abilityDisplayName(info.key, info.koLabel, siteLanguage) : abilityDisplayName(info.key, info.koLabel, siteLanguage)) : siteLanguage === 'ko' ? value : `${lt('원본 특성 표기')}: ${value}`

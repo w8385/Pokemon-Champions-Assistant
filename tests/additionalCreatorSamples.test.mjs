@@ -5,9 +5,10 @@ import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
 import { championsData } from '../src/effectiveRoster.ts'
 
 const byId = id => catalog.filter(entry => entry.provenance.sourceId === id)
+const originalCatalog = catalog.filter(entry => !entry.id.startsWith('blog-m6-'))
 
 test('new sources preserve presentation taxonomy, slot order and explicit party size', () => {
-  const sources = groupCreatorSources(catalog)
+  const sources = groupCreatorSources(originalCatalog)
   const mono = sources.find(source => source.sourceId === 'ZWp7MKpjp1M')
   const chemie = sources.find(source => source.sourceId === 'y2c5sLKYr7s')
   const noon = sources.find(source => source.sourceId === '224428783481')
@@ -20,9 +21,9 @@ test('new sources preserve presentation taxonomy, slot order and explicit party 
   assert.equal(chemie.confirmedMemberCount,6)
   assert.equal(byId('ZWp7MKpjp1M').length,6)
   assert.equal(byId('224428783481').length,1)
-  assert.equal(individualCreatorSources(catalog).length,50)
-  assert.equal(new Set(individualCreatorSources(catalog).map(s => s.id)).size,50)
-  assert.deepEqual(individualCreatorSources(catalog).map(s => s.members[0].id).sort(), catalog.map(e => e.id).sort())
+  assert.equal(individualCreatorSources(originalCatalog).length,50)
+  assert.equal(new Set(individualCreatorSources(originalCatalog).map(s => s.id)).size,50)
+  assert.deepEqual(individualCreatorSources(originalCatalog).map(s => s.members[0].id).sort(), originalCatalog.map(e => e.id).sort())
   assert.equal(relatedCreatorParties.ZWp7MKpjp1M?.partySize,6)
   assert.equal(relatedCreatorParties.ZWp7MKpjp1M?.completeMemberCount,0)
 })

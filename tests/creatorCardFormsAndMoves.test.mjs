@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { sourceBackedCardAbility } from '../src/creatorCardAbility.ts'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const app = read('../src/App.tsx')
@@ -40,10 +41,9 @@ test('source-recorded stats are displayed only on the matching form, with other 
 test('pre-mega abilities use source choices or matching recorded ability, never the mega-only ability', () => {
   assert.match(catalog, /preMegaAbilities: \['자기과신', '괴력집게'\]/)
   assert.match(app, /preMegaAbilities/)
-  assert.match(app, /recordedForm === formKey/)
-  assert.match(app, /formKey === entry\.pokemonKey/)
-  assert.match(app, /row\?\.abilities_ko\?\.length === 1/)
-  assert.match(app, /preMegaAbilities\?\.length/)
+  assert.match(app, /sourceBackedCardAbility\(\{ megaKey, formKey, rowAbilities: row\?\.abilities_ko/)
+  assert.equal(sourceBackedCardAbility({ megaKey: 'mega-scizor', formKey: 'mega-scizor', rowAbilities: ['테크니션'], ability: undefined }), undefined)
+  assert.equal(sourceBackedCardAbility({ megaKey: 'mega-scizor', formKey: 'scizor', rowAbilities: ['벌레의알림','테크니션'], ability: '테크니션', preMegaAbilities: ['벌레의알림'] }), '벌레의알림')
   const roster = JSON.parse(read('../src/pokemon_champions_verified_data.json')).rows
   for (const [key, ability] of [['mega-floette', '페어리오라'], ['mega-starmie', '천하장사']]) {
     const row = roster.find(row => row.key === key)
