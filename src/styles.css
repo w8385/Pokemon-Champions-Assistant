@@ -8692,4 +8692,8 @@ html {
 :where(.action-button, .pick-chip, .tab-chip, .autocomplete-item):disabled { cursor: not-allowed; opacity: .55; }
 :where(.pokemon-search-field input, .registered-move-slot input):disabled { cursor: not-allowed; opacity: .55; }
 .pokemon-search-field .autocomplete-item[aria-selected="true"] { border-color: var(--focus-ring); background: var(--control-hover); }
+.registered-move-slot:focus-within { z-index: 32; }
+.registered-move-slot .pokemon-search-field .move-autocomplete-menu { z-index: 30; }
+.sample-registered-move-slot .pokemon-search-field .move-autocomplete-menu { right: auto; min-width: max(100%, 220px); width: max-content; max-width: min(420px, calc(100vw - 48px)); }
+.sample-registered-move-slot .pokemon-search-field input { min-height: 34px; }
 :where(.panel, .card) > :where(h2, h3, .section-head):first-child { margin-top: 0; }

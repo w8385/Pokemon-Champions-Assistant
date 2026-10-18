@@ -48,11 +48,11 @@ test('party route owns the original editor and real callbacks, not a copied comp
  assert.match(app,/routePath === '\/party'/)
  assert.doesNotMatch(app.slice(app.indexOf('mainSection === \'home\' ? ('),app.indexOf('mainSection !== \'home\' && mainSection')), /setMainSection\('double'\)/)
 })
-test('empty Singles comparison accepts same-card species and explicit save',()=>{
+test('empty Singles comparison sends party registration to party management and retains explicit build apply',()=>{
  const start=app.indexOf('className="unified-single-pair"')
  const end=app.indexOf("{(mainSection === 'party' ||",start)
  const pair=app.slice(start,end)
- assert.match(pair,/빈 슬롯: 아래 카드에서 종·폼을 선택하세요/)
+ assert.match(pair,/빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요/)
  assert.match(pair,/onSaveEntry=/)
  assert.doesNotMatch(pair,/href="#\/single\?tab=pick"|href="#\/party"/)
 })

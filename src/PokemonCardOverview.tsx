@@ -2,6 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from 'react'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import type { EffortStatKey, MoveMeta } from './app/types'
 import type { PartialLibraryBuild } from './creatorSampleLibrary'
+import SearchCombobox, { type SearchComboboxProps, type SearchOption } from './SearchCombobox'
 
 export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null }
 
@@ -18,22 +19,34 @@ export function createReadonlyCardStats(
 }
 
 /** Shared registered slot for party, sample builder and read-only creator builds. */
-export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels }: {
+export type RegisteredMoveSearch = Omit<SearchComboboxProps<SearchOption>, 'value' | 'onChange' | 'inputProps' | 'label'>
+
+export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels, search }: {
   number: number; name: string; type?: string | null; meta?: MoveMeta | null; inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>; tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; children?: ReactNode; className?: string
+  search?: RegisteredMoveSearch
   labels: { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
 }) {
-  return <label className={`registered-move-slot ${className}`.trim()}>
-    <div className="registered-move-slot-head"><span>{number}{labels.slot}</span>
+  const sharedInputProps = { ...inputProps, ...tooltipProps,
+    onFocus: (event: React.FocusEvent<HTMLInputElement>) => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) },
+    onBlur: (event: React.FocusEvent<HTMLInputElement>) => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) },
+  }
+  const content = <>
+    <div className="registered-move-slot-head">{search && !inputProps.readOnly ? <label htmlFor={search.id}><span>{number}{labels.slot}</span></label> : <span>{number}{labels.slot}</span>}
       {type ? <img src={getTypeBadgeSrc(type)} alt={getTypeBadgeLabel(type)} title={getTypeBadgeLabel(type)} className="type-badge-image-small" /> : null}
     </div>
-    <input {...inputProps} {...tooltipProps} value={name}
+    {search && !inputProps.readOnly ? <SearchCombobox {...search} value={name} onChange={() => {}} inputProps={sharedInputProps}
+      menuClassName={`move-autocomplete-menu ${search.menuClassName ?? ''}`.trim()}
+      optionClassName={(option, index) => `move-autocomplete-item ${typeof search.optionClassName === 'function' ? search.optionClassName(option, index) : search.optionClassName ?? ''}`.trim()} /> : <input {...inputProps} {...tooltipProps} value={name}
       onFocus={event => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) }}
-      onBlur={event => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) }} />
+      onBlur={event => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) }} />}
     {children}
     {name ? <small className="registered-move-meta">
       {meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}
     </small> : null}
-  </label>
+  </>
+  return search && !inputProps.readOnly
+    ? <div className={`registered-move-slot ${className}`.trim()}>{content}</div>
+    : <label className={`registered-move-slot ${className}`.trim()}>{content}</label>
 }
 
 /** The party editor and source library share the same card heading, icons and stat tiles. */

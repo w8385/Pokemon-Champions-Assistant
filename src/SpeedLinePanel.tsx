@@ -3,6 +3,7 @@ import { buildSpeedComparison, buildSpeedScenario } from './speedLine'
 import { calculateSpeedInvestment } from './speedLineInvestment'
 import { searchPokemon } from './pokemonSearch'
 import PokemonSearchField from './PokemonSearchField'
+import SearchCombobox from './SearchCombobox'
 import { localizedChampionsItemLabel } from './championsItems'
 import type { SpeedLineState } from './speedLineState'
 import { PokemonCardHeading } from './PokemonCardOverview'
@@ -120,7 +121,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     <p className="muted speed-line-ability-note">{abilityText.separate}</p>
     <details className="speed-line-secondary-filters"><summary>{l('extraOptions')} · {l('search')} / {l('conditions')}</summary>
     <div className="speed-line-controls">
-      <label>{l('search')}<input type="search" value={state.query} onChange={e => update({ query: e.target.value })} /></label>
+      <SearchCombobox id="speed-line-list-search" mode="filter" label={l('search')} value={state.query} onChange={query => update({ query })} options={[]} onSelect={() => {}} />
       {numeric(l('listEffort'), 'listEffort', listDraft)}
       {select(l('listNature'), state.listNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ listNature: value as SpeedLineState['listNature'] }))}
       {select(l('items'), state.items, [['both', l('both')], ['normal', l('normal')], ['scarf', l('scarf')]], value => update({ items: value as SpeedLineState['items'] }))}

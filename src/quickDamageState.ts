@@ -1,3 +1,5 @@
+import { searchMoves } from './moveSearch.ts'
+
 export function quickStatNature(side: { speedNatureKnown: boolean; speedNatureMultiplier: number; statNatureMultipliers: Partial<Record<string, number>> }, key: string, nature: number): number {
   if (key === 'hp') return 1
   if (key === 'speed') return side.speedNatureKnown ? nature : side.speedNatureMultiplier
@@ -60,6 +62,5 @@ export function replaceQuickMove(moves: readonly string[], index: number, name: 
 }
 
 export function quickMoveSuggestions<T extends { name: string }>(query: string, pool: readonly T[]): T[] {
-  const value = query.trim().toLocaleLowerCase()
-  return pool.filter(option => !value || option.name.toLocaleLowerCase().includes(value)).slice(0, 8)
+  return searchMoves(pool, query, { limit: 8 })
 }

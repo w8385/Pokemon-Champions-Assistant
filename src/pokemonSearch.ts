@@ -1,5 +1,6 @@
 import { getJaName } from './jaLabels.ts'
 import type { SpeedLineSpecies } from './speedLine.ts'
+import { normalizeMatchText, rankedSearch } from './searchMatching.ts'
 
 export function normalizeSearchText(value: string): string {
   return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
@@ -19,36 +20,17 @@ export function speciesSearchCandidates(row: SpeedLineSpecies): string[] {
   return Array.from(new Set([...base, ...extra].flatMap(entry => [entry, normalizeSearchText(entry)])))
 }
 
-function matchesLooseQuery(source: string, query: string): boolean {
-  let cursor = 0
-  for (const char of source) {
-    if (char === query[cursor]) cursor += 1
-    if (cursor >= query.length) return true
-  }
-  return false
-}
-
 export function searchPokemon<T extends SpeedLineSpecies>(rows: readonly T[], query: string, options?: { includeMega?: boolean; allowLoose?: boolean; limit?: number }): T[] {
   const candidates = options?.includeMega === false ? rows.filter(row => !row.key.startsWith('mega-')) : rows
-  const normalized = normalizeSearchText(query.trim())
-  const limit = options?.limit === undefined ? Infinity : Math.max(0, options.limit)
-  if (!normalized) return candidates.slice(0, limit)
-  return candidates.map(row => {
-    const score = speciesSearchCandidates(row).reduce((best, candidate) => {
-      const text = normalizeSearchText(candidate)
-      if (text === normalized) return Math.min(best, 0)
-      if (text.startsWith(normalized)) return Math.min(best, 1)
-      if (text.includes(normalized)) return Math.min(best, 2)
-      if (options?.allowLoose !== false && matchesLooseQuery(text, normalized)) return Math.min(best, 3)
-      return best
-    }, Infinity)
-    return { row, score }
-  }).filter(entry => Number.isFinite(entry.score))
-    .sort((a, b) => a.score - b.score || a.row.name_ko.localeCompare(b.row.name_ko, 'ko'))
-    .slice(0, limit).map(entry => entry.row)
+  const sorted = query.trim() && normalizeMatchText(query) ? [...candidates].sort((a, b) => a.name_ko.localeCompare(b.name_ko, 'ko') || a.key.localeCompare(b.key)) : candidates
+  return rankedSearch(sorted, query, row => {
+    const official = [row.name_ko, row.name_en, row.name_ja, row.key]
+    const aliases = speciesSearchCandidates(row).filter(name => !official.some(entry => entry && normalizeMatchText(entry) === normalizeMatchText(name)))
+    return { official, aliases }
+  }, options)
 }
 
-// Only the builder picker promotes a form's own exact name/key above a Mega alias.
+// Compatibility helper for the builder; searchPokemon already ranks official exact names first.
 export function prioritizeExactSpecies<T extends SpeedLineSpecies>(matched: readonly T[], query: string): T[] {
   const normalized = normalizeSearchText(query.trim())
   if (!normalized) return [...matched]

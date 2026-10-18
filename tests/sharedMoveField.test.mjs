@@ -57,7 +57,7 @@ test('shared move input composes focus and blur tooltips with editor handlers', 
       inputProps: { onFocus: () => calls.push('editor-focus'), onBlur: () => calls.push('editor-blur'), onChange: () => calls.push('editor-change') },
       tooltipProps: { onFocus: () => calls.push('tooltip-focus'), onBlur: () => calls.push('tooltip-blur'), onMouseEnter: () => calls.push('tooltip-hover') },
     })
-    const input = React.Children.toArray(slot.props.children).find(child => child.type === 'input')
+    const input = React.Children.toArray(slot.props.children.props.children).find(child => child.type === 'input')
     input.props.onFocus({})
     input.props.onBlur({})
     assert.deepEqual(calls, ['tooltip-focus', 'editor-focus', 'tooltip-blur', 'editor-blur'])

@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('\nfunction LanguageIcon()', app.indexOf('function QuickDamagePanel(')))
-const selectors = app.slice(app.indexOf('entrySelectors={opponentSearch =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={opponentSearch =>')))
+const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 
 test('single pair has no saved-record editing detour', () => {
   assert.doesNotMatch(selectors, /href="#\/single\?tab=pick"|href="#\/party"/)

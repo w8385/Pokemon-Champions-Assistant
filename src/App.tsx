@@ -6,10 +6,11 @@ import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
-import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickMoveSuggestions, quickBattleStages, quickStagePair } from './quickDamageState'
+import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './quickDamageState'
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
 import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
+import { registerOpponentSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
 import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
 import { compareSpeedVisual } from './speedVisual'
@@ -25,6 +26,9 @@ import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import SpeedLinePanel from './SpeedLinePanel'
 import PokemonSearchField from './PokemonSearchField'
+import SearchCombobox from './SearchCombobox'
+import { searchMoves } from './moveSearch'
+import { resolveFormAwareMovePool } from './formAwareMovePool'
 import { PokemonBuildFields } from './PokemonBuildFields'
 import { normalizeSearchText, speciesSearchCandidates, searchPokemon, prioritizeExactSpecies } from './pokemonSearch'
 import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './speedModifiers'
@@ -154,7 +158,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '파티 한눈 요약': 'Party Overview', '내 파티': 'My Party', '상대 파티': 'Opponent Party',
     '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
     '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item', '사용 가능 특성 선택': 'Choose listed ability', '포켓몬 먼저 선택': 'Choose Pokémon first',
-    '종 선택': 'Species', '포켓몬 선택': 'Choose Pokémon', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술 슬롯': 'Move Slots', '기술풀 불러오는 중…': 'Loading move pool…', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
+    '종 선택': 'Species', '포켓몬 선택': 'Choose Pokémon', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술 슬롯': 'Move Slots', '기술풀 불러오는 중…': 'Loading move pool…', '기술풀을 불러오지 못했습니다.': 'Could not load move pool.', '사용 가능한 기술 없음': 'No available moves', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
     '시드': 'Seeded', '검증중': 'Verifying',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
     '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
@@ -167,7 +171,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '비교 상대 선택': 'Choose opponent', '비교 상대 교체': 'Change opponent', '비교 상대': 'Opponent', '1:1 비교': '1:1 comparison', '가장 경계할 상대 한 마리를 선택합니다.': 'Choose the one opponent you need to prepare for.', '결정력': 'Power index', '물리 내구력': 'Physical bulk', '특수 내구력': 'Special bulk', '상대 영향 제외': 'Excludes target', '기본 조건': 'Baseline', '계산 기준': 'Formula', '상대 의존': 'Target-dependent', '상시 보정': 'Always-on modifiers',
     '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'Register at least one sample move to compare here right away.', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': 'Add a comparison Pokémon from the search field above to show results here.', '샘플 기술로 이동': 'Go to Sample Moves', '세부 내구 조절': 'Detailed bulk tuning', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
     '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 만땅': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '비교 포켓몬 추가': 'Add comparison Pokémon', '비교 포켓몬': 'Comparison Pokémon', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '내 스피드 랭크': 'My Speed Stage', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
+    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 100%': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '비교 포켓몬 추가': 'Add comparison Pokémon', '비교 포켓몬': 'Comparison Pokémon', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '내 스피드 랭크': 'My Speed Stage', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
     '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
     '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
     '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
@@ -201,7 +205,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '파티 한눈 요약': 'パーティ一覧', '내 파티': '自分のパーティ', '상대 파티': '相手パーティ',
     '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
     '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択', '사용 가능 특성 선택': '使用可能な特性を選択', '포켓몬 먼저 선택': '先にポケモンを選択',
-    '종 선택': 'ポケモン', '포켓몬 선택': 'ポケモン選択', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술 슬롯': '技スロット', '기술풀 불러오는 중…': '技プール読み込み中…', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
+    '종 선택': 'ポケモン', '포켓몬 선택': 'ポケモン選択', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술 슬롯': '技スロット', '기술풀 불러오는 중…': '技プール読み込み中…', '기술풀을 불러오지 못했습니다.': '技プールを読み込めませんでした。', '사용 가능한 기술 없음': '使用可能な技がありません', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
     '시드': 'シード', '검증중': '検証中',
     '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
     '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
@@ -214,7 +218,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '비교 상대 선택': '比較相手を選択', '비교 상대 교체': '比較相手を変更', '비교 상대': '比較相手', '1:1 비교': '1対1比較', '가장 경계할 상대 한 마리를 선택합니다.': '最も警戒する相手を1匹選択します。', '결정력': '火力指数', '물리 내구력': '物理耐久', '특수 내구력': '特殊耐久', '상대 영향 제외': '相手補正を除外', '기본 조건': '基本条件', '계산 기준': '計算式', '상대 의존': '相手依存', '상시 보정': '常時補正',
     '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'サンプル技を1つ以上登録すると、ここですぐ比較できます。', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': '上の検索欄から比較ポケモンを追加すると、結果がここに表示されます。', '샘플 기술로 이동': 'サンプル技へ移動', '세부 내구 조절': '耐久の詳細調整', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
     '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 만땅': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '비교 포켓몬 추가': '比較ポケモン追加', '비교 포켓몬': '比較ポケモン', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '내 스피드 랭크': '自分の素早さランク', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
+    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 100%': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '비교 포켓몬 추가': '比較ポケモン追加', '비교 포켓몬': '比較ポケモン', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '내 스피드 랭크': '自分の素早さランク', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
@@ -1347,13 +1351,7 @@ async function loadEmbeddedMovePools() {
 
 async function embeddedMovePoolForKey(key: string) {
   const embeddedMovePools = await loadEmbeddedMovePools()
-  const merged = new Map<string, MoveOption>()
-  for (const poolKey of relatedMovePoolKeys(key)) {
-    for (const move of embeddedMovePools[poolKey] ?? []) {
-      if (!merged.has(move.name)) merged.set(move.name, move)
-    }
-  }
-  return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+  return resolveFormAwareMovePool(key, relatedMovePoolKeys(key), embeddedMovePools)
 }
 
 async function fetchMoveMeta(url: string) {
@@ -3145,20 +3143,7 @@ function resolveNatureInput(raw: string, language: SiteLanguage = 'ko') {
 }
 
 function filterMoveOptions(query: string, options: MoveOption[]) {
-  const normalized = query.trim().toLowerCase()
-  if (!normalized) return options
-  const scored = options
-    .map((option) => {
-      const name = option.name.toLowerCase()
-      if (name === normalized) return { option, score: 0 }
-      if (name.startsWith(normalized)) return { option, score: 1 }
-      if (name.includes(normalized)) return { option, score: 2 }
-      if (matchesLooseQuery(name, normalized)) return { option, score: 3 }
-      return null
-    })
-    .filter((entry): entry is { option: MoveOption; score: number } => Boolean(entry))
-    .sort((a, b) => a.score - b.score || a.option.name.localeCompare(b.option.name, 'ko'))
-  return scored.map((entry) => entry.option)
+  return searchMoves(options, query, { names: option => moveDescriptionFor(option.name) ?? undefined })
 }
 
 function displayTypeName(type: string | null | undefined, language: SiteLanguage) {
@@ -3207,7 +3192,7 @@ function itemTooltipData(itemName: string, language: SiteLanguage): HoverTooltip
 async function dexMoveLearnerRows(name: string) {
   const embeddedMovePools = await loadEmbeddedMovePools()
   const learnerRows = rows.filter((row) => {
-    return relatedMovePoolKeys(row.key).some((poolKey) => (embeddedMovePools[poolKey] ?? []).some((move) => move.name === name))
+    return resolveFormAwareMovePool(row.key, relatedMovePoolKeys(row.key), embeddedMovePools).some((move) => move.name === name)
   })
   return learnerRows.sort((a, b) => displayName(a, 'ko').localeCompare(displayName(b, 'ko'), 'ko'))
 }
@@ -3223,22 +3208,10 @@ function dexMoveIndex() {
 
 function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean }) {
   const allowLoose = options?.allowLoose ?? true
-  const normalized = normalizeSearchText(query.trim())
   const index = dexMoveIndex()
-  if (!normalized) return index.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
-  return index
-    .map(({ candidates, ...entry }) => {
-      const score = candidates.reduce((best, candidate) => {
-        if (candidate === normalized) return Math.min(best, 0)
-        if (candidate.startsWith(normalized)) return Math.min(best, 1)
-        if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
-        return best
-      }, Number.POSITIVE_INFINITY)
-      return Number.isFinite(score) ? { ...entry, score } : null
-    })
-    .filter((entry): entry is { key: string; name: string; meta: MoveMeta; score: number } => Boolean(entry))
-    .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name, 'ko'))
+  if (!query.trim()) return index.map(({ candidates: _candidates, ...entry }) => entry).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+  const ranked = searchMoves(index, query, { allowLoose, names: entry => ({ ...moveDescriptionFor(entry.name), aliases: entry.candidates }) })
+  return ranked.map(({ candidates: _candidates, ...entry }) => entry)
 }
 
 function abilityDisplayName(abilityKey: string, abilityKo: string, language: SiteLanguage) {
@@ -3831,6 +3804,7 @@ function quickSide(input: unknown, legacy: Record<string, unknown> = {}, origina
 function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
   const saved = readDraft(localStorage, side, slot, seed)
   if (!saved) return { side: seed as QuickSide, dirty: new Set<string>() }
+  if (side === 'attacker' && saved.dirty.has('key')) return { side: seed as QuickSide, dirty: new Set<string>() }
   const next = saved.side
   if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
   if (next.key && next.ability && !abilityMatchesKey(next.key, next.ability)) return { side: seed as QuickSide, dirty: new Set<string>() }
@@ -3850,7 +3824,7 @@ function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
   return actualStat(row[key], side.evs[key], quickStatNature(side, key, key === 'hp' ? 1 : natureMultiplier(side.nature, key)), key === 'hp')
 }
 
-function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
+function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
 
   const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
@@ -3868,7 +3842,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   })
   const [attackerSearch, setAttackerSearch] = React.useState('')
   const [defenderSearch, setDefenderSearch] = React.useState('')
-  const [pools, setPools] = React.useState<Record<string, MoveOption[]>>({})
+  const [pools, setPools] = React.useState<Record<string, MovePoolState>>({})
   const [activeSlot, setActiveSlot] = React.useState<{ side: 'attacker' | 'defender'; index: number } | null>(null)
   const [drafts, setDrafts] = React.useState<Record<string, string>>({})
   const [selected, setSelected] = React.useState<{ side: 'attacker' | 'defender'; index: number }>(() => {
@@ -3927,30 +3901,52 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     }
   }, [])
 
+  React.useEffect(() => {
+    if (!comparisonMode || !initialSides || !opponentResetRevision) return
+    skipDraftWrite.current = true
+    setAttacker(prev => resetPairAssumptions(prev, initialSides[0], dirty.attacker))
+    setDefender(resetPairAssumptions(initialSides[1] as QuickSide, initialSides[1], new Set()))
+    setDirty(prev => ({ ...prev, defender: new Set() }))
+    setDefenderSearch('')
+    setModalSide(null)
+    clearSideUI('defender')
+    setConditions(quickDefaultConditions())
+    previousTargets.current = [pairTarget(comparisonSlots?.[0] ?? 0, initialSides[0]), pairTarget(comparisonSlots?.[1] ?? 0, initialSides[1])]
+    setSelected(prev => prev.side === 'defender' ? { side: 'attacker', index: 0 } : prev)
+  }, [opponentResetRevision])
+
   const opener = React.useRef<HTMLElement | null>(null)
   const [, refreshMeta] = React.useState(0)
   React.useEffect(() => { if (!comparisonMode) localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions })) }, [attacker, defender, conditions, comparisonMode])
   React.useEffect(() => {
     if (!comparisonMode || !initialSides || !comparisonSlots) return
     if (skipDraftWrite.current) { skipDraftWrite.current = false; return }
-    const ownKept = writeDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
+    const legacyOwnSpeciesDraft = readDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0])?.dirty.has('key')
+    const ownKept = legacyOwnSpeciesDraft && !dirty.attacker.size ? true : writeDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
     const otherKept = writeDraft(localStorage, 'defender', comparisonSlots[1], initialSides[1], defender, dirty.defender)
     setDraftStorageFailed(!(ownKept && otherKept))
   }, [comparisonMode, seed0, seed1, attacker, defender, dirty])
   React.useEffect(() => {
-    for (const key of [attacker.key, defender.key]) {
-      if (!key || pools[key]) continue
-      let active = true
-      void embeddedMovePoolForKey(key).then(options => {
+    let active = true
+    for (const key of new Set([attacker.key, defender.key])) {
+      if (!key || pools[key]?.status === 'ready') continue
+      setPools(prev => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
+      const settle = (entries: MoveOption[], status: MovePoolState['status']) => {
         if (!active) return
-        const entries = options.length ? options : moveOptionsForEntry(sampleMoves.find(entry => entry.key === key))
-        setPools(prev => ({ ...prev, [key]: entries }))
+        setPools(prev => ({ ...prev, [key]: { status, moves: entries } }))
         const sanitize = (prev: QuickSide) => prev.key === key ? { ...prev, moves: restoreQuickMoves(prev.moves, '', entries) } : prev
         setAttacker(sanitize); setDefender(sanitize)
-      }).catch(() => { if (active) setPools(prev => ({ ...prev, [key]: moveOptionsForEntry(sampleMoves.find(entry => entry.key === key)) })) })
-      return () => { active = false }
+      }
+      void embeddedMovePoolForKey(key).then(options => {
+        const entries = options.length ? options : moveOptionsForEntry(sampleMoves.find(entry => entry.key === key))
+        settle(entries, 'ready')
+      }).catch(() => {
+        const fallback = moveOptionsForEntry(sampleMoves.find(entry => entry.key === key))
+        settle(fallback, fallback.length ? 'ready' : 'error')
+      })
     }
-  }, [attacker.key, defender.key, pools])
+    return () => { active = false }
+  }, [attacker.key, defender.key])
   React.useEffect(() => { let active = true; void loadMoveMetaByName().then(() => { if (active) refreshMeta(n => n + 1) }); return () => { active = false } }, [])
   const attackingRow = indexByKey.get(attacker.key)
   const defendingRow = indexByKey.get(defender.key)
@@ -3984,7 +3980,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const sourceRow = indexByKey.get(source.key), targetRow = indexByKey.get(target.key)
     const sourceStats = sourceRow ? toStats(source, sourceRow) : null
     const targetStats = targetRow ? toStats(target, targetRow) : null
-    const pool = pools[source.key] ?? []
+    const pool = pools[source.key]?.moves ?? []
     const poolMap: Record<string, MovePoolState> = { [source.key]: { status: 'ready', moves: pool } }
     const base = pool.some(option => option.name === name) ? resolveMoveMeta(name, pool, poolMap) : null
     if (!sourceStats || !targetStats || !base || !quickMoveSupported(name, base, Boolean(CONDITIONAL_MOVE_POWER_RULES[name]))) return null
@@ -3997,7 +3993,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, target.ability, conditions.weather, conditions.terrain)
     const foulPlay = name === '속임수'
     const [attackStage, defenseStage] = quickStagePair(source.battle, target.battle, { ...meta, usesTargetAttack: foulPlay })
-    const modifiers = resolveDamageModifiers({ attackerAbility: source.ability, attackerItem: source.item, defenderAbility: target.ability, defenderItem: target.item, moveName: name, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, target.ability, source.ability), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: target.battle.friendGuard, critical: conditions.critical })
+    const modifiers = resolveDamageModifiers({ attackerAbility: source.ability, attackerItem: source.item, defenderAbility: target.ability, defenderItem: target.item, moveName: name, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, target.ability, source.ability), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
     const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, source.ability, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
     return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness } : null
   }
@@ -4010,7 +4006,14 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {
-    if (key === (side === 'attacker' ? attacker.key : defender.key)) return
+    if (comparisonMode && side === 'attacker') return
+    if (comparisonMode && side === 'defender' && onOpponentSpecies) {
+      onOpponentSpecies?.(key)
+      setDefenderSearch('')
+      window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
+      return
+    }
+    if (key === (side === 'attacker' ? attacker.key : defender.key)) { if (!comparisonMode && side === 'attacker') window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0); return }
     setModalSide(null)
     clearSideUI(side)
     if (comparisonMode) {
@@ -4031,6 +4034,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     onDraftIdentity?.(side, key)
     if (side === 'attacker') { setAttacker(next); setAttackerSearch(''); setSelected({ side: 'attacker', index: 0 }) }
     else { setDefender(next); setDefenderSearch('') }
+    if (!comparisonMode && side === 'attacker') window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
   }
   const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
   const speciesSearch = (side: 'attacker' | 'defender', label: string) => <PokemonSearchField id={`quick-${side}`} label={label} value={side === 'attacker' ? attackerSearch : defenderSearch} onChange={side === 'attacker' ? setAttackerSearch : setDefenderSearch} onSelect={key => selectSide(side, key)} options={searchOptions(side === 'attacker' ? attackerSearch : defenderSearch)} placeholder={lt('종·폼 검색')} menuClassName="sample-damage-search-menu" />
@@ -4056,7 +4060,8 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const sideCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined, setEntry: React.Dispatch<React.SetStateAction<QuickSide>>) => {
     const search = side === 'attacker' ? attackerSearch : defenderSearch
     const setSearch = side === 'attacker' ? setAttackerSearch : setDefenderSearch
-    const pool = pools[entry.key] ?? []
+    const pool = pools[entry.key]?.moves ?? []
+    const status = pools[entry.key]?.status ?? 'loading'
     const poolMap: Record<string, MovePoolState> = { [entry.key]: { status: 'ready', moves: pool } }
     const labels = { slot: language === 'ja' ? '番' : language === 'en' ? ' · Move' : lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, language), power: lt('위력'), accuracy: lt('명중'), pp: 'PP', unknown: lt('미확인') }
     const commit = (index: number, option: MoveOption) => {
@@ -4067,7 +4072,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     }
     return <section className="card entry-card quick-side-card">
       <strong>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')}</strong>
-      {comparisonMode && side === 'defender' ? null : speciesSearch(side, lt(comparisonMode ? '내 파티 포켓몬 입력' : side === 'attacker' ? '공격측 포켓몬 검색' : '방어측 포켓몬 검색'))}
+      {comparisonMode ? null : speciesSearch(side, lt(side === 'attacker' ? '공격측 포켓몬 검색' : '방어측 포켓몬 검색'))}
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
         {statCard(side, entry, row)}
@@ -4077,15 +4082,17 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
           const name = entry.moves[index] ?? ''
           const draftKey = `${side}-${index}`
           const draft = drafts[draftKey] ?? ''
-          const options = quickMoveSuggestions(draft, pool)
+          const options = filterMoveOptions(draft, pool).slice(0, 8)
           const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
           const preview = calculate(side, name)
           return <div key={index} className={`quick-move-row ${selected.side === side && selected.index === index ? 'selected' : ''}`}>
             <RegisteredMoveSlot number={index + 1} name={activeSlot?.side === side && activeSlot.index === index ? draft : name} type={meta?.type} meta={meta} labels={labels} className={moveTypeThemeClass(meta?.type)}
               tooltipProps={tooltipForMove(name)}
-              inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: pool.length ? lt('사용 가능 기술 검색') : lt('기술풀 불러오는 중…'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onKeyDown: event => { if (event.key === 'Escape') { setActiveSlot(null); return } if (event.key === 'Enter' && !event.nativeEvent.isComposing && options[0]) { event.preventDefault(); commit(index, options[0]) } }, onBlur: () => setTimeout(() => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev), 150) }}>
-              {activeSlot?.side === side && activeSlot.index === index && options.length ? <div className="move-autocomplete-menu unified-dropdown-menu">{options.map(option => <button key={option.name} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)}`} onMouseDown={event => { event.preventDefault(); commit(index, option) }}>{option.name}</button>)}</div> : null}
-            </RegisteredMoveSlot>
+              search={{ id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                onSelect: option => { const found = options.find(move => move.name === option.key); if (found) commit(index, found) },
+                optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
+                renderOption: option => <span className="move-autocomplete-main">{options.find(move => move.name === option.key)?.type ? <SmallTypeBadgeImage type={options.find(move => move.name === option.key)!.type!} /> : null}<span>{option.label}</span></span> }}
+              inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'error' ? lt('기술풀을 불러오지 못했습니다.') : pool.length ? lt('사용 가능 기술 검색') : lt('사용 가능한 기술 없음'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
             <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
         })}</div>
@@ -4124,12 +4131,12 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const setBattle = (patch: Partial<QuickBattle>) => setSide(side, prev => ({ ...prev, battle: { ...prev.battle, ...patch } }))
     return <fieldset className="quick-side-battle"><legend>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {sourceLabels.battle}</legend>
       {([['attackStage','공격 랭크'], ['spAttackStage','특수공격 랭크'], ['defenseStage','방어 랭크'], ['spDefenseStage','특수방어 랭크']] as const).map(([key,label]) => <label key={key}>{lt(label)}<select value={battle[key]} onChange={event => setBattle({ [key]: Number(event.target.value) })}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label>)}
-      {([['burned','화상'],['lowHp','HP 1/3 이하'],['poisoned','독/맹독'],['fullHp','HP 만땅'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일'],['friendGuard','프렌드가드']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
+      {([['burned','화상'],['lowHp','HP 1/3 이하'],['poisoned','독/맹독'],['fullHp','HP 100%'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
     </fieldset>
   }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면비교' : '간단 대미지')}>
     <div className="row-between"><h2>{lt(comparisonMode ? '대면비교' : '간단 대미지')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
-    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')))}
+    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }}>{lt('상대 엔트리 초기화')}</button>)}
     <div className="quick-comparison-results">
       {speedStrip}
       <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
@@ -4175,6 +4182,7 @@ export default function App() {
   const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, sanitizeParty(persisted?.party).length))
   const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedOpp ?? persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
   const [singleDraftIdentity, setSingleDraftIdentity] = React.useState<{ attacker?: string; defender?: string }>({})
+  const [opponentResetRevision, setOpponentResetRevision] = React.useState(0)
   const initialDoubleParty = React.useMemo(() => sanitizeParty(persisted?.party), [persisted])
   const initialDoubleOpponents = React.useMemo(() => sanitizeOpponents(persisted?.opponents), [persisted])
   const defaultDoubleMyLeft = React.useMemo(() => firstFilledIndex(initialDoubleParty, 0), [initialDoubleParty])
@@ -4352,7 +4360,7 @@ export default function App() {
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
 
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
-  const [sampleDamageSearchOpen, setSampleDamageSearchOpen] = React.useState(false)
+
   const [sampleTuningModalOpen, setSampleTuningModalOpen] = React.useState(false)
   const [sampleTuningIdentity, setSampleTuningIdentity] = React.useState<string | null>(null)
   const sampleTuningOpener = React.useRef<HTMLElement | null>(null)
@@ -5149,7 +5157,7 @@ export default function App() {
   React.useEffect(() => {
     const targetKeys = Array.from(new Set([...party.map((member) => member.key), ...opponents.map((member) => member.key), sampleForge.key].filter(Boolean)))
     targetKeys.forEach((key) => {
-      if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready') return
+      if (movePoolByKey[key]?.status === 'loading' || movePoolByKey[key]?.status === 'ready' || movePoolByKey[key]?.status === 'error') return
       setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: prev[key]?.moves ?? [] } }))
       embeddedMovePoolForKey(key)
         .then((embedded) => {
@@ -6274,7 +6282,7 @@ export default function App() {
     calcDefenderStatused && sampleShowDefenderStatusedToggle ? lt('상대 상태이상') : null,
     calcParentalBond && sampleShowParentalBondToggle ? lt('부자유친 발동') : null,
     calcElectromorphosisCharged && sampleShowElectromorphosisToggle ? lt('일렉트릭 차지됨') : null,
-    calcDefenderFullHp && sampleShowDefenderFullHpToggle ? lt('상대 HP 만땅') : null,
+    calcDefenderFullHp && sampleShowDefenderFullHpToggle ? lt('상대 HP 100%') : null,
     calcDefenderDisguise && sampleShowDefenderDisguiseToggle ? '탈 intact' : null,
     calcAttackStage !== 0 ? `${lt('공격측 화력 랭크')} ${calcAttackStage > 0 ? `+${calcAttackStage}` : calcAttackStage}` : null,
     calcDefenseStage !== 0 ? `${lt('방어측 내구 랭크')} ${calcDefenseStage > 0 ? `+${calcDefenseStage}` : calcDefenseStage}` : null,
@@ -6399,7 +6407,6 @@ export default function App() {
   const addSampleDamageTarget = (key: string) => {
     setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, moveName: sampleDamageMoveChoices[0] ?? '' }])
     setSampleDamageSearch('')
-    setSampleDamageSearchOpen(false)
   }
 
   const updateSampleDamageTarget = (idx: number, patch: Partial<SampleDamageTarget>) => {
@@ -6684,6 +6691,38 @@ export default function App() {
     setSelectedOpp(0)
     setOpponentQuickSearch('')
     setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
+  }
+
+  const registerSingleOpponentSpecies = (key: string) => {
+    const current = selectedOpp
+    const { slots, nextIndex } = registerOpponentSpecies(opponents, current, key, () => ({ ...blankOpponent(), item: normalizeItemForKey(key, '') }))
+    if (opponents[current]?.key !== key) forgetDraft(localStorage, 'defender', current)
+    setOpponents(slots)
+    setOpponentSearch(prev => prev.map((value, index) => index === current ? searchDisplayLabel(key, siteLanguage) : value))
+    setOpponentItemDrafts(prev => prev.map((value, index) => index === current ? displayItemLabel(visibleChampionsItem(key, slots[current].item), siteLanguage) : value))
+    setOpponentAbilityDrafts(prev => prev.map((value, index) => index === current ? slots[current].ability : value))
+    setSingleDraftIdentity(prev => ({ ...prev, defender: '' }))
+    setSelectedOpp(nextIndex)
+  }
+  const resetSingleOpponentEntry = (search: string) => {
+    const snapshot = (() => { try { return snapshotDefenderDrafts(localStorage, emptyOpponents.length) } catch { return { ok: false } as const } })()
+    if (!snapshot.ok) {
+      window.alert(siteLanguage === 'en' ? 'Could not read opponent drafts. Nothing was reset.' : siteLanguage === 'ja' ? '相手の下書きを読み込めませんでした。初期化していません。' : '상대 초안을 읽지 못했습니다. 초기화하지 않았습니다.')
+      return false
+    }
+    if (hasOpponentEntryData(opponents, snapshot.hasDraft, [search, opponentQuickSearch, ...opponentSearch].join(' '), blankOpponent) && !window.confirm(siteLanguage === 'en' ? 'Reset all opponent entry slots and comparison drafts?' : siteLanguage === 'ja' ? '相手エントリーの全枠と比較下書きを初期化しますか？' : '상대 엔트리와 비교 초안을 모두 초기화할까요?')) return false
+    const removal = (() => { try { return removeDefenderDrafts(localStorage, snapshot) } catch { return { ok: false, restored: true } as const } })()
+    if (!removal.ok) {
+      window.alert(removal.restored
+        ? siteLanguage === 'en' ? 'Could not remove opponent drafts. Nothing was reset.' : siteLanguage === 'ja' ? '相手の下書きを削除できませんでした。初期化していません。' : '상대 초안을 삭제하지 못했습니다. 초기화하지 않았습니다.'
+        : siteLanguage === 'en' ? 'Could not remove opponent drafts; some drafts could not be restored. Opponent entries were not reset.' : siteLanguage === 'ja' ? '相手の下書きを削除できず、一部を復元できませんでした。エントリーは初期化していません。' : '상대 초안을 삭제하지 못했고 일부 복원에도 실패했습니다. 엔트리는 초기화하지 않았습니다.')
+      return false
+    }
+    resetOpponentsForFreshEntry()
+    setSingleDraftIdentity(prev => ({ ...prev, defender: '' }))
+    setOpponentResetRevision(prev => prev + 1)
+    window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
+    return true
   }
 
   const resetPartyForFreshEntry = () => {
@@ -7396,25 +7435,25 @@ export default function App() {
                   </div>
                 </div>
                 <div className="dex-search-autocomplete">
-                  <input
+                  <SearchCombobox id="dex-unified-search" mode="filter" options={[]} onSelect={() => {}}
                     value={dexUnifiedSearchDraft}
                     placeholder={lt('포켓몬 / 기술 / 특성 / 도구 검색')}
-                    onChange={(e) => {
+                    onChange={(value) => {
                       restoringDexRoute.current = null
-                      setDexUnifiedSearchDraft(e.target.value)
+                      setDexUnifiedSearchDraft(value)
                     }}
-                    onCompositionStart={() => setDexUnifiedSearchComposing(true)}
-                    onCompositionEnd={(e) => {
+                    inputProps={{ onCompositionStart: () => setDexUnifiedSearchComposing(true),
+                    onCompositionEnd: (e) => {
                       const nextValue = e.currentTarget.value
                       restoringDexRoute.current = null
                       setDexUnifiedSearchComposing(false)
                       setDexUnifiedSearchDraft(nextValue)
                       setDexUnifiedSearch(nextValue)
-                    }}
-                    onKeyDown={(e) => {
+                    },
+                    onKeyDown: (e) => {
                       if (e.key !== 'Enter' || e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229 || dexUnifiedSearchComposing || dexQueryPending || !dexResultKeys.length) return
                       setDexSelectedValue(dexResultKeys[0])
-                    }}
+                    } }}
                   />
                 </div>
               </div>
@@ -8005,17 +8044,18 @@ export default function App() {
         </section> : null}
 
         {mainSection === 'single' ? <div className="unified-single-pair">
-          <QuickDamagePanel language={siteLanguage} tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} initialSides={comparisonSides(party, opponents, selectedMy, selectedOpp, confirmedMovesByKey, comparisonAbility)} comparisonSlots={[selectedMy, selectedOpp]} comparisonMode movesForSpecies={key => confirmedMovesByKey[key] ?? []} sharedMoveSpecies={key => Boolean(key) && party.filter(member => member.key === key).length > 1} onDraftIdentity={(side, key) => setSingleDraftIdentity(prev => ({ ...prev, [side]: key }))} onSaveEntry={(side, draft, fields) => {
+          <QuickDamagePanel language={siteLanguage} tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} initialSides={comparisonSides(party, opponents, selectedMy, selectedOpp, confirmedMovesByKey, comparisonAbility)} comparisonSlots={[selectedMy, selectedOpp]} comparisonMode opponentResetRevision={opponentResetRevision} onOpponentSpecies={registerSingleOpponentSpecies} onResetOpponents={resetSingleOpponentEntry} movesForSpecies={key => confirmedMovesByKey[key] ?? []} sharedMoveSpecies={key => Boolean(key) && party.filter(member => member.key === key).length > 1} onDraftIdentity={(side, key) => setSingleDraftIdentity(prev => ({ ...prev, [side]: key }))} onSaveEntry={(side, draft, fields) => {
              const dirty = new Set(fields)
             if (side === 'attacker') {
+              if (draft.key !== party[selectedMy]?.key) return
               setParty(prev => prev.map((entry, slot) => slot === selectedMy ? commitComparisonEntry('own', entry, draft, dirty) : entry))
               if (dirty.has('moves')) setConfirmedMovesByKey(prev => ({ ...prev, [draft.key]: normalizeMoveSlots(draft.moves) }))
             } else {
               setOpponents(prev => prev.map((entry, slot) => slot === selectedOpp ? commitComparisonEntry('opponent', entry, draft, dirty) : entry))
             }
             setSingleDraftIdentity(prev => ({ ...prev, [side]: '' }))
-          }} entrySelectors={opponentSearch => <div className="single-entry-selectors">
-            <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(idx === selectedMy ? singleDraftIdentity.attacker || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setSingleDraftIdentity(prev => ({ ...prev, attacker: '' })); setSelectedMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key && !singleDraftIdentity.attacker ? <small>{lt('빈 슬롯: 아래 카드에서 종·폼을 선택하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong></div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(idx === selectedOpp ? singleDraftIdentity.defender || member.key : member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setSingleDraftIdentity(prev => ({ ...prev, defender: '' })); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div><div className="selected-opponent-search">{opponentSearch}</div></div></div>
+          }} entrySelectors={(opponentSearch, reset) => <div className="single-entry-selectors">
+            <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setSingleDraftIdentity(prev => ({ ...prev, attacker: '' })); setSelectedMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key ? <small>{lt('빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong>{reset}</div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setSingleDraftIdentity(prev => ({ ...prev, defender: '' })); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div><div className="selected-opponent-search">{opponentSearch}</div></div></div>
           </div>} />
         </div> : null}
         {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
@@ -8117,51 +8157,24 @@ export default function App() {
                           const moveType = findMoveType(move)
                           return <RegisteredMoveSlot key={`registered-move-${member.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={moveType} meta={resolveMoveMeta(move, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
                             tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                            search={{ id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                              onSelect: option => { selectMoveOption(member.key, moveIdx, option.key); setActiveMoveField(null) },
+                              optionClassName: option => moveTypeThemeClass(memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
+                              renderOption: option => <span className="move-autocomplete-main">{memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={memberMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
+                              optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
                             inputProps={{
                               placeholder: memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
                               onFocus: () => {
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
-                                setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
                               },
                               onBlur: () => {
-                                setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev), 120)
-                                setTimeout(() => closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`), 120)
+                                setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev)
                               },
                               onChange: (e) => {
                                 setConfirmedMoveSlot(member.key, moveIdx, e.target.value)
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
-                                setAutocompleteMenuOpen(`party-move-${member.key}-${moveIdx}`)
                               },
-                              onKeyDown: (e) => {
-                                const moveSuggestions = filterMoveOptions(move, memberMoveOptions).slice(0, 8)
-                                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                                  e.preventDefault()
-                                  moveAutocompleteMenuHighlight(`party-move-${member.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
-                                  return
-                                }
-                                if (e.key !== 'Enter') return
-                                const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`)]
-                                const committed = highlightedMove ? (selectMoveOption(member.key, moveIdx, highlightedMove.name), true) : commitTopMoveOption(member.key, moveIdx, move, memberMoveOptions)
-                                if (committed) {
-                                  e.preventDefault()
-                                  setActiveMoveField(null)
-                                  closeAutocompleteMenu(`party-move-${member.key}-${moveIdx}`)
-                                }
-                              },
-                            }}>
-                            {sameMoveField(activeMoveField, member.key, moveIdx, 'party') && memberMoveOptions.length ? (
-                              <div className="move-autocomplete-menu unified-dropdown-menu">
-                                {filterMoveOptions(move, memberMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                  <button key={`party-move-suggest-${member.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `party-move-${member.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectMoveOption(member.key, moveIdx, option.name)} {...bindTooltip(moveTooltipData(option.name, siteLanguage))}>
-                                    <span className="move-autocomplete-main">
-                                      {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
-                                      <span>{option.name}</span>
-                                    </span>
-                                  </button>
-                                ))}
-                              </div>
-                            ) : null}
-                          </RegisteredMoveSlot>
+                            }} />
                         })}
                       </div>
                       {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
@@ -8754,15 +8767,18 @@ export default function App() {
                             {sampleRegisteredMoves.map((move, moveIdx) => (
                               <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
                                 tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                                search={{ id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                                  onSelect: option => selectSampleMoveOption(moveIdx, option.key),
+                                  optionClassName: option => moveTypeThemeClass(sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
+                                  renderOption: option => <span className="move-autocomplete-main">{sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
+                                  optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
                                 inputProps={{
                                   placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
                                   onFocus: () => {
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                    setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
                                   },
                                   onBlur: () => {
-                                    setTimeout(() => setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev), 120)
-                                    setTimeout(() => closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`), 120)
+                                    setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev)
                                   },
                                   onChange: (e) => {
                                     setSampleLockedMoves((prev) => {
@@ -8772,37 +8788,8 @@ export default function App() {
                                       return normalizeMoveSlots(current)
                                     })
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                    setAutocompleteMenuOpen(`sample-move-${sampleForge.key}-${moveIdx}`)
                                   },
-                                  onKeyDown: (e) => {
-                                    const moveSuggestions = filterMoveOptions(move, sampleMoveOptions).slice(0, 8)
-                                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                                      e.preventDefault()
-                                      moveAutocompleteMenuHighlight(`sample-move-${sampleForge.key}-${moveIdx}`, moveSuggestions.length, e.key === 'ArrowDown' ? 1 : -1)
-                                      return
-                                    }
-                                    if (e.key !== 'Enter') return
-                                    const highlightedMove = moveSuggestions[highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`)]
-                                    const committed = highlightedMove ? (selectSampleMoveOption(moveIdx, highlightedMove.name), true) : commitSampleMoveOption(moveIdx, move)
-                                    if (committed) {
-                                      e.preventDefault()
-                                      closeAutocompleteMenu(`sample-move-${sampleForge.key}-${moveIdx}`)
-                                    }
-                                  },
-                                }}>
-                                {sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && sampleMoveOptions.length ? (
-                                  <div className="move-autocomplete-menu unified-dropdown-menu">
-                                    {filterMoveOptions(move, sampleMoveOptions).slice(0, 8).map((option, optionIdx) => (
-                                      <button key={`sample-move-suggest-${sampleForge.key}-${moveIdx}-${option.name}`} type="button" className={`move-autocomplete-item ${moveTypeThemeClass(option.type)} ${highlightedAutocompleteIndex(autocompleteHighlight, `sample-move-${sampleForge.key}-${moveIdx}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSampleMoveOption(moveIdx, option.name)} {...bindTooltip(moveTooltipData(option.name, siteLanguage))}>
-                                        <span className="move-autocomplete-main">
-                                          {option.type ? <SmallTypeBadgeImage type={option.type} /> : null}
-                                          <span>{option.name}</span>
-                                        </span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                ) : null}
-                              </RegisteredMoveSlot>
+                                }} />
                             ))}
                           </div>
                           {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
@@ -9121,7 +9108,7 @@ export default function App() {
                         <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
                       </div>
                       {sampleShowDefenderFullHpToggle || sampleShowDefenderDisguiseToggle ? <div className="calc-inline-pair">
-                        {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 만땅')}</span></label> : null}
+                        {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 100%')}</span></label> : null}
                         {sampleShowDefenderDisguiseToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} /><span>{lt('상대 탈 intact')}</span></label> : null}
                       </div> : null}
                     </div>
@@ -9152,7 +9139,7 @@ export default function App() {
                     <span>{lt('상대 포켓몬')}</span>
                     <strong>{sampleDamageCalcs[0]?.row ? displayName(sampleDamageCalcs[0].row, siteLanguage) : lt('비교 대상 없음')}</strong>
                   </div>
-              <label className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
+              <div className="sample-speed-slider-field sample-damage-search-field sample-speed-control-card sample-workbench-section-block sample-compare-adder-block sample-damage-compare-adder-standalone">
                     <div className="sample-compare-adder-head">
                       <span className="sample-workbench-section-label">{lt(sampleDamageCalcs.length ? '비교 상대 교체' : '비교 상대 선택')}</span>
                     </div>
@@ -9166,27 +9153,11 @@ export default function App() {
                       </div>
                       <p className="sample-compare-adder-copy">{sampleDamageMoveChoices.length ? lt('가장 경계할 상대 한 마리를 선택합니다.') : lt('샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.')}</p>
                     </div>
-                    <input value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onFocus={() => { setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onBlur={() => { setTimeout(() => setSampleDamageSearchOpen(false), 120); setTimeout(() => closeAutocompleteMenu('sample-damage-add'), 120) }} onChange={(e) => { setSampleDamageSearch(e.target.value); setSampleDamageSearchOpen(true); setAutocompleteMenuOpen('sample-damage-add') }} onKeyDown={(e) => {
-                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                        e.preventDefault()
-                        moveAutocompleteMenuHighlight('sample-damage-add', sampleDamageSearchResults.length, e.key === 'ArrowDown' ? 1 : -1)
-                        return
-                      }
-                      if (e.key !== 'Enter') return
-                      const highlightedOption = sampleDamageSearchResults[highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add')]
-                      if (highlightedOption) {
-                        e.preventDefault()
-                        addSampleDamageTarget(highlightedOption.key)
-                        closeAutocompleteMenu('sample-damage-add')
-                      }
-                    }} />
-                    {sampleDamageSearchOpen && sampleDamageSearchResults.length ? <div className="autocomplete-menu unified-dropdown-menu sample-damage-search-menu">
-                      {sampleDamageSearchResults.map((option, optionIdx) => <button key={`sample-damage-add-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'sample-damage-add') === optionIdx ? 'active' : ''}`} onMouseDown={() => addSampleDamageTarget(option.key)}>{searchDisplayLabel(option.key, siteLanguage)}</button>)}
-                    </div> : null}
+                    <PokemonSearchField id="sample-damage-add" label={lt('비교 상대 검색')} value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleDamageSearch} onSelect={addSampleDamageTarget} options={sampleDamageSearchResults.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} menuClassName="sample-damage-search-menu" />
                     {!sampleDamageMoveChoices.length ? <div className="sample-inline-helper sample-damage-adder-helper sample-damage-adder-helper-compact">
                       <button type="button" className="pick-chip" onClick={() => setSampleWorkbenchTab('builder')}>{lt('샘플 기술로 이동')}</button>
                     </div> : null}
-              </label>
+              </div>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
                 <div className="row-between sample-workbench-section-head">
                   <span className="sample-workbench-section-label">{lt('비교 상대')}</span>
@@ -10013,7 +9984,7 @@ export default function App() {
                       </label>
                       {showDefenderFullHpToggle ? <label className="calc-toggle-box">
                         <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
-                        <span>{lt('상대 HP 만땅')}</span>
+                        <span>{lt('상대 HP 100%')}</span>
                       </label> : null}
                     </div>
                     <div className="calc-inline-pair calc-stat-pair">
@@ -10037,7 +10008,7 @@ export default function App() {
                       </label>
                     </div></> : showDefenderFullHpToggle ? <label className="calc-toggle-box">
                       <input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} />
-                      <span>{lt('상대 HP 만땅')}</span>
+                      <span>{lt('상대 HP 100%')}</span>
                     </label> : null}
                   </>}
                   {showDefenderDisguiseToggle ? <label className="calc-toggle-box">

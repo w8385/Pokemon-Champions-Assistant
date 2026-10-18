@@ -92,7 +92,7 @@ test('own species-only save preserves existing shared-species move catalog', () 
   assert.match(source, /if \(dirty\.has\('moves'\)\) setConfirmedMovesByKey/)
   assert.doesNotMatch(source, /<QuickDamagePanel key=\{/)
   assert.match(source, /comparisonSlots=\{\[selectedMy, selectedOpp\]\}/)
-  assert.match(source, /if \(key === \(side === 'attacker' \? attacker\.key : defender\.key\)\) return/)
+  assert.match(source, /if \(key === \(side === 'attacker' \? attacker\.key : defender\.key\)\) \{/)
   const oldCatalog = { cinderace: ['무릎차기', '화염볼', '', ''] }
   const own = { key: 'garchomp', item: '', ability: '', config: { nature: 'hardy', speedStage: 0, scarf: false }, evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 } }
   const saved = commitComparisonEntry('own', own, { ...own, key: 'cinderace', nature: 'hardy', moves: oldCatalog.cinderace }, new Set(['key']))

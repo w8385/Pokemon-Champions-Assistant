@@ -8,7 +8,7 @@ const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('
 const single = app.slice(app.indexOf("mainSection === 'single' ? <div"), app.indexOf("(mainSection === 'party'", app.indexOf("mainSection === 'single' ? <div")))
 
 test('entry selectors render inside the actual comparison panel and disable independent identity search/swap', () => {
-  assert.match(quick, /entrySelectors\?: \(opponentSearch: React\.ReactNode\) => React\.ReactNode/)
+  assert.match(quick, /entrySelectors\?: \(opponentSearch: React\.ReactNode, reset: React\.ReactNode\) => React\.ReactNode/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(quick, /<PokemonSearchField id={`quick-\${side}`}/)
   assert.match(quick, /!comparisonMode \? <button type="button" className="action-button"[^]*?공수 교체/)
