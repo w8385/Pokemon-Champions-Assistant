@@ -31,7 +31,7 @@ function harness() {
     const route = new URL(location.hash.slice(1), 'https://example.test')
     return { mainSection: 'dex', dexSearchMode: route.searchParams.get('dexTab'), dexSearch: route.searchParams.get('q'), dexUnifiedSearch: route.searchParams.get('uq'), dexSelectedValue: route.searchParams.get('sel') }
   }
-  const context = vm.createContext({ URL, URLSearchParams, window: { location, history }, dexSelectionId, parseViewStateFromUrl, lastSpeedLineRoute: { current: null }, setMainSection(){}, setLibrarySourceId(){}, setActiveTab(){}, setSampleWorkbenchTab(){}, setSelectedMy(){}, setSelectedOpp(){}, party: [], opponents: [], sanitizeSelectedIndex(){}, restoringDexRoute: { current: null }, siteLanguage: 'ko', hideHoverTooltip(){}, searchDisplayLabel: key => key === 'mega-alakazam' ? '메가후딘' : key,
+  const context = vm.createContext({ URL, URLSearchParams, window: { location, history }, dexSelectionId, parseViewStateFromUrl, lastSpeedLineRoute: { current: null }, setMainSection(){}, setLibrarySourceId(){}, setLibraryLanguage(){}, setLibraryFormat(){}, setLibraryQuery(){}, setLibraryContentKind(){}, setActiveTab(){}, setSampleWorkbenchTab(){}, setSelectedMy(){}, setSelectedOpp(){}, party: [], opponents: [], sanitizeSelectedIndex(){}, restoringDexRoute: { current: null }, restoringLibraryRoute: { current: null }, writeLibraryContext(){}, siteLanguage: 'ko', hideHoverTooltip(){}, searchDisplayLabel: key => key === 'mega-alakazam' ? '메가후딘' : key,
     setDexSearchMode: value => { state.mode = value }, setDexSearch(){}, setDexUnifiedSearchDraft: value => { state.query = value }, setDexUnifiedSearch(){}, setDexSelectedValue: value => { state.selection = value },
     React: { useCallback: fn => fn },
   })

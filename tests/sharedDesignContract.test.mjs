@@ -9,7 +9,7 @@ const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const partyStart = source.indexOf('const partySpeciesOptions = filterSpeciesOptions(')
 const party = source.slice(partyStart, source.indexOf('{row ? <><PokemonBuildFields', partyStart))
-const builderStart = source.indexOf("sampleWorkbenchTab === 'builder' ? <>")
+const builderStart = source.indexOf('id="sample-builder-section"')
 const builder = source.slice(builderStart, source.indexOf('<PokemonBuildFields key={`sample-', builderStart))
 const modalStart = source.indexOf("{sampleTuningModalOpen && mainSection === 'sample'")
 const modal = source.slice(modalStart, source.indexOf('<main className="grid">', modalStart))
@@ -23,9 +23,9 @@ test('Party and Builder mount the input-owning shared species picker and keep th
   assert.doesNotMatch(builder, /<input\b|<div className="autocomplete-menu/)
 })
 
-test('Builder mounts real effort modal only in Builder on matching species, with shared focus and Escape handling', () => {
+test('Research Lab mounts real effort modal in its editing screen on matching species', () => {
   assert.match(modal, /<EffortTuningModal/)
-  assert.match(modal, /mainSection === 'sample' && sampleWorkbenchTab === 'builder'/)
+  assert.match(modal, /mainSection === 'sample' && sampleWorkbenchTab !== 'library'/)
   assert.match(modal, /sampleTuningIdentity === sampleForge\.key/)
   assert.match(modal, /onEffort=\{\(key, value\) => setSampleForge/)
   assert.match(modal, /applyChampionsEffort/)
@@ -47,12 +47,10 @@ test('Common semantic tokens are consumed by actual navigation, actions, search 
   assert.match(css, /:disabled/)
 })
 
-test('quick calculation has no misleading workflow shell and Sample retains its tab links without duplicate heading', () => {
-  const shell = source.slice(source.indexOf("{(mainSection === 'double' || mainSection === 'sample')"), source.indexOf("{mainSection === 'speedLine' ? <SpeedLinePanel"))
-  assert.match(shell, /mainSection === 'double' \|\| mainSection === 'sample'/)
-  assert.match(shell, /mainSection === 'double' \? <div className="row-between section-head workflow-shell-head">/)
-  assert.match(shell, /mainSection === 'sample' \? \(/)
-  assert.match(shell, /href=\{`#\/sample-builder\?sampleTab=\$\{value\}`\}/)
+test('quick calculation and Sample do not render a redundant workflow shell or sample tabs', () => {
+  const shell = source.slice(source.indexOf("{mainSection === 'double' ? <section className=\"panel wide workflow-shell-panel\">"), source.indexOf("{mainSection === 'speedLine' ? <SpeedLinePanel"))
+  assert.match(shell, /mainSection === 'double'/)
+  assert.doesNotMatch(shell, /mainSection === 'sample'|sample-workbench-tab-/)
 })
 
 let server, Field, Modal

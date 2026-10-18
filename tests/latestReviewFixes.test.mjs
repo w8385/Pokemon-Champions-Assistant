@@ -33,7 +33,7 @@ test('comparison speed assumptions and nature travel with side, not role',()=>{
 })
 test('default single party starts with pair, not wizard; quick remains independent',()=>{
  assert.match(app,/mainSection === 'single'[^]*?unified-single-pair/)
- assert.match(app,/comparisonMode \? '대면비교' : '간단 대미지'/)
+ assert.match(app,/comparisonMode \? '대면' : '계산기'/)
  assert.match(app,/mainSection === 'single'[^]*?QuickDamagePanel/)
  assert.match(app,/href="#\/party"[^]*?내 파티 관리/)
 })

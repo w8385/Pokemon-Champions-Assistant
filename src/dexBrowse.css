@@ -1,0 +1,47 @@
+.dex-browse-grid.dex-results-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 245px), 1fr));
+  gap: 12px;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  scrollbar-gutter: auto;
+}
+.dex-browse-grid-status { grid-column: 1 / -1; }
+.dex-browse-grid .dex-browse-card {
+  min-width: 0;
+  min-height: 88px;
+  text-decoration: none;
+  align-content: start;
+  overflow-wrap: anywhere;
+}
+.dex-browse-grid .dex-browse-card:focus-visible,
+.dex-move-pool a:focus-visible,
+.dex-move-pool input:focus-visible,
+.dex-move-pool button:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 2px; }
+.dex-browse-grid .dex-browse-card[aria-disabled="true"] { opacity: .65; cursor: progress; }
+@media (max-width: 600px) {
+  .dex-browse-grid.dex-results-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dex-browse-grid .dex-browse-card { padding: 10px; }
+  .dex-browse-grid .dex-browse-card .dex-result-sprite { width: 42px; height: 42px; flex-basis: 42px; }
+  .dex-browse-grid .dex-browse-card .dex-pokemon-preview-row,
+  .dex-browse-grid .dex-browse-card .dex-move-preview-row { gap: 8px; }
+}
+@media (max-width: 350px) {
+  .dex-browse-grid.dex-results-list { grid-template-columns: minmax(0, 1fr); }
+}
+.dex-move-pool { min-width: 0; padding: 18px 0; }
+.dex-move-pool-heading h3 { margin: 0 0 8px; }
+.dex-move-pool-warning { margin: 0 0 12px; padding: 10px 12px; border: 1px solid #9a7133; border-radius: 8px; color: #f7dca8; background: rgba(120, 80, 22, .18); }
+.dex-move-pool-count { font-weight: 700; }
+.dex-move-pool-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 14px; }
+.dex-move-pool-filters label { display: grid; gap: 5px; min-width: min(100%, 140px); }
+.dex-move-pool-filters label:first-child { flex: 1 1 220px; }
+.dex-move-pool-filters input, .dex-move-pool-filters select { min-width: 0; width: 100%; min-height: 44px; border: 1px solid #64748b; border-radius: 8px; padding: 8px; background: #111b2c; color: #eef2f7; font: inherit; }
+.dex-move-pool-table-wrap { max-width: 100%; overflow-x: auto; }
+.dex-move-pool-table { width: 100%; min-width: 690px; border-collapse: collapse; font-size: 0.95rem; }
+.dex-move-pool-table th, .dex-move-pool-table td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; vertical-align: middle; }
+.dex-move-pool-table tbody th { font-weight: 600; }
+.dex-move-pool-link { display: inline-flex; align-items: center; min-height: 44px; color: #93c5fd; }
+.dex-move-pool-description { min-width: 170px; max-width: 360px; }
+.dex-move-pool button { min-height: 44px; padding: 8px 14px; cursor: pointer; }

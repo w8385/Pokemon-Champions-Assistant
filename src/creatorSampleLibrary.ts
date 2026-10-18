@@ -332,20 +332,20 @@ export const relatedCreatorParties: Record<string, CreatorSource> = {
 }
 
 export function filterCreatorSources(sources: CreatorSource[], filters: {
-  language: LibraryLanguage; format: LibraryFormat | 'all'; query: string; contentKind: ContentKind | 'all'
+  language: LibraryLanguage | 'all'; format: LibraryFormat | 'all'; query: string; contentKind: ContentKind | 'all'
 }): CreatorSource[] {
   const query = filters.query.trim().toLocaleLowerCase()
-  return sources.filter(source => (filters.contentKind === 'all' || source.contentKind === filters.contentKind) && source.language === filters.language &&
+  return sources.filter(source => (filters.contentKind === 'all' || source.contentKind === filters.contentKind) && (filters.language === 'all' || source.language === filters.language) &&
     (filters.format === 'all' || source.format === filters.format) &&
     (!query || [source.title, source.creator ?? '', ...source.members.flatMap(member => [member.pokemonKey, member.title])]
       .some(text => text.toLocaleLowerCase().includes(query))))
 }
 
 export function filterCreatorSamples<T extends { language: LibraryLanguage; format: LibraryFormat | null; pokemonKey: string; title: string; creator: string | null }>(
-  entries: T[], filters: { language: LibraryLanguage; format: LibraryFormat | 'all'; query: string },
+  entries: T[], filters: { language: LibraryLanguage | 'all'; format: LibraryFormat | 'all'; query: string },
 ): T[] {
   const query = filters.query.trim().toLocaleLowerCase()
-  return entries.filter((entry) => entry.language === filters.language && (filters.format === 'all' || entry.format === filters.format) &&
+  return entries.filter((entry) => (filters.language === 'all' || entry.language === filters.language) && (filters.format === 'all' || entry.format === filters.format) &&
     (!query || [entry.pokemonKey, entry.title, entry.creator ?? ''].some((text) => text.toLocaleLowerCase().includes(query))))
 }
 

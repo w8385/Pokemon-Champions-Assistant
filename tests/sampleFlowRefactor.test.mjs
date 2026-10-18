@@ -22,8 +22,8 @@ test('library uses one filtered visible list and a separate source detail', () =
   assert.ok(/librarySourceId/.test(app))
 })
 
-test('only builder, speed and damage render save and apply actions', () => {
-  assert.ok(/\{\['builder', 'speed', 'damage'\]\.includes\(sampleWorkbenchTab\) \? <section className="panel wide">\s*<div className="sample-builder-action-card">/.test(app))
+test('research lab keeps save and apply actions while library does not render them', () => {
+  assert.ok(/\{sampleWorkbenchTab !== 'library' \? <section className="panel wide">\s*<div className="sample-builder-action-card">/.test(app))
 })
 
 test('home sample builder card explicitly selects builder tab', () => {

@@ -5,8 +5,9 @@ const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
 test('library has navigable sample tab and route without replacing builder', () => {
   assert.match(app, /sampleTabParam === 'library'/)
-  assert.match(app, /\['library', lt\('샘플 라이브러리'\)\]/)
-  assert.match(app, /sampleWorkbenchTab === 'builder'/)
+  assert.match(app, /sampleWorkbenchTab === 'library' \? <div className="creator-library">/)
+  assert.match(app, /id="sample-builder-section"/)
+  assert.doesNotMatch(app, /sample-workbench-tab-\$\{value\}/)
 })
 test('link entry is explicitly partial and import is gated', () => {
   assert.match(app, /createLinkDraft\(linkDraftInput/)

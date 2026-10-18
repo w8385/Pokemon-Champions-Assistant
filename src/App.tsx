@@ -3,9 +3,10 @@ import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_M
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
-import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type ContentKind, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
+import { libraryDetailHref, libraryListHref, parseLibraryContext, writeLibraryContext, type LibraryViewContext } from './libraryViewRoute'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './quickDamageState'
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
@@ -29,6 +30,10 @@ import PokemonSearchField from './PokemonSearchField'
 import SearchCombobox from './SearchCombobox'
 import { searchMoves } from './moveSearch'
 import { resolveFormAwareMovePool } from './formAwareMovePool'
+import { DexBrowseGrid, type DexBrowseCard } from './DexBrowseGrid'
+import { DexMovePoolSection } from './DexMovePoolSection'
+import { loadDexGameLearnset, loadDexGameMoveLearners, DEX_GAME_LEARNSET_SOURCE, type DexLearnsetProvenance } from './dexGameLearnsets'
+import { dexDisplayMoveMeta, getDexGameMove, getDexGameMoveNames } from './dexGameMoveIndex'
 import { sourceBackedCardAbility } from './creatorCardAbility'
 import { confirmedCreatorEfforts } from './creatorConfirmedEfforts'
 import { PokemonBuildFields } from './PokemonBuildFields'
@@ -41,7 +46,7 @@ import { additionalFormSpecs, championsData } from './effectiveRoster'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
-import { abilityDescriptionFor, getDexDescriptionsSync, getItemIndexSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './dex/data'
+import { abilityDescriptionFor, getDexDescriptionsSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './dex/data'
 
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
@@ -137,7 +142,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 속도 조정': 'Adjust my Speed', '상대 속도 조정': 'Adjust opponent Speed', '속도 보정 기준': 'Speed calculation basis', '양쪽 상태·랭크·장막 없음': 'No status, stages or screens on either side',
     '대면 가정 · 저장 기록 미변경': 'Matchup assumption · saved records unchanged', '가정의 출처와 한계': 'Assumptions and limits', '계산 한계': 'Calculation limits', '계산 조건': 'Calculation conditions', '계산 조건 바꾸기': 'Adjust calculation conditions', '상태·랭크·장막 없음': 'No status, stages or screens', '기술 등록 →': 'Register a move →', '기술을 등록하거나 선택하세요.': 'Register or select a move.', '양쪽 포켓몬을 선택하세요.': 'Choose both Pokémon.', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'This move is unsupported under current conditions or is a status move.', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in My Party.', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in Opponent Entry.',
     '대면비교': 'Matchup Comparison', '비교 불가': 'Cannot compare', '원본 특성 미확인': 'Unresolved source ability', '종·폼 검색': 'Search species or form', '엔트리 저장': 'Save entry', '변경 취소': 'Cancel changes', '저장 전 변경 · 대면 가정은 저장되지 않음': 'Unsaved entry changes · battle assumptions are temporary', '저장된 엔트리 · 전투 가정은 임시': 'Saved entry · battle assumptions are temporary', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': 'Same-species slots share moves. Move edits affect all of them.', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': 'Opponent full nature and offense effort unknown; recorded Def/Sp. Def modifiers apply. Modal edits affect only this matchup.', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': 'Full nature is a matchup assumption, not the saved entry; offense effort unknown and assumed zero.', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'Entry-backed · changes to assumptions do not edit saved entries', '속도 성격 가정': 'Speed nature assumption', '스카프 시나리오': 'Scarf scenario', '(전제 조건 미충족 · 미적용)': '(Prerequisite unmet · not applied)', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'Unburden requires no currently held item.',
-    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information',
+    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '링크 지역': 'Link region',
     '선택 기술 상세': 'Selected move details', '속도 가정 조정': 'Adjust Speed assumptions',
     '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
     '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
@@ -184,7 +189,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 속도 조정': '自分の素早さを調整', '상대 속도 조정': '相手の素早さを調整', '속도 보정 기준': '素早さの計算根拠', '양쪽 상태·랭크·장막 없음': '両側とも状態・ランク・壁なし',
     '대면 가정 · 저장 기록 미변경': '対面上の想定・保存記録は変更なし', '가정의 출처와 한계': '想定の根拠と限界', '계산 한계': '計算の限界', '계산 조건': '計算条件', '계산 조건 바꾸기': '計算条件を変更', '상태·랭크·장막 없음': '状態・ランク・壁なし', '기술 등록 →': '技を登録 →', '기술을 등록하거나 선택하세요.': '技を登録または選択してください。', '양쪽 포켓몬을 선택하세요.': '両方のポケモンを選択してください。', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'この技は現在の条件では非対応か変化技です。', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': '空き枠：自分のパーティでポケモンを登録してください。', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': '空き枠：相手エントリーでポケモンを登録してください。',
     '대면비교': '対面比較', '비교 불가': '比較不可', '원본 특성 미확인': '原典の特性未解決', '종·폼 검색': '種族・フォルムを検索', '엔트리 저장': 'エントリーを保存', '변경 취소': '変更を取り消す', '저장 전 변경 · 대면 가정은 저장되지 않음': '未保存の変更・対面上の想定は保存されません', '저장된 엔트리 · 전투 가정은 임시': '保存済みエントリー・戦闘上の想定は一時的', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': '同じ種族のスロットは技を共有します。技の変更はすべてに適用されます。', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': '相手の性格全体と攻撃努力は不明。記録された防御・特防補正を適用し、モーダルの変更はこの対面のみに反映します。', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': '性格全体は対面上の想定で、保存済みエントリーとは異なります。攻撃努力は不明で0と想定します。', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'エントリーに基づく・想定の変更は保存済みエントリーに反映されません', '속도 성격 가정': '素早さ性格の想定', '스카프 시나리오': 'スカーフ想定', '(전제 조건 미충족 · 미적용)': '（発動条件を満たさず・適用なし）', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'かるわざ発動には現在持ち物がない必要があります。',
-    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報',
+    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報', '대면': '対面', '계산기': '計算機', '스피드라인': '素早さライン', '샘플 연구소': 'サンプル研究所', '링크 지역': 'リンクの地域',
     '선택 기술 상세': '選択した技の詳細', '속도 가정 조정': '素早さの計算条件',
     '연속기는 기절 확률 계산 제외': '連続技のひんし確率は計算対象外', '간단 대미지': '簡易ダメージ', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': '攻撃側と防御側を選んで技のダメージをすぐ比較します。', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'パーティと相手エントリーを変更しない独立した計算です。', '공수 교체': '攻守を交換', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Lv.50・個体値31・性格補正なし・チャンピオンズ努力0/32・持ち物と特性なし。実数値入力は計算値を上書きします。', '포켓몬을 선택하세요.': 'ポケモンを選択してください。', '특성 없음': '特性なし', '노력 포인트': '努力ポイント', '사용 가능 공격 기술': '使用可能な攻撃技', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': '確認済みの攻撃技データがありません。推測技は表示しません。', '대미지 결과': 'ダメージ結果', '1타 확률': '一撃確率', '16개 난수 피해': '16個の乱数ダメージ', '실수치는 1~999의 정수로 입력하세요.': '実数値には1～999の整数を入力してください。', '공격측·방어측과 기술을 선택하세요.': '攻撃側・防御側と技を選んでください。', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': '選択していない発動条件・変動威力・回復・命中率は計算しません。連続技の乱数は既存エンジンで同じ乱数を各ヒットに使用します。',
     '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
@@ -1346,7 +1351,7 @@ function megaToggleLabel(key: string, language: SiteLanguage) {
 
 async function loadEmbeddedMovePools() {
   if (!embeddedMovePoolsPromise) {
-    embeddedMovePoolsPromise = import('./championsMovePools.json').then((module) => module.default as Record<string, MoveOption[]>)
+    embeddedMovePoolsPromise = import('./championsMovePools.json').then((module) => module.default as Record<string, MoveOption[]>).catch(error => { embeddedMovePoolsPromise = null; throw error })
   }
   return embeddedMovePoolsPromise
 }
@@ -1726,11 +1731,13 @@ function parseViewStateFromUrl(): ViewState | null {
     const selectedMy = routeUrl.searchParams.get('my') !== null ? Number(routeUrl.searchParams.get('my')) : undefined
     const selectedOpp = routeUrl.searchParams.get('opp') !== null ? Number(routeUrl.searchParams.get('opp')) : undefined
     const librarySourceId = routePath.startsWith('/sample-library/') ? decodeURIComponent(routePath.slice('/sample-library/'.length)) : null
+    const libraryContext = parseLibraryContext(routeUrl.searchParams, librarySourceId)
     const speedLineUrl = routePath === '/speed-line' ? parseSpeedLineState(routeUrl.searchParams) : undefined
     return { mainSection: mainSection ?? normalizedRoute.section, activeTab: mainSection === 'single' || mainSection === 'double' ? normalizedRoute.tab as MainTab : activeTab,
       speedLineState: speedLineUrl?.state, speedLineWarnings: speedLineUrl?.warnings,
       sampleWorkbenchTab: normalizedRoute.section === 'sample' ? normalizedRoute.tab as SampleWorkbenchTab : sampleWorkbenchTab,
-      librarySourceId,
+      librarySourceId, libraryLanguage: libraryContext.language, libraryFormat: libraryContext.format,
+      libraryQuery: libraryContext.query, libraryContentKind: libraryContext.kind,
       dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp }
   } catch {
     return null
@@ -1743,6 +1750,10 @@ function syncViewStateToUrl(viewState: ViewState) {
   const routePath = viewState.mainSection === 'quickDamage' ? '/damage' : viewState.mainSection === 'sample' ? viewState.sampleWorkbenchTab === 'library' && viewState.librarySourceId ? `/sample-library/${encodeURIComponent(viewState.librarySourceId)}` : '/sample-builder' : viewState.mainSection === 'single' ? '/single' : viewState.mainSection === 'party' ? '/party' : viewState.mainSection === 'double' ? '/double' : viewState.mainSection === 'dex' ? '/dex' : viewState.mainSection === 'speedLine' ? '/speed-line' : '/'
   if (viewState.mainSection === 'double' && viewState.activeTab) params.set('tab', viewState.activeTab)
   if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab && !viewState.librarySourceId) params.set('sampleTab', viewState.sampleWorkbenchTab)
+  if (viewState.mainSection === 'sample' && viewState.sampleWorkbenchTab === 'library') writeLibraryContext(params, {
+    language: viewState.libraryLanguage ?? 'all', format: viewState.libraryFormat ?? 'all',
+    query: viewState.libraryQuery ?? '', kind: viewState.libraryContentKind ?? 'party',
+  })
   if (viewState.mainSection === 'dex' && viewState.dexSearchMode) params.set('dexTab', viewState.dexSearchMode)
   if (viewState.mainSection === 'dex' && viewState.dexSearch) params.set('q', viewState.dexSearch)
   if (viewState.mainSection === 'dex' && viewState.dexUnifiedSearch) params.set('uq', viewState.dexUnifiedSearch)
@@ -1754,7 +1765,7 @@ function syncViewStateToUrl(viewState: ViewState) {
   if ((window.location.hash.replace(/^#/, '') || '/') === nextHash) return
   const url = new URL(window.location.href)
   url.hash = nextHash
-  window.history.replaceState(null, '', url)
+  window.history.replaceState(window.history.state, '', url)
 }
 
 function pushDexDetailHistory(mode: DexSearchMode, query: string, selection: string) {
@@ -3191,21 +3202,16 @@ function itemTooltipData(itemName: string, language: SiteLanguage): HoverTooltip
   }
 }
 
-async function dexMoveLearnerRows(name: string) {
-  const embeddedMovePools = await loadEmbeddedMovePools()
-  const learnerRows = rows.filter((row) => {
-    return resolveFormAwareMovePool(row.key, relatedMovePoolKeys(row.key), embeddedMovePools).some((move) => move.name === name)
-  })
-  return learnerRows.sort((a, b) => displayName(a, 'ko').localeCompare(displayName(b, 'ko'), 'ko'))
-}
-
 function moveSearchCandidates(name: string) {
   const candidates = moveNameCandidates(name)
   return Array.from(new Set(candidates.flatMap((entry) => [entry, normalizeSearchText(entry)])))
 }
 
 function dexMoveIndex() {
-  return Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => ({ key: name, name, meta, candidates: moveSearchCandidates(name) }))
+  const names = new Set([...getDexGameMoveNames(), ...Object.keys(MOVE_META_BY_NAME)])
+  return [...names].map(name => ({
+    key: name, name, meta: dexDisplayMoveMeta(name, MOVE_META_BY_NAME[name])!, candidates: moveSearchCandidates(name),
+  }))
 }
 
 function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean }) {
@@ -4136,8 +4142,8 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       {([['burned','화상'],['lowHp','HP 1/3 이하'],['poisoned','독/맹독'],['fullHp','HP 100%'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
     </fieldset>
   }
-  return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면비교' : '간단 대미지')}>
-    <div className="row-between"><h2>{lt(comparisonMode ? '대면비교' : '간단 대미지')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
+  return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
+    <div className="row-between"><h2>{lt(comparisonMode ? '대면' : '계산기')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }}>{lt('상대 엔트리 초기화')}</button>)}
     <div className="quick-comparison-results">
       {speedStrip}
@@ -4348,11 +4354,13 @@ export default function App() {
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? ((persisted?.sampleWorkbenchTab as string) === 'rankers' ? 'library' : ['builder','speed','damage','library'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
   const [librarySourceId, setLibrarySourceId] = React.useState<string | null>(() => viewState?.librarySourceId ?? null)
   const libraryScrollRef = React.useRef<number | null>(null)
-  const [libraryLanguage, setLibraryLanguage] = React.useState<LibraryLanguage>('ko')
-  const [libraryFormat, setLibraryFormat] = React.useState<LibraryFormat | 'all'>('all')
-  const [libraryContentKind, setLibraryContentKind] = React.useState<ContentKind>(() => viewState?.librarySourceId?.startsWith('individual:') ? 'pokemon' : 'party')
+  const restoringLibraryRoute = React.useRef<LibraryViewContext & { sourceId: string | null } | null>(null)
+  const [libraryLanguage, setLibraryLanguage] = React.useState<LibraryLanguage | 'all'>(() => viewState?.libraryLanguage ?? 'all')
+  const [libraryFormat, setLibraryFormat] = React.useState<LibraryFormat | 'all'>(() => viewState?.libraryFormat ?? 'all')
+  const [libraryContentKind, setLibraryContentKind] = React.useState<'party' | 'pokemon'>(() => viewState?.libraryContentKind ?? 'party')
   const [draftFormat, setDraftFormat] = React.useState<LibraryFormat>('singles')
-  const [libraryQuery, setLibraryQuery] = React.useState('')
+  const [draftLanguage, setDraftLanguage] = React.useState<LibraryLanguage>('ko')
+  const [libraryQuery, setLibraryQuery] = React.useState(() => viewState?.libraryQuery ?? '')
   const [creatorMegaSelection, setCreatorMegaSelection] = React.useState<Record<string, boolean>>({})
   const [linkDraftInput, setLinkDraftInput] = React.useState('')
   const [linkDraftError, setLinkDraftError] = React.useState(false)
@@ -4368,14 +4376,13 @@ export default function App() {
   const sampleTuningOpener = React.useRef<HTMLElement | null>(null)
   React.useEffect(() => {
     setSampleTuningModalOpen(false)
-  }, [mainSection, sampleWorkbenchTab, sampleForge.key])
+  }, [mainSection, sampleWorkbenchTab === 'library', sampleForge.key])
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [sampleDamageConditionsCollapsed, setSampleDamageConditionsCollapsed] = React.useState(true)
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
   const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [sampleItemDraft, setSampleItemDraft] = React.useState(() => displayItemLabel(visibleChampionsItem((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, (persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).item), 'ko'))
-  const [dexMoveLearners, setDexMoveLearners] = React.useState<Row[]>([])
-  const [dexMoveLearnersStatus, setDexMoveLearnersStatus] = React.useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
+  const [dexMoveLearnerResult, setDexMoveLearnerResult] = React.useState<{ name: string; status: 'loading' | 'ready' | 'missing' | 'error'; keys: string[] } | null>(null)
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
   const [asyncDataVersion, setAsyncDataVersion] = React.useState(0)
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -4449,47 +4456,86 @@ export default function App() {
     if (dexSearchMode === 'ability') return dexAbilityOptions.map((option) => option.key)
     return dexItemOptions
   }, [dexAbilityOptions, dexCategoryResults, dexItemOptions, dexMoveOptions, dexSearchMode, dexSpeciesOptions, hasDexUnifiedSearch])
-  const dexSelectedAllResult = React.useMemo(() => {
-    if (!hasDexUnifiedSearch || !dexSelectedValue || dexQueryPending) return null
-    if (parseDexSelectionId(dexSelectedValue)?.kind !== dexSearchMode) return null
-    const direct = dexCategoryResults.find((result) => result.id === dexSelectedValue)
-    if (direct) return direct
+  // An explicit URL selection is canonical; search results are only a browsing projection.
+  const dexSelectedAllResult = React.useMemo<DexResultItem | null>(() => {
+    if (!dexSelectedValue) return null
     const parsed = parseDexSelectionId(dexSelectedValue)
-    if (!parsed) return null
-    if (parsed.kind === 'pokemon') {
-      const row = indexByKey.get(parsed.key)
-      return row ? { id: dexSelectionId('pokemon', parsed.key), kind: 'pokemon' as const, key: parsed.key, row, score: 0 } : null
+    const kind = parsed?.kind ?? dexSearchMode
+    const key = parsed?.key ?? dexSelectedValue
+    if (kind !== dexSearchMode) return null
+    if (kind === 'pokemon') {
+      const row = indexByKey.get(key)
+      return row ? { id: dexSelectionId(kind, key), kind, key, row, score: 0 } : null
     }
-    if (parsed.kind === 'move') {
-      const meta = MOVE_META_BY_NAME[parsed.key]
-      return meta ? { id: dexSelectionId('move', parsed.key), kind: 'move' as const, key: parsed.key, name: parsed.key, meta, score: 0 } : null
+    if (kind === 'move') {
+      const meta = dexDisplayMoveMeta(key, MOVE_META_BY_NAME[key])
+      return meta ? { id: dexSelectionId(kind, key), kind, key, name: key, meta, score: 0 } : null
     }
-    if (parsed.kind === 'ability') {
-      const resolved = ABILITY_INDEX.byKey.get(parsed.key)
-      return resolved ? { id: dexSelectionId('ability', parsed.key), kind: 'ability' as const, key: resolved.key, koLabel: resolved.koLabel, pokemonKeys: resolved.pokemonKeys, score: 0 } : null
+    if (kind === 'ability') {
+      const ability = ABILITY_INDEX.byKey.get(key)
+      return ability ? { id: dexSelectionId(kind, key), kind, key, koLabel: ability.koLabel, pokemonKeys: ability.pokemonKeys, score: 0 } : null
     }
-    const itemIndex = getItemIndexSync()
-    return itemIndex?.byKey.has(parsed.key)
-      ? { id: dexSelectionId('item', parsed.key), kind: 'item' as const, key: parsed.key, item: parsed.key, previewText: '', score: 0 }
+    const canonicalItem = canonicalChampionsItemName(key)
+    return CHAMPIONS_ITEM_OPTIONS.includes(canonicalItem as ChampionsItem) || resolveItemInfo(key)
+      ? { id: dexSelectionId(kind, key), kind, key, item: key, previewText: '', score: 0 }
       : null
-  }, [dexCategoryResults, dexSearchMode, dexQueryPending, dexSelectedValue, hasDexUnifiedSearch])
-  const dexSelectedRow = dexQueryPending ? null : dexSelectedAllResult?.kind === 'pokemon'
-    ? dexSelectedAllResult.row
-    : dexSearchMode === 'pokemon' && dexSelectedValue
-      ? (indexByKey.get(dexSelectedValue) ?? null)
-      : null
-  const dexSelectedMove = dexQueryPending ? null : dexSelectedAllResult?.kind === 'move'
-    ? { key: dexSelectedAllResult.key, name: dexSelectedAllResult.name, meta: dexSelectedAllResult.meta }
-    : dexSearchMode === 'move' && dexSelectedValue
-      ? (dexMoveOptions.find((option) => option.key === dexSelectedValue) ?? (MOVE_META_BY_NAME[dexSelectedValue] ? { key: dexSelectedValue, name: dexSelectedValue, meta: MOVE_META_BY_NAME[dexSelectedValue] } : null))
-      : null
+  }, [dexSearchMode, dexSelectedValue, asyncDataVersion])
+  const dexSelectedRow = dexSelectedAllResult?.kind === 'pokemon' ? dexSelectedAllResult.row : null
+  const dexSelectedMove = dexSelectedAllResult?.kind === 'move'
+    ? { key: dexSelectedAllResult.key, name: dexSelectedAllResult.name, meta: dexSelectedAllResult.meta } : null
   const dexSelectedMoveName = dexSelectedMove?.name ?? ''
-  const dexSelectedAbility = dexQueryPending ? null : dexSelectedAllResult?.kind === 'ability'
-    ? { key: dexSelectedAllResult.key, koLabel: dexSelectedAllResult.koLabel, pokemonKeys: dexSelectedAllResult.pokemonKeys }
-    : dexSearchMode === 'ability' && dexSelectedValue
-      ? (dexAbilityOptions.find((option) => option.key === dexSelectedValue) ?? null)
-      : null
-  const dexSelectedItem = dexQueryPending ? null : dexSelectedAllResult?.kind === 'item' ? dexSelectedAllResult.item : dexSearchMode === 'item' && dexSelectedValue ? dexSelectedValue : null
+  const dexMoveLearnersStatus = !dexSelectedMoveName ? 'idle' : dexMoveLearnerResult?.name === dexSelectedMoveName ? dexMoveLearnerResult.status : 'loading'
+  const dexMoveLearners = dexMoveLearnerResult?.name === dexSelectedMoveName && dexMoveLearnerResult.status === 'ready'
+    ? dexMoveLearnerResult.keys.map(key => indexByKey.get(key)).filter((row): row is Row => Boolean(row))
+      .sort((a, b) => displayName(a, 'ko').localeCompare(displayName(b, 'ko'), 'ko')) : []
+  const dexSelectedAbility = dexSelectedAllResult?.kind === 'ability'
+    ? { key: dexSelectedAllResult.key, koLabel: dexSelectedAllResult.koLabel, pokemonKeys: dexSelectedAllResult.pokemonKeys } : null
+  const dexSelectedItem = dexSelectedAllResult?.kind === 'item' ? dexSelectedAllResult.item : null
+  const dexListHref = React.useMemo(() => {
+    const params = new URLSearchParams()
+    params.set('dexTab', dexSearchMode)
+    if (dexUnifiedSearchDraft.trim()) { params.set('q', dexUnifiedSearchDraft.trim()); params.set('uq', dexUnifiedSearchDraft.trim()) }
+    return `#/dex?${params}`
+  }, [dexSearchMode, dexUnifiedSearchDraft])
+  const dexDetailHref = (kind: DexSearchMode, key: string) => {
+    const params = new URLSearchParams(dexListHref.split('?')[1])
+    params.set('dexTab', kind)
+    params.set('sel', dexSelectionId(kind, key))
+    return `#/dex?${params}`
+  }
+  const dexBrowseResults = React.useMemo<DexResultItem[]>(() => {
+    if (hasDexUnifiedSearch) return dexCategoryResults
+    if (dexSearchMode === 'pokemon') return dexSpeciesOptions.flatMap((option, score) => {
+      const row = indexByKey.get(option.key)
+      return row ? [{ id: dexSelectionId('pokemon', option.key), kind: 'pokemon' as const, key: option.key, row, score }] : []
+    })
+    if (dexSearchMode === 'move') return dexMoveOptions.map((option, score) => ({ id: dexSelectionId('move', option.key), kind: 'move' as const, key: option.key, name: option.name, meta: option.meta, score }))
+    if (dexSearchMode === 'ability') return dexAbilityOptions.map((option, score) => ({ id: dexSelectionId('ability', option.key), kind: 'ability' as const, key: option.key, koLabel: option.koLabel, pokemonKeys: option.pokemonKeys, score }))
+    return dexItemOptions.map((item, score) => ({ id: dexSelectionId('item', item), kind: 'item' as const, key: item, item, previewText: localizedDexText(itemDescriptionFor(item), siteLanguage)?.summary ?? '', score }))
+  }, [hasDexUnifiedSearch, dexCategoryResults, dexSearchMode, dexSpeciesOptions, dexMoveOptions, dexAbilityOptions, dexItemOptions, siteLanguage])
+  const dexBrowseCards = React.useMemo<DexBrowseCard[]>(() => dexBrowseResults.map(result => {
+    const href = dexDetailHref(result.kind, result.key)
+    if (result.kind === 'pokemon') return { id: result.id, href, kind: result.kind, label: searchDisplayLabel(result.key, siteLanguage), secondaryLabel: result.row.name_en, sprite: result.row.sprite, types: result.row.types }
+    if (result.kind === 'move') return { id: result.id, href, kind: result.kind, label: result.name, types: result.meta.type ? [result.meta.type] : [], metaText: `${displayTypeName(result.meta.type, siteLanguage)} · ${result.meta.category == null ? lt('미확인') : displayMoveCategoryName(result.meta.category, siteLanguage)}${result.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(result.meta)}` : ''}${result.meta.pp != null ? ` · PP ${result.meta.pp}` : ''}` }
+    if (result.kind === 'ability') return { id: result.id, href, kind: result.kind, label: abilityDisplayName(result.key, result.koLabel, siteLanguage), metaText: `${result.pokemonKeys.length}${siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}`, pokemonSprites: result.pokemonKeys.flatMap(key => { const row = indexByKey.get(key); return row?.sprite ? [{key, src: row.sprite}] : [] }) }
+    return { id: result.id, href, kind: result.kind, label: displayItemLabel(result.item, siteLanguage), secondaryLabel: result.previewText, sprite: itemSpriteSrc('', result.item) }
+  }), [dexBrowseResults, siteLanguage, dexListHref, lt])
+  const [dexPoolByKey, setDexPoolByKey] = React.useState<Record<string, {status: 'loading' | 'ready' | 'error' | 'missing'; moves: MoveOption[]; provenance: DexLearnsetProvenance}>>({})
+
+  React.useEffect(() => {
+    const key = mainSection === 'dex' ? dexSelectedRow?.key : undefined
+    if (!key || (dexPoolByKey[key] && dexPoolByKey[key].status !== 'loading')) return
+    let cancelled = false
+    setDexPoolByKey(prev => ({ ...prev, [key]: {status: 'loading', moves: [], provenance: DEX_GAME_LEARNSET_SOURCE} }))
+    void loadDexGameLearnset(key).then(result => {
+      if (cancelled) return
+      setDexPoolByKey(prev => ({ ...prev, [key]: result }))
+    }).catch(() => { if (!cancelled) setDexPoolByKey(prev => ({ ...prev, [key]: {status: 'error', moves: [], provenance: DEX_GAME_LEARNSET_SOURCE} })) })
+    return () => { cancelled = true }
+    // Route/key alone control requests. Failed module imports need an explicit page reload.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainSection, dexSelectedRow?.key])
+  const dexSelectedPool = dexSelectedRow ? dexPoolByKey[dexSelectedRow.key] : undefined
   const dexTopMoves = React.useMemo(() => dexSelectedRow ? usageTopMovesForKey(dexSelectedRow.key, 10) : [], [asyncDataVersion, dexSelectedRow])
   const dexSelectedMoveDescription = React.useMemo(() => dexSelectedMove ? moveDescriptionFor(dexSelectedMove.name) : null, [dexSelectedMove])
   const dexSelectedAbilityDescription = React.useMemo(() => dexSelectedAbility ? abilityDescriptionFor(dexSelectedAbility.key) : null, [dexSelectedAbility])
@@ -4538,27 +4584,19 @@ export default function App() {
 
   React.useEffect(() => {
     let cancelled = false
-    if (!dexSelectedMoveName) {
-      setDexMoveLearners([])
-      setDexMoveLearnersStatus('idle')
-      return
-    }
-    setDexMoveLearnersStatus('loading')
-    dexMoveLearnerRows(dexSelectedMoveName)
-      .then((rows) => {
+    if (mainSection !== 'dex' || !dexSelectedMoveName) return
+    setDexMoveLearnerResult({ name: dexSelectedMoveName, status: 'loading', keys: [] })
+    loadDexGameMoveLearners(dexSelectedMoveName)
+      .then((result) => {
         if (cancelled) return
-        setDexMoveLearners(rows)
-        setDexMoveLearnersStatus('ready')
+        setDexMoveLearnerResult({ name: dexSelectedMoveName, status: result.status, keys: result.keys })
       })
       .catch(() => {
         if (cancelled) return
-        setDexMoveLearners([])
-        setDexMoveLearnersStatus('error')
+        setDexMoveLearnerResult({ name: dexSelectedMoveName, status: 'error', keys: [] })
       })
-    return () => {
-      cancelled = true
-    }
-  }, [dexSelectedMoveName])
+    return () => { cancelled = true }
+  }, [mainSection, dexSelectedMoveName])
 
   const hideHoverTooltip = React.useCallback(() => setHoverTooltip(null), [])
   const showHoverTooltipAtElement = React.useCallback((element: HTMLElement, card: HoverTooltipCard | null | undefined) => {
@@ -4587,30 +4625,25 @@ export default function App() {
     }
   }, [])
 
-  React.useEffect(() => {
-    const restoring = restoringDexRoute.current
-    if (restoring && mainSection === 'dex') {
-      if (dexSearchMode !== restoring.mode || dexUnifiedSearchDraft !== restoring.query
-        || dexUnifiedSearch !== restoring.query || deferredDexSearch !== restoring.query
-        || deferredDexUnifiedSearch !== restoring.query || dexSelectedValue !== restoring.selection) return
-      // Only validate selection against the results for the restored query,
-      // never against the previous category's deferred list.
-      restoringDexRoute.current = null
-    }
-    if (dexQueryPending) return
-    // A deep-linked detail can precede lazy move/item catalog loading. Keep its
-    // URL selection until the first catalog load resolves rather than picking
-    // the first result from a transiently incomplete list.
-    if (dexSelectedValue && parseDexSelectionId(dexSelectedValue)?.kind === dexSearchMode && asyncDataVersion === 0) return
-    if (!dexResultKeys.length) {
-      if (dexSelectedValue !== null) setDexSelectedValue(null)
-      return
-    }
-    if (!dexSelectedValue || !dexResultKeys.includes(dexSelectedValue)) {
-      setDexSelectedValue(dexResultKeys[0])
-    }
-  }, [mainSection, dexSearchMode, dexQueryPending, dexUnifiedSearchDraft, dexUnifiedSearch, deferredDexSearch, deferredDexUnifiedSearch, dexResultKeys, dexSelectedValue, asyncDataVersion])
-
+  const navigateDexCard = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented || dexQueryPending) return
+    event.preventDefault()
+    const parsed = parseDexSelectionId(id)
+    if (!parsed) return
+    const url = new URL(event.currentTarget.href)
+    window.history.replaceState({ ...window.history.state, dexListScroll: window.scrollY }, '', window.location.href)
+    window.history.pushState({ ...window.history.state, dexFromList: true }, '', url)
+    restoringDexRoute.current = { mode: parsed.kind, query: dexUnifiedSearchDraft.trim(), selection: id }
+    setDexSelectedValue(id)
+  }
+  const navigateDexBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return
+    event.preventDefault()
+    if (window.history.state?.dexFromList) { window.history.back(); return }
+    restoringDexRoute.current = { mode: dexSearchMode, query: dexUnifiedSearchDraft.trim(), selection: null }
+    window.history.pushState(null, '', event.currentTarget.href)
+    setDexSelectedValue(null)
+  }
   const openDexPokemonDetail = React.useCallback((key: string) => {
     hideHoverTooltip()
     const nextLabel = searchDisplayLabel(key, siteLanguage)
@@ -5277,6 +5310,18 @@ export default function App() {
       if (route.activeTab) setActiveTab(route.activeTab)
       if (route.sampleWorkbenchTab) setSampleWorkbenchTab(route.sampleWorkbenchTab)
       setLibrarySourceId(route.librarySourceId ?? null)
+      restoringLibraryRoute.current = route.mainSection === 'sample' && route.sampleWorkbenchTab === 'library'
+        ? { sourceId: route.librarySourceId ?? null, language: route.libraryLanguage ?? 'all',
+          format: route.libraryFormat ?? 'all', query: route.libraryQuery ?? '', kind: route.libraryContentKind ?? 'party' }
+        : null
+      setLibraryLanguage(route.libraryLanguage ?? 'all')
+      setLibraryFormat(route.libraryFormat ?? 'all')
+      setLibraryQuery(route.libraryQuery ?? '')
+      setLibraryContentKind(route.libraryContentKind ?? 'party')
+      if (route.mainSection === 'sample' && route.sampleWorkbenchTab === 'library' && !route.librarySourceId) {
+        const scroll = window.history.state?.libraryScroll
+        if (typeof scroll === 'number' && Number.isFinite(scroll)) libraryScrollRef.current = scroll
+      }
       restoringDexRoute.current = route.mainSection === 'dex'
         ? { mode: route.dexSearchMode ?? 'pokemon', query: route.dexUnifiedSearch ?? route.dexSearch ?? '', selection: route.dexSelectedValue ?? null }
         : null
@@ -5285,6 +5330,10 @@ export default function App() {
       setDexUnifiedSearch(route.dexUnifiedSearch ?? route.dexSearch ?? '')
       setDexUnifiedSearchDraft(route.dexUnifiedSearch ?? route.dexSearch ?? '')
       setDexSelectedValue(route.dexSelectedValue ?? null)
+      if (route.mainSection === 'dex' && !route.dexSelectedValue && typeof window.history.state?.dexListScroll === 'number') {
+        const scroll = window.history.state.dexListScroll
+        requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: scroll, behavior: 'auto' })))
+      }
       if (route.selectedMy !== undefined) setSelectedMy(sanitizeSelectedIndex(route.selectedMy, party.length))
       if (route.selectedOpp !== undefined) setSelectedOpp(sanitizeSelectedIndex(route.selectedOpp, opponents.length))
     }
@@ -5301,11 +5350,19 @@ export default function App() {
         || deferredDexUnifiedSearch !== restoring.query || dexSelectedValue !== restoring.selection) return
       restoringDexRoute.current = null
     }
+    const restoringLibrary = restoringLibraryRoute.current
+    if (restoringLibrary && mainSection === 'sample') {
+      if (sampleWorkbenchTab !== 'library' || librarySourceId !== restoringLibrary.sourceId
+        || libraryLanguage !== restoringLibrary.language || libraryFormat !== restoringLibrary.format
+        || libraryQuery !== restoringLibrary.query || libraryContentKind !== restoringLibrary.kind) return
+      restoringLibraryRoute.current = null
+    }
     syncViewStateToUrl({
       mainSection,
       activeTab: mainSection === 'single' || mainSection === 'double' ? activeTab : undefined,
       sampleWorkbenchTab: mainSection === 'sample' ? sampleWorkbenchTab : undefined,
       librarySourceId: mainSection === 'sample' && sampleWorkbenchTab === 'library' ? librarySourceId : null,
+      libraryLanguage, libraryFormat, libraryQuery, libraryContentKind,
       dexSearchMode: mainSection === 'dex' ? dexSearchMode : undefined,
       dexSearch: mainSection === 'dex' ? deferredDexSearch.trim() : undefined,
       dexUnifiedSearch: mainSection === 'dex' ? deferredDexUnifiedSearch.trim() : undefined,
@@ -5314,20 +5371,25 @@ export default function App() {
       selectedOpp,
       speedLineState: mainSection === 'speedLine' ? speedLineState : undefined,
     })
-  }, [mainSection, activeTab, sampleWorkbenchTab, librarySourceId, dexSearchMode, dexUnifiedSearchDraft, dexUnifiedSearch, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp, speedLineState])
+  }, [mainSection, activeTab, sampleWorkbenchTab, librarySourceId, libraryLanguage, libraryFormat, libraryQuery, libraryContentKind, dexSearchMode, dexUnifiedSearchDraft, dexUnifiedSearch, deferredDexSearch, deferredDexUnifiedSearch, dexSelectedValue, selectedMy, selectedOpp, speedLineState])
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode])
   React.useEffect(() => {
+    if (mainSection !== 'sample' || sampleWorkbenchTab === 'library' || librarySourceId) return
+    const target = sampleWorkbenchTab === 'speed' ? 'sample-speed-section' : sampleWorkbenchTab === 'damage' ? 'sample-damage-section' : null
+    if (target) requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }))
+  }, [mainSection, sampleWorkbenchTab, librarySourceId])
+  React.useEffect(() => {
     if (librarySourceId) window.scrollTo({ top: 0, behavior: 'auto' })
-    else if (libraryScrollRef.current !== null) {
+    else if (mainSection === 'sample' && sampleWorkbenchTab === 'library' && libraryScrollRef.current !== null) {
       const previous = libraryScrollRef.current
       libraryScrollRef.current = null
-      requestAnimationFrame(() => window.scrollTo({ top: previous, behavior: 'auto' }))
+      requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: previous, behavior: 'auto' })))
     }
-  }, [librarySourceId])
+  }, [librarySourceId, mainSection, sampleWorkbenchTab])
 
   const myMember = party[selectedMy] ?? party[0]
   const oppMember = opponents[selectedOpp] ?? opponents[0]
@@ -7066,6 +7128,7 @@ export default function App() {
   }
 
   const librarySource = librarySourceId ? [...groupCreatorSources(catalog), ...individualCreatorSources(catalog)].find(source => source.id === librarySourceId) : null
+  const libraryContext: LibraryViewContext = { language: libraryLanguage, format: libraryFormat, query: libraryQuery, kind: libraryContentKind }
   const visibleSources = filterCreatorSources(libraryContentKind === 'pokemon' ? individualCreatorSources(catalog) : groupCreatorSources(catalog), {
     language: libraryLanguage, format: libraryFormat, query: libraryQuery,
     contentKind: libraryContentKind,
@@ -7267,7 +7330,7 @@ export default function App() {
         onNature={nature => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], config: { ...next[tuningModalIndex].config, nature } }; setParty(next) }}
         onClose={() => setTuningModalIndex(null)} translate={lt} statTheme={statThemeClass} opener={partyTuningOpener.current} magicCandidate={magicCandidate} magicPoints={key => magicEffortPoints(tuningRow, tuningMember, key)} /> : null}
 
-      {sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab === 'builder' && sampleTuningIdentity === sampleForge.key ? <EffortTuningModal
+      {sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab !== 'library' && sampleTuningIdentity === sampleForge.key ? <EffortTuningModal
         evs={sampleForge.evs} nature={sampleForge.config.nature}
         natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
         actualValue={(key, effort) => partyStatValue(sampleRow, effort === undefined ? sampleForge : { ...sampleForge, evs: { ...sampleForge.evs, [key]: effort } }, key)}
@@ -7294,19 +7357,19 @@ export default function App() {
                   <a className="home-route-card calm" href="#/single?tab=party">
                     <div className="home-route-card-copy">
                       <span className="home-route-eyebrow">{lt('싱글 배틀 운영')}</span>
-                      <strong>{lt('싱글배틀')}</strong>
+                      <strong>{lt('대면')}</strong>
                       <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
                     </div>
                   </a>
                   <a className="home-route-card calm" href="#/party">
                     <div className="home-route-card-copy">
                       <span className="home-route-eyebrow">{lt('파티 관리')}</span>
-                      <strong>{lt('내 파티 관리')}</strong>
+                      <strong>{lt('내 파티')}</strong>
                       <p>{lt('내 포켓몬과 기술 기준을 정리합니다.')}</p>
                     </div>
                   </a>
                   <a className="home-route-card calm" href="#/damage">
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('바로 시작')}</span><strong>{lt('간단 대미지')}</strong><p>{lt('공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.')}</p></div>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('바로 시작')}</span><strong>{lt('계산기')}</strong><p>{lt('공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.')}</p></div>
                   </a>
                 </div>
               </section>
@@ -7320,7 +7383,7 @@ export default function App() {
                   <a className="home-route-card calm" href="#/sample-builder?sampleTab=builder">
                     <div className="home-route-card-copy">
                       <span className="home-route-eyebrow">{lt('샘플 조정')}</span>
-                      <strong>{lt('포켓몬 샘플 빌더')}</strong>
+                      <strong>{lt('샘플 연구소')}</strong>
                       <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
                     </div>
                   </a>
@@ -7332,7 +7395,7 @@ export default function App() {
                     </div>
                   </a>
                   <a className="home-route-card calm" href="#/speed-line">
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('빠른 순 → 느린 순')}</span><strong>{lt('실능 스피드라인')}</strong><p>{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div>
+                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('빠른 순 → 느린 순')}</span><strong>{lt('스피드라인')}</strong><p>{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div>
                   </a>
                   <a className="home-route-card calm" href="#/sample-builder?sampleTab=library">
                     <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
@@ -7371,15 +7434,14 @@ export default function App() {
           </details>
         </>
         ) : null}
-        {(mainSection === 'double' || mainSection === 'sample') ? <section className="panel wide workflow-shell-panel">
-          {mainSection === 'double' ? <div className="row-between section-head workflow-shell-head">
+        {mainSection === 'double' ? <section className="panel wide workflow-shell-panel">
+          <div className="row-between section-head workflow-shell-head">
             <div>
               <span className="home-section-label">{lt('현재 흐름')}</span>
               <h2>{lt('더블배틀')}</h2>
               <p className="muted">{lt('더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.')}</p>
             </div>
-          </div> : null}
-          {mainSection === 'double' ? (
+          </div>
             <div className="workflow-step-shell double">
               <button type="button" className={`workflow-step-card ${activeTab === 'party' ? 'active' : ''}`} onClick={() => setActiveTab('party')}>
                 <span className="workflow-step-number">01</span>
@@ -7403,23 +7465,12 @@ export default function App() {
                 </div>
               </button>
             </div>
-          ) : mainSection === 'sample' ? (
-            <div className="tab-bar section-menu-tabs" role="navigation" aria-label={lt('샘플')}>
-              {([
-                ['builder', lt('샘플 빌드')],
-                ['speed', lt('샘플 스피드')],
-                ['damage', lt('샘플 대미지 계산')],
-                ['library', lt('샘플 라이브러리')],
-              ] as const).map(([value, label]) => (
-                <a key={`sample-workbench-tab-${value}`} href={`#/sample-builder?sampleTab=${value}`} aria-current={sampleWorkbenchTab === value ? 'page' : undefined} className={`tab-chip sample-filter-chip ${sampleWorkbenchTab === value ? 'active' : ''}`}>{label}</a>
-              ))}
-            </div>
-          ) : null}
         </section> : null}
 
         {mainSection === 'speedLine' ? <SpeedLinePanel rows={rows} state={speedLineState} warnings={speedLineWarnings} onChange={next => { lastSpeedLineRoute.current = speedLineRouteAfterEdit(next); setSpeedLineState(next); setSpeedLineWarnings([]) }} language={siteLanguage} translate={lt} displayName={row => displayName(row, siteLanguage)} /> : null}
 
         {mainSection === 'dex' ? <>
+          {!dexSelectedValue ? <>
           <section className="panel wide">
             <div className="section-head">
               <div>
@@ -7452,7 +7503,7 @@ export default function App() {
                     },
                     onKeyDown: (e) => {
                       if (e.key !== 'Enter' || e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229 || dexUnifiedSearchComposing || dexQueryPending || !dexResultKeys.length) return
-                      setDexSelectedValue(dexResultKeys[0])
+                      document.querySelector<HTMLAnchorElement>('.dex-browse-card')?.click()
                     } }}
                   />
                 </div>
@@ -7469,145 +7520,13 @@ export default function App() {
               </div>
             </div>
           </section>
-          <section className="panel wide dex-content-panel">
-          <div className="dex-browser-layout">
-            <div className="dex-browser-sidebar">
-              <div className="dex-results-card">
-                <div className="row-between section-head compact">
-                  <div>
-                    <h3>{lt('검색 결과')}</h3>
-                    <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
-                  </div>
-                </div>
-                {dexQueryPending ? <p role="status">{siteLanguage === 'en' ? 'Searching…' : siteLanguage === 'ja' ? '検索中…' : '검색 중…'}</p> : null}
-                <div className="dex-results-list" aria-busy={dexQueryPending} onClickCapture={event => { if (dexQueryPending) { event.preventDefault(); event.stopPropagation() } }}>
-                  {hasDexUnifiedSearch ? dexCategoryResults.map((result) => {
-                    if (result.kind === 'pokemon') {
-                      return <button key={result.id} type="button" className={`dex-result-item ${dexSelectedValue === result.id ? 'active' : ''}`} onClick={() => setDexSelectedValue(result.id)}>
-                        <div className="row-between compact-gap">
-                          <span className="pick-badge subtle">{lt('포켓몬')}</span>
-                        </div>
-                        <div className="dex-pokemon-preview-row">
-                          {result.row.sprite ? <img src={result.row.sprite} alt={searchDisplayLabel(result.key, siteLanguage)} className="dex-result-sprite" /> : <div className="dex-result-sprite placeholder" />}
-                          <div className="dex-pokemon-preview-body">
-                            <div>
-                              <strong>{searchDisplayLabel(result.key, siteLanguage)}</strong>
-                              <div className="muted dex-result-subline">{result.row.name_en}</div>
-                            </div>
-                            <div className="type-badge-wrap dex-result-typebadges">
-                              {result.row.types.map((type) => <TypeBadgeImage key={`dex-all-row-type-icon-${result.key}-${type}`} type={type} />)}
-                            </div>
-                          </div>
-                        </div>
-                      </button>
-                    }
-                    if (result.kind === 'move') {
-                      return <button key={result.id} type="button" className={`dex-result-item ${dexSelectedValue === result.id ? 'active' : ''}`} onClick={() => setDexSelectedValue(result.id)}>
-                        <div className="row-between compact-gap">
-                          <span className="pick-badge subtle">{lt('기술')}</span>
-                        </div>
-                      <div className="dex-move-preview-row">
-                          {result.meta.type ? <TypeBadgeImage type={result.meta.type} /> : null}
-                          <div className="dex-pokemon-preview-body">
-                            <strong>{result.name}</strong>
-                            <span className="muted">{displayTypeName(result.meta.type, siteLanguage)} · {displayMoveCategoryName(result.meta.category, siteLanguage)}{result.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(result.meta)}` : ''}{result.meta.pp != null ? ` · PP ${result.meta.pp}` : ''}</span>
-                          </div>
-                        </div>
-                      </button>
-                    }
-                    if (result.kind === 'ability') {
-                      const previewRows = result.pokemonKeys
-                        .map((key) => indexByKey.get(key) ?? null)
-                        .filter((row): row is Row => Boolean(row))
-                      return <button key={result.id} type="button" className={`dex-result-item ${dexSelectedValue === result.id ? 'active' : ''}`} onClick={() => setDexSelectedValue(result.id)}>
-                        <div className="row-between compact-gap">
-                          <span className="pick-badge subtle">{lt('특성')}</span>
-                        </div>
-                        <div className="dex-ability-result-card">
-                          <div className="dex-ability-result-copy">
-                            <strong>{abilityDisplayName(result.key, result.koLabel, siteLanguage)}</strong>
-                            <span className="muted">{result.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
-                          </div>
-                          {previewRows.length ? <div className="dex-ability-result-sprites" aria-hidden="true">
-                            {previewRows.map((row) => row.sprite ? <img key={`dex-all-ability-result-sprite-${result.key}-${row.key}`} src={row.sprite} alt="" className="dex-ability-result-sprite" /> : null)}
-                          </div> : null}
-                        </div>
-                      </button>
-                    }
-                    return <button key={result.id} type="button" className={`dex-result-item ${dexSelectedValue === result.id ? 'active' : ''}`} onClick={() => setDexSelectedValue(result.id)} {...bindTooltip(itemTooltipData(result.item, siteLanguage))}>
-                      <div className="row-between compact-gap">
-                        <span className="pick-badge subtle">{lt('도구')}</span>
-                      </div>
-                      <div className="dex-move-preview-row">
-                        <img src={itemSpriteSrc('', result.item)} alt={displayItemLabel(result.item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                        <div className="dex-pokemon-preview-body dex-item-result-body">
-                          <strong>{displayItemLabel(result.item, siteLanguage)}</strong>
-                          {result.previewText ? <span className="muted">{result.previewText}</span> : null}
-                        </div>
-                      </div>
-                    </button>
-                  }) : null}
-                  {!hasDexUnifiedSearch && dexSearchMode === 'pokemon' ? dexSpeciesOptions.map((option) => {
-                    const row = indexByKey.get(option.key)
-                    if (!row) return null
-                    return <button key={`dex-pokemon-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
-                      <div className="dex-pokemon-preview-row">
-                        {row.sprite ? <img src={row.sprite} alt={searchDisplayLabel(option.key, siteLanguage)} className="dex-result-sprite" /> : <div className="dex-result-sprite placeholder" />}
-                        <div className="dex-pokemon-preview-body">
-                          <div>
-                            <strong>{searchDisplayLabel(option.key, siteLanguage)}</strong>
-                            <div className="muted dex-result-subline">{row.name_en}</div>
-                          </div>
-                          <div className="type-badge-wrap dex-result-typebadges">
-                            {row.types.map((type) => <TypeBadgeImage key={`dex-row-type-icon-${option.key}-${type}`} type={type} />)}
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  }) : null}
-                  {!hasDexUnifiedSearch && dexSearchMode === 'move' ? dexMoveOptions.map((option) => <button key={`dex-move-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
-                    <div className="dex-move-preview-row">
-                      {option.meta.type ? <TypeBadgeImage type={option.meta.type} /> : null}
-                      <div className="dex-pokemon-preview-body">
-                        <strong>{option.name}</strong>
-                        <span className="muted">{displayTypeName(option.meta.type, siteLanguage)} · {displayMoveCategoryName(option.meta.category, siteLanguage)}{option.meta.power != null ? ` · ${lt('위력')} ${resolvedMovePower(option.meta)}` : ''}{option.meta.pp != null ? ` · PP ${option.meta.pp}` : ''}</span>
-                      </div>
-                    </div>
-                  </button>) : null}
-                  {!hasDexUnifiedSearch && dexSearchMode === 'ability' ? dexAbilityOptions.map((option) => {
-                    const previewRows = option.pokemonKeys
-                      .map((key) => indexByKey.get(key) ?? null)
-                      .filter((row): row is Row => Boolean(row))
-                    return <button key={`dex-ability-${option.key}`} type="button" className={`dex-result-item ${dexSelectedValue === option.key ? 'active' : ''}`} onClick={() => setDexSelectedValue(option.key)}>
-                      <div className="dex-ability-result-card">
-                        <div className="dex-ability-result-copy">
-                          <strong>{abilityDisplayName(option.key, option.koLabel, siteLanguage)}</strong>
-                          <span className="muted">{option.pokemonKeys.length}{siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}</span>
-                        </div>
-                        {previewRows.length ? <div className="dex-ability-result-sprites" aria-hidden="true">
-                          {previewRows.map((row) => row.sprite ? <img key={`dex-ability-result-sprite-${option.key}-${row.key}`} src={row.sprite} alt="" className="dex-ability-result-sprite" /> : null)}
-                        </div> : null}
-                      </div>
-                    </button>
-                  }) : null}
-                  {!hasDexUnifiedSearch && dexSearchMode === 'item' ? dexItemOptions.map((item) => {
-                    const itemText = localizedDexText(itemDescriptionFor(item), siteLanguage)
-                    const itemPreviewText = itemText?.summary || itemText?.detail || ''
-                    return <button key={`dex-item-${item}`} type="button" className={`dex-result-item ${dexSelectedValue === item ? 'active' : ''}`} onClick={() => setDexSelectedValue(item)} {...bindTooltip(itemTooltipData(item, siteLanguage))}>
-                      <div className="dex-move-preview-row">
-                        <img src={itemSpriteSrc('', item)} alt={displayItemLabel(item, siteLanguage)} className="dex-item-preview-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
-                        <div className="dex-pokemon-preview-body dex-item-result-body">
-                          <strong>{displayItemLabel(item, siteLanguage)}</strong>
-                          {itemPreviewText ? <span className="muted">{itemPreviewText}</span> : null}
-                        </div>
-                      </div>
-                    </button>
-                  }) : null}
-                  {!dexResultKeys.length ? <div className="dex-empty-state muted">{lt('검색 결과가 없습니다.')}</div> : null}
-                </div>
-              </div>
-            </div>
-
+          <section className="panel wide dex-content-panel"><h3>{lt('검색 결과')}</h3>
+            <DexBrowseGrid items={dexBrowseCards} language={siteLanguage} busy={dexQueryPending}
+              onNavigate={navigateDexCard} renderTypeBadge={type => <TypeBadgeImage type={type} />}
+              tooltipPropsForItem={id => { const item = dexBrowseResults.find(result => result.id === id); return item?.kind === 'item' ? bindTooltip(itemTooltipData(item.item, siteLanguage)) : {} }} />
+          </section></> : null}
+          {dexSelectedValue ? <section className="panel wide dex-content-panel dex-detail-page">
+            <a href={dexListHref} className="chip-button dex-back-link" onClick={navigateDexBack}>{siteLanguage === 'en' ? '← Back to results' : siteLanguage === 'ja' ? '← 一覧へ戻る' : '← 목록으로 돌아가기'}</a>
             <div className="dex-browser-detail">
               {dexSelectedRow ? <div className="dex-detail-card">
                 <div className="dex-detail-head">
@@ -7691,12 +7610,29 @@ export default function App() {
                 </div>
               </div> : null}
 
+              {dexSelectedRow ? <DexMovePoolSection key={dexSelectedRow.key} recordKey={dexSelectedRow.key} language={siteLanguage}
+                status={dexSelectedPool?.status ?? 'idle'} moves={dexSelectedPool?.moves ?? []} provenance={dexSelectedPool?.provenance}
+                metaForMove={name => dexDisplayMoveMeta(name, MOVE_META_BY_NAME[name])} displayMoveName={name => name}
+                renderTypeBadge={type => <TypeBadgeImage type={type} />}
+                detailHref={name => dexDetailHref('move', name)}
+                onNavigate={(event, name) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return; event.preventDefault(); openDexMoveDetail(name) }}
+                tooltipPropsForMove={name => {
+                  const tooltip = moveTooltipData(name, siteLanguage)
+                  const source = getDexGameMove(name)
+                  return bindTooltip(tooltip && source ? {
+                    ...tooltip, accentType: source.type,
+                    rows: tooltip.rows.map((row, idx) => idx === 0 ? { ...row, value: displayTypeName(source.type, siteLanguage) } : row),
+                  } : tooltip)
+                }}
+                onRetry={() => window.location.reload()} /> : null}
+
               {dexSelectedMove ? <div className="dex-detail-card">
+                {getDexGameMove(dexSelectedMove.name) ? <p className="dex-move-pool-warning">{siteLanguage === 'ko' ? '타입은 게임 스냅샷, 그외 메타는 기존 도감 · 미수록 메타 미확인' : siteLanguage === 'ja' ? 'タイプはゲームスナップショット、他のメタデータは既存図鑑 · 未収録は未確認' : 'Type from game snapshot; other available metadata from legacy Dex · missing metadata unknown'}</p> : null}
                 <div className="dex-detail-head">
                   <div className="dex-detail-identity compact">
                     <div>
                       <h3>{dexSelectedMove.name}</h3>
-                      <p className="muted">{displayTypeName(dexSelectedMove.meta.type, siteLanguage)} · {displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage)}</p>
+                      <p className="muted">{displayTypeName(dexSelectedMove.meta.type, siteLanguage)} · {dexSelectedMove.meta.category ? displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage) : '—'}</p>
                     </div>
                   </div>
                 </div>
@@ -7705,11 +7641,11 @@ export default function App() {
                     <strong>{lt('기본 정보')}</strong>
                     <div className="pick-summary-badges">
                       <span className="pick-badge">{lt('타입')} {displayTypeName(dexSelectedMove.meta.type, siteLanguage)}</span>
-                      <span className="pick-badge">{lt('분류')} {displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage)}</span>
+                      <span className="pick-badge">{lt('분류')} {dexSelectedMove.meta.category ? displayMoveCategoryName(dexSelectedMove.meta.category, siteLanguage) : '—'}</span>
                       <span className="pick-badge">{lt('위력')} {dexSelectedMove.meta.power != null ? resolvedMovePower(dexSelectedMove.meta) : '-'}</span>
                       <span className="pick-badge">PP {dexSelectedMove.meta.pp != null ? dexSelectedMove.meta.pp : '-'}</span>
                       <span className="pick-badge">{lt('명중')} {dexSelectedMove.meta.accuracy != null ? `${dexSelectedMove.meta.accuracy}%` : '-'}</span>
-                      <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? 0}</span>
+                      <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? (MOVE_META_BY_NAME[dexSelectedMove.name] ? 0 : '—')}</span>
                     </div>
                   </div>
                   <div className="dex-detail-panel">
@@ -7725,9 +7661,12 @@ export default function App() {
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('배우는 포켓몬')}</strong>
+                    {getDexGameMove(dexSelectedMove.name) ? <p className="dex-move-pool-warning">{siteLanguage === 'ko' ? `게임 데이터 스냅샷 · ${DEX_GAME_LEARNSET_SOURCE.date} · 현재 버전 일치 미검증` : siteLanguage === 'ja' ? `ゲームデータスナップショット · ${DEX_GAME_LEARNSET_SOURCE.date} · 現行版との一致未検証` : `Game data snapshot · ${DEX_GAME_LEARNSET_SOURCE.date} · current-version match unverified`}</p> : null}
                     <div className="pick-summary-badges">
                       {dexMoveLearnersStatus === 'loading' ? <span className="pick-badge">Loading…</span> : null}
-                      {dexMoveLearnersStatus === 'error' ? <span className="pick-badge">-</span> : null}
+                      {dexMoveLearnersStatus === 'missing' ? <span role="status">{siteLanguage === 'ko' ? '이 기술은 게임 스냅샷에 수록되지 않아 습득 포켓몬을 확인할 수 없습니다.' : siteLanguage === 'ja' ? 'この技はゲームスナップショットに未収録のため、習得ポケモンは未確認です。' : 'This move is not in the game snapshot; learners are unknown.'}</span> : null}
+                      {dexMoveLearnersStatus === 'error' ? <span role="status">{siteLanguage === 'ko' ? '게임 스냅샷을 불러오지 못했습니다.' : siteLanguage === 'ja' ? 'ゲームスナップショットを読み込めませんでした。' : 'Could not load the game snapshot.'}</span> : null}
+                      {dexMoveLearnersStatus === 'error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도' : siteLanguage === 'ja' ? '再試行' : 'Retry'}</button> : null}
                       {dexMoveLearnersStatus === 'ready' ? dexMoveLearners.map((row) => <button key={`dex-move-learner-${dexSelectedMove.key}-${row.key}`} type="button" className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={() => openDexPokemonDetail(row.key)}>
                         {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
                         <span>{displayName(row, siteLanguage)}</span>
@@ -7809,11 +7748,11 @@ export default function App() {
               </div> : null}
 
               {!dexSelectedRow && !dexSelectedMove && !dexSelectedAbility && !dexSelectedItem ? <div className="dex-detail-card dex-placeholder-card">
-                <p className="muted">{lt('검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.')}</p>
+                <p className="muted">{siteLanguage === 'en' ? 'Unknown Dex entry.' : siteLanguage === 'ja' ? '登録が見つかりません。' : '도감 항목을 찾을 수 없습니다.'}</p>
+                <a href={dexListHref} onClick={navigateDexBack}>{siteLanguage === 'en' ? 'Back to results' : siteLanguage === 'ja' ? '一覧へ戻る' : '목록으로 돌아가기'}</a>
               </div> : null}
             </div>
-          </div>
-        </section>
+          </section> : null}
         </> : null}
 
         {(mainSection === 'single' && (activeTab === 'speed' || activeTab === 'power')) ? (
@@ -8061,7 +8000,7 @@ export default function App() {
         {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between">
-              <h2>{lt('내 파티 관리')}</h2>
+              <h2>{lt('내 파티')}</h2>
               <div className="inline-controls compact-actions">
                 <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}>{partyImageImportBusy ? lt('OCR 추출 중...') : lt('사진 IMPORT')}</button>
                 <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('내 파티 초기화')}</button>
@@ -8633,7 +8572,7 @@ export default function App() {
           <div className="sample-content-panel">
           {sampleWorkbenchTab === 'library' ? <div className="creator-library">
             {librarySourceId ? <div className="creator-library-detail">
-              <a className="creator-library-back" href="#/sample-builder?sampleTab=library">← {lt('샘플 라이브러리')} · {lt('목록으로')}</a>
+              <a className="creator-library-back" href={libraryListHref(libraryContext)}>← {lt('샘플 라이브러리')} · {lt('목록으로')}</a>
               {librarySource ? <>
                 <div className="section-head"><div><h2>{librarySource.title}</h2><p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
                 <div className="creator-library-lineup">{librarySource.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}</div>
@@ -8647,7 +8586,7 @@ export default function App() {
                   <p>{entry.provenance.evidence}</p>
                   {Object.entries(entry.provenance.fields).map(([field, evidence]) => evidence ? <p key={field}>{field} · {evidence.location} · {evidence.checkedAt} · <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a></p> : null)}
                 </div>)}</details>
-                {librarySource.contentKind === 'party' ? librarySource.members.map(entry => <a key={entry.id} href={`#/sample-library/${encodeURIComponent(`individual:${entry.id}`)}`}>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title} · {lt('개별 포켓몬 샘플')}</a>) : null}
+                {librarySource.contentKind === 'party' ? librarySource.members.map(entry => <a key={entry.id} href={libraryDetailHref(`individual:${entry.id}`, { ...libraryContext, kind: 'pokemon' })}>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title} · {lt('개별 포켓몬 샘플')}</a>) : null}
                 {librarySource.members.map(entry => <div key={entry.id} className="creator-library-member-actions">
                   {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
                   {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
@@ -8679,13 +8618,17 @@ export default function App() {
               <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><span aria-hidden="true">◉</span> {lt('개별 포켓몬 샘플')}</button>
             </div>
             <div className="creator-library-filters">
-              <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select></label>
+              <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage | 'all')}><option value="all">{lt('전체')}</option><option value="ko">KR</option><option value="ja">JP</option></select></label>
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <div className="creator-library-list">
               {visibleSources.map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
-                <a className="creator-library-source-link" href={`#/sample-library/${encodeURIComponent(source.id)}`} onClick={() => { libraryScrollRef.current = window.scrollY; setLibrarySourceId(source.id) }}>
+                <a className="creator-library-source-link" href={libraryDetailHref(source.id, libraryContext)} onClick={(event) => {
+                  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
+                  libraryScrollRef.current = window.scrollY
+                  window.history.replaceState({ ...window.history.state, libraryScroll: window.scrollY }, '', window.location.href)
+                }}>
                   <span className="creator-library-sprites">{source.members.map(member => { const row = indexByKey.get(member.pokemonKey); return row?.sprite ? <img key={member.id} src={row.sprite} alt="" /> : null })}</span>
                   <strong>{source.title}</strong>
                 </a>
@@ -8695,20 +8638,22 @@ export default function App() {
             {sampleWorkbenchTab === 'library' && pendingCreatorLeads.length > 0 ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{pendingCreatorLeads.map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
-              const draft = createLinkDraft(linkDraftInput, libraryLanguage, draftFormat)
+              const draft = createLinkDraft(linkDraftInput, draftLanguage, draftFormat)
               if (!draft) { setLinkDraftError(true); return }
               setCreatorLinkDrafts((prev) => prev.some((entry) => entry.sourceUrl === draft.sourceUrl) ? prev : [draft, ...prev])
               setLinkDraftInput('')
               setLinkDraftError(false)
             }}>
               <h3>{lt('출처 링크 보관')}</h3><p className="muted">{lt('이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.')}</p>
-              <div className="creator-library-submit-row"><select aria-label={lt('링크 형식')} value={draftFormat} onChange={(e) => setDraftFormat(e.target.value as LibraryFormat)}><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select><input aria-label={lt('출처 URL')} type="url" value={linkDraftInput} onChange={(e) => { setLinkDraftInput(e.target.value); setLinkDraftError(false) }} placeholder="https://…" required /><button type="submit" className="action-button">{lt('링크 추가')}</button></div>
+              <div className="creator-library-submit-row"><select aria-label={lt('링크 지역')} value={draftLanguage} onChange={(e) => setDraftLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select><select aria-label={lt('링크 형식')} value={draftFormat} onChange={(e) => setDraftFormat(e.target.value as LibraryFormat)}><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select><input aria-label={lt('출처 URL')} type="url" value={linkDraftInput} onChange={(e) => { setLinkDraftInput(e.target.value); setLinkDraftError(false) }} placeholder="https://…" required /><button type="submit" className="action-button">{lt('링크 추가')}</button></div>
               {linkDraftError ? <p role="alert">{lt('http 또는 https 주소를 입력하세요.')}</p> : null}
               <p className="muted">{lt('공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.')}{' '}<a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noopener noreferrer">{lt('제보 폼 열기')}</a></p>
             </form> : null}
-            {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => entry.language === libraryLanguage && (libraryFormat === 'all' || entry.format === libraryFormat)).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('삭제')}</button></div>) : null}
+            {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => (libraryLanguage === 'all' || entry.language === libraryLanguage) && (libraryFormat === 'all' || entry.format === libraryFormat) && (!libraryQuery.trim() || entry.sourceUrl.toLocaleLowerCase().includes(libraryQuery.trim().toLocaleLowerCase()))).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')} · {draft.language === 'ko' ? 'KR' : 'JP'}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('삭제')}</button></div>) : null}
             </>}
-          </div> : sampleWorkbenchTab === 'builder' ? <>
+          </div> : <>
+          <section id="sample-builder-section" className="sample-lab-section" aria-label={lt('샘플 빌드')}>
+          <h2>{lt('샘플 연구소')} · {lt('샘플 빌드')}</h2>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <div className="sample-panel-header sample-panel-header-main">
@@ -8867,7 +8812,10 @@ export default function App() {
                 </>
             </div>
           </div>
-          </> : sampleWorkbenchTab === 'speed' ? <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
+          </section>
+          <section id="sample-speed-section" className="sample-lab-section" aria-label={lt('샘플 스피드')}>
+          <h2>{lt('샘플 스피드')}</h2>
+          <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="sample-calculator-split sample-speed-calculator-split">
                 <div className="sample-calculator-side sample-calculator-source">
@@ -8986,7 +8934,11 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div> : <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
+          </div>
+          </section>
+          <section id="sample-damage-section" className="sample-lab-section" aria-label={lt('샘플 대미지 계산')}>
+          <h2>{lt('샘플 대미지 계산')}</h2>
+          <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
               <div className="sample-calculator-split sample-damage-calculator-split">
                 <div className="sample-calculator-side sample-calculator-source">
@@ -9155,7 +9107,7 @@ export default function App() {
                     </div>
                     <PokemonSearchField id="sample-damage-add" label={lt('비교 상대 검색')} value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleDamageSearch} onSelect={addSampleDamageTarget} options={sampleDamageSearchResults.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} menuClassName="sample-damage-search-menu" />
                     {!sampleDamageMoveChoices.length ? <div className="sample-inline-helper sample-damage-adder-helper sample-damage-adder-helper-compact">
-                      <button type="button" className="pick-chip" onClick={() => setSampleWorkbenchTab('builder')}>{lt('샘플 기술로 이동')}</button>
+                      <button type="button" className="pick-chip" onClick={() => document.getElementById('sample-moves-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>{lt('샘플 기술로 이동')}</button>
                     </div> : null}
               </div>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
@@ -9345,16 +9297,18 @@ export default function App() {
                     <span className="pick-badge">{lt('샘플 기술')} {sampleDamageMoveChoices.length}/4</span>
                     <span className="pick-badge quiet">{lt('1:1 비교')}</span>
                   </div>
-                  {!sampleDamageMoveChoices.length ? <button type="button" className="pick-chip" onClick={() => setSampleWorkbenchTab('builder')}>{lt('샘플 기술로 이동')}</button> : null}
+                  {!sampleDamageMoveChoices.length ? <button type="button" className="pick-chip" onClick={() => document.getElementById('sample-moves-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>{lt('샘플 기술로 이동')}</button> : null}
                 </div>}
               </div>
                 </div>
               </div>
             </div>
-          </div>}
+          </div>
+          </section>
+          </>}
           </div>
         </section>
-        {['builder', 'speed', 'damage'].includes(sampleWorkbenchTab) ? <section className="panel wide">
+        {sampleWorkbenchTab !== 'library' ? <section className="panel wide">
           <div className="sample-builder-action-card">
             <div className="sample-builder-action-head">
               <strong>{lt('저장/적용')}</strong>
@@ -9387,7 +9341,7 @@ export default function App() {
             <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{lt('초안을 파티에 적용')} · {applyToSlotLabel(selectedMy, siteLanguage)}</button>
           </div>
         </section> : null}
-        {['builder', 'speed', 'damage'].includes(sampleWorkbenchTab) ? <section id="sample-saved-card" className="panel wide">
+        {sampleWorkbenchTab !== 'library' ? <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">
               <span>{lt('저장한 샘플')}</span>

@@ -100,7 +100,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     catch { setCopyFailed(true) }
   }
   return <section className="panel wide speed-line-panel">
-    <div className="section-head"><div><h2>{translate('실능 스피드라인')}</h2><p className="muted">{l('notes')}</p></div></div>
+    <div className="section-head"><div><h2>{translate('스피드라인')}</h2><p className="muted">{l('notes')}</p></div></div>
     {warnings.length ? <p role="alert">{language === 'ko' ? 'URL의 잘못된 값을 기본값으로 복원했습니다' : language === 'ja' ? 'URLの不正な値を既定値に戻しました' : 'Invalid URL values were restored to defaults'}: {warnings.join(', ')}</p> : null}
     <div className="speed-line-reference card entry-card">
       <PokemonCardHeading name={<strong>{referenceRow ? displayName(referenceRow) : unknownReference ?? l('none')}</strong>} sprite={referenceRow?.sprite} spriteAlt={referenceRow ? displayName(referenceRow) : ''} types={referenceRow?.types} />
@@ -134,7 +134,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     <label><input type="checkbox" checked={showHypothetical} onChange={event => setShowHypothetical(event.target.checked)} /> {l('showHypothetical')}</label>
     </details>
     {!draftsValid ? <p role="alert">{l('invalid')}</p> : <><p className="muted">{l('count')}: {new Set(entries.map(entry => entry.row.key)).size} · {entries.length}</p>
-      {entries.length ? <div className="speed-line-list" role="table" aria-label={language === 'en' ? 'Actual Speed Line' : '실능 스피드라인'}>
+      {entries.length ? <div className="speed-line-list" role="table" aria-label={translate('스피드라인')}>
         <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{l('pokemon')}</span><span role="columnheader">{l('base')}</span><span role="columnheader">{l('actual')}</span><span role="columnheader">{l('difference')}</span></div>
         {entries.map((entry, idx) => <React.Fragment key={entry.id}>
           {idx === markerIndex ? referenceMarker : null}

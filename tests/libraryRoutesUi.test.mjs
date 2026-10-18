@@ -12,11 +12,11 @@ test('library list links canonical source IDs to a separate detail route, withou
   assert.match(list, /source\.members\.map/)
   assert.match(list, /source\.title/)
   assert.doesNotMatch(list, /creatorCard|ReadonlyPokemonCard|검증 완료|실수치|기술 구성/)
-  assert.match(app, /\/sample-library\/\$\{encodeURIComponent\(source\.id\)\}/)
+  assert.match(app, /libraryDetailHref\(source\.id, libraryContext\)/)
 })
 test('detail resolves source ID from full catalog independent of list filters and has back route', () => {
   assert.match(app, /librarySourceId \? .*\.find\(source => source\.id === librarySourceId\)/)
-  assert.match(app, /href="#\/sample-builder\?sampleTab=library"/)
+  assert.match(app, /href=\{libraryListHref\(libraryContext\)\}/)
   assert.match(app, /creatorCard\(member\)/)
   assert.match(app, /entry\.provenance/)
   assert.match(app, /librarySource\.completeMemberCount === librarySource\.partySize/)

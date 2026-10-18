@@ -18,7 +18,7 @@ const code = ts.transpileModule(`const resolve = ${callback.getText(ast)}; globa
 const row = { key: 'pikachu' }
 const pokemon = { id: 'pokemon:pikachu', kind: 'pokemon', key: 'pikachu', row }
 function resolve(overrides = {}) {
-  const context = vm.createContext({ hasDexUnifiedSearch: true, dexQueryPending: false, dexSelectedValue: pokemon.id, dexSearchMode: 'pokemon', dexAllResults: [pokemon], dexCategoryResults: [pokemon], parseDexSelectionId, indexByKey: new Map([['pikachu', row]]), MOVE_META_BY_NAME: {}, ...overrides })
+  const context = vm.createContext({ hasDexUnifiedSearch: true, dexQueryPending: false, dexSelectedValue: pokemon.id, dexSearchMode: 'pokemon', dexAllResults: [pokemon], dexCategoryResults: [pokemon], parseDexSelectionId, indexByKey: new Map([['pikachu', row]]), MOVE_META_BY_NAME: {}, ABILITY_INDEX: {byKey: new Map()}, getItemIndexSync: () => ({byKey: new Map()}), dexSelectionId: (kind,key) => `${kind}:${key}`, ...overrides })
   vm.runInContext(code, context)
   return context.resolve()
 }
@@ -29,14 +29,17 @@ test('Dex selected detail is scoped to the active category, including fallback I
   assert.equal(resolve({ dexSearchMode: 'item', dexAllResults: [], dexCategoryResults: [] }), null)
 })
 
-test('legacy Dex rows are an alternative to unified results rather than a duplicate list', () => {
-  for (const [mode, options] of [['pokemon', 'dexSpeciesOptions'], ['move', 'dexMoveOptions'], ['ability', 'dexAbilityOptions'], ['item', 'dexItemOptions']]) {
-    assert.ok(source.includes(`{!hasDexUnifiedSearch && dexSearchMode === '${mode}' ? ${options}.map`), `${mode} rows must not render twice for a unified query`)
+test('blank-query and unified results share one projected card grid without duplicate rendering', () => {
+  assert.match(source, /if \(hasDexUnifiedSearch\) return dexCategoryResults/)
+  for (const [mode, options] of [['pokemon', 'dexSpeciesOptions'], ['move', 'dexMoveOptions'], ['ability', 'dexAbilityOptions']]) {
+    assert.ok(source.includes(`if (dexSearchMode === '${mode}') return ${options}.${mode === 'pokemon' ? 'flatMap' : 'map'}`), `${mode} projects the blank-query list`)
   }
+  assert.match(source, /return dexItemOptions\.map\(/)
+  assert.equal((source.match(/<DexBrowseGrid\b/g) ?? []).length, 1)
 })
 
-test('pending unified-query input cannot display an old committed detail or commit an old Enter result', () => {
-  assert.equal(resolve({ dexQueryPending: true }), null)
+test('pending unified-query input cannot commit an old Enter result; explicit detail remains stable', () => {
+  assert.equal(resolve({ dexQueryPending: true })?.key, 'pikachu')
   const input = source.slice(source.indexOf('value={dexUnifiedSearchDraft}'), source.indexOf('</div>', source.indexOf('value={dexUnifiedSearchDraft}')))
   assert.match(input, /if \([^\n]*dexQueryPending[^\n]*\) return/)
 })

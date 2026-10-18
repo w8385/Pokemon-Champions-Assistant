@@ -31,7 +31,7 @@ test('dex has one editable search with category-scoped results and IME guard', (
   const dex = app.slice(app.indexOf("{mainSection === 'dex' ? <>"), app.indexOf("{dexSelectedMove ? <div className=\"dex-detail-card\">"))
   assert.equal((dex.match(/className="dex-search-autocomplete/g) ?? []).length, 1)
   assert.match(dex, /dexUnifiedSearchComposing/)
-  assert.match(dex, /dexResultKeys\[0\]/)
+  assert.match(dex, /document\.querySelector<HTMLAnchorElement>\('\.dex-browse-card'\)\?\.click\(\)/)
   assert.match(app, /route\.dexSearch/)
 })
 

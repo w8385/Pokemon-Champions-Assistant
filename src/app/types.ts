@@ -263,6 +263,10 @@ export type ViewState = {
   activeTab?: MainTab
   sampleWorkbenchTab?: SampleWorkbenchTab
   librarySourceId?: string | null
+  libraryLanguage?: 'all' | 'ko' | 'ja'
+  libraryFormat?: 'all' | 'singles' | 'doubles'
+  libraryQuery?: string
+  libraryContentKind?: 'party' | 'pokemon'
   dexSearchMode?: DexSearchMode
   dexSearch?: string
   dexUnifiedSearch?: string
