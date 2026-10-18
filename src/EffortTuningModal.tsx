@@ -1,11 +1,9 @@
 import React from 'react'
 import type { EffortValues } from './myPartyChampionsSamples'
 import type { EffortStatKey, NatureId } from './app/types'
+import { STAT_PRESENTATION } from './statPresentation'
 
-const stats: { key: EffortStatKey; label: string }[] = [
-  { key: 'hp', label: 'HP' }, { key: 'attack', label: '공격' }, { key: 'defense', label: '방어' },
-  { key: 'spAttack', label: '특수공격' }, { key: 'spDefense', label: '특수방어' }, { key: 'speed', label: '스피드' },
-]
+const stats = STAT_PRESENTATION.map(stat => ({ key: stat.key, label: stat.modalLabel ?? stat.label }))
 const checkpoints = [11, 22, 32]
 export function EffortTuningModal({ evs, nature, natureOptions, actualValue, onEffort, onNature, onClose, translate, statTheme, override, onOverride, title, opener, magicCandidate, magicPoints }: {
   evs: EffortValues; nature: NatureId; natureOptions: { id: NatureId; label: string }[]

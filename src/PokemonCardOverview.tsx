@@ -37,7 +37,7 @@ export function RegisteredMoveSlot({ number, name, type, meta, inputProps, toolt
 }
 
 /** The party editor and source library share the same card heading, icons and stat tiles. */
-export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '' }: { name: ReactNode; sprite?: string; types?: string[]; spriteAlt?: string }) {
+export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '', actions }: { name: ReactNode; sprite?: string; types?: string[]; spriteAlt?: string; actions?: ReactNode }) {
   return <div className="entry-card-top">
     {sprite ? <img src={sprite} alt={spriteAlt} className="entry-sprite" /> : null}
     <div className="entry-card-head"><div className="party-card-header"><div className="party-card-title-block">
@@ -47,6 +47,7 @@ export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '' }:
         return <img key={type} src={getTypeBadgeSrc(type)} alt={label} title={label} className="type-badge-image" />
       })}</span></div> : null}
     </div></div></div>
+    {actions ? <div className="entry-card-actions">{actions}</div> : null}
   </div>
 }
 

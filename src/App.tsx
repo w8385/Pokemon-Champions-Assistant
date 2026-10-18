@@ -19,6 +19,7 @@ import { analyzePartyMatchups } from './partyAnalysis'
 import { PartyAnalysisPanel } from './PartyAnalysisPanel'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
+import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './statPresentation'
 import { getSpeedAbility, speedActivationAllowed, SPEED_ABILITIES } from './speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './singleSpeedComparison'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
@@ -786,14 +787,6 @@ const CONDITIONAL_MOVE_POWER_RULES: Record<string, ConditionalMovePowerRule> = {
   },
 }
 
-const EFFORT_STAT_OPTIONS: { key: EffortStatKey; short: string; label: string }[] = [
-  { key: 'hp', short: '체력', label: '체력' },
-  { key: 'spAttack', short: '특수공격', label: '특수공격' },
-  { key: 'attack', short: '공격', label: '공격' },
-  { key: 'spDefense', short: '특수방어', label: '특수방어' },
-  { key: 'defense', short: '방어', label: '방어' },
-  { key: 'speed', short: '스피드', label: '스피드' },
-]
 
 const typeChart: Record<string, Partial<Record<string, number>>> = {
   Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
@@ -8091,9 +8084,8 @@ export default function App() {
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
                   <div key={`${member.key}-${idx}`} className="card entry-card">
-                    {row ? <button type="button" className="entry-card-clear-button" aria-label={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null}
-
-                    <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types} name={
+                    <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
+                      actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null} name={
                             <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"
                               inputClassName="party-inline-species-input" value={partySearch[idx] ?? ''}
                               placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
