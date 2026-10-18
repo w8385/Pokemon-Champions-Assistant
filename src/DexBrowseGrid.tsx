@@ -1,4 +1,4 @@
-import type React from 'react'
+import React from 'react'
 import type { SiteLanguage } from './app/types'
 import './dexBrowse.css'
 
@@ -18,20 +18,41 @@ export type DexBrowseGridProps = {
   items: DexBrowseCard[]
   language: SiteLanguage
   busy: boolean
+  totalCount?: number
+  scope?: string
+  onLoadMore?: () => void
   onNavigate: (event: React.MouseEvent<HTMLAnchorElement>, id: string) => void
   renderTypeBadge: (type: string) => React.ReactNode
   tooltipPropsForItem?: (id: string) => React.HTMLAttributes<HTMLElement>
 }
 
 const labels = {
-  ko: { pokemon: '포켓몬', move: '기술', ability: '특성', item: '도구', empty: '검색 결과가 없습니다.', busy: '검색 중…' },
-  en: { pokemon: 'Pokémon', move: 'Move', ability: 'Ability', item: 'Item', empty: 'No results.', busy: 'Searching…' },
-  ja: { pokemon: 'ポケモン', move: 'わざ', ability: 'とくせい', item: 'どうぐ', empty: '検索結果がありません。', busy: '検索中…' },
+  ko: { pokemon: '포켓몬', move: '기술', ability: '특성', item: '도구', empty: '검색 결과가 없습니다.', busy: '검색 중…', more: '더보기', end: '모두 표시' },
+  en: { pokemon: 'Pokémon', move: 'Move', ability: 'Ability', item: 'Item', empty: 'No results.', busy: 'Searching…', more: 'Load more', end: 'All shown' },
+  ja: { pokemon: 'ポケモン', move: 'わざ', ability: 'とくせい', item: 'どうぐ', empty: '検索結果がありません。', busy: '検索中…', more: 'もっと見る', end: 'すべて表示' },
 } as const
 
+function DexLoadSentinel({ onLoadMore }: { onLoadMore: () => void }) {
+  const sentinel = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    if (!sentinel.current || typeof IntersectionObserver === 'undefined') return
+    let fired = false
+    const observer = new IntersectionObserver(entries => {
+      if (fired || !entries.some(entry => entry.isIntersecting)) return
+      fired = true
+      observer.disconnect()
+      onLoadMore()
+    }, { rootMargin: '400px 0px' })
+    observer.observe(sentinel.current)
+    return () => observer.disconnect()
+  }, [onLoadMore])
+  return <div className="dex-browse-sentinel" ref={sentinel} aria-hidden="true" />
+}
+
 /** The sole card preview renderer for both blank-query and searched catalog projections. */
-export function DexBrowseGrid({ items, language, busy, onNavigate, renderTypeBadge, tooltipPropsForItem }: DexBrowseGridProps) {
+export function DexBrowseGrid({ items, language, busy, totalCount = items.length, scope = '', onLoadMore, onNavigate, renderTypeBadge, tooltipPropsForItem }: DexBrowseGridProps) {
   const text = labels[language]
+  const hasMore = !busy && items.length < totalCount && Boolean(onLoadMore)
   return <div className="dex-browse-grid dex-results-list" aria-busy={busy}>
     {busy ? <p role="status" className="dex-browse-grid-status">{text.busy}</p> : null}
     {!busy && !items.length ? <div className="dex-empty-state muted dex-browse-grid-status">{text.empty}</div> : null}
@@ -62,5 +83,10 @@ export function DexBrowseGrid({ items, language, busy, onNavigate, renderTypeBad
         </div> : null}
       </a>
     })}
+    {!busy && items.length ? <div className="dex-browse-footer" role="status">
+      <span>{items.length} / {totalCount}{!hasMore ? ` · ${text.end}` : ''}</span>
+      {hasMore ? <><DexLoadSentinel key={`${scope}:${items.length}`} onLoadMore={onLoadMore!} />
+        <button type="button" onClick={onLoadMore} className="chip-button dex-browse-more">{text.more}</button></> : null}
+    </div> : null}
   </div>
 }

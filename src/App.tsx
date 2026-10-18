@@ -31,6 +31,7 @@ import SearchCombobox from './SearchCombobox'
 import { searchMoves } from './moveSearch'
 import { resolveFormAwareMovePool } from './formAwareMovePool'
 import { DexBrowseGrid, type DexBrowseCard } from './DexBrowseGrid'
+import { DEX_PAGE_SIZE, dexNextPage, dexPageScope, dexScrollRestoreReady, dexVisibleCount, type DexPage, type DexScrollRestore } from './dexPagination'
 import { DexMovePoolSection } from './DexMovePoolSection'
 import { loadDexGameLearnset, loadDexGameMoveLearners, DEX_GAME_LEARNSET_SOURCE, type DexLearnsetProvenance } from './dexGameLearnsets'
 import { dexDisplayMoveMeta, getDexGameMove, getDexGameMoveNames } from './dexGameMoveIndex'
@@ -4335,10 +4336,12 @@ export default function App() {
   const [dexUnifiedSearch, setDexUnifiedSearch] = React.useState(() => viewState?.dexUnifiedSearch ?? viewState?.dexSearch ?? '')
   const [dexUnifiedSearchDraft, setDexUnifiedSearchDraft] = React.useState(() => viewState?.dexUnifiedSearch ?? viewState?.dexSearch ?? '')
   const [dexUnifiedSearchComposing, setDexUnifiedSearchComposing] = React.useState(false)
+  const [dexPagination, setDexPagination] = React.useState<DexPage>({ scope: '', count: DEX_PAGE_SIZE })
   const [dexSelectedValue, setDexSelectedValue] = React.useState<string | null>(() => viewState?.dexSelectedValue ?? null)
   // Route restoration is asynchronous (including deferred search values). Do not
   // serialize a half-restored render back over the history entry we just read.
   const restoringDexRoute = React.useRef<{ mode: DexSearchMode; query: string; selection: string | null } | null>(null)
+  const pendingDexScrollRestore = React.useRef<DexScrollRestore | null>(null)
   const [selectedDexPartySlot, setSelectedDexPartySlot] = React.useState<number | null>(null)
   const [hoverTooltip, setHoverTooltip] = React.useState<({ anchorX: number; anchorTop: number; anchorBottom: number } & HoverTooltipCard) | null>(null)
   const longPressTimerRef = React.useRef<number | null>(null)
@@ -4421,17 +4424,17 @@ export default function App() {
   const deferredDexUnifiedSearch = React.useDeferredValue(dexUnifiedSearch)
   const dexQueryPending = dexUnifiedSearchComposing || dexUnifiedSearchDraft !== deferredDexUnifiedSearch || dexUnifiedSearchDraft !== deferredDexSearch
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
-  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }).slice(0, 12), [deferredDexSearch])
-  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [asyncDataVersion, deferredDexSearch])
-  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }).slice(0, 48), [deferredDexSearch])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }).slice(0, 48), [deferredDexSearch, siteLanguage])
+  const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }), [deferredDexSearch])
+  const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }), [asyncDataVersion, deferredDexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }), [deferredDexSearch])
+  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
     const unifiedQuery = deferredDexUnifiedSearch.trim()
     if (!unifiedQuery) return []
-    const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true, allowLoose: false }).slice(0, 10)
-    const moveOptions = filterDexMoveOptions(unifiedQuery, { allowLoose: false }).slice(0, 16)
-    const abilityOptions = filterDexAbilityOptions(unifiedQuery, { allowLoose: false }).slice(0, 10)
-    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false, allowLoose: false }).slice(0, 16)
+    const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true, allowLoose: false })
+    const moveOptions = filterDexMoveOptions(unifiedQuery, { allowLoose: false })
+    const abilityOptions = filterDexAbilityOptions(unifiedQuery, { allowLoose: false })
+    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false, allowLoose: false })
     const pokemonResults: Extract<DexResultItem, { kind: 'pokemon' }>[] = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
@@ -4446,7 +4449,6 @@ export default function App() {
     })
     return ([...pokemonResults, ...moveResults, ...abilityResults, ...itemResults] as DexResultItem[])
       .sort((a, b) => a.score - b.score || a.kind.localeCompare(b.kind) || a.key.localeCompare(b.key, 'ko'))
-      .slice(0, 40)
   }, [asyncDataVersion, deferredDexUnifiedSearch, siteLanguage])
   const dexCategoryResults = React.useMemo(() => dexAllResults.filter(result => result.kind === dexSearchMode), [dexAllResults, dexSearchMode])
   const dexResultKeys = React.useMemo(() => {
@@ -4520,6 +4522,20 @@ export default function App() {
     if (result.kind === 'ability') return { id: result.id, href, kind: result.kind, label: abilityDisplayName(result.key, result.koLabel, siteLanguage), metaText: `${result.pokemonKeys.length}${siteLanguage === 'en' ? ' Pokémon' : siteLanguage === 'ja' ? '匹' : '마리'}`, pokemonSprites: result.pokemonKeys.flatMap(key => { const row = indexByKey.get(key); return row?.sprite ? [{key, src: row.sprite}] : [] }) }
     return { id: result.id, href, kind: result.kind, label: displayItemLabel(result.item, siteLanguage), secondaryLabel: result.previewText, sprite: itemSpriteSrc('', result.item) }
   }), [dexBrowseResults, siteLanguage, dexListHref, lt])
+  const dexScope = dexPageScope(dexSearchMode, normalizeSearchText(deferredDexUnifiedSearch))
+  const dexCount = dexVisibleCount(dexPagination, dexScope, dexBrowseCards.length)
+  React.useEffect(() => {
+    if (dexQueryPending) return
+    const saved = pendingDexScrollRestore.current
+    setDexPagination(previous => {
+      if (saved?.scope === dexScope && (previous.scope !== dexScope || previous.count !== saved.count)) return { scope: dexScope, count: saved.count }
+      return previous.scope === dexScope ? previous : { scope: dexScope, count: DEX_PAGE_SIZE }
+    })
+  }, [dexScope, dexQueryPending])
+  const loadMoreDex = React.useCallback(() => {
+    if (dexQueryPending || dexCount >= dexBrowseCards.length) return
+    setDexPagination(previous => dexNextPage(previous, dexScope, dexBrowseCards.length, dexCount))
+  }, [dexQueryPending, dexCount, dexBrowseCards.length, dexScope])
   const [dexPoolByKey, setDexPoolByKey] = React.useState<Record<string, {status: 'loading' | 'ready' | 'error' | 'missing'; moves: MoveOption[]; provenance: DexLearnsetProvenance}>>({})
 
   React.useEffect(() => {
@@ -4631,10 +4647,11 @@ export default function App() {
     const parsed = parseDexSelectionId(id)
     if (!parsed) return
     const url = new URL(event.currentTarget.href)
-    window.history.replaceState({ ...window.history.state, dexListScroll: window.scrollY }, '', window.location.href)
+    window.history.replaceState({ ...window.history.state, dexListScroll: window.scrollY, dexListCount: dexCount, dexListScope: dexScope }, '', window.location.href)
     window.history.pushState({ ...window.history.state, dexFromList: true }, '', url)
     restoringDexRoute.current = { mode: parsed.kind, query: dexUnifiedSearchDraft.trim(), selection: id }
     setDexSelectedValue(id)
+    window.scrollTo({ top: 0, behavior: 'auto' })
   }
   const navigateDexBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return
@@ -5330,9 +5347,17 @@ export default function App() {
       setDexUnifiedSearch(route.dexUnifiedSearch ?? route.dexSearch ?? '')
       setDexUnifiedSearchDraft(route.dexUnifiedSearch ?? route.dexSearch ?? '')
       setDexSelectedValue(route.dexSelectedValue ?? null)
-      if (route.mainSection === 'dex' && !route.dexSelectedValue && typeof window.history.state?.dexListScroll === 'number') {
-        const scroll = window.history.state.dexListScroll
-        requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: scroll, behavior: 'auto' })))
+      pendingDexScrollRestore.current = null
+      if (route.mainSection === 'dex' && !route.dexSelectedValue) {
+        const scope = dexPageScope(route.dexSearchMode ?? 'pokemon', normalizeSearchText(route.dexUnifiedSearch ?? route.dexSearch ?? ''))
+        const savedCount = window.history.state?.dexListCount
+        const savedScroll = window.history.state?.dexListScroll
+        if (window.history.state?.dexListScope === scope && typeof savedCount === 'number' && Number.isFinite(savedCount) && savedCount >= DEX_PAGE_SIZE) {
+          setDexPagination({ scope, count: savedCount })
+          if (typeof savedScroll === 'number' && Number.isFinite(savedScroll) && savedScroll >= 0) {
+            pendingDexScrollRestore.current = { scope, count: savedCount, y: savedScroll }
+          }
+        }
       }
       if (route.selectedMy !== undefined) setSelectedMy(sanitizeSelectedIndex(route.selectedMy, party.length))
       if (route.selectedOpp !== undefined) setSelectedOpp(sanitizeSelectedIndex(route.selectedOpp, opponents.length))
@@ -5377,6 +5402,21 @@ export default function App() {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode])
+  React.useEffect(() => {
+    const pending = pendingDexScrollRestore.current
+    if (!pending || !dexScrollRestoreReady(pending, { section: mainSection, selection: dexSelectedValue,
+      queryPending: dexQueryPending, scope: dexScope, visibleCount: dexCount, totalCount: dexBrowseCards.length })) return
+    let active = true
+    let secondFrame = 0
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        if (!active || pendingDexScrollRestore.current !== pending) return
+        window.scrollTo({ top: pending.y, behavior: 'auto' })
+        pendingDexScrollRestore.current = null
+      })
+    })
+    return () => { active = false; cancelAnimationFrame(firstFrame); cancelAnimationFrame(secondFrame) }
+  }, [mainSection, dexSelectedValue, dexQueryPending, dexScope, dexCount, dexBrowseCards.length])
   React.useEffect(() => {
     if (mainSection !== 'sample' || sampleWorkbenchTab === 'library' || librarySourceId) return
     const target = sampleWorkbenchTab === 'speed' ? 'sample-speed-section' : sampleWorkbenchTab === 'damage' ? 'sample-damage-section' : null
@@ -7491,12 +7531,14 @@ export default function App() {
                     placeholder={lt('포켓몬 / 기술 / 특성 / 도구 검색')}
                     onChange={(value) => {
                       restoringDexRoute.current = null
+                      pendingDexScrollRestore.current = null
                       setDexUnifiedSearchDraft(value)
                     }}
                     inputProps={{ onCompositionStart: () => setDexUnifiedSearchComposing(true),
                     onCompositionEnd: (e) => {
                       const nextValue = e.currentTarget.value
                       restoringDexRoute.current = null
+                      pendingDexScrollRestore.current = null
                       setDexUnifiedSearchComposing(false)
                       setDexUnifiedSearchDraft(nextValue)
                       setDexUnifiedSearch(nextValue)
@@ -7515,13 +7557,14 @@ export default function App() {
                   ['ability', lt('특성')],
                   ['item', lt('도구')],
                 ] as [DexSearchMode, string][]).map(([mode, label]) => (
-                  <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => { if (mode === dexSearchMode) return; restoringDexRoute.current = null; setDexSelectedValue(null); setDexSearchMode(mode) }}>{label}</button>
+                  <button key={`dex-mode-${mode}`} type="button" className={`tab-chip ${dexSearchMode === mode ? 'active' : ''}`} onClick={() => { if (mode === dexSearchMode) return; restoringDexRoute.current = null; pendingDexScrollRestore.current = null; setDexSelectedValue(null); setDexSearchMode(mode) }}>{label}</button>
                 ))}
               </div>
             </div>
           </section>
           <section className="panel wide dex-content-panel"><h3>{lt('검색 결과')}</h3>
-            <DexBrowseGrid items={dexBrowseCards} language={siteLanguage} busy={dexQueryPending}
+            <DexBrowseGrid items={dexQueryPending ? [] : dexBrowseCards.slice(0, dexCount)} totalCount={dexBrowseCards.length}
+              scope={dexScope} language={siteLanguage} busy={dexQueryPending} onLoadMore={loadMoreDex}
               onNavigate={navigateDexCard} renderTypeBadge={type => <TypeBadgeImage type={type} />}
               tooltipPropsForItem={id => { const item = dexBrowseResults.find(result => result.id === id); return item?.kind === 'item' ? bindTooltip(itemTooltipData(item.item, siteLanguage)) : {} }} />
           </section></> : null}
