@@ -1,6 +1,7 @@
 import type { EffortValues } from './myPartyChampionsSamples'
 import type { NatureId, EffortStatKey } from './app/types'
 import { additionalCreatorSamples } from './additionalCreatorSamples.ts'
+import { previousSeasonRankerSamples } from './previousSeasonRankerSamples.ts'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -18,7 +19,7 @@ export type LibraryBuild = {
 export type PartialLibraryBuild = Partial<LibraryBuild> & {
   evsKnown?: Partial<EffortValues> // Sparse, source-confirmed investment; unknown fields stay absent.
   preMegaAbilities?: string[]
-  actualStats?: Record<EffortStatKey, number> // Values transcribed from the source image, not inferred from nature.
+  actualStats?: Partial<Record<EffortStatKey, number>> // Only source-printed values for actualStatsForm; x remains absent.
   actualStatsForm?: string // Distinguishes a pre-Mega party screen from the selected Mega species.
 }
 export type PartialBuildField = `partialBuild.${keyof PartialLibraryBuild}`
@@ -219,6 +220,7 @@ export const catalog: CreatorSample[] = [
     }
   }),
   ...additionalCreatorSamples,
+  ...previousSeasonRankerSamples,
 ]
 
 export function isVerifiedRankerSample(entry: CreatorSample): boolean {

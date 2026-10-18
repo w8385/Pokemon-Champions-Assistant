@@ -22,7 +22,7 @@ test('catalog keeps the three original uploads and all six blog party members', 
   assert.ok(mono.every(e => e.creator === '모노' && e.provenance.sourceUrl === 'https://m.blog.naver.com/2tjqja/224319761655'))
   assert.ok(mono.every(e => supportedSpeciesKeys.has(e.pokemonKey) && supportedSpeciesKeys.has(e.partialBuild.actualStatsForm)))
   assert.equal(new Set(catalog.map(e => e.id)).size, catalog.length)
-  for (const entry of catalog) {
+  for (const entry of catalog.filter(e => e.provenance.collectedAt === '2026-10-03')) {
     assert.equal(entry.rank, null)
     assert.equal(entry.provenance.canonicalUrl, entry.provenance.sourceUrl)
     assert.equal(entry.provenance.collectedAt, '2026-10-03')
@@ -43,7 +43,7 @@ test('catalog keeps the three original uploads and all six blog party members', 
 test('document taxonomy groups the original six under one party and all are importable', () => {
   const sources = groupCreatorSources(catalog)
   const party = sources.find(source => source.sourceId === '224319761655')
-  assert.equal(sources.length, 7)
+  assert.equal(sources.length, 10)
   assert.equal(party.contentKind, 'party')
   assert.equal(party.platform, 'blog')
   assert.equal(party.canonicalUrl, 'https://m.blog.naver.com/2tjqja/224319761655')
@@ -178,18 +178,18 @@ test('Mono six recorded slots remain individually findable, with only Gyarados f
 
 test('individual index contains every recorded member once regardless of source presentation', () => {
   const individuals = individualCreatorSources(catalog)
-  assert.equal(individuals.length, 32)
-  assert.equal(new Set(individuals.map(s => s.id)).size, 32)
+  assert.equal(individuals.length, 50)
+  assert.equal(new Set(individuals.map(s => s.id)).size, 50)
   assert.deepEqual(individuals.map(s => s.members[0].id).sort(), catalog.map(e => e.id).sort())
   assert.equal(individuals[0].members[0].pokemonKey, 'mega-gyarados')
   assert.equal(individuals[0].members[0].featuredSample, true)
   assert.ok(individuals.every(s => s.id === `individual:${s.members[0].id}` && s.members.length === 1 && s.partySize === null && s.contentKind === 'pokemon' && s.confirmedMemberCount === 1))
   assert.ok(individuals.every(s => s.canonicalUrl === s.members[0].provenance.canonicalUrl && s.creator === s.members[0].creator && s.sourceId === s.members[0].provenance.sourceId))
-  assert.equal(individuals.filter(s => s.completeMemberCount === 1).length, 12)
-  assert.equal(individuals.filter(s => s.completeMemberCount === 0).length, 20)
+  assert.equal(individuals.filter(s => s.completeMemberCount === 1).length, 19)
+  assert.equal(individuals.filter(s => s.completeMemberCount === 0).length, 31)
   assert.equal(filterCreatorSources(individuals, { language: 'ko', format: 'singles', query: 'hydreigon', contentKind: 'pokemon' }).length, 1)
   assert.equal(individuals.filter(s => s.sourceId === 'Ix8nrNnmTUk').length, 6)
-  assert.equal(groupCreatorSources(catalog).filter(s => s.contentKind === 'party').length, 3)
+  assert.equal(groupCreatorSources(catalog).filter(s => s.contentKind === 'party').length, 6)
 })
 
 test('related Mono rental six can prepare a separate party without changing catalog taxonomy or entries', () => {
@@ -255,7 +255,7 @@ test('only the six-member blog prepares a Mono party, not the individual Mono vi
 })
 
 test('ranker menu requires independently recorded rank evidence', () => {
-  assert.equal(catalog.some(isVerifiedRankerSample), false)
+  assert.equal(catalog.filter(entry => entry.provenance.collectedAt === '2026-10-03').some(isVerifiedRankerSample), false)
   assert.equal(isVerifiedRankerSample({ ...complete, rank: '1위' }), false)
   assert.equal(isVerifiedRankerSample({ ...complete, rank: '1위', provenance: { ...complete.provenance, fields: { rank: { sourceUrl: 'https://example.org/ranking', location: 'season results', checkedAt: '2026-10-03' } } } }), true)
 })

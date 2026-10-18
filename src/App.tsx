@@ -6510,7 +6510,7 @@ export default function App() {
     }
     setSavedPartyPresets(prev => [preset, ...prev])
     setCreatorPartyImportError('')
-    setMainSection('single')
+    setMainSection('party')
     setActiveTab('party')
   }
 
@@ -7078,8 +7078,8 @@ export default function App() {
     const canToggle = Boolean(baseKey && indexByKey.has(baseKey) && indexByKey.has(megaKey!))
     const formKey = canToggle && creatorMegaSelection[entry.id] === false ? baseKey! : entry.pokemonKey
     const row = indexByKey.get(formKey) // No substitute species for unsupported forms.
-    const build = entry.build ?? entry.partialBuild
-    const member: PartyMember | null = row && build?.nature && build.evs && !entry.partialBuild?.evsKnown ? {
+    const build = entry.build ? { ...entry.partialBuild, ...entry.build } : entry.partialBuild
+    const member: PartyMember | null = row && build?.nature && build.evs && (entry.build || !entry.partialBuild?.evsKnown) ? {
       key: formKey, evs: build.evs, config: { nature: build.nature, scarf: false, speedStage: 0 },
       picked: false, tuning: { magicNumber: 0, maxValue: 0 }, item: build.item ?? '', ability: '',
     } : null
