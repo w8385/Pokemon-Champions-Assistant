@@ -56,56 +56,35 @@ test('invalid target slug survives route and blocks effective target speed and m
   assert.doesNotMatch(view, /Target effective Speed: <strong>|Minimum effort to pass:/)
 })
 
-test('restored ordinary Mega + Scarf target requires explicit advanced opt-in, unlike filtered valid targets', () => {
+test('restored ordinary Mega + Scarf target stays blocked and offers a repair without changing the reference', () => {
   const { state } = parseSpeedLineState(new URLSearchParams('slv=3&ref=qwilfish&target=mega-charizard-x&targetItem=scarf&q=not-a-match&forms=nonMega&items=normal'))
   const hidden = html(state)
   assert.match(hidden, /Mega Charizard X/)
-  assert.match(hidden, /Show item combinations not verified for battle/)
-  assert.match(hidden, /not verified as usable in battle/)
+  assert.match(hidden, /Mega forms cannot hold Choice Scarf|Mega item and Choice Scarf cannot both be held/)
+  assert.doesNotMatch(hidden, /Show item combinations not verified for battle|Additional options →/)
   assert.doesNotMatch(hidden, /Target effective Speed: <strong>|Minimum effort to pass:/)
-  // Simulate the component's local advanced checkbox state, then turn it off again.
-  const original = React.useState
-  let enabled = false
-  let checkbox
-  React.useState = initial => {
-    const [value, setter] = original(initial)
-    if (initial === false && !checkbox) { checkbox = true; return [value, setter] }
-    if (initial === false) return [enabled, next => { enabled = next }]
-    return [value, setter]
-  }
-  try {
-    let tree
-    function Capture() { tree = Panel(panelProps(state)); return tree }
-    renderToStaticMarkup(React.createElement(Capture))
-    const flatten = node => !node ? [] : Array.isArray(node) ? node.flatMap(flatten) : node.props ? [node, ...flatten(node.props.children)] : []
-    const toggle = flatten(tree).find(node => node.type === 'input' && node.props.type === 'checkbox')
-    assert.ok(toggle)
-    toggle.props.onChange({ target: { checked: true } })
-    assert.equal(enabled, true)
-    checkbox = false
-    assert.match(html(state), /Target effective Speed: <strong>/)
-    assert.match(html(state), /Minimum effort to pass:/)
-    toggle.props.onChange({ target: { checked: false } })
-    checkbox = false
-    assert.doesNotMatch(html(state), /Target effective Speed: <strong>|Minimum effort to pass:/)
-  } finally { React.useState = original }
+  assert.doesNotMatch(hidden, /type="checkbox"/)
+  let next
+  let tree
+  function Capture() { tree = Panel({ ...panelProps(state), onChange: value => { next = value } }); return tree }
+  renderToStaticMarkup(React.createElement(Capture))
+  const flatten = node => !node ? [] : Array.isArray(node) ? node.flatMap(flatten) : node.props ? [node, ...flatten(node.props.children)] : []
+  const repair = flatten(tree).find(node => node.type === 'button' && node.props.children === 'Use without Choice Scarf')
+  assert.ok(repair)
+  repair.props.onClick()
+  assert.deepEqual([next.targetKey, next.targetItem, next.referenceKey], ['mega-charizard-x', 'normal', 'qwilfish'])
   const valid = html({ ...state, targetKey: 'qwilfish', targetItem: 'normal' })
   assert.match(valid, /Minimum effort to pass:/)
 })
 
-test('Z-Mega Scarf and Unburden Scarf remain unavailable regardless of advanced display state', () => {
+test('Z-Mega Scarf and Unburden Scarf remain unavailable', () => {
   for (const [key, ability] of [['mega-absol-z', null], ['unburden', 'unburden']]) {
     const state = parseSpeedLineState(new URLSearchParams(`slv=3&ref=qwilfish&target=${key}&targetItem=scarf${ability ? `&targetAbility=${ability}` : ''}`)).state
     const scenario = buildSpeedScenario(rows.find(row => row.key === key), state.listEffort, state.listNature, 'scarf', null, ability)
     assert.ok(scenario.unavailableReason)
     assert.throws(() => calculateSpeedInvestment(rows[0], state.referenceNature, state.referenceEffort, scenario), RangeError)
     assert.doesNotMatch(html(state), /Target effective Speed: <strong>|Minimum effort to pass:/)
-    const original = React.useState
-    let falseCalls = 0
-    React.useState = initial => initial === false && ++falseCalls === 2 ? [true, () => {}] : original(initial)
-    try {
-      assert.doesNotMatch(html(state), /Target effective Speed: <strong>|Minimum effort to pass:/)
-    } finally { React.useState = original }
+    assert.match(html(state), /Use without Choice Scarf/)
   }
 })
 
@@ -126,4 +105,41 @@ test('present but empty ability parameters remain invalid and round-trip without
   assert.equal(buildSpeedComparison(rows, state).reference, null)
   assert.equal(buildSpeedScenario(rows[0], 32, 'boost', 'normal', null, state.targetAbility).unavailableReason, 'ability-not-available')
   assert.doesNotMatch(html(state), /Target effective Speed: <strong>|Minimum effort to pass:/)
+})
+
+test('empty refAbility shows invalid selection in collapsed summary and repairs to absent ability in every language', () => {
+  const { state, warnings } = parseSpeedLineState(new URLSearchParams(`${route}&refAbility=`))
+  assert.deepEqual(warnings, ['refAbility'])
+  assert.equal(state.referenceAbility, '')
+  const labels = [
+    ['ko', '선택한 특성이 이 폼에 없습니다', '특성 없음', '선택 불가 특성 해제'],
+    ['en', 'Selected ability is unavailable on this form', 'No active ability', 'Clear unavailable ability'],
+    ['ja', '選択した特性はこのフォルムにありません', '特性なし', '使用不可の特性を解除'],
+  ]
+  for (const [language, invalid, absent, repairLabel] of labels) {
+    const properties = { ...panelProps(state), language, warnings }
+    const view = renderToStaticMarkup(React.createElement(Panel, properties))
+    const summary = view.match(/<details class="speed-line-reference-options"><summary>(.*?)<\/summary>/)?.[1]
+    assert.ok(summary, `missing collapsed ${language} summary`)
+    assert.match(summary, new RegExp(invalid))
+    assert.doesNotMatch(summary, new RegExp(absent))
+    assert.match(view, new RegExp(`refAbility[^]*?${repairLabel}`))
+    let tree, next
+    function Capture() { tree = Panel({ ...properties, onChange: value => { next = value } }); return tree }
+    renderToStaticMarkup(React.createElement(Capture))
+    const flatten = node => !node ? [] : Array.isArray(node) ? node.flatMap(flatten) : node.props ? [node, ...flatten(node.props.children)] : []
+    const repair = flatten(tree).find(node => node.type === 'button' && node.props.children === repairLabel)
+    assert.ok(repair)
+    repair.props.onClick()
+    assert.equal(next.referenceAbility, null)
+    assert.equal(next.referenceKey, state.referenceKey)
+    const repairedParams = new URLSearchParams()
+    writeSpeedLineState(repairedParams, next)
+    assert.equal(repairedParams.has('refAbility'), false)
+    const repaired = renderToStaticMarkup(React.createElement(Panel, { ...properties, state: next, warnings: [] }))
+    const repairedSummary = repaired.match(/<details class="speed-line-reference-options"><summary>(.*?)<\/summary>/)?.[1]
+    assert.ok(repairedSummary)
+    assert.match(repairedSummary, new RegExp(absent))
+    assert.doesNotMatch(repairedSummary, new RegExp(invalid))
+  }
 })

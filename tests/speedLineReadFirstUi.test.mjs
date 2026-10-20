@@ -36,10 +36,10 @@ test('read-first list hides impossible scarf megas, keeps compact row action and
   assert.match(html, /이 상대를 추월할 투자 보기/)
   assert.doesNotMatch(html, /역산 상대 선택|가상 조건/)
   assert.match(html, /unknown-key/)
-  assert.match(html, /실전에서 불가능한 조합도 보기/)
+  assert.doesNotMatch(html, /실전에서 불가능한 조합도 보기/)
 })
 
-test('selected target details open on action, optional impossible combinations show plain explanation', () => {
+test('selected target details open on action, impossible combinations show repair', () => {
   let tree
   function Capture() { tree = Panel(props({ targetKey: null })); return tree }
   renderToStaticMarkup(React.createElement(Capture))
@@ -56,5 +56,6 @@ test('selected target details open on action, optional impossible combinations s
   action.props.onClick()
   assert.equal(changed.targetKey, 'charizard')
   const opt = render({ targetKey: 'mega-charizard', targetItem: 'scarf' })
-  assert.match(opt, /이 도구 조합은 실전 사용 가능 여부가 확인되지 않음/)
+  assert.match(opt, /메가진화에 필요한 도구와 구애스카프를 동시에 지닐 수 없습니다/)
+  assert.match(opt, /구애스카프 미적용으로 바꾸기/)
 })

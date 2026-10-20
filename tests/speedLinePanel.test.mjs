@@ -23,12 +23,12 @@ const render = (overrides = {}, properties = {}) => renderToStaticMarkup(React.c
   displayName: row => row.name_en, ...properties,
 }))
 
-test('reference picker uses full roster while results filters hide it; condition summary and computed comparison remain', () => {
+test('reference picker uses full roster while results filters hide it; reference stats and computed comparison remain', () => {
   const html = render({ forms: 'mega', query: 'mega', comparison: 'slower' })
   assert.match(html, /<strong>Slow<\/strong>/)
   assert.match(html, /role="combobox"/)
-  assert.match(html, /Reference effective Speed/)
-  assert.match(html, /Comparison conditions/)
+  assert.match(html, /Effective Speed/)
+  assert.match(html, /<summary>List settings · 32pt · \+10% · Mega only · Reference slower<\/summary>/)
   assert.match(html, /mega-fast/)
   assert.match(html, /reference-marker/)
   assert.match(html, /Speed difference/)
@@ -45,7 +45,7 @@ test('unselected reference keeps entire listing and disables around control', ()
 test('empty filtered results show explicit reset with pinned reference', () => {
   const html = render({ query: 'nothing', comparison: 'equal' })
   assert.match(html, /Reset filters/)
-  assert.match(html, /Reference effective Speed/)
+  assert.match(html, /Effective Speed/)
   assert.match(html, /No results/)
 })
 
@@ -61,7 +61,7 @@ test('localized conditions expose assumptions, reference viewpoint, actual refer
   assert.match(html, /내가 빠름/)
   assert.match(html, /내가 느림/)
   assert.match(html, /기준 주변 \(±3\)/)
-  assert.match(html, /class="speed-line-condition-summary"[^>]*>[^]*?기준 유효 스피드[^]*?166/)
+  assert.match(html, /class="speed-line-reference-stat"[^>]*>[^]*?유효 스피드 <strong>166<\/strong>/)
 })
 
 test('invalid URL fields are surfaced as a localized repair notice', () => {
