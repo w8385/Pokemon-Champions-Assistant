@@ -8406,11 +8406,10 @@ html {
 .speed-line-reference-overview > :first-child { min-width: 0; }
 .speed-line-reference-overview > .entry-card-top { margin-bottom: 0; }
 .speed-line-reference .speed-line-controls { margin: .4rem 0; }
-.speed-line-reference-options, .speed-line-secondary-filters, .speed-line-assumption-details { min-width: 0; font-size: .85rem; }
-.speed-line-reference-options summary, .speed-line-secondary-filters summary, .speed-line-assumption-details summary { cursor: pointer; overflow-wrap: anywhere; }
+.speed-line-reference-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.speed-line-secondary-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .speed-line-list-toolbar { grid-template-columns: minmax(180px, 1.5fr) repeat(2, minmax(160px, 1fr)); align-items: end; }
-.speed-line-panel > .speed-line-secondary-filters, .speed-line-assumption-details { margin: .2rem 0; }
-.speed-line-assumption-details p { margin: .35rem 0; }
+.speed-line-panel > .speed-line-secondary-filters { margin: .2rem 0; }
 .speed-line-panel > p.muted { margin: .25rem 0; font-size: .8rem; }
 .speed-line-reference-stat { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; }
 .speed-line-reference-stat strong { font-size: clamp(1.25rem, 4vw, 1.8rem); line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -8428,15 +8427,15 @@ html {
 .speed-line-investment h3 { margin-top: 0; }
 
 .speed-line-species > span { min-width: 0; }
-.speed-line-species .speed-line-name-action { display: block; margin: 0; padding: 0; border: 0; background: none; color: inherit; text-align: left; font: inherit; font-weight: 700; cursor: pointer; overflow-wrap: anywhere; }
+.speed-line-species .speed-line-name-action { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; margin: 0; padding: .1rem .4rem; text-align: left; font: inherit; font-weight: 700; overflow-wrap: anywhere; }
 .speed-line-species .speed-line-name-action:hover, .speed-line-species .speed-line-name-action:focus-visible { color: #8dceff; text-decoration: underline; }
 .speed-line-species .speed-line-name-action[aria-pressed="true"] { text-decoration: underline; text-decoration-color: #8dceff; text-underline-offset: 3px; }
 .speed-line-item-badge { width: fit-content; max-width: 100%; padding: 0 .3rem; border: 1px solid #58677a; border-radius: 4px; color: var(--muted); font-size: .72rem; line-height: 1.3; overflow-wrap: anywhere; }
-.speed-line-ability-note { margin: .15rem 0; font-size: .8rem; line-height: 1.35; }
+
 .speed-line-additional { margin: .5rem 0; font-size: .85rem; }
 .speed-line-additional label { display: block; margin: .5rem 0; }
 .speed-line-additional input { width: auto; }
-.speed-line-investment summary { cursor: pointer; font-weight: 700; }
+.speed-line-investment h3 { margin: 0 0 .4rem; }
 .pokemon-search-field { min-width: 0; position: relative; display: grid; gap: .35rem; }
 .pokemon-search-field input { width: 100%; min-width: 0; min-height: var(--control-height); background: var(--control-bg); border-color: var(--border); color: var(--control-text); }
 .pokemon-search-field .party-inline-species-input { border: 0; padding: 0; background: transparent; font-size: 21px; font-weight: 800; }

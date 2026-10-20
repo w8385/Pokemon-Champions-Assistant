@@ -107,7 +107,7 @@ test('present but empty ability parameters remain invalid and round-trip without
   assert.doesNotMatch(html(state), /Target effective Speed: <strong>|Minimum effort to pass:/)
 })
 
-test('empty refAbility shows invalid selection in collapsed summary and repairs to absent ability in every language', () => {
+test('empty refAbility shows visible invalid selection and repairs to absent ability in every language', () => {
   const { state, warnings } = parseSpeedLineState(new URLSearchParams(`${route}&refAbility=`))
   assert.deepEqual(warnings, ['refAbility'])
   assert.equal(state.referenceAbility, '')
@@ -119,10 +119,10 @@ test('empty refAbility shows invalid selection in collapsed summary and repairs 
   for (const [language, invalid, absent, repairLabel] of labels) {
     const properties = { ...panelProps(state), language, warnings }
     const view = renderToStaticMarkup(React.createElement(Panel, properties))
-    const summary = view.match(/<details class="speed-line-reference-options"><summary>(.*?)<\/summary>/)?.[1]
-    assert.ok(summary, `missing collapsed ${language} summary`)
-    assert.match(summary, new RegExp(invalid))
-    assert.doesNotMatch(summary, new RegExp(absent))
+    const referenceControls = view.match(/class="speed-line-controls speed-line-reference-options"([^]*?)<\/div>/)?.[1]
+    assert.ok(referenceControls, `missing visible ${language} controls`)
+    assert.match(view, new RegExp(invalid))
+    assert.match(referenceControls, new RegExp(absent))
     assert.match(view, new RegExp(`refAbility[^]*?${repairLabel}`))
     let tree, next
     function Capture() { tree = Panel({ ...properties, onChange: value => { next = value } }); return tree }
@@ -137,9 +137,9 @@ test('empty refAbility shows invalid selection in collapsed summary and repairs 
     writeSpeedLineState(repairedParams, next)
     assert.equal(repairedParams.has('refAbility'), false)
     const repaired = renderToStaticMarkup(React.createElement(Panel, { ...properties, state: next, warnings: [] }))
-    const repairedSummary = repaired.match(/<details class="speed-line-reference-options"><summary>(.*?)<\/summary>/)?.[1]
-    assert.ok(repairedSummary)
-    assert.match(repairedSummary, new RegExp(absent))
-    assert.doesNotMatch(repairedSummary, new RegExp(invalid))
+    const repairedControls = repaired.match(/class="speed-line-controls speed-line-reference-options"([^]*?)<\/div>/)?.[1]
+    assert.ok(repairedControls)
+    assert.match(repairedControls, new RegExp(`selected="">${absent}`))
+    assert.doesNotMatch(repaired, new RegExp(invalid))
   }
 })

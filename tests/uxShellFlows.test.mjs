@@ -35,10 +35,10 @@ test('dex has one editable search with category-scoped results and IME guard', (
   assert.match(app, /route\.dexSearch/)
 })
 
-test('speed secondary filters stay in details after reference stats and before rows', () => {
+test('speed secondary filters are direct controls after reference stats and before rows', () => {
   const ref = speed.indexOf('className="speed-line-reference-stat"')
-  const filters = speed.indexOf('className="speed-line-secondary-filters"')
+  const filters = speed.indexOf('className="speed-line-controls speed-line-secondary-filters"')
   const list = speed.indexOf('className="speed-line-list"')
   assert.ok(ref > 0 && filters > ref && list > filters)
-  assert.match(speed.slice(filters - 10, filters), /<details/)
+  assert.match(speed.slice(filters - 6, filters), /<div /)
 })

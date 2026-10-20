@@ -22,7 +22,7 @@ test.after(async () => server?.close())
 test('condition scenarios show item and weather, stable IDs, and combined 501 Speed', () => {
   const html = render()
   assert.match(html, /특성 효과<select[^]*?<option value="conditions" selected="">발동 포함<\/option>/)
-  assert.match(html, /특성 발동 행은 각각 별도 조건/)
+  assert.doesNotMatch(html, /특성 발동 행은 각각 별도 조건/)
   assert.match(html, /data-key="swimmer" data-variant="scarf" data-ability="swift-swim" data-scenario-id="swimmer:scarf:swift-swim"/)
   assert.match(html, /data-scenario-id="swimmer:scarf:swift-swim"[^]*?501/)
   assert.match(html, /쓱쓱[^<]*\(비가 내릴 때\)/)

@@ -46,19 +46,12 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
   }[language]
   const abilityLabel = (slug: SpeedAbilitySelection) => { const ability = getSpeedAbility(slug); return ability ? `${ability[language === 'ko' ? 'labelKo' : language === 'ja' ? 'labelJa' : 'labelEn']} (${ability[language === 'ko' ? 'conditionKo' : language === 'ja' ? 'conditionJa' : 'conditionEn']})` : slug ?? '' }
   const l = (key: string): string => key === 'around' ? labels[language][key].replace('±10', `±${state.gap}`) : extra[language][key as keyof typeof extra.en] ?? overrides[language][key as keyof typeof overrides.en] ?? labels[language][key] ?? key
-  const summaryNature = state.listNature === 'neutral' ? l('neutral') : state.listNature === 'boost' ? '+10%' : '-10%'
-  const filterSummary = [l('extraOptions'), `${state.listEffort}pt`, summaryNature,
-    ...(state.forms !== 'all' ? [l(state.forms)] : []),
-    ...(state.comparison !== 'all' ? [l(state.comparison)] : []),
-    ...(state.sort !== 'desc' ? [l(state.sort)] : []),
-    ...(state.rangeMode !== 'all' ? [l('around')] : []),
-  ].join(' · ')
+
   const [referenceDraft, setReferenceDraft] = React.useState(String(state.referenceEffort))
   const [listDraft, setListDraft] = React.useState(String(state.listEffort))
   const [searchDraft, setSearchDraft] = React.useState('')
   const [copyFailed, setCopyFailed] = React.useState(false)
-  const [detailOpen, setDetailOpen] = React.useState(Boolean(state.targetKey))
-  const detailRef = React.useRef<HTMLDetailsElement>(null)
+  const detailRef = React.useRef<HTMLDivElement>(null)
   const referenceStage = state.referenceStage ?? 0
   const markerRef = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => setReferenceDraft(String(state.referenceEffort)), [state.referenceEffort])
@@ -118,13 +111,13 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
         {numeric(l('refEffort'), 'referenceEffort', referenceDraft)}
         {select(l('refNature'), state.referenceNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ referenceNature: value as SpeedLineState['referenceNature'] }))}
       </div>
-      <details className="speed-line-reference-options"><summary>{l('referenceOptions')} · {referenceStage > 0 ? '+' : ''}{referenceStage}{state.referenceAbility === '' ? ` · ${abilityText.unavailable}: ""` : state.referenceAbility ? ` · ${abilityLabel(state.referenceAbility)}` : ` · ${abilityText.noAbility}`}</summary><div className="speed-line-controls">
+      <div className="speed-line-controls speed-line-reference-options">
         {select(l('stage'), String(referenceStage), Array.from({ length: 13 }, (_, index) => index - 6).map(stage => [String(stage), stage > 0 ? `+${stage}` : String(stage)]), value => update({ referenceStage: Number(value) }))}
         {select(abilityText.reference, state.referenceAbility ?? '', [['', abilityText.noAbility], ...speedAbilitiesFor(referenceRow ?? {}).map(ability => [ability.slug, abilityLabel(ability.slug)] as [string, string]), ...(state.referenceAbility && !speedAbilitiesFor(referenceRow ?? {}).some(ability => ability.slug === state.referenceAbility) ? [[state.referenceAbility, `${state.referenceAbility} · ${abilityText.unavailable}`] as [string, string]] : [])], value => update({ referenceAbility: value || null }), !referenceRow)}
-      </div></details>
+      </div>
       {result?.referenceMissing ? <p role="alert">{l('missing')}</p> : null}
-      {referenceUnavailable ? <p role="alert">{abilityText[referenceUnavailable]}: {state.referenceAbility || '""'} <button type="button" onClick={() => update({ referenceAbility: null })}>{l('repairAbility')}</button></p> : null}
-      <div className="speed-line-actions"><button type="button" disabled={!reference || !draftsValid} onClick={jump}>{l('jump')}</button><button type="button" onClick={() => { update({ referenceKey: null, referenceAbility: null, comparison: 'all', rangeMode: 'all' }); setSearchDraft('') }}>{l('clear')}</button><button type="button" disabled={!draftsValid} onClick={share}>{l('share')}</button></div>
+      {referenceUnavailable ? <p role="alert">{abilityText[referenceUnavailable]}: {state.referenceAbility || '""'} <button type="button" className="action-button subtle" onClick={() => update({ referenceAbility: null })}>{l('repairAbility')}</button></p> : null}
+      <div className="speed-line-actions"><button type="button" className="action-button" disabled={!reference || !draftsValid} onClick={jump}>{l('jump')}</button><button type="button" className="action-button subtle" onClick={() => { update({ referenceKey: null, referenceAbility: null, comparison: 'all', rangeMode: 'all' }); setSearchDraft('') }}>{l('clear')}</button><button type="button" className="action-button subtle" disabled={!draftsValid} onClick={share}>{l('share')}</button></div>
       {copyFailed ? <label>{l('fallback')}<input readOnly onFocus={e => e.currentTarget.select()} value={typeof window !== 'undefined' ? window.location.href : ''} /></label> : null}
     </div>
     <div className="speed-line-list-toolbar speed-line-controls">
@@ -132,9 +125,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
       {select(l('items'), state.items, [['both', l('both')], ['normal', l('normal')], ['scarf', l('scarf')]], value => update({ items: value as SpeedLineState['items'] }))}
       {select(abilityText.mode, state.abilityMode ?? 'off', [['conditions', abilityText.conditions], ['off', abilityText.off]], value => update({ abilityMode: value as SpeedLineState['abilityMode'] }))}
     </div>
-    {state.abilityMode === 'conditions' ? <p className="muted speed-line-ability-note">{language === 'ko' ? '특성 발동 행은 각각 별도 조건 · 날씨·상태 자동 판정 없음' : language === 'ja' ? '特性発動行はそれぞれ別条件 · 天候・状態の自動判定なし' : 'Activated ability rows are separate scenarios · no automatic weather/status detection'}</p> : null}
-    <details className="speed-line-secondary-filters"><summary>{filterSummary}</summary>
-    <div className="speed-line-controls">
+    <div className="speed-line-controls speed-line-secondary-filters">
       {numeric(l('listEffort'), 'listEffort', listDraft)}
       {select(l('listNature'), state.listNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ listNature: value as SpeedLineState['listNature'] }))}
       {select(l('forms'), state.forms, ['all', 'nonMega', 'mega'].map(key => [key, l(key)]), value => update({ forms: value as SpeedLineState['forms'] }))}
@@ -142,28 +133,26 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
       {select(l('sort'), state.sort, ['desc', 'asc'].map(key => [key, l(key)]), value => update({ sort: value as SpeedLineState['sort'] }))}
       {select(l('range'), state.rangeMode, [['all', l('allRange')], ['around', l('around')]], value => update({ rangeMode: value as SpeedLineState['rangeMode'], gap: 10 }), !reference)}
     </div>
-    </details>
-    <details className="speed-line-assumption-details"><summary>{l('assumptions')}</summary><p className="muted">{l('notes')}</p><p className="muted">{abilityText.separate}</p></details>
     {!draftsValid ? <p role="alert">{l('invalid')}</p> : <><p className="muted">{l('count')}: {new Set(entries.map(entry => entry.row.key)).size} · {entries.length}</p>
       {entries.length ? <div className="speed-line-list" role="table" aria-label={translate('스피드라인')}>
         <div className="speed-line-row speed-line-heading" role="row"><span role="columnheader">#</span><span role="columnheader">{l('pokemon')}</span><span role="columnheader">{l('actual')}</span><span role="columnheader">{l('base')}</span><span role="columnheader">{l('difference')}</span></div>
         {entries.map((entry, idx) => <React.Fragment key={entry.id}>
           {idx === markerIndex ? referenceMarker : null}
           <div className="speed-line-row" role="row" data-key={entry.row.key} data-variant={entry.variant} data-ability={entry.abilitySlug ?? ''} data-scenario-id={entry.id}>
-            <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{entry.row.sprite ? <img src={entry.row.sprite} alt="" loading="lazy" /> : null}<span><button className="speed-line-name-action" type="button" aria-label={`${l('selectTarget')}: ${displayName(entry.row)} ${itemLabel(entry.variant)}${entry.abilitySlug ? ` ${abilityLabel(entry.abilitySlug)}` : ''}`} aria-pressed={state.targetKey === entry.row.key && state.targetItem === entry.variant && (state.targetAbility ?? null) === entry.abilitySlug} onClick={() => { update({ targetKey: entry.row.key, targetItem: entry.variant, targetAbility: entry.abilitySlug }); setDetailOpen(true); if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => detailRef.current?.scrollIntoView({ block: 'nearest' })) }}>{displayName(entry.row)}</button><small>{entry.row.name_en}</small><small className="speed-line-item-badge">{itemLabel(entry.variant)}{entry.abilitySlug ? ` · ${abilityLabel(entry.abilitySlug)}` : ''}</small></span></span><strong role="cell">{entry.actualSpeed} → {entry.effectiveSpeed}</strong><span role="cell">{entry.row.speed}</span><span role="cell">{entry.difference === null ? '—' : `${entry.difference > 0 ? '+' : ''}${entry.difference} · ${l(entry.relation!)}`}</span>
+            <span role="cell">{idx + 1}</span><span role="cell" className="speed-line-species">{entry.row.sprite ? <img src={entry.row.sprite} alt="" loading="lazy" /> : null}<span><button className="action-button subtle speed-line-name-action" type="button" aria-label={`${l('selectTarget')}: ${displayName(entry.row)} ${itemLabel(entry.variant)}${entry.abilitySlug ? ` ${abilityLabel(entry.abilitySlug)}` : ''}`} aria-pressed={state.targetKey === entry.row.key && state.targetItem === entry.variant && (state.targetAbility ?? null) === entry.abilitySlug} onClick={() => { update({ targetKey: entry.row.key, targetItem: entry.variant, targetAbility: entry.abilitySlug }); if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => detailRef.current?.scrollIntoView({ block: 'nearest' })) }}>{displayName(entry.row)}</button><small>{entry.row.name_en}</small><small className="speed-line-item-badge">{itemLabel(entry.variant)}{entry.abilitySlug ? ` · ${abilityLabel(entry.abilitySlug)}` : ''}</small></span></span><strong role="cell">{entry.actualSpeed} → {entry.effectiveSpeed}</strong><span role="cell">{entry.row.speed}</span><span role="cell">{entry.difference === null ? '—' : `${entry.difference > 0 ? '+' : ''}${entry.difference} · ${l(entry.relation!)}`}</span>
           </div>
         </React.Fragment>)}
         {markerIndex === entries.length ? referenceMarker : null}
-      </div> : <div className="speed-line-empty"><p>{l('noResults')}</p><button type="button" onClick={() => update({ query: '', forms: 'all', comparison: 'all', rangeMode: 'all' })}>{l('reset')}</button>{referenceMarker}</div>}
+      </div> : <div className="speed-line-empty"><p>{l('noResults')}</p><button type="button" className="action-button subtle" onClick={() => update({ query: '', forms: 'all', comparison: 'all', rangeMode: 'all' })}>{l('reset')}</button>{referenceMarker}</div>}
     </>}
-    <details ref={detailRef} className="speed-line-investment card" aria-label={l('investment')} open={detailOpen || Boolean(state.targetKey && (!selectedRow || targetUnsupported))} onToggle={event => setDetailOpen(event.currentTarget.open)}><summary>{l('investment')}{selectedTarget ? ` · ${displayName(selectedTarget.row)} · ${itemLabel(selectedTarget.variant)}${state.targetAbility ? ` · ${abilityLabel(state.targetAbility)}` : ''}` : state.targetKey ? ` · ${state.targetKey}` : ''}</summary>
+    {state.targetKey ? <div ref={detailRef} className="speed-line-investment card" aria-label={l('investment')}><h3>{l('investment')}</h3>
       {!draftsValid ? <p role="alert">{l('invalid')}</p> : state.targetKey && !selectedRow ? <p role="alert">{l('targetMissing')}: {state.targetKey}</p> : selectedTarget ? <>
         <p><strong>{displayName(selectedTarget.row)}</strong> · {itemLabel(selectedTarget.variant)}{state.targetAbility ? ` · ${abilityLabel(state.targetAbility)}` : ''} · {l('listEffort')} {state.listEffort} · {l(state.listNature)}</p>
-        {targetUnsupported ? <p role="alert">{targetUnavailable ? abilityText[targetUnavailable] : abilityText['item-required-for-mega']} · <button type="button" onClick={() => update(targetUnavailable === 'ability-not-available' ? { targetAbility: null } : { targetItem: 'normal' })}>{targetUnavailable === 'ability-not-available' ? l('repairAbility') : l('repairScarf')}</button></p> : <>
+        {targetUnsupported ? <p role="alert">{targetUnavailable ? abilityText[targetUnavailable] : abilityText['item-required-for-mega']} · <button type="button" className="action-button subtle" onClick={() => update(targetUnavailable === 'ability-not-available' ? { targetAbility: null } : { targetItem: 'normal' })}>{targetUnavailable === 'ability-not-available' ? l('repairAbility') : l('repairScarf')}</button></p> : <>
           <p>{l('actualReference')} {selectedTarget.actualSpeed} → {l('targetSpeed')}: <strong>{selectedTarget.effectiveSpeed}</strong></p>
           {investment && reference ? <><p>{l('actualCurrent')}: {investment.currentActualSpeed} · {l('current')}: {investment.currentSpeed}{investment.alreadyAhead ? ` · ${l('already')}` : ''}</p>{referenceStage !== 0 || state.referenceAbility ? <p>{l('actualMaximum')}: {investment.maxActualSpeed} · {l('maximum')}: {investment.maxSpeed}</p> : null}<p>{l('tie')}: {investment.tieEffort === null ? l('noTie') : `${investment.tieEffort} → ${investment.tieSpeed}`}</p><p>{l('pass')}: {investment.passEffort === null ? `${l('noPass')}${referenceStage === 0 && !state.referenceAbility ? ` · ${l('maximum')} ${investment.maxSpeed}` : ''}` : `${investment.passEffort} → ${investment.passSpeed}`}</p><p>{l('extra')}: {investment.additionalEffort === null ? '—' : investment.additionalEffort}{investment.previousPassSpeed !== null ? ` · ${l('previous')}: ${investment.previousPassSpeed}` : ''}</p></> : <p>{referenceUnavailable ? abilityText[referenceUnavailable] : reference ? l('invalid') : l('none')}</p>}
         </>}
       </> : <p>{l('targetNone')}</p>}
-    </details>
+    </div> : null}
   </section>
 }

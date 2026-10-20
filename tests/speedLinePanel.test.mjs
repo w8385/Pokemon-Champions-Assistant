@@ -28,7 +28,9 @@ test('reference picker uses full roster while results filters hide it; reference
   assert.match(html, /<strong>Slow<\/strong>/)
   assert.match(html, /role="combobox"/)
   assert.match(html, /Effective Speed/)
-  assert.match(html, /<summary>List settings · 32pt · \+10% · Mega only · Reference slower<\/summary>/)
+  assert.match(html, /class="speed-line-controls speed-line-secondary-filters"/)
+  assert.match(html, /<option value="mega" selected="">Mega only<\/option>/)
+  assert.match(html, /<option value="slower" selected="">Reference slower<\/option>/)
   assert.match(html, /mega-fast/)
   assert.match(html, /reference-marker/)
   assert.match(html, /Speed difference/)
@@ -55,9 +57,9 @@ test('same form uses independent efforts and cannot be mislabeled a zero differe
   assert.match(html, /-47 · Reference slower/)
 })
 
-test('localized conditions expose assumptions, reference viewpoint, actual reference speed and restored gap', () => {
+test('localized controls expose reference viewpoint, actual speed and restored gap without calculation prose', () => {
   const html = render({ referenceKey: 'fast', referenceEffort: 31, referenceNature: 'boost', rangeMode: 'around', gap: 3 }, { language: 'ko' })
-  assert.match(html, /레벨 50 · 개체값 31/)
+  assert.doesNotMatch(html, /레벨 50 · 개체값 31/)
   assert.match(html, /내가 빠름/)
   assert.match(html, /내가 느림/)
   assert.match(html, /기준 주변 \(±3\)/)
