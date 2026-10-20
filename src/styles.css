@@ -112,7 +112,7 @@ header {
   max-width: 100%;
   align-items: center;
   justify-content: center;
-  min-height: var(--control-height);
+  min-height: 44px;
   padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
@@ -183,12 +183,12 @@ header p {
 }
 .icon-button {
   appearance: none;
-  width: 40px;
-  height: 40px;
-  border: 1px solid #2b3540;
-  background: #111821;
-  color: #eef2f7;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  background: var(--control-bg);
+  color: var(--control-text);
+  border-radius: var(--radius-control);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -660,7 +660,7 @@ header p {
   background: var(--control-bg);
   color: var(--control-text);
   border-radius: var(--radius-control);
-  min-height: var(--control-height);
+  min-height: 44px;
   padding: 9px 12px;
   cursor: pointer;
 }
@@ -2464,7 +2464,7 @@ header p {
   color: #93a4b8;
 }
 .sample-label-input {
-  min-height: 38px;
+  min-height: var(--control-height);
   padding: 9px 11px;
   border-radius: 10px;
   border: 1px solid rgba(51, 65, 85, 0.78);
@@ -2803,6 +2803,31 @@ header p {
   border-color: rgba(45, 212, 191, 0.42);
   color: #ccfbf1;
   background: rgba(13, 148, 136, 0.2);
+}
+#sample-builder-card > .entry-card-top {
+  min-width: 0;
+  margin-bottom: 12px;
+}
+#sample-builder-card .entry-card-top > .entry-sprite {
+  width: 84px;
+  height: 84px;
+  flex: 0 0 84px;
+}
+#sample-builder-card .party-card-title-block {
+  min-width: 0;
+  width: 100%;
+}
+#sample-builder-card .party-card-title-block .sample-species-search {
+  width: 100%;
+  min-width: 0;
+}
+#sample-builder-card .sample-hero-search-input {
+  width: 100%;
+  min-width: 0;
+}
+#sample-builder-section > .sample-builder-action-card {
+  --sample-surface-border: rgba(51, 65, 85, 0.78);
+  --sample-surface-bg: rgba(11, 18, 32, 0.78);
 }
 .sample-builder-action-card {
   display: grid;
@@ -3963,7 +3988,7 @@ header p {
 .sample-speed-slider-field select,
 .sample-damage-target-controls input[type="number"],
 .sample-damage-target-controls select {
-  min-height: 38px;
+  min-height: var(--control-height);
   padding: 9px 11px;
   border-radius: 10px;
   border: 1px solid rgba(51, 65, 85, 0.78);
@@ -4327,7 +4352,7 @@ header p {
 }
 .sample-speed-rank-row select {
   width: 88px;
-  min-height: 36px;
+  min-height: var(--control-height);
 }
 .sample-speed-card-body-full {
   grid-template-columns: minmax(0, 1fr);
@@ -5064,10 +5089,10 @@ header p {
   background: #0b1220;
 }
 .sample-meta-grid .party-meta-chip {
-  padding: 7px 9px;
   border-radius: 12px;
 }
 .party-meta-chip-editor {
+  padding: 0;
   position: relative;
 }
 .party-meta-chip-editor:has(.party-meta-popover) {
@@ -5077,6 +5102,7 @@ header p {
 }
 .party-meta-chip-button {
   width: 100%;
+  min-height: 44px;
   text-align: left;
   cursor: pointer;
   font: inherit;
@@ -5084,7 +5110,7 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 0;
+  padding: 8px 10px;
   border: 0;
   background: transparent;
 }
@@ -5878,9 +5904,12 @@ input, select, textarea {
   background: var(--control-bg);
   color: var(--control-text);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 8px 10px;
   color-scheme: dark;
+}
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), select) {
+  min-height: var(--control-height);
 }
 input::placeholder, textarea::placeholder {
   color: var(--placeholder);
@@ -5888,14 +5917,14 @@ input::placeholder, textarea::placeholder {
 }
 .opponent-meta-select {
   cursor: pointer;
-  min-height: 38px;
+  min-height: var(--control-height);
 }
 .opponent-item-search {
   position: relative;
 }
 .opponent-meta-input {
   width: 100%;
-  min-height: 38px;
+  min-height: var(--control-height);
 }
 .opponent-meta-select:disabled {
   cursor: not-allowed;
@@ -7786,7 +7815,7 @@ html {
     flex: 0 0 auto;
     white-space: nowrap;
     justify-content: center;
-    min-height: 40px;
+    min-height: 44px;
     padding: 8px 12px;
   }
   .grid { grid-template-columns: 1fr; }
@@ -8098,7 +8127,7 @@ html {
     padding: 0 0 6px;
   }
   .header-primary-tab {
-    min-height: 38px;
+    min-height: 44px;
     padding: 8px 10px;
     font-size: 14px;
   }
@@ -8472,7 +8501,7 @@ html {
 .section-menu-tabs a { text-decoration: none; }
 @media (max-width: 700px) {
   .header-route-menu > .header-primary-tabs { display: flex; flex-wrap: wrap; width: 100%; overflow: visible; gap: 6px; padding: 2px 0 6px; }
-  .header-route-menu .header-primary-tab { flex: 1 1 auto; min-width: 0; min-height: 40px; padding: 7px 9px; font-size: 13px; white-space: normal; text-align: center; line-height: 1.25; }
+  .header-route-menu .header-primary-tab { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 7px 9px; font-size: 13px; white-space: normal; text-align: center; line-height: 1.25; }
 }
 /* One real navigation row on desktop; preserve eight direct links on mobile. */
 .header-title-stack { display: flex; align-items: center; gap: 12px; }
@@ -8709,5 +8738,11 @@ html {
 .registered-move-slot:focus-within { z-index: 32; }
 .registered-move-slot .pokemon-search-field .move-autocomplete-menu { z-index: 30; }
 .sample-registered-move-slot .pokemon-search-field .move-autocomplete-menu { right: auto; min-width: max(100%, 220px); width: max-content; max-width: min(420px, calc(100vw - 48px)); }
-.sample-registered-move-slot .pokemon-search-field input { min-height: 34px; }
+.sample-registered-move-slot .pokemon-search-field input { min-height: var(--control-height); }
+.sample-lab-section :is(#sample-speed-add, #sample-damage-add) { min-height: var(--control-height); }
 :where(.panel, .card) > :where(h2, h3, .section-head):first-child { margin-top: 0; }
+/* Only the narrow party and builder editors need four readable move rows. */
+@media (max-width: 359px) {
+  .manage-entry-grid .registered-move-grid,
+  #sample-builder-section .sample-track-input-grid { grid-template-columns: minmax(0, 1fr); }
+}

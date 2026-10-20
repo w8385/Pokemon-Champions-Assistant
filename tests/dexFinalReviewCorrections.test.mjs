@@ -33,15 +33,15 @@ function compile(path) {
   return exports
 }
 
-test('actual pool link opens move category on a fresh native tab and keeps list query', () => {
+test('actual pool link opens move category on a fresh native tab with destination query', () => {
   const { dexListHref, dexDetailHref } = evaluate(['dexListHref','dexDetailHref'], { React:{useMemo:fn=>fn()},URLSearchParams,dexSearchMode:'pokemon',dexUnifiedSearchDraft:'후딘',dexSelectionId })
   assert.match(dexListHref, /dexTab=pokemon/)
   const href = dexDetailHref('move','볼가득넣기')
   const params = new URL(href.slice(1),'https://example.test').searchParams
   assert.equal(params.get('dexTab'),'move')
   assert.equal(params.get('sel'),'move:볼가득넣기')
-  assert.equal(params.get('q'),'후딘')
-  assert.equal(params.get('uq'),'후딘')
+  assert.equal(params.get('q'),'볼가득넣기')
+  assert.equal(params.get('uq'),'볼가득넣기')
   assert.match(app, /detailHref=\{name => dexDetailHref\('move', name\)\}/)
   assert.match(app, /event\.ctrlKey \|\| event\.shiftKey \|\| event\.altKey/)
 })

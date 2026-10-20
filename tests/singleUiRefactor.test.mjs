@@ -5,11 +5,16 @@ import { readFileSync } from 'node:fs'
 const panel = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').split('function QuickDamagePanel(')[1].split('function LanguageIcon(')[0]
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 
-test('adjacent Speed and damage results precede primary inline editing cards and battle conditions', () => {
+test('real inline editing cards precede one adjacent Speed/damage result and battle conditions', () => {
   const view = panel.slice(panel.indexOf('return <section className={`panel wide quick-damage'))
-  const order = ['{entrySelectors?.(', 'className="quick-comparison-results"', '{speedStrip}', 'className="quick-result"', 'className="quick-sides"', 'className="quick-conditions"']
+  const order = ['{entrySelectors?.(', 'className="quick-sides"', 'className="quick-comparison-results"', '{speedStrip}', 'className="quick-result"', 'className="quick-conditions"']
   let previous = -1
   for (const marker of order) { const position = view.indexOf(marker); assert.ok(position > previous, `${marker} must follow previous region`); previous = position }
+  assert.equal((view.match(/className="quick-sides"/g) ?? []).length, 1)
+  assert.equal((view.match(/className="quick-comparison-results"/g) ?? []).length, 1)
+  assert.equal((view.match(/\{speedStrip\}/g) ?? []).length, 1)
+  assert.equal((view.match(/className="quick-result"/g) ?? []).length, 1)
+  assert.match(view, /\{sideCard\('attacker', attacker, attackingRow, setAttacker\)\}\{sideCard\('defender', defender, defendingRow, setDefender\)\}/)
   assert.match(panel, /<PokemonBuildFields/)
   assert.match(panel, /<PokemonStatGrid/)
   assert.match(panel, /className="registered-move-grid quick-registered-moves"/)

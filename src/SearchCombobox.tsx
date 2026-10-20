@@ -3,6 +3,8 @@ import React from 'react'
 export type SearchOption = { key: string; label: string; sprite?: string }
 export type SearchComboboxProps<T extends SearchOption> = {
   id: string
+  /** Access to the owned input for caller focus handoff after a selection. */
+  inputRef?: React.Ref<HTMLInputElement>
   /** Filter-only input: results are rendered by the caller, never as a duplicate popup. */
   mode?: 'combobox' | 'filter'
   value: string
@@ -35,7 +37,7 @@ export function nextSearchHighlight(index: number, count: number, direction: -1 
 }
 
 /** Owns the only input, suggestion list and all selection/IME state for species and moves. */
-export default function SearchCombobox<T extends SearchOption>({ id, mode = 'combobox', value, onChange, onSelect, options, label, placeholder, className = '', inputClassName, menuClassName = '', optionClassName, renderOption, optionProps, inputProps, noResults, showEmpty = false, showAllOnEmpty = false, commitOnEmpty = false, disabled = false, readOnly = false }: SearchComboboxProps<T>) {
+export default function SearchCombobox<T extends SearchOption>({ id, inputRef, mode = 'combobox', value, onChange, onSelect, options, label, placeholder, className = '', inputClassName, menuClassName = '', optionClassName, renderOption, optionProps, inputProps, noResults, showEmpty = false, showAllOnEmpty = false, commitOnEmpty = false, disabled = false, readOnly = false }: SearchComboboxProps<T>) {
   const [open, setOpen] = React.useState(false)
   const openRef = React.useRef(false)
   const [highlight, setHighlight] = React.useState(-1)
@@ -66,7 +68,7 @@ export default function SearchCombobox<T extends SearchOption>({ id, mode = 'com
   }
   return <div className={`pokemon-search-field ${className}`.trim()}>
     {label ? <label htmlFor={id}>{label}</label> : null}
-    <input {...inputProps} id={id} className={inputClassName ?? inputProps?.className} type={inputProps?.type ?? 'search'} value={value} placeholder={placeholder ?? inputProps?.placeholder} disabled={disabled || inputProps?.disabled} readOnly={readOnly || inputProps?.readOnly}
+    <input {...inputProps} ref={inputRef} id={id} className={inputClassName ?? inputProps?.className} type={inputProps?.type ?? 'search'} value={value} placeholder={placeholder ?? inputProps?.placeholder} disabled={disabled || inputProps?.disabled} readOnly={readOnly || inputProps?.readOnly}
       role={mode === 'filter' ? 'searchbox' : 'combobox'} aria-autocomplete={mode === 'filter' ? undefined : 'list'} aria-expanded={mode === 'filter' ? undefined : open && Boolean(visible.length || showEmpty && value.trim())} aria-controls={mode === 'filter' ? undefined : listId}
       aria-activedescendant={mode === 'combobox' && open && highlight >= 0 && visible[highlight] ? `${id}-option-${highlight}` : undefined}
       onFocus={event => { if (!inactive && mode === 'combobox') setDropdownOpen(true); inputProps?.onFocus?.(event) }}

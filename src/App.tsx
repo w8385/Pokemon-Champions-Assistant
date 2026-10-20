@@ -45,7 +45,7 @@ import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './speedLineRouteRe
 import { validateBackup } from './backupValidation'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 
-import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SearchFieldTarget, SiteLanguage, StatKey, ViewState } from './app/types'
+import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
 import { abilityDescriptionFor, getDexDescriptionsSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './dex/data'
 
@@ -230,7 +230,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
-    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。', '현재 흐름': '現在のフロー', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'まず自分のパーティを埋め、相手の公開情報を書いてから計算に進む。', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'ダブルはパーティと相手情報を整えたあと、プランナーでターンの流れを見る。', '내 포켓몬과 기술 기준을 정리합니다.': '自分のポケモンと技の基準を整える。', '상대 공개 정보와 가정을 정리합니다.': '相手の公開情報と想定を整理する。', '추월컷과 속도선을 확인합니다.': '抜きラインと素早さ帯を確認する。', '기술 대미지와 조건을 맞춥니다.': '技ダメージと条件を合わせる。', '더블 기준 화력과 행동순을 정리합니다.': 'ダブル基準の火力と行動順を整理する。', '이 화면에서 하는 일': 'この画面でやること', '입력 순서': '入力順', '현재 기준 정보': '現在の基準情報', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': '自分のパーティと相手エントリーを先に整えると計算がぶれにくい。', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': '自分の技選択 → 相手基準確認 → 火力条件調整の順で見ればいい。', '선택된 기술': '選択中の技',
+    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '파티 관리': 'パーティ管理', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。', '현재 흐름': '現在のフロー', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'まず自分のパーティを埋め、相手の公開情報を書いてから計算に進む。', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'ダブルはパーティと相手情報を整えたあと、プランナーでターンの流れを見る。', '내 포켓몬과 기술 기준을 정리합니다.': '自分のポケモンと技の基準を整える。', '상대 공개 정보와 가정을 정리합니다.': '相手の公開情報と想定を整理する。', '추월컷과 속도선을 확인합니다.': '抜きラインと素早さ帯を確認する。', '기술 대미지와 조건을 맞춥니다.': '技ダメージと条件を合わせる。', '더블 기준 화력과 행동순을 정리합니다.': 'ダブル基準の火力と行動順を整理する。', '이 화면에서 하는 일': 'この画面でやること', '입력 순서': '入力順', '현재 기준 정보': '現在の基準情報', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': '自分のパーティと相手エントリーを先に整えると計算がぶれにくい。', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': '自分の技選択 → 相手基準確認 → 火力条件調整の順で見ればいい。', '선택된 기술': '選択中の技',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
   },
 }
@@ -3732,10 +3732,6 @@ function searchDisplayLabel(key: string, language: SiteLanguage) {
   return displayName(row, language)
 }
 
-function sameSearchTarget(a: SearchFieldTarget, side: 'party' | 'opponent' | 'sample' | 'opponentQuick', idx: number) {
-  return a?.side === side && a?.idx === idx
-}
-
 function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample' | 'opponent') {
   return a?.key === key && a?.slotIdx === slotIdx && a?.scope === scope
 }
@@ -4059,11 +4055,12 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     if (field === 'nature') return opponentSource?.speedNatureKnown && !dirty.defender.has('key') ? null : sourceLabels.natureUnknown
     return opponentSource?.knownOffense?.[field] && !dirty.defender.has('key') ? null : sourceLabels.unknown
   }
-  const speedCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row) => {
+  const speedCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
+    if (!row) return null
     const scarf = scarfFor(entry), ability = abilityFor(entry, row)
     return <div className="quick-speed-card">
-      <div className="quick-speed-chips"><span>{lt('스피드 종족값')} {row.speed}</span><span>{lt('성격 보정')} {entry.speedNatureKnown ? natureLabel(entry.nature, language) : `${entry.speedNatureMultiplier}×`}</span><span>{lt('스피드 노력')} {entry.evs.speed}/32</span><span>{lt('스피드 랭크')} {entry.speedStage > 0 ? '+' : ''}{entry.speedStage}</span><span>{lt('스카프')} {scarf ? '×1.5' : '×1'}</span><span>{lt('특성')} {ability && entry.speedAbilityActive && abilityPermitted(entry, row) ? `×${ability.multiplier}` : '×1'}</span></div>
-      <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{lt('속도 성격 가정')}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{lt('스카프 시나리오')}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{lt('일반')}</option><option value="scarf">{lt('스카프 가정')}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
+      <strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)} <small>{lt('스피드 종족값')} {row.speed}</small></strong>
+      <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{lt('속도 성격 가정')}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{lt('스카프 시나리오')}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{lt('일반')}</option><option value="scarf">{lt('스카프 가정')}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
     </div>
   }
   const sideCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined, setEntry: React.Dispatch<React.SetStateAction<QuickSide>>) => {
@@ -4085,7 +4082,6 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
         {statCard(side, entry, row)}
-        {speedCard(side, entry, row)}
         {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}
         <div className="registered-move-grid quick-registered-moves">{Array.from({ length: 4 }, (_, index) => {
           const name = entry.moves[index] ?? ''
@@ -4146,11 +4142,14 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
     <div className="row-between"><h2>{lt(comparisonMode ? '대면' : '계산기')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공수 교체')}</button> : null}</div>
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }}>{lt('상대 엔트리 초기화')}</button>)}
+    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
     <div className="quick-comparison-results">
       {speedStrip}
+      <div className="quick-speed-settings" aria-label={lt('스피드 조건')}>
+        {speedCard('attacker', attacker, attackingRow)}{speedCard('defender', defender, defendingRow)}
+      </div>
       <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
     </div>
-    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
     <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
       <label>{lt('날씨')}<select value={conditions.weather} onChange={event => setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather }))}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
       <label>{lt('필드')}<select value={conditions.terrain} onChange={event => setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain }))}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
@@ -4319,7 +4318,6 @@ export default function App() {
   const [opponentMoveInputFocused, setOpponentMoveInputFocused] = React.useState(false)
   const [calcOpponentMoveDraft, setCalcOpponentMoveDraft] = React.useState('')
   const [calcOpponentMoveInputFocused, setCalcOpponentMoveInputFocused] = React.useState(false)
-  const [activeSearchField, setActiveSearchField] = React.useState<SearchFieldTarget>(null)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [activeItemField, setActiveItemField] = React.useState<ItemFieldTarget>(null)
   const [autocompleteHighlight, setAutocompleteHighlight] = React.useState<AutocompleteHighlight>(null)
@@ -4499,9 +4497,13 @@ export default function App() {
     if (dexUnifiedSearchDraft.trim()) { params.set('q', dexUnifiedSearchDraft.trim()); params.set('uq', dexUnifiedSearchDraft.trim()) }
     return `#/dex?${params}`
   }, [dexSearchMode, dexUnifiedSearchDraft])
-  const dexDetailHref = (kind: DexSearchMode, key: string) => {
+  const dexDetailHref = (kind: DexSearchMode, key: string, label = kind === 'pokemon' ? searchDisplayLabel(key, siteLanguage) : kind === 'item' ? displayItemLabel(key, siteLanguage) : key) => {
     const params = new URLSearchParams(dexListHref.split('?')[1])
     params.set('dexTab', kind)
+    if (kind !== dexSearchMode) {
+      params.set('q', label)
+      params.set('uq', label)
+    }
     params.set('sel', dexSelectionId(kind, key))
     return `#/dex?${params}`
   }
@@ -4736,6 +4738,8 @@ export default function App() {
         longPressTriggeredRef.current = false
         return
       }
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return
+      event.preventDefault()
       onNavigate()
     },
   }), [bindTooltip, clearLongPressTimer, showHoverTooltip, showHoverTooltipAtElement])
@@ -5906,12 +5910,6 @@ export default function App() {
     })
     setActiveItemField({ scope: 'opponent', idx })
   }
-  const commitTopSpeciesOption = (side: 'party' | 'opponent' | 'sample', idx: number, rawQuery: string) => {
-    const top = side === 'sample' ? prioritizeExactSpecies(searchPokemon(rows, rawQuery, { includeMega: true }), rawQuery)[0] : filterSpeciesOptions(rawQuery, { includeMega: side !== 'opponent' })[0]
-    if (!top) return false
-    selectSpecies(side, idx, top.key)
-    return true
-  }
   const selectSpecies = (side: 'party' | 'opponent' | 'sample', idx: number, key: string) => {
     if (side === 'party') {
       const member = party[idx]
@@ -5930,8 +5928,6 @@ export default function App() {
       const nextEmptyIdx = next.findIndex((entry, entryIdx) => entryIdx > idx && !entry.key)
       if (nextEmptyIdx >= 0) {
         window.setTimeout(() => {
-          setActiveSearchField({ side: 'party', idx: nextEmptyIdx })
-          setAutocompleteMenuOpen(`party-species-${nextEmptyIdx}`)
           document.getElementById(`party-species-${nextEmptyIdx}`)?.focus()
         }, 0)
       }
@@ -5963,7 +5959,6 @@ export default function App() {
       setSampleItemDraft(displayItemLabel(itemForSpeciesSelection(key, sampleForge.item), siteLanguage))
       setSampleSearch(searchDisplayLabel(key, siteLanguage))
     }
-    setActiveSearchField(null)
   }
   const trackedKeys = Array.from(new Set([...party.map((member) => member.key), ...opponents.map((member) => member.key)]))
   const moveCards = trackedKeys
@@ -6781,7 +6776,6 @@ export default function App() {
     const nextIdx = nextOpponentSlotIndex(slotIdx)
     setSelectedOpp(nextIdx)
     setOpponentQuickSearch('')
-    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
     setTimeout(() => opponentQuickInputRef.current?.focus(), 0)
   }
 
@@ -6853,7 +6847,6 @@ export default function App() {
     setOpponentItemDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
     setOpponentAbilityDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
     setActiveOpponentAbilityField((prev) => prev === idx ? null : prev)
-    setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', idx) ? null : prev)
     setActiveItemField((prev) => sameItemField(prev, 'opponent', idx) ? null : prev)
     setActiveMoveField((prev) => prev?.scope === 'opponent' && prev.key === opponents[idx]?.key ? null : prev)
     if (selectedOpp === idx) setSelectedOpp(0)
@@ -7614,13 +7607,13 @@ export default function App() {
                   <div className="dex-detail-panel">
                     <strong>{lt('특성')}</strong>
                     <div className="pick-summary-badges">
-                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => <button key={`dex-ability-${dexSelectedRow.key}-${idx}`} type="button" className="pick-badge subtle dex-chip-button" {...bindNavigableTooltip(abilityTooltipData(ability, siteLanguage, dexSelectedRow), () => openDexAbilityDetail(ability, dexSelectedRow))}>{ability}</button>)}
+                      {displayAbilities(dexSelectedRow, siteLanguage).map((ability, idx) => { const resolved = resolveAbilityInfo(ability, dexSelectedRow); return <a key={`dex-ability-${dexSelectedRow.key}-${idx}`} href={dexDetailHref('ability', resolved?.key ?? ability, resolved?.koLabel ?? ability)} className="pick-badge subtle dex-chip-button" {...bindNavigableTooltip(abilityTooltipData(ability, siteLanguage, dexSelectedRow), () => openDexAbilityDetail(ability, dexSelectedRow))}>{ability}</a> })}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('상위 채용 기술')}</strong>
                     <div className="pick-summary-badges">
-                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <button key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} type="button" className="pick-badge dex-chip-button" {...bindNavigableTooltip(moveTooltipData(move, siteLanguage), () => openDexMoveDetail(move))}>{move}</button>) : <span className="pick-badge">-</span>}
+                      {dexTopMoves.length ? dexTopMoves.map((move, idx) => <a key={`dex-move-chip-${dexSelectedRow.key}-${idx}`} href={dexDetailHref('move', move)} className="pick-badge dex-chip-button" {...bindNavigableTooltip(moveTooltipData(move, siteLanguage), () => openDexMoveDetail(move))}>{move}</a>) : <span className="pick-badge">-</span>}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
@@ -7710,10 +7703,10 @@ export default function App() {
                       {dexMoveLearnersStatus === 'missing' ? <span role="status">{siteLanguage === 'ko' ? '이 기술은 게임 스냅샷에 수록되지 않아 습득 포켓몬을 확인할 수 없습니다.' : siteLanguage === 'ja' ? 'この技はゲームスナップショットに未収録のため、習得ポケモンは未確認です。' : 'This move is not in the game snapshot; learners are unknown.'}</span> : null}
                       {dexMoveLearnersStatus === 'error' ? <span role="status">{siteLanguage === 'ko' ? '게임 스냅샷을 불러오지 못했습니다.' : siteLanguage === 'ja' ? 'ゲームスナップショットを読み込めませんでした。' : 'Could not load the game snapshot.'}</span> : null}
                       {dexMoveLearnersStatus === 'error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도' : siteLanguage === 'ja' ? '再試行' : 'Retry'}</button> : null}
-                      {dexMoveLearnersStatus === 'ready' ? dexMoveLearners.map((row) => <button key={`dex-move-learner-${dexSelectedMove.key}-${row.key}`} type="button" className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={() => openDexPokemonDetail(row.key)}>
+                      {dexMoveLearnersStatus === 'ready' ? dexMoveLearners.map((row) => <a key={`dex-move-learner-${dexSelectedMove.key}-${row.key}`} href={dexDetailHref('pokemon', row.key)} className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={event => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return; event.preventDefault(); openDexPokemonDetail(row.key) }}>
                         {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
                         <span>{displayName(row, siteLanguage)}</span>
-                      </button>) : null}
+                      </a>) : null}
                     </div>
                   </div>
                 </div>
@@ -7750,10 +7743,10 @@ export default function App() {
                       {dexSelectedAbility.pokemonKeys.map((key) => {
                         const row = indexByKey.get(key)
                         if (!row) return null
-                        return <button key={`dex-ability-pokemon-${key}`} type="button" className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={() => openDexPokemonDetail(key)}>
+                        return <a key={`dex-ability-pokemon-${key}`} href={dexDetailHref('pokemon', key)} className="pick-badge subtle dex-ability-pokemon-chip dex-chip-button" onClick={event => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return; event.preventDefault(); openDexPokemonDetail(key) }}>
                           {row.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="dex-ability-pokemon-sprite" /> : null}
                           <span>{displayName(row, siteLanguage)}</span>
-                        </button>
+                        </a>
                       })}
                     </div>
                   </div>
@@ -7825,51 +7818,11 @@ export default function App() {
                   <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>{lt('상대 엔트리 초기화')}</button>
                 </div>
                 <div className="quick-opponent-search-bar compact embedded">
-                  <label className="species-picker">
-                    {lt('상대 엔트리 빠른 입력')}
-                    <div className="autocomplete">
-                      <input
-                        value={opponentQuickSearch}
-                        placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
-                        onFocus={() => {
-                          setActiveSearchField({ side: 'opponentQuick', idx: 0 })
-                          setAutocompleteMenuOpen('opponent-quick-species-0')
-                        }}
-                        onBlur={() => {
-                          setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)
-                          setTimeout(() => closeAutocompleteMenu('opponent-quick-species-0'), 120)
-                        }}
-                        onChange={(e) => {
-                          setOpponentQuickSearch(e.target.value)
-                          setActiveSearchField({ side: 'opponentQuick', idx: 0 })
-                          setAutocompleteMenuOpen('opponent-quick-species-0')
-                        }}
-                        onKeyDown={(e) => {
-                          const options = filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8)
-                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                            e.preventDefault()
-                            moveAutocompleteMenuHighlight('opponent-quick-species-0', options.length, e.key === 'ArrowDown' ? 1 : -1)
-                            return
-                          }
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0')]
-                            commitOpponentQuickSearch(highlightedOption?.key)
-                            closeAutocompleteMenu('opponent-quick-species-0')
-                          }
-                        }}
-                      />
-                      {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
-                        <div className="autocomplete-menu unified-dropdown-menu">
-                          {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
-                            <button key={`speed-power-opp-quick-${option.key}`} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0') === optionIdx ? 'active' : ''}`} onMouseDown={() => commitOpponentQuickSearch(option.key)}>
-                              {searchDisplayLabel(option.key, siteLanguage)}
-                            </button>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  </label>
+                  <PokemonSearchField id="opponent-strip-quick" className="species-picker" inputRef={opponentQuickInputRef}
+                    label={lt('상대 엔트리 빠른 입력')} value={opponentQuickSearch}
+                    placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
+                    onChange={setOpponentQuickSearch} onSelect={key => commitOpponentQuickSearch(key)}
+                    options={filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage) }))} />
                   <div className="quick-opponent-hint compact">
                     <strong>{lt('현재 입력 슬롯')}</strong>
                     <span>{selectedOpp + 1} / {MAX_OPPONENTS}</span>
@@ -8199,52 +8152,11 @@ export default function App() {
           </div>
 
           <div className="quick-opponent-search-bar">
-            <label className="species-picker">
-              {lt('상대 엔트리 빠른 입력')}
-              <div className="autocomplete">
-                <input
-                  ref={opponentQuickInputRef}
-                  value={opponentQuickSearch}
-                  placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
-                  onFocus={() => {
-                    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
-                    setAutocompleteMenuOpen('opponent-quick-species-0')
-                  }}
-                  onBlur={() => {
-                    setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponentQuick', 0) ? null : prev), 120)
-                    setTimeout(() => closeAutocompleteMenu('opponent-quick-species-0'), 120)
-                  }}
-                  onChange={(e) => {
-                    setOpponentQuickSearch(e.target.value)
-                    setActiveSearchField({ side: 'opponentQuick', idx: 0 })
-                    setAutocompleteMenuOpen('opponent-quick-species-0')
-                  }}
-                  onKeyDown={(e) => {
-                    const options = filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8)
-                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                      e.preventDefault()
-                      moveAutocompleteMenuHighlight('opponent-quick-species-0', options.length, e.key === 'ArrowDown' ? 1 : -1)
-                      return
-                    }
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0')]
-                      commitOpponentQuickSearch(highlightedOption?.key)
-                      closeAutocompleteMenu('opponent-quick-species-0')
-                    }
-                  }}
-                />
-                {sameSearchTarget(activeSearchField, 'opponentQuick', 0) ? (
-                  <div className="autocomplete-menu unified-dropdown-menu">
-                      {filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
-                      <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, 'opponent-quick-species-0') === optionIdx ? 'active' : ''}`} onMouseDown={() => commitOpponentQuickSearch(option.key)}>
-                        {searchDisplayLabel(option.key, siteLanguage)}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </label>
+            <PokemonSearchField id="opponent-entry-quick" className="species-picker" inputRef={opponentQuickInputRef}
+              label={lt('상대 엔트리 빠른 입력')} value={opponentQuickSearch}
+              placeholder={searchSlotPlaceholder(selectedOpp, siteLanguage)}
+              onChange={setOpponentQuickSearch} onSelect={key => commitOpponentQuickSearch(key)}
+              options={filterSpeciesOptions(opponentQuickSearch, { includeMega: false }).slice(0, 8).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage) }))} />
             <div className="quick-opponent-hint">
               <strong>{lt('현재 입력 슬롯')}</strong>
               <span>{selectedOpp + 1} / {MAX_OPPONENTS}</span>
@@ -8295,54 +8207,11 @@ export default function App() {
                 </div>
               </div>
               <div className="opponent-detail-fields">
-                <label className="species-picker">
-                  {lt('종 선택')}
-                  <div className="autocomplete">
-                    <input
-                      value={opponentSearch[selectedOpp] ?? ''}
-                      placeholder={lt('포켓몬 검색')}
-                      onFocus={() => {
-                        setActiveSearchField({ side: 'opponent', idx: selectedOpp })
-                        setAutocompleteMenuOpen(`opponent-species-${selectedOpp}`)
-                      }}
-                      onBlur={() => {
-                        setTimeout(() => setActiveSearchField((prev) => sameSearchTarget(prev, 'opponent', selectedOpp) ? null : prev), 120)
-                        setTimeout(() => closeAutocompleteMenu(`opponent-species-${selectedOpp}`), 120)
-                      }}
-                      onChange={(e) => {
-                        const next = [...opponentSearch]
-                        next[selectedOpp] = e.target.value
-                        setOpponentSearch(next)
-                        setActiveSearchField({ side: 'opponent', idx: selectedOpp })
-                        setAutocompleteMenuOpen(`opponent-species-${selectedOpp}`)
-                      }}
-                      onKeyDown={(e) => {
-                        const options = filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8)
-                        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                          e.preventDefault()
-                          moveAutocompleteMenuHighlight(`opponent-species-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
-                          return
-                        }
-                        if (e.key !== 'Enter') return
-                        const highlightedOption = options[highlightedAutocompleteIndex(autocompleteHighlight, `opponent-species-${selectedOpp}`)]
-                        const committed = highlightedOption ? (selectSpecies('opponent', selectedOpp, highlightedOption.key), true) : commitTopSpeciesOption('opponent', selectedOpp, opponentSearch[selectedOpp] ?? '')
-                        if (committed) {
-                          e.preventDefault()
-                          closeAutocompleteMenu(`opponent-species-${selectedOpp}`)
-                        }
-                      }}
-                    />
-                    {sameSearchTarget(activeSearchField, 'opponent', selectedOpp) ? (
-                      <div className="autocomplete-menu unified-dropdown-menu">
-                        {filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8).map((option, optionIdx) => (
-                          <button key={option.key} type="button" className={`autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opponent-species-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectSpecies('opponent', selectedOpp, option.key)}>
-                            {searchDisplayLabel(option.key, siteLanguage)}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                </label>
+                <PokemonSearchField id={`opponent-detail-species-${selectedOpp}`} className="species-picker"
+                  label={lt('종 선택')} value={opponentSearch[selectedOpp] ?? ''} placeholder={lt('포켓몬 검색')}
+                  onChange={value => setOpponentSearch(prev => prev.map((text, slot) => slot === selectedOpp ? value : text))}
+                  onSelect={key => selectSpecies('opponent', selectedOpp, key)}
+                  options={filterSpeciesOptions(opponentSearch[selectedOpp] ?? '', { includeMega: false }).slice(0, 8).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage) }))} />
                 <label>
                   {lt('도구')}
                   <div className="opponent-item-search">
@@ -8699,21 +8568,13 @@ export default function App() {
           <h2>{lt('샘플 연구소')} · {lt('샘플 빌드')}</h2>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
-              <div className="sample-panel-header sample-panel-header-main">
-              <div className="sample-hero sample-hero-attached">
-                {sampleRow.sprite ? <img src={sampleRow.sprite} alt={displayName(sampleRow, siteLanguage)} className="entry-sprite large" /> : null}
-                <div className="sample-hero-copy">
-                  <PokemonSearchField id="sample-species-0" className="sample-species-search sample-hero-search"
-                    inputClassName="sample-species-search-input sample-hero-search-input"
-                    value={sampleSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleSearch}
-                    onSelect={key => selectSpecies('sample', 0, key)}
-                    options={sampleSpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
-                  <div className="summary-line sample-type-line">
-                    <span className="type-badge-wrap">{sampleRow.types.map((type) => <TypeBadgeImage key={type} type={type} />)}</span>
-                  </div>
-                </div>
-              </div>
-              </div>
+              <PokemonCardHeading sprite={sampleRow.sprite} spriteAlt={displayName(sampleRow, siteLanguage)} types={sampleRow.types} name={
+                <PokemonSearchField id="sample-species-0" className="sample-species-search sample-hero-search"
+                  inputClassName="sample-species-search-input sample-hero-search-input" label={lt('포켓몬 검색')}
+                  value={sampleSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleSearch}
+                  onSelect={key => selectSpecies('sample', 0, key)}
+                  options={sampleSpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
+              } />
               <PokemonBuildFields key={`sample-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} className="sample-meta-grid"
                 ability={sampleForge.ability} nature={sampleForge.config.nature} item={sampleForge.item}
                 abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
@@ -8854,6 +8715,37 @@ export default function App() {
                   </div>
                 </>
             </div>
+          </div>
+          <div className="sample-builder-action-card">
+            <div className="sample-builder-action-head">
+              <strong>{lt('저장/적용')}</strong>
+              <div className="pick-summary-badges sample-slot-target-badges">
+                <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
+                <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
+              </div>
+            </div>
+            <div className="sample-builder-save-row">
+              <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
+              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('내 샘플로 저장')}</button>
+            </div>
+            <div className="sample-builder-slot-grid">
+              {party.map((member, idx) => {
+                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
+                return (
+                  <button
+                    key={`sample-builder-slot-${idx}`}
+                    type="button"
+                    className={`sample-builder-slot-chip ${selectedMy === idx ? 'active' : ''}`}
+                    onClick={() => setSelectedMy(idx)}
+                  >
+                    <span>{slotNumberLabel(idx, siteLanguage)}</span>
+                    <strong>{row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</strong>
+                  </button>
+                )
+              })}
+            </div>
+            <p className="muted">{lt('편집 초안은 아직 파티에 반영되지 않았습니다. 저장은 개인 샘플에 복사하고 적용은 아래 선택 슬롯을 교체합니다.')}</p>
+            <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{lt('초안을 파티에 적용')} · {applyToSlotLabel(selectedMy, siteLanguage)}</button>
           </div>
           </section>
           <section id="sample-speed-section" className="sample-lab-section" aria-label={lt('샘플 스피드')}>
@@ -9351,39 +9243,6 @@ export default function App() {
           </>}
           </div>
         </section>
-        {sampleWorkbenchTab !== 'library' ? <section className="panel wide">
-          <div className="sample-builder-action-card">
-            <div className="sample-builder-action-head">
-              <strong>{lt('저장/적용')}</strong>
-              <div className="pick-summary-badges sample-slot-target-badges">
-                <span className="pick-badge">{sampleConfirmedMoves.length}/4</span>
-                <span className="pick-badge">{lt('저장 샘플 수')} {savedSamples.length}</span>
-              </div>
-            </div>
-            <div className="sample-builder-save-row">
-              <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
-              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('내 샘플로 저장')}</button>
-            </div>
-            <div className="sample-builder-slot-grid">
-              {party.map((member, idx) => {
-                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                return (
-                  <button
-                    key={`sample-builder-slot-${idx}`}
-                    type="button"
-                    className={`sample-builder-slot-chip ${selectedMy === idx ? 'active' : ''}`}
-                    onClick={() => setSelectedMy(idx)}
-                  >
-                    <span>{slotNumberLabel(idx, siteLanguage)}</span>
-                    <strong>{row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</strong>
-                  </button>
-                )
-              })}
-            </div>
-            <p className="muted">{lt('편집 초안은 아직 파티에 반영되지 않았습니다. 저장은 개인 샘플에 복사하고 적용은 아래 선택 슬롯을 교체합니다.')}</p>
-            <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{lt('초안을 파티에 적용')} · {applyToSlotLabel(selectedMy, siteLanguage)}</button>
-          </div>
-        </section> : null}
         {sampleWorkbenchTab !== 'library' ? <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">

@@ -23,7 +23,11 @@ test('library uses one filtered visible list and a separate source detail', () =
 })
 
 test('research lab keeps save and apply actions while library does not render them', () => {
-  assert.ok(/\{sampleWorkbenchTab !== 'library' \? <section className="panel wide">\s*<div className="sample-builder-action-card">/.test(app))
+  const builder = app.slice(app.indexOf('<section id="sample-builder-section"'), app.indexOf('<section id="sample-speed-section"'))
+  assert.match(builder, /<div className="sample-builder-action-card">/)
+  assert.ok(builder.indexOf('id="sample-moves-card"') < builder.indexOf('className="sample-builder-action-card"'))
+  assert.equal((app.match(/className="sample-builder-action-card"/g) ?? []).length, 1)
+  assert.ok(app.indexOf('id="sample-saved-card"') > app.indexOf('id="sample-damage-section"'))
 })
 
 test('home sample builder card explicitly selects builder tab', () => {

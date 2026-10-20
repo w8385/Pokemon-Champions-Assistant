@@ -5,6 +5,7 @@ export { nextSearchHighlight }
 export type PokemonSearchOption = { key: string; label: string; sprite?: string }
 type Props = {
   id: string
+  inputRef?: React.Ref<HTMLInputElement>
   label?: string
   placeholder?: string
   value: string

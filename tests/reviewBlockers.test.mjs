@@ -19,8 +19,9 @@ test('quick battle statuses and screens are attached to their Pokémon and follo
   assert.match(quick, /setAttacker\(defender\); setDefender\(attacker\)/)
   assert.doesNotMatch(quick, /burned: conditions\.burned/)
 })
-test('builder Enter chooses same first visible result', () => {
-  assert.match(app, /const top = side === 'sample' \? prioritizeExactSpecies\(searchPokemon\(rows, rawQuery, \{ includeMega: true \}\), rawQuery\)\[0\]/)
+test('builder Enter chooses from the same ranked visible results', () => {
+  assert.match(app, /const sampleSpeciesOptions = prioritizeExactSpecies\(searchPokemon\(rows, sampleSearch \?\? '', \{ includeMega: true \}\), sampleSearch \?\? ''\)\.slice\(0, 8\)/)
+  assert.match(app, /<PokemonSearchField id="sample-species-0"[^]*?onSelect=\{key => selectSpecies\('sample', 0, key\)\}[^]*?options=\{sampleSpeciesOptions\.map/)
 })
 test('shared modal traps focus and restores connected opener; quick uses floating tooltip', () => {
   assert.match(modal, /event\.key !== 'Tab'/)
