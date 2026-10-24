@@ -5,6 +5,7 @@ export const MOVE_SEARCH_ALIASES: Readonly<Record<string, readonly string[]>> = 
   '번개펀치': ['번펀'],
   '스텔스록': ['스록'],
   '볼트체인지': ['볼체'],
+  '아쿠아제트': ['아젯'],
   '하이퍼보이스': ['하보'],
   '치근거리기': ['치근'],
 }

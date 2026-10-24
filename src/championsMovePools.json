@@ -7251,6 +7251,10 @@
       "type": "ice"
     },
     {
+      "name": "아쿠아제트",
+      "type": "water"
+    },
+    {
       "name": "아픔나누기",
       "type": "normal"
     },
@@ -9791,6 +9795,10 @@
     {
       "name": "싸라기눈",
       "type": "ice"
+    },
+    {
+      "name": "아쿠아제트",
+      "type": "water"
     },
     {
       "name": "아픔나누기",
