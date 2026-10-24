@@ -9,6 +9,7 @@ import type { SpeedLineState } from './speedLineState'
 import { PokemonCardHeading } from './PokemonCardOverview'
 import { getJaName } from './jaLabels'
 import { getSpeedAbility, speedAbilitiesFor } from './speedAbilities'
+import SpeedLineRangesPanel from './SpeedLineRangesPanel'
 import type { SpeedAbilitySelection } from './speedLineState'
 import type { Row, SiteLanguage } from './app/types'
 
@@ -66,7 +67,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
   }
   const roster = React.useMemo(() => rows.map(row => ({ ...row, name_ja: row.name_ja || getJaName(row.key, row.name_ko, row.name_en) })), [rows])
   const suggestions = React.useMemo(() => searchDraft.trim() ? searchPokemon(roster, searchDraft, { includeMega: true, limit: 12 }).map(row => ({ key: row.key, label: `${displayName(row)} (${row.name_en})`, sprite: row.sprite })) : [], [roster, searchDraft, displayName])
-  const result = draftsValid ? buildSpeedComparison(roster, state.referenceKey ? state : { ...state, comparison: 'all', rangeMode: 'all' }) : null
+  const result = state.view !== 'ranges' && draftsValid ? buildSpeedComparison(roster, state.referenceKey ? state : { ...state, comparison: 'all', rangeMode: 'all' }) : null
   const reference = result?.reference ?? null
   const referenceRow = state.referenceKey ? roster.find(row => row.key === state.referenceKey) : undefined
   const referenceUnavailable = result?.referenceUnavailableReason ?? null
@@ -98,8 +99,10 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
     try { await navigator.clipboard.writeText(window.location.href); setCopyFailed(false) }
     catch { setCopyFailed(true) }
   }
+  if (state.view === 'ranges') return <SpeedLineRangesPanel rows={rows} state={state} onChange={onChange} language={language} translate={translate} displayName={displayName} warnings={warnings} />
   return <section className="panel wide speed-line-panel">
     <div className="section-head"><h2>{translate('스피드라인')}</h2></div>
+    <nav className="speed-line-view-switch" aria-label={translate('스피드라인')}><button type="button" className="action-button subtle" onClick={() => update({ view: 'ranges' })}>{language === 'ko' ? '구간 보기' : language === 'ja' ? '範囲表示' : 'Speed ranges'}</button><button type="button" className="action-button" aria-current="page">{language === 'ko' ? '개별 조건 계산' : language === 'ja' ? '個別条件計算' : 'Individual calculation'}</button></nav>
     {warnings.length ? <p role="alert">{language === 'ko' ? 'URL의 잘못된 값을 기본값으로 복원했습니다' : language === 'ja' ? 'URLの不正な値を既定値に戻しました' : 'Invalid URL values were restored to defaults'}: {warnings.join(', ')}</p> : null}
     <div className="speed-line-reference card entry-card">
       <div className="speed-line-reference-overview">

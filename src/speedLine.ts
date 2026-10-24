@@ -1,5 +1,5 @@
 import { actualStat } from './statMechanics.ts'
-import { applySpeedModifiers, applySpeedStage } from './speedModifiers.ts'
+import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './speedModifiers.ts'
 import { getSpeedAbility, speedAbilitiesFor } from './speedAbilities.ts'
 import type { SpeedActivation } from './speedAbilities.ts'
 import { searchPokemon } from './pokemonSearch.ts'
@@ -12,6 +12,25 @@ export type SpeedLineSpecies = { key: string; name_ko: string; name_en: string; 
 
 export function calculateSpeed(base: number, effort: number, nature: SpeedNature): number {
   return actualStat(base, effort, nature === 'boost' ? 1.1 : nature === 'lower' ? 0.9 : 1)
+}
+
+export type SpeedInterval = { min: number; max: number }
+export type SpeedRangeEntry<T extends SpeedLineSpecies> = { row: T; normal: SpeedInterval; scarf: SpeedInterval | null }
+
+/** Max-investment neutral → boosted nature, no stages or activated abilities. */
+export function buildSpeedRanges<T extends SpeedLineSpecies>(rows: readonly T[], referenceKey: string | null): {
+  entries: SpeedRangeEntry<T>[]; reference: SpeedRangeEntry<T> | null; referenceMissing: boolean; scaleMax: number
+} {
+  const entries = rows.map(row => {
+    const normal = { min: calculateSpeed(row.speed, 32, 'neutral'), max: calculateSpeed(row.speed, 32, 'boost') }
+    return { row, normal, scarf: row.key.startsWith('mega-') ? null : { min: applyChoiceScarf(normal.min), max: applyChoiceScarf(normal.max) } }
+  }).sort((a, b) => b.normal.max - a.normal.max || a.row.key.localeCompare(b.row.key))
+  return {
+    entries,
+    reference: entries.find(entry => entry.row.key === referenceKey) ?? null,
+    referenceMissing: referenceKey !== null && !entries.some(entry => entry.row.key === referenceKey),
+    scaleMax: Math.max(1, ...entries.map(entry => entry.scarf?.max ?? entry.normal.max)),
+  }
 }
 
 function matchingRows<T extends SpeedLineSpecies>(rows: readonly T[], queryText: string, forms: SpeedLineOptions['forms']): T[] {

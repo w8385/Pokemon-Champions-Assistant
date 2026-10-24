@@ -5,6 +5,7 @@ import { getSpeedAbility } from './speedAbilities.ts'
 export type SpeedAbilitySelection = string | null
 
 export interface SpeedLineState {
+  view: 'ranges' | 'detail'
   referenceKey: string | null
   referenceEffort: number
   referenceStage: number
@@ -26,6 +27,7 @@ export interface SpeedLineState {
 }
 
 export const defaultSpeedLineState: SpeedLineState = {
+  view: 'ranges',
   referenceKey: null,
   referenceEffort: 32,
   referenceStage: 0,
@@ -64,6 +66,14 @@ export function parseSpeedLineState(params: URLSearchParams): { state: SpeedLine
   const warnings: string[] = []
   const version = params.get('slv')
   if (version !== null && version !== '1' && version !== '2' && version !== '3') return { state, warnings: ['slv'] }
+  // A bare reference URL uses the new overview; historical configured links retain their calculator.
+  const legacyDetail = ['refEp', 'refStage', 'refNature', 'listEp', 'listNature', 'q', 'forms', 'cmp', 'sort', 'range', 'gap', 'items', 'abilities', 'refAbility', 'target', 'targetItem', 'targetAbility'].some(field => params.has(field))
+  const view = params.get('view')
+  if (view === 'ranges' || view === 'detail') state.view = view
+  else {
+    if (view !== null) warnings.push('view')
+    if (legacyDetail) state.view = 'detail'
+  }
   if (version === '1' && !params.has('items')) state.items = 'normal'
   if (version === '1' || version === '2') state.abilityMode = 'off'
 
@@ -128,6 +138,7 @@ export function parseSpeedLineState(params: URLSearchParams): { state: SpeedLine
 
 export function writeSpeedLineState(params: URLSearchParams, state: SpeedLineState): void {
   params.set('slv', '3')
+  params.set('view', state.view ?? 'detail')
   if (state.referenceKey === null) params.delete('ref')
   else params.set('ref', state.referenceKey)
   params.set('refEp', String(state.referenceEffort))

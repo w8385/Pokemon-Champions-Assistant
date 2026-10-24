@@ -8757,3 +8757,45 @@ html {
   .manage-entry-grid .registered-move-grid,
   #sample-builder-section .sample-track-input-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Speed-line overview: one shared zero-based physical axis for both variants. */
+.speed-line-view-switch { display: flex; flex-wrap: wrap; gap: .4rem; margin: .4rem 0 .75rem; }
+.speed-line-view-switch .action-button { min-height: 44px; }
+.speed-range-panel { min-width: 0; }
+.speed-range-reference { padding: .7rem; display: grid; gap: .55rem; min-width: 0; }
+.speed-range-reference .entry-card-top { margin: 0; }
+.speed-range-reference .pokemon-search-field { position: relative; z-index: 5; }
+.speed-range-reference .pokemon-search-field input { width: 100%; min-height: 40px; }
+.speed-range-reference-values { display: flex; gap: .4rem 1rem; align-items: center; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.speed-range-reference-values strong { white-space: nowrap; font-size: 1.15rem; }
+.speed-range-reference-values button { min-height: 44px; }
+.speed-range-toolbar { display: flex; align-items: end; flex-wrap: wrap; gap: .4rem 1rem; margin: .65rem 0 .4rem; }
+.speed-range-toolbar .pokemon-search-field { flex: 1 1 190px; max-width: 350px; }
+.speed-range-toolbar input { min-height: 40px; width: 100%; }
+.speed-range-toolbar p { flex: 2 1 300px; margin: 0; font-size: .8rem; line-height: 1.45; color: var(--muted); }
+.speed-range-list { max-height: 68vh; overflow-y: auto; border: 1px solid #42536a; border-radius: 10px; }
+.speed-range-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 3fr); align-items: center; gap: .5rem; border-bottom: 1px solid #344253; padding: .4rem .6rem; }
+.speed-range-row:last-child { border-bottom: 0; }
+.speed-range-row.is-reference { background: #203b54; box-shadow: inset 3px 0 #8dceff; }
+.speed-range-species { display: flex; align-items: center; gap: .4rem; min-width: 0; overflow-wrap: anywhere; }
+.speed-range-species img { width: 32px; height: 32px; object-fit: contain; flex: none; }
+.speed-range-species small { color: #8dceff; }
+.speed-range-tracks { display: grid; gap: .25rem; min-width: 0; }
+.speed-range-track-row { display: grid; grid-template-columns: minmax(105px, 145px) 2.4rem minmax(0, 1fr) 2.4rem; gap: .3rem; align-items: center; min-width: 0; font-size: .79rem; }
+.speed-range-variant { color: var(--muted); }
+.speed-range-end { text-align: center; font-variant-numeric: tabular-nums; }
+.speed-range-axis { position: relative; height: 13px; min-width: 0; background: #243242; border-radius: 3px; }
+.speed-range-band { position: absolute; top: 2px; bottom: 2px; min-width: 2px; border-radius: 3px; background: #6cb9fa; }
+.speed-range-scarf .speed-range-band { background: #e9b864; }
+.speed-range-marker { position: absolute; z-index: 1; top: -3px; bottom: -3px; border-left: 2px solid #fff; }
+.speed-range-unavailable { grid-column: 2 / -1; color: var(--muted); }
+.speed-range-no-results { padding: 1rem; }
+@media (max-width: 680px) {
+  .speed-range-row { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
+  .speed-range-track-row { grid-template-columns: minmax(94px, 112px) 2.1rem minmax(0, 1fr) 2.1rem; gap: .15rem; }
+  .speed-range-species img { width: 26px; height: 26px; }
+}
+@media (max-width: 350px) {
+  .speed-range-track-row { grid-template-columns: minmax(85px, 94px) 2rem minmax(0, 1fr) 2rem; font-size: .72rem; }
+  .speed-range-row { padding-inline: .3rem; }
+}
