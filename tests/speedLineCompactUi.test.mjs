@@ -42,7 +42,7 @@ test('row leads with actual to effective Speed before base Speed', () => {
 
 test('actions reuse shared button design while name selection remains compact', () => {
   const html = render({ targetKey: 'mega-other', targetItem: 'scarf', query: 'no-match' })
-  for (const text of ['기준선으로 이동', '기준 해제', '공유 링크 복사', '구애스카프 미적용으로 바꾸기', '필터 초기화']) assert.match(html, new RegExp(`<button[^>]*class="[^"]*action-button[^"]*"[^>]*>${text}</button>`), text)
+  for (const text of ['기준선으로 이동', '기준 포켓몬 해제', '스피드라인 링크 복사', '구애스카프 미적용으로 바꾸기', '검색·폼·비교·범위 초기화']) assert.match(html, new RegExp(`<button[^>]*class="[^"]*action-button[^"]*"[^>]*>${text}</button>`), text)
   assert.match(render(), /class="action-button subtle speed-line-name-action"/)
   const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
   assert.match(css, /\.speed-line-actions button\s*\{[^}]*min-height:\s*44px/)

@@ -46,7 +46,7 @@ test('unselected reference keeps entire listing and disables around control', ()
 
 test('empty filtered results show explicit reset with pinned reference', () => {
   const html = render({ query: 'nothing', comparison: 'equal' })
-  assert.match(html, /Reset filters/)
+  assert.match(html, /Reset search, form, comparison and range/)
   assert.match(html, /Effective Speed/)
   assert.match(html, /No results/)
 })

@@ -21,7 +21,7 @@ test('Quick selected attacker moves keyboard focus to the existing defender sear
 
 test('Single has explicit opponent reset and commits species to registered slots', () => {
   assert.match(app, /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
-  assert.match(panel, /onResetOpponents\?\.\(defenderSearch\)[^\n]*?\{lt\('상대 엔트리 초기화'\)\}/)
+  assert.match(panel, /onResetOpponents\?\.\(defenderSearch\)[^\n]*?\{lt\('상대 엔트리·비교 초안 초기화'\)\}/)
   assert.match(panel, /onOpponentSpecies\?\.\(key\)/)
   assert.match(panel, /opponentResetRevision/)
 })

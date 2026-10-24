@@ -14,7 +14,7 @@ test('dex builder action names builder tab explicitly and slot replacement is co
 })
 
 test('sample save and apply have distinct labels and replacement confirmation', () => {
-  assert.match(app, /내 샘플로 저장/)
+  assert.match(app, /onClick=\{saveCurrentSample\}>\{lt\('샘플 저장'\)\}/)
   assert.match(app, /confirmPartySlotReplacement\(sampleForge, slotIdx/)
   assert.match(app, /confirmPartySlotReplacement\(entry.member, selectedMy/)
 })

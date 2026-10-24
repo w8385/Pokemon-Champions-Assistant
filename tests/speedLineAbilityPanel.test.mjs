@@ -64,7 +64,7 @@ test('reference picker only offers actual abilities and resets ability on change
   search.props.onSelect('feet')
   assert.equal(changed.referenceAbility, null)
   assert.equal(changed.referenceKey, 'feet')
-  const clear = all.find(x => x.type === 'button' && x.props.children === '기준 해제')
+  const clear = all.find(x => x.type === 'button' && x.props.children === '기준 포켓몬 해제')
   clear.props.onClick()
   assert.equal(changed.referenceAbility, null)
 })

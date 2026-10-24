@@ -8411,6 +8411,17 @@ html {
   opacity: 0.45;
 }
 
+/* Saved-record actions are main mobile actions, unlike compact selection chips. */
+@media (max-width: 600px) {
+  .party-preset-controls button,
+  .party-preset-card-actions button,
+  .saved-sample-list button,
+  .sample-builder-save-button,
+  .sample-builder-apply-button {
+    min-height: 44px;
+  }
+}
+
 @media (max-width: 374px) {
   .damage-side-moves,
   .damage-side-moves-player,
