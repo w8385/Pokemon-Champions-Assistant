@@ -5,6 +5,7 @@ import type { DexLearnsetProvenance } from './dexGameLearnsets'
 import { moveDescriptionFor } from './dex/data'
 import { localizedDexText } from './dex/helpers'
 import { searchMoves } from './moveSearch'
+import { getMoveMetadata } from './moveMetadata'
 import './dexBrowse.css'
 
 export type DexMovePoolSectionProps = {
@@ -43,11 +44,11 @@ export function DexMovePoolSection({ recordKey, language, status, moves, metaFor
   const current = filters.recordKey === recordKey ? filters : { recordKey, query:'', type:'', category:'' }
   useEffect(() => { setFilters(prev => prev.recordKey === recordKey ? prev : { recordKey, query:'', type:'', category:'' }) }, [recordKey])
   const setFilter = (key: 'query' | 'type' | 'category', value: string) => setFilters(prev => ({ ...(prev.recordKey === recordKey ? prev : { recordKey, query:'', type:'', category:'' }), [key]: value }))
-  const types = [...new Set(moves.map(move => provenance?.kind === 'game-snapshot' ? move.type : metaForMove(move.name)?.type ?? move.type).filter((type): type is string => Boolean(type)))].sort()
+  const types = [...new Set(moves.map(move => getMoveMetadata(move.name)?.meta.type ?? metaForMove(move.name)?.type ?? move.type).filter((type): type is string => Boolean(type)))].sort()
   const searched = searchMoves(moves, current.query, { names: move => ({ aliases:[displayMoveName(move.name)] }) })
   const displayed = searched.filter(move => {
     const meta = metaForMove(move.name)
-    const type = provenance?.kind === 'game-snapshot' ? move.type : meta?.type ?? move.type
+    const type = getMoveMetadata(move.name)?.meta.type ?? meta?.type ?? move.type
     return (!current.type || type === current.type) && (!current.category || meta?.category === current.category)
   })
   return <section className="dex-move-pool" aria-busy={status === 'loading'}>
@@ -63,7 +64,7 @@ export function DexMovePoolSection({ recordKey, language, status, moves, metaFor
         {displayed.length ? <div className="dex-move-pool-table-wrap"><table className="dex-move-pool-table"><thead><tr>{[text.name,text.type,text.category,text.power,text.accuracy,text.pp,text.description].map(label => <th key={label} scope="col">{label}</th>)}</tr></thead><tbody>
           {displayed.map((move, index) => {
             const meta = metaForMove(move.name)
-            const type = provenance?.kind === 'game-snapshot' ? move.type : meta?.type ?? move.type
+            const type = getMoveMetadata(move.name)?.meta.type ?? meta?.type ?? move.type
             const tooltip = tooltipPropsForMove?.(move.name)
             const description = localizedDexText(moveDescriptionFor(move.name), language)
             return <tr key={`${move.name}-${index}`}>

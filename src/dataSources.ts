@@ -33,11 +33,13 @@ export const dataSourcePolicy = {
     caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함한다.',
   },
   moveMeta: {
-    sourceOfTruth: 'src/championsLearnedMoveMeta.json',
+    identityAndBasicType: 'src/dexGameMoveIndex.json (510 pinned IDs)',
+    legacyOtherFields: 'src/championsLearnedMoveMeta.json (731 historical rows)',
+    provider: 'src/moveMetadata.ts',
     report: 'reports/championsMoveMetaReport.json',
-    primary: '포챔스 move pool에 등장하는 기술명을 PokeAPI move detail과 매칭해 생성한 계산기용 메타',
-    supplements: ['src/championsMovePools.json', 'src/championsMoveNameOverrides.json', 'src/championsMoveMetaNameAliases.json', 'src/championsMoveMetaOverrides.json', 'reports/pokeapiMoveDetailsCache.json'],
-    caveat: '기본 타입/분류/위력/명중은 PokeAPI 기반 자동 생성이고, 다단히트·가변위력·예외 계산은 overrides로 보정한다.',
+    primary: '고정 스냅샷의 ID·한국어 이름·기본 타입; 분류/위력/명중/PP/우선도와 효과 플래그는 기존 생성 메타 중 확인 가능한 필드만 사용',
+    supplements: ['src/championsMoveMetaNameAliases.json (양방향 ID 별칭)', 'src/championsMoveMetaOverrides.json', 'reports/pokeapiMoveDetailsCache.json'],
+    caveat: '생성기 입력은 아직 과거 기술 풀 기준이며 다음 절편에서 이전합니다. 옛 메타 222개 중 source에 없는 행은 역사적 자료로 보존하되 스냅샷 내 습득 여부를 뜻하지 않습니다. 없는 필드와 우선도는 미확인; PokeAPI 유래 나머지 필드와 현행 게임 버전 동등성은 별도 검증이 필요합니다.',
   },
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',

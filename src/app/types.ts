@@ -132,7 +132,7 @@ export type MoveMeta = {
   usesDefenseAsAttack?: boolean
   targetsDefenseStat?: 'defense' | 'spDefense'
   alwaysCrit?: boolean
-  priority?: number
+  priority?: number | null
 }
 
 export type HoverTooltipCard = {

@@ -19,11 +19,12 @@ const legacy = JSON.parse(readFileSync(new URL('../src/championsLearnedMoveMeta.
 async function browse() {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const [{searchMoves},{dexDisplayMoveMeta,getDexGameMove,getDexGameMoveNames}] = await Promise.all([
-      server.ssrLoadModule('/src/moveSearch.ts'), server.ssrLoadModule('/src/dexGameMoveIndex.ts'),
+    const [{searchMoves},{getDexGameMove,getDexGameMoveNames},{getMoveMetadata},{MOVE_META_BY_NAME}] = await Promise.all([
+      server.ssrLoadModule('/src/moveSearch.ts'), server.ssrLoadModule('/src/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/moveMetadata.ts'),server.ssrLoadModule('/src/dex/data.ts'),
     ])
+    Object.assign(MOVE_META_BY_NAME,legacy)
     const context = {
-      MOVE_META_BY_NAME:legacy, dexDisplayMoveMeta, getDexGameMove, getDexGameMoveNames,
+      MOVE_META_BY_NAME, getMoveMetadata, getDexGameMove, getDexGameMoveNames,
       moveNameCandidates:name=>[name], normalizeSearchText:text=>text.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g,''),
       searchMoves, byDisplayName, moveDescriptionFor:()=>null,
     }

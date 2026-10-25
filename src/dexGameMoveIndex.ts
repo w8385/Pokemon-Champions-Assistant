@@ -1,4 +1,3 @@
-import type { MoveMeta } from './app/types'
 import index from './dexGameMoveIndex.json'
 import aliases from './championsMoveMetaNameAliases.json'
 
@@ -51,12 +50,4 @@ const aliasedIdentities = (() => {
 /** Recognized historical names share a source ID, never eligibility by themselves. */
 export function getDexGameMoveIdentity(name: string): DexGameMove | null {
   return getDexGameMove(name) ?? aliasedIdentities.get(name) ?? null
-}
-
-/** Dex display only: the source owns type; other known stats remain legacy metadata. */
-export function dexDisplayMoveMeta(name: string, legacy: MoveMeta | null | undefined): MoveMeta | null {
-  const source = getDexGameMove(name)
-  if (source) return legacy ? { ...legacy, type: source.type }
-    : { type: source.type, category: null, power: null, accuracy: null, pp: null }
-  return legacy ?? null
 }

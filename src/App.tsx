@@ -38,7 +38,8 @@ import { DexBrowseGrid, type DexBrowseCard } from './DexBrowseGrid'
 import { DEX_PAGE_SIZE, dexNextPage, dexPageScope, dexScrollRestoreReady, dexVisibleCount, type DexPage, type DexScrollRestore } from './dexPagination'
 import { DexMovePoolSection } from './DexMovePoolSection'
 import { loadDexGameLearnset, loadDexGameMoveLearners, DEX_GAME_LEARNSET_SOURCE, type DexLearnsetProvenance } from './dexGameLearnsets'
-import { dexDisplayMoveMeta, getDexGameMove, getDexGameMoveNames } from './dexGameMoveIndex'
+import { getDexGameMove, getDexGameMoveNames } from './dexGameMoveIndex'
+import { getMoveMetadata } from './moveMetadata'
 import { sourceBackedCardAbility } from './creatorCardAbility'
 import { confirmedCreatorEfforts } from './creatorConfirmedEfforts'
 import { PokemonBuildFields } from './PokemonBuildFields'
@@ -1179,10 +1180,6 @@ const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'ミストシード': { ko: '미스트필드에서 특수방어가 1단계 상승하고 소모됨.', en: 'Raises Special Defense by 1 stage in Misty Terrain, then is consumed.', ja: 'ミストフィールドで 特防が1段階上がり消費される。' },
   'グラスシード': { ko: '그래스필드에서 방어가 1단계 상승하고 소모됨.', en: 'Raises Defense by 1 stage in Grassy Terrain, then is consumed.', ja: 'グラスフィールドで 防御が1段階上がり消費される。' },
 }
-const MOVE_META_BY_NORMALIZED = new Map(
-  Object.entries(MOVE_META_BY_NAME).map(([name, meta]) => [normalizeSearchText(name), meta] as const),
-)
-
 function moveNameCandidates(name: string) {
   const base = name.trim()
   const alias = MOVE_NAME_ALIASES[base] ?? MOVE_NAME_ALIASES_BY_NORMALIZED.get(normalizeSearchText(base))
@@ -1222,7 +1219,7 @@ function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | n
 
 function lookupMoveMeta(name: string) {
   if (!name) return null
-  return MOVE_META_BY_NAME[name] ?? MOVE_META_BY_NORMALIZED.get(normalizeSearchText(name)) ?? null
+  return getMoveMetadata(name)?.meta ?? null
 }
 
 function findMatchingMoveOption(name: string, options: MoveOption[]) {
@@ -1232,8 +1229,8 @@ function findMatchingMoveOption(name: string, options: MoveOption[]) {
 }
 
 function resolveMoveType(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>) {
-  const source = getDexGameMove(name)
-  if (source) return source.type
+  const source = getMoveMetadata(name)
+  if (source?.id) return source.meta.type
   const direct = findMatchingMoveOption(name, preferredOptions)
   if (direct?.type) return direct.type
   for (const candidate of moveNameCandidates(name)) {
@@ -1249,6 +1246,8 @@ function resolveMoveType(name: string, preferredOptions: MoveOption[], movePools
 
 function resolveMoveMeta(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>): MoveMeta | null {
   if (!name) return null
+  const source = getMoveMetadata(name)
+  if (source?.id) return source.meta
   const candidates = moveNameCandidates(name)
   for (const candidate of candidates) {
     const meta = lookupMoveMeta(candidate)
@@ -3196,9 +3195,14 @@ function moveSearchCandidates(name: string) {
 }
 
 function dexMoveIndex() {
-  const names = new Set([...getDexGameMoveNames(), ...Object.keys(MOVE_META_BY_NAME)])
-  return [...names].map(name => ({
-    key: name, name, meta: dexDisplayMoveMeta(name, MOVE_META_BY_NAME[name])!, candidates: moveSearchCandidates(name),
+  const grouped = new Map<string, string[]>()
+  for (const raw of new Set([...getDexGameMoveNames(), ...Object.keys(MOVE_META_BY_NAME)])) {
+    const canonical = getMoveMetadata(raw)?.canonicalName ?? raw
+    grouped.set(canonical, [...(grouped.get(canonical) ?? []), raw])
+  }
+  return [...grouped].map(([name, aliases]) => ({
+    key: name, name, meta: getMoveMetadata(name)!.meta,
+    candidates: Array.from(new Set(aliases.flatMap(moveSearchCandidates))),
   }))
 }
 
@@ -3286,7 +3290,9 @@ function comparisonAbility(key: string, raw: string): string {
 function moveTooltipData(name: string, language: SiteLanguage): HoverTooltipCard | null {
   const meta = lookupMoveMeta(name)
   if (!meta) return null
-  const description = localizedDexText(moveDescriptionFor(name), language)
+  const identity = getMoveMetadata(name)
+  const described = moveDescriptionFor(name)
+  const description = localizedDexText(!identity?.id || described?.moveId === identity.id ? described : null, language)
   return {
     kind: 'move',
     title: name,
@@ -3967,7 +3973,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
   const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
   const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
   const selectedPool = pools[selectedSide.key]
-  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !MOVE_META_BY_NAME[selectedMove] ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
+  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !getMoveMetadata(selectedMove)?.provenance.category || getMoveMetadata(selectedMove)?.provenance.category === 'unknown' ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
   const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {
@@ -4062,7 +4068,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <span className="move-autocomplete-main">{options.find(move => move.name === option.key)?.type ? <SmallTypeBadgeImage type={options.find(move => move.name === option.key)!.type!} /> : null}<span>{option.label}</span></span> }}
               inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
-            <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || !MOVE_META_BY_NAME[name] ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
+            <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
         })}</div>
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
@@ -4459,7 +4465,7 @@ export default function App() {
       return row ? { id: dexSelectionId(kind, key), kind, key, row, score: 0 } : null
     }
     if (kind === 'move') {
-      const meta = dexDisplayMoveMeta(key, MOVE_META_BY_NAME[key])
+      const meta = getMoveMetadata(key)?.meta ?? null
       return meta ? { id: dexSelectionId(kind, key), kind, key, name: key, meta, score: 0 } : null
     }
     if (kind === 'ability') {
@@ -4986,7 +4992,7 @@ export default function App() {
         sprite: row?.sprite ?? null,
         selectedMove,
         occupied: Boolean(row),
-        priority: moveMeta?.priority ?? 0,
+        priority: selectedMove ? moveMeta?.priority ?? null : 0,
         speed: doubleSpeedBySlot[slot] ?? null,
       }
     })
@@ -5006,7 +5012,7 @@ export default function App() {
       const enemyTargets = targetOptions.filter((targetSlot) => doubleSlotMeta[targetSlot].side !== meta.side)
       const moveRows = (doubleActionOptionsBySlot[slot] ?? []).map((move) => {
         const lookup = lookupMoveMeta(move)
-        const priority = lookup?.priority ?? 0
+        const priority = lookup?.priority ?? null
         const spreadMove = DOUBLE_SPREAD_MOVE_NAMES.has(normalizeSearchText(move))
         const targetPreview = (targetSlot: DoubleBoardSlot) => {
           const preview = buildDoubleDamageContext(slot, targetSlot, move, spreadMove)
@@ -5490,7 +5496,7 @@ export default function App() {
       if (member.ability && !selectedAbility) unknownKeys.push(`${member.key} · 특성 원본: ${member.ability}`)
       const ability = selectedAbility?.slug ?? ''
       const moves = (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4).map(name => {
-        const base = moveNameCandidates(name).map(candidate => lookupMoveMeta(candidate)).find(Boolean) ?? null
+        const base = lookupMoveMeta(name)
         const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability)
         return { name, type: adjusted?.type ?? null, category: adjusted?.category ?? null }
       })
@@ -7641,18 +7647,11 @@ export default function App() {
 
               {dexSelectedRow ? <DexMovePoolSection key={dexSelectedRow.key} recordKey={dexSelectedRow.key} language={siteLanguage}
                 status={dexSelectedPool?.status ?? 'idle'} moves={dexSelectedPool?.moves ?? []} provenance={dexSelectedPool?.provenance}
-                metaForMove={name => dexDisplayMoveMeta(name, MOVE_META_BY_NAME[name])} displayMoveName={name => name}
+                metaForMove={name => getMoveMetadata(name)?.meta ?? null} displayMoveName={name => name}
                 renderTypeBadge={type => <TypeBadgeImage type={type} />}
                 detailHref={name => dexDetailHref('move', name)}
                 onNavigate={(event, name) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return; event.preventDefault(); openDexMoveDetail(name) }}
-                tooltipPropsForMove={name => {
-                  const tooltip = moveTooltipData(name, siteLanguage)
-                  const source = getDexGameMove(name)
-                  return bindTooltip(tooltip && source ? {
-                    ...tooltip, accentType: source.type,
-                    rows: tooltip.rows.map((row, idx) => idx === 0 ? { ...row, value: displayTypeName(source.type, siteLanguage) } : row),
-                  } : tooltip)
-                }}
+                tooltipPropsForMove={name => bindTooltip(moveTooltipData(name, siteLanguage))}
                 onRetry={() => window.location.reload()} /> : null}
 
               {dexSelectedMove ? <div className="dex-detail-card">
@@ -7674,7 +7673,7 @@ export default function App() {
                       <span className="pick-badge">{lt('위력')} {dexSelectedMove.meta.power != null ? resolvedMovePower(dexSelectedMove.meta) : '-'}</span>
                       <span className="pick-badge">PP {dexSelectedMove.meta.pp != null ? dexSelectedMove.meta.pp : '-'}</span>
                       <span className="pick-badge">{lt('명중')} {dexSelectedMove.meta.accuracy != null ? `${dexSelectedMove.meta.accuracy}%` : '-'}</span>
-                      <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? (MOVE_META_BY_NAME[dexSelectedMove.name] ? 0 : '—')}</span>
+                      <span className="pick-badge">{lt('우선도')} {dexSelectedMove.meta.priority ?? '—'}</span>
                     </div>
                   </div>
                   <div className="dex-detail-panel">
@@ -7927,7 +7926,7 @@ export default function App() {
                           <span className="double-move-row-title">{move}</span>
                           <span className="double-move-row-meta">
                             {type ? <SmallTypeBadgeImage type={type} /> : null}
-                            <span>{lt('우선도')} {priority >= 0 ? `+${priority}` : priority}</span>
+                            <span>{lt('우선도')} {priority == null ? '—' : priority >= 0 ? `+${priority}` : priority}</span>
                           </span>
                         </button>) : <span className="double-action-empty">{lt('등록 기술 없음')}</span>}
                       </div>
@@ -7953,7 +7952,7 @@ export default function App() {
                   <div className="double-layout-card-head compact">
                     <strong>{lt('4마리 행동순')}</strong>
                   </div>
-                  {doubleActionOrder.some(entry => entry.occupied && entry.speed === null) ? <p role="status">{lt('전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.')}</p> : null}
+                  {doubleActionOrder.some(entry => entry.occupied && (entry.speed === null || entry.priority === null)) ? <p role="status">{lt('전체 행동순 미확인 · 속도 또는 선택 기술 우선도가 미확인되어 슬롯 순서로 표시합니다.')}</p> : null}
                   <div className="double-speed-preview-list">
                     {doubleActionOrder.map((entry) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
                       <span>{entry.rank === null ? lt(entry.occupied ? '전체 순위 미확인' : '미선택') : `${entry.rank}${lt('순위')}`} · {entry.label}</span>

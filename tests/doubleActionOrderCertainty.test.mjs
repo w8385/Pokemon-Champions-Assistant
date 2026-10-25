@@ -11,7 +11,7 @@ let memo, preview, notice
 function visit(node) {
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleActionOrder') memo = node.initializer
   if (ts.isCallExpression(node) && node.expression.getText(source) === 'doubleActionOrder.map' && node.getText(source).includes('double-speed-preview-item')) preview = node
-  if (ts.isConditionalExpression(node) && node.getText(source).includes("lt('전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.')")) notice = node
+  if (ts.isConditionalExpression(node) && node.getText(source).includes("lt('전체 행동순 미확인 · 속도 또는 선택 기술 우선도가 미확인되어 슬롯 순서로 표시합니다.')")) notice = node
   ts.forEachChild(node, visit)
 }
 visit(source)

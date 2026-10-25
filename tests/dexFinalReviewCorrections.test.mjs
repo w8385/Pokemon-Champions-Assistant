@@ -46,26 +46,29 @@ test('actual pool link opens move category on a fresh native tab with destinatio
   assert.match(app, /event\.ctrlKey \|\| event\.shiftKey \|\| event\.altKey/)
 })
 
-test('ID 747 resolves synchronously on a fresh direct URL but unknown identity remains missing', () => {
+test('ID 747 resolves synchronously on a fresh direct URL but unknown identity remains missing', async () => {
   const api = compile(new URL('../src/dexGameMoveIndex.ts', import.meta.url))
   const source = api.getDexGameMove('볼가득넣기')
   assert.equal(source.id,747)
   assert.equal(source.sourceKo,'볼가득넣기')
   assert.equal(source.type,'normal')
   assert.equal(api.getDexGameMove('실제로없는기술'),null)
-  const projected = api.dexDisplayMoveMeta('볼가득넣기',null)
+  const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
+  let getMoveMetadata
+  try { ({getMoveMetadata} = await server.ssrLoadModule('/src/moveMetadata.ts'))
+  const projected = getMoveMetadata('볼가득넣기').meta
   assert.equal(projected.category,null)
   assert.equal(projected.power,null)
   assert.equal(projected.accuracy,null)
   assert.equal(projected.pp,null)
   assert.equal(projected.type,'normal')
-  assert.equal(api.dexDisplayMoveMeta('실제로없는기술',null),null)
-  assert.match(declaration('dexSelectedAllResult').getText(ast), /dexDisplayMoveMeta\(key, MOVE_META_BY_NAME\[key\]/)
+  assert.equal(getMoveMetadata('실제로없는기술'),null)
+  assert.match(declaration('dexSelectedAllResult').getText(ast), /getMoveMetadata\(key\)\?\.meta/)
   const resolver = declaration('dexSelectedAllResult').initializer.getText(ast)
   function resolve(selection) {
     const context = {React:{useMemo:fn=>fn()},dexSelectedValue:selection,dexSearchMode:'move',
       parseDexSelectionId:token=>({kind:token.slice(0,token.indexOf(':')),key:token.slice(token.indexOf(':')+1)}),
-      dexSelectionId, dexDisplayMoveMeta:api.dexDisplayMoveMeta,MOVE_META_BY_NAME:{},asyncDataVersion:0}
+      dexSelectionId, getMoveMetadata,asyncDataVersion:0}
     const code = ts.transpileModule(`globalThis.result = ${resolver}`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText
     vm.runInNewContext(code,context)
     return context.result
@@ -73,7 +76,8 @@ test('ID 747 resolves synchronously on a fresh direct URL but unknown identity r
   assert.equal(resolve('move:볼가득넣기').meta.type,'normal')
   assert.equal(resolve('move:실제로없는기술'),null)
   assert.match(app, /dexSelectedMove\.meta\.category \? displayMoveCategoryName\(dexSelectedMove\.meta\.category, siteLanguage\) : '—'/)
-  assert.match(app, /dexSelectedMove\.meta\.priority \?\? \(MOVE_META_BY_NAME\[dexSelectedMove\.name\] \? 0 : '—'\)/)
+  assert.match(app, /dexSelectedMove\.meta\.priority \?\? '—'/)
+  } finally { await server.close() }
 })
 
 test('all 510 pinned source move types agree in lazy pool and small fresh-route index', () => {
@@ -109,6 +113,6 @@ test('rendered game pool badges and type filters use source type over legacy met
     assert.match(html, /data-type="steel"/)
     assert.match(html, /타입은 게임 스냅샷/)
   } finally {await server.close()}
-  assert.match(declaration('dexSelectedAllResult').getText(ast), /dexDisplayMoveMeta\(key, MOVE_META_BY_NAME\[key\]/)
-  assert.match(app, /tooltipPropsForMove=\{name =>[\s\S]*?getDexGameMove\(name\)/)
+  assert.match(declaration('dexSelectedAllResult').getText(ast), /getMoveMetadata\(key\)\?\.meta/)
+  assert.match(app, /tooltipPropsForMove=\{name => bindTooltip\(moveTooltipData\(name, siteLanguage\)\)\}/)
 })
