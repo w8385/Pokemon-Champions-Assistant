@@ -20,11 +20,7 @@ const CURRENT_REGULATION = {
   rosterUrl: OFFICIAL_REGULATION_ROSTER_URL,
 }
 const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
-const TYPE_KO_BY_KEY = {
-  normal: '노말', fire: '불꽃', water: '물', electric: '전기', grass: '풀', ice: '얼음',
-  fighting: '격투', poison: '독', ground: '땅', flying: '비행', psychic: '에스퍼', bug: '벌레',
-  rock: '바위', ghost: '고스트', dragon: '드래곤', dark: '악', steel: '강철', fairy: '페어리',
-}
+const TYPE_KO_BY_KEY = JSON.parse(await fs.readFile(path.join(root, 'src', 'typeKoLabels.json'), 'utf8'))
 const MANUAL_FORMS = [
   {
     key: 'persian-alolan', apiName: 'persian-alola', canonicalFormSlug: 'persian-alolan', source: 'regulation-m-c-form',

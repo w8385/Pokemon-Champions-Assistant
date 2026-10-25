@@ -51,11 +51,14 @@ import { validateBackup } from './backupValidation'
 import { initializeWorkspace, workspaceReducer, persistWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './partyWorkspace'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 import verifiedAbilityLabels from './verifiedAbilityLabels.json'
+import typeKoLabels from './typeKoLabels.json'
 import { abilityAliases, abilityForSpeciesSelection, abilityIndex, isCalculableAbility, localizedAbilityLabel, resolveFormAbility } from './abilityIdentity'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
 import { abilityDescriptionFor, getDexDescriptionsSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './dex/data'
+
+const TYPE_KO_BY_KEY: Record<string, string> = typeKoLabels
 
 const PUNCH_MOVE_NAMES = new Set([
   '그로우펀치', '냉동펀치', '드레인펀치', '마하펀치', '메가톤펀치', '번개펀치',
@@ -422,12 +425,6 @@ const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-steelix': 'steelixite',
   'mega-tyranitar': 'tyranitarite',
   'mega-venusaur': 'venusaurite',
-}
-
-const TYPE_KO_BY_KEY: Record<string, string> = {
-  normal: '노말', fire: '불꽃', water: '물', electric: '전기', grass: '풀', ice: '얼음',
-  fighting: '격투', poison: '독', ground: '땅', flying: '비행', psychic: '에스퍼', bug: '벌레',
-  rock: '바위', ghost: '고스트', dragon: '드래곤', dark: '악', steel: '강철', fairy: '페어리',
 }
 
 const OPPONENT_BULK_PRESETS: Record<Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig> = {
