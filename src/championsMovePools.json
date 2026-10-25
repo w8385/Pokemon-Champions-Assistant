@@ -75485,6 +75485,10 @@
       "type": "water"
     },
     {
+      "name": "아쿠아제트",
+      "type": "water"
+    },
+    {
       "name": "아쿠아테일",
       "type": "water"
     },
@@ -111835,6 +111839,10 @@
       "type": "water"
     },
     {
+      "name": "아쿠아제트",
+      "type": "water"
+    },
+    {
       "name": "아픔나누기",
       "type": "normal"
     },
@@ -118790,6 +118798,10 @@
     },
     {
       "name": "아쿠아브레이크",
+      "type": "water"
+    },
+    {
+      "name": "아쿠아제트",
       "type": "water"
     },
     {
