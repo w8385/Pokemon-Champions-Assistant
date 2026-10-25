@@ -199,6 +199,7 @@ export type PersistedState = {
   sampleLockedMoves?: string[]
   savedSamples?: SavedSample[]
   savedPartyPresets?: SavedPartyPreset[]
+  activePartyPresetId?: string | null
   sampleWorkbenchTab?: SampleWorkbenchTab
   creatorLinkDrafts?: LinkDraft[]
   sampleSpeedTargets?: SampleSpeedTarget[]

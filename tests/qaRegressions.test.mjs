@@ -65,7 +65,7 @@ test('saved entries require exported metadata and complete member fields', () =>
   assert.throws(() => validateBackup(backup({ savedPartyPresets: [{ ...preset, party: [{ key: 'pikachu' }] }] })), /backup savedPartyPresets/i)
   assert.throws(() => validateBackup(backup({ savedSamples: [{ ...sample, member: member('') }] })), /backup savedSamples/i)
   assert.throws(() => validateBackup(backup({ savedPartyPresets: [{ ...preset, party: [] }] })), /backup savedPartyPresets/i)
-  assert.throws(() => validateBackup(backup({ savedPartyPresets: [{ ...preset, party: [member('')] }] })), /backup savedPartyPresets/i)
+  assert.doesNotThrow(() => validateBackup(backup({ savedPartyPresets: [{ ...preset, party: [member('')] }] })))
 })
 
 test('unsupported species are rejected rather than silently replaced; intentional blanks and extra forms survive', () => {
@@ -105,7 +105,7 @@ test('import validates before its first state write', () => {
   const importBody = app.split('  const importState = async ')[1]?.split('  const applyOcrImportedParty')[0]
   assert.ok(importBody)
   assert.match(importBody, /validateBackup\(JSON\.parse\(text\)\)/)
-  assert.ok(importBody.indexOf('validateBackup(JSON.parse(text))') < importBody.indexOf('setParty('))
+  assert.ok(importBody.indexOf('validateBackup(JSON.parse(text))') < importBody.indexOf("dispatchWorkspace({ type: 'IMPORT'"))
   const firstSetter = importBody.search(/\bset[A-Z]\w*\(/)
   for (const preparation of ['sanitizeParty(parsed.party)', 'sanitizeOpponents(parsed.opponents)', 'sanitizeSavedSamples(parsed.savedSamples)', 'sanitizeSavedPartyPresets(parsed.savedPartyPresets)', 'sanitizeSampleDamageTargets(parsed.sampleDamageTargets)']) {
     assert.ok(importBody.indexOf(preparation) >= 0 && importBody.indexOf(preparation) < firstSetter, `${preparation} must precede every setter`)

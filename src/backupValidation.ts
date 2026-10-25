@@ -42,7 +42,7 @@ const savedSample = (input: unknown): boolean => record(input) && completeMember
   id: nonBlank, label: nonBlank, lockedMoves: strings,
 })
 const savedPreset = (input: unknown): boolean => record(input) && roster(input.party, completeMember) &&
-  input.party.length > 0 && input.party.some(entry => entry.key !== '') && requiredFields(input, {
+  input.party.length > 0 && requiredFields(input, {
   id: nonBlank, label: nonBlank, lockedMovesBySlot: value => entries(value, strings),
 })
 const linkDraft = (input: unknown): boolean => record(input) && optionalFields(input, {
@@ -64,6 +64,7 @@ export function validateBackup(value: unknown): ImportExportPayload {
     sampleForge: member,
     savedSamples: input => entries(input, savedSample),
     savedPartyPresets: input => entries(input, savedPreset),
+    activePartyPresetId: input => input === null || nonBlank(input),
     creatorLinkDrafts: input => entries(input, linkDraft),
     sampleSpeedTargets: input => entries(input, opponent),
     sampleDamageTargets: input => entries(input, opponent),

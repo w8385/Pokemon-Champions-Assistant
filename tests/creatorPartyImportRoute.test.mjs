@@ -7,7 +7,7 @@ test('creator whole-party import saves a preset then routes to the actual party 
   const handler = app.match(/const importCreatorParty = \(source:[\s\S]*?\n  }/)
   assert.ok(handler, 'real App import handler exists')
   assert.match(handler[0], /prepareCreatorParty\(source/)
-  assert.match(handler[0], /setSavedPartyPresets\(prev => \[preset, \.\.\.prev\]\)/)
+  assert.match(handler[0], /dispatchWorkspace\(\{ type: 'ADD', preset \}\)/)
   assert.match(handler[0], /setMainSection\('party'\)/)
   assert.doesNotMatch(handler[0], /applyPartyPreset\(/)
 })

@@ -8,12 +8,11 @@ const region = (begin, end) => app.slice(app.indexOf(begin), app.indexOf(end, ap
 const party = region('className="party-preset-board"', 'className="entry-grid manage-entry-grid"')
 const lab = app.slice(app.indexOf('className="sample-builder-action-card"'), app.indexOf('id="sample-saved-card"') + 6000)
 
-test('a saved party card is inert except for one explicit confirmed load button', () => {
-  assert.match(party, /<div className="party-preset-card-main">[\s\S]*?<\/div>\s*<div className="party-preset-card-actions">/)
-  assert.equal((party.match(/confirmAndApplyPartyPreset\(preset\)/g) ?? []).length, 1)
-  assert.match(party, /onClick=\{\(\) => confirmAndApplyPartyPreset\(preset\)\}>\{lt\('파티 불러오기'\)\}/)
-  for (const text of ['파티 저장', '저장 파티 덮어쓰기', '저장 파티 이름 변경', '저장 파티 삭제', '현재 파티 비우기', '이미지에서 파티 가져오기']) assert.ok(app.includes(`lt('${text}')`), text)
-  for (const handler of ['saveNewPartyPreset', 'overwriteActivePartyPreset', 'renamePartyPreset', 'resetPartyForFreshEntry']) assert.ok(party.includes(handler) || app.includes(`onClick={${handler}}`), handler)
+test('saved party card selects directly, while distinct actions remain separate', () => {
+  assert.match(party, /<button type="button" aria-pressed=\{activePartyPresetId === preset.id\} className="party-preset-card-main" onClick=\{\(\) => applyPartyPreset\(preset.id\)\}>/)
+  assert.doesNotMatch(party, /confirmAndApplyPartyPreset|파티 불러오기|저장 파티 덮어쓰기|lt\('파티 저장'\)/)
+  for (const text of ['새 파티', '저장 파티 이름 변경', '저장 파티 삭제', '현재 파티 비우기', '이미지에서 파티 가져오기']) assert.ok(app.includes(`lt('${text}')`), text)
+  for (const handler of ['createNewParty', 'renamePartyPreset', 'resetPartyForFreshEntry']) assert.ok(party.includes(handler) || app.includes(`onClick={${handler}}`), handler)
 })
 
 test('builder removes only secondary build echoes and keeps tuning, calculation and saved-card identity', () => {

@@ -40,8 +40,8 @@ test('default single party starts with pair, not wizard; quick remains independe
 test('party route owns the original editor and real callbacks, not a copied comparison panel',()=>{
  const editor=app.slice(app.indexOf('className="party-columns party-manage-columns"'),app.indexOf('className="entry-grid manage-entry-grid"')+100)
  assert.match(app,/mainSection === 'party' \|\| \(mainSection === 'double' && activeTab === 'party'\)/)
- assert.match(editor,/saveNewPartyPreset/)
- assert.match(editor,/confirmAndApplyPartyPreset/)
+ assert.match(editor,/createNewParty/)
+ assert.match(editor,/onClick=\{\(\) => applyPartyPreset\(preset.id\)\}/)
  assert.match(app,/mainSection === 'party'[^]*?RegisteredMoveSlot[^]*?setConfirmedMoveSlot/)
  assert.match(app,/mainSection === 'party'[^]*?partyStatValue/)
  assert.match(app,/viewState\.mainSection === 'party' \? '\/party'/)

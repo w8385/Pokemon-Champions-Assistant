@@ -35,9 +35,10 @@ test('Research Lab mounts real effort modal in its editing screen on matching sp
   assert.match(source, /setSampleTuningModalOpen\(false\)/)
 })
 
-test('Preset overwrite only exists for an actual selected preset, not an empty list', () => {
+test('selected preset owns a live editable name; copy/overwrite controls are absent', () => {
   const preset = source.slice(source.indexOf('<div className="party-preset-controls">'), source.indexOf('party-preset-grid', source.indexOf('<div className="party-preset-controls">')))
-  assert.match(preset, /activePartyPresetId && savedPartyPresets\.some\(/)
+  assert.match(preset, /createNewParty/)
+  assert.doesNotMatch(preset, /overwriteActivePartyPreset|saveNewPartyPreset/)
 })
 
 test('Common semantic tokens are consumed by actual navigation, actions, search and panels', () => {

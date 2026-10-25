@@ -43,6 +43,7 @@ import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './speedM
 import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from './speedLineState'
 import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './speedLineRouteRestore'
 import { validateBackup } from './backupValidation'
+import { initializeWorkspace, workspaceReducer, persistWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './partyWorkspace'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
@@ -141,6 +142,7 @@ type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
     '파티 저장': 'Save party', '파티 불러오기': 'Load party', '저장 파티 덮어쓰기': 'Overwrite saved party', '저장 파티 이름 변경': 'Rename saved party', '저장 파티 삭제': 'Delete saved party', '현재 파티 비우기': 'Clear current party', '이미지에서 파티 가져오기': 'Import party from image',
+    '새 파티': 'New party', '선택 파티 이름': 'Selected party name', '저장 중': 'Saving…', '자동 저장됨': 'Autosaved', '저장 실패 · 변경은 현재 화면에만 유지': 'Save failed · changes are kept only on this screen', '저장 데이터 읽기 실패 · 원본 보호 중': 'Could not read saved data · original is protected', '저장 재시도': 'Retry save', '원본 덮어쓰기 확인': 'Confirm overwrite of original', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': 'Overwrite the original stored data with this screen?', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'Party selection changed; image was not applied. Please try again.',
     '샘플 저장': 'Save sample', '샘플 불러오기': 'Load sample', '저장 샘플 삭제': 'Delete saved sample', '샘플 편집기에 가져오기': 'Import to sample editor', '저장 파티에 추가': 'Add to saved parties', '출처 링크 저장': 'Save source link', '저장 링크 삭제': 'Delete saved link',
     '전체 데이터 내보내기': 'Export all data', '전체 데이터 불러오기': 'Import all data', '샘플 편집기로 보내기': 'Send to sample editor', '파티 슬롯 선택': 'Choose party slot', '선택 슬롯에 넣기': 'Put in selected slot', '공격측·방어측 바꾸기': 'Swap attacker and defender', '상대 엔트리·비교 초안 초기화': 'Reset opponent entry and comparison draft',
     '내 속도 조정': 'Adjust my Speed', '상대 속도 조정': 'Adjust opponent Speed', '속도 보정 기준': 'Speed calculation basis', '양쪽 상태·랭크·장막 없음': 'No status, stages or screens on either side',
@@ -191,6 +193,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   },
   ja: {
     '파티 저장': 'パーティを保存', '파티 불러오기': 'パーティを読み込む', '저장 파티 덮어쓰기': '保存パーティを上書き', '저장 파티 이름 변경': '保存パーティの名前を変更', '저장 파티 삭제': '保存パーティを削除', '현재 파티 비우기': '現在のパーティを空にする', '이미지에서 파티 가져오기': '画像からパーティを取り込む',
+    '새 파티': '新しいパーティ', '선택 파티 이름': '選択中のパーティ名', '저장 중': '保存中…', '자동 저장됨': '自動保存済み', '저장 실패 · 변경은 현재 화면에만 유지': '保存失敗 · 変更はこの画面にのみ保持', '저장 데이터 읽기 실패 · 원본 보호 중': '保存データの読み込み失敗 · 元データを保護中', '저장 재시도': '保存を再試行', '원본 덮어쓰기 확인': '元データの上書きを確認', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': '元の保存データを現在の画面で上書きしますか？', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'パーティの選択が変わったため、画像は反映されませんでした。もう一度お試しください。',
     '샘플 저장': 'サンプルを保存', '샘플 불러오기': 'サンプルを読み込む', '저장 샘플 삭제': '保存サンプルを削除', '샘플 편집기에 가져오기': 'サンプル編集画面に取り込む', '저장 파티에 추가': '保存パーティに追加', '출처 링크 저장': '出典リンクを保存', '저장 링크 삭제': '保存リンクを削除',
     '전체 데이터 내보내기': '全データを書き出す', '전체 데이터 불러오기': '全データを読み込む', '샘플 편집기로 보내기': 'サンプル編集画面へ送る', '파티 슬롯 선택': 'パーティのスロットを選択', '선택 슬롯에 넣기': '選択したスロットに入れる', '공격측·방어측 바꾸기': '攻撃側と防御側を入れ替える', '상대 엔트리·비교 초안 초기화': '相手エントリーと比較下書きを初期化',
     '내 속도 조정': '自分の素早さを調整', '상대 속도 조정': '相手の素早さを調整', '속도 보정 기준': '素早さの計算根拠', '양쪽 상태·랭크·장막 없음': '両側とも状態・ランク・壁なし',
@@ -292,7 +295,7 @@ function sanitizeLockedMoveSlots(input: unknown, slotCount: number): string[][] 
   return Array.from({ length: slotCount }, (_, idx) => {
     const value = input[idx]
     return Array.isArray(value)
-      ? value.filter((move): move is string => typeof move === 'string' && move.trim().length > 0).slice(0, 4)
+      ? value.slice(0, 4).map((move) => typeof move === 'string' ? move : '')
       : []
   })
 }
@@ -1581,7 +1584,7 @@ function sanitizeConfirmedMovesByKey(input: unknown): Record<string, string[]> {
   return Object.fromEntries(
     Object.entries(input)
       .filter(([key]) => typeof key === 'string')
-      .map(([key, value]) => [key, Array.isArray(value) ? value.filter((move): move is string => typeof move === 'string' && move.trim().length > 0) : []])
+      .map(([key, value]) => [key, Array.isArray(value) ? fourMoves(value) : []])
   )
 }
 
@@ -1668,13 +1671,16 @@ function sanitizeSavedSamples(input: unknown): SavedSample[] {
 
 function sanitizeSavedPartyPresets(input: unknown): SavedPartyPreset[] {
   if (!Array.isArray(input)) return []
+  const used = new Set<string>()
   return input
     .map((entry, idx) => {
       if (!entry || typeof entry !== 'object') return null
       const raw = entry as Partial<SavedPartyPreset>
       const party = sanitizeParty(raw.party)
+      const id = uniquePartyId(Array.from(used, id => ({ id } as SavedPartyPreset)), typeof raw.id === 'string' && raw.id.trim() ? raw.id : `party-${idx}`)
+      used.add(id)
       return {
-        id: typeof raw.id === 'string' ? raw.id : `party-${idx}`,
+        id,
         label: typeof raw.label === 'string' && raw.label.trim() ? raw.label : `Party ${idx + 1}`,
         party,
         lockedMovesBySlot: sanitizeLockedMoveSlots(raw.lockedMovesBySlot, party.length),
@@ -1689,14 +1695,16 @@ function sanitizeSelectedIndex(value: unknown, listLength: number) {
   return num
 }
 
-function loadPersistedState(): PersistedState | null {
-  if (typeof window === 'undefined') return null
+function loadPersistedState(): { value: PersistedState | null; error: boolean } {
+  if (typeof window === 'undefined') return { value: null, error: false }
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    return JSON.parse(raw) as PersistedState
+    if (!raw) return { value: null, error: false }
+    const parsed: unknown = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid persisted state')
+    return { value: parsed as PersistedState, error: false }
   } catch {
-    return null
+    return { value: null, error: true }
   }
 }
 
@@ -4193,15 +4201,43 @@ function SettingsIcon() {
 }
 
 export default function App() {
-  const persisted = React.useMemo(() => loadPersistedState(), [])
+  const persistedRead = React.useMemo(() => loadPersistedState(), [])
+  const persisted = persistedRead.value
+  const initialWorkspace = React.useMemo(() => initializeWorkspace({
+    ...(Array.isArray(persisted?.party) ? { party: sanitizeParty(persisted.party) } : {}),
+    ...(persisted?.confirmedMovesByKey !== undefined ? { confirmedMovesByKey: sanitizeConfirmedMovesByKey(persisted.confirmedMovesByKey) } : {}),
+    savedPartyPresets: sanitizeSavedPartyPresets(persisted?.savedPartyPresets),
+    activePartyPresetId: persisted?.activePartyPresetId,
+  }, sanitizeParty(undefined)), [persisted])
+  const [workspace, setWorkspace] = React.useState(initialWorkspace)
+  const workspaceRef = React.useRef(workspace)
+  const workspaceSelectionRevision = React.useRef(0)
+  const dispatchWorkspace = (action: PartyWorkspaceAction) => {
+    const next = workspaceReducer(workspaceRef.current, action)
+    if (action.type === 'IMPORT' || next.activePartyPresetId !== workspaceRef.current.activePartyPresetId) workspaceSelectionRevision.current++
+    workspaceRef.current = next
+    setWorkspace(next)
+  }
+  const { party, confirmedMovesByKey, savedPartyPresets, activePartyPresetId } = workspace
+  const setParty = (update: PartyMember[] | ((previous: PartyMember[]) => PartyMember[])) => {
+    if (persistenceStatus !== 'failed' && persistenceStatus !== 'read-failed') setPersistenceStatus('saving')
+    dispatchWorkspace({ type: 'EDIT_PARTY', update })
+  }
+  const setConfirmedMovesByKey = (update: Record<string, string[]> | ((previous: Record<string, string[]>) => Record<string, string[]>)) => {
+    if (persistenceStatus !== 'failed' && persistenceStatus !== 'read-failed') setPersistenceStatus('saving')
+    dispatchWorkspace({ type: 'EDIT_MOVES', update })
+  }
+
+  const [persistenceStatus, setPersistenceStatus] = React.useState<'saving' | 'saved' | 'failed' | 'read-failed'>(() => persistedRead.error ? 'read-failed' : 'saving')
+  const [allowRecoveryWrite, setAllowRecoveryWrite] = React.useState(!persistedRead.error)
+  const [retryPersistence, setRetryPersistence] = React.useState(0)
   const viewState = React.useMemo(() => parseViewStateFromUrl(), [])
-  const [party, setParty] = React.useState<PartyMember[]>(() => sanitizeParty(persisted?.party))
   const [opponents, setOpponents] = React.useState<OpponentState[]>(() => sanitizeOpponents(persisted?.opponents))
-  const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, sanitizeParty(persisted?.party).length))
+  const [selectedMy, setSelectedMy] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedMy ?? persisted?.selectedMy, initialWorkspace.party.length))
   const [selectedOpp, setSelectedOpp] = React.useState(() => sanitizeSelectedIndex(viewState?.selectedOpp ?? persisted?.selectedOpp, sanitizeOpponents(persisted?.opponents).length))
   const [singleDraftIdentity, setSingleDraftIdentity] = React.useState<{ attacker?: string; defender?: string }>({})
   const [opponentResetRevision, setOpponentResetRevision] = React.useState(0)
-  const initialDoubleParty = React.useMemo(() => sanitizeParty(persisted?.party), [persisted])
+  const initialDoubleParty = React.useMemo(() => initialWorkspace.party, [initialWorkspace])
   const initialDoubleOpponents = React.useMemo(() => sanitizeOpponents(persisted?.opponents), [persisted])
   const defaultDoubleMyLeft = React.useMemo(() => firstFilledIndex(initialDoubleParty, 0), [initialDoubleParty])
   const defaultDoubleMyRight = React.useMemo(() => initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) >= 0 ? initialDoubleParty.findIndex((entry, idx) => idx !== defaultDoubleMyLeft && Boolean(entry.key)) : Math.min(defaultDoubleMyLeft + 1, initialDoubleParty.length - 1), [defaultDoubleMyLeft, initialDoubleParty])
@@ -4319,8 +4355,7 @@ export default function App() {
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [sampleMoveFilter, setSampleMoveFilter] = React.useState<MoveFilter>('core')
   const [moveSearch, setMoveSearch] = React.useState('')
-  const [confirmedMovesByKey, setConfirmedMovesByKey] = React.useState<Record<string, string[]>>(() => sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey))
-  const [partySearch, setPartySearch] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => searchDisplayLabel(member.key, 'ko')))
+  const [partySearch, setPartySearch] = React.useState<string[]>(() => initialWorkspace.party.map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [opponentAbilityDrafts, setOpponentAbilityDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => member.ability ?? ''))
@@ -4356,11 +4391,12 @@ export default function App() {
   const longPressTriggeredRef = React.useRef(false)
   const suppressFocusTooltipRef = React.useRef(false)
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
-  const [savedPartyPresets, setSavedPartyPresets] = React.useState<SavedPartyPreset[]>(() => sanitizeSavedPartyPresets(persisted?.savedPartyPresets))
   const [partyImageImportBusy, setPartyImageImportBusy] = React.useState(false)
   const [partyImageImportStatus, setPartyImageImportStatus] = React.useState('')
   const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
-  const [activePartyPresetId, setActivePartyPresetId] = React.useState<string | null>(null)
+  const activePartyLabel = savedPartyPresets.find(record => record.id === activePartyPresetId)?.label ?? ''
+  const [partyNameDraft, setPartyNameDraft] = React.useState(activePartyLabel)
+  React.useEffect(() => { setPartyNameDraft(activePartyLabel) }, [activePartyPresetId, activePartyLabel])
   const [creatorPartyImportError, setCreatorPartyImportError] = React.useState('')
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? ((persisted?.sampleWorkbenchTab as string) === 'rankers' ? 'library' : ['builder','speed','damage','library'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
   const [librarySourceId, setLibrarySourceId] = React.useState<string | null>(() => viewState?.librarySourceId ?? null)
@@ -4391,7 +4427,7 @@ export default function App() {
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [sampleDamageConditionsCollapsed, setSampleDamageConditionsCollapsed] = React.useState(true)
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
-  const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => sanitizeParty(persisted?.party).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
+  const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => initialWorkspace.party.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [sampleItemDraft, setSampleItemDraft] = React.useState(() => displayItemLabel(visibleChampionsItem((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, (persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).item), 'ko'))
   const [dexMoveLearnerResult, setDexMoveLearnerResult] = React.useState<{ name: string; status: 'loading' | 'ready' | 'missing' | 'error'; keys: string[] } | null>(null)
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, MovePoolState>>({})
@@ -5242,7 +5278,7 @@ export default function App() {
   }, [party, opponents, sampleForge.key, movePoolByKey])
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || !allowRecoveryWrite) return
     const payload: PersistedState = {
       party,
       opponents,
@@ -5291,6 +5327,7 @@ export default function App() {
       sampleLockedMoves,
       savedSamples,
       savedPartyPresets,
+      activePartyPresetId,
       sampleWorkbenchTab,
       creatorLinkDrafts,
       sampleSpeedTargets,
@@ -5324,8 +5361,8 @@ export default function App() {
       doubleActionTargetOppRight,
       doubleActionFocusSlot,
     }
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }, [party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcDefenderDisguise, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, sampleLockedMoves, savedSamples, savedPartyPresets, sampleWorkbenchTab, creatorLinkDrafts, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
+    setPersistenceStatus(persistWorkspace(() => window.localStorage, STORAGE_KEY, payload) ? 'saved' : 'failed')
+  }, [allowRecoveryWrite, retryPersistence, activePartyPresetId, party, opponents, selectedMy, selectedOpp, calcSwapSides, calcAttackStage, calcDefenseStage, calcHitCount, calcWeather, calcTerrain, calcBurned, calcCritical, calcAttackerLowHp, calcTargetPoisoned, calcDefenderFullHp, calcDefenderDisguise, calcMovedAfterTarget, calcFaintedAllies, calcRivalryMode, calcParentalBond, calcDefenderStatused, calcElectromorphosisCharged, calcReflect, calcLightScreen, calcAuroraVeil, calcFriendGuard, calcTypeChangeStab, calcConditionalPowerValues, calcOpponentBulkPreset, calcOpponentHpEv, calcOpponentDefenseEv, calcOpponentSpDefenseEv, calcOpponentDefenseNature, calcOpponentSpDefenseNature, calcOpponentOffensePreset, calcOpponentAttackEv, calcOpponentSpAttackEv, calcOpponentAttackNature, calcOpponentSpAttackNature, battleNote, confirmedMovesByKey, mainSection, activeTab, sampleForge, sampleLockedMoves, savedSamples, savedPartyPresets, sampleWorkbenchTab, creatorLinkDrafts, sampleSpeedTargets, sampleDamageTargets, doubleMyLeft, doubleMyRight, doubleOppLeft, doubleOppRight, doubleTrickRoom, doubleTailwindMy, doubleTailwindOpp, doubleFriendGuardMy, doubleFriendGuardOpp, doubleWideGuardMy, doubleWideGuardOpp, doubleAttackerSlot, doubleDefenderSlot, doubleSpreadMove, doubleMoveName, doubleProtectMyLeft, doubleProtectMyRight, doubleProtectOppLeft, doubleProtectOppRight, doubleActionMoveMyLeft, doubleActionMoveMyRight, doubleActionMoveOppLeft, doubleActionMoveOppRight, doubleActionTargetMyLeft, doubleActionTargetMyRight, doubleActionTargetOppLeft, doubleActionTargetOppRight, doubleActionFocusSlot])
 
   React.useEffect(() => {
     const restoreRoute = () => {
@@ -6583,28 +6620,16 @@ export default function App() {
     setActiveTab('party')
   }
 
-  const applyPartyPreset = (presetParty: PartyMember[], presetLockedMovesBySlot: string[][], presetId?: string | null) => {
-    const nextParty = clonePartyList(sanitizeParty(presetParty))
-    const nextLockedMovesBySlot = sanitizeLockedMoveSlots(presetLockedMovesBySlot, nextParty.length)
-    const nextConfirmedMovesByKey = Object.fromEntries(
-      nextParty
-        .map((member, idx) => [member.key, nextLockedMovesBySlot[idx] ?? []] as const)
-        .filter(([key]) => Boolean(key))
-    )
-    setParty(nextParty)
-    setConfirmedMovesByKey(nextConfirmedMovesByKey)
-    setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
-    setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+  const applyPartyPreset = (presetId: string) => {
+    const record = savedPartyPresets.find(entry => entry.id === presetId)
+    if (!record) return
+    dispatchWorkspace({ type: 'SELECT', id: presetId })
+    setPartySearch(record.party.map(member => searchDisplayLabel(member.key, siteLanguage)))
+    setPartyItemDrafts(record.party.map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setSelectedMy(0)
-    setActiveItemField((prev) => prev?.scope === 'party' ? null : prev)
-    setActiveMoveField((prev) => prev?.scope === 'party' ? null : prev)
+    setActiveItemField(prev => prev?.scope === 'party' ? null : prev)
+    setActiveMoveField(prev => prev?.scope === 'party' ? null : prev)
     setTuningModalIndex(null)
-    setActivePartyPresetId(presetId ?? null)
-  }
-
-  const confirmAndApplyPartyPreset = (preset: SavedPartyPreset) => {
-    if (!window.confirm(lt('현재 파티를 교체하고 저장한 파티를 적용할까요?'))) return
-    applyPartyPreset(preset.party, preset.lockedMovesBySlot, preset.id)
   }
 
   const importCreatorParty = (source: ReturnType<typeof groupCreatorSources>[number]) => {
@@ -6617,49 +6642,26 @@ export default function App() {
       party: prepared.party,
       lockedMovesBySlot: prepared.lockedMovesBySlot,
     }
-    setSavedPartyPresets(prev => [preset, ...prev])
+    dispatchWorkspace({ type: 'ADD', preset })
     setCreatorPartyImportError('')
     setMainSection('party')
     setActiveTab('party')
   }
 
-  const buildPartyPresetLockedMoves = () => party.map((member) => {
-    if (!member.key) return []
-    return (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4)
-  })
-
-  const saveNewPartyPreset = () => {
-    const label = partyPresetLabelDraft.trim() || `${lt('파티 이름')} ${savedPartyPresets.length + 1}`
-    const nextPreset: SavedPartyPreset = {
-      id: `party-${Date.now()}`,
-      label,
-      party: clonePartyList(party),
-      lockedMovesBySlot: buildPartyPresetLockedMoves(),
-    }
-    setSavedPartyPresets((prev) => [nextPreset, ...prev])
-    setActivePartyPresetId(nextPreset.id)
+  const createNewParty = () => {
+    const id = `party-${crypto.randomUUID()}`
+    dispatchWorkspace({ type: 'CREATE', id, label: partyPresetLabelDraft.trim() || lt('새 파티'), emptyParty: cloneEmptyParty() })
     setPartyPresetLabelDraft('')
-  }
-
-  const overwriteActivePartyPreset = () => {
-    if (!activePartyPresetId) {
-      saveNewPartyPreset()
-      return
-    }
-    setSavedPartyPresets((prev) => prev.map((entry) => entry.id === activePartyPresetId ? {
-      ...entry,
-      label: partyPresetLabelDraft.trim() || entry.label,
-      party: clonePartyList(party),
-      lockedMovesBySlot: buildPartyPresetLockedMoves(),
-    } : entry))
-    setPartyPresetLabelDraft('')
+    setPartySearch(emptyParty.map(() => ''))
+    setPartyItemDrafts(emptyParty.map(() => ''))
+    setSelectedMy(0)
+    setTuningModalIndex(null)
   }
 
   const renamePartyPreset = (preset: SavedPartyPreset) => {
     if (typeof window === 'undefined') return
     const nextLabel = window.prompt(lt('파티 이름'), preset.label)?.trim()
-    if (!nextLabel) return
-    setSavedPartyPresets((prev) => prev.map((entry) => entry.id === preset.id ? { ...entry, label: nextLabel } : entry))
+    if (nextLabel) dispatchWorkspace({ type: 'RENAME', id: preset.id, label: nextLabel })
   }
 
   const saveCurrentSample = () => {
@@ -6834,7 +6836,9 @@ export default function App() {
   }
 
   const resetPartyForFreshEntry = () => {
-    setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
+    const label = savedPartyPresets.find(record => record.id === activePartyPresetId)?.label ?? lt('새 파티')
+    if (!window.confirm(`${label}: ${lt('현재 파티 비우기')} (6)`)) return
+    setParty(cloneEmptyParty())
     setPartySearch(emptyParty.map(() => ''))
     setPartyItemDrafts(emptyParty.map(() => ''))
     setSelectedMy(0)
@@ -6863,7 +6867,7 @@ export default function App() {
   }
 
   const resetAll = () => {
-    setParty(emptyParty.map((member) => ({ ...member, evs: { ...member.evs }, config: { ...member.config }, tuning: { ...member.tuning } })))
+    dispatchWorkspace({ type: 'RESET', id: `party-${crypto.randomUUID()}`, emptyParty: cloneEmptyParty() })
     setPartyItemDrafts(emptyParty.map(() => ''))
     setOpponents(emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] })))
     setPartySearch(emptyParty.map(() => ''))
@@ -6908,7 +6912,6 @@ export default function App() {
     setStab(1.5)
     setEffectiveness(1)
     setBattleNote('')
-    setConfirmedMovesByKey({})
     setActiveTab('party')
     setMainSection('home')
     setSampleForge(defaultSampleForge())
@@ -6916,16 +6919,14 @@ export default function App() {
     setSampleItemDraft(displayItemLabel(visibleChampionsItem(defaultSampleForge().key, defaultSampleForge().item), siteLanguage))
     setSampleSearch(searchDisplayLabel(defaultSampleForge().key, siteLanguage))
     setSavedSamples([])
-    setSavedPartyPresets([])
     setCreatorLinkDrafts([])
     setPartyPresetLabelDraft('')
-    setActivePartyPresetId(null)
     setSampleSpeedTargets(defaultSampleSpeedTargets)
     setSampleDamageTargets(defaultSampleDamageTargets)
     setSampleSpeedSearch('')
     setSampleDamageSearch('')
     setSampleLabelDraft('')
-    if (typeof window !== 'undefined') window.localStorage.removeItem(STORAGE_KEY)
+    // Persist the completed reset rather than removing storage before the effect runs.
   }
 
   const exportState = () => {
@@ -6978,6 +6979,7 @@ export default function App() {
       sampleLockedMoves,
       savedSamples,
       savedPartyPresets,
+      activePartyPresetId,
       sampleWorkbenchTab,
       creatorLinkDrafts,
       sampleSpeedTargets,
@@ -7037,7 +7039,10 @@ export default function App() {
       const nextSelectedMy = sanitizeSelectedIndex(parsed.selectedMy, nextParty.length)
       const nextSelectedOpp = sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length)
 
-      setParty(nextParty)
+      dispatchWorkspace({ type: 'IMPORT', workspace: initializeWorkspace({
+        ...(Array.isArray(parsed.party) ? { party: nextParty } : {}),
+        ...(parsed.confirmedMovesByKey !== undefined ? { confirmedMovesByKey: nextConfirmedMovesByKey } : {}), savedPartyPresets: nextSavedPartyPresets, activePartyPresetId: parsed.activePartyPresetId,
+      }, sanitizeParty(undefined)) })
       setPartyItemDrafts(nextPartyItemDrafts)
       setOpponents(nextOpponents)
       setOpponentItemDrafts(nextOpponentItemDrafts)
@@ -7086,16 +7091,13 @@ export default function App() {
       setCalcOpponentAttackNature(nextOffenseState.attackNature)
       setCalcOpponentSpAttackNature(nextOffenseState.spAttackNature)
       setBattleNote(typeof parsed.battleNote === 'string' ? parsed.battleNote : '')
-      setConfirmedMovesByKey(nextConfirmedMovesByKey)
       setMainSection(parsed.mainSection ?? 'home')
       setSampleForge(nextSampleForge)
       setSampleLockedMoves(nextSampleLockedMoves)
       setSampleItemDraft(nextSampleItemDraft)
       setSampleSearch(nextSampleSearch)
       setSavedSamples(nextSavedSamples)
-      setSavedPartyPresets(nextSavedPartyPresets)
-      setActivePartyPresetId(null)
-      setSampleLabelDraft('')
+        setSampleLabelDraft('')
     } catch {
       if (typeof window !== 'undefined') window.alert(lt('불러오기 실패: JSON 형식을 확인하세요.'))
     } finally {
@@ -7103,23 +7105,24 @@ export default function App() {
     }
   }
 
-  const applyOcrImportedParty = React.useCallback((imported: OcrImportedPartyMember[]) => {
+  const applyOcrImportedParty = (imported: OcrImportedPartyMember[], targetId: string) => {
     const nextParty = cloneEmptyParty()
-    const nextConfirmedMovesByKey = { ...confirmedMovesByKey }
+    const nextConfirmedMovesByKey = { ...workspaceRef.current.confirmedMovesByKey }
     imported.slice(0, nextParty.length).forEach((entry, idx) => {
       nextParty[idx] = clonePartyMember(entry.member)
       nextConfirmedMovesByKey[entry.member.key] = entry.lockedMoves
     })
-    setParty(nextParty)
-    setConfirmedMovesByKey(nextConfirmedMovesByKey)
+    dispatchWorkspace({ type: 'EDIT_BUILD', targetId, party: nextParty, moves: nextConfirmedMovesByKey })
     setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setSelectedMy(firstFilledIndex(nextParty, 0))
-  }, [confirmedMovesByKey, siteLanguage])
+  }
 
   const importPartyFromImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? [])
     if (!files.length || partyImageImportBusy) return
+    const targetId = workspaceRef.current.activePartyPresetId
+    const selectionRevision = workspaceSelectionRevision.current
     try {
       setPartyImageImportBusy(true)
       setPartyImageImportStatus(lt('OCR 준비 중...'))
@@ -7134,32 +7137,41 @@ export default function App() {
         })
         return result.data.text
       }
-      const documents: string[] = []
-      for (const file of files) {
-        setPartyImageImportStatus(`${file.name} · ${lt('레이아웃 OCR 분석 중...')}`)
-        const text = await recognize(file, file.name)
-        documents.push(text)
-      }
-      const imported = parseOcrImportedPartyDocuments(documents)
-      if (!imported.length) {
+      let importedCount = 0
+      const result = await runGuardedOcrImport({
+        files,
+        recognize: (file) => {
+          setPartyImageImportStatus(`${file.name} · ${lt('레이아웃 OCR 분석 중...')}`)
+          return recognize(file, file.name)
+        },
+        parse: parseOcrImportedPartyDocuments,
+        isCurrent: () => workspaceSelectionRevision.current === selectionRevision
+          && workspaceRef.current.activePartyPresetId === targetId
+          && workspaceRef.current.savedPartyPresets.some(record => record.id === targetId),
+        confirm: (imported) => {
+          const summary = imported.slice(0, 6).map((entry) => {
+            const nature = natureChipLabel(entry.member.config.nature, siteLanguage)
+            const moves = entry.lockedMoves.slice(0, 2).join(', ')
+            return `${searchDisplayLabel(entry.member.key, siteLanguage)}${nature ? ` · ${nature}` : ''}${moves ? ` · ${moves}` : ''}`
+          }).join('\n')
+          return typeof window === 'undefined' || window.confirm(`${lt('다음 파티를 가져올까요?')}\n${summary}`)
+        },
+        apply: (imported) => { importedCount = imported.length; applyOcrImportedParty(imported, targetId) },
+      })
+      if (result === 'empty') {
         setPartyImageImportStatus(lt('사진에서 파티를 찾지 못했습니다.'))
         if (typeof window !== 'undefined') window.alert(lt('사진에서 포켓몬 이름을 찾지 못했습니다. 조금 더 선명한 스크린샷으로 다시 시도해 주세요.'))
         return
       }
-      const summary = imported.slice(0, 6).map((entry) => {
-        const nature = natureChipLabel(entry.member.config.nature, siteLanguage)
-        const moves = entry.lockedMoves.slice(0, 2).join(', ')
-        return `${searchDisplayLabel(entry.member.key, siteLanguage)}${nature ? ` · ${nature}` : ''}${moves ? ` · ${moves}` : ''}`
-      }).join('\n')
-      if (typeof window !== 'undefined') {
-        const confirmed = window.confirm(`${lt('다음 파티를 가져올까요?')}\n${summary}`)
-        if (!confirmed) {
-          setPartyImageImportStatus(lt('사진 IMPORT가 취소되었습니다.'))
-          return
-        }
+      if (result === 'stale') {
+        setPartyImageImportStatus(lt('파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.'))
+        return
       }
-      applyOcrImportedParty(imported)
-      setPartyImageImportStatus(`${lt('사진 IMPORT 완료')} · ${imported.length}${lt('마리 반영')}`)
+      if (result === 'cancelled') {
+        setPartyImageImportStatus(lt('사진 IMPORT가 취소되었습니다.'))
+        return
+      }
+      setPartyImageImportStatus(`${lt('사진 IMPORT 완료')} · ${importedCount}${lt('마리 반영')}`)
     } catch (error) {
       console.error(error)
       setPartyImageImportStatus(lt('사진 IMPORT 실패'))
@@ -8023,8 +8035,23 @@ export default function App() {
                   onChange={(e) => setPartyPresetLabelDraft(e.target.value)}
                   placeholder={lt('파티 이름')}
                 />
-                <button type="button" className="pick-chip" onClick={saveNewPartyPreset}>{lt('파티 저장')}</button>
-                {activePartyPresetId && savedPartyPresets.some(preset => preset.id === activePartyPresetId) ? <button type="button" className="pick-chip" onClick={overwriteActivePartyPreset}>{lt('저장 파티 덮어쓰기')}</button> : null}
+                <button type="button" className="pick-chip" onClick={createNewParty}>{lt('새 파티')}</button>
+                <label className="party-active-name">{lt('선택 파티 이름')}
+                  <input aria-label={lt('선택 파티 이름')} value={partyNameDraft}
+                    onChange={event => {
+                      const nextName = event.target.value
+                      setPartyNameDraft(nextName)
+                      if (nextName.trim()) dispatchWorkspace({ type: 'RENAME', id: activePartyPresetId, label: nextName })
+                    }}
+                    onBlur={() => { if (!partyNameDraft.trim()) setPartyNameDraft(activePartyLabel) }} />
+                </label>
+              </div>
+              <div role="status" aria-live="polite" className={persistenceStatus === 'failed' || persistenceStatus === 'read-failed' ? 'party-persistence-error' : 'muted-inline'}>
+                {persistenceStatus === 'read-failed' ? lt('저장 데이터 읽기 실패 · 원본 보호 중') : persistenceStatus === 'failed' ? lt('저장 실패 · 변경은 현재 화면에만 유지') : persistenceStatus === 'saving' ? lt('저장 중') : lt('자동 저장됨')}
+                {persistenceStatus === 'failed' ? <button type="button" className="pick-chip" onClick={() => { setPersistenceStatus('saving'); setRetryPersistence(value => value + 1) }}>{lt('저장 재시도')}</button> : null}
+                {persistenceStatus === 'read-failed' ? <button type="button" className="pick-chip" onClick={() => {
+                  if (window.confirm(lt('원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?'))) { setPersistenceStatus('saving'); setAllowRecoveryWrite(true) }
+                }}>{lt('원본 덮어쓰기 확인')}</button> : null}
               </div>
               <span className="muted-inline">{lt('여러 스크린샷의 이름/상세 영역을 합쳐 종·도구·특성·기술·성격·노력치를 최대한 복원합니다.')}</span>
               {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
@@ -8032,7 +8059,7 @@ export default function App() {
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
                   const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
                   return <div key={preset.id} className={`party-preset-card ${activePartyPresetId === preset.id ? 'active' : ''}`}>
-                    <div className="party-preset-card-main">
+                    <button type="button" aria-pressed={activePartyPresetId === preset.id} className="party-preset-card-main" onClick={() => applyPartyPreset(preset.id)}>
                       <div className="party-preset-sprite-row">
                         {leadMembers.length ? leadMembers.map((member, idx) => {
                           const row = indexByKey.get(member.key) ?? rows[0]
@@ -8041,13 +8068,17 @@ export default function App() {
                       </div>
                       <strong>{preset.label}</strong>
                       <span className="muted-inline">{leadMembers.length}/6</span>
-                    </div>
+                    </button>
                     <div className="party-preset-card-actions">
-                      <button type="button" className="pick-chip" onClick={() => confirmAndApplyPartyPreset(preset)}>{lt('파티 불러오기')}</button>
                       <button type="button" className="pick-chip" onClick={() => renamePartyPreset(preset)}>{lt('저장 파티 이름 변경')}</button>
                       <button type="button" className="pick-chip" onClick={() => {
-                        setSavedPartyPresets((prev) => prev.filter((entry) => entry.id !== preset.id))
-                        setActivePartyPresetId((prev) => prev === preset.id ? null : prev)
+                        if (!window.confirm(`${preset.label}: ${lt('저장 파티 삭제')}?`)) return
+                        dispatchWorkspace({ type: 'DELETE', id: preset.id, emptyParty: cloneEmptyParty(), replacementId: `party-${crypto.randomUUID()}` })
+                        if (preset.id === activePartyPresetId) {
+                          const next = savedPartyPresets.find(record => record.id !== preset.id)
+                          setPartySearch((next?.party ?? emptyParty).map(member => searchDisplayLabel(member.key, siteLanguage)))
+                          setPartyItemDrafts((next?.party ?? emptyParty).map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
+                        }
                       }}>{lt('저장 파티 삭제')}</button>
                     </div>
                   </div>

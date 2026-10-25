@@ -8376,14 +8376,24 @@ html {
 }
 .party-preset-card-main {
   display: grid;
+  width: 100%;
   justify-items: start;
   gap: 8px;
   background: transparent;
   border: 0;
+  border-radius: 10px;
+  cursor: pointer;
   color: inherit;
   text-align: left;
   padding: 0;
 }
+.party-preset-card-main:hover,
+.party-preset-card-main:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.party-active-name { display: grid; gap: 4px; color: var(--muted, #cbd5e1); }
+.party-persistence-error { color: #fecaca; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .party-preset-sprite-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
