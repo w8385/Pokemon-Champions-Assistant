@@ -1,5 +1,6 @@
 import type { ImportExportPayload } from './app/types'
 import { supportedSpeciesKeys } from './effectiveRoster.ts'
+import { knownNature } from './buildRules.ts'
 
 const record = (input: unknown): input is Record<string, unknown> =>
   input !== null && typeof input === 'object' && !Array.isArray(input)
@@ -30,7 +31,7 @@ const completeMember = (input: unknown): boolean => member(input) && record(inpu
   tuning: value => record(value) && requiredFields(value, numericFields(['magicNumber', 'maxValue'])),
 })
 const opponent = (input: unknown): boolean => record(input) && speciesKey(input.key) && optionalFields(input, {
-  ...textFields(['item', 'ability', 'notes', 'moveName']), nature: (value: unknown) => typeof value === 'string' && ['hardy','lonely','brave','adamant','naughty','bold','docile','relaxed','impish','lax','timid','hasty','serious','jolly','naive','modest','mild','quiet','bashful','rash','calm','gentle','sassy','careful','quirky'].includes(value), revealedMoves: strings,
+  ...textFields(['item', 'ability', 'notes', 'moveName']), nature: knownNature, revealedMoves: strings,
   ...boolFields(['natureBoost', 'scarf', 'picked']),
   ...numericFields(['speedStage', 'hpEv', 'attackEv', 'defenseEv', 'spAttackEv', 'spDefenseEv', 'speedEv', 'defenseNature', 'spDefenseNature']),
 })

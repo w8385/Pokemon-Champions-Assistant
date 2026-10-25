@@ -19,7 +19,7 @@ const CURRENT_REGULATION = {
   endsAt: '2026-12-02T01:59:00.000Z',
   rosterUrl: OFFICIAL_REGULATION_ROSTER_URL,
 }
-const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
+const CHAMPIONS_EFFORT_PER_STAT_CAP = JSON.parse(await fs.readFile(path.join(root, 'src', 'effortLimits.json'), 'utf8')).perStat
 const TYPE_KO_BY_KEY = JSON.parse(await fs.readFile(path.join(root, 'src', 'typeKoLabels.json'), 'utf8'))
 const MANUAL_FORMS = [
   {

@@ -23,7 +23,7 @@ function assertTypeLabels(row) {
     return typeLabels[type]
   }), `${row.key} type labels`)
 }
-let server, app, validateBackup, typeLabels
+let server, app, validateBackup, buildRules, typeLabels
 
 test.before(async () => {
   typeLabels = JSON.parse(await source('src/typeKoLabels.json'))
@@ -32,6 +32,7 @@ test.before(async () => {
   } }] })
   app = await server.ssrLoadModule('/src/App.tsx')
   ;({ validateBackup } = await server.ssrLoadModule('/src/backupValidation.ts'))
+  buildRules = await server.ssrLoadModule('/src/buildRules.ts')
 })
 test.after(async () => { await server?.close() })
 
@@ -49,11 +50,51 @@ test('both actual KO label producers consume the same 18-entry input and generat
     assert.ok(node, `generator ${name}`)
     return node.getText(ast)
   }).join('\n')
-  const generatorBuildRow = vm.runInNewContext(`const CHAMPIONS_EFFORT_PER_STAT_CAP = 32;\n${functions}\nbuildRow`, { TYPE_KO_BY_KEY: typeLabels, Math })
+  const generatorBuildRow = vm.runInNewContext(`const CHAMPIONS_EFFORT_PER_STAT_CAP = ${buildRules.CHAMPIONS_EFFORT_PER_STAT_CAP};\n${functions}\nbuildRow`, { TYPE_KO_BY_KEY: typeLabels, Math })
   const fixture = { id: 9, key: 'fixture', canonicalFormSlug: 'base', name_ko: '검사용', name_en: 'Fixture', name_ja: 'テスト', types: Object.keys(typeLabels), abilities: [], abilities_ko: [], stats: { hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86 }, sprite: null, sprite_status: 'fixture' }
   const generated = generatorBuildRow(fixture)
   assert.deepEqual(Array.from(generated.types_ko), Object.values(typeLabels))
   assert.equal(generated.fast, actualStat(86, 32, 1.1))
+})
+
+test('backup opponent nature membership delegates to the shared 25-nature rule without restricting archived party builds', async () => {
+  const expected = 'hardy lonely brave adamant naughty bold docile relaxed impish lax timid hasty serious jolly naive modest mild quiet bashful rash calm gentle sassy careful quirky'.split(' ')
+  assert.deepEqual(buildRules.NATURES.map(entry => entry.id), expected)
+  const validationText = await source('src/backupValidation.ts')
+  const ast = ts.createSourceFile('backupValidation.ts', validationText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  const opponent = ast.statements.find(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(entry => entry.name.getText(ast) === 'opponent'))
+  assert.ok(opponent)
+  assert.match(validationText, /import\s*\{\s*knownNature\s*\}\s*from\s*['"]\.\/buildRules(?:\.ts)?['"]/, 'the backup uses the shared runtime predicate')
+  assert.match(opponent.getText(ast), /\bnature:\s*knownNature\b/, 'opponent membership is the imported rule, not a copied list')
+  for (const nature of expected) {
+    assert.equal(buildRules.knownNature(nature), true, nature)
+    const payload = { version: 1, party: [], opponents: [{ key: '', nature }] }
+    assert.strictEqual(validateBackup(payload), payload)
+  }
+  for (const nature of ['not-a-nature', '', null, 1]) {
+    assert.equal(buildRules.knownNature(nature), false)
+    assert.throws(() => validateBackup({ version: 1, party: [], opponents: [{ key: '', nature }] }), /backup/i)
+  }
+  const archived = { version: 1, party: [{ key: '', config: { nature: 'not-a-nature', scarf: false, speedStage: 0 }, evs: { hp: 33, speed: 67 } }], opponents: [{ key: '' }] }
+  assert.strictEqual(validateBackup(archived), archived, 'historical party values and missing opponent nature remain lossless')
+})
+
+test('runtime effort exports and generator Speed template read one JSON limit input', async () => {
+  const limits = JSON.parse(await source('src/effortLimits.json'))
+  assert.deepEqual(limits, { perStat: 32, total: 66 })
+  assert.equal(buildRules.CHAMPIONS_EFFORT_PER_STAT_CAP, limits.perStat)
+  assert.equal(buildRules.CHAMPIONS_EFFORT_CAP, limits.total)
+  const runtimeText = await source('src/buildRules.ts')
+  const generatorText = await source('scripts/sync-champions-verified-data.mjs')
+  assert.match(runtimeText, /import\s+effortLimits\s+from\s+['"]\.\/effortLimits\.json['"]/)
+  assert.match(runtimeText, /CHAMPIONS_EFFORT_PER_STAT_CAP\s*=\s*effortLimits\.perStat/)
+  assert.match(runtimeText, /CHAMPIONS_EFFORT_CAP\s*=\s*effortLimits\.total/)
+  assert.match(generatorText, /CHAMPIONS_EFFORT_PER_STAT_CAP\s*=\s*JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'effortLimits\.json'\), 'utf8'\)\)\.perStat/)
+  assert.match(generatorText, /actualStat\(base, CHAMPIONS_EFFORT_PER_STAT_CAP, boosted \? 1\.1 : 1\)/)
+  assert.equal(buildRules.validEffort(32), true)
+  assert.equal(buildRules.validEffort(33), false)
+  assert.equal(buildRules.validCompleteEfforts({ hp: 32, attack: 32, defense: 2, spAttack: 0, spDefense: 0, speed: 0 }), true)
+  assert.equal(buildRules.validCompleteEfforts({ hp: 32, attack: 32, defense: 3, spAttack: 0, spDefense: 0, speed: 0 }), false)
 })
 
 test('real App index, rendered 332+9 forms, accepted backup keys and form fields have the same identities', () => {

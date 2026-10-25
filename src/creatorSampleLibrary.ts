@@ -3,6 +3,7 @@ import type { NatureId, EffortStatKey } from './app/types'
 import { additionalCreatorSamples } from './additionalCreatorSamples.ts'
 import { previousSeasonRankerSamples } from './previousSeasonRankerSamples.ts'
 import { m6TopTenSamples } from './m6TopTenSamples.ts'
+import { validCompleteEfforts } from './buildRules.ts'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -357,6 +358,5 @@ export function canImportCreatorSample(entry: CreatorSample | LinkDraft): entry 
   if (!build.nature || !build.item?.trim() || !build.ability?.trim() || !Array.isArray(build.moves) ||
     build.moves.length !== 4 || build.moves.some((move) => typeof move !== 'string' || !move.trim()) ||
     new Set(build.moves.map((move) => move.trim())).size !== 4 || !build.evs) return false
-  return stats.every((stat) => Number.isInteger(build.evs[stat]) && build.evs[stat] >= 0 && build.evs[stat] <= 32) &&
-    stats.reduce((sum, stat) => sum + build.evs[stat], 0) <= 66
+  return validCompleteEfforts(build.evs)
 }

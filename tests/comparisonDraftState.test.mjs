@@ -49,6 +49,71 @@ test('species-only replacement restores its blank ability and moves without leak
   assert.deepEqual([...restored.dirty], ['key'])
 })
 
+test('invalid new effort and nature writes reject without replacing a readable draft or sibling', () => {
+  memory.clear()
+  const key = draftStorageKey('attacker', 2)
+  assert.equal(writeDraft(storage, 'attacker', 2, seed, draft, new Set(['defense'])), true)
+  assert.equal(writeDraft(storage, 'defender', 2, seed, draft, new Set(['ability'])), true)
+  const original = memory.get(key)
+  const sibling = memory.get(draftStorageKey('defender', 2))
+  const invalid = [
+    [{ ...draft, evs: { ...seed.evs, speed: 33 } }, ['speed']],
+    [{ ...draft, evs: { ...seed.evs, speed: 32, attack: 32, defense: 3 } }, ['speed', 'attack', 'defense']],
+    [{ ...draft, nature: 'not-a-nature' }, ['nature']],
+    [{ ...draft, moves: ['a', '', '', '', 'extra'] }, ['moves']],
+    [{ ...draft, evs: { ...seed.evs, speed: -1 } }, ['speed']],
+    [{ ...draft, evs: { ...seed.evs, speed: 1.5 } }, ['speed']],
+    [draft, ['unknown-field']],
+  ]
+  for (const [next, fields] of invalid) {
+    assert.equal(writeDraft(storage, 'attacker', 2, seed, next, new Set(fields)), false, fields.join(','))
+    assert.equal(memory.get(key), original)
+    assert.equal(memory.get(draftStorageKey('defender', 2)), sibling)
+    assert.equal(readDraft(storage, 'attacker', 2, seed).side.evs.defense, 12)
+  }
+})
+
+test('merged seed budget and all six explicit species replacement values are validated', () => {
+  memory.clear()
+  const invested = { ...seed, evs: { ...seed.evs, attack: 32, defense: 32 } }
+  const key = draftStorageKey('defender', 3)
+  assert.equal(writeDraft(storage, 'defender', 3, invested, { ...draft, evs: { ...invested.evs, speed: 3 } }, new Set(['speed'])), false)
+  assert.equal(memory.has(key), false)
+  assert.equal(writeDraft(storage, 'defender', 3, seed, { ...draft, evs: { ...seed.evs, speed: 33 } }, new Set(['key'])), false)
+  assert.equal(memory.has(key), false)
+  const legal = { ...draft, evs: { ...seed.evs, attack: 32, defense: 32, speed: 2 }, moves: ['alias', '', 'move', ''] }
+  assert.equal(writeDraft(storage, 'defender', 3, seed, legal, new Set(['key'])), true)
+  assert.deepEqual(readDraft(storage, 'defender', 3, seed).side.evs, legal.evs)
+  assert.deepEqual(readDraft(storage, 'defender', 3, seed).side.moves, legal.moves)
+  assert.equal(readDraft(storage, 'defender', 3, { ...seed, item: 'changed' }), null)
+  assert.equal(readDraft(storage, 'defender', 4, seed), null)
+  const raw = memory.get(key)
+  memory.set(key, JSON.stringify({ ...JSON.parse(raw), patch: { nature: 'not-a-nature' }, dirty: ['nature'] }))
+  assert.equal(readDraft(storage, 'defender', 3, seed), null)
+  assert.equal(memory.get(key).includes('not-a-nature'), true)
+})
+
+test('serialization and storage failures return false without throwing or removing prior draft', () => {
+  memory.clear()
+  assert.equal(writeDraft(storage, 'attacker', 1, seed, draft, new Set(['ability'])), true)
+  const key = draftStorageKey('attacker', 1)
+  const original = memory.get(key)
+  assert.equal(writeDraft(storage, 'attacker', 1, seed, { ...draft, moves: null }, new Set(['moves'])), false)
+  assert.equal(writeDraft(storage, 'attacker', 1, seed, { ...draft, ability: 123 }, new Set(['ability'])), false)
+  assert.equal(writeDraft({ ...storage, setItem: () => { throw Error('quota') } }, 'attacker', 1, seed, draft, new Set(['ability'])), false)
+  assert.equal(writeDraft(storage, 'attacker', 1, { ...seed, item: 1n }, draft, new Set(['ability'])), false)
+  assert.equal(memory.get(key), original)
+  assert.equal(readDraft(storage, 'attacker', 1, seed).side.ability, '')
+})
+
+test('sparse payload rejects unclaimed effort objects rather than treating them as dirty fields', () => {
+  memory.clear()
+  const key = draftStorageKey('attacker', 0)
+  memory.set(key, JSON.stringify({ version: 1, seed: JSON.stringify(seed), dirty: ['ability'], patch: { ability: '', evs: {} } }))
+  assert.equal(readDraft(storage, 'attacker', 0, seed), null)
+  assert.equal(memory.has(key), true)
+})
+
 test('mounted markup puts shared cards before grouped results, moves below stats and one opponent search near slot', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))

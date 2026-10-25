@@ -12,6 +12,7 @@ import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQu
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
 import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
+import { NATURES, natureMultiplier, knownNature, CHAMPIONS_EFFORT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP, validEffort } from './buildRules'
 import { registerOpponentSpecies, soleAbilityForSelectedSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
 import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
@@ -339,8 +340,6 @@ function sanitizeLockedMoveSlots(input: unknown, slotCount: number): string[][] 
 const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
 const MAX_OPPONENTS = 6
-const CHAMPIONS_EFFORT_CAP = 66
-const CHAMPIONS_EFFORT_PER_STAT_CAP = 32
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
 const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
   'mega-abomasnow': 'abomasite',
@@ -846,35 +845,7 @@ function clampBattleStage(value: unknown) {
   return Math.max(-6, Math.min(6, Math.trunc(num)))
 }
 
-const NATURES: { id: NatureId; label: string; up?: StatKey; down?: StatKey }[] = [
-  { id: 'hardy', label: '노력', },
-  { id: 'lonely', label: '외로움', up: 'attack', down: 'defense' },
-  { id: 'brave', label: '용감', up: 'attack', down: 'speed' },
-  { id: 'adamant', label: '고집', up: 'attack', down: 'spAttack' },
-  { id: 'naughty', label: '개구쟁이', up: 'attack', down: 'spDefense' },
-  { id: 'bold', label: '대담', up: 'defense', down: 'attack' },
-  { id: 'docile', label: '온순', },
-  { id: 'relaxed', label: '무사태평', up: 'defense', down: 'speed' },
-  { id: 'impish', label: '장난꾸러기', up: 'defense', down: 'spAttack' },
-  { id: 'lax', label: '촐랑', up: 'defense', down: 'spDefense' },
-  { id: 'timid', label: '겁쟁이', up: 'speed', down: 'attack' },
-  { id: 'hasty', label: '성급', up: 'speed', down: 'defense' },
-  { id: 'serious', label: '성실', },
-  { id: 'jolly', label: '명랑', up: 'speed', down: 'spAttack' },
-  { id: 'naive', label: '천진난만', up: 'speed', down: 'spDefense' },
-  { id: 'modest', label: '조심', up: 'spAttack', down: 'attack' },
-  { id: 'mild', label: '의젓', up: 'spAttack', down: 'defense' },
-  { id: 'quiet', label: '냉정', up: 'spAttack', down: 'speed' },
-  { id: 'bashful', label: '수줍음', },
-  { id: 'rash', label: '덜렁', up: 'spAttack', down: 'spDefense' },
-  { id: 'calm', label: '차분', up: 'spDefense', down: 'attack' },
-  { id: 'gentle', label: '얌전', up: 'spDefense', down: 'defense' },
-  { id: 'sassy', label: '건방', up: 'spDefense', down: 'speed' },
-  { id: 'careful', label: '신중', up: 'spDefense', down: 'spAttack' },
-  { id: 'quirky', label: '변덕', },
-]
-
-const natureById = new Map(NATURES.map((nature) => [nature.id, nature]))
+const natureById = new Map(NATURES.map(nature => [nature.id, nature]))
 
 function legacyNatureFromBoostStat(stat?: unknown): NatureId {
   switch (stat) {
@@ -885,14 +856,6 @@ function legacyNatureFromBoostStat(stat?: unknown): NatureId {
     case 'speed': return 'jolly'
     default: return 'hardy'
   }
-}
-
-function natureMultiplier(natureId: NatureId, stat: StatKey) {
-  const nature = natureById.get(natureId)
-  if (!nature) return 1
-  if (nature.up === stat) return 1.1
-  if (nature.down === stat) return 0.9
-  return 1
 }
 
 function statLabel(stat: StatKey, language: SiteLanguage = 'ko') {
@@ -1532,8 +1495,8 @@ function sanitizeOpponents(input: unknown): OpponentState[] {
         item: typeof raw.item === 'string' ? raw.item : '',
         ability: sanitizeAbilityForKey(raw.key, raw.ability, false),
         ...(NATURES.some(nature => nature.id === raw.nature) ? { nature: raw.nature } : {}),
-        ...(typeof raw.attackEv === 'number' && Number.isInteger(raw.attackEv) && raw.attackEv >= 0 && raw.attackEv <= 32 ? { attackEv: raw.attackEv } : {}),
-        ...(typeof raw.spAttackEv === 'number' && Number.isInteger(raw.spAttackEv) && raw.spAttackEv >= 0 && raw.spAttackEv <= 32 ? { spAttackEv: raw.spAttackEv } : {}),
+        ...(validEffort(raw.attackEv) ? { attackEv: raw.attackEv } : {}),
+        ...(validEffort(raw.spAttackEv) ? { spAttackEv: raw.spAttackEv } : {}),
         notes: typeof raw.notes === 'string' ? raw.notes : '',
         revealedMoves: Array.isArray(raw.revealedMoves)
           ? raw.revealedMoves.filter((move): move is string => typeof move === 'string')
@@ -3759,7 +3722,7 @@ function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defend
   const next = saved.side
   if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
   // A historical draft's invalid ability remains visible and repairable; calculation is gated below.
-  if (!NATURES.some(nature => nature.id === next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
+  if (!knownNature(next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
   // A restored item is evidence, not an edit request. Invalid drafts remain repairable.
   const speciesChanged = saved.dirty.has('key') && next.key !== seed.key
   return { dirty: saved.dirty, side: { ...next, actual: {}, battle: quickBlankBattle(), speedStage: speciesChanged ? 0 : seed.speedStage,
