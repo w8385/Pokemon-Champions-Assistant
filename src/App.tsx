@@ -11,7 +11,7 @@ import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQu
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
 import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
-import { registerOpponentSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
+import { registerOpponentSpecies, soleAbilityForSelectedSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
 import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
 import { compareSpeedVisual } from './speedVisual'
@@ -45,6 +45,7 @@ import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './speedLineRouteRe
 import { validateBackup } from './backupValidation'
 import { initializeWorkspace, workspaceReducer, persistWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './partyWorkspace'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
+import verifiedAbilityLabels from './verifiedAbilityLabels.json'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
@@ -1456,7 +1457,8 @@ function abilityMatchesKey(key: string, ability: string) {
   if (!normalized) return false
   return row.abilities.some((slug, idx) => {
     const ko = row.abilities_ko[idx] ?? ''
-    return normalizeSearchText(slug) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(slug)) === normalized
+    const ja = verifiedAbilityLabels.abilities[slug as keyof typeof verifiedAbilityLabels.abilities]?.ja
+    return normalizeSearchText(slug) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(slug)) === normalized || (ja && normalizeSearchText(ja) === normalized)
   })
 }
 
@@ -1941,7 +1943,8 @@ function resolveSelectedAbility(row: Row, selectedAbility: string, language: Sit
     const ko = (row.abilities_ko[abilityIdx] ?? '').trim().toLowerCase()
     const en = titleCaseSlug(slug).trim().toLowerCase()
     const shown = (abilityLabels[abilityIdx] ?? '').trim().toLowerCase()
-    return normalized === ko || normalized === en || normalized === shown || normalized === slug.trim().toLowerCase()
+    const ja = verifiedAbilityLabels.abilities[slug as keyof typeof verifiedAbilityLabels.abilities]?.ja
+    return normalized === ko || normalized === en || normalized === shown || normalized === slug.trim().toLowerCase() || (ja && normalized === ja.toLowerCase())
   })
   if (idx < 0) return null
   return {
@@ -2410,7 +2413,7 @@ function abilityNoteLabel(ability: string) {
     'dry-skin': '건조피부',
     'earth-eater': '대지먹기',
     'electric-surge': '일렉트릭메이커',
-    'eelevate': '일렉트리베이트',
+    'eelevate': '천정부지',
     'fairy-aura': '페어리오라',
     'filter': '필터',
     'flash-fire': '타오르는불꽃',
@@ -3242,15 +3245,23 @@ function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean })
 }
 
 function abilityDisplayName(abilityKey: string, abilityKo: string, language: SiteLanguage) {
-  return language === 'ko' ? abilityKo : titleCaseSlug(abilityKey)
+  return verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.[language] ?? (language === 'ko' ? abilityKo : titleCaseSlug(abilityKey))
+}
+
+export function selectedAbilityDisplayName(row: Row, storedAbility: string, language: SiteLanguage) {
+  if (!storedAbility) return undefined
+  const selected = resolveSelectedAbility(row, storedAbility, language)
+  return selected ? abilityDisplayName(selected.slug, selected.label, language) : undefined
 }
 
 function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
   const enLabel = titleCaseSlug(abilityKey)
+  const jaLabel = verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.ja
   return Array.from(new Set([
     abilityKey,
     abilityKo,
     enLabel,
+    ...(jaLabel ? [jaLabel, normalizeSearchText(jaLabel)] : []),
     normalizeSearchText(abilityKey),
     normalizeSearchText(abilityKo),
     normalizeSearchText(enLabel),
@@ -3297,6 +3308,8 @@ const ABILITY_INDEX = (() => {
     byNormalized.set(normalizeSearchText(entry.key), payload)
     byNormalized.set(normalizeSearchText(entry.koLabel), payload)
     byNormalized.set(normalizeSearchText(titleCaseSlug(entry.key)), payload)
+    const ja = verifiedAbilityLabels.abilities[entry.key as keyof typeof verifiedAbilityLabels.abilities]?.ja
+    if (ja) byNormalized.set(normalizeSearchText(ja), payload)
   }
   return { byKey, byNormalized }
 })()
@@ -3329,7 +3342,8 @@ function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
   if (row) {
     const idx = row.abilities.findIndex((abilityKey, abilityIdx) => {
       const ko = row.abilities_ko[abilityIdx] ?? ''
-      return normalizeSearchText(abilityKey) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(abilityKey)) === normalized
+      const ja = verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.ja
+      return normalizeSearchText(abilityKey) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(abilityKey)) === normalized || (ja && normalizeSearchText(ja) === normalized)
     })
     if (idx >= 0) {
       const abilityKey = row.abilities[idx]
@@ -3721,8 +3735,7 @@ function displayTypes(row: Row, language: SiteLanguage) {
 }
 
 function displayAbilities(row: Row, language: SiteLanguage) {
-  if (language === 'en') return row.abilities.map(titleCaseSlug)
-  if (language === 'ja') return row.abilities.map(titleCaseSlug)
+  if (language !== 'ko') return row.abilities.map((slug, index) => abilityDisplayName(slug, row.abilities_ko[index] ?? slug, language))
   return row.abilities_ko
 }
 
@@ -4052,7 +4065,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')
       return
     }
-    const next = { ...quickBlank(), key, item: megaStoneForKey(key) ?? '', moves: side === 'attacker' && comparisonMode ? Array.from({ length: 4 }, (_, index) => movesForSpecies?.(key)?.[index] ?? '') : ['', '', '', ''] }
+    const next = { ...quickBlank(), key, ability: soleAbilityForSelectedSpecies(indexByKey.get(key)), item: megaStoneForKey(key) ?? '', moves: side === 'attacker' && comparisonMode ? Array.from({ length: 4 }, (_, index) => movesForSpecies?.(key)?.[index] ?? '') : ['', '', '', ''] }
     if (comparisonMode) setDirty(prev => ({ ...prev, [side]: new Set(['key']) }))
     onDraftIdentity?.(side, key)
     if (side === 'attacker') { setAttacker(next); setAttackerSearch(''); setSelected({ side: 'attacker', index: 0 }) }
@@ -5961,6 +5974,10 @@ export default function App() {
     if (side === 'party') {
       const member = party[idx]
       if (!member) return
+      if (key === member.key) {
+        setPartySearch(prev => prev.map((value, slot) => slot === idx ? searchDisplayLabel(key, siteLanguage) : value))
+        return
+      }
       const next = [...party]
       next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item), config: { ...member.config, nature: defaultNatureForKey(key) } }
       setParty(next)
@@ -6000,6 +6017,10 @@ export default function App() {
       nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
       setOpponentSearch(nextSearch)
     } else {
+      if (key === sampleForge.key) {
+        setSampleSearch(searchDisplayLabel(key, siteLanguage))
+        return
+      }
       setSampleTuningModalOpen(false)
       setSampleForge((prev) => ({ ...prev, key, ability: defaultAbilityForKey(key), item: itemForSpeciesSelection(key, prev.item), config: { ...prev.config, nature: defaultNatureForKey(key) } }))
       setSampleLockedMoves(confirmedMovesByKey[key] ?? [])
@@ -6805,7 +6826,7 @@ export default function App() {
 
   const registerSingleOpponentSpecies = (key: string) => {
     const current = selectedOpp
-    const { slots, nextIndex } = registerOpponentSpecies(opponents, current, key, () => ({ ...blankOpponent(), item: normalizeItemForKey(key, '') }))
+    const { slots, nextIndex } = registerOpponentSpecies(opponents, current, key, () => ({ ...blankOpponent(), ability: soleAbilityForSelectedSpecies(indexByKey.get(key)), item: normalizeItemForKey(key, '') }))
     if (opponents[current]?.key !== key) forgetDraft(localStorage, 'defender', current)
     setOpponents(slots)
     setOpponentSearch(prev => prev.map((value, index) => index === current ? searchDisplayLabel(key, siteLanguage) : value))
@@ -7750,9 +7771,9 @@ export default function App() {
                   <div className="dex-detail-panel">
                     <strong>{lt('이름')}</strong>
                     <div className="pick-summary-badges">
-                      {dexSelectedAbilityDescription?.nameKo ? <span className="pick-badge">KO {dexSelectedAbilityDescription.nameKo}</span> : null}
-                      {dexSelectedAbilityDescription?.nameEn ? <span className="pick-badge">EN {dexSelectedAbilityDescription.nameEn}</span> : null}
-                      {dexSelectedAbilityDescription?.nameJa ? <span className="pick-badge">JP {dexSelectedAbilityDescription.nameJa}</span> : null}
+                      <span className="pick-badge">KO {dexSelectedAbilityDescription?.nameKo ?? dexSelectedAbility.koLabel}</span>
+                      {(dexSelectedAbilityDescription?.nameEn ?? verifiedAbilityLabels.abilities[dexSelectedAbility.key as keyof typeof verifiedAbilityLabels.abilities]?.en) ? <span className="pick-badge">EN {dexSelectedAbilityDescription?.nameEn ?? verifiedAbilityLabels.abilities[dexSelectedAbility.key as keyof typeof verifiedAbilityLabels.abilities]?.en}</span> : null}
+                      {(dexSelectedAbilityDescription?.nameJa ?? verifiedAbilityLabels.abilities[dexSelectedAbility.key as keyof typeof verifiedAbilityLabels.abilities]?.ja) ? <span className="pick-badge">JP {dexSelectedAbilityDescription?.nameJa ?? verifiedAbilityLabels.abilities[dexSelectedAbility.key as keyof typeof verifiedAbilityLabels.abilities]?.ja}</span> : null}
                     </div>
                   </div>
                   <div className="dex-detail-panel">
@@ -8110,7 +8131,7 @@ export default function App() {
                               options={partySpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
                     } />
                     {row ? <><PokemonBuildFields key={`${idx}-${member.key}`} identity={`${idx}-${member.key}`}
-                      ability={member.ability} nature={member.config.nature} item={member.item}
+                      ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
                       abilities={abilityOptions.map(value => ({ value, label: value }))}
                       natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                       itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
@@ -8617,7 +8638,7 @@ export default function App() {
                   options={sampleSpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
               } />
               <PokemonBuildFields key={`sample-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} className="sample-meta-grid"
-                ability={sampleForge.ability} nature={sampleForge.config.nature} item={sampleForge.item}
+                ability={sampleForge.ability} abilityLabel={selectedAbilityDisplayName(sampleRow, sampleForge.ability, siteLanguage)} nature={sampleForge.config.nature} item={sampleForge.item}
                 abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
                 natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                 itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}

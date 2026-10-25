@@ -7,6 +7,7 @@ type Tooltip = React.HTMLAttributes<HTMLElement>
 export type PokemonBuildFieldsProps = {
   identity: string
   ability: string
+  abilityLabel?: string
   nature: string
   item: string
   abilities: BuildOption[]
@@ -26,7 +27,7 @@ export type PokemonBuildFieldsProps = {
 
 /** The input and its popup are owned here; callers only adapt values and commits. */
 export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
-  const { identity, ability, nature, item, abilities, natures, itemOptions, onAbility, onNature, onItem, labels, itemLabel, itemSprite, fixedItem, abilityTooltip, itemTooltip } = props
+  const { identity, ability, abilityLabel, nature, item, abilities, natures, itemOptions, onAbility, onNature, onItem, labels, itemLabel, itemSprite, fixedItem, abilityTooltip, itemTooltip } = props
   const [open, setOpen] = React.useState<Field | null>(null)
   const [draft, setDraft] = React.useState('')
   const [highlight, setHighlight] = React.useState(-1)
@@ -122,7 +123,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     </> : (field === 'ability' ? [{ value: '', label: labels.none }, ...abilities] : natures).map((option, idx) => optionButton(field, option, idx))}
   </div> : null
   return <div className={`party-meta-grid pokemon-build-fields ${props.className || ''}`} onClick={event => event.stopPropagation()}>
-    <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
+    <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
     <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>
     <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || fixedItem || '')} alt="" className="item-sprite" /><strong>{item || fixedItem ? itemLabel(item || fixedItem || '') : labels.none}</strong></div>, itemTooltip?.(item))}</div>
     {open && typeof document !== 'undefined' ? createPortal(popup(open), document.body) : null}

@@ -5,6 +5,11 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
+// Pinned game-text exceptions absent from PokeAPI's localized ability names.
+const VERIFIED_CHAMPIONS_ABILITY_KO = Object.fromEntries(
+  Object.entries(JSON.parse(await fs.readFile(path.join(root, 'src', 'verifiedAbilityLabels.json'), 'utf8')).abilities)
+    .map(([slug, labels]) => [slug, labels.ko]),
+)
 const allPokemonPath = path.resolve(root, '..', 'pokemon-data', 'pkmnchamps_allPokemon.json')
 const reportPath = path.join(root, 'reports', 'championsVerifiedDataSyncReport.json')
 const OFFICIAL_REGULATION_ROSTER_URL = 'https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/ja/pokemon.html'
@@ -278,6 +283,7 @@ async function main() {
 
   async function getAbilityKo(name) {
     if (abilityKoCache.has(name)) return abilityKoCache.get(name)
+    if (VERIFIED_CHAMPIONS_ABILITY_KO[name]) return VERIFIED_CHAMPIONS_ABILITY_KO[name]
     const detail = await fetchJson(`https://pokeapi.co/api/v2/ability/${name}`)
     const ko = detail.names.find((entry) => entry.language.name === 'ko')?.name ?? name
     abilityKoCache.set(name, ko)

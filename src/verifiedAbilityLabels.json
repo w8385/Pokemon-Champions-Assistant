@@ -1,0 +1,7 @@
+{
+  "source": "projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 rom-txt/{kor,usa,jpn}/tokusei.json TOKUSEI_313, TOKUSEI_316",
+  "abilities": {
+    "eelevate": { "ko": "천정부지", "en": "Eelevate", "ja": "うなぎのぼり" },
+    "fire-mane": { "ko": "불꽃의갈기", "en": "Fire Mane", "ja": "ほのおのたてがみ" }
+  }
+}

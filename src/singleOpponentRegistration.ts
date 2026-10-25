@@ -1,5 +1,11 @@
 import { draftStorageKey } from './comparisonDraftState.ts'
 
+// Only an explicit species/form commit may use this default. Restored and
+// source-unverified records keep their recorded ability (including '').
+export function soleAbilityForSelectedSpecies(row?: { abilities: readonly string[] } | null): string {
+  return row?.abilities.length === 1 ? row.abilities[0] : ''
+}
+
 // Entry registration is a master-record change, unlike temporary comparison builds.
 export function registerOpponentSpecies<T extends { key: string }>(slots: readonly T[], current: number, key: string, blank: () => T): { slots: T[]; nextIndex: number } {
   if (!slots[current] || !key) return { slots: [...slots], nextIndex: current }
