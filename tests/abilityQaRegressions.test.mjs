@@ -33,7 +33,7 @@ test('known historic KO ability labels render in EN/JA without rewriting their s
           itemLabel: value => value, itemSprite: () => '/sprite.svg',
         }))
         assert.match(html, new RegExp(`<strong>${visible}</strong>`))
-        assert.match(html, new RegExp(`aria-label="Ability: ${storedKo}"`))
+        assert.match(html, new RegExp(`aria-label="Ability: ${visible}"`))
       }
     }
     const unknown = renderToStaticMarkup(React.createElement(PokemonBuildFields, {

@@ -4,6 +4,12 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { itemForSpeciesSelection } from '../src/itemIdentity.ts'
+import { championsData } from '../src/effectiveRoster.ts'
+import { createServer } from 'vite'
+
+const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
+const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+await server.close()
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
@@ -20,7 +26,7 @@ function fixture(key, item, selectedOpp = 1) {
   const record = { key, item, ability: 'recorded-ability', config: { nature: 'timid', scarf: true, speedStage: 2 }, evs: { hp: 11 }, tuning: { attack: 3 }, revealedMoves: ['move-a', '', 'move-c', ''], rawSource: { item, move: 'source-spelling' } }
   const state = { opponents: [{ key: 'cinderace', item: '' }, record, { key: '', item: '' }], selectedOpp, opponentSearch: ['', 'old label', ''], opponentItemDrafts: ['', 'original draft', ''], opponentAbilityDrafts: ['', 'original ability draft', ''], quickSearch: 'typed query', writes: 0 }
   const set = field => update => { state[field] = typeof update === 'function' ? update(state[field]) : update }
-  const context = vm.createContext({ opponents: state.opponents, opponentSearch: state.opponentSearch, selectedOpp, opponentQuickSearch: state.quickSearch, siteLanguage: 'ko', itemForSpeciesSelection,
+  const context = vm.createContext({ opponents: state.opponents, opponentSearch: state.opponentSearch, selectedOpp, opponentQuickSearch: state.quickSearch, siteLanguage: 'ko', itemForSpeciesSelection, abilityForSpeciesSelection, indexByKey: new Map(championsData.rows.map(row => [row.key, row])),
     setOpponents: update => { state.writes++; set('opponents')(update); context.opponents = state.opponents },
     setOpponentSearch: update => { set('opponentSearch')(update); context.opponentSearch = state.opponentSearch },
     setOpponentItemDrafts: set('opponentItemDrafts'), setOpponentAbilityDrafts: set('opponentAbilityDrafts'),
@@ -60,6 +66,7 @@ for (const [label, call] of [['detail species picker', 'detail'], ['quick oppone
     app[call]('mega-gyarados')
     assert.equal(app.state.opponents[1].key, 'mega-gyarados')
     assert.equal(app.state.opponents[1].item, '갸라도스나이트')
+    assert.equal(app.state.opponents[1].ability, 'mold-breaker')
     assert.equal(app.state.opponents[1].revealedMoves, app.record.revealedMoves)
     assert.equal(app.state.opponents[1].rawSource, app.record.rawSource)
     assert.equal(app.state.opponents[0].key, 'cinderace')

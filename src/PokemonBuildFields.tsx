@@ -8,6 +8,7 @@ export type PokemonBuildFieldsProps = {
   identity: string
   ability: string
   abilityLabel?: string
+  abilityError?: string | null
   nature: string
   item: string
   abilities: BuildOption[]
@@ -86,7 +87,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     close()
   }
   const button = (field: Field, title: string, content: React.ReactNode, tooltip?: Tooltip) => <button
-    type="button" className="party-meta-chip-button" aria-label={`${title}: ${field === 'ability' ? ability || labels.none : field === 'nature' ? nature || labels.none : item ? itemLabel(item) : labels.none}`}
+    type="button" className="party-meta-chip-button" aria-label={`${title}: ${field === 'ability' ? abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none : field === 'nature' ? nature || labels.none : item ? itemLabel(item) : labels.none}`}
     aria-expanded={open === field} ref={el => { trigger.current[field] = el }} onClick={() => begin(field)}
     {...tooltip}>{<><span>{title}</span>{content}</>}
   </button>
@@ -127,6 +128,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
   </div> : null
   return <div className={`party-meta-grid pokemon-build-fields ${props.className || ''}`} onClick={event => event.stopPropagation()}>
     <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
+    {props.abilityError && <small role="alert" className="item-validation-error">{props.abilityError}</small>}
     <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>
     <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || '')} alt="" className="item-sprite" /><strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
     {itemError && <small role="alert" className="item-validation-error">{itemError}</small>}

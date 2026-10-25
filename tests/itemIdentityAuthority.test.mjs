@@ -58,9 +58,18 @@ test('source-evidenced Japanese Mega Stones remain valid without rewriting raw s
 })
 
 test('every live App damage caller blocks bad raw before modifiers or calcDamage', () => {
+  const singleGuard = app.slice(app.indexOf('const singleItemError ='), app.indexOf('const speedAxisMin ='))
+  assert.match(singleGuard, /heldItemError\(myMember\.key, myMember\.item, siteLanguage\)/)
+  assert.match(singleGuard, /heldItemError\(oppMember\.key, oppMember\.item, siteLanguage\)/)
+  const itemGuard = app.slice(app.indexOf('function heldItemError('), app.indexOf('function ', app.indexOf('function heldItemError(') + 1))
+  assert.match(itemGuard, /classifyHeldItem\(key, item\)/)
+  for (const [key, raw] of [['mega-gyarados', 'こだわりスカーフ'], ['mega-gyarados', ''], ['garchomp', 'unrecognized-original']]) {
+    assert.equal(isCalculableHeldItem(key, raw), false)
+    assert.ok(!['none', 'allowed', 'required-stone'].includes(classifyHeldItem(key, raw).status))
+  }
   const single = app.slice(app.indexOf('const damageMovePreviews ='), app.indexOf('const damageMovePreviewByName ='))
-  assert.match(single, /isCalculableHeldItem\(myMember\.key, myMember\.item\)/)
-  assert.match(single, /isCalculableHeldItem\(oppMember\.key, oppMember\.item\)/)
+  assert.match(single, /if \(singleItemError\) return \{ moveName, moveType: null, damage: null, verdict: null \}/)
+  assert.ok(single.indexOf('if (singleItemError)') < single.indexOf('resolveMoveMeta('))
   assert.match(app, /const damageModifiers = singleItemError \? null : resolveDamageModifiers\(/)
   const sample = app.slice(app.indexOf('const sampleDamageCalcs ='), app.indexOf('const addSampleSpeedTarget ='))
   assert.match(sample, /isCalculableHeldItem\(sampleForge\.key, sampleForge\.item\)/)

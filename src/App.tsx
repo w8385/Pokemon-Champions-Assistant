@@ -15,6 +15,7 @@ import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
 import { registerOpponentSpecies, soleAbilityForSelectedSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
 import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
+import { presentDoubleActionOrder } from './doubleOrderPresentation'
 import { compareSpeedVisual } from './speedVisual'
 import { EffortTuningModal } from './EffortTuningModal'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
@@ -23,7 +24,7 @@ import { PartyAnalysisPanel } from './PartyAnalysisPanel'
 import { getJaName, getJaTypes } from './jaLabels'
 import { actualStat } from './statMechanics'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './statPresentation'
-import { getSpeedAbility, speedActivationAllowed, SPEED_ABILITIES } from './speedAbilities'
+import { getSpeedAbility, speedActivationAllowed } from './speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './singleSpeedComparison'
 import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import SpeedLinePanel from './SpeedLinePanel'
@@ -49,6 +50,7 @@ import { validateBackup } from './backupValidation'
 import { initializeWorkspace, workspaceReducer, persistWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './partyWorkspace'
 import { additionalFormSpecs, championsData } from './effectiveRoster'
 import verifiedAbilityLabels from './verifiedAbilityLabels.json'
+import { abilityAliases, abilityForSpeciesSelection, abilityIndex, isCalculableAbility, localizedAbilityLabel, resolveFormAbility } from './abilityIdentity'
 
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './dex/helpers'
@@ -194,7 +196,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
     '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': 'Manage your party and calculate speed and damage based on opponent entries.', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': 'Adjust one Pokémon’s nature, effort values, and moves, then save it as a sample.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions battles in one place.', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'Quickly check doubles turn order and expected damage.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '기능제안/버그제보': 'Feature Requests / Bug Reports', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
-    '더블배틀': 'Doubles Battle', '더블배틀 메뉴': 'Doubles Menu', '더블 계산 작업 보드': 'Doubles Planning Board', '더블 배틀 플래너': 'Doubles Battle Planner', '턴 플랜': 'Turn Plan', '속도/전장': 'Speed / Field', '아군 순풍': 'My Tailwind', '상대 순풍': 'Opponent Tailwind', '트릭룸': 'Trick Room', '트릭룸 순서': 'Trick Room Order', '기본 순서': 'Normal Order', '상대 프렌드가드': 'Opponent Friend Guard', '상대별 총 기대 대미지': 'Expected Damage by Target', '상대 대상': 'Opponent Target', '보조/자기 대상': 'Ally / Self Target', '4마리 행동순': '4-Pokémon Turn Order', '광역기 감쇠가 자동 적용됩니다.': 'Spread move reduction applies automatically.', '우선도': 'Priority', '순위': 'Rank', '계산 대기': 'Waiting for calc', '방어로 막힘': 'Blocked by Protect', '와이드가드로 차단됨': 'Blocked by Wide Guard', '내 좌측': 'My Left', '내 우측': 'My Right', '상대 좌측': 'Opp Left', '상대 우측': 'Opp Right', '사용률 상위 기술': 'Top Usage Moves',
+    '더블배틀': 'Doubles Battle', '더블배틀 메뉴': 'Doubles Menu', '더블 계산 작업 보드': 'Doubles Planning Board', '더블 배틀 플래너': 'Doubles Battle Planner', '턴 플랜': 'Turn Plan', '속도/전장': 'Speed / Field', '아군 순풍': 'My Tailwind', '상대 순풍': 'Opponent Tailwind', '트릭룸': 'Trick Room', '트릭룸 순서': 'Trick Room Order', '기본 순서': 'Normal Order', '상대 프렌드가드': 'Opponent Friend Guard', '상대별 총 기대 대미지': 'Expected Damage by Target', '상대 대상': 'Opponent Target', '보조/자기 대상': 'Ally / Self Target', '4마리 행동순': '4-Pokémon Turn Order', '전체 순위 미확인': 'Overall rank unknown', '전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.': 'Overall action order unknown · A participating Pokémon has unknown Speed; showing board-slot order.', '광역기 감쇠가 자동 적용됩니다.': 'Spread move reduction applies automatically.', '우선도': 'Priority', '순위': 'Rank', '계산 대기': 'Waiting for calc', '방어로 막힘': 'Blocked by Protect', '와이드가드로 차단됨': 'Blocked by Wide Guard', '내 좌측': 'My Left', '내 우측': 'My Right', '상대 좌측': 'Opp Left', '상대 우측': 'Opp Right', '사용률 상위 기술': 'Top Usage Moves',
     '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
     '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
@@ -245,7 +247,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
     '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': '自分のパーティを管理し、相手エントリーに応じて素早さと火力を計算できます。', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': '1匹を基準に性格・努力値・技を調整し、サンプルとして保存できます。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'ポケモンチャンピオンズのバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'ダブルバトルの行動順と想定ダメージをすばやく確認できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '기능제안/버그제보': '機能提案 / バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
     '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
-    '더블배틀': 'ダブルバトル', '더블배틀 메뉴': 'ダブルバトルメニュー', '더블 계산 작업 보드': 'ダブル計算作業ボード', '더블 배틀 플래너': 'ダブルバトルプランナー', '턴 플랜': 'ターンプラン', '속도/전장': '素早さ / 盤面', '아군 순풍': '味方おいかぜ', '상대 순풍': '相手おいかぜ', '트릭룸': 'トリックルーム', '트릭룸 순서': 'トリル順', '기본 순서': '通常順', '상대 프렌드가드': '相手フレンドガード', '상대별 총 기대 대미지': '相手ごとの想定総ダメージ', '상대 대상': '相手対象', '보조/자기 대상': '味方 / 自分対象', '4마리 행동순': '4匹の行動順', '광역기 감쇠가 자동 적용됩니다.': '全体技の補正を自動適用します。', '우선도': '優先度', '순위': '順位', '계산 대기': '計算待ち', '방어로 막힘': 'まもるで防がれた', '와이드가드로 차단됨': 'ワイドガードで防がれた', '내 좌측': '自分左', '내 우측': '自分右', '상대 좌측': '相手左', '상대 우측': '相手右', '사용률 상위 기술': '使用率上位の技',
+    '더블배틀': 'ダブルバトル', '더블배틀 메뉴': 'ダブルバトルメニュー', '더블 계산 작업 보드': 'ダブル計算作業ボード', '더블 배틀 플래너': 'ダブルバトルプランナー', '턴 플랜': 'ターンプラン', '속도/전장': '素早さ / 盤面', '아군 순풍': '味方おいかぜ', '상대 순풍': '相手おいかぜ', '트릭룸': 'トリックルーム', '트릭룸 순서': 'トリル順', '기본 순서': '通常順', '상대 프렌드가드': '相手フレンドガード', '상대별 총 기대 대미지': '相手ごとの想定総ダメージ', '상대 대상': '相手対象', '보조/자기 대상': '味方 / 自分対象', '4마리 행동순': '4匹の行動順', '전체 순위 미확인': '全体順位は未確認', '전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.': '全体の行動順は未確認 · 素早さが不明なポケモンがいるため、スロット順で表示します。', '광역기 감쇠가 자동 적용됩니다.': '全体技の補正を自動適用します。', '우선도': '優先度', '순위': '順位', '계산 대기': '計算待ち', '방어로 막힘': 'まもるで防がれた', '와이드가드로 차단됨': 'ワイドガードで防がれた', '내 좌측': '自分左', '내 우측': '自分右', '상대 좌측': '相手左', '상대 우측': '相手右', '사용률 상위 기술': '使用率上位の技',
     '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
     '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
     '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
@@ -1433,25 +1435,19 @@ function sanitizeMemberConfig(input: unknown, key = ''): MemberConfig {
   }
 }
 
-function abilityMatchesKey(key: string, ability: string) {
-  const row = indexByKey.get(key)
-  if (!row) return false
-  const normalized = normalizeSearchText(ability)
-  if (!normalized) return false
-  return row.abilities.some((slug, idx) => {
-    const ko = row.abilities_ko[idx] ?? ''
-    const ja = verifiedAbilityLabels.abilities[slug as keyof typeof verifiedAbilityLabels.abilities]?.ja
-    return normalizeSearchText(slug) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(slug)) === normalized || (ja && normalizeSearchText(ja) === normalized)
-  })
+export function classifyAbilityForKey(key: string, raw: string) {
+  return resolveFormAbility(indexByKey.get(key), raw, abilityDescriptionFor, rows)
 }
-
-function sanitizeAbilityForKey(key: string, ability: unknown, fallbackToDefault = true) {
-  if (ability === '') return ''
-  const raw = typeof ability === 'string' ? ability : ''
-  if (raw && abilityMatchesKey(key, raw)) return raw
-  const row = indexByKey.get(key)
-  const shouldUseDefault = fallbackToDefault || Boolean(row && row.abilities.length === 1)
-  return shouldUseDefault ? defaultAbilityForKey(key) : ''
+function abilityMatchesKey(key: string, ability: string) {
+  return classifyAbilityForKey(key, ability).status === 'allowed'
+}
+function sanitizeAbilityForKey(_key: string, ability: unknown, _fallbackToDefault = false) {
+  // A read boundary never substitutes a form's ability for original evidence.
+  return typeof ability === 'string' ? ability : ''
+}
+function heldAbilityError(key: string, ability: string, language: SiteLanguage): string | null {
+  if (!key || isCalculableAbility(indexByKey.get(key), ability, abilityDescriptionFor, rows)) return null
+  return language === 'en' ? 'Unrecognized or unavailable ability. Open Ability to select one or explicitly clear it.' : language === 'ja' ? '未確認またはこのフォルムで使えない特性です。特性から選び直すか明示的に空にしてください。' : '미확인 또는 폼에 없는 특성 · 특성을 선택하거나 명시적으로 비우세요.'
 }
 
 function sanitizePartyTuning(input: unknown): PartyTuning {
@@ -1504,7 +1500,7 @@ function sanitizeEvs(input: unknown): EffortValues {
   }
 }
 
-function sanitizeParty(input: unknown): PartyMember[] {
+export function sanitizeParty(input: unknown): PartyMember[] {
   if (!Array.isArray(input)) return defaultParty
   const cleaned = input
     .map((member) => {
@@ -1920,20 +1916,9 @@ const MY_SPEED_ABILITY_MARKERS: Record<string, { type: 'stage' | 'multiplier', v
 }
 
 function resolveSelectedAbility(row: Row, selectedAbility: string, language: SiteLanguage) {
-  const normalized = selectedAbility.trim().toLowerCase()
-  const abilityLabels = displayAbilities(row, language)
-  const idx = row.abilities.findIndex((slug, abilityIdx) => {
-    const ko = (row.abilities_ko[abilityIdx] ?? '').trim().toLowerCase()
-    const en = titleCaseSlug(slug).trim().toLowerCase()
-    const shown = (abilityLabels[abilityIdx] ?? '').trim().toLowerCase()
-    const ja = verifiedAbilityLabels.abilities[slug as keyof typeof verifiedAbilityLabels.abilities]?.ja
-    return normalized === ko || normalized === en || normalized === shown || normalized === slug.trim().toLowerCase() || (ja && normalized === ja.toLowerCase())
-  })
-  if (idx < 0) return null
-  return {
-    slug: row.abilities[idx],
-    label: row.abilities_ko[idx] ?? titleCaseSlug(row.abilities[idx]),
-  }
+  void language
+  const resolved = resolveFormAbility(row, selectedAbility, abilityDescriptionFor, rows)
+  return resolved.status === 'allowed' ? { slug: resolved.slug!, label: localizedAbilityLabel(row, resolved.slug!, 'ko', abilityDescriptionFor) } : null
 }
 
 function isSpeedAbilityConditionActive(slug: string, weather: DamageWeather, terrain: DamageTerrain) {
@@ -3226,7 +3211,8 @@ function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean })
 }
 
 function abilityDisplayName(abilityKey: string, abilityKo: string, language: SiteLanguage) {
-  return verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.[language] ?? (language === 'ko' ? abilityKo : titleCaseSlug(abilityKey))
+  const row = rows.find(entry => entry.abilities.includes(abilityKey))
+  return row ? localizedAbilityLabel(row, abilityKey, language, abilityDescriptionFor) : abilityKo
 }
 
 export function selectedAbilityDisplayName(row: Row, storedAbility: string, language: SiteLanguage) {
@@ -3236,23 +3222,14 @@ export function selectedAbilityDisplayName(row: Row, storedAbility: string, lang
 }
 
 function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
-  const enLabel = titleCaseSlug(abilityKey)
-  const jaLabel = verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.ja
-  return Array.from(new Set([
-    abilityKey,
-    abilityKo,
-    enLabel,
-    ...(jaLabel ? [jaLabel, normalizeSearchText(jaLabel)] : []),
-    normalizeSearchText(abilityKey),
-    normalizeSearchText(abilityKo),
-    normalizeSearchText(enLabel),
-  ]))
+  const row = rows.find(entry => entry.abilities.includes(abilityKey))
+  return row ? abilityAliases(row, abilityKey, abilityDescriptionFor).flatMap(alias => [alias, normalizeSearchText(alias)]) : [abilityKey, abilityKo]
 }
 
 function filterDexAbilityOptions(query: string, options?: { allowLoose?: boolean }) {
   const allowLoose = options?.allowLoose ?? true
   const normalized = normalizeSearchText(query.trim())
-  const entries = [...ABILITY_INDEX.byKey.values()].map((entry) => ({ ...entry, pokemonKeys: [...entry.pokemonKeys].sort((a, b) => a.localeCompare(b, 'ko')) }))
+  const entries = [...abilityIndex(rows, abilityDescriptionFor).byKey.values()].map((entry) => ({ ...entry, pokemonKeys: [...entry.pokemonKeys].sort((a, b) => a.localeCompare(b, 'ko')) }))
   if (!normalized) return byDisplayName(entries, entry => entry.koLabel, entry => entry.key)
   return entries
     .map((entry) => {
@@ -3269,31 +3246,7 @@ function filterDexAbilityOptions(query: string, options?: { allowLoose?: boolean
     .sort((a, b) => a.score - b.score || a.koLabel.localeCompare(b.koLabel, 'ko'))
 }
 
-const ABILITY_INDEX = (() => {
-  const byKey = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
-  for (const row of rows) {
-    row.abilities.forEach((abilityKey, idx) => {
-      const koLabel = row.abilities_ko[idx] ?? titleCaseSlug(abilityKey)
-      const existing = byKey.get(abilityKey)
-      if (existing) {
-        existing.pokemonKeys.push(row.key)
-        return
-      }
-      byKey.set(abilityKey, { key: abilityKey, koLabel, pokemonKeys: [row.key] })
-    })
-  }
-  const byNormalized = new Map<string, { key: string; koLabel: string; pokemonKeys: string[] }>()
-  for (const entry of byKey.values()) {
-    const pokemonKeys = Array.from(new Set(entry.pokemonKeys))
-    const payload = { ...entry, pokemonKeys }
-    byNormalized.set(normalizeSearchText(entry.key), payload)
-    byNormalized.set(normalizeSearchText(entry.koLabel), payload)
-    byNormalized.set(normalizeSearchText(titleCaseSlug(entry.key)), payload)
-    const ja = verifiedAbilityLabels.abilities[entry.key as keyof typeof verifiedAbilityLabels.abilities]?.ja
-    if (ja) byNormalized.set(normalizeSearchText(ja), payload)
-  }
-  return { byKey, byNormalized }
-})()
+const ABILITY_INDEX = abilityIndex(rows)
 
 function getOcrAbilityIndexSync() {
   if (ocrAbilityIndexCache) return ocrAbilityIndexCache
@@ -3318,35 +3271,16 @@ function getOcrAbilityIndexSync() {
 
 function resolveAbilityInfo(rawAbility: string, row?: Row | null) {
   const normalized = normalizeSearchText(rawAbility)
-  const direct = ABILITY_INDEX.byNormalized.get(normalized)
-  if (direct) return direct
+  const index = abilityIndex(rows, abilityDescriptionFor)
   if (row) {
-    const idx = row.abilities.findIndex((abilityKey, abilityIdx) => {
-      const ko = row.abilities_ko[abilityIdx] ?? ''
-      const ja = verifiedAbilityLabels.abilities[abilityKey as keyof typeof verifiedAbilityLabels.abilities]?.ja
-      return normalizeSearchText(abilityKey) === normalized || normalizeSearchText(ko) === normalized || normalizeSearchText(titleCaseSlug(abilityKey)) === normalized || (ja && normalizeSearchText(ja) === normalized)
-    })
-    if (idx >= 0) {
-      const abilityKey = row.abilities[idx]
-      return ABILITY_INDEX.byKey.get(abilityKey) ?? { key: abilityKey, koLabel: row.abilities_ko[idx] ?? titleCaseSlug(abilityKey), pokemonKeys: [row.key] }
-    }
+    const resolved = resolveFormAbility(row, rawAbility, abilityDescriptionFor, rows)
+    return resolved.status === 'allowed' ? index.byKey.get(resolved.slug!) ?? null : null
   }
-  return null
+  return index.byNormalized.get(normalized) ?? null
 }
 
 function comparisonAbility(key: string, raw: string): string {
-  if (!raw) return ''
-  const row = indexByKey.get(key)
-  if (!row) return raw
-  const direct = resolveAbilityInfo(raw, row)?.key
-  if (direct && row.abilities.includes(direct)) return direct
-  const normalized = normalizeSearchText(raw)
-  const localized = row.abilities.find(slug => {
-    const description = abilityDescriptionFor(slug)
-    const speedName = SPEED_ABILITIES.find(entry => entry.slug === slug)
-    return [description?.nameEn, description?.nameJa, speedName?.labelEn, speedName?.labelJa].some(name => name && normalizeSearchText(name) === normalized)
-  })
-  return localized ?? raw // Preserve unknown source evidence rather than dropping it.
+  return classifyAbilityForKey(key, raw).slug ?? raw // Preserve unknown source evidence.
 }
 
 function moveTooltipData(name: string, language: SiteLanguage): HoverTooltipCard | null {
@@ -3716,8 +3650,7 @@ function displayTypes(row: Row, language: SiteLanguage) {
 }
 
 function displayAbilities(row: Row, language: SiteLanguage) {
-  if (language !== 'ko') return row.abilities.map((slug, index) => abilityDisplayName(slug, row.abilities_ko[index] ?? slug, language))
-  return row.abilities_ko
+  return row.abilities.map(slug => localizedAbilityLabel(row, slug, language, abilityDescriptionFor))
 }
 
 function abilitiesForKey(key: string, language: SiteLanguage) {
@@ -3733,9 +3666,7 @@ function itemOptionsForKey(key: string) {
 }
 
 function defaultAbilityForKey(key: string) {
-  const row = indexByKey.get(key)
-  if (!row) return ''
-  return row.abilities_ko[0] || row.abilities[0] || ''
+  return abilityForSpeciesSelection(indexByKey.get(key), '', key, '')
 }
 
 function searchDisplayLabel(key: string, language: SiteLanguage) {
@@ -3809,14 +3740,14 @@ const QUICK_KEY = 'pokemon-champions-quick-damage:v1'
 const quickBlankBattle = (): QuickBattle => ({ attackStage: 0, spAttackStage: 0, defenseStage: 0, spDefenseStage: 0, burned: false, lowHp: false, poisoned: false, fullHp: false, reflect: false, lightScreen: false, auroraVeil: false, friendGuard: false })
 const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {}, moves: ['', '', '', ''], battle: quickBlankBattle(), speedStage: 0, speedNatureKnown: true, speedNatureMultiplier: 1, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false })
 const quickDefaultConditions = (): QuickConditions => ({ weather: 'none', terrain: 'none', critical: false, typeChangeStab: true, hits: 2 })
-function quickSide(input: unknown, legacy: Record<string, unknown> = {}, originalAttacker = false): QuickSide {
+export function quickSide(input: unknown, legacy: Record<string, unknown> = {}, originalAttacker = false): QuickSide {
   const value = input && typeof input === 'object' && !Array.isArray(input) ? input as Partial<QuickSide> : {}
   const key = typeof value.key === 'string' && indexByKey.has(value.key) ? value.key : ''
   const item = quickItem(value.item, megaStoneForKey(key), CHAMPIONS_ITEM_OPTIONS)
   const own = value.battle && typeof value.battle === 'object' && !Array.isArray(value.battle) ? value.battle : null
   const source = own ?? { attackStage: originalAttacker ? legacy.attackStage : 0, defenseStage: originalAttacker ? 0 : legacy.defenseStage, burned: originalAttacker ? legacy.burned : false, lowHp: originalAttacker ? legacy.lowHp : false, poisoned: originalAttacker ? false : legacy.targetPoisoned, fullHp: originalAttacker ? false : legacy.defenderFullHp, reflect: originalAttacker ? false : legacy.reflect, lightScreen: originalAttacker ? false : legacy.lightScreen, auroraVeil: originalAttacker ? false : legacy.auroraVeil, friendGuard: originalAttacker ? false : legacy.friendGuard }
   const battle = { ...quickBattleStages(source as Partial<QuickBattle>, legacy, originalAttacker), ...Object.fromEntries((['burned','lowHp','poisoned','fullHp','reflect','lightScreen','auroraVeil','friendGuard'] as const).map(flag => [flag, source[flag] === true])) } as QuickBattle
-  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: key && typeof value.ability === 'string' && abilityMatchesKey(key, value.ability) ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
+  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
 }
 function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
   const saved = readDraft(localStorage, side, slot, seed)
@@ -3824,7 +3755,7 @@ function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defend
   if (side === 'attacker' && saved.dirty.has('key')) return { side: seed as QuickSide, dirty: new Set<string>() }
   const next = saved.side
   if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
-  if (next.key && next.ability && !abilityMatchesKey(next.key, next.ability)) return { side: seed as QuickSide, dirty: new Set<string>() }
+  // A historical draft's invalid ability remains visible and repairable; calculation is gated below.
   if (!NATURES.some(nature => nature.id === next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
   // A restored item is evidence, not an edit request. Invalid drafts remain repairable.
   const speciesChanged = saved.dirty.has('key') && next.key !== seed.key
@@ -3841,7 +3772,7 @@ function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
   return actualStat(row[key], side.evs[key], quickStatNature(side, key, key === 'hp' ? 1 : natureMultiplier(side.nature, key)), key === 'hp')
 }
 
-function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
+export function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
 
   const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
@@ -3852,11 +3783,21 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     return side
   })
   const [defender, setDefender] = React.useState(() => initialSides?.[1] ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).side : quickSide(saved.defender, saved.conditions as Record<string, unknown> ?? {}))
-  const [conditions, setConditions] = React.useState<QuickConditions>(() => {
+  const [configuredConditions, setConditions] = React.useState<QuickConditions>(() => {
     const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
     const defaults = quickDefaultConditions()
     return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: [1,2,3,4,5].includes(Number(input.hits)) ? Number(input.hits) : 2, critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false }
   })
+  // The two cards own the field projection; persisted/manual conditions remain separate.
+  const [manualFields, setManualFields] = React.useState(() => {
+    const previous = !comparisonMode && saved.manualFields && typeof saved.manualFields === 'object' ? saved.manualFields as Record<string, unknown> : null
+    return { weather: previous ? previous.weather === true : configuredConditions.weather !== 'none', terrain: previous ? previous.terrain === true : configuredConditions.terrain !== 'none' }
+  })
+  const ownAbility = resolveFormAbility(indexByKey.get(attacker.key), attacker.ability, abilityDescriptionFor, rows).slug ?? ''
+  const opposingAbility = resolveFormAbility(indexByKey.get(defender.key), defender.ability, abilityDescriptionFor, rows).slug ?? ''
+  const conditions: QuickConditions = { ...configuredConditions,
+    weather: manualFields.weather ? configuredConditions.weather : deriveAutoWeatherFromAbilities(ownAbility, opposingAbility),
+    terrain: manualFields.terrain ? configuredConditions.terrain : deriveAutoTerrainFromAbilities(ownAbility, opposingAbility) }
   const [attackerSearch, setAttackerSearch] = React.useState('')
   const [defenderSearch, setDefenderSearch] = React.useState('')
   const [pools, setPools] = React.useState<Record<string, SharedPoolState>>({})
@@ -3890,6 +3831,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const pairChanged = targets.some((target, index) => target !== previousTargets.current[index])
     if (pairChanged) {
       setConditions(quickDefaultConditions())
+      setManualFields({ weather: false, terrain: false })
       setModalSide(null)
       setAttacker(prev => resetPairAssumptions(prev, initialSides[0], dirty.attacker))
       setDefender(prev => resetPairAssumptions(prev, initialSides[1], dirty.defender))
@@ -3928,6 +3870,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     setModalSide(null)
     clearSideUI('defender')
     setConditions(quickDefaultConditions())
+    setManualFields({ weather: false, terrain: false })
     previousTargets.current = [pairTarget(comparisonSlots?.[0] ?? 0, initialSides[0]), pairTarget(comparisonSlots?.[1] ?? 0, initialSides[1])]
     setSelected(prev => prev.side === 'defender' ? { side: 'attacker', index: 0 } : prev)
   }, [opponentResetRevision])
@@ -3935,7 +3878,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const opener = React.useRef<HTMLElement | null>(null)
   const [, refreshMeta] = React.useState(0)
   const [moveMetaReady, setMoveMetaReady] = React.useState(false)
-  React.useEffect(() => { if (!comparisonMode) localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions })) }, [attacker, defender, conditions, comparisonMode])
+  React.useEffect(() => { if (!comparisonMode) localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions: configuredConditions, manualFields })) }, [attacker, defender, configuredConditions, manualFields, comparisonMode])
   React.useEffect(() => {
     if (!comparisonMode || !initialSides || !comparisonSlots) return
     if (skipDraftWrite.current) { skipDraftWrite.current = false; return }
@@ -3964,12 +3907,12 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const attackingRow = indexByKey.get(attacker.key)
   const defendingRow = indexByKey.get(defender.key)
   const scarfFor = (entry: QuickSide) => entry.speedScarfOverride ?? isChoiceScarfItem(entry.item)
-  const abilityFor = (entry: QuickSide, row: Row | undefined) => row && row.abilities.includes(entry.ability) ? getSpeedAbility(entry.ability) : null
-  const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(entry.ability, { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: entry.battle.burned || entry.battle.poisoned }))
+  const abilityFor = (entry: QuickSide, row: Row | undefined) => getSpeedAbility(row ? resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '' : '')
+  const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '', { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: entry.battle.burned || entry.battle.poisoned }))
   const speedFor = (entry: QuickSide, row: Row | undefined, scarf: boolean, ability: 1 | 1.5 | 2 = 1) => {
     if (!row) return null
     const itemStatus = classifyHeldItem(entry.key, entry.item)
-    if (!isCalculableHeldItem(entry.key, entry.item)) return { value: null, reason: heldItemError(entry.key, entry.item, language) }
+    if (!isCalculableHeldItem(entry.key, entry.item) || heldAbilityError(entry.key, entry.ability, language)) return { value: null, reason: heldItemError(entry.key, entry.item, language) || heldAbilityError(entry.key, entry.ability, language) }
     if (scarf && itemStatus.requiredStone) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
     if (entry.speedAbilityActive && entry.ability === 'unburden' && scarf) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
     const actual = entry.actual.speed
@@ -3994,7 +3937,9 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const source = direction === 'attacker' ? attacker : defender
     const target = direction === 'attacker' ? defender : attacker
     const sourceRow = indexByKey.get(source.key), targetRow = indexByKey.get(target.key)
-    if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item)) return null
+    if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item) || heldAbilityError(source.key, source.ability, language) || heldAbilityError(target.key, target.ability, language)) return null
+    const sourceAbility = resolveFormAbility(sourceRow, source.ability, abilityDescriptionFor, rows).slug ?? ''
+    const targetAbility = resolveFormAbility(targetRow, target.ability, abilityDescriptionFor, rows).slug ?? ''
     if ((source.speedScarfOverride === true && classifyHeldItem(source.key, source.item).requiredStone) || (target.speedScarfOverride === true && classifyHeldItem(target.key, target.item).requiredStone)) return null
     if ((source.ability === 'unburden' && source.speedAbilityActive && isChoiceScarfItem(source.item)) || (target.ability === 'unburden' && target.speedAbilityActive && isChoiceScarfItem(target.item))) return null
     const sourceStats = sourceRow ? toStats(source, sourceRow) : null
@@ -4004,16 +3949,16 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const base = moveInPool(name, pool) ? resolveMoveMeta(name, pool, poolMap) : null
     if (!sourceStats || !targetStats || !base || !quickMoveSupported(name, base, Boolean(CONDITIONAL_MOVE_POWER_RULES[name]))) return null
     const choices = multiHitOptions(name)
-    const meta = applyTargetWeightMovePower(name, resolveAbilityAdjustedMoveMeta(name, resolveMultiHitMeta(name, base, choices?.includes(conditions.hits) ? conditions.hits : choices?.[0] ?? null, source.ability), source.ability, conditions.weather), targetRow?.weightKg ?? null)
+    const meta = applyTargetWeightMovePower(name, resolveAbilityAdjustedMoveMeta(name, resolveMultiHitMeta(name, base, choices?.includes(conditions.hits) ? conditions.hits : choices?.[0] ?? null, sourceAbility), sourceAbility, conditions.weather), targetRow?.weightKg ?? null)
     if (!meta) return null
     const type = meta.type, mode = meta.category === 'physical' || meta.category === 'special' ? meta.category : null
     if (!type || !mode || !meta.power || !sourceRow || !targetRow) return null
-    const sourceTypes = resolveAbilityAdjustedTypes(sourceRow.types, source.ability, conditions.weather, conditions.terrain)
-    const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, target.ability, conditions.weather, conditions.terrain)
+    const sourceTypes = resolveAbilityAdjustedTypes(sourceRow.types, sourceAbility, conditions.weather, conditions.terrain)
+    const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, targetAbility, conditions.weather, conditions.terrain)
     const foulPlay = name === '속임수'
     const [attackStage, defenseStage] = quickStagePair(source.battle, target.battle, { ...meta, usesTargetAttack: foulPlay })
-    const modifiers = resolveDamageModifiers({ attackerAbility: source.ability, attackerItem: source.item, defenderAbility: target.ability, defenderItem: target.item, moveName: name, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, target.ability, source.ability), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
-    const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, source.ability, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
+    const modifiers = resolveDamageModifiers({ attackerAbility: sourceAbility, attackerItem: source.item, defenderAbility: targetAbility, defenderItem: target.item, moveName: name, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
+    const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, sourceAbility, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
     return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness } : null
   }
   const selectedSide = selected.side === 'attacker' ? attacker : defender
@@ -4022,7 +3967,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
   const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
   const selectedPool = pools[selectedSide.key]
-  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !MOVE_META_BY_NAME[selectedMove] ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
+  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !MOVE_META_BY_NAME[selectedMove] ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
   const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {
@@ -4038,6 +3983,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     clearSideUI(side)
     if (comparisonMode) {
       setConditions(quickDefaultConditions())
+      setManualFields({ weather: false, terrain: false })
       setAttacker(prev => resetPairAssumptions(prev, initialSides![0], dirty.attacker))
       setDefender(prev => resetPairAssumptions(prev, initialSides![1], dirty.defender))
       previousTargets.current[side === 'attacker' ? 0 : 1] = pairTarget(comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0, { key })
@@ -4126,8 +4072,9 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const statCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
     const setEntry = side === 'attacker' ? setAttacker : setDefender
     return row ? <div className="quick-stat-card" key={side}><PokemonBuildFields key={`${side}-${entry.key}`} identity={`${side}-${entry.key}`} className="quick-build-fields"
-          ability={entry.ability} nature={entry.nature} item={entry.item}
-          abilities={row.abilities.map((value, index) => ({ value, label: language === 'ja' ? abilityDescriptionFor(value)?.nameJa || displayAbilities(row, language)[index] : displayAbilities(row, language)[index] }))}
+          ability={entry.ability} abilityLabel={selectedAbilityDisplayName(row, entry.ability, language)} nature={entry.nature} item={entry.item}
+          abilities={row.abilities.map(value => ({ value, label: localizedAbilityLabel(row, value, language, abilityDescriptionFor) }))}
+          abilityError={heldAbilityError(row.key, entry.ability, language)}
           natures={NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
           itemOptions={query => filterItemOptions(query, language, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(row.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, language), secondary: itemAutocompleteSecondaryLabel(value, language), sprite: itemSpriteSrc(row.key, value) }))}
           onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
@@ -4164,8 +4111,8 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
       <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
     </div>
     <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
-      <label>{lt('날씨')}<select value={conditions.weather} onChange={event => setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather }))}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
-      <label>{lt('필드')}<select value={conditions.terrain} onChange={event => setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain }))}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
+      <label>{lt('날씨')}<select value={conditions.weather} onChange={event => { setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather })) }}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
+      <label>{lt('필드')}<select value={conditions.terrain} onChange={event => { setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain })) }}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
       {toggle('critical','급소')}{toggle('typeChangeStab','타입변환 자속')}
       {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
     </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}
@@ -4468,7 +4415,7 @@ export default function App() {
   const hasDexUnifiedSearch = deferredDexUnifiedSearch.trim().length > 0
   const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }), [deferredDexSearch])
   const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }), [asyncDataVersion, deferredDexSearch])
-  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }), [deferredDexSearch])
+  const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }), [asyncDataVersion, deferredDexSearch])
   const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }), [deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
     const unifiedQuery = deferredDexUnifiedSearch.trim()
@@ -4607,42 +4554,6 @@ export default function App() {
   const dexSelectedItemText = React.useMemo(() => localizedDexText(dexSelectedItemDescription, siteLanguage), [dexSelectedItemDescription, siteLanguage])
   const dexSelectedItemEffectSummary = React.useMemo(() => dexSelectedItem ? itemEffectSummaryFor(dexSelectedItem, siteLanguage) : '', [dexSelectedItem, siteLanguage])
 
-  React.useEffect(() => {
-    setParty((prev) => {
-      let changed = false
-      const next = prev.map((member) => {
-        const ability = sanitizeAbilityForKey(member.key, member.ability, member.ability === undefined)
-        if (ability === member.ability) return member
-        changed = true
-        return { ...member, ability }
-      })
-      return changed ? next : prev
-    })
-  }, [])
-
-  React.useEffect(() => {
-    setSampleForge((prev) => {
-      const ability = sanitizeAbilityForKey(prev.key, prev.ability, true)
-      return ability === prev.ability ? prev : { ...prev, ability }
-    })
-  }, [])
-
-  React.useEffect(() => {
-    let nextAbilities: string[] | null = null
-    setOpponents((prev) => {
-      let changed = false
-      const next = prev.map((member, idx) => {
-        const ability = sanitizeAbilityForKey(member.key, member.ability, false)
-        if (ability === member.ability) return member
-        changed = true
-        if (!nextAbilities) nextAbilities = prev.map((item) => item.ability)
-        nextAbilities[idx] = ability
-        return { ...member, ability }
-      })
-      return changed ? next : prev
-    })
-    if (nextAbilities) setOpponentAbilityDrafts(nextAbilities)
-  }, [])
 
   React.useEffect(() => {
     let cancelled = false
@@ -4889,15 +4800,25 @@ export default function App() {
     const attackerItem = attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item
     const defenderItem = defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item
     if (!isCalculableHeldItem(attackerKey, attackerItem) || !isCalculableHeldItem(defenderKey, defenderItem)) return null
-    const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
-    const defenderAbility = defenderMeta.side === 'my' ? (defenderMeta.option.member.ability || defaultAbilityForKey(defenderMeta.option.member.key)) : defenderMeta.option.entry.ability
+    const attackerAbilityRaw = attackerMeta.side === 'my' ? attackerMeta.option.member.ability : attackerMeta.option.entry.ability
+    const defenderAbilityRaw = defenderMeta.side === 'my' ? defenderMeta.option.member.ability : defenderMeta.option.entry.ability
+    if (heldAbilityError(attackerKey, attackerAbilityRaw, siteLanguage) || heldAbilityError(defenderKey, defenderAbilityRaw, siteLanguage)) return null
+    const attackerAbility = classifyAbilityForKey(attackerKey, attackerAbilityRaw).slug ?? ''
+    const defenderAbility = classifyAbilityForKey(defenderKey, defenderAbilityRaw).slug ?? ''
     const attackerAllySlot: DoubleBoardSlot | null = attackerSlot === 'myLeft' ? 'myRight' : attackerSlot === 'myRight' ? 'myLeft' : attackerSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
     const attackerAllyMeta = attackerAllySlot ? doubleSlotMeta[attackerAllySlot] : null
     const attackerAllyAbility = attackerAllyMeta?.option?.row
       ? (attackerAllyMeta.side === 'my'
-        ? (attackerAllyMeta.option.member.ability || defaultAbilityForKey(attackerAllyMeta.option.member.key))
+        ? attackerAllyMeta.option.member.ability
         : attackerAllyMeta.option.entry.ability)
       : ''
+    if (attackerAllyMeta?.option?.row && heldAbilityError(attackerAllyMeta.option.row.key, attackerAllyAbility, siteLanguage)) return null
+    const defenderAllySlot: DoubleBoardSlot = defenderSlot === 'myLeft' ? 'myRight' : defenderSlot === 'myRight' ? 'myLeft' : defenderSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
+    const defenderAllyMeta = doubleSlotMeta[defenderAllySlot]
+    const defenderAllyAbility = defenderAllyMeta.option?.row
+      ? (defenderAllyMeta.side === 'my' ? defenderAllyMeta.option.member.ability : defenderAllyMeta.option.entry.ability)
+      : ''
+    if (defenderAllyMeta.option?.row && heldAbilityError(defenderAllyMeta.option.row.key, defenderAllyAbility, siteLanguage)) return null
     const resolvedAttackerRow = attackingFormRow(attackerRow, attackerAbility)
     const attackerStats = attackerMeta.side === 'my'
       ? buildPartyBattleStats(resolvedAttackerRow, attackerMeta.option.member)
@@ -4923,10 +4844,11 @@ export default function App() {
     const protectionMultiplier = protectionDamageMultiplier(attackerAbility, moveName, guardedByWide || protectedTarget)
     const piercesProtection = protectionMultiplier > 0 && protectionMultiplier < 1
     const blockedByProtection = protectionMultiplier === 0
-    const friendGuard = attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
+    const friendGuardAvailable = Boolean(defenderAllyMeta.option?.row && classifyAbilityForKey(defenderAllyMeta.option.row.key, defenderAllyAbility).slug === 'friend-guard')
+    const friendGuard = attackerMeta.side !== defenderMeta.side && friendGuardAvailable && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
     const modifiers = blockedByProtection ? null : resolveDamageModifiers({
       attackerAbility,
-      attackerAllyAbility,
+      attackerAllyAbility: attackerAllyMeta?.option?.row ? classifyAbilityForKey(attackerAllyMeta.option.row.key, attackerAllyAbility).slug ?? '' : '',
       attackerItem,
       defenderAbility,
       defenderItem,
@@ -4965,7 +4887,7 @@ export default function App() {
     const damage = blockedByProtection ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
     const reason = blockedByProtection && guardedByWide ? lt('와이드가드로 차단됨') : blockedByProtection && protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
     return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
-  }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey])
+  }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey, asyncDataVersion])
   const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
   const doubleSpeedOrder = React.useMemo(() => {
     const entries = ([
@@ -4975,7 +4897,7 @@ export default function App() {
       { slot: 'oppRight' as const, side: 'opp' as const, label: lt('상대 우측'), option: doubleBoardSlots.oppRight, tailwind: doubleTailwindOpp },
     ]).map((entry, idx) => {
       if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null, sprite: null as string | null }
-      if (!isCalculableHeldItem(entry.option.row.key, entry.side === 'my' ? entry.option.member.item : entry.option.entry.item)) return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed: null as number | null, effectiveSpeed: null as number | null, sprite: entry.option.row.sprite ?? null }
+      if (!isCalculableHeldItem(entry.option.row.key, entry.side === 'my' ? entry.option.member.item : entry.option.entry.item) || heldAbilityError(entry.option.row.key, entry.side === 'my' ? entry.option.member.ability : entry.option.entry.ability, siteLanguage)) return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed: null as number | null, effectiveSpeed: null as number | null, sprite: entry.option.row.sprite ?? null }
       const speed = entry.side === 'my'
         ? partySpeedValue(entry.option.row, entry.option.member)
         : opponentSpeedValue(entry.option.row, entry.option.entry)
@@ -4988,7 +4910,7 @@ export default function App() {
       if (aSpeed === bSpeed) return a.idx - b.idx
       return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
     })
-  }, [doubleBoardSlots, doubleTailwindMy, doubleTailwindOpp, doubleTrickRoom, lt, siteLanguage])
+  }, [doubleBoardSlots, doubleTailwindMy, doubleTailwindOpp, doubleTrickRoom, lt, siteLanguage, asyncDataVersion])
   const doubleSpeedBySlot = React.useMemo(() => Object.fromEntries(doubleSpeedOrder.map((entry) => [entry.slot, entry.effectiveSpeed])) as Partial<Record<DoubleBoardSlot, number | null>>, [doubleSpeedOrder])
   const doubleBoardStateCards = React.useMemo(() => {
     const slotOrder: DoubleBoardSlot[] = ['myLeft', 'myRight', 'oppLeft', 'oppRight']
@@ -5005,7 +4927,7 @@ export default function App() {
           row,
           name: row ? displayName(row, siteLanguage) : lt('미선택'),
           item: displayItemLabel(visibleChampionsItem(key, option.member.item ?? ''), siteLanguage),
-          ability: option.member.ability || defaultAbilityForKey(key) || '',
+          ability: classifyAbilityForKey(key, option.member.ability).slug ?? option.member.ability,
           moves: (confirmedMovesByKey[key] ?? []).filter(Boolean),
           speed: doubleSpeedBySlot[slot],
           protected: doubleProtectBySlot[slot],
@@ -5020,16 +4942,15 @@ export default function App() {
         row,
         name: row ? displayName(row, siteLanguage) : lt('미선택'),
         item: displayItemLabel(visibleChampionsItem(key, option && 'entry' in option ? option.entry.item ?? '' : ''), siteLanguage),
-        ability: option && 'entry' in option ? option.entry.ability || '' : '',
+        ability: option && 'entry' in option ? classifyAbilityForKey(key, option.entry.ability).slug ?? option.entry.ability : '',
         moves: (option && 'entry' in option ? option.entry.revealedMoves : []).filter(Boolean),
         speed: doubleSpeedBySlot[slot],
         protected: doubleProtectBySlot[slot],
         tailwind: doubleTailwindOpp,
       }
     })
-  }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage])
-  const FRIEND_GUARD_NAMES = new Set(['프렌드가드', 'Friend Guard', 'フレンドガード'])
-  const doubleFriendGuardAvailableOpp = React.useMemo(() => doubleBoardStateCards.some((card) => card.side === 'opp' && FRIEND_GUARD_NAMES.has(card.ability || '')), [doubleBoardStateCards])
+  }, [confirmedMovesByKey, doubleProtectBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTailwindMy, doubleTailwindOpp, lt, siteLanguage, asyncDataVersion])
+  const doubleFriendGuardAvailableOpp = React.useMemo(() => doubleBoardStateCards.some((card) => card.side === 'opp' && card.row && classifyAbilityForKey(card.row.key, card.ability).slug === 'friend-guard'), [doubleBoardStateCards, asyncDataVersion])
   const doubleActionOptionsBySlot = React.useMemo(() => {
     return Object.fromEntries(doubleBoardStateCards.map((card) => [card.slot, card.moves])) as Record<DoubleBoardSlot, string[]>
   }, [doubleBoardStateCards])
@@ -5040,7 +4961,7 @@ export default function App() {
     oppRight: ['myLeft', 'myRight'] as DoubleBoardSlot[],
   }), [])
   const doubleActionOrder = React.useMemo(() => {
-    return (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
+    const entries = (['myLeft', 'myRight', 'oppLeft', 'oppRight'] as DoubleBoardSlot[]).map((slot, idx) => {
       const meta = doubleSlotMeta[slot]
       const option = meta.option
       const row = option?.row ?? null
@@ -5064,16 +4985,12 @@ export default function App() {
         name: row ? displayName(row, siteLanguage) : lt('미선택'),
         sprite: row?.sprite ?? null,
         selectedMove,
+        occupied: Boolean(row),
         priority: moveMeta?.priority ?? 0,
         speed: doubleSpeedBySlot[slot] ?? null,
       }
-    }).sort((a, b) => {
-      if (a.priority !== b.priority) return b.priority - a.priority
-      const aSpeed = a.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
-      const bSpeed = b.speed ?? (doubleTrickRoom ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY)
-      if (aSpeed !== bSpeed) return doubleTrickRoom ? aSpeed - bSpeed : bSpeed - aSpeed
-      return a.idx - b.idx
     })
+    return presentDoubleActionOrder(entries, doubleTrickRoom)
   }, [doubleActionMoveBySlot, doubleActionOptionsBySlot, doubleSlotMeta, doubleSpeedBySlot, doubleTrickRoom, lt, movePoolByKey, siteLanguage])
   const doubleFocusedActionTarget = doubleActionTargetBySlot[doubleActionFocusSlot]
   const doubleFocusedActionMeta = doubleSlotMeta[doubleActionFocusSlot]
@@ -5571,7 +5488,7 @@ export default function App() {
       if (!row) { unknownKeys.push(member.key); return [] }
       const selectedAbility = member.ability ? resolveSelectedAbility(row, member.ability, siteLanguage) : null
       if (member.ability && !selectedAbility) unknownKeys.push(`${member.key} · 특성 원본: ${member.ability}`)
-      const ability = selectedAbility?.slug ?? member.ability ?? ''
+      const ability = selectedAbility?.slug ?? ''
       const moves = (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4).map(name => {
         const base = moveNameCandidates(name).map(candidate => lookupMoveMeta(candidate)).find(Boolean) ?? null
         const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability)
@@ -5597,7 +5514,7 @@ export default function App() {
   const singleSpeedItem: SingleSpeedItem = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.item : 'normal'
   const singleSpeedAbilityActive = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.abilityActive : false
   const singleSpeedAbility = oppRow ? speedAbilityCandidate(oppRow, siteLanguage) : null
-  const singleItemError = heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)
+  const singleItemError = heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage) || heldAbilityError(myMember.key, myMember.ability, siteLanguage) || heldAbilityError(oppMember.key, oppMember.ability, siteLanguage)
   const singleSpeedComparison = oppRow && !singleItemError ? compareSingleSpeed(
     { row: myRow, effort: myMember.evs.speed, nature: natureMultiplier(myMember.config.nature, 'speed'), stage: myMember.config.speedStage, scarf: singleSpeedOwnScarf },
     oppRow, singleSpeedNature, singleSpeedItem, oppMember.speedStage,
@@ -5633,11 +5550,11 @@ export default function App() {
   const defenderRow = attackFromOpponent ? myRow : oppRow
   const attackerMemberKey = attackFromOpponent ? oppMember.key : myMember.key
   const attackerAbilityValue = attackFromOpponent
-    ? (selectedOppAbility?.slug ?? sanitizeAbilityForKey(attackerRow?.key ?? oppMember.key, oppMember.ability, false))
-    : (selectedMyAbility?.slug ?? sanitizeAbilityForKey(attackerRow?.key ?? myMember.key, myMember.ability, true))
+    ? (selectedOppAbility?.slug ?? '')
+    : (selectedMyAbility?.slug ?? '')
   const defenderAbilityValue = attackFromOpponent
-    ? (selectedMyAbility?.slug ?? sanitizeAbilityForKey(defenderRow?.key ?? myMember.key, myMember.ability, true))
-    : (selectedOppAbility?.slug ?? sanitizeAbilityForKey(defenderRow?.key ?? oppMember.key, oppMember.ability, false))
+    ? (selectedMyAbility?.slug ?? '')
+    : (selectedOppAbility?.slug ?? '')
   const selectedAttackAbility = attackFromOpponent ? selectedOppAbility : selectedMyAbility
   const selectedDefenseAbility = attackFromOpponent ? selectedMyAbility : selectedOppAbility
   const attackerBattleStats = attackFromOpponent
@@ -6016,8 +5933,7 @@ export default function App() {
         setOpponentSearch(prev => prev.map((value, slot) => slot === idx ? searchDisplayLabel(key, siteLanguage) : value))
         return
       }
-      const allowedAbilities = abilitiesForKey(key, siteLanguage)
-      const nextAbility = allowedAbilities.includes(member.ability) ? member.ability : ''
+      const nextAbility = abilityForSpeciesSelection(indexByKey.get(key), member.key, key, member.ability)
       const next = [...opponents]
       next[idx] = { ...member, key, item: normalizeItemForKey(key, member.item), ability: nextAbility }
       setOpponents(next)
@@ -6097,7 +6013,7 @@ export default function App() {
     friendGuard: false,
   })
   const damageMovePreviews = registeredDamageMoves.map((moveName) => {
-    if (!isCalculableHeldItem(myMember.key, myMember.item) || !isCalculableHeldItem(oppMember.key, oppMember.item)) return { moveName, moveType: null, damage: null, verdict: null }
+    if (singleItemError) return { moveName, moveType: null, damage: null, verdict: null }
     const baseMeta = resolveMoveMeta(moveName, attackerMoveOptions, movePoolByKey)
     const hitOptions = multiHitOptions(moveName)
     const hitCount = moveName === activeDamageMove && hitOptions?.includes(calcHitCount)
@@ -6315,7 +6231,6 @@ export default function App() {
     ? activeMoveField.slotIdx
     : Math.min(sampleConfirmedMoves.length, 3)
   const sampleAbilityOptions = displayAbilities(sampleRow, siteLanguage)
-  const sampleAbility = sampleForge.ability || sampleAbilityOptions[0] || defaultAbilityForKey(sampleForge.key)
   const sampleFixedMegaStone = megaStoneForKey(sampleForge.key)
   const sampleCalcConfig = sampleFixedMegaStone ? { ...sampleForge.config, scarf: false } : sampleForge.config
   const sampleCalcMember = sampleFixedMegaStone ? { ...sampleForge, config: sampleCalcConfig } : sampleForge
@@ -6328,7 +6243,7 @@ export default function App() {
     .slice(0, 8)
   const sampleSpeedCalcs = sampleSpeedTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    if (!row || !isCalculableHeldItem(sampleForge.key, sampleForge.item)) return null
+    if (!row || !isCalculableHeldItem(sampleForge.key, sampleForge.item) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)) return null
     const scenarios = [
       { id: 'base', label: lt('준속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, false, false, member.speedStage) },
       { id: 'fast', label: lt('최속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage) },
@@ -6384,13 +6299,13 @@ export default function App() {
       cancelled = true
     }
   }, [sampleDamageTargets, weightByKey])
-  const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(sampleForge.key, sampleForge.ability, true)) : sampleForge.ability
+  const sampleAttackerAbilityValue = sampleRow ? (resolveSelectedAbility(sampleRow, sampleForge.ability, siteLanguage)?.slug ?? '') : ''
   const damageSampleAttackerStats = buildPartyBattleStats(attackingFormRow(sampleRow, sampleAttackerAbilityValue), sampleCalcMember)
   const sampleBulkIndices = durabilityIndices(buildPartyBattleStats(sampleRow, sampleCalcMember))
   const sampleBaselineWeather = deriveAutoWeatherFromAbilities(sampleAttackerAbilityValue)
   const sampleBaselineTerrain = deriveAutoTerrainFromAbilities(sampleAttackerAbilityValue)
   const sampleDecisionPowerIndices = sampleDamageMoveChoices.map((moveName) => {
-    if (!isCalculableHeldItem(sampleForge.key, sampleForge.item)) return { moveName, moveMeta: null, value: null, attackStat: null, stab: 1, notes: [] as string[] }
+    if (!isCalculableHeldItem(sampleForge.key, sampleForge.item) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)) return { moveName, moveMeta: null, value: null, attackStat: null, stab: 1, notes: [] as string[] }
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
     const defaultHitCount = multiHitOptions(moveName)?.[0] ?? null
     const moveRule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
@@ -6458,7 +6373,7 @@ export default function App() {
   const sampleUsesTypeChangeStabAbility = sampleAttackerAbilityValue === 'protean' || sampleAttackerAbilityValue === 'libero' || sampleAttackerAbilityValue === '변환자재'
   const sampleDamageDefenderAbilitySlugs = sampleDamageTargets.map((member) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    return row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? member.ability) : member.ability
+    return row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? '') : ''
   })
   const sampleShowAttackerLowHpToggle = ['blaze', 'torrent', 'overgrow', 'swarm'].includes(sampleAttackerAbilityValue)
   const sampleShowTargetPoisonedToggle = sampleAttackerAbilityValue === 'merciless'
@@ -6502,8 +6417,8 @@ export default function App() {
   }, [sampleShowDefenderDisguiseToggle])
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    const itemMismatch = !isCalculableHeldItem(sampleForge.key, sampleForge.item) || !isCalculableHeldItem(member.key, member.item)
-    const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(member.key, member.ability, false)) : member.ability
+    const itemMismatch = !isCalculableHeldItem(sampleForge.key, sampleForge.item) || !isCalculableHeldItem(member.key, member.item) || Boolean(heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage) || heldAbilityError(member.key, member.ability, siteLanguage))
+    const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? '') : ''
     const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
     const moveHitOptions = multiHitOptions(moveName)
@@ -6531,7 +6446,7 @@ export default function App() {
     const unavailableReason = !row
       ? lt('비교 대상 없음')
       : itemMismatch
-        ? heldItemError(sampleForge.key, sampleForge.item, siteLanguage) || heldItemError(member.key, member.item, siteLanguage)
+        ? heldItemError(sampleForge.key, sampleForge.item, siteLanguage) || heldItemError(member.key, member.item, siteLanguage) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage) || heldAbilityError(member.key, member.ability, siteLanguage)
       : !moveName
         ? lt('등록 기술 없음')
         : moveMeta?.category === 'status'
@@ -6551,7 +6466,7 @@ export default function App() {
     if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
       return { idx, member, row, moveName, moveCategory, movePower, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
-    const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, attackerAbilityValue)
+    const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, sampleAttackerAbilityValue)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
       attackerItem: sampleForge.item,
@@ -6606,7 +6521,7 @@ export default function App() {
   }
 
   const addSampleDamageTarget = (key: string) => {
-    setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, item: itemForSpeciesSelection(key, ''), moveName: sampleDamageMoveChoices[0] ?? '' }])
+    setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, item: itemForSpeciesSelection(key, ''), ability: abilityForSpeciesSelection(indexByKey.get(key), '', key, ''), moveName: sampleDamageMoveChoices[0] ?? '' }])
     setSampleDamageSearch('')
   }
 
@@ -6823,8 +6738,7 @@ export default function App() {
     if (!resolvedKey) return
     const slotIdx = selectedOpp
     if (opponents[slotIdx]?.key !== resolvedKey) {
-      const allowedAbilities = abilitiesForKey(resolvedKey, siteLanguage)
-      const nextAbility = allowedAbilities.includes(opponents[slotIdx]?.ability) ? opponents[slotIdx]?.ability ?? '' : ''
+      const nextAbility = abilityForSpeciesSelection(indexByKey.get(resolvedKey), opponents[slotIdx]?.key ?? '', resolvedKey, opponents[slotIdx]?.ability ?? '')
       const next = [...opponents]
       next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item), ability: nextAbility }
       setOpponents(next)
@@ -8039,9 +7953,10 @@ export default function App() {
                   <div className="double-layout-card-head compact">
                     <strong>{lt('4마리 행동순')}</strong>
                   </div>
+                  {doubleActionOrder.some(entry => entry.occupied && entry.speed === null) ? <p role="status">{lt('전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.')}</p> : null}
                   <div className="double-speed-preview-list">
-                    {doubleActionOrder.map((entry, idx) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
-                      <span>{idx + 1}{lt('순위')} · {entry.label}</span>
+                    {doubleActionOrder.map((entry) => <div key={`double-order-${entry.slot}`} className={`double-speed-preview-item ${entry.side === 'opp' ? 'opp' : 'my'}`}>
+                      <span>{entry.rank === null ? lt(entry.occupied ? '전체 순위 미확인' : '미선택') : `${entry.rank}${lt('순위')}`} · {entry.label}</span>
                       <div className="double-order-main with-sprite">
                         {entry.sprite ? <img src={entry.sprite} alt={entry.name} className="double-order-sprite" /> : null}
                         <strong>{entry.name}</strong>
@@ -8168,7 +8083,7 @@ export default function App() {
                               options={partySpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
                     } />
                     {row ? <><PokemonBuildFields key={`${idx}-${member.key}`} identity={`${idx}-${member.key}`}
-                      ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
+                      ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} abilityError={heldAbilityError(member.key, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
                       abilities={abilityOptions.map(value => ({ value, label: value }))}
                       natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                       itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(member.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
@@ -8296,7 +8211,7 @@ export default function App() {
                     {row?.sprite ? <img src={row.sprite} alt={displayName(row, siteLanguage)} className="pick-slot-sprite" /> : null}
                     <strong>{row ? displayName(row, siteLanguage) : emptySlotLabel(idx, siteLanguage)}</strong>
                     <span>{opponentSearch[idx] || lt('포켓몬 미입력')}</span>
-                    <span>{member.ability || lt('특성 미기입')}</span>
+                    <span>{row ? selectedAbilityDisplayName(row, member.ability, siteLanguage) || member.ability || lt('특성 미기입') : member.ability || lt('특성 미기입')}</span>
                     <span {...bindTooltip(member.item ? itemTooltipData(member.item, siteLanguage) : null)}>{member.item ? displayItemLabel(member.item, siteLanguage) : lt('도구 미기입')}</span>
                   </button>
                 )
@@ -8389,7 +8304,7 @@ export default function App() {
                   {lt('특성')}
                   <select
                     className="opponent-meta-select"
-                    value={oppMember.ability}
+                    value={resolveSelectedAbility(oppRow!, oppMember.ability, siteLanguage)?.slug ?? oppMember.ability}
                     {...bindTooltip(oppMember.ability ? abilityTooltipData(oppMember.ability, siteLanguage, oppRow) : null)}
                     disabled={!oppMember.key}
                     onChange={(e) => {
@@ -8399,10 +8314,12 @@ export default function App() {
                     }}
                   >
                     <option value="">{oppMember.key ? lt('사용 가능 특성 선택') : lt('포켓몬 먼저 선택')}</option>
-                    {abilitiesForKey(oppMember.key, siteLanguage).map((ability) => (
-                      <option key={`opp-ability-option-${selectedOpp}-${ability}`} value={ability}>{ability}</option>
+                    {oppMember.ability && !resolveSelectedAbility(oppRow!, oppMember.ability, siteLanguage) ? <option value={oppMember.ability}>{`${lt('원본 특성 표기')}: ${oppMember.ability}`}</option> : null}
+                    {(oppRow?.abilities ?? []).map((ability) => (
+                      <option key={`opp-ability-option-${selectedOpp}-${ability}`} value={ability}>{localizedAbilityLabel(oppRow!, ability, siteLanguage, abilityDescriptionFor)}</option>
                     ))}
                   </select>
+                  {heldAbilityError(oppMember.key, oppMember.ability, siteLanguage) && <small role="alert" className="item-validation-error">{heldAbilityError(oppMember.key, oppMember.ability, siteLanguage)}</small>}
                 </label>
                 <div className="opponent-revealed-moves-card">
                   <div className="opponent-revealed-moves-head">{lt('공개 기술')}</div>
@@ -8688,7 +8605,7 @@ export default function App() {
                   options={sampleSpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
               } />
               <PokemonBuildFields key={`sample-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} className="sample-meta-grid"
-                ability={sampleForge.ability} abilityLabel={selectedAbilityDisplayName(sampleRow, sampleForge.ability, siteLanguage)} nature={sampleForge.config.nature} item={sampleForge.item}
+                ability={sampleForge.ability} abilityLabel={selectedAbilityDisplayName(sampleRow, sampleForge.ability, siteLanguage)} abilityError={heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)} nature={sampleForge.config.nature} item={sampleForge.item}
                 abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
                 natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                 itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(sampleForge.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
@@ -9165,6 +9082,7 @@ export default function App() {
                   return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     {heldItemError(entry.member.key, entry.member.item, siteLanguage) && <div role="alert" className="item-validation-error">{heldItemError(entry.member.key, entry.member.item, siteLanguage)} <button type="button" className="pick-chip" onClick={() => updateSampleDamageTarget(entry.idx, { item: itemForSpeciesSelection(entry.member.key, '') })}>{requiredMegaStone(entry.member.key) ? (siteLanguage === 'ko' ? `${requiredMegaStone(entry.member.key)} 장착` : siteLanguage === 'ja' ? `${requiredMegaStone(entry.member.key)} を装備` : `Equip ${requiredMegaStone(entry.member.key)}`) : lt('도구 없음')}</button></div>}
+                    {heldAbilityError(entry.member.key, entry.member.ability, siteLanguage) && <div role="alert" className="item-validation-error">{heldAbilityError(entry.member.key, entry.member.ability, siteLanguage)}</div>}
                     <div className="row-between sample-compare-card-head">
                       <div className="sample-compare-hero sample-compare-hero-compact">
                         {entry.row?.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
@@ -9194,6 +9112,11 @@ export default function App() {
                         </div>
                         <div className="sample-damage-target-controls sample-damage-target-controls-wide sample-damage-target-controls-stacked">
                           <div className="sample-damage-control-section sample-damage-control-section-primary">
+                            <label>{lt('특성')}<select value={entry.row ? resolveFormAbility(entry.row, entry.member.ability, abilityDescriptionFor, rows).slug ?? entry.member.ability : entry.member.ability} onChange={e => updateSampleDamageTarget(entry.idx, { ability: e.target.value })}>
+                              <option value="">{lt('미선택')}</option>
+                              {entry.member.ability && entry.row && !resolveFormAbility(entry.row, entry.member.ability, abilityDescriptionFor, rows).slug ? <option value={entry.member.ability}>{`${lt('원본 특성 표기')}: ${entry.member.ability}`}</option> : null}
+                              {entry.row?.abilities.map(slug => <option key={slug} value={slug}>{localizedAbilityLabel(entry.row!, slug, siteLanguage, abilityDescriptionFor)}</option>)}
+                            </select></label>
                             <label>
                               {lt('기술 구성')}
                               <select value={entry.member.moveName || ''} onChange={(e) => updateSampleDamageTarget(entry.idx, { moveName: e.target.value })}>
@@ -9756,7 +9679,7 @@ export default function App() {
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface separated">
-            {(heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)) && <p role="alert" className="item-validation-error">{heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)}</p>}
+            {singleItemError && <p role="alert" className="item-validation-error">{singleItemError}</p>}
             {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
             </div> : null}

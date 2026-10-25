@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { normalizeRoute } from '../src/navigation.ts'
 import { commitComparisonEntry } from '../src/singleInlineEntry.ts'
 import { comparisonSides } from '../src/unifiedComparisonAdapter.ts'
+import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
@@ -58,19 +59,26 @@ test('changing species clears previous species build and unknown assumptions', (
   assert.deepEqual(opp.revealedMoves, [])
 })
 
-test('actual ability sanitizer preserves explicit blank even for a one-ability species', () => {
+test('actual ability sanitizer preserves explicit blank even for a one-ability species', async () => {
+  const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
+  const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+  await server.close()
   const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const start = source.indexOf('function sanitizeAbilityForKey(')
   const end = source.indexOf('function sanitizePartyTuning(', start)
-  const rows = new Map([['one', { abilities: ['trace'] }], ['two', { abilities: ['first', 'second'] }]])
-  const context = vm.createContext({ indexByKey: rows, abilityMatchesKey: (key, value) => rows.get(key)?.abilities.includes(value), defaultAbilityForKey: key => rows.get(key)?.abilities[0] ?? '' })
+  const rows = new Map([['one', { key: 'one', abilities: ['trace'], abilities_ko: ['트레이스'] }], ['two', { key: 'two', abilities: ['first', 'second'], abilities_ko: ['첫째', '둘째'] }]])
+  const context = vm.createContext({})
   const code = ts.transpileModule(source.slice(start, end), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText
   vm.runInContext(`${code}\nthis.sanitize = sanitizeAbilityForKey`, context)
   assert.equal(context.sanitize('one', '', false), '')
   assert.equal(context.sanitize('one', '', true), '')
   assert.equal(context.sanitize('two', '', false), '')
-  assert.equal(context.sanitize('one', undefined, true), 'trace')
+  assert.equal(context.sanitize('one', undefined, true), '')
   assert.equal(context.sanitize('one', 'trace', false), 'trace')
+  assert.equal(context.sanitize('one', 'unrecognized-original', true), 'unrecognized-original')
+  assert.equal(abilityForSpeciesSelection(rows.get('one'), 'one', 'one', ''), '')
+  assert.equal(abilityForSpeciesSelection(rows.get('one'), 'two', 'one', ''), 'trace')
+  assert.equal(abilityForSpeciesSelection(rows.get('two'), 'one', 'two', ''), '')
 })
 
 test('source knownness distinguishes absent offense from explicitly recorded zero and full nature', () => {

@@ -1,7 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { createServer } from 'vite'
 import * as registration from '../src/singleOpponentRegistration.ts'
+
 
 const root = new URL('../', import.meta.url)
 const roster = JSON.parse(readFileSync(new URL('src/pokemon_champions_verified_data.json', root)))
@@ -40,13 +42,27 @@ test('actual Single registration and both Quick search callbacks use the form-sp
   assert.equal(input[0].ability, '')
 })
 
-test('all three verified labels appear in Dex details, form controls and JA saved ability resolution without inventing descriptions', () => {
+test('verified labels resolve in the shared form authority and actual saved-field boundary without inventing descriptions', async () => {
   assert.deepEqual(verified.abilities.eelevate, { ko: '천정부지', en: 'Eelevate', ja: 'うなぎのぼり' })
   assert.deepEqual(verified.abilities['fire-mane'], { ko: '불꽃의갈기', en: 'Fire Mane', ja: 'ほのおのたてがみ' })
-  assert.match(app, /verifiedAbilityLabels\.abilities\[slug as keyof typeof verifiedAbilityLabels\.abilities\]\?\.ja/)
-  assert.match(app, /verifiedAbilityLabels\.abilities\[abilityKey as keyof typeof verifiedAbilityLabels\.abilities\]\?\.ja/)
-  assert.match(app, /KO \{dexSelectedAbilityDescription\?\.nameKo \?\? dexSelectedAbility\.koLabel\}/)
-  assert.match(app, /EN \{dexSelectedAbilityDescription\?\.nameEn \?\? verifiedAbilityLabels\.abilities\[dexSelectedAbility\.key as keyof typeof verifiedAbilityLabels\.abilities\]\?\.en\}/)
-  assert.match(app, /JP \{dexSelectedAbilityDescription\?\.nameJa \?\? verifiedAbilityLabels\.abilities\[dexSelectedAbility\.key as keyof typeof verifiedAbilityLabels\.abilities\]\?\.ja\}/)
+  assert.match(app, /displayAbilities\(dexSelectedRow, siteLanguage\)/)
+  assert.match(app, /ability=\{member\.ability\} abilityLabel=\{selectedAbilityDisplayName\(row, member\.ability, siteLanguage\)\}/)
   assert.match(app, /dexSelectedAbilityText\?\.detail \|\| dexSelectedAbilityText\?\.summary \|\| lt\('설명 데이터 없음'\)/)
+  const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
+  try {
+    const { abilityIndex, localizedAbilityLabel } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+    const { selectedAbilityDisplayName, classifyAbilityForKey } = await server.ssrLoadModule('/src/App.tsx')
+    for (const slug of ['eelevate', 'fire-mane']) {
+      const owner = roster.rows.find(entry => entry.abilities.includes(slug))
+      assert.ok(owner, slug)
+      const indexEntry = abilityIndex(roster.rows).byKey.get(slug)
+      assert.equal(indexEntry.koLabel, verified.abilities[slug].ko)
+      for (const language of ['ko', 'en', 'ja']) {
+        assert.equal(localizedAbilityLabel(owner, slug, language), verified.abilities[slug][language])
+        assert.equal(selectedAbilityDisplayName(owner, slug, language), verified.abilities[slug][language])
+      }
+      assert.equal(selectedAbilityDisplayName(owner, verified.abilities[slug].ko, 'ja'), verified.abilities[slug].ja)
+      assert.equal(classifyAbilityForKey(owner.key, verified.abilities[slug].ja).slug, slug)
+    }
+  } finally { await server.close() }
 })
