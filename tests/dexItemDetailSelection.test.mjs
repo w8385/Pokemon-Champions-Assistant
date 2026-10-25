@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/championsItems.ts'
+import { canonicalHeldItem } from '../src/itemIdentity.ts'
 import { parseDexSelectionId } from '../src/dex/helpers.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
@@ -21,8 +22,7 @@ function declaration(ast, name) {
   return found.getText(ast).replace(/^export /, '')
 }
 const program = ts.transpileModule(`
-  const ${declaration(appAst, 'ITEM_ALIAS_TO_CANONICAL')};
-  ${declaration(appAst, 'canonicalChampionsItemName')}
+  const canonicalChampionsItemName = canonicalHeldItem;
   ${declaration(dataAst, 'normalizeSearchText')}
   let itemIndexCache = null;
   ${declaration(dataAst, 'getItemIndexSync')}
@@ -41,7 +41,7 @@ const program = ts.transpileModule(`
 `, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
 function selected(raw, overrides = {}) {
   const context = vm.createContext({
-    CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel,
+    CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel, canonicalHeldItem,
     getDexDescriptionsSync: () => descriptions,
     dexSelectedValue: `item:${raw}`, dexSearchMode: 'item',
     parseDexSelectionId, dexSelectionId: (kind, key) => `${kind}:${key}`,

@@ -8,11 +8,11 @@ test('restored null, arrays and primitives are empty records', () => {
   assert.deepEqual(readQuickSaved('{"move":"Flamethrower"}'), { move: 'Flamethrower' })
 })
 
-test('restored Mega item is always its required stone, while normal items remain eligible', () => {
-  assert.equal(quickItem('いのちのたま', '한카리아스나이트', CHAMPIONS_ITEM_OPTIONS), '한카리아스나이트')
-  assert.equal(quickItem('', '한카리아스나이트', CHAMPIONS_ITEM_OPTIONS), '한카리아스나이트')
+test('restored Quick items retain incompatible, explicit blank and unknown originals', () => {
+  assert.equal(quickItem('いのちのたま', '한카리아스나이트', CHAMPIONS_ITEM_OPTIONS), 'いのちのたま')
+  assert.equal(quickItem('', '한카리아스나이트', CHAMPIONS_ITEM_OPTIONS), '')
   assert.equal(quickItem('いのちのたま', null, CHAMPIONS_ITEM_OPTIONS), 'いのちのたま')
-  assert.equal(quickItem('unknown', null, CHAMPIONS_ITEM_OPTIONS), '')
+  assert.equal(quickItem('unknown', null, CHAMPIONS_ITEM_OPTIONS), 'unknown')
 })
 
 test('supported variable hit and target-weight moves remain selectable without admitting unknown variable power', () => {

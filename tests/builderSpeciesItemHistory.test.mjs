@@ -4,12 +4,13 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
+import { itemForSpeciesSelection, requiredMegaStone } from '../src/itemIdentity.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const declarations = new Map()
 function visit(node) {
-  if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ['selectSpecies', 'megaStoneForKey', 'canonicalChampionsItemName', 'normalizeItemForKey', 'isAllowedChampionsItem', 'itemForSpeciesSelection', 'saveCurrentSample'].includes(node.name.getText(ast))) declarations.set(node.name.getText(ast), node)
+  if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ['selectSpecies', 'saveCurrentSample'].includes(node.name.getText(ast))) declarations.set(node.name.getText(ast), node)
   ts.forEachChild(node, visit)
 }
 visit(ast)
@@ -22,12 +23,12 @@ function builder(initialKey, initialItem) {
   ])
   const state = { forge: { key: initialKey, item: initialItem, ability: 'prior', evs: {}, config: { nature: 'jolly' }, tuning: {} }, saved: [] }
   const set = field => update => { state[field] = typeof update === 'function' ? update(state[field]) : update }
-  const context = vm.createContext({ indexByKey: rows, CHAMPIONS_ITEM_OPTIONS, ITEM_ALIAS_TO_CANONICAL: new Map(), sampleForge: state.forge, siteLanguage: 'ko', confirmedMovesByKey: {}, Date,
+  const context = vm.createContext({ indexByKey: rows, CHAMPIONS_ITEM_OPTIONS, itemForSpeciesSelection, megaStoneForKey: requiredMegaStone, sampleForge: state.forge, siteLanguage: 'ko', confirmedMovesByKey: {}, Date,
     defaultAbilityForKey: () => 'new', defaultNatureForKey: () => 'jolly', displayItemLabel: value => value, visibleChampionsItem: (_key, value) => value, searchDisplayLabel: key => key,
     setSampleTuningModalOpen(){}, setSampleForge: update => { set('forge')(update); context.sampleForge = state.forge }, setSampleLockedMoves(){}, setSampleItemDraft: value => { state.draft = value }, setSampleSearch(){}, setActiveSearchField(){}, setSavedSamples: set('saved'), setSampleLabelDraft(){},
     sampleLabelDraft: 'sample', sampleLockedMoves: [], sampleRow: {}, displayName: () => 'sample', natureLabel: () => 'jolly',
   })
-  const names = ['megaStoneForKey', 'canonicalChampionsItemName', 'normalizeItemForKey', 'isAllowedChampionsItem', 'itemForSpeciesSelection', 'selectSpecies', 'saveCurrentSample']
+  const names = ['selectSpecies', 'saveCurrentSample']
   vm.runInContext(transpile(names.filter(name => declarations.has(name)).map(name => declarations.get(name).getText(ast)).join('\n') + '\nglobalThis.select = selectSpecies; globalThis.save = saveCurrentSample;'), context)
   return { state, select: key => context.select('sample', 0, key), save: () => context.save() }
 }

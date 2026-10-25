@@ -20,6 +20,8 @@ export type PokemonBuildFieldsProps = {
   itemLabel: (value: string) => string
   itemSprite: (value: string) => string
   fixedItem?: string | null
+  itemError?: string | null
+  repairLabel?: string
   abilityTooltip?: (value: string) => Tooltip
   itemTooltip?: (value: string) => Tooltip
   className?: string
@@ -27,7 +29,7 @@ export type PokemonBuildFieldsProps = {
 
 /** The input and its popup are owned here; callers only adapt values and commits. */
 export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
-  const { identity, ability, abilityLabel, nature, item, abilities, natures, itemOptions, onAbility, onNature, onItem, labels, itemLabel, itemSprite, fixedItem, abilityTooltip, itemTooltip } = props
+  const { identity, ability, abilityLabel, nature, item, abilities, natures, itemOptions, onAbility, onNature, onItem, labels, itemLabel, itemSprite, fixedItem, itemError, abilityTooltip, itemTooltip } = props
   const [open, setOpen] = React.useState<Field | null>(null)
   const [draft, setDraft] = React.useState('')
   const [highlight, setHighlight] = React.useState(-1)
@@ -110,7 +112,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
       }
     }}>
     {field === 'item' ? <>
-      <div className="meta-item-input-row"><input ref={input} autoFocus value={fixedItem ? itemLabel(item || fixedItem) : draft} readOnly={Boolean(fixedItem)} placeholder={fixedItem ? labels.fixed : labels.itemPlaceholder}
+      <div className="meta-item-input-row"><input ref={input} autoFocus value={fixedItem ? itemLabel(item) : draft} readOnly={Boolean(fixedItem)} placeholder={fixedItem ? labels.fixed : labels.itemPlaceholder}
         onFocus={() => setHighlight(-1)} onChange={event => { setDraft(event.target.value); setHighlight(-1) }}
         onKeyDown={event => {
           if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return
@@ -119,13 +121,15 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
         }} />
         {!fixedItem && (draft || item) && <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={event => event.preventDefault()} onClick={() => choose('item', '')}>×</button>}
       </div>
+      {fixedItem && itemError && <button type="button" className="party-meta-option" onClick={() => { onItem(fixedItem); close(true) }}>{props.repairLabel || fixedItem}</button>}
       {!fixedItem && options.length > 0 && <div className="move-autocomplete-menu unified-dropdown-menu">{options.map((option, idx) => optionButton(field, option, idx))}</div>}
     </> : (field === 'ability' ? [{ value: '', label: labels.none }, ...abilities] : natures).map((option, idx) => optionButton(field, option, idx))}
   </div> : null
   return <div className={`party-meta-grid pokemon-build-fields ${props.className || ''}`} onClick={event => event.stopPropagation()}>
     <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
     <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>
-    <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || fixedItem || '')} alt="" className="item-sprite" /><strong>{item || fixedItem ? itemLabel(item || fixedItem || '') : labels.none}</strong></div>, itemTooltip?.(item))}</div>
+    <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || '')} alt="" className="item-sprite" /><strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
+    {itemError && <small role="alert" className="item-validation-error">{itemError}</small>}
     {open && typeof document !== 'undefined' ? createPortal(popup(open), document.body) : null}
   </div>
 }

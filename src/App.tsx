@@ -1,5 +1,6 @@
 import React from 'react'
 import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_SPRITE_MAP, localizedChampionsItemLabel, type ChampionsItem } from './championsItems'
+import { canonicalHeldItem, classifyHeldItem, requiredMegaStone, itemForSpeciesSelection, isCalculableHeldItem } from './itemIdentity'
 import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
@@ -600,60 +601,23 @@ const speciesOptions = rows.map((row) => ({
   label: `${row.name_ko} (${row.name_en})`,
 }))
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
-const ITEM_ALIAS_TO_CANONICAL = new Map(
-  CHAMPIONS_ITEM_OPTIONS.flatMap((item) => {
-    const variants = [
-      item,
-      localizedChampionsItemLabel(item, 'ko'),
-      localizedChampionsItemLabel(item, 'en'),
-      ...(CHAMPIONS_ITEM_ALIASES[item] ?? []),
-    ]
-    return [...new Set(variants.map((variant) => variant.trim()).filter(Boolean))]
-      .map((variant) => [variant.toLowerCase(), item] as const)
-  }),
-)
-
-function canonicalChampionsItemName(item: string) {
-  const normalized = item.trim()
-  if (!normalized) return ''
-  return ITEM_ALIAS_TO_CANONICAL.get(normalized.toLowerCase()) ?? normalized
-}
-
-function megaStoneForKey(key: string) {
-  if (!key.startsWith('mega-')) return null
-  const row = indexByKey.get(key)
-  if (!row) return null
-  const koName = row.name_ko.replace(/^메가/, '').trim()
-  const suffixMatch = koName.match(/\s*([XYZ])$/i)
-  if (suffixMatch) {
-    const suffix = suffixMatch[1].toUpperCase()
-    const baseName = koName.replace(/\s*[XYZ]$/i, '').trim()
-    return `${baseName}나이트${suffix}`
-  }
-  return `${koName}나이트`
-}
-
+// Legacy caller names delegate to the single raw-item authority; only explicit form selection equips a stone.
+const canonicalChampionsItemName = canonicalHeldItem
+const megaStoneForKey = requiredMegaStone
 function normalizeItemForKey(key: string, item: string) {
-  return megaStoneForKey(key) ?? canonicalChampionsItemName(item)
+  return itemForSpeciesSelection(key, item)
 }
-
-// Explicit species changes discard an old species' stone; restored records are untouched.
-function itemForSpeciesSelection(key: string, item: string) {
-  const fixed = megaStoneForKey(key)
-  if (fixed) return fixed
-  const canonical = canonicalChampionsItemName(item)
-  return canonical && CHAMPIONS_ITEM_OPTIONS.includes(canonical as ChampionsItem) ? canonical : ''
-}
-
 function isAllowedChampionsItem(key: string, item: string) {
-  const normalized = normalizeItemForKey(key, item).trim()
-  if (!normalized) return true
-  return normalized === megaStoneForKey(key) || CHAMPIONS_ITEM_OPTIONS.includes(normalized as ChampionsItem)
+  return isCalculableHeldItem(key, item)
 }
-
-function visibleChampionsItem(key: string, item: string) {
-  const normalized = normalizeItemForKey(key, item).trim()
-  return isAllowedChampionsItem(key, normalized) ? normalized : ''
+function visibleChampionsItem(_key: string, item: string) {
+  return item
+}
+function heldItemError(key: string, item: string, language: SiteLanguage): string | null {
+  const { status, requiredStone } = classifyHeldItem(key, item)
+  if (status === 'none' || status === 'allowed' || status === 'required-stone') return null
+  if (requiredStone) return language === 'en' ? `Item mismatch: requires ${requiredStone}. Open Item to repair.` : language === 'ja' ? `道具不一致: ${requiredStone} が必要です。道具から修正してください。` : `도구 불일치: ${requiredStone} 필요 · 도구에서 수정하세요.`
+  return language === 'en' ? 'Unrecognized or incompatible held item. Open Item to repair.' : language === 'ja' ? '未確認または不適合な道具です。道具から修正してください。' : '확인되지 않았거나 부적합한 도구 · 도구에서 수정하세요.'
 }
 
 function isChoiceScarfItem(item: string) {
@@ -666,8 +630,8 @@ function itemSpriteSrc(key: string, item: string) {
     const filename = cleaned.split('/').pop() || cleaned
     return `${import.meta.env.BASE_URL}item-sprites/${filename.endsWith('.png') ? filename : `${filename}.png`}`
   }
-  const normalized = normalizeItemForKey(key, item).trim()
-  const megaSlug = MEGA_STONE_SPRITE_BY_KEY[key]
+  const normalized = canonicalChampionsItemName(item).trim()
+  const megaSlug = classifyHeldItem(key, item).status === 'required-stone' ? MEGA_STONE_SPRITE_BY_KEY[key] : null
   if (megaSlug) return localSpriteSrc(megaSlug)
   const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized as ChampionsItem]
   if (spriteSlug) return localSpriteSrc(spriteSlug)
@@ -1554,7 +1518,7 @@ function sanitizeParty(input: unknown): PartyMember[] {
         picked: typeof raw.picked === 'boolean' ? raw.picked : false,
         evs: sanitizeEvs(raw.evs),
         tuning: sanitizePartyTuning(raw.tuning),
-        item: normalizeItemForKey(raw.key, typeof raw.item === 'string' ? raw.item : ''),
+        item: typeof raw.item === 'string' ? raw.item : '',
         ability: sanitizeAbilityForKey(raw.key, raw.ability, raw.ability === undefined),
       }
     })
@@ -3140,11 +3104,9 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko', options
   return matched.length ? matched : (fallbackToAll ? byDisplayName(CHAMPIONS_ITEM_OPTIONS, item => displayItemLabel(item, language), item => item, language) : [])
 }
 
-function resolveItemInput(key: string, raw: string, language: SiteLanguage = 'ko') {
-  const fixed = megaStoneForKey(key)
-  if (fixed) return fixed
-  const top = filterItemOptions(raw, language)[0]
-  return top && isAllowedChampionsItem(key, top) ? top : ''
+function resolveItemInput(key: string, raw: string, _language: SiteLanguage = 'ko') {
+  const identity = classifyHeldItem(key, raw)
+  return identity.status === 'allowed' || identity.status === 'required-stone' ? identity.canonical! : raw
 }
 
 function filterAbilityOptions(options: string[], query: string) {
@@ -3671,7 +3633,7 @@ function parseOcrImportedMember(lines: string[], speciesOverride?: string | null
     picked: false,
     evs: parsedEvs,
     tuning: defaultPartyTuning(),
-    item: normalizeItemForKey(speciesKey, item),
+    item,
     ability,
   }
   return { member, lockedMoves: lockedMoves.slice(0, 4), rawLines: normalizedLines }
@@ -3864,7 +3826,7 @@ function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defend
   if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
   if (next.key && next.ability && !abilityMatchesKey(next.key, next.ability)) return { side: seed as QuickSide, dirty: new Set<string>() }
   if (!NATURES.some(nature => nature.id === next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
-  if (next.key && quickItem(next.item, megaStoneForKey(next.key), CHAMPIONS_ITEM_OPTIONS) !== next.item) return { side: seed as QuickSide, dirty: new Set<string>() }
+  // A restored item is evidence, not an edit request. Invalid drafts remain repairable.
   const speciesChanged = saved.dirty.has('key') && next.key !== seed.key
   return { dirty: saved.dirty, side: { ...next, actual: {}, battle: quickBlankBattle(), speedStage: speciesChanged ? 0 : seed.speedStage,
     speedNatureKnown: saved.dirty.has('nature') || speciesChanged ? true : seed.speedNatureKnown,
@@ -4006,6 +3968,9 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(entry.ability, { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: entry.battle.burned || entry.battle.poisoned }))
   const speedFor = (entry: QuickSide, row: Row | undefined, scarf: boolean, ability: 1 | 1.5 | 2 = 1) => {
     if (!row) return null
+    const itemStatus = classifyHeldItem(entry.key, entry.item)
+    if (!isCalculableHeldItem(entry.key, entry.item)) return { value: null, reason: heldItemError(entry.key, entry.item, language) }
+    if (scarf && itemStatus.requiredStone) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
     if (entry.speedAbilityActive && entry.ability === 'unburden' && scarf) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
     const actual = entry.actual.speed
     if (actual !== undefined) {
@@ -4029,6 +3994,9 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
     const source = direction === 'attacker' ? attacker : defender
     const target = direction === 'attacker' ? defender : attacker
     const sourceRow = indexByKey.get(source.key), targetRow = indexByKey.get(target.key)
+    if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item)) return null
+    if ((source.speedScarfOverride === true && classifyHeldItem(source.key, source.item).requiredStone) || (target.speedScarfOverride === true && classifyHeldItem(target.key, target.item).requiredStone)) return null
+    if ((source.ability === 'unburden' && source.speedAbilityActive && isChoiceScarfItem(source.item)) || (target.ability === 'unburden' && target.speedAbilityActive && isChoiceScarfItem(target.item))) return null
     const sourceStats = sourceRow ? toStats(source, sourceRow) : null
     const targetStats = targetRow ? toStats(target, targetRow) : null
     const pool = choicesForPool(pools[source.key])
@@ -4054,7 +4022,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
   const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
   const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
   const selectedPool = pools[selectedSide.key]
-  const selectedReason = !selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !MOVE_META_BY_NAME[selectedMove] ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.')
+  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !MOVE_META_BY_NAME[selectedMove] ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
   const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {
@@ -4166,7 +4134,7 @@ function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSl
           onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}
           onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
           labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && sourceStatus('nature') ? sourceStatus('nature') === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${sourceStatus('nature')}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
-          itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={megaStoneForKey(row.key)} />
+          itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />
 <PokemonStatGrid showEffort stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: `${lt(stat.label)}${side === 'defender' && comparisonMode && (stat.key === 'attack' || stat.key === 'spAttack') && sourceStatus(stat.key) ? ` · ${sourceStatus(stat.key)}` : ''}${side === 'defender' && comparisonMode && entry.statNatureMultipliers[stat.key] !== undefined ? ` · ${sourceLabels.modifier} ×${entry.statNatureMultipliers[stat.key]}` : ''}`, theme: statThemeClass(stat.key), value: quickStat(entry, row, stat.key), ev: entry.evs[stat.key] }))} onTune={() => { opener.current = document.activeElement as HTMLElement; setModalKey(entry.key); setModalSide(side) }} /></div> : null
   }
   const toggle = (key: 'critical' | 'typeChangeStab', label: string) => <label className="quick-check"><input type="checkbox" checked={conditions[key]} onChange={event => setConditions(prev => ({ ...prev, [key]: event.target.checked }))} />{lt(label)}</label>
@@ -4916,6 +4884,11 @@ export default function App() {
     if (!attackerMeta.option?.row || !defenderMeta.option?.row || !moveName) return null
     const attackerRow = attackerMeta.option.row
     const defenderRow = defenderMeta.option.row
+    const attackerKey = attackerMeta.side === 'my' ? attackerMeta.option.member.key : attackerMeta.option.entry.key
+    const defenderKey = defenderMeta.side === 'my' ? defenderMeta.option.member.key : defenderMeta.option.entry.key
+    const attackerItem = attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item
+    const defenderItem = defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item
+    if (!isCalculableHeldItem(attackerKey, attackerItem) || !isCalculableHeldItem(defenderKey, defenderItem)) return null
     const attackerAbility = attackerMeta.side === 'my' ? (attackerMeta.option.member.ability || defaultAbilityForKey(attackerMeta.option.member.key)) : attackerMeta.option.entry.ability
     const defenderAbility = defenderMeta.side === 'my' ? (defenderMeta.option.member.ability || defaultAbilityForKey(defenderMeta.option.member.key)) : defenderMeta.option.entry.ability
     const attackerAllySlot: DoubleBoardSlot | null = attackerSlot === 'myLeft' ? 'myRight' : attackerSlot === 'myRight' ? 'myLeft' : attackerSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
@@ -4938,7 +4911,6 @@ export default function App() {
         defenseNature: defenderMeta.option.entry.defenseNature,
         spDefenseNature: defenderMeta.option.entry.spDefenseNature,
       }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
-    const attackerKey = attackerMeta.side === 'my' ? attackerMeta.option.member.key : attackerMeta.option.entry.key
     const moveOptions = choicesForPool(movePoolByKey[attackerKey])
     const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
     const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
@@ -4955,9 +4927,9 @@ export default function App() {
     const modifiers = blockedByProtection ? null : resolveDamageModifiers({
       attackerAbility,
       attackerAllyAbility,
-      attackerItem: attackerMeta.side === 'my' ? attackerMeta.option.member.item : attackerMeta.option.entry.item,
+      attackerItem,
       defenderAbility,
-      defenderItem: defenderMeta.side === 'my' ? defenderMeta.option.member.item : defenderMeta.option.entry.item,
+      defenderItem,
       moveName,
       baseMoveType: moveMeta?.type ?? moveType,
       moveType,
@@ -5003,6 +4975,7 @@ export default function App() {
       { slot: 'oppRight' as const, side: 'opp' as const, label: lt('상대 우측'), option: doubleBoardSlots.oppRight, tailwind: doubleTailwindOpp },
     ]).map((entry, idx) => {
       if (!entry.option?.row) return { ...entry, idx, name: lt('미선택'), speed: null as number | null, effectiveSpeed: null as number | null, sprite: null as string | null }
+      if (!isCalculableHeldItem(entry.option.row.key, entry.side === 'my' ? entry.option.member.item : entry.option.entry.item)) return { ...entry, idx, name: displayName(entry.option.row, siteLanguage), speed: null as number | null, effectiveSpeed: null as number | null, sprite: entry.option.row.sprite ?? null }
       const speed = entry.side === 'my'
         ? partySpeedValue(entry.option.row, entry.option.member)
         : opponentSpeedValue(entry.option.row, entry.option.entry)
@@ -5624,7 +5597,8 @@ export default function App() {
   const singleSpeedItem: SingleSpeedItem = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.item : 'normal'
   const singleSpeedAbilityActive = singleSpeedAssumption?.identity === singleSpeedIdentity ? singleSpeedAssumption.abilityActive : false
   const singleSpeedAbility = oppRow ? speedAbilityCandidate(oppRow, siteLanguage) : null
-  const singleSpeedComparison = oppRow ? compareSingleSpeed(
+  const singleItemError = heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)
+  const singleSpeedComparison = oppRow && !singleItemError ? compareSingleSpeed(
     { row: myRow, effort: myMember.evs.speed, nature: natureMultiplier(myMember.config.nature, 'speed'), stage: myMember.config.speedStage, scarf: singleSpeedOwnScarf },
     oppRow, singleSpeedNature, singleSpeedItem, oppMember.speedStage,
     singleSpeedAbility ? { slug: singleSpeedAbility.slug, active: singleSpeedAbilityActive } : undefined,
@@ -6038,6 +6012,10 @@ export default function App() {
     } else if (side === 'opponent') {
       const member = opponents[idx]
       if (!member) return
+      if (key === member.key) {
+        setOpponentSearch(prev => prev.map((value, slot) => slot === idx ? searchDisplayLabel(key, siteLanguage) : value))
+        return
+      }
       const allowedAbilities = abilitiesForKey(key, siteLanguage)
       const nextAbility = allowedAbilities.includes(member.ability) ? member.ability : ''
       const next = [...opponents]
@@ -6085,7 +6063,7 @@ export default function App() {
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
   const effectiveCalcMode = activeDamageMoveCategory ?? 'special'
   const effectiveMovePower = activeDamageMovePower ?? 0
-  const damageModifiers = resolveDamageModifiers({
+  const damageModifiers = singleItemError ? null : resolveDamageModifiers({
     attackerAbility: attackerAbilitySlug,
     attackerItem: attackFromOpponent ? oppMember.item : myMember.item,
     defenderAbility: defenderAbilitySlug,
@@ -6119,6 +6097,7 @@ export default function App() {
     friendGuard: false,
   })
   const damageMovePreviews = registeredDamageMoves.map((moveName) => {
+    if (!isCalculableHeldItem(myMember.key, myMember.item) || !isCalculableHeldItem(oppMember.key, oppMember.item)) return { moveName, moveType: null, damage: null, verdict: null }
     const baseMeta = resolveMoveMeta(moveName, attackerMoveOptions, movePoolByKey)
     const hitOptions = multiHitOptions(moveName)
     const hitCount = moveName === activeDamageMove && hitOptions?.includes(calcHitCount)
@@ -6349,7 +6328,7 @@ export default function App() {
     .slice(0, 8)
   const sampleSpeedCalcs = sampleSpeedTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
-    if (!row) return null
+    if (!row || !isCalculableHeldItem(sampleForge.key, sampleForge.item)) return null
     const scenarios = [
       { id: 'base', label: lt('준속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, false, false, member.speedStage) },
       { id: 'fast', label: lt('최속'), speed: opponentScenarioSpeed(row, CHAMPIONS_EFFORT_PER_STAT_CAP, true, false, member.speedStage) },
@@ -6411,6 +6390,7 @@ export default function App() {
   const sampleBaselineWeather = deriveAutoWeatherFromAbilities(sampleAttackerAbilityValue)
   const sampleBaselineTerrain = deriveAutoTerrainFromAbilities(sampleAttackerAbilityValue)
   const sampleDecisionPowerIndices = sampleDamageMoveChoices.map((moveName) => {
+    if (!isCalculableHeldItem(sampleForge.key, sampleForge.item)) return { moveName, moveMeta: null, value: null, attackStat: null, stab: 1, notes: [] as string[] }
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
     const defaultHitCount = multiHitOptions(moveName)?.[0] ?? null
     const moveRule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
@@ -6522,6 +6502,7 @@ export default function App() {
   }, [sampleShowDefenderDisguiseToggle])
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    const itemMismatch = !isCalculableHeldItem(sampleForge.key, sampleForge.item) || !isCalculableHeldItem(member.key, member.item)
     const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? sanitizeAbilityForKey(member.key, member.ability, false)) : member.ability
     const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
     const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
@@ -6549,6 +6530,8 @@ export default function App() {
     const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
     const unavailableReason = !row
       ? lt('비교 대상 없음')
+      : itemMismatch
+        ? heldItemError(sampleForge.key, sampleForge.item, siteLanguage) || heldItemError(member.key, member.item, siteLanguage)
       : !moveName
         ? lt('등록 기술 없음')
         : moveMeta?.category === 'status'
@@ -6623,7 +6606,7 @@ export default function App() {
   }
 
   const addSampleDamageTarget = (key: string) => {
-    setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, moveName: sampleDamageMoveChoices[0] ?? '' }])
+    setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, item: itemForSpeciesSelection(key, ''), moveName: sampleDamageMoveChoices[0] ?? '' }])
     setSampleDamageSearch('')
   }
 
@@ -6839,21 +6822,23 @@ export default function App() {
     const resolvedKey = forcedKey ?? resolveSpeciesKey(opponentQuickSearch, { includeMega: false }) ?? filterSpeciesOptions(opponentQuickSearch, { includeMega: false })[0]?.key
     if (!resolvedKey) return
     const slotIdx = selectedOpp
-    const allowedAbilities = abilitiesForKey(resolvedKey, siteLanguage)
-    const nextAbility = allowedAbilities.includes(opponents[slotIdx]?.ability) ? opponents[slotIdx]?.ability ?? '' : ''
-    const next = [...opponents]
-    next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item), ability: nextAbility }
-    setOpponents(next)
-    setOpponentItemDrafts((prev) => {
-      const nextDrafts = [...prev]
-      nextDrafts[slotIdx] = displayItemLabel(visibleChampionsItem(resolvedKey, next[slotIdx].item), siteLanguage)
-      return nextDrafts
-    })
-    setOpponentAbilityDrafts((prev) => {
-      const nextDrafts = [...prev]
-      nextDrafts[slotIdx] = nextAbility
-      return nextDrafts
-    })
+    if (opponents[slotIdx]?.key !== resolvedKey) {
+      const allowedAbilities = abilitiesForKey(resolvedKey, siteLanguage)
+      const nextAbility = allowedAbilities.includes(opponents[slotIdx]?.ability) ? opponents[slotIdx]?.ability ?? '' : ''
+      const next = [...opponents]
+      next[slotIdx] = { ...next[slotIdx], key: resolvedKey, item: normalizeItemForKey(resolvedKey, next[slotIdx].item), ability: nextAbility }
+      setOpponents(next)
+      setOpponentItemDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[slotIdx] = displayItemLabel(visibleChampionsItem(resolvedKey, next[slotIdx].item), siteLanguage)
+        return nextDrafts
+      })
+      setOpponentAbilityDrafts((prev) => {
+        const nextDrafts = [...prev]
+        nextDrafts[slotIdx] = nextAbility
+        return nextDrafts
+      })
+    }
     const nextSearch = [...opponentSearch]
     nextSearch[slotIdx] = searchDisplayLabel(resolvedKey, siteLanguage)
     setOpponentSearch(nextSearch)
@@ -8186,12 +8171,13 @@ export default function App() {
                       ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
                       abilities={abilityOptions.map(value => ({ value, label: value }))}
                       natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
-                      itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
+                      itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(member.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
                       onAbility={ability => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, ability } : entry))}
                       onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature: nature as NatureId } } : entry))}
                       onItem={item => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, item: item ? resolveItemInput(entry.key, item, siteLanguage) : '' } : entry))}
                       labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
                       itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(member.key, value)} fixedItem={fixedMegaStone}
+                      itemError={heldItemError(member.key, member.item, siteLanguage)} repairLabel={siteLanguage === 'ko' ? `${fixedMegaStone} 장착` : siteLanguage === 'ja' ? `${fixedMegaStone} を装備` : `Equip ${fixedMegaStone}`}
                       abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, row) : null)}
                       itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
                     />{memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}</> : null}
@@ -8634,7 +8620,7 @@ export default function App() {
                     const resolvedAbility = formAbilities.includes(sourceAbility) ? sourceAbility :
                       entry.pokemonKey.startsWith('mega-') && entry.partialBuild?.preMegaAbilities?.includes(sourceAbility) && formAbilities.length === 1 ? formAbilities[0] : null
                     if (!resolvedAbility) return
-                    setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: normalizeItemForKey(entry.pokemonKey, entry.build.item), ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
+                    setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: entry.build.item, ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
                     setSampleLockedMoves([...entry.build.moves])
                     setSampleSearch(searchDisplayLabel(entry.pokemonKey, siteLanguage))
                     setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
@@ -8705,12 +8691,13 @@ export default function App() {
                 ability={sampleForge.ability} abilityLabel={selectedAbilityDisplayName(sampleRow, sampleForge.ability, siteLanguage)} nature={sampleForge.config.nature} item={sampleForge.item}
                 abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
                 natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
-                itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
+                itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(sampleForge.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
                 onAbility={ability => setSampleForge(prev => ({ ...prev, ability }))}
                 onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature: nature as NatureId } }))}
                 onItem={item => setSampleForge(prev => ({ ...prev, item: item ? resolveItemInput(prev.key, item, siteLanguage) : '' }))}
                 labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
                 itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(sampleForge.key, value)} fixedItem={sampleFixedMegaStone}
+                itemError={heldItemError(sampleForge.key, sampleForge.item, siteLanguage)} repairLabel={siteLanguage === 'ko' ? `${sampleFixedMegaStone} 장착` : siteLanguage === 'ja' ? `${sampleFixedMegaStone} を装備` : `Equip ${sampleFixedMegaStone}`}
                 abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, sampleRow) : null)}
                 itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
               />
@@ -8938,6 +8925,7 @@ export default function App() {
                 <div className="row-between sample-workbench-section-head">
                   <span className="sample-workbench-section-label">{lt('비교 상대')}</span>
                 </div>
+                {heldItemError(sampleForge.key, sampleForge.item, siteLanguage) && <p role="status">{heldItemError(sampleForge.key, sampleForge.item, siteLanguage)}</p>}
                 {sampleSpeedCalcs.length ? sampleSpeedCalcs.map((entry) => (
                   <div key={`sample-speed-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     <div className="row-between sample-compare-card-head">
@@ -9176,6 +9164,7 @@ export default function App() {
                       : '\u00A0'
                   return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
+                    {heldItemError(entry.member.key, entry.member.item, siteLanguage) && <div role="alert" className="item-validation-error">{heldItemError(entry.member.key, entry.member.item, siteLanguage)} <button type="button" className="pick-chip" onClick={() => updateSampleDamageTarget(entry.idx, { item: itemForSpeciesSelection(entry.member.key, '') })}>{requiredMegaStone(entry.member.key) ? (siteLanguage === 'ko' ? `${requiredMegaStone(entry.member.key)} 장착` : siteLanguage === 'ja' ? `${requiredMegaStone(entry.member.key)} を装備` : `Equip ${requiredMegaStone(entry.member.key)}`) : lt('도구 없음')}</button></div>}
                     <div className="row-between sample-compare-card-head">
                       <div className="sample-compare-hero sample-compare-hero-compact">
                         {entry.row?.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
@@ -9469,7 +9458,7 @@ export default function App() {
                 </div>
               </div>
                 <div className="speed-context-card single-speed-result">
-                {singleSpeedComparison?.unavailableReason ? <p role="status">{lt(singleSpeedComparison.unavailableReason === 'own-mega-scarf' ? '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'unburden-scarf' ? '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'ability-unavailable' ? '이 폼에 없는 특성은 발동할 수 없습니다.' : '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.')}</p> : singleSpeedComparison ? <div className="single-speed-verdict" role="status">
+                {singleItemError ? <p role="status">{singleItemError}</p> : singleSpeedComparison?.unavailableReason ? <p role="status">{lt(singleSpeedComparison.unavailableReason === 'own-mega-scarf' ? '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'unburden-scarf' ? '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.' : singleSpeedComparison.unavailableReason === 'ability-unavailable' ? '이 폼에 없는 특성은 발동할 수 없습니다.' : '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.')}</p> : singleSpeedComparison ? <div className="single-speed-verdict" role="status">
                  <strong>{singleSpeedComparison.verdict === 'faster' ? lt('내가 빠름') : singleSpeedComparison.verdict === 'equal' ? lt('동속') : lt('내가 느림')}</strong>
                  <span>{lt('내 스피드')} {singleSpeedComparison.currentSpeed} · {lt('상대 가정 스피드')} {singleSpeedComparison.targetSpeed}</span>
                  <span>{singleSpeedComparison.verdict === 'faster' ? `${lt('현재 투자로 이미 추월')} · ${lt('엄격히 추월할 최소 스피드 노력')} ${singleSpeedComparison.passEffort}/32 · ${lt('추가')} 0pt` : singleSpeedComparison.passEffort === null ? `${lt('현재 성격·도구로 추월 불가')} · ${lt('최대')} ${singleSpeedComparison.maxSpeed} (${lt('스피드 노력')} 32/32)` : `${lt('엄격히 추월할 최소 스피드 노력')} ${singleSpeedComparison.passEffort}/32 · ${lt('현재보다 추가')} ${singleSpeedComparison.additionalEffort}pt`}</span>
@@ -9767,6 +9756,7 @@ export default function App() {
             </div>
           </div>
           <div className="damage-surface-card damage-control-surface separated">
+            {(heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)) && <p role="alert" className="item-validation-error">{heldItemError(myMember.key, myMember.item, siteLanguage) || heldItemError(oppMember.key, oppMember.item, siteLanguage)}</p>}
             {activeDamageMoveMeta?.variablePower && !activeDamageMoveHitOptions?.length ? <div className="pick-summary-badges damage-auto-badges">
               <span className="pick-badge warn">{variablePowerHint(activeDamageMove, lt, { targetWeightKnown: typeof calcTargetWeightKg === 'number', resolvedPower: activeDamageMovePower, totalPower: activeDamageMoveHitSummary?.totalPower ?? null })}</span>
             </div> : null}
@@ -9789,9 +9779,9 @@ export default function App() {
                   <div><dt>{lt('위력')}</dt><dd>{activeDamageMovePower ?? '—'}</dd></div>
                   <div><dt>{lt('특성')}</dt><dd>{selectedAttackAbility?.label ?? abilityNoteLabel(attackerAbilitySlug) ?? '—'}</dd></div>
                   <div><dt>{lt('자속')}</dt><dd>{activeDamageMoveType ? autoStab : '—'}</dd></div>
-                  <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
+                  <div><dt>{lt('상성')}</dt><dd>{activeDamageMoveType && damageModifiers ? `${damageModifiers.effectiveness}x` : '—'}</dd></div>
                 </dl>
-                {damageModifiers.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
+                {damageModifiers?.notes.length ? <div className="damage-applied-modifiers" aria-label={lt('적용 조건')}>
                   {damageModifiers.notes.map((note) => <span key={`damage-modifier-${note}`}>{note}</span>)}
                 </div> : null}
               </div>

@@ -47,8 +47,10 @@ export function quickMoveSupported(name: string, meta: { category?: string | nul
 }
 
 export function quickItem(item: unknown, requiredStone: string | null, options: readonly string[]): string {
-  if (requiredStone) return requiredStone
-  return typeof item === 'string' && (item === '' || options.includes(item)) ? item : ''
+  // A read boundary preserves the original spelling and even an invalid pairing.
+  // Classification happens against the form before any battle calculation.
+  void requiredStone; void options
+  return typeof item === 'string' ? item : ''
 }
 
 export function restoreQuickMoves<T extends { name: string }>(saved: unknown, legacy: unknown, pool: readonly T[]): string[] {
