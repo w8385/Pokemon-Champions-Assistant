@@ -1,19 +1,22 @@
 {
-  "generatedAt": "2026-09-10T14:06:45.373Z",
   "source": {
-    "movePools": "src/championsMovePools.json",
-    "moveNameOverrides": "src/championsMoveNameOverrides.json",
-    "moveMetaOverrides": "src/championsMoveMetaOverrides.json",
-    "pokeApi": "https://pokeapi.co/api/v2/move?limit=2000",
-    "cache": "reports/pokeapiMoveDetailsCache.json"
+    "identityAndType": "src/dexGameMoveIndex.json",
+    "historicalFieldEvidence": "src/championsMoveMetaLegacyEvidence.json",
+    "historicalMatchProvenance": "reports/championsMoveMetaLegacyReport.json",
+    "manualOverrides": "src/championsMoveMetaOverrides.json",
+    "aliases": "src/championsMoveMetaNameAliases.json",
+    "offline": true,
+    "sourceSnapshot": "projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)"
   },
   "totals": {
-    "championsPoolMoves": 731,
-    "generatedMetaMoves": 731,
-    "unmatchedMoves": 0,
-    "cachedMoveDetails": 937
+    "pinnedIds": 510,
+    "sharedLegacyRows": 509,
+    "legacyOnlyRows": 222,
+    "sourceOnlyRows": 1,
+    "generatedMetaMoves": 732,
+    "aliasAnchoredComponents": 39,
+    "aliasSourceLessComponents": 10
   },
-  "unmatchedMoves": [],
   "generatedMoves": [
     {
       "moveName": "10만마력",
@@ -4400,6 +4403,12 @@
       "apiName": "recover",
       "ko": "HP회복",
       "en": "Recover"
+    },
+    {
+      "moveName": "볼가득넣기",
+      "apiName": null,
+      "ko": null,
+      "en": null
     }
   ]
 }

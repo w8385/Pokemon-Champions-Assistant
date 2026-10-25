@@ -34,12 +34,14 @@ export const dataSourcePolicy = {
   },
   moveMeta: {
     identityAndBasicType: 'src/dexGameMoveIndex.json (510 pinned IDs)',
-    legacyOtherFields: 'src/championsLearnedMoveMeta.json (731 historical rows)',
+    legacyOtherFields: 'src/championsMoveMetaLegacyEvidence.json (731 immutable historical rows)',
     provider: 'src/moveMetadata.ts',
+    generatedCatalog: 'src/championsLearnedMoveMeta.json (732 rows: 510 source names + 222 preserved historical names)',
+    offlineProducer: 'scripts/build-champions-move-meta.mjs --offline',
     report: 'reports/championsMoveMetaReport.json',
     primary: '고정 스냅샷의 ID·한국어 이름·기본 타입; 분류/위력/명중/PP/우선도와 효과 플래그는 기존 생성 메타 중 확인 가능한 필드만 사용',
-    supplements: ['src/championsMoveMetaNameAliases.json (양방향 ID 별칭)', 'src/championsMoveMetaOverrides.json', 'reports/pokeapiMoveDetailsCache.json'],
-    caveat: '생성기 입력은 아직 과거 기술 풀 기준이며 다음 절편에서 이전합니다. 옛 메타 222개 중 source에 없는 행은 역사적 자료로 보존하되 스냅샷 내 습득 여부를 뜻하지 않습니다. 없는 필드와 우선도는 미확인; PokeAPI 유래 나머지 필드와 현행 게임 버전 동등성은 별도 검증이 필요합니다.',
+    supplements: ['src/championsMoveMetaNameAliases.json (양방향 ID 별칭)', 'src/championsMoveMetaOverrides.json (보존 값 검증)', 'reports/championsMoveMetaLegacyReport.json (과거 매칭 출처)', 'reports/pokeapiMoveDetailsCache.json (과거 생성 기록, 오프라인 생성 입력 아님)'],
+    caveat: '기본 ID·타입만 2026-09-09 고정 source 기준입니다. 다른 필드는 731행 역사적 증거에서 복원하며 없는 필드·우선도는 null/미확인입니다. 별칭의 원문 행을 보존하고 source 없는 222행은 역사적 검색·저장 호환성이지 습득 자격이 아닙니다. PokeAPI 유래 비타입 필드 및 현행 게임·규정 일치는 별도 검증이 필요합니다.',
   },
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',

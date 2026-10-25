@@ -1,212 +1,150 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const root = path.resolve(__dirname, '..')
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const input = relative => path.join(root, relative)
+const SOURCE = 'src/dexGameMoveIndex.json'
+const EVIDENCE = 'src/championsMoveMetaLegacyEvidence.json'
+const LEGACY_REPORT = 'reports/championsMoveMetaLegacyReport.json'
+const OVERRIDES = 'src/championsMoveMetaOverrides.json'
+const ALIASES = 'src/championsMoveMetaNameAliases.json'
+const EVIDENCE_SHA256 = '183edc049bfaf73369301985b4e03b0b0da188e47e19f87acedb9727cc05ec35'
+const SOURCE_SHA256 = '821c977af77863f53abffd95668e4173d67b42de76d8e1c79c89903d54ec9c3c'
+const LEGACY_REPORT_SHA256 = '406acf626f4184056faa9e3e33ac4c5a2152188ca0fbbc20bad2bbd8dbf5a2b4'
 
-const championsMovePoolsPath = path.join(root, 'src', 'championsMovePools.json')
-const moveNameOverridesPath = path.join(root, 'src', 'championsMoveNameOverrides.json')
-const moveMetaNameAliasesPath = path.join(root, 'src', 'championsMoveMetaNameAliases.json')
-const moveMetaOverridesPath = path.join(root, 'src', 'championsMoveMetaOverrides.json')
-const outputMetaPath = path.join(root, 'src', 'championsLearnedMoveMeta.json')
-const outputReportPath = path.join(root, 'reports', 'championsMoveMetaReport.json')
-const cachePath = path.join(root, 'reports', 'pokeapiMoveDetailsCache.json')
-
-const POKEAPI_MOVE_LIST_URL = 'https://pokeapi.co/api/v2/move?limit=2000'
-const CONCURRENCY = 12
-
-function normalizeText(value) {
-  return String(value ?? '').toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
-}
-
-function chunk(items, size) {
-  const result = []
-  for (let idx = 0; idx < items.length; idx += size) result.push(items.slice(idx, idx + size))
+function options(args) {
+  const result = { check: false, output: input('src/championsLearnedMoveMeta.json'), report: input('reports/championsMoveMetaReport.json') }
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index]
+    if (arg === '--offline') continue // Offline is always the only supported mode.
+    if (arg === '--check') { result.check = true; continue }
+    if (arg === '--output' || arg === '--report') {
+      if (!args[index + 1]) throw Error(`missing value for ${arg}`)
+      result[arg.slice(2)] = path.resolve(args[++index])
+      continue
+    }
+    throw Error(`unknown argument ${arg}`)
+  }
+  if (result.output === result.report) throw Error('output and report must be different files')
   return result
 }
 
-async function readJson(filePath, fallback = null) {
-  try {
-    return JSON.parse(await fs.readFile(filePath, 'utf8'))
-  } catch {
-    return fallback
-  }
+async function readPinned(relative, expectedSha) {
+  const bytes = await fs.readFile(input(relative))
+  const actual = createHash('sha256').update(bytes).digest('hex')
+  if (actual !== expectedSha) throw Error(`${relative} hash mismatch: ${actual}; review pinned input before rebuilding`)
+  return JSON.parse(bytes)
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url, {
-    headers: {
-      'user-agent': 'pokemon-champions-assistant/0.1 (+https://github.com/w8385/Pokemon-Champions-Assistant)',
-      'accept': 'application/json',
-    },
-  })
-  if (!response.ok) throw new Error(`fetch failed ${response.status} ${url}`)
-  return response.json()
+async function readJson(relative) {
+  return JSON.parse(await fs.readFile(input(relative),'utf8'))
 }
 
-function collectMoveNames(movePools) {
-  const names = new Set()
-  for (const value of Object.values(movePools)) {
-    const moves = Array.isArray(value) ? value : (value?.moves ?? [])
-    for (const move of moves) {
-      if (move?.name) names.add(move.name)
+function assert(condition, message) {
+  if (!condition) throw Error(message)
+}
+
+function validateAliases(source, aliases) {
+  const neighbors = new Map()
+  for (const [left,right] of Object.entries(aliases)) {
+    for (const [name,other] of [[left,right],[right,left]]) {
+      if (!neighbors.has(name)) neighbors.set(name,new Set())
+      neighbors.get(name).add(other)
     }
   }
-  return Array.from(names).sort((a, b) => a.localeCompare(b, 'ko'))
+  const visited = new Set()
+  let anchored = 0, sourceLess = 0
+  for (const name of neighbors.keys()) {
+    if (visited.has(name)) continue
+    const queue = [name], ids = new Set([source[name]?.id].filter(id=>id != null))
+    visited.add(name)
+    for (const current of queue) for (const next of neighbors.get(current) ?? []) {
+      if (visited.has(next)) continue
+      visited.add(next); queue.push(next)
+      if (source[next]) ids.add(source[next].id)
+    }
+    assert(ids.size <= 1,`alias component has conflicting source IDs: ${queue.join(', ')}`)
+    if (ids.size) anchored++; else sourceLess++
+  }
+  return { anchored, sourceLess }
 }
 
-function buildLookupKeys(detail, englishToKoMap) {
-  const keys = new Set()
-  const add = (value) => {
-    if (!value) return
-    keys.add(value)
-    keys.add(normalizeText(value))
+async function build() {
+  const [source, legacy, previousReport, overrides, aliases] = await Promise.all([
+    readPinned(SOURCE,SOURCE_SHA256),readPinned(EVIDENCE,EVIDENCE_SHA256),
+    readPinned(LEGACY_REPORT,LEGACY_REPORT_SHA256),readJson(OVERRIDES),readJson(ALIASES),
+  ])
+  const sourceNames = Object.keys(source), legacyNames = Object.keys(legacy)
+  const historical = legacyNames.filter(name=>!Object.hasOwn(source,name))
+  const intersection = sourceNames.filter(name=>Object.hasOwn(legacy,name))
+  assert(sourceNames.length === 510 && new Set(sourceNames.map(name=>source[name].id)).size === 510,'pinned source IDs must be unique and complete')
+  assert(legacyNames.length === 731 && intersection.length === 509 && historical.length === 222,'legacy evidence coverage changed')
+  for (const [name,row] of Object.entries(source)) assert(Number.isInteger(row.id) && row.sourceKo && typeof row.type === 'string' && row.type,`invalid source row ${name}`)
+  for (const [name,fields] of Object.entries(overrides)) {
+    assert(Object.hasOwn(legacy,name),`override without evidence: ${name}`)
+    assert(!Object.hasOwn(fields,'id') && !Object.hasOwn(fields,'type'),`override must not own ID/type: ${name}`)
+    for (const [field,value] of Object.entries(fields)) assert(JSON.stringify(legacy[name][field]) === JSON.stringify(value),`override differs from frozen evidence: ${name}.${field}`)
   }
-
-  add(detail.name)
-  add(detail.apiName)
-
-  for (const [lang, value] of Object.entries(detail.names ?? {})) {
-    if (lang === 'ko' || lang === 'ja' || lang === 'ja-Hrkt' || lang === 'en') add(value)
+  const aliasComponents = validateAliases(source,aliases)
+  const generated = {}
+  // Source controls eligibility and basic type; the frozen archive supplies other legacy fields.
+  for (const name of sourceNames) {
+    const evidence = legacy[name]
+    const { type: _historicalType, ...nonType } = evidence ?? {}
+    generated[name] = evidence
+      ? { type: source[name].type, ...nonType }
+      : { type: source[name].type, category: null, power: null, accuracy: null, pp: null, priority: null }
   }
+  // Historical raw names, including source-anchored aliases, retain their own exact rows.
+  for (const name of historical) generated[name] = legacy[name]
 
-  const overrideKo = englishToKoMap.get(detail.names?.en ?? '')
-  if (overrideKo) add(overrideKo)
-
-  return keys
-}
-
-function toMoveMeta(detail, overrides = {}) {
-  return {
-    type: detail.type,
-    category: detail.category,
-    power: detail.power,
-    accuracy: detail.accuracy,
-    pp: detail.pp,
-    ...(typeof detail.priority === 'number' && detail.priority !== 0 ? { priority: detail.priority } : {}),
-    ...overrides,
+  const oldMatches = previousReport.generatedMoves
+  assert(Array.isArray(oldMatches) && oldMatches.length === legacyNames.length,'historical match provenance missing')
+  assert(new Set(oldMatches.map(row=>row.moveName)).size === legacyNames.length && oldMatches.every(row=>Object.hasOwn(legacy,row.moveName)), 'historical match names differ from frozen evidence')
+  const report = {
+    source: {
+      identityAndType: SOURCE,
+      historicalFieldEvidence: EVIDENCE,
+      historicalMatchProvenance: LEGACY_REPORT,
+      manualOverrides: OVERRIDES,
+      aliases: ALIASES,
+      offline: true,
+      sourceSnapshot: 'projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)',
+    },
+    totals: {
+      pinnedIds: sourceNames.length,
+      sharedLegacyRows: intersection.length,
+      legacyOnlyRows: historical.length,
+      sourceOnlyRows: sourceNames.length - intersection.length,
+      generatedMetaMoves: Object.keys(generated).length,
+      aliasAnchoredComponents: aliasComponents.anchored,
+      aliasSourceLessComponents: aliasComponents.sourceLess,
+    },
+    // Historical API-name mapping is provenance, not authority for new metadata.
+    generatedMoves: [...oldMatches, ...sourceNames.filter(name=>!legacy[name]).map(name=>({moveName:name,apiName:null,ko:null,en:null}))],
   }
+  return { generated, report }
 }
 
 async function main() {
-  const [movePools, moveNameOverrides, moveMetaNameAliases, moveMetaOverrides, cache] = await Promise.all([
-    readJson(championsMovePoolsPath, {}),
-    readJson(moveNameOverridesPath, {}),
-    readJson(moveMetaNameAliasesPath, {}),
-    readJson(moveMetaOverridesPath, {}),
-    readJson(cachePath, {}),
-  ])
-
-  const englishToKoMap = new Map(
-    Object.entries(moveNameOverrides ?? {})
-      .filter(([, value]) => value?.ko)
-      .map(([english, value]) => [english, value.ko]),
-  )
-  const normalizedNameAliases = new Map(
-    Object.entries(moveMetaNameAliases ?? {}).flatMap(([from, to]) => {
-      const entries = [[from, to], [normalizeText(from), to]]
-      return entries
-    }),
-  )
-
-  const moveNames = collectMoveNames(movePools)
-  const moveIndex = await fetchJson(POKEAPI_MOVE_LIST_URL)
-  const indexEntries = moveIndex.results ?? []
-
-  const detailCache = { ...(cache ?? {}) }
-  const missingDetailEntries = indexEntries.filter((entry) => !detailCache[entry.name] || !Object.prototype.hasOwnProperty.call(detailCache[entry.name], 'pp'))
-
-  for (const batch of chunk(missingDetailEntries, CONCURRENCY)) {
-    const resolved = await Promise.all(batch.map(async (entry) => {
-      const detail = await fetchJson(entry.url)
-      return [entry.name, {
-        apiName: detail.name,
-        type: detail.type?.name ?? null,
-        category: detail.damage_class?.name ?? null,
-        power: detail.power ?? null,
-        accuracy: detail.accuracy ?? null,
-        pp: detail.pp ?? null,
-        priority: detail.priority ?? 0,
-        names: Object.fromEntries(
-          (detail.names ?? [])
-            .filter((item) => ['ko', 'ja', 'ja-Hrkt', 'en'].includes(item.language?.name))
-            .map((item) => [item.language.name, item.name]),
-        ),
-      }]
-    }))
-    for (const [apiName, detail] of resolved) detailCache[apiName] = detail
-  }
-
-  const detailList = Object.values(detailCache)
-  const detailByLookupKey = new Map()
-  for (const detail of detailList) {
-    for (const key of buildLookupKeys(detail, englishToKoMap)) {
-      if (!detailByLookupKey.has(key)) detailByLookupKey.set(key, detail)
+  const targets = options(process.argv.slice(2))
+  const {generated,report} = await build()
+  const outputs = [[targets.output,`${JSON.stringify(generated,null,2)}\n`],[targets.report,`${JSON.stringify(report,null,2)}\n`]]
+  if (targets.check) {
+    for (const [target,expected] of outputs) {
+      const actual = await fs.readFile(target,'utf8').catch(()=>null)
+      assert(actual === expected,`stale or missing generated output: ${target}`)
     }
+    console.log('offline move metadata and report are byte-identical; no files written')
+    return
   }
-
-  const generatedMeta = {}
-  const unmatched = []
-  const matchedFrom = []
-
-  for (const moveName of moveNames) {
-    const alias = normalizedNameAliases.get(moveName) ?? normalizedNameAliases.get(normalizeText(moveName))
-    const lookupKeys = [moveName, alias, normalizeText(moveName), alias ? normalizeText(alias) : null].filter(Boolean)
-    const match = lookupKeys.map((key) => detailByLookupKey.get(key)).find(Boolean)
-    if (!match) {
-      unmatched.push(moveName)
-      continue
-    }
-
-    generatedMeta[moveName] = toMoveMeta(match, moveMetaOverrides?.[moveName])
-    matchedFrom.push({
-      moveName,
-      apiName: match.apiName,
-      ko: match.names?.ko ?? null,
-      en: match.names?.en ?? null,
-    })
+  for (const [target,content] of outputs) {
+    await fs.mkdir(path.dirname(target),{recursive:true})
+    await fs.writeFile(target,content)
   }
-
-  const report = {
-    generatedAt: new Date().toISOString(),
-    source: {
-      movePools: path.relative(root, championsMovePoolsPath),
-      moveNameOverrides: path.relative(root, moveNameOverridesPath),
-      moveMetaOverrides: path.relative(root, moveMetaOverridesPath),
-      pokeApi: POKEAPI_MOVE_LIST_URL,
-      cache: path.relative(root, cachePath),
-    },
-    totals: {
-      championsPoolMoves: moveNames.length,
-      generatedMetaMoves: Object.keys(generatedMeta).length,
-      unmatchedMoves: unmatched.length,
-      cachedMoveDetails: Object.keys(detailCache).length,
-    },
-    unmatchedMoves: unmatched,
-    generatedMoves: matchedFrom,
-  }
-
-  await Promise.all([
-    fs.mkdir(path.dirname(outputMetaPath), { recursive: true }),
-    fs.mkdir(path.dirname(outputReportPath), { recursive: true }),
-    fs.mkdir(path.dirname(cachePath), { recursive: true }),
-  ])
-
-  await Promise.all([
-    fs.writeFile(outputMetaPath, `${JSON.stringify(generatedMeta, null, 2)}\n`),
-    fs.writeFile(outputReportPath, `${JSON.stringify(report, null, 2)}\n`),
-    fs.writeFile(cachePath, `${JSON.stringify(detailCache, null, 2)}\n`),
-  ])
-
-  console.log(`wrote ${path.relative(root, outputMetaPath)} (${Object.keys(generatedMeta).length} moves)`)
-  console.log(`wrote ${path.relative(root, outputReportPath)}`)
-  console.log(`cached ${Object.keys(detailCache).length} pokeapi move details`)
-  if (unmatched.length) console.log(`unmatched moves: ${unmatched.length}`)
+  console.log(`offline metadata ${Object.keys(generated).length} rows; historical evidence 731 rows; HTTP 0`)
 }
 
-main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})
+main().catch(error=>{console.error(error);process.exitCode=1})

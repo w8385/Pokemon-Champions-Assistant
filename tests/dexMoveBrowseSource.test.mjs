@@ -14,6 +14,7 @@ function actualFunction(name) {
   return node.getText(source)
 }
 const legacy = JSON.parse(readFileSync(new URL('../src/championsLearnedMoveMeta.json', import.meta.url), 'utf8'))
+const historicalEvidence = JSON.parse(readFileSync(new URL('../src/championsMoveMetaLegacyEvidence.json', import.meta.url), 'utf8'))
 
 // Execute App's actual shared filter against its real source index, metadata and matcher.
 async function browse() {
@@ -43,8 +44,10 @@ test('shared Dex blank and queried options prefer source type without changing l
       assert.equal(options.find(option=>option.name===name)?.meta.type,type,`${query || 'blank'}: ${name}`)
     }
   }
-  assert.equal(legacy['성장'].type,'normal')
-  assert.equal(legacy['집게덫'].type,'grass')
+  assert.equal(legacy['성장'].type,'grass')
+  assert.equal(legacy['집게덫'].type,'steel')
+  assert.equal(historicalEvidence['성장'].type,'normal')
+  assert.equal(historicalEvidence['집게덫'].type,'grass')
 })
 
 test('ID 747 is in actual blank and unified search results with unknown non-type metadata', async () => {
@@ -55,7 +58,8 @@ test('ID 747 is in actual blank and unified search results with unknown non-type
     assert.equal(option.meta.type,'normal')
     for (const field of ['category','power','accuracy','pp']) assert.equal(option.meta[field],null)
   }
-  assert.equal(legacy['볼가득넣기'],undefined)
+  assert.equal(historicalEvidence['볼가득넣기'],undefined)
+  assert.equal(legacy['볼가득넣기'].priority,null)
 })
 
 test('historical legacy-only Dex move stays searchable', async () => {

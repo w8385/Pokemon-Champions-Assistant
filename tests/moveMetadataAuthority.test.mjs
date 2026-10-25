@@ -9,6 +9,7 @@ import { presentDoubleActionOrder } from '../src/doubleOrderPresentation.ts'
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url),'utf8')
 const ast = ts.createSourceFile('App.tsx',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
 const legacy = JSON.parse(readFileSync(new URL('../src/championsLearnedMoveMeta.json',import.meta.url),'utf8'))
+const historicalEvidence = JSON.parse(readFileSync(new URL('../src/championsMoveMetaLegacyEvidence.json',import.meta.url),'utf8'))
 const pinned = JSON.parse(readFileSync(new URL('../src/dexGameMoveIndex.json',import.meta.url),'utf8'))
 const aliases = JSON.parse(readFileSync(new URL('../src/championsMoveMetaNameAliases.json',import.meta.url),'utf8'))
 function fn(name) { const found=ast.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name); assert.ok(found,name); return found.getText(ast) }
@@ -60,8 +61,9 @@ test('source-only 747 has unknown non-type metadata and priority across actual r
 test('510 source identities and all historical-only rows survive without invented IDs',async()=>{
   const {getMoveMetadata,api,getDexGameMoveIdentity}=await runtime()
   assert.equal(Object.keys(pinned).length,510)
-  assert.equal(Object.keys(legacy).length,731)
-  const shared=Object.keys(pinned).filter(name=>legacy[name]),historical=Object.keys(legacy).filter(name=>!pinned[name])
+  assert.equal(Object.keys(legacy).length,732)
+  assert.equal(Object.keys(historicalEvidence).length,731)
+  const shared=Object.keys(pinned).filter(name=>historicalEvidence[name]),historical=Object.keys(historicalEvidence).filter(name=>!pinned[name])
   assert.equal(shared.length,509); assert.equal(historical.length,222)
   for(const [name,source] of Object.entries(pinned)) {
     const row=getMoveMetadata(name)
