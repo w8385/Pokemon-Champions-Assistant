@@ -5,9 +5,16 @@
 .quick-damage .quick-speed-overview-bars > div { grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5ch; }
 .quick-damage .quick-speed-overview-bars .quick-speed-track { width: 100%; box-sizing: border-box; }
 .quick-damage .quick-side-card .quick-stat-card { min-width: 0; }
-.quick-damage .selected-opponent-search { min-width: 0; margin-top: .5rem; }
+.quick-damage .single-entry-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .5rem; min-width: 0; margin-bottom: .5rem; }
+.quick-damage .single-entry-toolbar .action-button { min-height: 44px; white-space: nowrap; }
+.quick-damage .single-entry-toolbar input { min-height: 40px; }
+.quick-damage .selected-opponent-search { min-width: 0; }
 .quick-damage .selected-opponent-search .pokemon-search-field,
 .quick-damage .selected-opponent-search input { width: 100%; box-sizing: border-box; min-width: 0; }
+@media (max-width: 600px) {
+  .quick-damage .single-entry-toolbar { grid-template-columns: minmax(0, 1fr); }
+  .quick-damage .single-entry-toolbar .action-button { justify-self: end; }
+}
 .quick-damage .quick-record-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; border: 1px solid var(--border, #66758b); border-radius: .5rem; padding: .5rem .7rem; }
 .quick-damage .quick-record-actions span { color: var(--muted, #a9b9cd); font-size: .85rem; }
 .quick-damage .quick-speed-settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

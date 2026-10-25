@@ -29,9 +29,9 @@ test('selected Dex renders original four detail panels with back and full form-a
   assert.match(dex, /dex-detail-card/)
   assert.match(dex, /<DexMovePoolSection\b/)
   assert.match(dex, /href=\{dexListHref\}/)
-  assert.match(source, /loadDexGameLearnset\(key\)\.then\(result/)
-  // Battle callers keep their original resolver; Dex uses the independently dated game snapshot.
-  assert.match(declarations('embeddedMovePoolForKey'), /resolveFormAwareMovePool\(key, relatedMovePoolKeys\(key\), embeddedMovePools\)/)
+  assert.match(source, /loadFormLearnset\(key\)\.then\(result/)
+  // Battle and Dex now share exact-form eligibility from the pinned source.
+  assert.match(source, /choicesForPool\(memberMovePool\)/)
   assert.match(dex, /provenance=\{dexSelectedPool\?\.provenance\}/)
 })
 test('explicit selection resolves independently of current search results and no automatic first selection', () => {

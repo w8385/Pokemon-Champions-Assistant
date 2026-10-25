@@ -22,8 +22,9 @@ const sourceLearners = [
 async function withResolver(callback) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { resolveFormAwareMovePool } = await server.ssrLoadModule('/src/formAwareMovePool.ts')
-    await callback(resolveFormAwareMovePool)
+    const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+    const current = Object.fromEntries(await Promise.all(Object.keys(game.forms).map(async key => [key, (await loadFormLearnset(key)).moves])))
+    await callback(key => current[key] ?? [])
   } finally { await server.close() }
 }
 
@@ -54,9 +55,9 @@ test('actual battle resolver includes Aqua Jet once for Azumarill, preserving th
   const moves = resolve('azumarill', ['azumarill'], pools)
   assert.deepEqual(moves.filter(move => move.name === '아쿠아제트'), [{ name: '아쿠아제트', type: 'water' }])
   assert.ok(moves.some(move => move.name === '아쿠아브레이크'))
-  assert.equal(moves.length, pools.azumarill.length)
+  assert.deepEqual(moves, game.forms.azumarill.moves.map(id => ({ name: game.moves[id].appName, type: game.moves[id].type })))
   assert.equal(resolve('rotom', ['rotom'], pools).some(move => move.name === '아쿠아제트'), false)
-  assert.match(app, /resolveFormAwareMovePool\(key, relatedMovePoolKeys\(key\), embeddedMovePools\)/)
+  assert.match(app, /loadFormLearnset\(key\)/)
 }))
 
 test('real move picker finds Azumarill Aqua Jet with full name and 아젯, but not for unrelated forms', async () => withResolver(resolve => {
@@ -75,6 +76,6 @@ test('selected Aqua Jet remains valid and passes the actual physical-damage supp
   const meta = learnedMeta['아쿠아제트']
   assert.deepEqual({ type: meta.type, category: meta.category, power: meta.power, priority: meta.priority }, { type: 'water', category: 'physical', power: 40, priority: 1 })
   assert.equal(quickMoveSupported('아쿠아제트', meta), true)
-  assert.match(app, /pool\.some\(option => option\.name === name\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
+  assert.match(app, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
   assert.match(app, /quickMoveSupported\(name, base, Boolean\(CONDITIONAL_MOVE_POWER_RULES\[name\]\)\)/)
 }))

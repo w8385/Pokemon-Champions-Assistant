@@ -18,8 +18,9 @@ test('normalization and Japanese resolver reuse existing aliases and scoring', (
   assert.deepEqual(searchPokemon(rows, 'rtw', { allowLoose: false }), [])
   assert.deepEqual(searchPokemon(rows, 'rtw', { allowLoose: true }).map(r => r.key), ['rotom-wash'])
 })
-test('empty search retains roster order; caller rows and reference/list searches stay independent', () => {
-  assert.deepEqual(searchPokemon(rows, '').map(r => r.key), rows.map(r => r.key))
+test('empty search uses Korean alphabetical order without mutating caller rows or reference searches', () => {
+  assert.deepEqual(searchPokemon(rows, '').map(r => r.key), ['charizard', 'mr-mime', 'mega-charizard', 'rotom-wash'])
+  assert.deepEqual(rows.map(r => r.key), ['charizard', 'mega-charizard', 'rotom-wash', 'mr-mime'])
   assert.deepEqual(searchPokemon(rows, '리자몽', { includeMega: false }).map(r => r.key), ['charizard'])
   assert.deepEqual(searchPokemon(rows, '워시').map(r => r.key), ['rotom-wash'])
 })

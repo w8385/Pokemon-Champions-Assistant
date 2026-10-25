@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { appTranslate } from './appTranslations.mjs'
 import { searchPokemon } from '../src/pokemonSearch.ts'
 import * as speciesModule from '../src/pokemonSearch.ts'
 const prioritizeExactSpecies = (...args) => speciesModule.prioritizeExactSpecies(...args)
@@ -31,8 +32,9 @@ test('detail route uses normalized tab before persisted fallback', () => {
 })
 test('detail strings exist in both language dictionaries and source data remains untouched', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  for (const section of [app.split('  en: {')[1]?.split('  ja: {')[0], app.split('  ja: {')[1]?.split('\n  },')[0]]) {
-    for (const key of ['목록으로', '계산 실수치 · 원본 실수치 미기록']) assert.ok(section?.includes(`'${key}':`), key)
+  const translate = appTranslate()
+  for (const language of ['en', 'ja']) {
+    for (const key of ['목록으로', '계산 실수치 · 원본 실수치 미기록']) assert.notEqual(translate(language, key), key, `${language}: ${key}`)
   }
   assert.match(app, /ability=\{localizedAbility\}/)
   assert.match(app, /slot: siteLanguage === 'ja'/)

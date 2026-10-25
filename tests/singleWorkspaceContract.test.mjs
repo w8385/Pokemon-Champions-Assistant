@@ -17,13 +17,13 @@ test('entry selectors render inside the actual comparison panel and disable inde
 })
 
 test('unknown sources are localized beside build values and temporary battle controls remain visible', () => {
-  assert.match(quick, /className="quick-source-badges"/)
+  assert.doesNotMatch(quick, /className="quick-source-badges"/)
   assert.match(quick, /sourceLabels = \{/)
   const speedSummary = quick.slice(quick.indexOf('const speedStrip ='), quick.indexOf('const sideBattleControls ='))
   assert.doesNotMatch(speedSummary, /quick-speed-current|quick-speed-source/)
   assert.match(quick, /sourceStatus\('nature'\)/)
-  assert.match(quick, /sourceStatus\('attack'\)/)
-  assert.match(quick, /sourceStatus\('spAttack'\)/)
+  assert.match(quick, /stat\.key === 'attack' \|\| stat\.key === 'spAttack'/)
+  assert.match(quick, /sourceStatus\(stat\.key\)/)
   assert.match(quick, /opponentSource\?\.knownOffense/)
   assert.match(quick, /sourceLabels\.natureUnknown/)
   assert.match(quick, /계산 조건 · 이 대면만/)

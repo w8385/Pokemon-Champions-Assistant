@@ -47,9 +47,10 @@ test('resolver does not broaden unrelated forms or invent moves for unknown keys
   assert.deepEqual(resolveFormAwareMovePool('alolan-vulpix', ['alolan-vulpix'], { vulpix: [{ name: '불꽃세례', type: 'fire' }] }), [])
 }))
 
-test('all app callers use the shared resolver; empty pools are not shown as loading forever', () => {
-  assert.match(app, /resolveFormAwareMovePool\(key, relatedMovePoolKeys\(key\), embeddedMovePools\)/)
+test('battle callers select from shared source and distinguish missing from loading and failure', () => {
+  assert.match(app, /choicesForPool\(memberMovePool\)/)
+  assert.match(app, /choicesForPool\(sampleMovePool\)/)
   assert.match(app, /status === 'loading' \? lt\('기술풀 불러오는 중…'\)/)
-  assert.match(app, /status === 'error' \? lt\('기술풀을 불러오지 못했습니다.'\)/)
-  assert.match(app, /lt\('사용 가능한 기술 없음'\)/)
+  assert.match(app, /status === 'load-error' \? lt\('기술풀을 불러오지 못했습니다.'\)/)
+  assert.match(app, /status === 'missing' \? lt\('기술풀 미확인'\)/)
 })

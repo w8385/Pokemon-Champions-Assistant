@@ -1,9 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
+
 import vm from 'node:vm'
 import ts from 'typescript'
+import { createServer } from 'vite'
 
 const appUrl = new URL('../src/App.tsx', import.meta.url)
 const app = readFileSync(appUrl, 'utf8')
@@ -15,32 +16,25 @@ function visit(node) {
 }
 visit(source)
 assert.ok(callback, 'actual mounted Dex pool effect exists')
-function compile(url) {
-  const exports = {}
-  const output = ts.transpileModule(readFileSync(url, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText
-  vm.runInNewContext(output, { exports, require: createRequire(url) })
-  return exports
-}
-const primary = compile(new URL('../src/dexGameLearnsets.ts', import.meta.url))
-const legacy = JSON.parse(readFileSync(new URL('../src/championsMovePools.json', import.meta.url), 'utf8'))
-const resolver = compile(new URL('../src/formAwareMovePool.ts', import.meta.url))
+
 async function runEffect(key) {
+  const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
+  try {
+  const primary = await server.ssrLoadModule('/src/sharedLearnsets.ts')
   let state = {}
   const context = {
     mainSection: 'dex', dexSelectedRow: { key }, dexPoolByKey: {},
     setDexPoolByKey: update => { state = update(state) },
-    loadDexGameLearnset: primary.loadDexGameLearnset,
-    DEX_GAME_LEARNSET_SOURCE: primary.DEX_GAME_LEARNSET_SOURCE,
-    loadEmbeddedMovePools: async () => legacy,
-    resolveFormAwareMovePool: resolver.resolveFormAwareMovePool,
-    relatedMovePoolKeys: key => [key],
+    loadFormLearnset: primary.loadFormLearnset,
+    DEX_GAME_LEARNSET_SOURCE: primary.LEARNSET_SOURCE,
   }
   const output = ts.transpileModule(`globalThis.run = ${callback.getText(source)}`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
   vm.runInNewContext(output, context)
   const cleanup = context.run()
-  for (let attempts = 0; attempts < 30 && state[key]?.status === 'loading'; attempts++) await new Promise(resolve => setImmediate(resolve))
+  for (let attempts = 0; attempts < 100 && state[key]?.status === 'loading'; attempts++) await new Promise(resolve => setTimeout(resolve, 10))
   cleanup?.()
   return state[key]
+  } finally { await server.close() }
 }
 
 test('the actual App Dex effect loads the dated game learnset rather than historical seed', async () => {

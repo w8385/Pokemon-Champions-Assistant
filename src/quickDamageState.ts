@@ -53,8 +53,9 @@ export function quickItem(item: unknown, requiredStone: string | null, options: 
 
 export function restoreQuickMoves<T extends { name: string }>(saved: unknown, legacy: unknown, pool: readonly T[]): string[] {
   const source = Array.isArray(saved) ? saved : [legacy]
-  const valid = new Set(pool.map(option => option.name))
-  return Array.from({ length: 4 }, (_, i) => typeof source[i] === 'string' && valid.has(source[i]) ? source[i] : '')
+  // Historical records can predate (or fall outside) the pinned learnset. Never erase them on load.
+  void pool
+  return Array.from({ length: 4 }, (_, i) => typeof source[i] === 'string' ? source[i] : '')
 }
 
 export function replaceQuickMove(moves: readonly string[], index: number, name: string): string[] {

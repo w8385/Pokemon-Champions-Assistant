@@ -1,6 +1,7 @@
 import { getJaName } from './jaLabels.ts'
 import type { SpeedLineSpecies } from './speedLine.ts'
 import { normalizeMatchText, rankedSearch } from './searchMatching.ts'
+import { byDisplayName } from './displayOrder.ts'
 
 export function normalizeSearchText(value: string): string {
   return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
@@ -22,7 +23,7 @@ export function speciesSearchCandidates(row: SpeedLineSpecies): string[] {
 
 export function searchPokemon<T extends SpeedLineSpecies>(rows: readonly T[], query: string, options?: { includeMega?: boolean; allowLoose?: boolean; limit?: number }): T[] {
   const candidates = options?.includeMega === false ? rows.filter(row => !row.key.startsWith('mega-')) : rows
-  const sorted = query.trim() && normalizeMatchText(query) ? [...candidates].sort((a, b) => a.name_ko.localeCompare(b.name_ko, 'ko') || a.key.localeCompare(b.key)) : candidates
+  const sorted = byDisplayName(candidates, row => row.name_ko, row => row.key)
   return rankedSearch(sorted, query, row => {
     const official = [row.name_ko, row.name_en, row.name_ja, row.key]
     const aliases = speciesSearchCandidates(row).filter(name => !official.some(entry => entry && normalizeMatchText(entry) === normalizeMatchText(name)))

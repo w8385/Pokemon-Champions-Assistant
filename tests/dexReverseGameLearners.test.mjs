@@ -50,7 +50,7 @@ test('actual Dex detail effect calls canonical reverse loader and renders only i
   visit(ast)
   assert.ok(effect)
   const body = effect.getText(ast)
-  assert.match(body, /loadDexGameMoveLearners\(dexSelectedMoveName\)/)
+  assert.match(body, /loadMoveLearners\(dexSelectedMoveName\)/)
   assert.doesNotMatch(body, /dexMoveLearnerRows\(/)
   assert.match(body, /cancelled/)
   assert.match(app, /dexMoveLearnersStatus === 'missing'/)

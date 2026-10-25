@@ -44,7 +44,7 @@ export function DexMovePoolSection({ recordKey, language, status, moves, metaFor
   useEffect(() => { setFilters(prev => prev.recordKey === recordKey ? prev : { recordKey, query:'', type:'', category:'' }) }, [recordKey])
   const setFilter = (key: 'query' | 'type' | 'category', value: string) => setFilters(prev => ({ ...(prev.recordKey === recordKey ? prev : { recordKey, query:'', type:'', category:'' }), [key]: value }))
   const types = [...new Set(moves.map(move => provenance?.kind === 'game-snapshot' ? move.type : metaForMove(move.name)?.type ?? move.type).filter((type): type is string => Boolean(type)))].sort()
-  const searched = current.query.trim() ? searchMoves(moves, current.query, { names: move => ({ aliases:[displayMoveName(move.name)] }) }) : moves
+  const searched = searchMoves(moves, current.query, { names: move => ({ aliases:[displayMoveName(move.name)] }) })
   const displayed = searched.filter(move => {
     const meta = metaForMove(move.name)
     const type = provenance?.kind === 'game-snapshot' ? move.type : meta?.type ?? move.type

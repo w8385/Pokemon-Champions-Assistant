@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { appTranslate } from './appTranslations.mjs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
@@ -35,9 +36,11 @@ test('home sample builder card explicitly selects builder tab', () => {
 })
 
 test('English and Japanese translate link format and unrecorded actual stats', () => {
-  for (const section of [app.split('  en: {')[1]?.split('  ja: {')[0], app.split('  ja: {')[1]?.split('\n  },')[0]]) {
-    assert.ok(section?.includes("'링크 형식':"))
-    assert.ok(section?.includes("'실수치 미기록':"))
+  const translate = appTranslate()
+  for (const language of ['en', 'ja']) {
+    for (const text of ['링크 형식', '실수치 미기록']) {
+      assert.notEqual(translate(language, text), text, `${language}: ${text}`)
+    }
   }
 })
 

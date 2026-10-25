@@ -28,7 +28,7 @@ test('query normalization keeps initials, handles punctuation and does not match
   assert.equal(searchPokemon(roster, '  Ｍｅｇａ - GARCHOMP ')[0].key, 'mega-garchomp')
   assert.equal(searchPokemon(roster, 'ㅎ-ㅋ-ㄹ-ㅇ-ㅅ')[0].key, 'garchomp')
   assert.deepEqual(searchPokemon(roster, '!!!'), [])
-  assert.deepEqual(keys(searchPokemon(roster, '')), keys(roster))
+  assert.deepEqual(keys(searchPokemon(roster, '')), ['landorus-therian', 'landorus-incarnate', 'dragonite', 'mega-garchomp', 'rotom-wash', 'garchomp'])
 })
 
 test('move matching accepts caller-provided multilingual labels without expanding its pool', () => {

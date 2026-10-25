@@ -13,9 +13,10 @@ const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 async function withMoveModules(callback) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const resolver = await server.ssrLoadModule('/src/formAwareMovePool.ts')
+    const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+    const current = Object.fromEntries(await Promise.all(['starmie', 'mega-starmie', 'rotom'].map(async key => [key, (await loadFormLearnset(key)).moves])))
     const search = await server.ssrLoadModule('/src/moveSearch.ts')
-    await callback(resolver.resolveFormAwareMovePool, search.searchMoves)
+    await callback(key => current[key] ?? [], search.searchMoves)
   } finally { await server.close() }
 }
 
@@ -36,7 +37,7 @@ test('the actual battle pool resolves Aqua Jet for Starmie and Mega without broa
     assert.ok(moves.some(move => move.name === '냉동빔'), 'preserve old pool')
   }
   assert.equal(resolve('rotom', ['rotom'], pools).some(move => move.name === '아쿠아제트'), false)
-  assert.match(app, /resolveFormAwareMovePool\(key, relatedMovePoolKeys\(key\), embeddedMovePools\)/)
+  assert.match(app, /loadFormLearnset\(key\)/)
 }))
 
 test('the actual move search finds full name and 아젯 only inside the selected battle pool', async () => withMoveModules(async (resolve, search) => {
@@ -52,7 +53,7 @@ test('selected Aqua Jet crosses the real calculation eligibility gate with water
   const meta = metaByName['아쿠아제트']
   assert.deepEqual({ type: meta.type, category: meta.category, power: meta.power, priority: meta.priority }, { type: 'water', category: 'physical', power: 40, priority: 1 })
   assert.equal(quickMoveSupported('아쿠아제트', meta), true)
-  assert.match(app, /pool\.some\(option => option\.name === name\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
+  assert.match(app, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
   assert.match(app, /quickMoveSupported\(name, base, Boolean\(CONDITIONAL_MOVE_POWER_RULES\[name\]\)\)/)
   assert.match(app, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats, meta\.power/)
 })

@@ -8571,8 +8571,7 @@ html {
 .quick-rolls { display: flex; flex-wrap: wrap; gap: .2rem .5rem; min-width: 0; }
 .single-entry-commit { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
 .single-entry-commit span { font-size: .8rem; }
-.quick-source-badges { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .5rem; }
-.quick-source-badges small, .quick-source-badge { border: 1px solid var(--border, #66758b); border-radius: .35rem; padding: .15rem .35rem; color: var(--muted, #c4d3e2); }
+.quick-source-badge { border: 1px solid var(--border, #66758b); border-radius: .35rem; padding: .15rem .35rem; color: var(--muted, #c4d3e2); }
 .quick-build-card { min-width: 0; display: grid; align-content: start; gap: .65rem; }
 .single-workspace .quick-side-card { gap: 7px; padding-inline: .5rem; }
 .single-workspace .quick-side-card .quick-registered-moves { margin-top: .2rem; }

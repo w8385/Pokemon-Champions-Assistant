@@ -50,7 +50,7 @@ test('distinct import and export destinations have scoped Korean keys and EN/JA 
 test('entry actions identify which master record is changed, not temporary assumptions', () => {
   const quick = region('function QuickDamagePanel(', 'function LanguageIcon(')
   assert.match(quick, /side === 'attacker' \? '내 파티 기록에 반영' : '상대 엔트리 기록에 반영'/)
-  assert.match(quick, /\{lt\('상대 엔트리·비교 초안 초기화'\)\}/)
+  assert.match(quick, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}>\{lt\('상대 초기화'\)\}/)
   assert.match(quick, /onSaveEntry\?\.\(side, entry, dirty\[side\]\)/)
   assert.match(quick, /onResetOpponents\?\.\(defenderSearch\)/)
 })

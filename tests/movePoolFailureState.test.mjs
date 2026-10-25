@@ -16,9 +16,8 @@ function mount(initial) {
     party: [{ key: 'fixture' }], opponents: [], sampleForge: { key: '' },
     movePoolByKey: initial,
     setMovePoolByKey(update) { context.movePoolByKey = update(context.movePoolByKey) },
-    embeddedMovePoolForKey() { loads++; return Promise.reject(new Error('fixture network failure')) },
-    fetchPokemonMovePool() { throw new Error('unexpected fallback request') },
-    moveOptionsForEntry() { return [] }, sampleMoves: [],
+    loadFormLearnset() { loads++; return Promise.reject(new Error('fixture snapshot failure')) },
+    LEARNSET_SOURCE: { kind: 'game-snapshot', date: '2026-09-09' },
   }
   vm.runInNewContext(effectCode, context)
   return { context, run: () => effect(), loads: () => loads }
@@ -31,17 +30,17 @@ test('Party/Builder move-pool failure settles instead of refetching on its own s
   mounted.run() // render with loading state
   assert.equal(mounted.loads(), 1)
   await new Promise(setImmediate)
-  assert.equal(mounted.context.movePoolByKey.fixture.status, 'error')
+  assert.equal(mounted.context.movePoolByKey.fixture.status, 'load-error')
   for (let i = 0; i < 4; i++) {
     mounted.run()
     await new Promise(setImmediate)
   }
   assert.equal(mounted.loads(), 1, 'the settled error must not trigger an automatic request loop')
-  assert.equal(mounted.context.movePoolByKey.fixture.status, 'error')
+  assert.equal(mounted.context.movePoolByKey.fixture.status, 'load-error')
 })
 
-test('ready, loading and error entries do not start duplicate pool loads', () => {
-  for (const status of ['ready', 'loading', 'error']) {
+test('verified, missing, loading and failed entries do not start duplicate pool loads', () => {
+  for (const status of ['ready-verified', 'missing', 'loading', 'load-error']) {
     const mounted = mount({ fixture: { status, moves: [] } })
     mounted.run()
     assert.equal(mounted.loads(), 0, status)

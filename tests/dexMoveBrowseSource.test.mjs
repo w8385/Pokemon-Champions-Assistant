@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { createServer } from 'vite'
+import { byDisplayName } from '../src/displayOrder.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
@@ -24,7 +25,7 @@ async function browse() {
     const context = {
       MOVE_META_BY_NAME:legacy, dexDisplayMoveMeta, getDexGameMove, getDexGameMoveNames,
       moveNameCandidates:name=>[name], normalizeSearchText:text=>text.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g,''),
-      searchMoves, moveDescriptionFor:()=>null,
+      searchMoves, byDisplayName, moveDescriptionFor:()=>null,
     }
     const code = ts.transpileModule(`${actualFunction('moveSearchCandidates')}\n${actualFunction('dexMoveIndex')}\n${actualFunction('filterDexMoveOptions')}\nglobalThis.filter = filterDexMoveOptions`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText
     vm.runInNewContext(code,context)
