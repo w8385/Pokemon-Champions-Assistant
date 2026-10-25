@@ -23,11 +23,23 @@ test('empty search retains roster order; caller rows and reference/list searches
   assert.deepEqual(searchPokemon(rows, '리자몽', { includeMega: false }).map(r => r.key), ['charizard'])
   assert.deepEqual(searchPokemon(rows, '워시').map(r => r.key), ['rotom-wash'])
 })
-test('v1 omitted items remains normal; absent and v2 default both', () => {
-  assert.equal(defaultSpeedLineState.items, 'both')
+test('v1 and later omitted items default normal; explicit historical choices remain intact', () => {
+  assert.equal(defaultSpeedLineState.items, 'normal')
   assert.equal(parseSpeedLineState(new URLSearchParams('slv=1&my=0&opp=1')).state.items, 'normal')
-  assert.equal(parseSpeedLineState(new URLSearchParams('my=0&opp=1')).state.items, 'both')
-  assert.equal(parseSpeedLineState(new URLSearchParams('slv=2')).state.items, 'both')
+  assert.equal(parseSpeedLineState(new URLSearchParams('my=0&opp=1')).state.items, 'normal')
+  for (const version of ['1', '2', '3']) {
+    assert.equal(parseSpeedLineState(new URLSearchParams(`slv=${version}&view=detail&ref=charizard`)).state.items, 'normal')
+    for (const items of ['normal', 'both', 'scarf']) {
+      const parsed = parseSpeedLineState(new URLSearchParams(`slv=${version}&view=detail&items=${items}&ref=charizard`))
+      assert.equal(parsed.state.items, items)
+      assert.deepEqual(parsed.warnings, [])
+      const written = new URLSearchParams()
+      writeSpeedLineState(written, parsed.state)
+      assert.equal(written.get('items'), items)
+      assert.equal(parseSpeedLineState(written).state.items, items)
+    }
+  }
+  assert.equal(parseSpeedLineState(new URLSearchParams('items=both&ref=charizard')).state.items, 'both')
 })
 test('v3 roundtrip persists committed target identity and item but never drafts or affects slots', () => {
   const params = new URLSearchParams('my=0&opp=1&other=keep')
@@ -42,7 +54,7 @@ test('v3 roundtrip persists committed target identity and item but never drafts 
 })
 test('invalid values warn and default without discarding unknown keys', () => {
   const { state, warnings } = parseSpeedLineState(new URLSearchParams('slv=2&items=bogus&target=missing&targetItem=bogus&ref=missing-ref&refEp=-1&gap=Infinity'))
-  assert.deepEqual([state.items, state.targetKey, state.targetItem, state.referenceKey, state.referenceEffort, state.gap], ['both', 'missing', 'normal', 'missing-ref', 32, 10])
+  assert.deepEqual([state.items, state.targetKey, state.targetItem, state.referenceKey, state.referenceEffort, state.gap], ['normal', 'missing', 'normal', 'missing-ref', 32, 10])
   assert.deepEqual(warnings, ['refEp', 'gap', 'items', 'targetItem'])
   assert.equal(parseSpeedLineState(new URLSearchParams('slv=2&target=missing')).state.targetItem, 'normal')
   assert.deepEqual(parseSpeedLineState(new URLSearchParams('slv=4&items=scarf&target=missing')).state, defaultSpeedLineState)

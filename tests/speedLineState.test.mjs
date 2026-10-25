@@ -8,6 +8,18 @@ test('missing speed-line fields use defaults, independent of legacy my and opp s
   assert.deepEqual(warnings, [])
 })
 
+test('fresh individual calculation defaults to Scarf not applied and writes that choice', () => {
+  assert.equal(defaultSpeedLineState.items, 'normal')
+  const { state, warnings } = parseSpeedLineState(new URLSearchParams('view=detail&ref=odd'))
+  assert.equal(state.view, 'detail')
+  assert.equal(state.items, 'normal')
+  assert.deepEqual(warnings, [])
+  const params = new URLSearchParams()
+  writeSpeedLineState(params, state)
+  assert.equal(params.get('items'), 'normal')
+  assert.equal(parseSpeedLineState(params).state.items, 'normal')
+})
+
 test('explicit versioned URL round-trips all independent settings without touching my or opp and other keys', () => {
   const params = new URLSearchParams('my=0&opp=1&other=keep&ref=old&ref=duplicate')
   const state = { view: 'detail', referenceKey: 'mega-a', referenceEffort: 0, referenceStage: 0, referenceNature: 'lower', listEffort: 31, listNature: 'neutral', query: '메가', forms: 'mega', comparison: 'slower', sort: 'asc', rangeMode: 'around', gap: 7, items: 'both', targetKey: null, targetItem: 'normal', abilityMode: 'conditions', referenceAbility: null, targetAbility: null }

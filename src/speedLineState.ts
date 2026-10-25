@@ -40,7 +40,7 @@ export const defaultSpeedLineState: SpeedLineState = {
   sort: 'desc',
   rangeMode: 'all',
   gap: 10,
-  items: 'both',
+  items: 'normal',
   targetKey: null,
   targetItem: 'normal',
   abilityMode: 'conditions',

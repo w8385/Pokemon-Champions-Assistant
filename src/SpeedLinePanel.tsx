@@ -102,7 +102,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
   if (state.view === 'ranges') return <SpeedLineRangesPanel rows={rows} state={state} onChange={onChange} language={language} translate={translate} displayName={displayName} warnings={warnings} />
   return <section className="panel wide speed-line-panel">
     <div className="section-head"><h2>{translate('스피드라인')}</h2></div>
-    <nav className="speed-line-view-switch" aria-label={translate('스피드라인')}><button type="button" className="action-button subtle" onClick={() => update({ view: 'ranges' })}>{language === 'ko' ? '구간 보기' : language === 'ja' ? '範囲表示' : 'Speed ranges'}</button><button type="button" className="action-button" aria-current="page">{language === 'ko' ? '개별 조건 계산' : language === 'ja' ? '個別条件計算' : 'Individual calculation'}</button></nav>
+    <nav className="speed-line-view-switch" aria-label={translate('스피드라인')}><button type="button" className="action-button subtle" onClick={() => update({ view: 'ranges' })}>{language === 'ko' ? '추월컷 커버리지' : language === 'ja' ? '追い越しライン・カバレッジ' : 'Overtake coverage'}</button><button type="button" className="action-button" aria-current="page">{language === 'ko' ? '개별 조건 계산' : language === 'ja' ? '個別条件計算' : 'Individual calculation'}</button></nav>
     {warnings.length ? <p role="alert">{language === 'ko' ? 'URL의 잘못된 값을 기본값으로 복원했습니다' : language === 'ja' ? 'URLの不正な値を既定値に戻しました' : 'Invalid URL values were restored to defaults'}: {warnings.join(', ')}</p> : null}
     <div className="speed-line-reference card entry-card">
       <div className="speed-line-reference-overview">
