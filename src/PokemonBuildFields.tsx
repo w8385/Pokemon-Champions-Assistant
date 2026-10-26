@@ -6,6 +6,7 @@ type Field = 'ability' | 'nature' | 'item'
 type Tooltip = React.HTMLAttributes<HTMLElement>
 export type PokemonBuildFieldsProps = {
   identity: string
+  itemOnly?: boolean
   ability: string
   abilityLabel?: string
   abilityError?: string | null
@@ -127,9 +128,11 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     </> : (field === 'ability' ? [{ value: '', label: labels.none }, ...abilities] : natures).map((option, idx) => optionButton(field, option, idx))}
   </div> : null
   return <div className={`party-meta-grid pokemon-build-fields ${props.className || ''}`} onClick={event => event.stopPropagation()}>
-    <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
-    {props.abilityError && <small role="alert" className="item-validation-error">{props.abilityError}</small>}
-    <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>
+    {!props.itemOnly && <>
+      <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
+      {props.abilityError && <small role="alert" className="item-validation-error">{props.abilityError}</small>}
+      <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>
+    </>}
     <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || '')} alt="" className="item-sprite" /><strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
     {itemError && <small role="alert" className="item-validation-error">{itemError}</small>}
     {open && typeof document !== 'undefined' ? createPortal(popup(open), document.body) : null}
