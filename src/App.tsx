@@ -9,10 +9,12 @@ import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
 import { libraryDetailHref, libraryListHref, parseLibraryContext, writeLibraryContext, type LibraryViewContext } from './libraryViewRoute'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './quickDamageState'
+import { sampleBattle, sampleConditions, sampleMoveKey, sampleMoveStats, type SampleBattle } from './sampleDamageProjection'
+import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate } from './sampleDamageMoves'
 import { comparisonSides, type ComparisonSeed } from './unifiedComparisonAdapter'
 import { commitComparisonEntry } from './singleInlineEntry'
 import { readDraft, writeDraft, forgetDraft } from './comparisonDraftState'
-import { NATURES, natureMultiplier, knownNature, CHAMPIONS_EFFORT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP, validEffort } from './buildRules'
+import { NATURES, natureMultiplier, knownNature, CHAMPIONS_EFFORT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP, validEffort, validCompleteEfforts } from './buildRules'
 import { registerOpponentSpecies, soleAbilityForSelectedSpecies, hasOpponentEntryData, snapshotDefenderDrafts, removeDefenderDrafts } from './singleOpponentRegistration'
 import { pairTarget, resetPairAssumptions } from './comparisonPairState'
 import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
@@ -178,6 +180,7 @@ function recordedLearnsetText(name: string, pool: SharedPoolState | undefined, l
 type DamageMoveSelection = { key: string; move: string }
 const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': 'Build verification covers build information only, not official verification of rankings or results.',
     '파티 저장': 'Save party', '파티 불러오기': 'Load party', '저장 파티 덮어쓰기': 'Overwrite saved party', '저장 파티 이름 변경': 'Rename saved party', '저장 파티 삭제': 'Delete saved party', '현재 파티 비우기': 'Clear current party', '이미지에서 파티 가져오기': 'Import party from image',
     '새 파티': 'New party', '선택 파티 이름': 'Selected party name', '저장 중': 'Saving…', '자동 저장됨': 'Autosaved', '저장 실패 · 변경은 현재 화면에만 유지': 'Save failed · changes are kept only on this screen', '저장 데이터 읽기 실패 · 원본 보호 중': 'Could not read saved data · original is protected', '저장 재시도': 'Retry save', '원본 덮어쓰기 확인': 'Confirm overwrite of original', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': 'Overwrite the original stored data with this screen?', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'Party selection changed; image was not applied. Please try again.',
     '샘플 저장': 'Save sample', '샘플 불러오기': 'Load sample', '저장 샘플 삭제': 'Delete saved sample', '샘플 편집기에 가져오기': 'Import to sample editor', '저장 파티에 추가': 'Add to saved parties', '출처 링크 저장': 'Save source link', '저장 링크 삭제': 'Delete saved link',
@@ -195,7 +198,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '형식 미확인: 원본에 싱글/더블 표기 없음': 'Format unknown: source does not specify singles or doubles', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': 'Only confirmed fields are shown. Incomplete builds cannot be imported.', '구성 근거 이미지': 'Build evidence image', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': 'No confirmed builds match. Video sources below await build review.', '구성 확인 대기 · 영상 자료': 'Videos awaiting build review', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': 'Only video titles are confirmed; these cannot be used or imported as builds.',
     '실능 스피드라인': 'Actual Speed Line', '빠른 순 → 느린 순': 'Fastest → Slowest', '검색 · 이름/폼': 'Search Pokémon or form', '메가폼 포함': 'All forms', '메가폼 제외': 'Exclude Mega', '메가폼만': 'Mega only', '성격 보정 +10%': 'Speed +10%', '성격 보정 없음': 'Neutral nature', '성격 보정 -10%': 'Speed −10%', '챔피언스 노력 포인트': 'Champions Speed effort points', '검색 결과 없음': 'No matching Pokémon', '실능 스피드라인 안내': 'Level 50 · IV 31 · Champions effort 0–32 added before nature · no item, ability, stages, or field effects. Speed ties share a value; listed by key.', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': 'Browse verified Pokémon and forms sorted by actual Speed.', '포켓몬 수': 'Pokémon shown', '기본 스피드': 'Base Speed',
     '랭커 샘플': 'Ranker samples', '순위 근거가 확인된 자료만 모읍니다.': 'Only samples with verified ranking evidence appear here.', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': 'No ranker samples with verified ranking evidence yet. A ranking claim in a video title is not enough.',
-    '크리에이터 샘플 라이브러리': 'Creator sample library', '자료 확인': 'Browse sources', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': 'Browse verified builds or save source links.', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': 'Only source-verified builds can be imported. Saved links are not verified or automatically collected.', '지역': 'Region', '배틀 형식': 'Battle format', '포켓몬 / 텍스트 검색': 'Pokémon / text search', '검증 완료': 'Verified', '부분 확인': 'Partial', '제작자 미확인': 'Creator unconfirmed', '원본 출처': 'Original source', '빌더로 가져오기': 'Import to builder', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': 'No verified creator builds match. Usage presets are not source-verified creator builds.', '출처 링크 보관': 'Save a source link', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'Saved only in this browser as partial. Creator, rank and build are not inferred.', '출처 URL': 'Source URL', '링크 추가': 'Save link', 'http 또는 https 주소를 입력하세요.': 'Enter an HTTP or HTTPS URL.', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': 'To suggest a public entry, send its source and build evidence using the project feedback form.', '제보 폼 열기': 'Open feedback form', '부분 확인 · 개인 링크': 'Partial · personal link',
+    '크리에이터 샘플 라이브러리': 'Creator sample library', '자료 확인': 'Browse sources', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': 'Browse verified builds or save source links.', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': 'Only source-verified builds can be imported. Saved links are not verified or automatically collected.', '원본에서 확인된 구성만 빌더로 가져옵니다.': 'Only source-confirmed builds can be imported.', '내 출처 링크': 'My source links', '제목·제작자·포켓몬 이름 검색': 'Search title, creator, or Pokémon name', '구성 미완성 · 불러올 수 없음': 'Incomplete build · cannot load', '형식 미확인': 'Format unknown', '지역': 'Region', '배틀 형식': 'Battle format', '포켓몬 / 텍스트 검색': 'Pokémon / text search', '검증 완료': 'Verified', '부분 확인': 'Partial', '제작자 미확인': 'Creator unconfirmed', '원본 출처': 'Original source', '빌더로 가져오기': 'Import to builder', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': 'No verified creator builds match. Usage presets are not source-verified creator builds.', '출처 링크 보관': 'Save a source link', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'Saved only in this browser as partial. Creator, rank and build are not inferred.', '출처 URL': 'Source URL', '링크 추가': 'Save link', 'http 또는 https 주소를 입력하세요.': 'Enter an HTTP or HTTPS URL.', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': 'To suggest a public entry, send its source and build evidence using the project feedback form.', '제보 폼 열기': 'Open feedback form', '부분 확인 · 개인 링크': 'Partial · personal link',
     '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
     '내 파티 관리': 'My Party', '싱글 배틀 준비': 'Singles battle prep', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '대미지 계산': 'Damage Calc',
     '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
@@ -229,6 +232,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': '構成の確認は育成情報のみが対象で、順位・成績の公式な検証ではありません。',
     '파티 저장': 'パーティを保存', '파티 불러오기': 'パーティを読み込む', '저장 파티 덮어쓰기': '保存パーティを上書き', '저장 파티 이름 변경': '保存パーティの名前を変更', '저장 파티 삭제': '保存パーティを削除', '현재 파티 비우기': '現在のパーティを空にする', '이미지에서 파티 가져오기': '画像からパーティを取り込む',
     '새 파티': '新しいパーティ', '선택 파티 이름': '選択中のパーティ名', '저장 중': '保存中…', '자동 저장됨': '自動保存済み', '저장 실패 · 변경은 현재 화면에만 유지': '保存失敗 · 変更はこの画面にのみ保持', '저장 데이터 읽기 실패 · 원본 보호 중': '保存データの読み込み失敗 · 元データを保護中', '저장 재시도': '保存を再試行', '원본 덮어쓰기 확인': '元データの上書きを確認', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': '元の保存データを現在の画面で上書きしますか？', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'パーティの選択が変わったため、画像は反映されませんでした。もう一度お試しください。',
     '샘플 저장': 'サンプルを保存', '샘플 불러오기': 'サンプルを読み込む', '저장 샘플 삭제': '保存サンプルを削除', '샘플 편집기에 가져오기': 'サンプル編集画面に取り込む', '저장 파티에 추가': '保存パーティに追加', '출처 링크 저장': '出典リンクを保存', '저장 링크 삭제': '保存リンクを削除',
@@ -246,7 +250,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '형식 미확인: 원본에 싱글/더블 표기 없음': '形式未確認：原典にシングル・ダブルの記載なし', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': '確認済みの項目のみ表示します。未完成の構成は取り込めません。', '구성 근거 이미지': '構成の根拠画像', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': '該当する確認済み構成はありません。下の動画は構成確認待ちです。', '구성 확인 대기 · 영상 자료': '構成確認待ちの動画', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': '動画のタイトルのみ確認済みです。構成として利用・取込はできません。',
     '실능 스피드라인': '実数値素早さライン', '빠른 순 → 느린 순': '速い順 → 遅い順', '검색 · 이름/폼': 'ポケモン・フォルム検索', '메가폼 포함': '全フォルム', '메가폼 제외': 'メガを除外', '메가폼만': 'メガのみ', '성격 보정 +10%': '素早さ+10%', '성격 보정 없음': '性格補正なし', '성격 보정 -10%': '素早さ−10%', '챔피언스 노력 포인트': 'チャンピオンズ素早さ努力ポイント', '검색 결과 없음': '該当ポケモンなし', '실능 스피드라인 안내': 'Lv.50・個体値31・チャンピオンズ努力ポイント0～32を性格補正前に加算。道具・特性・ランク・場の効果なし。同速はキー順。', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': '確認済みポケモンとフォルムを実数値素早さ順に表示。', '포켓몬 수': '表示数', '기본 스피드': '種族値素早さ',
     '랭커 샘플': '上位ランカーのサンプル', '순위 근거가 확인된 자료만 모읍니다.': '順位の根拠を確認できた資料だけ表示します。', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': '順位の根拠を確認できたサンプルはまだありません。動画タイトルの主張だけでは掲載しません。',
-    '크리에이터 샘플 라이브러리': 'クリエイターサンプルライブラリ', '자료 확인': '資料を見る', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': '検証済みの構成を探すか、元リンクを保存します。', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': '原典で確認できた構成だけ取り込めます。リンク保存は検証・自動収集ではありません。', '지역': '地域', '배틀 형식': '対戦形式', '포켓몬 / 텍스트 검색': 'ポケモン / テキスト検索', '검증 완료': '検証済み', '부분 확인': '一部確認', '제작자 미확인': '投稿者未確認', '원본 출처': '元の出典', '빌더로 가져오기': 'ビルダーに取り込む', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': '該当する検証済み構成はありません。採用率プリセットは出典確認済みの投稿者構成ではありません。', '출처 링크 보관': '出典リンクを保存', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'このブラウザだけに一部確認として保存します。投稿者・順位・構成は自動判定しません。', '출처 URL': '出典URL', '링크 추가': 'リンクを追加', 'http 또는 https 주소를 입력하세요.': 'HTTPかHTTPSのURLを入力してください。', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': '公開リストへの提案は原典と構成の根拠をフォームから送ってください。', '제보 폼 열기': 'フォームを開く', '부분 확인 · 개인 링크': '一部確認 · 個人リンク',
+    '크리에이터 샘플 라이브러리': 'クリエイターサンプルライブラリ', '자료 확인': '資料を見る', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': '検証済みの構成を探すか、元リンクを保存します。', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': '原典で確認できた構成だけ取り込めます。リンク保存は検証・自動収集ではありません。', '원본에서 확인된 구성만 빌더로 가져옵니다.': '原典で確認できた構成だけ取り込めます。', '내 출처 링크': '自分の出典リンク', '제목·제작자·포켓몬 이름 검색': 'タイトル・投稿者・ポケモン名で検索', '구성 미완성 · 불러올 수 없음': '構成未完成・取り込み不可', '형식 미확인': '形式未確認', '지역': '地域', '배틀 형식': '対戦形式', '포켓몬 / 텍스트 검색': 'ポケモン / テキスト検索', '검증 완료': '検証済み', '부분 확인': '一部確認', '제작자 미확인': '投稿者未確認', '원본 출처': '元の出典', '빌더로 가져오기': 'ビルダーに取り込む', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': '該当する検証済み構成はありません。採用率プリセットは出典確認済みの投稿者構成ではありません。', '출처 링크 보관': '出典リンクを保存', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'このブラウザだけに一部確認として保存します。投稿者・順位・構成は自動判定しません。', '출처 URL': '出典URL', '링크 추가': 'リンクを追加', 'http 또는 https 주소를 입력하세요.': 'HTTPかHTTPSのURLを入力してください。', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': '公開リストへの提案は原典と構成の根拠をフォームから送ってください。', '제보 폼 열기': 'フォームを開く', '부분 확인 · 개인 링크': '一部確認 · 個人リンク',
     '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
     '내 파티 관리': '自分のパーティ', '싱글 배틀 준비': 'シングルバトル準備', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '대미지 계산': '火力計算',
     '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
@@ -734,12 +738,27 @@ const defaultSampleSpeedTargets: SampleSpeedTarget[] = ['garchomp'].filter((key)
 }))
 const blankSampleDamageTarget = (): SampleDamageTarget => ({
   ...blankOpponent(),
+  speedEv: 0,
   hpEv: 0,
   defenseEv: 0,
   spDefenseEv: 0,
   defenseNature: 1,
   spDefenseNature: 1,
   moveName: '',
+  opponentMoves: ['', '', '', ''],
+  opponentMoveName: '',
+  attackEv: 0,
+  spAttackEv: 0,
+  attackNature: 1,
+  spAttackNature: 1,
+  reverseAttackStage: 0,
+  reverseDefenseStage: 0,
+  reverseBurned: false,
+  reverseReflect: false,
+  reverseLightScreen: false,
+  reverseAuroraVeil: false,
+  reverseDefenderFullHp: true,
+  sampleConditions: undefined,
 })
 const defaultSampleDamageTargets: SampleDamageTarget[] = ['garchomp'].filter((key) => indexByKey.has(key)).map((key) => ({
   ...blankSampleDamageTarget(),
@@ -1576,11 +1595,26 @@ function sanitizeSampleDamageTargets(input: unknown): SampleDamageTarget[] {
         hpEv: clampNonNegativeInt(raw.hpEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseEv: clampNonNegativeInt(raw.defenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         spDefenseEv: clampNonNegativeInt(raw.spDefenseEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
-        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        speedEv: clampNonNegativeInt((raw as Partial<SampleDamageTarget> & { speedEv?: number }).speedEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
         defenseNature: raw.defenseNature === 1.1 ? 1.1 : 1,
         spDefenseNature: raw.spDefenseNature === 1.1 ? 1.1 : 1,
         moveName: typeof raw.moveName === 'string' ? raw.moveName : '',
-      }
+        opponentMoves: fixedSampleOpponentMoves(raw.opponentMoves),
+        opponentMoveName: typeof raw.opponentMoveName === 'string' ? raw.opponentMoveName : '',
+        attackEv: clampNonNegativeInt(raw.attackEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        spAttackEv: clampNonNegativeInt(raw.spAttackEv ?? 0, CHAMPIONS_EFFORT_PER_STAT_CAP),
+        attackNature: raw.attackNature === 1.1 ? 1.1 : raw.attackNature === 0.9 ? 0.9 : 1,
+        spAttackNature: raw.spAttackNature === 1.1 ? 1.1 : raw.spAttackNature === 0.9 ? 0.9 : 1,
+        reverseAttackStage: clampSpeedStage(raw.reverseAttackStage),
+        reverseDefenseStage: clampSpeedStage(raw.reverseDefenseStage),
+        reverseBurned: typeof raw.reverseBurned === 'boolean' ? raw.reverseBurned : false,
+        reverseReflect: typeof raw.reverseReflect === 'boolean' ? raw.reverseReflect : false,
+        reverseLightScreen: typeof raw.reverseLightScreen === 'boolean' ? raw.reverseLightScreen : false,
+        reverseAuroraVeil: typeof raw.reverseAuroraVeil === 'boolean' ? raw.reverseAuroraVeil : false,
+        reverseDefenderFullHp: typeof raw.reverseDefenderFullHp === 'boolean' ? raw.reverseDefenderFullHp : true,
+        sampleConditions: raw.sampleConditions?.ownerKey && typeof raw.sampleConditions.ownerKey === 'string'
+          ? sampleConditions(raw.sampleConditions.ownerKey, raw.sampleConditions) : undefined,
+      } as SampleDamageTarget
     })
     .filter((target): target is SampleDamageTarget => Boolean(target))
     .slice(0, 1)
@@ -1799,9 +1833,18 @@ function isNoEffectDamage(damage: { min: number, max: number, rolls: number[] } 
   return damage.max <= 0 || damage.rolls.every((roll) => roll <= 0)
 }
 
-function resolveDamageVerdict(damage: { min: number, max: number, rolls: number[] }, hp: number, language: SiteLanguage) {
+function resolveDamageVerdict(damage: { min: number, max: number, rolls: number[] }, hp: number, language: SiteLanguage, multiHit = false) {
   if (isNoEffectDamage(damage)) {
     return language === 'en' ? 'No effect' : language === 'ja' ? '無効' : '무효'
+  }
+  // The engine repeats a single roll across hits; those rolls are not a true
+  // per-hit distribution. Bounds are safe, a KO probability would be invented.
+  if (multiHit) {
+    for (let turns = 1; turns <= 8; turns += 1) {
+      if (damage.min * turns >= hp) return language === 'en' ? `Guaranteed ${turns}HKO` : language === 'ja' ? `確定 ${turns}発` : `확정 ${turns}타`
+      if (damage.max * turns >= hp) return language === 'en' ? `Possible ${turns}HKO (range only)` : language === 'ja' ? `最大 ${turns}発の可能性（範囲のみ）` : `최대 ${turns}타 가능 (범위만)`
+    }
+    return language === 'en' ? 'Needs long game' : language === 'ja' ? '長期戦' : '장기전'
   }
   for (let hitCount = 1; hitCount <= 8; hitCount += 1) {
     const chance = koChanceForHits(damage.rolls, hp, hitCount)
@@ -4338,6 +4381,16 @@ export default function App() {
   const [creatorLinkDrafts, setCreatorLinkDrafts] = React.useState<LinkDraft[]>(() => sanitizeLinkDrafts(persisted?.creatorLinkDrafts))
   const [sampleSpeedTargets, setSampleSpeedTargets] = React.useState<SampleSpeedTarget[]>(() => sanitizeSampleSpeedTargets(persisted?.sampleSpeedTargets))
   const [sampleDamageTargets, setSampleDamageTargets] = React.useState<SampleDamageTarget[]>(() => sanitizeSampleDamageTargets(persisted?.sampleDamageTargets))
+  React.useEffect(() => {
+    setSampleDamageTargets(prev => prev.map(member => member.sampleConditions?.ownerKey === sampleForge.key
+      ? member : { ...member, sampleConditions: member.sampleConditions
+        ? sampleConditions(sampleForge.key)
+        : { ...sampleConditions(sampleForge.key),
+            own: sampleBattle({ defenseStage: member.reverseDefenseStage, reflect: member.reverseReflect, lightScreen: member.reverseLightScreen, auroraVeil: member.reverseAuroraVeil, fullHp: member.reverseDefenderFullHp }),
+            opponent: sampleBattle({ attackStage: member.reverseAttackStage, burned: member.reverseBurned }) } }))
+  }, [sampleForge.key])
+  const [sampleOpponentMoveDraft, setSampleOpponentMoveDraft] = React.useState<{ key: string; index: number; text: string } | null>(null)
+  const [sampleMoveHitCounts, setSampleMoveHitCounts] = React.useState<Record<string, number>>({})
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
 
   const [sampleDamageSearch, setSampleDamageSearch] = React.useState('')
@@ -5157,7 +5210,7 @@ export default function App() {
   }, [sampleForge.key, sampleForge.item, siteLanguage])
 
   React.useEffect(() => {
-    const targetKeys = Array.from(new Set([...party.map((member) => member.key), ...opponents.map((member) => member.key), sampleForge.key].filter(Boolean)))
+    const targetKeys = Array.from(new Set([...party.map((member) => member.key), ...opponents.map((member) => member.key), sampleForge.key, ...sampleDamageTargets.map((member) => member.key)].filter(Boolean)))
     targetKeys.forEach((key) => {
       if (movePoolByKey[key]) return
       setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'loading', moves: [], moveIds: [], provenance: LEARNSET_SOURCE } }))
@@ -5167,7 +5220,7 @@ export default function App() {
         setMovePoolByKey((prev) => ({ ...prev, [key]: { status: 'load-error', moves: [], moveIds: [], provenance: LEARNSET_SOURCE } }))
       })
     })
-  }, [party, opponents, sampleForge.key, movePoolByKey])
+  }, [party, opponents, sampleForge.key, sampleDamageTargets, movePoolByKey])
 
   React.useEffect(() => {
     if (typeof window === 'undefined' || !allowRecoveryWrite) return
@@ -5360,11 +5413,7 @@ export default function App() {
     })
     return () => { active = false; cancelAnimationFrame(firstFrame); cancelAnimationFrame(secondFrame) }
   }, [mainSection, dexSelectedValue, dexQueryPending, dexScope, dexCount, dexBrowseCards.length])
-  React.useEffect(() => {
-    if (mainSection !== 'sample' || sampleWorkbenchTab === 'library' || librarySourceId) return
-    const target = sampleWorkbenchTab === 'speed' ? 'sample-speed-section' : sampleWorkbenchTab === 'damage' ? 'sample-damage-section' : null
-    if (target) requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }))
-  }, [mainSection, sampleWorkbenchTab, librarySourceId])
+
   React.useEffect(() => {
     if (librarySourceId) window.scrollTo({ top: 0, behavior: 'auto' })
     else if (mainSection === 'sample' && sampleWorkbenchTab === 'library' && libraryScrollRef.current !== null) {
@@ -6200,6 +6249,38 @@ export default function App() {
     })
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
+  const renderSampleMoveEditor = () => (
+    <>
+                          <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
+                            {sampleRegisteredMoves.map((move, moveIdx) => (
+                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
+                                tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                                search={{ id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                                  onSelect: option => selectSampleMoveOption(moveIdx, option.key),
+                                  optionClassName: option => moveTypeThemeClass(sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
+                                  renderOption: option => <span className="move-autocomplete-main">{sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
+                                  optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
+                                inputProps={{
+                                  placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
+                                  onFocus: () => {
+                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                    setMoveInputDraft(move)
+                                    setMoveCommitNotice(null)
+                                  },
+                                  onBlur: (e) => {
+                                    if (sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null) commitEditorMove(e.target.value, move, sampleMovePool, sampleForge.key, moveIdx, 'sample')
+                                    setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev)
+                                  },
+
+                                  onChange: (e) => {
+                                    setMoveInputDraft(e.target.value)
+                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
+                                  },
+                                }}>{recordedLearnsetText(move, sampleMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, sampleMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, sampleForge.key, moveIdx, 'sample') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</RegisteredMoveSlot>
+                            ))}
+                          </div>
+    </>
+  )
   const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
   const sampleCuratedMoveBuckets = [
     { id: 'core' as const, label: lt('코어'), moves: sampleMoveSet?.core ?? [] },
@@ -6247,19 +6328,7 @@ export default function App() {
   const sampleDamageSearchResults = filterSpeciesOptions(sampleDamageSearch, { includeMega: true })
     .filter((option) => !sampleDamageTargets.some((target) => target.key === option.key))
     .slice(0, 8)
-  React.useEffect(() => {
-    setSampleDamageTargets((prev) => {
-      let changed = false
-      const next = prev.map((entry) => {
-        const fallbackMove = sampleDamageMoveChoices[0] ?? ''
-        const nextMoveName = entry.moveName && sampleDamageMoveChoices.includes(entry.moveName) ? entry.moveName : fallbackMove
-        if (nextMoveName === entry.moveName) return entry
-        changed = true
-        return { ...entry, moveName: nextMoveName }
-      })
-      return changed ? next : prev
-    })
-  }, [sampleDamageMoveChoices])
+
 
   React.useEffect(() => {
     const missingWeightTargets = sampleDamageTargets
@@ -6287,7 +6356,7 @@ export default function App() {
   const sampleBaselineTerrain = deriveAutoTerrainFromAbilities(sampleAttackerAbilityValue)
   const sampleDecisionPowerIndices = sampleDamageMoveChoices.map((moveName) => {
     if (!isCalculableHeldItem(sampleForge.key, sampleForge.item) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)) return { moveName, moveMeta: null, value: null, attackStat: null, stab: 1, notes: [] as string[] }
-    const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
+    const moveMetaBase = moveInPool(moveName, sampleMoveOptions) ? resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey) : null
     const defaultHitCount = multiHitOptions(moveName)?.[0] ?? null
     const moveRule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
     const moveMeta = applyConditionalMovePower(
@@ -6300,8 +6369,8 @@ export default function App() {
       ),
       moveRule?.defaultValue,
     )
-    if (!moveMeta || (moveMeta.category !== 'physical' && moveMeta.category !== 'special') || !moveMeta.type) {
-      return { moveName, moveMeta, value: null, attackStat: null, stab: 1, notes: [] as string[] }
+    if (!moveMeta || (moveMeta.category !== 'physical' && moveMeta.category !== 'special') || !moveMeta.type || sampleDamageMoveGate(moveName, sampleMovePool?.status, moveInPool(moveName, sampleMoveOptions), moveMeta, Boolean(moveRule && moveMetaBase && moveMeta.power))) {
+      return { moveName, moveMeta: null, value: null, attackStat: null, stab: 1, notes: [] as string[] }
     }
     const attackerTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, sampleBaselineWeather, sampleBaselineTerrain)
     const stab = resolveStabMultiplier(attackerTypes, moveMeta.type, sampleAttackerAbilityValue, true)
@@ -6373,15 +6442,88 @@ export default function App() {
     }
   }, [sampleShowDefenderDisguiseToggle])
   const sampleDamageCalcs = sampleDamageTargets.map((member, idx) => {
+    const condition = sampleConditions(sampleForge.key, member.sampleConditions)
+    // Legacy fields are retained verbatim, with their old reverse meaning only at projection.
+    if (!member.sampleConditions) {
+      condition.opponent.attackStage = member.reverseAttackStage
+      condition.own.defenseStage = member.reverseDefenseStage
+      condition.opponent.burned = member.reverseBurned
+      condition.own.reflect = member.reverseReflect
+      condition.own.lightScreen = member.reverseLightScreen
+      condition.own.auroraVeil = member.reverseAuroraVeil
+      condition.own.fullHp = member.reverseDefenderFullHp
+    }
+    const ownBattle = condition.own
+    const opponentBattle = condition.opponent
     const row = member.key ? (indexByKey.get(member.key) ?? null) : null
+    const opponentPool = movePoolByKey[member.key]
+    const opponentOptions = choicesForPool(opponentPool)
+    // Both recorded four-slot lists are the calculation owners; legacy selected names stay stored only.
+    const opponentEffortsValid = validCompleteEfforts({ hp: member.hpEv, attack: member.attackEv, defense: member.defenseEv, spAttack: member.spAttackEv, spDefense: member.spDefenseEv, speed: member.speedEv })
+    const reverseDefenderStats = buildPartyBattleStats(sampleRow, sampleCalcMember)
+    const reverseAbility = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? '') : ''
+    const reverseAttackerStats = row ? buildOpponentBattleStats(attackingFormRow(row, reverseAbility), {
+      hpEv: member.hpEv, defenseEv: member.defenseEv, spDefenseEv: member.spDefenseEv,
+      defenseNature: member.defenseNature, spDefenseNature: member.spDefenseNature,
+    }, { attackEv: member.attackEv, spAttackEv: member.spAttackEv, attackNature: member.attackNature, spAttackNature: member.spAttackNature }) : null
+    const reverseMoves = member.opponentMoves.filter(Boolean).map((opponentMoveName) => {
+    const reverseMoveKey = sampleMoveKey(sampleForge.key, member.key, 'reverse', opponentMoveName)
+    const reverseBase = opponentMoveName && moveInPool(opponentMoveName, opponentOptions) ? resolveMoveMeta(opponentMoveName, opponentOptions, movePoolByKey) : null
+    const reverseHits = multiHitOptions(opponentMoveName)
+    const reverseRule = CONDITIONAL_MOVE_POWER_RULES[opponentMoveName]
+    const reverseMeta = reverseBase && applyConditionalMovePower(opponentMoveName,
+      applyTargetWeightMovePower(opponentMoveName,
+        resolveAbilityAdjustedMoveMeta(opponentMoveName,
+          resolveMultiHitMeta(opponentMoveName, reverseBase, reverseHits?.includes(condition.moveHits[reverseMoveKey]) ? condition.moveHits[reverseMoveKey] : reverseHits?.[0] ?? null, reverseAbility),
+          reverseAbility, calcWeather),
+        typeof sampleRow.weightKg === 'number' ? sampleRow.weightKg : weightByKey[sampleRow.key] ?? null),
+      reverseRule ? normalizeConditionalPowerValue(reverseRule, condition.conditionalValues[reverseMoveKey] ?? reverseRule.defaultValue) : null)
+    const reverseGate = sampleDamageMoveGate(opponentMoveName, opponentPool?.status, moveInPool(opponentMoveName, opponentOptions), reverseMeta, Boolean(reverseRule && reverseBase && reverseMeta?.power))
+    const reverseReason = !opponentEffortsValid ? lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')
+      : !row ? lt('비교 대상 없음')
+      : !opponentMoveName ? lt('상대 기술을 등록하세요.')
+      : reverseGate === 'loading' ? lt('기술풀 불러오는 중…')
+      : reverseGate === 'source' ? lt('현재 폼 기술풀 밖 기록 · 미확인')
+      : reverseGate === 'unsupported' ? lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.')
+      : heldItemError(member.key, member.item, siteLanguage) || heldItemError(sampleForge.key, sampleForge.item, siteLanguage) || heldAbilityError(member.key, member.ability, siteLanguage) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)
+      || null
+    let reverseDamage: ReturnType<typeof calcDamage> = null
+    if (!reverseReason && row && reverseAttackerStats && reverseMeta?.power && reverseMeta.type && (reverseMeta.category === 'physical' || reverseMeta.category === 'special')) {
+      const reverseProjection = sampleMoveStats(opponentMoveName, reverseMeta, reverseAttackerStats, reverseDefenderStats, opponentBattle, ownBattle)
+      const reverseTargetTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain)
+      const reverseSourceTypes = resolveAbilityAdjustedTypes(row.types, reverseAbility, calcWeather, calcTerrain)
+      const reverseModifiers = resolveDamageModifiers({
+        attackerAbility: reverseAbility, attackerItem: member.item,
+        defenderAbility: sampleAttackerAbilityValue, defenderKey: sampleForge.key, defenderItem: sampleForge.item,
+        moveName: opponentMoveName, baseMoveType: reverseBase?.type ?? reverseMeta.type,
+        moveType: reverseMeta.type, movePower: reverseMeta.power, mode: reverseMeta.category,
+        effectiveness: abilityAdjustedTypeEffectiveness(reverseMeta.type, reverseTargetTypes, sampleAttackerAbilityValue, reverseAbility),
+        attackStage: reverseProjection.attackStage, defenseStage: reverseProjection.defenseStage, defenderTypes: reverseTargetTypes,
+        burned: opponentBattle.burned, attackerLowHp: opponentBattle.lowHp, targetPoisoned: ownBattle.poisoned, defenderFullHp: ownBattle.fullHp,
+        movedAfterTarget: opponentBattle.movedAfterTarget, faintedAllies: opponentBattle.faintedAllies, rivalryMode: opponentBattle.rivalryMode, parentalBond: reverseAbility === 'parental-bond' && opponentBattle.parentalBond, defenderStatused: ownBattle.statused,
+        electromorphosisCharged: opponentBattle.electromorphosisCharged, critical: opponentBattle.critical || Boolean(reverseMeta.alwaysCrit), weather: calcWeather, terrain: calcTerrain,
+        reflect: ownBattle.reflect, lightScreen: ownBattle.lightScreen, auroraVeil: ownBattle.auroraVeil, friendGuard: false,
+      })
+      reverseDamage = calcDamage(reverseProjection.attacker, reverseProjection.defender,
+        reverseMeta.power, reverseMeta.category, resolveStabMultiplier(reverseSourceTypes, reverseMeta.type, reverseAbility, calcTypeChangeStab), reverseModifiers.effectiveness, reverseMeta, reverseModifiers)
+    }
+    return { damage: reverseDamage, defenderStats: reverseDefenderStats, attackerStats: reverseAttackerStats,
+      moveName: opponentMoveName, reason: reverseReason || (reverseDamage ? null : lt('대미지 계산 불가')),
+      verdict: reverseDamage ? resolveDamageVerdict(reverseDamage, reverseDefenderStats.hp, siteLanguage, Boolean(reverseMeta?.hits && reverseMeta.hits > 1)) : null,
+      opponentPool, opponentOptions, moveRule: reverseRule,
+      moveConditionValue: reverseRule ? normalizeConditionalPowerValue(reverseRule, condition.conditionalValues[reverseMoveKey] ?? reverseRule.defaultValue) : null,
+      moveHitOptions: reverseHits, moveHitCount: reverseHits?.includes(condition.moveHits[reverseMoveKey]) ? condition.moveHits[reverseMoveKey] : reverseHits?.[0] ?? null }
+    })
+    const reverse = reverseMoves[0] ?? { opponentPool, opponentOptions, moveName: '', damage: null, reason: lt('상대 기술을 등록하세요.'), defenderStats: reverseDefenderStats, verdict: null }
     const itemMismatch = !isCalculableHeldItem(sampleForge.key, sampleForge.item) || !isCalculableHeldItem(member.key, member.item) || Boolean(heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage) || heldAbilityError(member.key, member.ability, siteLanguage))
     const defenderAbilityValue = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? '') : ''
-    const moveName = member.moveName || sampleDamageMoveChoices[0] || ''
-    const moveMetaBase = resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey)
+    const forwardMoves = sampleRegisteredMoves.slice(0, 4).filter(Boolean).map((moveName) => {
+    const forwardMoveKey = sampleMoveKey(sampleForge.key, member.key, 'forward', moveName)
+    const moveMetaBase = moveInPool(moveName, sampleMoveOptions) ? resolveMoveMeta(moveName, sampleMoveOptions, movePoolByKey) : null
     const moveHitOptions = multiHitOptions(moveName)
-    const moveHitCount = moveHitOptions?.includes(calcHitCount) ? calcHitCount : (moveHitOptions?.[0] ?? null)
+    const moveHitCount = moveHitOptions?.includes(condition.moveHits[forwardMoveKey]) ? condition.moveHits[forwardMoveKey] : (moveHitOptions?.[0] ?? null)
     const moveRule = moveName ? CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null : null
-    const moveConditionValue = moveRule ? normalizeConditionalPowerValue(moveRule, calcConditionalPowerValues[moveName] ?? moveRule.defaultValue) : null
+    const moveConditionValue = moveRule ? normalizeConditionalPowerValue(moveRule, condition.conditionalValues[forwardMoveKey] ?? moveRule.defaultValue) : null
     const targetWeightKg = row ? (typeof row.weightKg === 'number' ? row.weightKg : weightByKey[row.key] ?? null) : null
     const moveMeta = applyConditionalMovePower(
       moveName,
@@ -6400,10 +6542,15 @@ export default function App() {
     const moveType = moveMeta?.type ?? null
     const moveCategory = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : null
     const movePower = typeof moveMeta?.power === 'number' ? moveMeta.power : null
-    const unavailableReason = !row
+    const forwardGate = sampleDamageMoveGate(moveName, sampleMovePool?.status, moveInPool(moveName, sampleMoveOptions), moveMeta, Boolean(moveRule && moveMetaBase && moveMeta?.power))
+    const unavailableReason = !opponentEffortsValid ? lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')
+      : !row
       ? lt('비교 대상 없음')
       : itemMismatch
         ? heldItemError(sampleForge.key, sampleForge.item, siteLanguage) || heldItemError(member.key, member.item, siteLanguage) || heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage) || heldAbilityError(member.key, member.ability, siteLanguage)
+      : forwardGate === 'loading' ? lt('기술풀 불러오는 중…')
+      : forwardGate === 'source' ? lt('현재 폼 기술풀 밖 기록 · 미확인')
+      : forwardGate === 'unsupported' ? lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.')
       : !moveName
         ? lt('등록 기술 없음')
         : moveMeta?.category === 'status'
@@ -6421,9 +6568,10 @@ export default function App() {
       spDefenseNature: member.spDefenseNature,
     }) : null
     if (!row || !defenderStats || unavailableReason || !moveType || !moveCategory || !movePower) {
-      return { idx, member, row, moveName, moveCategory, movePower, effectivePower: null, appliedDecisionPower: null, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
+      return { idx, member, row, reverse, moveName, moveCategory, movePower, effectivePower: null, appliedDecisionPower: null, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
     const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, sampleAttackerAbilityValue)
+    const forwardProjection = sampleMoveStats(moveName, moveMeta!, damageSampleAttackerStats, defenderStats, ownBattle, opponentBattle)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
       attackerItem: sampleForge.item,
@@ -6436,35 +6584,38 @@ export default function App() {
       movePower,
       mode: moveCategory,
       effectiveness: effectivenessValue,
-      attackStage: calcAttackStage,
-      defenseStage: calcDefenseStage,
+      attackStage: forwardProjection.attackStage,
+      defenseStage: forwardProjection.defenseStage,
       defenderTypes: effectiveDefenderTypes,
-      burned: calcBurned,
-      attackerLowHp: calcAttackerLowHp,
-      targetPoisoned: calcTargetPoisoned,
-      defenderFullHp: calcDefenderFullHp,
-      disguiseActive: calcDefenderDisguise,
-      movedAfterTarget: calcMovedAfterTarget,
-      faintedAllies: calcFaintedAllies,
-      rivalryMode: calcRivalryMode,
-      parentalBond: calcParentalBond,
-      defenderStatused: calcDefenderStatused,
-      electromorphosisCharged: calcElectromorphosisCharged,
-      critical: calcCritical,
+      burned: ownBattle.burned,
+      attackerLowHp: ownBattle.lowHp,
+      targetPoisoned: opponentBattle.poisoned,
+      defenderFullHp: opponentBattle.fullHp,
+      disguiseActive: opponentBattle.disguiseActive,
+      movedAfterTarget: ownBattle.movedAfterTarget,
+      faintedAllies: ownBattle.faintedAllies,
+      rivalryMode: ownBattle.rivalryMode,
+      parentalBond: ownBattle.parentalBond,
+      defenderStatused: opponentBattle.statused,
+      electromorphosisCharged: ownBattle.electromorphosisCharged,
+      critical: ownBattle.critical || Boolean(moveMeta?.alwaysCrit),
       weather: calcWeather,
       terrain: calcTerrain,
-      reflect: calcReflect,
-      lightScreen: calcLightScreen,
-      auroraVeil: calcAuroraVeil,
-      friendGuard: calcFriendGuard,
+      reflect: opponentBattle.reflect,
+      lightScreen: opponentBattle.lightScreen,
+      auroraVeil: opponentBattle.auroraVeil,
+      friendGuard: false,
     })
     const attackStatLabel = moveCategory === 'physical' ? '공격' : '특수공격'
-    const attackStatValue = moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack
-    const damage = calcDamage(damageSampleAttackerStats, defenderStats, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
+    const attackStatValue = moveMeta?.usesDefenseAsAttack ? forwardProjection.attacker.defense : moveName === '속임수' ? forwardProjection.defender.attack : moveCategory === 'physical' ? forwardProjection.attacker.attack : forwardProjection.attacker.spAttack
+    const damage = calcDamage(forwardProjection.attacker, forwardProjection.defender, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
     // Use the exact fixed-point power path from calcDamage, not a second rounding rule.
     const effectivePower = engineMovePower(movePower, modifierPack.powerMultiplier ?? 1)
-    const appliedDecisionPower = damage && moveMeta ? decisionPowerIndex(damageSampleAttackerStats, moveMeta, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack) : null
-    return { idx, member, row, moveName, moveCategory, movePower, effectivePower, appliedDecisionPower, attackStatLabel, attackStatValue, defenderStats, damage, verdict: damage ? resolveDamageVerdict(damage, defenderStats.hp, siteLanguage) : lt('대미지 계산 불가'), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason: damage ? null : lt('대미지 계산 불가') }
+    const appliedDecisionPower = damage && moveMeta ? decisionPowerIndex(forwardProjection.attacker, moveMeta, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack) : null
+    return { idx, member, row, reverse, moveName, moveCategory, movePower, effectivePower, appliedDecisionPower, attackStatLabel, attackStatValue, defenderStats, damage, verdict: damage ? resolveDamageVerdict(damage, defenderStats.hp, siteLanguage, Boolean(moveMeta?.hits && moveMeta.hits > 1)) : lt('대미지 계산 불가'), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason: damage ? null : lt('대미지 계산 불가') }
+    })
+    return { idx, member, row, conditions: condition, reverse, reverseMoves, forwardMoves, defenderStats: forwardMoves[0]?.defenderStats ?? (row ? buildOpponentBattleStats(row, { hpEv: member.hpEv, defenseEv: member.defenseEv, spDefenseEv: member.spDefenseEv, defenseNature: member.defenseNature, spDefenseNature: member.spDefenseNature }) : null), opponentEffortsValid }
+
   })
 
   const addSampleSpeedTarget = (key: string) => {
@@ -6482,12 +6633,40 @@ export default function App() {
   }
 
   const addSampleDamageTarget = (key: string) => {
-    setSampleDamageTargets([{ ...blankSampleDamageTarget(), key, item: itemForSpeciesSelection(key, ''), ability: abilityForSpeciesSelection(indexByKey.get(key), '', key, ''), moveName: sampleDamageMoveChoices[0] ?? '' }])
+    setSampleOpponentMoveDraft(null)
+    setSampleDamageTargets([{ ...blankSampleDamageTarget(), sampleConditions: sampleConditions(sampleForge.key), key, item: itemForSpeciesSelection(key, ''), ability: abilityForSpeciesSelection(indexByKey.get(key), '', key, ''), moveName: '' }])
     setSampleDamageSearch('')
   }
 
   const updateSampleDamageTarget = (idx: number, patch: Partial<SampleDamageTarget>) => {
     setSampleDamageTargets((prev) => prev.map((entry, entryIdx) => (entryIdx === idx ? { ...entry, ...patch } : entry)))
+  }
+  const updateSampleBattle = (idx: number, side: 'own' | 'opponent', patch: Partial<SampleBattle>) => {
+    setSampleDamageTargets(prev => prev.map((member, i) => {
+      if (idx !== i) return member
+      const conditions = sampleConditions(sampleForge.key, member.sampleConditions)
+      return { ...member, sampleConditions: { ...conditions, [side]: sampleBattle({ ...conditions[side], ...patch }) } }
+    }))
+  }
+  const updateSampleMoveCondition = (idx: number, direction: 'forward' | 'reverse', move: string, field: 'moveHits' | 'conditionalValues', value: number | boolean) => {
+    setSampleDamageTargets(prev => prev.map((member, i) => {
+      if (i !== idx) return member
+      const conditions = sampleConditions(sampleForge.key, member.sampleConditions)
+      const key = sampleMoveKey(sampleForge.key, member.key, direction, move)
+      return { ...member, sampleConditions: { ...conditions, [field]: { ...conditions[field], [key]: value } } }
+    }))
+  }
+  const selectSampleOpponentMove = (idx: number, slot: number, move: string) => {
+    setSampleDamageTargets(prev => prev.map((member, memberIdx) => {
+      if (memberIdx !== idx) return member
+      const accepted = move ? resolveEligibleMoveInput(move, movePoolByKey[member.key]) : ''
+      if (move && !accepted) return member
+      if (accepted === null) return member
+      const selectedMove = accepted ?? ''
+      const opponentMoves = replaceSampleOpponentMove(member.opponentMoves, slot, selectedMove)
+      return { ...member, opponentMoves, opponentMoveName: selectedMove || (member.opponentMoveName === member.opponentMoves[slot] ? opponentMoves.find(Boolean) ?? '' : member.opponentMoveName) }
+    }))
+    setSampleOpponentMoveDraft(null)
   }
 
   const applySampleDamageBulkPresetSelection = (idx: number, preset: OpponentBulkPreset) => {
@@ -7116,10 +7295,13 @@ export default function App() {
 
   const librarySource = librarySourceId ? [...groupCreatorSources(catalog), ...individualCreatorSources(catalog)].find(source => source.id === librarySourceId) : null
   const libraryContext: LibraryViewContext = { language: libraryLanguage, format: libraryFormat, query: libraryQuery, kind: libraryContentKind }
+  const matchingLibraryPokemonKeys = new Set(libraryQuery.trim() ? searchPokemon(rows, libraryQuery, { includeMega: true }).map(row => row.key) : [])
   const visibleSources = filterCreatorSources(libraryContentKind === 'pokemon' ? individualCreatorSources(catalog) : groupCreatorSources(catalog), {
-    language: libraryLanguage, format: libraryFormat, query: libraryQuery,
+    language: libraryLanguage, format: libraryFormat, query: '',
     contentKind: libraryContentKind,
-  }).filter(source => source.confirmedMemberCount > 0)
+  }).filter(source => source.confirmedMemberCount > 0 && (!libraryQuery.trim() ||
+    filterCreatorSources([source], { language: libraryLanguage, format: libraryFormat, query: libraryQuery, contentKind: libraryContentKind }).length > 0 ||
+    source.members.some(member => matchingLibraryPokemonKeys.has(member.pokemonKey))))
 
   const pendingCreatorLeads = filterCreatorSamples(catalog.filter(entry => !entry.partialBuild && entry.contentKind === 'unknown'), { language: libraryLanguage, format: libraryFormat, query: libraryQuery })
   const moveSlotLabels = { slot: siteLanguage === 'ja' ? '番' : siteLanguage === 'en' ? ' · Move' : lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, siteLanguage),
@@ -8470,44 +8652,54 @@ export default function App() {
               <a className="creator-library-back" href={libraryListHref(libraryContext)}>← {lt('샘플 라이브러리')} · {lt('목록으로')}</a>
               {librarySource ? <>
                 <div className="section-head"><div><h2>{librarySource.title}</h2><p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
-                <div className="creator-library-lineup">{librarySource.members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}</div>
+                <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
+                <div className="creator-library-source-summary"><a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a><span>{lt('원본 ID')}: {librarySource.sourceId}</span></div>
                 {librarySource.contentKind === 'party' ? <div className="creator-library-completeness"><span>{lt('구성 확인')} {librarySource.confirmedMemberCount}/{librarySource.partySize ?? 6}</span><span>{librarySource.completeMemberCount === librarySource.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div> : null}
-                {librarySource.contentKind === 'party' && librarySource.partySize === 6 && librarySource.completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(librarySource)}>{lt('저장 파티에 추가')}</button> : null}
+                {librarySource.contentKind === 'party' && librarySource.partySize === 6 && librarySource.completeMemberCount === 6 ? <button type="button" className="action-button creator-library-party-action" onClick={() => importCreatorParty(librarySource)}>{lt('저장 파티에 추가')}</button> : librarySource.contentKind === 'party' ? <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p> : null}
                 {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
-                <a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a>
-                <details className="creator-library-provenance"><summary>{lt('출처 및 확인 기록')}</summary><p>{lt('원본 ID')}: {librarySource.sourceId}</p>{librarySource.members.map(entry => <div key={entry.id}>
-                  <h3>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title}</h3>
-                  <p>{lt('게시')}: {entry.provenance.publishedAt ?? lt('미확인')} · {lt('수집')}: {entry.provenance.collectedAt} · {lt('확인')}: {entry.provenance.verifiedAt || lt('미확인')}</p>
-                  <p>{entry.provenance.evidence}</p>
-                  {Object.entries(entry.provenance.fields).map(([field, evidence]) => evidence ? <p key={field}>{field} · {evidence.location} · {evidence.checkedAt} · <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('구성 근거 이미지')}</a></p> : null)}
-                </div>)}</details>
-                {librarySource.contentKind === 'party' ? librarySource.members.map(entry => <a key={entry.id} href={libraryDetailHref(`individual:${entry.id}`, { ...libraryContext, kind: 'pokemon' })}>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title} · {lt('개별 포켓몬 샘플')}</a>) : null}
-                {librarySource.members.map(entry => <div key={entry.id} className="creator-library-member-actions">
-                  {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
-                  {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
+                <div className="creator-library-lineup">{librarySource.members.map(entry => <div key={entry.id} className="creator-library-member-card">
+                  {creatorCard(entry)}
+                  <div className="creator-library-member-context">
+                    {librarySource.contentKind === 'party' ? <a href={libraryDetailHref(`individual:${entry.id}`, { ...libraryContext, kind: 'pokemon' })}>{indexByKey.get(entry.pokemonKey) ? displayName(indexByKey.get(entry.pokemonKey)!, siteLanguage) : entry.title} · {lt('개별 포켓몬 샘플')}</a> : null}
+                    {canImportCreatorSample(entry) && indexByKey.has(entry.pokemonKey) ? <button type="button" className="action-button" onClick={() => {
                     if (!canImportCreatorSample(entry)) return
                     const formAbilities = indexByKey.get(entry.pokemonKey)?.abilities_ko ?? []
                     const sourceAbility = entry.build.ability
                     const resolvedAbility = formAbilities.includes(sourceAbility) ? sourceAbility :
                       entry.pokemonKey.startsWith('mega-') && entry.partialBuild?.preMegaAbilities?.includes(sourceAbility) && formAbilities.length === 1 ? formAbilities[0] : null
                     if (!resolvedAbility) return
+                    restoringLibraryRoute.current = null
                     setSampleForge({ ...defaultSampleForge(), key: entry.pokemonKey, item: entry.build.item, ability: resolvedAbility, evs: { ...entry.build.evs }, config: { nature: entry.build.nature, scarf: false, speedStage: 0 } })
                     setSampleLockedMoves([...entry.build.moves])
                     setSampleSearch(searchDisplayLabel(entry.pokemonKey, siteLanguage))
                     setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
                     setLibrarySourceId(null)
                     setSampleWorkbenchTab('builder')
-                  }}>{lt('샘플 편집기에 가져오기')}</button> : null}
-                </div>)}
-                {relatedCreatorParties[librarySource.sourceId] && librarySource.contentKind === 'pokemon' ? <details className="creator-library-companion-party">
-                  <summary>{lt('영상에 나온 사용 파티')}</summary>
-                  <div className="creator-library-lineup">{relatedCreatorParties[librarySource.sourceId].members.map(member => <div key={member.id} className="creator-library-member-card">{creatorCard(member)}</div>)}</div>
-                  {relatedCreatorParties[librarySource.sourceId].completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(relatedCreatorParties[librarySource.sourceId])}>{lt('저장 파티에 추가')}</button> : null}
+                  }}>{lt('샘플 편집기에 가져오기')}</button> : <p className="muted">{indexByKey.has(entry.pokemonKey) ? lt('구성 미완성 · 불러올 수 없음') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.')}</p>}
+                    {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
+                    <small className="muted" title={entry.provenance.evidence}>{lt('게시')}: {entry.provenance.publishedAt ?? lt('미확인')} · {lt('수집')}: {entry.provenance.collectedAt} · {lt('확인')}: {entry.provenance.verifiedAt || lt('미확인')}</small>
+                    <div className="creator-library-evidence-links" aria-label={lt('출처 및 확인 기록')}>
+                      {Object.entries(entry.provenance.fields).map(([field, evidence]) => {
+                        const names: Record<string, string> = { pokemonKey: '폼', item: '도구', moves: '기술', evsKnown: '노력치', evs: '노력치', actualStats: '실수치', actualStatsForm: '폼', nature: '성격', ability: '특성', preMegaAbilities: '특성', creator: '제작자', title: '제목', format: '배틀 형식', rank: '순위', build: '샘플 빌드' }
+                        return evidence ? <a key={field} href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer" title={`${evidence.location} · ${evidence.checkedAt}`}>{lt(names[field.split('.').pop() ?? field] ?? field)}</a> : null
+                      })}
+                    </div>
+                  </div>
+                </div>)}</div>
+                {relatedCreatorParties[librarySource.sourceId] && librarySource.contentKind === 'pokemon' ? <section className="creator-library-companion-party">
+                  <h3>{lt('영상에 나온 사용 파티')}</h3>
+                  <div className="creator-library-companion-list">{relatedCreatorParties[librarySource.sourceId].members.map(member => <a key={member.id} href={libraryDetailHref(`individual:${member.id}`, { ...libraryContext, kind: 'pokemon' })}>
+                    {indexByKey.get(member.pokemonKey)?.sprite ? <img src={indexByKey.get(member.pokemonKey)!.sprite} alt="" /> : null}
+                    <span>{indexByKey.get(member.pokemonKey) ? displayName(indexByKey.get(member.pokemonKey)!, siteLanguage) : member.title}</span>
+                    <small>{canImportCreatorSample(member) ? lt('구성 확인') : lt('부분 확인')}</small>
+                  </a>)}</div>
+                  {relatedCreatorParties[librarySource.sourceId].completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(relatedCreatorParties[librarySource.sourceId])}>{lt('저장 파티에 추가')}</button> : <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p>}
                   {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
-                </details> : null}
+                </section> : null}
               </> : <p role="status">{lt('출처를 찾을 수 없습니다.')}</p>}
             </div> : <>
-            <div className="section-head"><div><h2>{lt('샘플 라이브러리')}</h2><p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.')}</p></div></div>
+            <div className="section-head"><div><h2>{lt('샘플 라이브러리')}</h2><p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다.')}</p></div></div>
+            <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
             <div className="creator-library-kind-tabs" role="group" aria-label={lt('샘플 라이브러리')}>
               <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><span aria-hidden="true">◈ ◈ ◈</span> {lt('파티 소개')}</button>
               <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><span aria-hidden="true">◉</span> {lt('개별 포켓몬 샘플')}</button>
@@ -8517,6 +8709,7 @@ export default function App() {
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
               <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
+            <p className="creator-library-result-count" role="status">{lt('검색 결과')} {visibleSources.length} · {libraryContentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {lt('제목·제작자·포켓몬 이름 검색')}</p>
             <div className="creator-library-list">
               {visibleSources.map((source) => <article key={source.id} className={`creator-library-card creator-library-card--${source.contentKind}`}>
                 <a className="creator-library-source-link" href={libraryDetailHref(source.id, libraryContext)} onClick={(event) => {
@@ -8527,10 +8720,12 @@ export default function App() {
                   <span className="creator-library-sprites">{source.members.map(member => { const row = indexByKey.get(member.pokemonKey); return row?.sprite ? <img key={member.id} src={row.sprite} alt="" /> : null })}</span>
                   <strong>{source.title}</strong>
                 </a>
+                <span className="creator-library-row-meta">{source.creator ?? lt('제작자 미확인')} · {source.language === 'ko' ? 'KR' : 'JP'} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인')} · {source.completeMemberCount === source.members.length ? lt('구성 확인') : lt('부분 확인')}</span>
               </article>)}
-              {!visibleSources.length ? <p className="muted" role="status">{lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.')}</p> : null}
+              {!visibleSources.length ? <p className="muted" role="status">{pendingCreatorLeads.length ? lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.') : lt('검색 결과 없음')}</p> : null}
             </div>
             {sampleWorkbenchTab === 'library' && pendingCreatorLeads.length > 0 ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{pendingCreatorLeads.map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
+            <section className="creator-library-personal"><h3>{lt('내 출처 링크')}</h3>
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, draftLanguage, draftFormat)
@@ -8545,9 +8740,16 @@ export default function App() {
               <p className="muted">{lt('공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.')}{' '}<a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noopener noreferrer">{lt('제보 폼 열기')}</a></p>
             </form> : null}
             {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => (libraryLanguage === 'all' || entry.language === libraryLanguage) && (libraryFormat === 'all' || entry.format === libraryFormat) && (!libraryQuery.trim() || entry.sourceUrl.toLocaleLowerCase().includes(libraryQuery.trim().toLocaleLowerCase()))).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')} · {draft.language === 'ko' ? 'KR' : 'JP'}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('저장 링크 삭제')}</button></div>) : null}
+            </section>
             </>}
           </div> : <>
-          <section id="sample-builder-section" className="sample-lab-section" aria-label={lt('샘플 빌드')}>
+          <nav className="sample-lab-tabs" role="tablist" aria-label={lt('샘플 연구소')}>
+            {([{ value: 'builder', label: '샘플 빌드' }, { value: 'speed', label: '샘플 스피드' }, { value: 'damage', label: '샘플 대미지 계산' }] as const).map(({ value, label }) =>
+              <a key={value} id={`sample-workbench-tab-${value}`} href={`#/sample-builder?sampleTab=${value}`} role="tab" aria-selected={sampleWorkbenchTab === value} aria-controls={`sample-${value}-section`} className={`tab-chip ${sampleWorkbenchTab === value ? 'active' : ''}`}>{lt(label)}</a>
+            )}
+          </nav>
+          {sampleWorkbenchTab !== 'builder' ? <p className="sample-lab-build-link">{lt('현재 빌드')}: {displayName(sampleRow, siteLanguage)} · <a className="pick-chip" href="#/sample-builder?sampleTab=builder">{lt('샘플 빌드 편집')}</a></p> : null}
+          {sampleWorkbenchTab === 'builder' ? <section id="sample-builder-section" role="tabpanel" aria-labelledby="sample-workbench-tab-builder" className="sample-lab-section" aria-label={lt('샘플 빌드')}>
           <h2>{lt('샘플 연구소')} · {lt('샘플 빌드')}</h2>
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
@@ -8597,34 +8799,7 @@ export default function App() {
                               })}>{lt('슬롯 비우기')}</button>
                             </div>
                           </div>
-                          <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
-                            {sampleRegisteredMoves.map((move, moveIdx) => (
-                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
-                                tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                                search={{ id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                                  onSelect: option => selectSampleMoveOption(moveIdx, option.key),
-                                  optionClassName: option => moveTypeThemeClass(sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
-                                  renderOption: option => <span className="move-autocomplete-main">{sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
-                                  optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
-                                inputProps={{
-                                  placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
-                                  onFocus: () => {
-                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                    setMoveInputDraft(move)
-                                    setMoveCommitNotice(null)
-                                  },
-                                  onBlur: (e) => {
-                                    if (sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null) commitEditorMove(e.target.value, move, sampleMovePool, sampleForge.key, moveIdx, 'sample')
-                                    setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev)
-                                  },
-
-                                  onChange: (e) => {
-                                    setMoveInputDraft(e.target.value)
-                                    setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
-                                  },
-                                }}>{recordedLearnsetText(move, sampleMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, sampleMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, sampleForge.key, moveIdx, 'sample') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</RegisteredMoveSlot>
-                            ))}
-                          </div>
+                          {renderSampleMoveEditor()}
                           {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
                         </div>
                         {sampleCuratedMoveBuckets.length ? <div className="sample-track-card top-move-chip-card sample-track-secondary-section">
@@ -8737,8 +8912,8 @@ export default function App() {
             <p className="muted">{lt('편집 초안은 아직 파티에 반영되지 않았습니다. 저장은 개인 샘플에 복사하고 적용은 아래 선택 슬롯을 교체합니다.')}</p>
             <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{putInPartySlotLabel(selectedMy, siteLanguage)}</button>
           </div>
-          </section>
-          <section id="sample-speed-section" className="sample-lab-section" aria-label={lt('샘플 스피드')}>
+          </section> : null}
+          {sampleWorkbenchTab === 'speed' ? <section id="sample-speed-section" role="tabpanel" aria-labelledby="sample-workbench-tab-speed" className="sample-lab-section" aria-label={lt('샘플 스피드')}>
           <h2>{lt('샘플 스피드')}</h2>
           <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
@@ -8848,8 +9023,8 @@ export default function App() {
               </div>
             </div>
           </div>
-          </section>
-          <section id="sample-damage-section" className="sample-lab-section" aria-label={lt('샘플 대미지 계산')}>
+          </section> : null}
+          {sampleWorkbenchTab === 'damage' ? <section id="sample-damage-section" role="tabpanel" aria-labelledby="sample-workbench-tab-damage" className="sample-lab-section" aria-label={lt('샘플 대미지 계산')}>
           <h2>{lt('샘플 대미지 계산')}</h2>
           <div className="sample-builder-grid compact-sample-builder-grid sample-single-pane-grid">
             <div className="sample-main-card flat-sample-main-card">
@@ -8875,6 +9050,7 @@ export default function App() {
                   </div>
                   </div>
                 </div>
+                <div className="move-card flat-sample-move-card sample-damage-own-moves"><strong>{lt('기술 배치')}</strong>{renderSampleMoveEditor()}</div>
                 <div className="sample-power-index-panel sample-workbench-wide-card sample-workbench-section">
                   <div className="row-between sample-workbench-section-head">
                     <strong>{lt('기본 결정력')}</strong>
@@ -8899,73 +9075,20 @@ export default function App() {
                         ]))}
                       >
                         <span className="sample-power-index-name">{entry.moveName}</span>
-                        <strong>{entry.value == null ? lt('상대 의존') : formatBattleIndex(entry.value, siteLanguage)}</strong>
-                        <small>{entry.moveMeta ? `${lt('위력')} ${totalPower || '—'} · ${displayMoveCategoryName(entry.moveMeta.category, siteLanguage)}` : lt('대미지 계산 불가')}</small>
+                        <strong>{entry.value == null ? (entry.moveMeta ? lt('상대 의존') : lt('대미지 계산 불가')) : formatBattleIndex(entry.value, siteLanguage)}</strong>
+                        <small>{entry.value != null && entry.moveMeta ? `${lt('위력')} ${totalPower || '—'} · ${displayMoveCategoryName(entry.moveMeta.category, siteLanguage)}` : lt('대미지 계산 불가')}</small>
                       </div>
                     }) : <div className="sample-empty-state">{lt('등록 기술 없음')}</div>}
                   </div>
                 </div>
-                <div className="sample-damage-shared-controls sample-workbench-wide-card sample-damage-conditions-panel sample-workbench-section sample-damage-top-conditions">
-                  <div className="row-between sample-damage-conditions-head sample-workbench-section-head">
-                    <strong>{lt('세부 조건')}</strong>
-                  </div>
-                  <div className="sample-damage-conditions-box damage-control-groups">
-                  <div className="damage-control-group">
-                    <div className="damage-control-group-title">{lt('화력 조건')}</div>
-                    <div className="calc-grid damage-calc-grid compact offense-grid">
-                      {sampleUsesTypeChangeStabAbility ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTypeChangeStab} onChange={(e) => setCalcTypeChangeStab(e.target.checked)} /><span>{lt('타입변환 자속')}</span></label> : null}
-                      <div className="calc-inline-pair">
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcCritical} onChange={(e) => setCalcCritical(e.target.checked)} /><span>{lt('급소')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcBurned} onChange={(e) => setCalcBurned(e.target.checked)} /><span>{lt('화상')}</span></label>
-                      </div>
-                      {sampleShowAttackerLowHpToggle || sampleShowTargetPoisonedToggle ? <div className="calc-inline-pair">
-                        {sampleShowAttackerLowHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcAttackerLowHp} onChange={(e) => setCalcAttackerLowHp(e.target.checked)} /><span>{lt('공격측 HP 1/3 이하')}</span></label> : null}
-                        {sampleShowTargetPoisonedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcTargetPoisoned} onChange={(e) => setCalcTargetPoisoned(e.target.checked)} /><span>{lt('상대 독/맹독')}</span></label> : null}
-                      </div> : null}
-                      {sampleShowMovedAfterTargetToggle || sampleShowDefenderStatusedToggle ? <div className="calc-inline-pair">
-                        {sampleShowMovedAfterTargetToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcMovedAfterTarget} onChange={(e) => setCalcMovedAfterTarget(e.target.checked)} /><span>{lt('상대보다 늦게 행동')}</span></label> : null}
-                        {sampleShowDefenderStatusedToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderStatused} onChange={(e) => setCalcDefenderStatused(e.target.checked)} /><span>{lt('상대 상태이상')}</span></label> : null}
-                      </div> : null}
-                      {sampleShowFaintedAlliesInput || sampleShowRivalryModeInput ? <div className="calc-inline-pair">
-                        {sampleShowFaintedAlliesInput ? <label>{lt('기절한 아군 수')}<input type="number" min={0} max={5} value={calcFaintedAllies} onChange={(e) => setCalcFaintedAllies(Math.max(0, Math.min(5, Math.trunc(Number(e.target.value) || 0))))} /></label> : null}
-                        {sampleShowRivalryModeInput ? <label>{lt('라이벌리 성별 관계')}<select value={calcRivalryMode} onChange={(e) => setCalcRivalryMode(e.target.value as RivalryMode)}><option value="neutral">{lt('없음')}</option><option value="same">{lt('같은 성별')}</option><option value="opposite">{lt('다른 성별')}</option></select></label> : null}
-                      </div> : null}
-                      {sampleShowParentalBondToggle || sampleShowElectromorphosisToggle ? <div className="calc-inline-pair">
-                        {sampleShowParentalBondToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcParentalBond} onChange={(e) => setCalcParentalBond(e.target.checked)} /><span>{lt('부자유친 발동')}</span></label> : null}
-                        {sampleShowElectromorphosisToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcElectromorphosisCharged} onChange={(e) => setCalcElectromorphosisCharged(e.target.checked)} /><span>{lt('일렉트릭 차지됨')}</span></label> : null}
-                      </div> : null}
-                      <div className="calc-inline-pair">
-                        <label>{lt('공격측 화력 랭크')}<select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
-                        <label>{lt('방어측 내구 랭크')}<select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>{[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-damage-def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
-                      </div>
-                      {sampleShowDefenderFullHpToggle || sampleShowDefenderDisguiseToggle ? <div className="calc-inline-pair">
-                        {sampleShowDefenderFullHpToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderFullHp} onChange={(e) => setCalcDefenderFullHp(e.target.checked)} /><span>{lt('상대 HP 100%')}</span></label> : null}
-                        {sampleShowDefenderDisguiseToggle ? <label className="calc-toggle-box"><input type="checkbox" checked={calcDefenderDisguise} onChange={(e) => setCalcDefenderDisguise(e.target.checked)} /><span>{lt('상대 탈 intact')}</span></label> : null}
-                      </div> : null}
-                    </div>
-                  </div>
-                  <div className="damage-control-group">
-                    <div className="damage-control-group-title">{lt('전장 조건')}</div>
-                    <div className="calc-grid damage-calc-grid compact field-grid">
-                      <div className="calc-inline-pair">
-                        <label>{lt('날씨')}<select value={calcWeather} onChange={(e) => setCalcWeather(e.target.value as DamageWeather)}><option value="none">{lt('없음')}</option><option value="sun">{lt('쾌청')}</option><option value="rain">{lt('비')}</option><option value="sand">{lt('모래바람')}</option><option value="snow">{lt('싸라기눈')}</option></select></label>
-                        <label>{lt('필드')}<select value={calcTerrain} onChange={(e) => setCalcTerrain(e.target.value as DamageTerrain)}><option value="none">{lt('없음')}</option><option value="electric">{lt('일렉트릭필드')}</option><option value="grassy">{lt('그래스필드')}</option><option value="psychic">{lt('사이코필드')}</option><option value="misty">{lt('미스트필드')}</option></select></label>
-                      </div>
-                      <div className="calc-inline-pair">
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcReflect} onChange={(e) => setCalcReflect(e.target.checked)} /><span>{lt('리플렉터')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcLightScreen} onChange={(e) => setCalcLightScreen(e.target.checked)} /><span>{lt('빛의장막')}</span></label>
-                      </div>
-                      <div className="calc-inline-pair">
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcAuroraVeil} onChange={(e) => setCalcAuroraVeil(e.target.checked)} /><span>{lt('오로라베일')}</span></label>
-                        <label className="calc-toggle-box"><input type="checkbox" checked={calcFriendGuard} onChange={(e) => setCalcFriendGuard(e.target.checked)} /><span>{lt('프렌드가드')}</span></label>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
+                <div className="sample-damage-shared-controls sample-workbench-wide-card">
+                  <strong>{lt('공유 전장')}</strong>
+                  <label>{lt('날씨')}<select value={calcWeather} onChange={e => setCalcWeather(e.target.value as DamageWeather)}><option value="none">{lt('없음')}</option><option value="sun">{lt('쾌청')}</option><option value="rain">{lt('비')}</option><option value="sand">{lt('모래바람')}</option><option value="snow">{lt('싸라기눈')}</option></select></label>
+                  <label>{lt('필드')}<select value={calcTerrain} onChange={e => setCalcTerrain(e.target.value as DamageTerrain)}><option value="none">{lt('없음')}</option><option value="electric">{lt('일렉트릭필드')}</option><option value="grassy">{lt('그래스필드')}</option><option value="psychic">{lt('사이코필드')}</option><option value="misty">{lt('미스트필드')}</option></select></label>
                 </div>
               </div>
-                </div>
-                <div className="sample-calculator-side sample-calculator-target">
+              </div>
+              <div className="sample-calculator-side sample-calculator-target">
                   <div className="sample-calculator-side-heading enemy">
                     <span>{lt('상대 포켓몬')}</span>
                     <strong>{sampleDamageCalcs[0]?.row ? displayName(sampleDamageCalcs[0].row, siteLanguage) : lt('비교 대상 없음')}</strong>
@@ -8975,9 +9098,6 @@ export default function App() {
                       <span className="sample-workbench-section-label">{lt(sampleDamageCalcs.length ? '비교 상대 교체' : '비교 상대 선택')}</span>
                     </div>
                     <PokemonSearchField id="sample-damage-add" label={lt('비교 상대 검색')} value={sampleDamageSearch} placeholder={lt('포켓몬 검색')} onChange={setSampleDamageSearch} onSelect={addSampleDamageTarget} options={sampleDamageSearchResults.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} menuClassName="sample-damage-search-menu" />
-                    {!sampleDamageMoveChoices.length ? <div className="sample-inline-helper sample-damage-adder-helper sample-damage-adder-helper-compact">
-                      <button type="button" className="pick-chip" onClick={() => document.getElementById('sample-moves-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>{lt('샘플 기술로 이동')}</button>
-                    </div> : null}
               </div>
               <div className="sample-overview-stack sample-workbench-section sample-compare-targets-section">
                 <div className="row-between sample-workbench-section-head">
@@ -8985,25 +9105,6 @@ export default function App() {
                 </div>
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => {
                   const bulkPresetKey = detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })
-                  const bulkPresetLabel = bulkPresetKey === 'custom' ? lt('직접 조절') : OPPONENT_BULK_PRESETS[bulkPresetKey].label
-                  const verdictTone = resolveDamageVerdictTone(entry.damage, entry.defenderStats?.hp ?? null)
-                  const [verdictPrimary, verdictDetail] = (entry.verdict || '').split(' · ')
-                  const damageValueText = entry.damage ? (isNoEffectDamage(entry.damage) ? lt('무효') : `${entry.damage.min} ~ ${entry.damage.max}`) : '—'
-                  const damageHelperText = entry.damage
-                    ? (isNoEffectDamage(entry.damage)
-                      ? '\u00A0'
-                      : entry.moveHitSummary
-                        ? `${lt('총위력')} ${entry.moveHitSummary.totalPower}`
-                        : entry.effectivePower
-                          ? `${lt('적용 위력')} ${entry.effectivePower}`
-                          : '\u00A0')
-                    : entry.unavailableReason || '\u00A0'
-                  const percentValueText = entry.damage ? (isNoEffectDamage(entry.damage) ? lt('무효') : `${entry.damage.minPct}% ~ ${entry.damage.maxPct}%`) : '—'
-                  const percentHelperText = entry.damage && !isNoEffectDamage(entry.damage) && entry.defenderStats
-                    ? `${lt('상대 체력')} ${entry.defenderStats.hp}`
-                    : entry.defenderStats
-                      ? `${lt('상대 체력')} ${entry.defenderStats.hp}`
-                      : '\u00A0'
                   return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     {heldAbilityError(entry.member.key, entry.member.ability, siteLanguage) && <div role="alert" className="item-validation-error">{heldAbilityError(entry.member.key, entry.member.ability, siteLanguage)}</div>}
@@ -9014,7 +9115,7 @@ export default function App() {
                       </div>
                       <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
                     </div>
-                    {entry.defenderStats ? <div className="combat-index-strip opponent-combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
+                    {entry.defenderStats && entry.opponentEffortsValid ? <div className="combat-index-strip opponent-combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                       <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${entry.defenderStats.hp} × ${entry.defenderStats.defense}` }]))}>
                         <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(durabilityIndices(entry.defenderStats).physical, siteLanguage)}</strong>
                       </span>
@@ -9040,26 +9141,50 @@ export default function App() {
                               {entry.member.ability && entry.row && !resolveFormAbility(entry.row, entry.member.ability, abilityDescriptionFor, rows).slug ? <option value={entry.member.ability}>{`${lt('원본 특성 표기')}: ${entry.member.ability}`}</option> : null}
                               {entry.row?.abilities.map(slug => <option key={slug} value={slug}>{localizedAbilityLabel(entry.row!, slug, siteLanguage, abilityDescriptionFor)}</option>)}
                             </select></label>
-                            <label>
-                              {lt('기술 구성')}
-                              <select value={entry.member.moveName || ''} onChange={(e) => updateSampleDamageTarget(entry.idx, { moveName: e.target.value })}>
-                                {!sampleDamageMoveChoices.length ? <option value="">{lt('등록 기술 없음')}</option> : null}
-                                {sampleDamageMoveChoices.map((move) => <option key={`sample-damage-move-${entry.idx}-${move}`} value={move}>{move}</option>)}
-                              </select>
-                            </label>
-                            {entry.moveHitOptions?.length ? <label>
-                              {lt('타수')}
-                              <select value={entry.moveHitCount ?? entry.moveHitOptions[0]} onChange={(e) => setCalcHitCount(Math.max(1, Math.trunc(Number(e.target.value))))} disabled={entry.moveHitOptions.length === 1}>
-                                {entry.moveHitOptions.map((hit) => <option key={`sample-damage-hit-${entry.idx}-${hit}`} value={hit}>{`${hit} ${lt('타수')}`}</option>)}
-                              </select>
-                              {entry.moveHitSummary ? <small>{lt('총위력')} {entry.moveHitSummary.totalPower}</small> : null}
-                            </label> : entry.moveRule ? <label>
-                              {lt('위력 조건')}
-                              {entry.moveRule.kind === 'count'
-                                ? <><span>{lt(entry.moveRule.label)}</span><input type="number" min={entry.moveRule.min ?? 0} max={entry.moveRule.max ?? 999} value={Number(entry.moveConditionValue ?? entry.moveRule.defaultValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: Number(e.target.value) }))} /></>
-                                : <span className="calc-toggle-box"><input type="checkbox" checked={Boolean(entry.moveConditionValue)} onChange={(e) => setCalcConditionalPowerValues((prev) => ({ ...prev, [entry.moveName]: e.target.checked }))} /><span>{lt(entry.moveRule.label)}</span></span>}
-                            </label> : null}
-                            {(entry.moveRule || entry.moveHitOptions?.length || entry.moveName === '로우킥' || entry.moveName === '안다리걸기' || entry.moveName === '안다리 걸기' || entry.moveName === '풀묶기' || entry.moveName === '트리플악셀') ? <div className="calc-lock-box sample-damage-inline-hint">{variablePowerHint(entry.moveName, lt, { targetWeightKnown: entry.targetWeightKnown, resolvedPower: entry.movePower, totalPower: entry.moveHitSummary?.totalPower ?? null })}</div> : null}
+                             <div className="sample-damage-direction-result" aria-label={lt('내 포켓몬 → 상대')}>
+                               <strong>{lt('내 포켓몬 → 상대')}</strong>
+                               {entry.forwardMoves.length ? entry.forwardMoves.map((move, slot) => <div key={`forward-${slot}`} className="sample-damage-move-result">
+                                 <strong>{move.moveName}</strong><span>{move.damage ? `${move.damage.min} ~ ${move.damage.max} · ${move.damage.minPct}% ~ ${move.damage.maxPct}% · ${move.verdict}` : move.unavailableReason}</span>
+                                 {move.damage ? <small>{lt('상대 적용 결정력')} {move.appliedDecisionPower == null ? '—' : formatBattleIndex(move.appliedDecisionPower, siteLanguage)} · {lt('적용 위력')} {move.effectivePower}</small> : null}
+                                 {move.moveHitOptions?.length ? <label>{lt('타수')}<select value={move.moveHitCount ?? move.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'moveHits', Number(e.target.value))}>{move.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
+                                 {move.moveRule ? <label>{lt(move.moveRule.label)}{move.moveRule.kind === 'count' ? <input type="number" min={move.moveRule.min ?? 0} max={move.moveRule.max ?? 999} value={Number(move.moveConditionValue ?? move.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(move.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', e.target.checked)} />}</label> : null}
+                                 {(move.moveRule || move.moveHitOptions?.length || move.moveName === '로우킥' || move.moveName === '풀묶기') ? <small>{variablePowerHint(move.moveName, lt, { targetWeightKnown: move.targetWeightKnown, resolvedPower: move.movePower, totalPower: move.moveHitSummary?.totalPower ?? null })}</small> : null}
+                               </div>) : <p>{lt('등록 기술 없음')}</p>}
+                             </div>
+                             <div className="sample-damage-direction-result" aria-label={lt('상대 → 내 포켓몬')}>
+                               <strong>{lt('상대 → 내 포켓몬')}</strong>
+                               <small role="status">{learnsetStatusText(entry.reverse.opponentPool, siteLanguage)} · {`EV ${entry.member.attackEv}/${entry.member.spAttackEv} · 성격 ${entry.member.attackNature}/${entry.member.spAttackNature} · ${entry.member.speedEv} Speed EV · 가정 시나리오 (확정 빌드 아님)`}</small>
+                               {!entry.opponentEffortsValid ? <p role="alert">{lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')}</p> : null}
+                               <div className="registered-move-grid sample-registered-move-grid sample-opponent-move-grid">
+                                 {entry.member.opponentMoves.map((move, slot) => {
+                                   const editing = sampleOpponentMoveDraft?.key === entry.member.key && sampleOpponentMoveDraft.index === slot
+                                   const input = editing ? sampleOpponentMoveDraft.text : move
+                                   const meta = resolveMoveMeta(move, entry.reverse.opponentOptions, movePoolByKey)
+                                   const result = entry.reverseMoves.find(item => item.moveName === move)
+                                   return <div key={`sample-opponent-move-${entry.member.key}-${slot}`} className="sample-opponent-move-cell">
+                                     <RegisteredMoveSlot number={slot + 1} name={input} type={meta?.type} meta={meta} labels={moveSlotLabels}
+                                       className={moveTypeThemeClass(meta?.type)}
+                                       search={{ id: `sample-opponent-move-${entry.member.key}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                                         onSelect: option => selectSampleOpponentMove(entry.idx, slot, option.key) }}
+                                       tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
+                                       inputProps={{ placeholder: lt('상대 기술 검색'),
+                                         onFocus: () => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: move }),
+                                         onChange: event => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: event.target.value }),
+                                         onBlur: event => { if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value); else setSampleOpponentMoveDraft(null) },
+                                       }} >{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null}</RegisteredMoveSlot>
+                                     {move ? <div className="sample-damage-move-result"><span>{result?.damage ? `${result.damage.min} ~ ${result.damage.max} · ${result.damage.minPct}% ~ ${result.damage.maxPct}% · ${result.verdict}` : result?.reason}</span>
+                                       {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
+                                       {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
+                                     </div> : null}
+                                   </div>
+                                 })}
+                               </div>
+                             <div className="sample-opponent-offense-grid">
+                                {([{ key: 'attackEv', label: lt('상대 공격 EV') }, { key: 'spAttackEv', label: lt('상대 특공 EV') }] as const).map(({ key, label }) => <label key={key}>{label}<input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member[key]} onChange={e => updateSampleDamageTarget(entry.idx, { [key]: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} /></label>)}
+                                {([{ key: 'attackNature', label: lt('상대 공격 성격') }, { key: 'spAttackNature', label: lt('상대 특공 성격') }] as const).map(({ key, label }) => <label key={key}>{label}<select value={entry.member[key]} onChange={e => updateSampleDamageTarget(entry.idx, { [key]: Number(e.target.value) })}><option value={0.9}>−</option><option value={1}>{lt('중립')}</option><option value={1.1}>+</option></select></label>)}
+                              </div>
+                               <small>{lt('내 체력')} {entry.reverse.defenderStats.hp} · {lt('내 방어')} {entry.reverse.defenderStats.defense} · {lt('내 특수방어')} {entry.reverse.defenderStats.spDefense}</small>
+                           </div>
                           </div>
                           <div className="sample-damage-control-section">
                             <label>
@@ -9100,74 +9225,50 @@ export default function App() {
                           </div>
                         </div>
                       </div>
-                      <div className="sample-workbench-mainpanel">
-                        <div className="sample-damage-context-card">
-
-                          <div className="sample-damage-context-grid">
-                            <div className="sample-damage-context-row">
-                              <span className="sample-damage-context-label">{entry.attackStatLabel}</span>
-                              <strong>{entry.attackStatValue}</strong>
-                            </div>
-                            {entry.defenderStats ? <>
-                              <div className="sample-damage-context-row">
-                                <span className="sample-damage-context-label">{lt('상대 체력')}</span>
-                                <strong>{entry.defenderStats.hp}</strong>
-                              </div>
-                              <div className="sample-damage-context-row">
-                                <span className="sample-damage-context-label">{lt('상대 방어')}</span>
-                                <strong>{entry.defenderStats.defense}</strong>
-                              </div>
-                              <div className="sample-damage-context-row">
-                                <span className="sample-damage-context-label">{lt('상대 특수방어')}</span>
-                                <strong>{entry.defenderStats.spDefense}</strong>
-                              </div>
-                            </> : null}
+                    </div>
+                    <div className="sample-conditions-owner-grid">
+                      {(['own', 'opponent'] as const).map(side => {
+                        const battle = entry.conditions[side]
+                        const sideLabel = side === 'own' ? lt('내 포켓몬') : lt('상대 포켓몬')
+                        const opponentAbility = entry.row ? resolveSelectedAbility(entry.row, entry.member.ability, siteLanguage)?.slug ?? '' : ''
+                        const ability = side === 'own' ? sampleAttackerAbilityValue : opponentAbility
+                        const otherAbility = side === 'own' ? opponentAbility : sampleAttackerAbilityValue
+                        const hasAttacks = (side === 'own' ? sampleDamageMoveChoices : entry.member.opponentMoves).some(Boolean)
+                        const hasIncoming = (side === 'own' ? entry.member.opponentMoves : sampleDamageMoveChoices).some(Boolean)
+                        const relevantCondition = (key: keyof SampleBattle) => Boolean(battle[key]) && key !== 'fullHp' || ({
+                          burned: hasAttacks, lowHp: ['blaze','torrent','overgrow','swarm'].includes(ability),
+                          poisoned: otherAbility === 'merciless', statused: ability === 'marvel-scale',
+                          fullHp: ['multiscale','shadow-shield'].includes(ability), reflect: hasIncoming, lightScreen: hasIncoming, auroraVeil: hasIncoming,
+                          critical: hasAttacks, movedAfterTarget: ability === 'analytic', electromorphosisCharged: ability === 'electromorphosis',
+                          disguiseActive: ability === 'disguise', parentalBond: ability === 'parental-bond',
+                        } as Partial<Record<keyof SampleBattle, boolean>>)[key] === true
+                        return <div key={side} className="sample-damage-control-section"><strong>{sideLabel} · {lt('전투 가정')}</strong>
+                          <div className="sample-opponent-offense-grid">
+                            {([{key:'attackStage',label:'공격 랭크'}, {key:'spAttackStage',label:'특공 랭크'}, {key:'defenseStage',label:'방어 랭크'}, {key:'spDefenseStage',label:'특방 랭크'}] as const).map(({key,label}) => <label key={key}>{sideLabel} {lt(label)}<select value={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: clampBattleStage(e.target.value)})}>{[6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6].map(n => <option key={n} value={n}>{n > 0 ? `+${n}` : n}</option>)}</select></label>)}
+                            {(['attack','defense','spAttack','spDefense'] as const).map(key => <label key={key}>{sideLabel} {lt(({attack:'공격 실수치',defense:'방어 실수치',spAttack:'특공 실수치',spDefense:'특방 실수치'} as const)[key])}<input type="number" min={1} max={999} placeholder={lt('기본 실수치')} value={battle.actual[key] ?? ''} onChange={e => updateSampleBattle(entry.idx, side, {actual: {...battle.actual, [key]: e.target.value === '' ? undefined : Number(e.target.value)}})} /></label>)}
+                          </div>
+                          <div className="sample-reverse-conditions">
+                            {([{key:'burned',label:'화상'}, {key:'lowHp',label:'HP 1/3 이하'}, {key:'poisoned',label:'독/맹독'}, {key:'statused',label:'상태이상'}, {key:'fullHp',label:'HP 100%'}, {key:'reflect',label:'리플렉터'}, {key:'lightScreen',label:'빛의장막'}, {key:'auroraVeil',label:'오로라베일'}, {key:'critical',label:'급소'}, {key:'movedAfterTarget',label:'상대보다 늦게 행동'}, {key:'electromorphosisCharged',label:'일렉트릭 차지됨'}, {key:'disguiseActive',label:'탈 intact'}, {key:'parentalBond',label:'부자유친 발동'}] as const).filter(({key}) => relevantCondition(key)).map(({key,label}) => <label key={key} className="sample-reverse-checkbox"><input type="checkbox" checked={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: e.target.checked})} />{sideLabel} {lt(label)}</label>)}
+                            {ability === 'supreme-overlord' || battle.faintedAllies > 0 ? <label>{sideLabel} {lt('기절한 아군 수')}<input type="number" min={0} max={5} value={battle.faintedAllies} onChange={e => updateSampleBattle(entry.idx, side, {faintedAllies: Number(e.target.value)})} /></label> : null}
+                            {ability === 'rivalry' || battle.rivalryMode !== 'neutral' ? <label>{sideLabel} {lt('라이벌리 성별 관계')}<select value={battle.rivalryMode} onChange={e => updateSampleBattle(entry.idx, side, {rivalryMode: e.target.value as RivalryMode})}><option value="neutral">{lt('없음')}</option><option value="same">{lt('같은 성별')}</option><option value="opposite">{lt('다른 성별')}</option></select></label> : null}
                           </div>
                         </div>
-                        <div className="sample-damage-metric-grid">
-                          <div className={`sample-damage-metric-box ${entry.damage ? '' : 'unavailable-secondary'}`}>
-                            <span className="sample-damage-metric-label">{lt('상대 적용 결정력')} · {siteLanguage === 'ko' ? '추상 지표' : siteLanguage === 'ja' ? '参考指数' : 'comparison index'}</span>
-                            <div className="sample-damage-metric-copy"><strong>{entry.appliedDecisionPower == null ? '—' : formatBattleIndex(entry.appliedDecisionPower, siteLanguage)}</strong><small className="sample-damage-metric-helper">{entry.effectivePower == null ? entry.unavailableReason || '\u00A0' : `${lt('적용 위력')} ${entry.effectivePower}`}</small></div>
-                          </div>
-                          <div className={`sample-damage-metric-box verdict ${entry.damage ? `verdict-${verdictTone}` : 'unavailable'}`}>
-                            <span className="sample-damage-metric-label">{entry.damage ? lt('판정') : lt('계산 상태')}</span>
-                            <div className="sample-damage-metric-copy">
-                              <strong>{entry.damage ? (verdictPrimary || entry.verdict) : (entry.unavailableReason || entry.verdict)}</strong>
-                              <small className="sample-damage-metric-helper">{entry.damage ? (verdictDetail || '\u00A0') : '\u00A0'}</small>
-                            </div>
-                          </div>
-                          <div className={`sample-damage-metric-box ${entry.damage ? '' : 'unavailable-secondary'}`}>
-                            <span className="sample-damage-metric-label">{lt('실대미지')}</span>
-                            <div className="sample-damage-metric-copy">
-                              <strong>{damageValueText}</strong>
-                              <small className="sample-damage-metric-helper">{damageHelperText}</small>
-                            </div>
-                          </div>
-                          <div className={`sample-damage-metric-box enemy ${entry.damage ? '' : 'unavailable-secondary'}`}>
-                            <span className="sample-damage-metric-label">{lt('체력비율')}</span>
-                            <div className="sample-damage-metric-copy">
-                              <strong>{percentValueText}</strong>
-                              <small className="sample-damage-metric-helper">{percentHelperText}</small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      })}
                     </div>
                   </div>
                 )}) : <div className="sample-empty-state sample-damage-empty-state">
                   <strong>{lt('비교 대상 없음')}</strong>
-                  {!sampleDamageMoveChoices.length ? <button type="button" className="pick-chip" onClick={() => document.getElementById('sample-moves-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>{lt('샘플 기술로 이동')}</button> : null}
                 </div>}
               </div>
                 </div>
               </div>
             </div>
           </div>
-          </section>
+          </section> : null}
           </>}
           </div>
         </section>
-        {sampleWorkbenchTab !== 'library' ? <section id="sample-saved-card" className="panel wide">
+        {sampleWorkbenchTab === 'builder' ? <section id="sample-saved-card" className="panel wide">
           <details className="saved-sample-list flat-saved-sample-list sample-drawer sample-managed-drawer" open>
             <summary className="sample-drawer-summary sample-managed-summary">
               <span>{lt('저장한 샘플')}</span>

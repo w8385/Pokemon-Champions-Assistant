@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const quick = app.slice(app.indexOf('const sideCard ='), app.indexOf('const statCard ='))
 const party = app.slice(app.indexOf('registeredMoves.map('), app.indexOf('memberTopSuggestedMoves.length ?'))
-const builder = app.slice(app.indexOf('sampleRegisteredMoves.map('), app.indexOf("sampleMovePool?.status === 'loading' ? <div className=\"move-pool-helper sample-move-pool-helper\""))
+const builder = app.slice(app.indexOf('sampleRegisteredMoves.map('), app.indexOf('  const sampleTopSuggestedMoves ='))
 const damage = app.slice(app.indexOf('sampleDamageCalcs[0]?.row ?'), app.indexOf('sample-overview-stack sample-workbench-section sample-compare-targets-section', app.indexOf('sampleDamageCalcs[0]?.row ?')))
 
 test('all editable move slots delegate the real input and option selection to one combobox', () => {

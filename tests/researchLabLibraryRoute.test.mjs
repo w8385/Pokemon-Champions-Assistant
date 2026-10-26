@@ -3,18 +3,18 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
-test('research lab mounts actual builder, speed and damage tools together without sample subnavigation', () => {
+test('research lab exposes exclusive build, speed and damage panels with saved actions owned by build', () => {
   const lab = app.slice(app.indexOf("mainSection === 'sample' ? <>"), app.indexOf('</> : <>', app.indexOf("mainSection === 'sample' ? <>")))
-  assert.match(lab, /id="sample-builder-card"/)
-  assert.match(lab, /id="sample-speed-section"/)
-  assert.match(lab, /id="sample-damage-section"/)
-  assert.match(lab, /sampleSpeedCalcs\.map/)
-  assert.match(lab, /sampleDamageCalcs\.map/)
-  assert.match(lab, /sample-builder-save-row/)
-  assert.match(lab, /savedSamples\.map/)
-  assert.doesNotMatch(app, /sample-workbench-tab-\$\{value\}/)
+  assert.match(lab, /role="tablist"[^>]*aria-label=\{lt\('샘플 연구소'\)\}/)
+  for (const tab of ['builder', 'speed', 'damage']) assert.match(lab, new RegExp(`value: '${tab}'`))
+  assert.match(lab, /<a key=\{value\}[^>]+href=\{`#\/sample-builder\?sampleTab=\$\{value\}`\}/)
+  assert.doesNotMatch(lab, /onClick=\{\(\) => setSampleWorkbenchTab\(value\)\}/)
+  assert.match(lab, /sample-workbench-tab-\$\{value\}/)
+  assert.match(lab, /sampleWorkbenchTab === 'builder' \? <section id="sample-builder-section"/)
+  assert.match(lab, /sampleWorkbenchTab === 'speed' \? <section id="sample-speed-section"/)
+  assert.match(lab, /sampleWorkbenchTab === 'damage' \? <section id="sample-damage-section"/)
+  assert.match(lab, /sampleWorkbenchTab === 'builder' \? <section id="sample-saved-card"/)
   assert.match(app, /sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab !== 'library'/)
-  assert.match(app, /document\.getElementById\('sample-moves-card'\)/)
 })
 test('library has independent draft language and restores four validated URL filters', () => {
   assert.match(app, /createLinkDraft\(linkDraftInput, draftLanguage, draftFormat\)/)

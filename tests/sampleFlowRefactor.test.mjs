@@ -44,11 +44,13 @@ test('English and Japanese translate link format and unrecorded actual stats', (
   }
 })
 
-test('source provenance is on detail only while retaining evidence and import gate', () => {
-  const details = app.split('<details className="creator-library-provenance">')[1]?.split('</details>')[0]
+test('source provenance stays visible beside each detail card with import gate', () => {
+  const details = app.split('className="creator-library-member-context"')[1]?.split('</div>')[0]
   assert.ok(details)
-  assert.ok(!details.includes('creator-library-build'))
   assert.ok(details.includes('entry.provenance'))
-  assert.ok(details.includes('구성 근거 이미지'))
-  assert.ok(app.includes('canImportCreatorSample(entry)'))
+  assert.ok(details.includes('creator-library-evidence-links'))
+  assert.ok(details.includes('href={evidence.sourceUrl}'))
+  assert.ok(details.includes('evidence.location'))
+  assert.ok(details.includes('canImportCreatorSample(entry)'))
+  assert.ok(!app.includes('<details className="creator-library-provenance">'))
 })

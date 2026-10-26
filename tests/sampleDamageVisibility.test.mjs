@@ -14,29 +14,29 @@ const section = app.split('<section id="sample-damage-section"')[1]?.split('</se
 test('sample damage shows the real condition controls without a disclosure or repeated condition summaries', () => {
   assert.ok(section)
   assert.doesNotMatch(section, /sampleDamageConditionsCollapsed|sample-damage-conditions-summary-grid|aria-expanded=/)
-  assert.match(section, /className="sample-damage-conditions-box damage-control-groups"/)
-  for (const control of ['calcCritical', 'calcBurned', 'calcAttackStage', 'calcDefenseStage', 'calcWeather', 'calcTerrain', 'calcReflect', 'calcLightScreen']) {
-    assert.match(section, new RegExp(`(?:checked|value)=\\{${control}\\}`), control)
-  }
+  assert.match(section, /className="sample-conditions-owner-grid"/)
+  for (const field of ['attackStage', 'spAttackStage', 'defenseStage', 'spDefenseStage', 'critical', 'burned', 'reflect', 'lightScreen']) assert.ok(section.includes(`key:'${field}'`), field)
+  assert.match(section, /updateSampleBattle\(entry.idx, side/)
+  for (const control of ['calcWeather', 'calcTerrain']) assert.match(section, new RegExp(`value=\\{${control}\\}`), control)
   assert.doesNotMatch(app, /sampleDamageConditionsCollapsed/)
 })
 
-test('each target keeps existing editable move and bulk handlers beside a single numerical result', () => {
+test('each target places four move results beside editable conditions and bulk', () => {
   assert.ok(section)
   assert.doesNotMatch(section, /sample-damage-target-summary-strip|sample-damage-bulk-details|sample-damage-context-row primary/)
   assert.doesNotMatch(section, /sample-damage-bulk-summary|<details/)
   const target = section.split('key={`sample-damage-target-${entry.idx}`}')[1]?.split(')}) : <div className="sample-empty-state')[0]
   assert.ok(target)
-  assert.match(target, /moveName: e\.target\.value/)
+  assert.match(target, /entry\.forwardMoves\.map\(\(move, slot\)/)
+  assert.match(target, /entry\.member\.opponentMoves\.map\(\(move, slot\)/)
+  assert.doesNotMatch(target, /공격 선택|moveName: e\.target\.value|sample-damage-metric-grid/)
   assert.match(target, /applySampleDamageBulkPresetSelection\(entry\.idx/)
   for (const field of ['hpEv', 'defenseEv', 'spDefenseEv', 'defenseNature', 'spDefenseNature']) {
     assert.match(target, new RegExp(`updateSampleDamageTarget\\(entry.idx, \\{ ${field}:`), field)
   }
-  for (const result of ['verdictPrimary', 'damageValueText', 'percentValueText']) assert.ok(target.includes(result), result)
-  assert.ok(target.indexOf('moveName: e.target.value') < target.indexOf('sample-damage-metric-grid'))
-  assert.ok(target.indexOf('hpEv:') < target.indexOf('sample-damage-metric-grid'))
+  for (const result of ['move.damage.minPct', 'result.damage.minPct', 'move.verdict', 'result.verdict']) assert.ok(target.includes(result), result)
   assert.doesNotMatch(target, /sample-damage-context-row primary|sample-damage-target-summary-strip/)
-  assert.match(css, /\.sample-calculator-target \.sample-damage-card-body\s*\{[^}]*grid-template-columns: minmax\(215px, 0\.86fr\) minmax\(0, 1\.14fr\)/)
+  assert.match(css, /\.sample-calculator-target \.sample-damage-card-body\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/)
 })
 
 test('sample target uses the shared item editor with the same item validation and damage inputs', () => {
@@ -64,9 +64,9 @@ test('Knock Off power depends on an allowed removable target item, not no item o
   assert.equal(context.knockOffPowerMultiplier('유턴', 'scizor', 'いのちのたま'), 1)
   assert.match(app, /powerMultiplier \*= knockOffMultiplier/)
   assert.match(app, /defenderKey: member.key/)
-  assert.match(section, /entry\.effectivePower/)
-  assert.match(section, /entry\.appliedDecisionPower/)
-  assert.match(app, /decisionPowerIndex\(damageSampleAttackerStats, moveMeta, resolveStabMultiplier\(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab\), modifierPack\)/)
+  assert.match(section, /move\.effectivePower/)
+  assert.match(section, /move\.appliedDecisionPower/)
+  assert.match(app, /decisionPowerIndex\(forwardProjection\.attacker, moveMeta, resolveStabMultiplier\(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab\), modifierPack\)/)
 })
 
 test('Knock Off item branches feed the existing damage and decision-power engines', () => {
@@ -84,7 +84,7 @@ test('Knock Off item branches feed the existing damage and decision-power engine
   assert.equal(engineMovePower(65, 1.5), 97)
   assert.match(app, /const effectivePower = engineMovePower\(movePower, modifierPack\.powerMultiplier \?\? 1\)/)
   assert.match(app, /const scaledPower = engineMovePower\(power, modifiers\?\.powerMultiplier \?\? 1\)/)
-  assert.match(section, /상대 적용 결정력'\)} · \{siteLanguage === 'ko' \? '추상 지표'/)
+  assert.match(section, /\{lt\('상대 적용 결정력'\)\} \{move\.appliedDecisionPower/)
   const attacker = { hp: 150, attack: 150, defense: 110, spAttack: 80, spDefense: 90 }
   const defender = { hp: 160, attack: 100, defense: 120, spAttack: 90, spDefense: 110 }
   const meta = { power: 65, category: 'physical' }
@@ -118,9 +118,9 @@ test('Knock Off item branches feed the existing damage and decision-power engine
 test('sample-only layout gives the item a full track, usable bulk numbers, and places compact results before bulk', () => {
   assert.match(css, /\.sample-calculator-target \.sample-damage-item-editor\s*\{\s*grid-template-columns: minmax\(0, 1fr\)/)
   assert.match(css, /\.sample-calculator-target \.sample-bulk-pair-row input\[type="number"\],[\s\S]*?min-width: 76px/)
-  assert.match(css, /\.sample-calculator-target \.sample-damage-card-body \.sample-workbench-mainpanel\s*\{[^}]*grid-row: 1/)
-  assert.match(css, /\.sample-calculator-target \.sample-damage-card-body \.sample-damage-control-section:not\(\.sample-damage-control-section-primary\)\s*\{[^}]*grid-row: 2/)
-  assert.match(css, /\.sample-calculator-target \.sample-damage-metric-box\.verdict\s*\{\s*grid-row: 2; grid-column: 2/)
+  assert.match(css, /\.sample-damage-move-result\s*\{[^}]*display: grid/)
   assert.match(css, /@media \(max-width: 700px\)[\s\S]*?#sample-damage-section \.sample-calculator-target \.sample-damage-card-body\s*\{\s*grid-template-columns: minmax\(0, 1fr\)/)
-  assert.match(css, /#sample-damage-section \.sample-calculator-target \.sample-damage-card-body \.sample-workbench-mainpanel\s*\{\s*order: 1/)
+  assert.match(css, /#sample-damage-section \.sample-opponent-move-grid,[\s\S]*?#sample-damage-section \.sample-track-input-grid,[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/)
+  assert.match(css, /#sample-damage-section \.registered-move-slot input\s*\{[^}]*height: 40px/)
+  assert.doesNotMatch(section, /className="sample-workbench-mainpanel"/)
 })

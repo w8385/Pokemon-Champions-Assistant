@@ -87,6 +87,20 @@ export type SampleDamageTarget = OpponentState & {
   defenseNature: number
   spDefenseNature: number
   moveName: string
+  opponentMoves: string[]
+  opponentMoveName: string
+  attackEv: number
+  spAttackEv: number
+  attackNature: number
+  spAttackNature: number
+  reverseAttackStage: number
+  reverseDefenseStage: number
+  reverseBurned: boolean
+  reverseReflect: boolean
+  reverseLightScreen: boolean
+  reverseAuroraVeil: boolean
+  reverseDefenderFullHp: boolean
+  sampleConditions?: import('../sampleDamageProjection').SampleConditions
 }
 
 export type SavedSample = {

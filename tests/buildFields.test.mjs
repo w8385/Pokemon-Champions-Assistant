@@ -10,7 +10,7 @@ test('party, quick, sample and sample target use the input-owning shared editor'
   assert.equal((app.match(/<PokemonBuildFields\b/g) ?? []).length, 4)
   const party = app.slice(app.indexOf('className="entry-grid manage-entry-grid"'), app.indexOf('className="move-card inline-move-card"'))
   const quick = app.slice(app.indexOf('const sideCard ='), app.indexOf('const toggle ='))
-  const sample = app.slice(app.indexOf('className="sample-meta-grid"') - 200, app.indexOf('sampleRegisteredMoves.map('))
+  const sample = app.slice(app.indexOf('className="sample-meta-grid"') - 200, app.indexOf('id="sample-moves-card"'))
   for (const section of [party, quick, sample]) assert.match(section, /<PokemonBuildFields\b/)
   assert.doesNotMatch(party, /party-meta-chip-button/)
   assert.doesNotMatch(quick, /<select[^>]*value=\{entry\.ability\}/)

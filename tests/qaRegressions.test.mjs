@@ -1,7 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import vm from 'node:vm'
+import { createRequire } from 'node:module'
 import { validateBackup } from '../src/backupValidation.ts'
+import { fixedSampleOpponentMoves } from '../src/sampleDamageMoves.ts'
+const ts = createRequire(import.meta.url)('typescript')
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
@@ -15,6 +19,44 @@ test('backup rejects unsupported version and malformed top-level shape', () => {
 const member = (key, picked = false) => ({ key, config: { nature: 'jolly', scarf: false, speedStage: 0 }, picked, evs: { hp: 0, attack: 32, defense: 0, spAttack: 0, spDefense: 0, speed: 32 }, tuning: { magicNumber: 0, maxValue: 0 }, item: '', ability: '' })
 const opponent = (key, picked = false) => ({ key, item: '', ability: '', notes: '', revealedMoves: [], natureBoost: false, scarf: false, speedStage: 0, picked, hpEv: 0, defenseEv: 0, spDefenseEv: 0, speedEv: 32, defenseNature: 1, spDefenseNature: 1 })
 const backup = (patch = {}) => ({ version: 1, party: [member('pikachu')], opponents: [opponent('pikachu')], ...patch })
+
+test('damage-target backup accepts and retains complete bidirectional scenario; malformed fields fail before import', () => {
+  const target = {
+    ...opponent('pikachu'), moveName: 'legacy-forward', opponentMoveName: 'legacy-reverse',
+    opponentMoves: ['볼트체인지', '전광석화', '', ''], attackEv: 24, spAttackEv: 8,
+    attackNature: 1.1, spAttackNature: 0.9, reverseAttackStage: 2,
+    reverseDefenseStage: -1, reverseBurned: true, reverseReflect: true,
+    reverseLightScreen: false, reverseAuroraVeil: true, reverseDefenderFullHp: false,
+  }
+  const payload = backup({ sampleDamageTargets: [target] })
+  const restored = validateBackup(JSON.parse(JSON.stringify(payload)))
+  assert.deepEqual(restored.sampleDamageTargets, [target])
+  for (const invalid of [
+    { opponentMoves: ['one', null, '', ''] }, { opponentMoves: ['one'] },
+    { attackEv: [] }, { attackNature: 'boosted' }, { reverseAttackStage: [] },
+    { reverseReflect: 1 }, { opponentMoveName: {} },
+  ]) assert.throws(() => validateBackup(backup({ sampleDamageTargets: [{ ...target, ...invalid }] })), /backup sampleDamageTargets/i)
+  assert.deepEqual(validateBackup(backup({ sampleDamageTargets: [{ ...opponent('pikachu'), moveName: 'old' }] })).sampleDamageTargets[0].moveName, 'old')
+})
+
+test('actual damage-target hydration projects reverse fields without consuming legacy selection', () => {
+  const tree = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const node = tree.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === 'sanitizeSampleDamageTargets')
+  assert.ok(node)
+  const js = ts.transpileModule(`${node.getText(tree)}\nglobalThis.hydrate = sanitizeSampleDamageTargets`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
+  const context = {
+    defaultSampleDamageTargets: [], indexByKey: new Map([['pikachu', {}]]), CHAMPIONS_EFFORT_PER_STAT_CAP: 32,
+    clampNonNegativeInt: (value, cap) => Math.max(0, Math.min(cap, Math.trunc(Number(value) || 0))),
+    clampSpeedStage: value => Math.max(-6, Math.min(6, Number(value) || 0)),
+    fixedSampleOpponentMoves,
+  }
+  vm.runInNewContext(js, context)
+  const raw = { ...opponent('pikachu'), moveName: 'outside-four', opponentMoveName: 'retired', opponentMoves: ['볼트체인지', '전광석화', '', ''], attackEv: 24, spAttackEv: 8, attackNature: 1.1, spAttackNature: 0.9, reverseAttackStage: 2, reverseDefenseStage: -1, reverseBurned: true, reverseReflect: true, reverseLightScreen: false, reverseAuroraVeil: true, reverseDefenderFullHp: false }
+  const projected = context.hydrate(validateBackup(backup({ sampleDamageTargets: [raw] })).sampleDamageTargets)[0]
+  for (const field of ['opponentMoves', 'opponentMoveName', 'moveName', 'attackEv', 'spAttackEv', 'attackNature', 'spAttackNature', 'reverseAttackStage', 'reverseDefenseStage', 'reverseBurned', 'reverseReflect', 'reverseLightScreen', 'reverseAuroraVeil', 'reverseDefenderFullHp']) {
+    assert.deepEqual(JSON.parse(JSON.stringify(projected[field])), raw[field], field)
+  }
+})
 
 test('backup rejects malformed nested roster primitives and shapes before mutation', () => {
   for (const input of [

@@ -35,6 +35,13 @@ const opponent = (input: unknown): boolean => record(input) && speciesKey(input.
   ...boolFields(['natureBoost', 'scarf', 'picked']),
   ...numericFields(['speedStage', 'hpEv', 'attackEv', 'defenseEv', 'spAttackEv', 'spDefenseEv', 'speedEv', 'defenseNature', 'spDefenseNature']),
 })
+const damageTarget = (input: unknown): boolean => opponent(input) && record(input) && optionalFields(input, {
+  opponentMoves: value => Array.isArray(value) && value.length === 4 && value.every(string),
+  opponentMoveName: string,
+  ...numericFields(['attackNature', 'spAttackNature', 'reverseAttackStage', 'reverseDefenseStage']),
+  ...boolFields(['reverseBurned', 'reverseReflect', 'reverseLightScreen', 'reverseAuroraVeil', 'reverseDefenderFullHp']),
+  sampleConditions,
+})
 const roster = (input: unknown, check: (value: unknown) => boolean): input is Record<string, unknown>[] =>
   Array.isArray(input) && input.every(check) && input.filter(entry => entry.picked === true).length <= 3
 const entries = (input: unknown, check: (value: unknown) => boolean) => Array.isArray(input) && input.every(check)
@@ -52,6 +59,17 @@ const linkDraft = (input: unknown): boolean => record(input) && optionalFields(i
 })
 const stringMap = (input: unknown) => record(input) && Object.values(input).every(strings)
 const powerMap = (input: unknown) => record(input) && Object.values(input).every(value => boolean(value) || number(value))
+const sampleBattle = (input: unknown) => record(input) && optionalFields(input, {
+  ...numericFields(['attackStage', 'spAttackStage', 'defenseStage', 'spDefenseStage', 'faintedAllies']),
+  ...boolFields(['burned', 'lowHp', 'poisoned', 'fullHp', 'statused', 'reflect', 'lightScreen', 'auroraVeil', 'critical', 'movedAfterTarget', 'electromorphosisCharged', 'disguiseActive', 'parentalBond']),
+  rivalryMode: value => ['neutral', 'same', 'opposite'].includes(value as string),
+  actual: value => record(value) && optionalFields(value, numericFields(['attack', 'defense', 'spAttack', 'spDefense'])),
+})
+function sampleConditions(input: unknown): boolean { return record(input) && requiredFields(input, {
+  ownerKey: speciesKey, own: sampleBattle, opponent: sampleBattle,
+  moveHits: value => record(value) && Object.values(value).every(number),
+  conditionalValues: powerMap,
+}) }
 
 /** Reject incompatible backups before React setters can mutate the workspace. */
 export function validateBackup(value: unknown): ImportExportPayload {
@@ -68,7 +86,7 @@ export function validateBackup(value: unknown): ImportExportPayload {
     activePartyPresetId: input => input === null || nonBlank(input),
     creatorLinkDrafts: input => entries(input, linkDraft),
     sampleSpeedTargets: input => entries(input, opponent),
-    sampleDamageTargets: input => entries(input, opponent),
+    sampleDamageTargets: input => entries(input, damageTarget),
     sampleLockedMoves: strings,
     confirmedMovesByKey: stringMap,
     calcConditionalPowerValues: powerMap,

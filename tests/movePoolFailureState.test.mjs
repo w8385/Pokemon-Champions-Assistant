@@ -7,13 +7,13 @@ import ts from 'typescript'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const marker = app.indexOf('const targetKeys = Array.from(new Set([...party.map(')
 const start = app.lastIndexOf('React.useEffect(', marker)
-const end = app.indexOf('}, [party, opponents, sampleForge.key, movePoolByKey])', marker) + '}, [party, opponents, sampleForge.key, movePoolByKey])'.length
+const end = app.indexOf('}, [party, opponents, sampleForge.key, sampleDamageTargets, movePoolByKey])', marker) + '}, [party, opponents, sampleForge.key, sampleDamageTargets, movePoolByKey])'.length
 const effectCode = ts.transpileModule(app.slice(start, end), { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
 function mount(initial) {
   let effect, loads = 0
   const context = {
     React: { useEffect(callback) { effect = callback } },
-    party: [{ key: 'fixture' }], opponents: [], sampleForge: { key: '' },
+    party: [{ key: 'fixture' }], opponents: [], sampleForge: { key: '' }, sampleDamageTargets: [],
     movePoolByKey: initial,
     setMovePoolByKey(update) { context.movePoolByKey = update(context.movePoolByKey) },
     loadFormLearnset() { loads++; return Promise.reject(new Error('fixture snapshot failure')) },
