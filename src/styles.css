@@ -8711,6 +8711,11 @@ html {
 .quick-result { min-width: 0; overflow-wrap: anywhere; }
 .quick-result h3 { font-size: clamp(1.25rem, 3vw, 1.9rem); margin: 8px 0; }
 .quick-result small { display: block; line-height: 1.6; }
+.quick-result.quick-ko-certain, .quick-move-preview.quick-ko-certain { border-color: #54d99a; background: rgba(38, 161, 103, .17); }
+.quick-result.quick-ko-possible, .quick-move-preview.quick-ko-possible { border-color: #f4bd65; background: rgba(210, 133, 32, .16); }
+.quick-ko-verdict { display: inline-block; margin-inline-start: .55em; padding: .08em .4em; border-radius: .3em; font-size: .78em; white-space: nowrap; vertical-align: middle; }
+.quick-ko-certain .quick-ko-verdict { color: #112d22; background: #8ff0b7; }
+.quick-ko-possible .quick-ko-verdict { color: #382108; background: #ffda82; }
 .quick-conditions { min-width: 0; }
 .quick-conditions summary { cursor: pointer; font-weight: 700; }
 .quick-condition-grid { margin-top: 12px; }

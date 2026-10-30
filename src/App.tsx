@@ -3794,6 +3794,18 @@ function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
   return actualStat(row[key], side.evs[key], quickStatNature(side, key, key === 'hp' ? 1 : natureMultiplier(side.nature, key)), key === 'hp')
 }
 
+// A multi-hit total does not supply the per-hit KO distribution needed for a 1-hit verdict.
+function quickKoVerdict(result: { damage: { min: number; max: number }; targetHp: number; hits: number; effectiveness: number } | null): 'certain' | 'possible' | null {
+  if (!result || result.hits !== 1 || result.effectiveness <= 0 || !Number.isFinite(result.targetHp) || result.targetHp <= 0 || !Number.isFinite(result.damage.min) || !Number.isFinite(result.damage.max) || result.damage.min <= 0 || result.damage.max < result.damage.min) return null
+  return result.damage.min >= result.targetHp ? 'certain' : result.damage.max >= result.targetHp ? 'possible' : null
+}
+
+const quickKoLabels = {
+  ko: { certain: '확정 1타', possible: '난수 1타' },
+  en: { certain: 'Guaranteed OHKO', possible: 'Possible OHKO' },
+  ja: { certain: '確定1発', possible: '乱数1発' },
+} as const
+
 export function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
 
@@ -3986,6 +3998,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
   const selectedSide = selected.side === 'attacker' ? attacker : defender
   const selectedMove = selectedSide.moves[selected.index] ?? ''
   const result = calculate(selected.side, selectedMove)
+  const selectedVerdict = quickKoVerdict(result)
   const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
   const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
   const selectedPool = pools[selectedSide.key]
@@ -4075,6 +4088,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
           const options = filterMoveOptions(draft, pool).slice(0, 8)
           const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
           const preview = calculate(side, name)
+          const previewVerdict = quickKoVerdict(preview)
           return <div key={index} className={`quick-move-row ${selected.side === side && selected.index === index ? 'selected' : ''}`}>
             {recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null}
             <RegisteredMoveSlot number={index + 1} name={activeSlot?.side === side && activeSlot.index === index ? draft : name} type={meta?.type} meta={meta} labels={labels} className={moveTypeThemeClass(meta?.type)}
@@ -4084,7 +4098,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <span className="move-autocomplete-main">{options.find(move => move.name === option.key)?.type ? <SmallTypeBadgeImage type={options.find(move => move.name === option.key)!.type!} /> : null}<span>{option.label}</span></span> }}
               inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
-            <button type="button" className="quick-move-preview" aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? `${preview.damage.min}–${preview.damage.max} · ${preview.damage.minPct}–${preview.damage.maxPct}%` : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
+            <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <>{preview.damage.min}–{preview.damage.max} · {preview.damage.minPct}–{preview.damage.maxPct}%{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
         })}</div>
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
@@ -4124,14 +4138,14 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
     <div className="row-between"><h2>{lt(comparisonMode ? '대면' : '계산기')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공격측·방어측 바꾸기')}</button> : null}</div>
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}>{lt('상대 초기화')}</button>)}
-    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
     <div className="quick-comparison-results">
       {speedStrip}
       <div className="quick-speed-settings" aria-label={lt('스피드 조건')}>
         {speedCard('attacker', attacker, attackingRow)}{speedCard('defender', defender, defendingRow)}
       </div>
-      <div className="quick-result" aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%)</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
+      <div className={`quick-result${selectedVerdict ? ` quick-ko-${selectedVerdict}` : ''}`} aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%){selectedVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][selectedVerdict]}</strong> : null}</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
     </div>
+    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
     <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
       <label>{lt('날씨')}<select value={conditions.weather} onChange={event => { setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather })) }}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
       <label>{lt('필드')}<select value={conditions.terrain} onChange={event => { setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain })) }}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>

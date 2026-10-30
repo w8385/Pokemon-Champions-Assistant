@@ -114,12 +114,12 @@ test('sparse payload rejects unclaimed effort objects rather than treating them 
   assert.equal(memory.has(key), true)
 })
 
-test('mounted markup puts shared cards before grouped results, moves below stats and one opponent search near slot', () => {
+test('shared results precede cards, with moves below stats and one opponent search near slot', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
-  assert.match(quick, /quick-comparison-results[^]*?\{speedStrip\}[^]*?<div className="quick-result"/)
+  assert.match(quick, /quick-comparison-results[^]*?\{speedStrip\}[^]*?quick-result\$\{selectedVerdict/)
   const view = quick.slice(quick.indexOf('return <section className={`panel wide quick-damage'))
-  assert.ok(view.indexOf('className="quick-sides"') < view.indexOf('className="quick-comparison-results"'))
+  assert.ok(view.indexOf('className="quick-comparison-results"') < view.indexOf('className="quick-sides"'))
   assert.match(quick, /\{statCard\(side, entry, row\)\}[^]*?quick-registered-moves/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)
   assert.match(app, /entrySelectors=\{\(opponentSearch, reset\) =>[^]*?className="selected-opponent-search">\{opponentSearch\}/)

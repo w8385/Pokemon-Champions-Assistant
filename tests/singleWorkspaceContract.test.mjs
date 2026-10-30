@@ -33,7 +33,7 @@ test('single speed shares one scale and build cards hold speed controls; rolls r
   assert.match(quick, /quick-speed-summary/)
   assert.match(quick, /quick-speed-card/)
   assert.match(quick, /className="quick-speed-assumptions"/)
-  assert.match(quick, /<div className="quick-result" aria-live="polite"/)
+  assert.match(quick, /<div className=\{`quick-result\$\{selectedVerdict[^]*?aria-live="polite"/)
   assert.match(quick, /className="quick-rolls"/)
   assert.match(css, /\.single-workspace/)
 })
