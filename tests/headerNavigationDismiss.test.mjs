@@ -55,5 +55,6 @@ test('single matchup does not announce a removed selection-estimate flow', () =>
   assert.match(matchup, /onDraftIdentity=/)
   assert.doesNotMatch(matchup, /<h2>/, 'the entry selectors do not add a second workspace title')
   const shared = source.slice(source.indexOf('function QuickDamagePanel('), source.indexOf('function LanguageIcon('))
-  assert.match(shared, /<h2>\{lt\(comparisonMode \? '대면' : '계산기'\)\}<\/h2>/)
+  assert.match(source, /<PageHeading title=\{lt\(mainSection === 'home'[^]*?'대면'[^]*?'계산기'/)
+  assert.doesNotMatch(shared, /<h2>\{lt\(comparisonMode \? '대면' : '계산기'\)\}<\/h2>/)
 })

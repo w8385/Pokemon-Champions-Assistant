@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { buildSpeedLine } from '../src/speedLine.ts'
 import { actualStat } from '../src/statMechanics.ts'
+import { routeGroups } from '../src/navigation.ts'
 
 const species = [
   { key: 'slow', name_ko: '느림', name_en: 'Slow', speed: 50 },
@@ -45,10 +46,11 @@ test('independent speed-line route and navigation retain existing menus and shar
   const types = readFileSync(new URL('../src/app/types.ts', import.meta.url), 'utf8')
   assert.match(types, /'speedLine'/)
   assert.match(app, /routePath === '\/speed-line'/)
-  assert.match(app, /<a className="home-route-card calm" href="#\/speed-line">/)
+  assert.equal(routeGroups.find(group => group.section === 'tools').links.find(link => link.section === 'speedLine').href, '#/speed-line')
   assert.match(app, /<SpeedLinePanel rows=\{rows\} state=\{speedLineState\}/)
   assert.match(app, /import \{ actualStat \} from '\.\/statMechanics'/)
   assert.doesNotMatch(app, /function actualStat\(/)
   assert.doesNotMatch(app, /setSampleWorkbenchTab\('rankers'\)/)
-  assert.match(app, /<a className="home-route-card calm" href="#\/dex">/)
+  assert.equal(routeGroups.find(group => group.section === 'dex').links[0].href, '#/dex')
+  assert.match(app, /group\.links\.map\(link => <a key=\{link\.href\} className="home-route-card calm" href=\{link\.href\}>/)
 })

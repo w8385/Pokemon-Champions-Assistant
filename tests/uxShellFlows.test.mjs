@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { routeGroups } from '../src/navigation.ts'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const speed = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
@@ -21,7 +22,9 @@ test('sample save and apply have distinct labels and replacement confirmation', 
 
 test('header one row and seven home native destinations', () => {
   const home = app.slice(app.indexOf('home-route-panel'), app.indexOf('home-footer-text-block'))
-  assert.equal((home.match(/className="home-route-card calm"/g) ?? []).length, 7)
+  assert.match(home, /routeGroups\.map\(group => <section/)
+  assert.match(home, /group\.links\.map\(link => <a key=\{link\.href\}/)
+  assert.equal(routeGroups.flatMap(group => group.links).length, 7)
   assert.doesNotMatch(home, /<button type="button" className="home-route-card/)
   assert.match(css, /\.header-title-stack\s*\{[^}]*display:\s*flex/)
   assert.match(css, /\.app-shell main a:visited/)

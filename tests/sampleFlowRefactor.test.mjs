@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { appTranslate } from './appTranslations.mjs'
+import { routeGroups } from '../src/navigation.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
@@ -32,7 +33,8 @@ test('research lab keeps save and apply actions while library does not render th
 })
 
 test('home sample builder card explicitly selects builder tab', () => {
-  assert.ok(/<a className="home-route-card calm" href="#\/sample-builder\?sampleTab=builder">\s*<div className="home-route-card-copy">\s*<span className="home-route-eyebrow">\{lt\('샘플 조정'\)\}/.test(app))
+  assert.equal(routeGroups.find(group => group.section === 'sample').links.find(link => link.tab === 'builder').href, '#/sample-builder?sampleTab=builder')
+  assert.match(app, /group\.links\.map\(link => <a key=\{link\.href\} className="home-route-card calm" href=\{link\.href\}>/)
 })
 
 test('English and Japanese translate link format and unrecorded actual stats', () => {

@@ -36,7 +36,8 @@ test('header renders named visible groups with native direct anchors, including 
     const nav = mounted.host.querySelector('#primary-navigation')
     assert.equal(nav.querySelector('a[href="#/"]')?.textContent, '홈')
     const groups = [...nav.querySelectorAll('.header-route-group')]
-    assert.deepEqual(groups.map(g => g.querySelector('.header-route-group-label')?.textContent), routeGroups.map(g => g.label))
+    assert.deepEqual(groups.map(g => g.getAttribute('aria-label')), routeGroups.map(g => g.label))
+    assert.equal(groups.at(-1).querySelectorAll('.header-route-group-label').length, 0)
     assert.deepEqual(groups.flatMap(g => [...g.querySelectorAll('a')].map(a => a.getAttribute('href'))), routeGroups.flatMap(g => g.links.map(l => l.href)))
     assert.equal(nav.querySelectorAll('button,details,summary').length, 0)
   } finally { await mounted.cleanup() }

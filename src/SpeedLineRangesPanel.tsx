@@ -54,7 +54,7 @@ export default function SpeedLineRangesPanel({ rows, state, onChange, language, 
   const openCut = (target: CoverageTarget<typeof roster[number]>) => update({ view: 'detail', targetKey: target.row.key, targetItem: target.variant, targetAbility: null,
     listEffort: 32, listNature: target.nature, referenceStage: 0, referenceAbility: null, items: target.variant, abilityMode: 'off', query: '', forms: 'all', comparison: 'all', rangeMode: 'all' })
   return <section className="panel wide speed-coverage-panel">
-    <div className="section-head"><h2>{translate('스피드라인')}</h2></div>
+
     <nav className="speed-line-view-switch" aria-label={translate('스피드라인')}><button type="button" className="action-button" aria-current="page">{l.title}</button><button type="button" className="action-button subtle" onClick={() => update({ view: 'detail' })}>{l.detail}</button></nav>
     {warnings.length ? <p role="alert">{l.restore}: {warnings.join(', ')}</p> : null}
     <div className="speed-coverage-reference card entry-card">

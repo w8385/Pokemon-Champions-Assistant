@@ -33,9 +33,10 @@ test('comparison speed assumptions and nature travel with side, not role',()=>{
 })
 test('default single party starts with pair, not wizard; quick remains independent',()=>{
  assert.match(app,/mainSection === 'single'[^]*?unified-single-pair/)
- assert.match(app,/comparisonMode \? '대면' : '계산기'/)
+ assert.match(app, /<PageHeading title=\{lt\(mainSection === 'home'[^]*?'대면'[^]*?'계산기'/)
  assert.match(app,/mainSection === 'single'[^]*?QuickDamagePanel/)
- assert.match(app,/href="#\/party"[^]*?내 파티 관리/)
+ assert.match(app,/빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요/)
+ assert.match(app,/group\.links\.map\(link => <a key=\{link\.href\} className="home-route-card calm" href=\{link\.href\}>/)
 })
 test('party route owns the original editor and real callbacks, not a copied comparison panel',()=>{
  const editor=app.slice(app.indexOf('className="party-columns party-manage-columns"'),app.indexOf('className="entry-grid manage-entry-grid"')+100)

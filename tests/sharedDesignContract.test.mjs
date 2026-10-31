@@ -12,7 +12,7 @@ const party = source.slice(partyStart, source.indexOf('{row ? <><PokemonBuildFie
 const builderStart = source.indexOf('id="sample-builder-section"')
 const builder = source.slice(builderStart, source.indexOf('<PokemonBuildFields key={`sample-', builderStart))
 const modalStart = source.indexOf("{sampleTuningModalOpen && mainSection === 'sample'")
-const modal = source.slice(modalStart, source.indexOf('<main className="grid">', modalStart))
+const modal = source.slice(modalStart, source.indexOf('<main className="grid page-frame">', modalStart))
 
 test('Party and Builder mount the input-owning shared species picker and keep their select callbacks', () => {
   assert.match(party, /<PokemonSearchField\s+id=\{`party-species-\$\{idx\}`\}/)

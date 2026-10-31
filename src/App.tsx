@@ -7,6 +7,7 @@ import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { normalizeRoute, routeGroups } from './navigation'
+import { PageHeading } from './PageHeading'
 import { libraryDetailHref, libraryListHref, parseLibraryContext, writeLibraryContext, type LibraryViewContext } from './libraryViewRoute'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './quickDamageState'
 import { sampleBattle, sampleConditions, sampleMoveKey, sampleMoveStats, type SampleBattle } from './sampleDamageProjection'
@@ -188,7 +189,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 속도 조정': 'Adjust my Speed', '상대 속도 조정': 'Adjust opponent Speed', '속도 보정 기준': 'Speed calculation basis', '양쪽 상태·랭크·장막 없음': 'No status, stages or screens on either side',
     '대면 가정 · 저장 기록 미변경': 'Matchup assumption · saved records unchanged', '가정의 출처와 한계': 'Assumptions and limits', '계산 한계': 'Calculation limits', '계산 조건': 'Calculation conditions', '계산 조건 바꾸기': 'Adjust calculation conditions', '상태·랭크·장막 없음': 'No status, stages or screens', '기술 등록 →': 'Register a move →', '기술을 등록하거나 선택하세요.': 'Register or select a move.', '양쪽 포켓몬을 선택하세요.': 'Choose both Pokémon.', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'This move is unsupported under current conditions or is a status move.', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in My Party.', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in Opponent Entry.',
     '대면비교': 'Matchup Comparison', '비교 불가': 'Cannot compare', '원본 특성 미확인': 'Unresolved source ability', '종·폼 검색': 'Search species or form', '엔트리 저장': 'Save entry', '변경 취소': 'Cancel changes', '저장 전 변경 · 대면 가정은 저장되지 않음': 'Unsaved entry changes · battle assumptions are temporary', '저장된 엔트리 · 전투 가정은 임시': 'Saved entry · battle assumptions are temporary', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': 'Same-species slots share moves. Move edits affect all of them.', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': 'Opponent full nature and offense effort unknown; recorded Def/Sp. Def modifiers apply. Modal edits affect only this matchup.', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': 'Full nature is a matchup assumption, not the saved entry; offense effort unknown and assumed zero.', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'Entry-backed · changes to assumptions do not edit saved entries', '속도 성격 가정': 'Speed nature assumption', '스카프 시나리오': 'Scarf scenario', '(전제 조건 미충족 · 미적용)': '(Prerequisite unmet · not applied)', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'Unburden requires no currently held item.',
-    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '링크 지역': 'Link region', '배틀': 'Battle', '분석 도구': 'Analysis Tools', '사용 중인 파티': 'Active Party', '이 파티로 대면 보기': 'View matchup with this party', '선택 내 슬롯 파티 편집': 'Edit selected party slot',
+    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '샘플': 'Samples', '링크 지역': 'Link region', '배틀': 'Battle', '분석 도구': 'Analysis Tools', '사용 중인 파티': 'Active Party', '이 파티로 대면 보기': 'View matchup with this party', '선택 내 슬롯 파티 편집': 'Edit selected party slot', '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.': 'Adjust Speed effort to compare when you overtake opposing benchmarks.',
     '선택 기술 상세': 'Selected move details', '속도 가정 조정': 'Adjust Speed assumptions',
     '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
     '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
@@ -240,7 +241,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 속도 조정': '自分の素早さを調整', '상대 속도 조정': '相手の素早さを調整', '속도 보정 기준': '素早さの計算根拠', '양쪽 상태·랭크·장막 없음': '両側とも状態・ランク・壁なし',
     '대면 가정 · 저장 기록 미변경': '対面上の想定・保存記録は変更なし', '가정의 출처와 한계': '想定の根拠と限界', '계산 한계': '計算の限界', '계산 조건': '計算条件', '계산 조건 바꾸기': '計算条件を変更', '상태·랭크·장막 없음': '状態・ランク・壁なし', '기술 등록 →': '技を登録 →', '기술을 등록하거나 선택하세요.': '技を登録または選択してください。', '양쪽 포켓몬을 선택하세요.': '両方のポケモンを選択してください。', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'この技は現在の条件では非対応か変化技です。', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': '空き枠：自分のパーティでポケモンを登録してください。', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': '空き枠：相手エントリーでポケモンを登録してください。',
     '대면비교': '対面比較', '비교 불가': '比較不可', '원본 특성 미확인': '原典の特性未解決', '종·폼 검색': '種族・フォルムを検索', '엔트리 저장': 'エントリーを保存', '변경 취소': '変更を取り消す', '저장 전 변경 · 대면 가정은 저장되지 않음': '未保存の変更・対面上の想定は保存されません', '저장된 엔트리 · 전투 가정은 임시': '保存済みエントリー・戦闘上の想定は一時的', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': '同じ種族のスロットは技を共有します。技の変更はすべてに適用されます。', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': '相手の性格全体と攻撃努力は不明。記録された防御・特防補正を適用し、モーダルの変更はこの対面のみに反映します。', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': '性格全体は対面上の想定で、保存済みエントリーとは異なります。攻撃努力は不明で0と想定します。', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'エントリーに基づく・想定の変更は保存済みエントリーに反映されません', '속도 성격 가정': '素早さ性格の想定', '스카프 시나리오': 'スカーフ想定', '(전제 조건 미충족 · 미적용)': '（発動条件を満たさず・適用なし）', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'かるわざ発動には現在持ち物がない必要があります。',
-    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報', '대면': '対面', '계산기': '計算機', '스피드라인': '素早さライン', '샘플 연구소': 'サンプル研究所', '링크 지역': 'リンクの地域',
+    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報', '대면': '対面', '계산기': '計算機', '스피드라인': '素早さライン', '샘플 연구소': 'サンプル研究所', '샘플': 'サンプル', '링크 지역': 'リンクの地域', '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.': '素早さの努力値を調整し、相手を抜けるラインを比較します。',
     '선택 기술 상세': '選択した技の詳細', '속도 가정 조정': '素早さの計算条件',
     '연속기는 기절 확률 계산 제외': '連続技のひんし確率は計算対象外', '간단 대미지': '簡易ダメージ', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': '攻撃側と防御側を選んで技のダメージをすぐ比較します。', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'パーティと相手エントリーを変更しない独立した計算です。', '공수 교체': '攻守を交換', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Lv.50・個体値31・性格補正なし・チャンピオンズ努力0/32・持ち物と特性なし。実数値入力は計算値を上書きします。', '포켓몬을 선택하세요.': 'ポケモンを選択してください。', '특성 없음': '特性なし', '노력 포인트': '努力ポイント', '사용 가능 공격 기술': '使用可能な攻撃技', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': '確認済みの攻撃技データがありません。推測技は表示しません。', '대미지 결과': 'ダメージ結果', '1타 확률': '一撃確率', '16개 난수 피해': '16個の乱数ダメージ', '실수치는 1~999의 정수로 입력하세요.': '実数値には1～999の整数を入力してください。', '공격측·방어측과 기술을 선택하세요.': '攻撃側・防御側と技を選んでください。', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': '選択していない発動条件・変動威力・回復・命中率は計算しません。連続技の乱数は既存エンジンで同じ乱数を各ヒットに使用します。',
     '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
@@ -4141,7 +4142,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     </fieldset>
   }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
-    <div className="row-between"><h2>{lt(comparisonMode ? '대면' : '계산기')}</h2>{!comparisonMode ? <button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공격측·방어측 바꾸기')}</button> : null}</div>
+    {!comparisonMode ? <div className="quick-heading-actions"><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공격측·방어측 바꾸기')}</button></div> : null}
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}>{lt('상대 초기화')}</button>)}
     <div className="quick-comparison-results">
       {speedStrip}
@@ -7456,7 +7457,7 @@ export default function App() {
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
                   <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
                   {routeGroups.map(group => <div key={group.section} className="header-route-group" aria-label={lt(group.label)}>
-                    <span className="header-route-group-label">{lt(group.label)}</span>
+                    {group.links.length > 1 ? <span className="header-route-group-label">{lt(group.label)}</span> : <span className="visually-hidden">{lt(group.label)}</span>}
                     <div className="header-route-group-links">{group.links.map(link => <a key={link.href} href={link.href}
                       className={`header-primary-tab ${mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'active' : ''}`}
                       aria-current={mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'page' : undefined}>{lt(link.label)}</a>)}</div>
@@ -7559,7 +7560,8 @@ export default function App() {
         opener={sampleTuningOpener.current} magicCandidate={sampleMagicCandidate}
         magicPoints={key => magicEffortPoints(sampleRow, sampleForge, key)} /> : null}
 
-      <main className="grid">
+      <main className="grid page-frame">
+        <PageHeading title={lt(mainSection === 'home' ? '홈' : mainSection === 'party' ? '내 파티' : mainSection === 'single' ? '대면' : mainSection === 'quickDamage' ? '계산기' : mainSection === 'speedLine' ? '스피드라인' : mainSection === 'sample' ? sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 연구소' : mainSection === 'dex' ? '도감' : '더블배틀')} />
         {(mainSection === 'party' || mainSection === 'single') ? <PartyContextBar
           language={siteLanguage} label={activePartyLabel} activeId={activePartyPresetId}
           records={savedPartyPresets} selectedMy={selectedMy} selectedOpp={selectedOpp}
@@ -7568,62 +7570,18 @@ export default function App() {
         {mainSection === 'home' ? (
         <>
           <section className="panel wide home-route-panel home-surface-panel">
-            <h2>{lt('바로 시작')}</h2>
             <div className="home-route-groups">
-              <section className="home-route-group">
-                <div className="home-route-group-head">
-                  <span className="home-section-label">{lt('싱글 배틀 준비')}</span>
-
-                </div>
+              {routeGroups.map(group => <section key={group.section} className="home-route-group">
+                <div className="home-route-group-head"><h3>{lt(group.label)}</h3></div>
                 <div className="home-route-grid home-route-grid-compact">
-                  <a className="home-route-card calm" href="#/single?tab=party">
+                  {group.links.map(link => <a key={link.href} className="home-route-card calm" href={link.href}>
                     <div className="home-route-card-copy">
-                      <span className="home-route-eyebrow">{lt('싱글 배틀 운영')}</span>
-                      <strong>{lt('대면')}</strong>
-                      <p>{lt('내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.')}</p>
+                      <strong>{lt(link.label)}</strong>
+                      <p>{lt(({ party: '내 포켓몬과 기술 기준을 정리합니다.', single: '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.', quickDamage: '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.', speedLine: '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.', dex: '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.' } as Record<string, string>)[link.section] ?? (link.tab === 'library' ? '검증된 빌드를 찾거나 원본 링크를 저장합니다.' : '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.'))}</p>
                     </div>
-                  </a>
-                  <a className="home-route-card calm" href="#/party">
-                    <div className="home-route-card-copy">
-                      <span className="home-route-eyebrow">{lt('파티 관리')}</span>
-                      <strong>{lt('내 파티')}</strong>
-                      <p>{lt('내 포켓몬과 기술 기준을 정리합니다.')}</p>
-                    </div>
-                  </a>
-                  <a className="home-route-card calm" href="#/damage">
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('바로 시작')}</span><strong>{lt('계산기')}</strong><p>{lt('공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.')}</p></div>
-                  </a>
+                  </a>)}
                 </div>
-              </section>
-
-              <section className="home-route-group">
-                <div className="home-route-group-head">
-                  <span className="home-section-label">{lt('샘플 조정 / 자료 확인')}</span>
-
-                </div>
-                <div className="home-route-grid home-route-grid-compact">
-                  <a className="home-route-card calm" href="#/sample-builder?sampleTab=builder">
-                    <div className="home-route-card-copy">
-                      <span className="home-route-eyebrow">{lt('샘플 조정')}</span>
-                      <strong>{lt('샘플 연구소')}</strong>
-                      <p>{lt('포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.')}</p>
-                    </div>
-                  </a>
-                  <a className="home-route-card calm" href="#/dex">
-                    <div className="home-route-card-copy">
-                      <span className="home-route-eyebrow">{lt('도감 확인')}</span>
-                      <strong>{lt('도감')}</strong>
-                      <p>{lt('포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.')}</p>
-                    </div>
-                  </a>
-                  <a className="home-route-card calm" href="#/speed-line">
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('빠른 순 → 느린 순')}</span><strong>{lt('스피드라인')}</strong><p>{lt('확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.')}</p></div>
-                  </a>
-                  <a className="home-route-card calm" href="#/sample-builder?sampleTab=library">
-                    <div className="home-route-card-copy"><span className="home-route-eyebrow">{lt('자료 확인')}</span><strong>{lt('샘플 라이브러리')}</strong><p>{lt('검증된 빌드를 찾거나 원본 링크를 저장합니다.')}</p></div>
-                  </a>
-                </div>
-              </section>
+              </section>)}
             </div>
           </section>
 
@@ -7694,11 +7652,6 @@ export default function App() {
         {mainSection === 'dex' ? <>
           {!dexSelectedValue ? <>
           <section className="panel wide">
-            <div className="section-head">
-              <div>
-                <h2>{lt('도감')}</h2>
-              </div>
-            </div>
             <div className="dex-tab-panel">
               <div className="dex-unified-search-card">
                 <div className="section-head compact">
@@ -8179,8 +8132,7 @@ export default function App() {
         </div> : null}
         {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
           <div className="party-columns party-manage-columns">
-            <div className="section-head row-between">
-              <h2>{lt('내 파티')}</h2>
+            <div className="section-head row-between party-actions-heading">
               <div className="inline-controls compact-actions">
                 <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}>{partyImageImportBusy ? lt('OCR 추출 중...') : lt('이미지에서 파티 가져오기')}</button>
                 <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('현재 파티 비우기')}</button>
@@ -8751,7 +8703,7 @@ export default function App() {
                 </section> : null}
               </> : <p role="status">{lt('출처를 찾을 수 없습니다.')}</p>}
             </div> : <>
-            <div className="section-head"><div><h2>{lt('샘플 라이브러리')}</h2><p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다.')}</p></div></div>
+            <p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다.')}</p>
             <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
             <div className="creator-library-kind-tabs" role="group" aria-label={lt('샘플 라이브러리')}>
               <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><span aria-hidden="true">◈ ◈ ◈</span> {lt('파티 소개')}</button>
@@ -8803,7 +8755,7 @@ export default function App() {
           </nav>
           {sampleWorkbenchTab !== 'builder' ? <p className="sample-lab-build-link">{lt('현재 빌드')}: {displayName(sampleRow, siteLanguage)} · <a className="pick-chip" href="#/sample-builder?sampleTab=builder">{lt('샘플 빌드 편집')}</a></p> : null}
           {sampleWorkbenchTab === 'builder' ? <section id="sample-builder-section" role="tabpanel" aria-labelledby="sample-workbench-tab-builder" className="sample-lab-section" aria-label={lt('샘플 빌드')}>
-          <h2>{lt('샘플 연구소')} · {lt('샘플 빌드')}</h2>
+
             <div className="sample-builder-grid compact-sample-builder-grid">
             <div id="sample-builder-card" className="sample-main-card flat-sample-main-card">
               <PokemonCardHeading sprite={sampleRow.sprite} spriteAlt={displayName(sampleRow, siteLanguage)} types={sampleRow.types} name={

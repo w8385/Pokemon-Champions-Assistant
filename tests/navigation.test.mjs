@@ -21,7 +21,9 @@ test('quick damage deep link resolves independently', () => {
 })
 test('speed line heading and list label match the direct menu destination', () => {
   const panel = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
-  assert.match(panel, /<h2>\{translate\('스피드라인'\)\}<\/h2>/)
+  const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+  assert.match(app, /<PageHeading title=\{lt\(mainSection === 'home'[^]*?mainSection === 'speedLine' \? '스피드라인'/)
+  assert.doesNotMatch(panel, /<h2>\{translate\('스피드라인'\)\}<\/h2>/)
   assert.match(panel, /role="table" aria-label=\{translate\('스피드라인'\)\}/)
 })
 

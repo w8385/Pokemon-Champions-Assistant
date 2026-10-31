@@ -11,7 +11,7 @@ test('entry selectors render inside the actual comparison panel and disable inde
   assert.match(quick, /entrySelectors\?: \(opponentSearch: React\.ReactNode, reset: React\.ReactNode\) => React\.ReactNode/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(quick, /<PokemonSearchField id={`quick-\${side}`}/)
-  assert.match(quick, /!comparisonMode \? <button type="button" className="action-button"[^]*?공격측·방어측 바꾸기/)
+  assert.match(quick, /!comparisonMode \? <div className="quick-heading-actions"><button type="button" className="action-button"[^]*?공격측·방어측 바꾸기/)
   assert.doesNotMatch(single, /<section className="panel wide"><h2>/)
   assert.match(single, /entrySelectors=\{/)
 })
