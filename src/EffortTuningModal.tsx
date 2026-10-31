@@ -2,6 +2,7 @@ import React from 'react'
 import type { EffortValues } from './myPartyChampionsSamples'
 import type { EffortStatKey, NatureId } from './app/types'
 import { STAT_PRESENTATION } from './statPresentation'
+import { UiIcon } from './UiIcon'
 
 const stats = STAT_PRESENTATION.map(stat => ({ key: stat.key, label: stat.modalLabel ?? stat.label }))
 const checkpoints = [11, 22, 32]
@@ -38,8 +39,8 @@ export function EffortTuningModal({ evs, nature, natureOptions, actualValue, onE
   }, [])
   return <div className="modal-backdrop" onClick={onClose}>
     <div ref={dialogRef} tabIndex={-1} className="modal-card effort-tuning-modal" role="dialog" aria-modal="true" aria-label={title ?? translate('노력치 보정')} onClick={event => event.stopPropagation()}>
-      <div className="row-between modal-header"><h2>{title ?? translate('노력치 보정')}</h2><button type="button" className="action-button" onClick={onClose}>{translate('닫기')}</button></div>
-      <div className="modal-grid"><label>{translate('성격')}<select value={nature} onChange={event => onNature(event.target.value as NatureId)}>{natureOptions.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><span>{translate('노력치 합')} {Object.values(evs).reduce((sum, value) => sum + value, 0)}/66</span></div>
+      <div className="row-between modal-header"><h2>{title ?? translate('노력치 보정')}</h2><button type="button" className="action-button" onClick={onClose}><UiIcon name="close" size={17} />{translate('닫기')}</button></div>
+      <div className="modal-grid"><label>{translate('성격')}<select value={nature} onChange={event => onNature(event.target.value as NatureId)}>{natureOptions.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><span className="effort-budget-tile" role="status"><UiIcon name="info" size={17} />{translate('노력치 합')} <strong>{Object.values(evs).reduce((sum, value) => sum + value, 0)}/66</strong></span></div>
       <div className="drag-stat-list">{stats.map(stat => {
         const current = evs[stat.key]
         const cap = Math.min(32, 66 - Object.entries(evs).reduce((sum, [key, value]) => sum + (key === stat.key ? 0 : value), 0))

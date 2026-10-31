@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/matchupWorkspace.css', import.meta.url), 'utf8')
-const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
+const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
 const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 
 test('one shared top toolbar owns existing opponent search and scoped reset before paired selectors', () => {
@@ -20,7 +20,7 @@ test('one shared top toolbar owns existing opponent search and scoped reset befo
 
 test('short visible reset keeps full destructive scope in accessible title and existing handler', () => {
   assert.match(panel, /onResetOpponents\?\.\(defenderSearch\)/)
-  assert.match(panel, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}[^>]*>\{lt\('상대 초기화'\)\}/)
+  assert.match(panel, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}[^>]*><UiIcon name="trash"[^>]*\/>\{lt\('상대 초기화'\)\}/)
   for (const label of ["'상대 초기화': 'Reset opponent'", "'상대 초기화': '相手を初期化'"]) assert.ok(app.includes(label), label)
   assert.match(css, /\.single-entry-toolbar \.action-button\s*\{[^}]*min-height:\s*44px/)
   assert.match(css, /\.single-entry-toolbar input\s*\{[^}]*min-height:\s*40px/)

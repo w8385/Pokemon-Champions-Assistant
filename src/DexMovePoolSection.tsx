@@ -52,7 +52,7 @@ export function DexMovePoolSection({ recordKey, language, status, moves, metaFor
     return (!current.type || type === current.type) && (!current.category || meta?.category === current.category)
   })
   return <section className="dex-move-pool" aria-busy={status === 'loading'}>
-    <div className="dex-move-pool-heading"><h3>{text.title}</h3>{provenance ? <p className="dex-move-pool-warning">{snapshotLabels[language].badge} · {provenance.date} · {snapshotLabels[language].warning} · {snapshotLabels[language].metadata} · <a href={`https://github.com/projectpokemon/champout/tree/${provenance.commit}`} target="_blank" rel="noopener noreferrer">{snapshotLabels[language].source}</a></p> : <p className="dex-move-pool-warning">{text.warning}</p>}</div>
+    <div className="dex-move-pool-heading"><h3>{text.title}</h3>{provenance && status !== 'ready' ? <p className="dex-move-pool-warning">{snapshotLabels[language].badge} · {provenance.date} · {snapshotLabels[language].warning} · <a href={`https://github.com/projectpokemon/champout/tree/${provenance.commit}`} target="_blank" rel="noopener noreferrer">{snapshotLabels[language].source}</a></p> : provenance ? <p className="dex-move-pool-warning">{snapshotLabels[language].metadata}</p> : <p className="dex-move-pool-warning">{text.warning}</p>}</div>
     {status === 'ready' ? <>
       <p className="dex-move-pool-count" role="status">{text.total} {moves.length} · {text.shown} {displayed.length}</p>
       {moves.length ? <>

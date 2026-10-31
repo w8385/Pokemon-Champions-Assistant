@@ -28,7 +28,7 @@ test('companion party is a compact separate section and own links are not public
   assert.match(detail, /relatedCreatorParties\[librarySource\.sourceId\]\.members\.map/)
   assert.doesNotMatch(detail, /<details[^>]+creator-library-companion-party/)
   assert.match(app, /<section className="creator-library-personal"/)
-  assert.match(app, /<h3>\{lt\('내 출처 링크'\)\}<\/h3>/)
+  assert.match(app, /<h3><UiIcon name=\"info\"[^>]*\/>\{lt\('내 출처 링크'\)\}<\/h3>/)
   const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
   assert.match(css, /@media \(max-width: 600px\)\s*\{\s*\.creator-library-detail \.registered-move-grid\s*\{ grid-template-columns: minmax\(0, 1fr\)/)
 })

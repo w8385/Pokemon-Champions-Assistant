@@ -1,5 +1,6 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
+import { UiIcon } from './UiIcon'
 
 export type BuildOption = { value: string; label: string; sprite?: string; secondary?: string }
 type Field = 'ability' | 'nature' | 'item'
@@ -18,7 +19,7 @@ export type PokemonBuildFieldsProps = {
   onAbility: (value: string) => void
   onNature: (value: string) => void
   onItem: (value: string) => void
-  labels: { ability: string; nature: string; item: string; none: string; itemPlaceholder: string; fixed?: string }
+  labels: { ability: string; nature: string; item: string; none: string; itemPlaceholder: string; fixed?: string; clear?: string }
   itemLabel: (value: string) => string
   itemSprite: (value: string) => string
   fixedItem?: string | null
@@ -90,7 +91,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
   const button = (field: Field, title: string, content: React.ReactNode, tooltip?: Tooltip) => <button
     type="button" className="party-meta-chip-button" aria-label={`${title}: ${field === 'ability' ? abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none : field === 'nature' ? nature || labels.none : item ? itemLabel(item) : labels.none}`}
     aria-expanded={open === field} ref={el => { trigger.current[field] = el }} onClick={() => begin(field)}
-    {...tooltip}>{<><span>{title}</span>{content}</>}
+    {...tooltip}>{<><span>{title}</span>{content}<UiIcon name="chevron" size={14} className="ui-icon meta-field-chevron" /></>}
   </button>
   const optionButton = (field: Field, option: BuildOption, index: number) => {
     const optionTooltip = field === 'ability' ? abilityTooltip?.(option.value) : undefined
@@ -121,9 +122,9 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
           if (options.length && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) { event.preventDefault(); setHighlight(i => Math.max(0, Math.min(options.length - 1, i + (event.key === 'ArrowDown' ? 1 : -1)))) }
           if (event.key === 'Enter' && options.length) { event.preventDefault(); choose('item', options[highlight < 0 ? 0 : highlight].value) }
         }} />
-        {!fixedItem && (draft || item) && <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={event => event.preventDefault()} onClick={() => choose('item', '')}>×</button>}
+        {!fixedItem && (draft || item) && <button type="button" className="meta-item-clear-button" aria-label={`${labels.item}: ${labels.clear ?? 'Clear'}`} onMouseDown={event => event.preventDefault()} onClick={() => choose('item', '')}><UiIcon name="close" size={16} /><span>{labels.item} {labels.clear ?? 'Clear'}</span></button>}
       </div>
-      {fixedItem && itemError && <button type="button" className="party-meta-option" onClick={() => { onItem(fixedItem); close(true) }}>{props.repairLabel || fixedItem}</button>}
+      {fixedItem && itemError && <button type="button" className="party-meta-option" onClick={() => { onItem(fixedItem); close(true) }}><UiIcon name="warning" size={16} />{props.repairLabel || fixedItem}</button>}
       {!fixedItem && options.length > 0 && <div className="move-autocomplete-menu unified-dropdown-menu">{options.map((option, idx) => optionButton(field, option, idx))}</div>}
     </> : (field === 'ability' ? [{ value: '', label: labels.none }, ...abilities] : natures).map((option, idx) => optionButton(field, option, idx))}
   </div> : null

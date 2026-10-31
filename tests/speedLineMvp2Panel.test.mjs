@@ -31,7 +31,7 @@ test('reference jump focuses immediately and recenters after deferred row layout
  const walk = node => { if(Array.isArray(node)) return node.forEach(walk); if(node?.props) { nodes.push(node); walk(node.props.children) } }
  walk(tree)
  const marker=nodes.find(node=>node.props.className?.includes('speed-line-reference-marker'))
- const button=nodes.find(node=>node.type==='button'&&node.props.children==='Jump to reference')
+ const button=nodes.find(node=>node.type==='button'&&(Array.isArray(node.props.children) ? node.props.children.includes('Jump to reference') : node.props.children==='Jump to reference'))
  const calls=[]; const frames=[]; const original=globalThis.requestAnimationFrame
  marker.props.ref.current={scrollIntoView:options=>calls.push(options),focus:()=>calls.push('focus')}
  globalThis.requestAnimationFrame=callback=>{frames.push(callback);return frames.length}

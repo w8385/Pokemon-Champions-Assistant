@@ -1,20 +1,35 @@
+import type { UiIconName } from './UiIcon'
+
+export const homeRoute = { label: '홈', href: '#/', icon: 'home' } as const satisfies { label: string; href: string; icon: UiIconName }
+
 export const routeGroups = [
   { label: '배틀', section: 'battle', links: [
-    { label: '내 파티', href: '#/party', section: 'party', tab: '' },
-    { label: '대면', href: '#/single?tab=party', section: 'single', tab: 'party' },
+    { label: '내 파티', href: '#/party', section: 'party', tab: '', icon: 'party' },
+    { label: '대면', href: '#/single?tab=party', section: 'single', tab: 'party', icon: 'battle' },
   ] },
   { label: '분석 도구', section: 'tools', links: [
-    { label: '계산기', href: '#/damage', section: 'quickDamage', tab: '' },
-    { label: '스피드라인', href: '#/speed-line', section: 'speedLine', tab: '' },
+    { label: '계산기', href: '#/damage', section: 'quickDamage', tab: '', icon: 'calculator' },
+    { label: '스피드라인', href: '#/speed-line', section: 'speedLine', tab: '', icon: 'speed' },
   ] },
   { label: '샘플', section: 'sample', links: [
-    { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library' },
-    { label: '샘플 연구소', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder' },
+    { label: '샘플 라이브러리', href: '#/sample-builder?sampleTab=library', section: 'sample', tab: 'library', icon: 'library' },
+    { label: '샘플 연구소', href: '#/sample-builder?sampleTab=builder', section: 'sample', tab: 'builder', icon: 'lab' },
   ] },
   { label: '도감', section: 'dex', links: [
-    { label: '도감', href: '#/dex', section: 'dex', tab: '' },
+    { label: '도감', href: '#/dex', section: 'dex', tab: '', icon: 'dex' },
   ] },
 ] as const
+
+export function routeIconFor(section: string, tab = ''): UiIconName | undefined {
+  if (section === 'home') return homeRoute.icon
+  if (section === 'double') return 'battle'
+  for (const group of routeGroups) {
+    for (const link of group.links) {
+      if (link.section === section && (section !== 'sample' || (tab === 'library' ? link.tab === 'library' : link.tab === 'builder'))) return link.icon
+    }
+  }
+  return undefined
+}
 
 export function normalizeRoute(hash: string): { section: 'home' | 'single' | 'party' | 'double' | 'sample' | 'speedLine' | 'dex' | 'quickDamage'; tab: string } {
   const route = new URL((hash.replace(/^#/, '') || '/'), 'https://route.local')

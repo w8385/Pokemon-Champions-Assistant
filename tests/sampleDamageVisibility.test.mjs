@@ -34,7 +34,7 @@ test('each target places four move results beside editable conditions and bulk',
   for (const field of ['hpEv', 'defenseEv', 'spDefenseEv', 'defenseNature', 'spDefenseNature']) {
     assert.match(target, new RegExp(`updateSampleDamageTarget\\(entry.idx, \\{ ${field}:`), field)
   }
-  for (const result of ['move.damage.minPct', 'result.damage.minPct', 'move.verdict', 'result.verdict']) assert.ok(target.includes(result), result)
+  for (const result of ['damage={move.damage}', 'damage={result.damage}', 'move.verdict', 'result.verdict']) assert.ok(target.includes(result), result)
   assert.doesNotMatch(target, /sample-damage-context-row primary|sample-damage-target-summary-strip/)
   assert.match(css, /\.sample-calculator-target \.sample-damage-card-body\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/)
 })

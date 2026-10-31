@@ -1,4 +1,5 @@
 import React from 'react'
+import { UiIcon } from './UiIcon'
 
 export type SearchOption = { key: string; label: string; sprite?: string }
 export type SearchComboboxProps<T extends SearchOption> = {
@@ -68,6 +69,7 @@ export default function SearchCombobox<T extends SearchOption>({ id, inputRef, m
   }
   return <div className={`pokemon-search-field ${className}`.trim()}>
     {label ? <label htmlFor={id}>{label}</label> : null}
+    <UiIcon name="search" size={18} className="ui-icon search-field-icon" />
     <input {...inputProps} ref={inputRef} id={id} className={inputClassName ?? inputProps?.className} type={inputProps?.type ?? 'search'} value={value} placeholder={placeholder ?? inputProps?.placeholder} disabled={disabled || inputProps?.disabled} readOnly={readOnly || inputProps?.readOnly}
       role={mode === 'filter' ? 'searchbox' : 'combobox'} aria-autocomplete={mode === 'filter' ? undefined : 'list'} aria-expanded={mode === 'filter' ? undefined : open && Boolean(visible.length || showEmpty && value.trim())} aria-controls={mode === 'filter' ? undefined : listId}
       aria-activedescendant={mode === 'combobox' && open && highlight >= 0 && visible[highlight] ? `${id}-option-${highlight}` : undefined}

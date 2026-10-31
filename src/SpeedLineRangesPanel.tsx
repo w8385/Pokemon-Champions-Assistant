@@ -1,4 +1,5 @@
 import React from 'react'
+import { UiIcon } from './UiIcon'
 import { searchPokemon } from './pokemonSearch'
 import { speciesSearchCandidates } from './pokemonSearch'
 import { searchMatchScore } from './searchMatching'
@@ -55,7 +56,7 @@ export default function SpeedLineRangesPanel({ rows, state, onChange, language, 
     listEffort: 32, listNature: target.nature, referenceStage: 0, referenceAbility: null, items: target.variant, abilityMode: 'off', query: '', forms: 'all', comparison: 'all', rangeMode: 'all' })
   return <section className="panel wide speed-coverage-panel">
 
-    <nav className="speed-line-view-switch" aria-label={translate('스피드라인')}><button type="button" className="action-button" aria-current="page">{l.title}</button><button type="button" className="action-button subtle" onClick={() => update({ view: 'detail' })}>{l.detail}</button></nav>
+    <nav className="speed-line-view-switch ui-segmented" aria-label={translate('스피드라인')}><button type="button" className="action-button" aria-current="page">{l.title}</button><button type="button" className="action-button subtle" onClick={() => update({ view: 'detail' })}>{l.detail}</button></nav>
     {warnings.length ? <p role="alert">{l.restore}: {warnings.join(', ')}</p> : null}
     <div className="speed-coverage-reference card entry-card">
       <PokemonCardHeading name={<strong>{projection.reference ? displayName(projection.reference) : state.referenceKey ? `${l.missing} (${state.referenceKey})` : l.empty}</strong>} sprite={projection.reference?.sprite} spriteAlt={projection.reference ? displayName(projection.reference) : ''} types={projection.reference?.types} />
@@ -79,10 +80,10 @@ export default function SpeedLineRangesPanel({ rows, state, onChange, language, 
         <td data-label={l.newTargets}><button type="button" className="action-button subtle speed-coverage-show-targets" aria-label={`${l.effortRange} ${group.start}${group.end !== group.start ? `–${group.end}` : ''}: ${l.newTargets} ${group.newTargets.length}`} aria-controls="speed-coverage-target-list" aria-current={selectedGroup?.start === group.start ? 'true' : undefined} onClick={() => { setEffort(String(group.start)); setTargetQuery('') }}>{group.newTargets.length}</button></td>
       </tr>)}</tbody></table></div>
       {selectedGroup ? <section className="speed-coverage-targets" aria-label={l.targetSearch}>
-        <h3>{l.newTargets} · {l.effortRange} {selectedGroup.start}{selectedGroup.end !== selectedGroup.start ? `–${selectedGroup.end}` : ''}</h3>
+        <h3><UiIcon name="search" size={17} />{l.newTargets} · {l.effortRange} {selectedGroup.start}{selectedGroup.end !== selectedGroup.start ? `–${selectedGroup.end}` : ''}</h3>
         <p className="muted">{selectedGroup.start === 0 ? l.atZero : l.newTargets} · {l.targetCount}: {visibleTargets.length}/{selectedGroup.newTargets.length}</p>
-        <label htmlFor="speed-coverage-target-search">{l.targetSearch}</label><input id="speed-coverage-target-search" type="search" value={targetQuery} onChange={e => setTargetQuery(e.target.value)} />
-        <div id="speed-coverage-target-list" className="speed-coverage-target-list" role="list">{visibleTargets.length ? visibleTargets.map(target => <div role="listitem" key={`${target.row.key}:${target.variant}:${target.nature}`} className="speed-coverage-target-item">{targetName(target)} · {l.effort} {target.passEffort} <button type="button" className="action-button subtle speed-coverage-cut" onClick={() => openCut(target)}>{l.detailCut}</button></div>) : <p className="muted">{l.none}</p>}</div>
+        <label htmlFor="speed-coverage-target-search"><UiIcon name="search" size={16} />{l.targetSearch}</label><input id="speed-coverage-target-search" type="search" value={targetQuery} onChange={e => setTargetQuery(e.target.value)} />
+        <div id="speed-coverage-target-list" className="speed-coverage-target-list" role="list">{visibleTargets.length ? visibleTargets.map(target => <div role="listitem" key={`${target.row.key}:${target.variant}:${target.nature}`} className="speed-coverage-target-item">{targetName(target)} · {l.effort} {target.passEffort} <button type="button" className="action-button subtle speed-coverage-cut" onClick={() => openCut(target)}><UiIcon name="chevron" size={15} />{l.detailCut}</button></div>) : <p className="muted">{l.none}</p>}</div>
       </section> : null}</div>
       <p className="muted speed-coverage-premise">{l.premise}</p>
     </> : null}

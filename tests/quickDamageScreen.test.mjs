@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const screen = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
+const screen = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
 
 test('standalone damage reuses real picker and engine without changing party entries', () => {
   assert.match(screen, /<PokemonSearchField id=\{`quick-\$\{side\}`\}/)

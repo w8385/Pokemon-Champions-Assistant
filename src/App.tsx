@@ -6,8 +6,10 @@ import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
 import { prepareCreatorParty } from './creatorPartyImport'
-import { normalizeRoute, routeGroups } from './navigation'
+import { homeRoute, normalizeRoute, routeGroups, routeIconFor } from './navigation'
 import { PageHeading } from './PageHeading'
+import { UiIcon } from './UiIcon'
+import { DamageRangeMeter } from './DamageRangeMeter'
 import { libraryDetailHref, libraryListHref, parseLibraryContext, writeLibraryContext, type LibraryViewContext } from './libraryViewRoute'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './quickDamageState'
 import { sampleBattle, sampleConditions, sampleMoveKey, sampleMoveStats, type SampleBattle } from './sampleDamageProjection'
@@ -155,9 +157,9 @@ type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error' | FormLear
 type SharedPoolState = FormLearnset | { status: 'loading' | 'load-error'; moves: MoveOption[]; moveIds: number[]; provenance: typeof LEARNSET_SOURCE }
 function learnsetStatusText(pool: SharedPoolState | undefined, language: SiteLanguage) {
   const messages = {
-    ko: { loading: '폼별 기술 스냅샷 로딩 중', ready: '폼별 기술 · 2026-09-09 스냅샷 (현행판 일치 미검증)', missing: '폼별 기술 출처 미확인 · 기존 기록 유지', error: '폼별 기술 로딩 실패 · 기존 기록 유지', legacy: '폼별 기술 출처 미검증' },
-    en: { loading: 'Loading form learnset', ready: 'Exact-form learnset · 2026-09-09 snapshot (current version unverified)', missing: 'Form learnset unknown · records retained', error: 'Learnset load failed · records retained', legacy: 'Form learnset unverified' },
-    ja: { loading: 'フォルム別わざを読込中', ready: 'フォルム別わざ · 2026-09-09 スナップショット (現行版未検証)', missing: 'フォルム別わざ未確認 · 記録は保持', error: 'わざの読込失敗 · 記録は保持', legacy: 'フォルム別わざ未検証' },
+    ko: { loading: '폼별 기술 스냅샷 로딩 중', ready: '', missing: '폼별 기술 출처 미확인 · 기존 기록 유지', error: '폼별 기술 로딩 실패 · 기존 기록 유지', legacy: '폼별 기술 출처 미검증' },
+    en: { loading: 'Loading form learnset', ready: '', missing: 'Form learnset unknown · records retained', error: 'Learnset load failed · records retained', legacy: 'Form learnset unverified' },
+    ja: { loading: 'フォルム別わざを読込中', ready: '', missing: 'フォルム別わざ未確認 · 記録は保持', error: 'わざの読込失敗 · 記録は保持', legacy: 'フォルム別わざ未検証' },
   }[language]
   switch (pool?.status) {
     case 'ready-verified': return messages.ready
@@ -4068,7 +4070,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     if (!row) return null
     const scarf = scarfFor(entry), ability = abilityFor(entry, row)
     return <div className="quick-speed-card">
-      <div className="quick-speed-card-heading"><strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)}</strong><span className="quick-speed-base-badge">{lt('스피드 종족값')} {row.speed}</span></div>
+      <div className="quick-speed-card-heading"><strong><UiIcon name="speed" size={17} />{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)}</strong><span className="quick-speed-base-badge">{lt('스피드 종족값')} {row.speed}</span></div>
       <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{speedLabels.nature}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{speedLabels.scarf}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{speedLabels.off}</option><option value="scarf">{speedLabels.on}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
     </div>
   }
@@ -4091,7 +4093,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
         {statCard(side, entry, row)}
-        <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small>
+        {learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
         {status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{language === 'ko' ? '다시 시도 (새로고침)' : language === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
         {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}
         <div className="registered-move-grid quick-registered-moves">{Array.from({ length: 4 }, (_, index) => {
@@ -4111,7 +4113,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <span className="move-autocomplete-main">{options.find(move => move.name === option.key)?.type ? <SmallTypeBadgeImage type={options.find(move => move.name === option.key)!.type!} /> : null}<span>{option.label}</span></span> }}
               inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
-            <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <>{preview.damage.min}–{preview.damage.max} · {preview.damage.minPct}–{preview.damage.maxPct}%{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
+            <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
         })}</div>
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
@@ -4129,7 +4131,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
           onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
           onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}
           onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
-          labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && sourceStatus('nature') ? sourceStatus('nature') === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${sourceStatus('nature')}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
+          labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && sourceStatus('nature') ? sourceStatus('nature') === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${sourceStatus('nature')}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
           itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />
 <PokemonStatGrid showEffort stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: `${lt(stat.label)}${side === 'defender' && comparisonMode && (stat.key === 'attack' || stat.key === 'spAttack') && sourceStatus(stat.key) ? ` · ${sourceStatus(stat.key)}` : ''}${side === 'defender' && comparisonMode && entry.statNatureMultipliers[stat.key] !== undefined ? ` · ${sourceLabels.modifier} ×${entry.statNatureMultipliers[stat.key]}` : ''}`, theme: statThemeClass(stat.key), value: quickStat(entry, row, stat.key), ev: entry.evs[stat.key] }))} onTune={() => { opener.current = document.activeElement as HTMLElement; setModalKey(entry.key); setModalSide(side) }} /></div> : null
   }
@@ -4149,24 +4151,24 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     </fieldset>
   }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
-    {!comparisonMode ? <div className="quick-heading-actions"><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공격측·방어측 바꾸기')}</button></div> : null}
-    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}>{lt('상대 초기화')}</button>)}
+    {!comparisonMode ? <div className="quick-heading-actions"><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}><UiIcon name="swap" size={17} />{lt('공격측·방어측 바꾸기')}</button></div> : null}
+    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}><UiIcon name="trash" size={17} />{lt('상대 초기화')}</button>)}
     <div className="quick-comparison-results">
       <div className="quick-speed-settings" aria-label={lt('스피드 조건')}>
         {speedCard('attacker', attacker, attackingRow)}{speedCard('defender', defender, defendingRow)}
       </div>
       {speedStrip}
-      <div className={`quick-result${selectedVerdict ? ` quick-ko-${selectedVerdict}` : ''}`} aria-live="polite" aria-label={lt('대미지 결과')}><div className="quick-result-head"><strong>{moveLabel(selectedMove) || lt('기술 선택')}</strong><span>{selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')}</span></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%){selectedVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][selectedVerdict]}</strong> : null}</h3><p>{lt('상대 체력')} {result.targetHp}{result.effectiveness !== 1 ? ` · ${lt('상성')} ×${result.effectiveness}` : null}{result.hits === 1 && result.effectiveness > 0 && Number.isFinite(result.targetHp) && result.targetHp > 0 && Number.isFinite(result.damage.max) && result.damage.max < result.targetHp ? <> · {({ ko: '1타 불가', en: 'No OHKO', ja: '1発不可' } as const)[language]}</> : null}{selectedVerdict === 'possible' ? <span className="quick-ko-chance"> · {(result.damage.rolls.filter(roll => roll >= result.targetHp).length / result.damage.rolls.length * 100).toFixed(1)}%</span> : null}</p>{result.hits > 1 ? <p>{lt('연속기는 기절 확률 계산 제외')}</p> : null}</> : <p role="status">{selectedReason}</p>}</div>
+      <div className={`quick-result${selectedVerdict ? ` quick-ko-${selectedVerdict}` : ''}`} aria-live="polite" aria-label={lt('대미지 결과')}><div className="quick-result-head"><strong>{moveLabel(selectedMove) || lt('기술 선택')}</strong><span>{selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')}</span></div>{result ? <><h3><DamageRangeMeter damage={result.damage} targetHp={result.targetHp} language={language} />{selectedVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][selectedVerdict]}</strong> : null}</h3><p>{lt('상대 체력')} {result.targetHp}{result.effectiveness !== 1 ? ` · ${lt('상성')} ×${result.effectiveness}` : null}{result.hits === 1 && result.effectiveness > 0 && Number.isFinite(result.targetHp) && result.targetHp > 0 && Number.isFinite(result.damage.max) && result.damage.max < result.targetHp ? <> · {({ ko: '1타 불가', en: 'No OHKO', ja: '1発不可' } as const)[language]}</> : null}{selectedVerdict === 'possible' ? <span className="quick-ko-chance"> · {(result.damage.rolls.filter(roll => roll >= result.targetHp).length / result.damage.rolls.length * 100).toFixed(1)}%</span> : null}</p>{result.hits > 1 ? <p>{lt('연속기는 기절 확률 계산 제외')}</p> : null}</> : <p role="status">{selectedReason}</p>}</div>
     </div>
     <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
-    <div className="quick-conditions"><strong>{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
+    <div className="quick-conditions"><strong className="ui-section-label"><UiIcon name="settings" size={17} />{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
       <label>{lt('날씨')}<select value={conditions.weather} onChange={event => { setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather })) }}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
       <label>{lt('필드')}<select value={conditions.terrain} onChange={event => { setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain })) }}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
       {toggle('critical','급소')}{toggle('typeChangeStab','타입변환 자속')}
       {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
     </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}
     </div></div>
-    {comparisonMode && (dirty.attacker.size || dirty.defender.size || draftStorageFailed) ? <div className="quick-record-actions" aria-label={lt('기록에 반영')}><span role="status">{draftStorageFailed ? language === 'en' ? 'Comparison draft · automatic storage failed; edits remain on screen' : language === 'ja' ? '比較下書き · 自動保存できません · 編集内容は画面上のみ' : '비교 초안 · 자동 보관 실패 · 변경은 현재 화면에만 유지' : language === 'en' ? 'Comparison draft · kept automatically' : language === 'ja' ? '比較下書き · 自動保存' : '비교 초안 · 자동 보관'}</span>{(['attacker','defender'] as const).map(side => dirty[side].size ? <button key={side} type="button" className="action-button" disabled={!(side === 'attacker' ? attacker.key : defender.key)} onClick={() => { const slot = comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0; const entry = side === 'attacker' ? attacker : defender; if (side === 'attacker' && dirty[side].has('moves') && sharedMoveSpecies?.(entry.key) && !window.confirm(language === 'en' ? 'Apply these moves to all slots of this species?' : language === 'ja' ? 'この種のすべての枠に技を反映しますか？' : '같은 종의 모든 슬롯에 기술을 반영할까요?')) return; onSaveEntry?.(side, entry, dirty[side]); if (!forgetDraft(localStorage, side, slot)) setDraftStorageFailed(true); setDirty(prev => ({ ...prev, [side]: new Set() })) }}>{language === 'en' ? side === 'attacker' ? 'Apply to my party record' : 'Apply to opponent entry record' : language === 'ja' ? side === 'attacker' ? '自分のパーティ記録に反映' : '相手エントリー記録に反映' : side === 'attacker' ? '내 파티 기록에 반영' : '상대 엔트리 기록에 반영'}</button> : null)}</div> : null}
+    {comparisonMode && (dirty.attacker.size || dirty.defender.size || draftStorageFailed) ? <div className="quick-record-actions" aria-label={lt('기록에 반영')}><span role="status">{draftStorageFailed ? language === 'en' ? 'Comparison draft · automatic storage failed; edits remain on screen' : language === 'ja' ? '比較下書き · 自動保存できません · 編集内容は画面上のみ' : '비교 초안 · 자동 보관 실패 · 변경은 현재 화면에만 유지' : language === 'en' ? 'Comparison draft · kept automatically' : language === 'ja' ? '比較下書き · 自動保存' : '비교 초안 · 자동 보관'}</span>{(['attacker','defender'] as const).map(side => dirty[side].size ? <button key={side} type="button" className="action-button" disabled={!(side === 'attacker' ? attacker.key : defender.key)} onClick={() => { const slot = comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0; const entry = side === 'attacker' ? attacker : defender; if (side === 'attacker' && dirty[side].has('moves') && sharedMoveSpecies?.(entry.key) && !window.confirm(language === 'en' ? 'Apply these moves to all slots of this species?' : language === 'ja' ? 'この種のすべての枠に技を反映しますか？' : '같은 종의 모든 슬롯에 기술을 반영할까요?')) return; onSaveEntry?.(side, entry, dirty[side]); if (!forgetDraft(localStorage, side, slot)) setDraftStorageFailed(true); setDirty(prev => ({ ...prev, [side]: new Set() })) }}><UiIcon name="check" size={17} />{language === 'en' ? side === 'attacker' ? 'Apply to my party record' : 'Apply to opponent entry record' : language === 'ja' ? side === 'attacker' ? '自分のパーティ記録に反映' : '相手エントリー記録に反映' : side === 'attacker' ? '내 파티 기록에 반영' : '상대 엔트리 기록에 반영'}</button> : null)}</div> : null}
     {modalSide && modalKey === (modalSide === 'attacker' ? attacker : defender).key && indexByKey.get(modalKey) ? (() => {
       const entry = modalSide === 'attacker' ? attacker : defender
       const row = indexByKey.get(entry.key)!
@@ -4190,22 +4192,6 @@ function PartyContextBar({ language, label, activeId, records, selectedMy, selec
     </label>
     <a className="action-button party-context-link" href={href}>{lt(mode === 'party' ? '이 파티로 대면 보기' : '선택 내 슬롯 파티 편집')}</a>
   </section>
-}
-
-function LanguageIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
-      <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm6.93 9h-3.14a15.4 15.4 0 0 0-1.38-5.03A8.03 8.03 0 0 1 18.93 11ZM12 4.07c.78.95 1.86 3.15 2.31 6.93H9.69C10.14 7.22 11.22 5.02 12 4.07ZM4.07 13h3.14a15.4 15.4 0 0 0 1.38 5.03A8.03 8.03 0 0 1 4.07 13Zm3.14-2H4.07a8.03 8.03 0 0 1 4.52-5.03A15.4 15.4 0 0 0 7.21 11Zm4.79 8.93c-.78-.95-1.86-3.15-2.31-6.93h4.62c-.45 3.78-1.53 5.98-2.31 6.93ZM14.41 18.03A15.4 15.4 0 0 0 15.79 13h3.14a8.03 8.03 0 0 1-4.52 5.03Z"/>
-    </svg>
-  )
-}
-
-function SettingsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="language-icon-svg">
-      <path fill="currentColor" d="M5 3h11l3 3v15H5V3Zm2 2v4h8V5H7Zm0 8v6h10v-6H7Zm2 1h6v4H9v-4Z"/>
-    </svg>
-  )
 }
 
 export default function App() {
@@ -7032,6 +7018,10 @@ export default function App() {
   }
 
   const resetAll = () => {
+    const warning = siteLanguage === 'ko' ? '저장 파티·상대·샘플·저장 링크를 초기화합니다. 독립 계산기 데이터는 유지됩니다. 계속할까요?'
+      : siteLanguage === 'ja' ? '保存パーティ・相手・サンプル・保存リンクを初期化します。独立した計算機のデータは保持されます。続行しますか？'
+        : 'Reset saved parties, opponents, samples and saved links? Standalone calculator data will be kept.'
+    if (!window.confirm(warning)) return false
     dispatchWorkspace({ type: 'RESET', id: `party-${crypto.randomUUID()}`, emptyParty: cloneEmptyParty() })
     setPartyItemDrafts(emptyParty.map(() => ''))
     setOpponents(emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] })))
@@ -7092,6 +7082,7 @@ export default function App() {
     setSampleDamageSearch('')
     setSampleLabelDraft('')
     // Persist the completed reset rather than removing storage before the effect runs.
+    return true
   }
 
   const exportState = () => {
@@ -7423,7 +7414,7 @@ export default function App() {
                   <div className="header-icon-actions">
                   <div className="language-menu-wrap header-language-wrap">
                     <button type="button" className="icon-button" aria-label={lt('언어 선택')} title={lt('언어')} onClick={() => { setLanguageMenuOpen((prev) => !prev); setSettingsMenuOpen(false) }}>
-                      <LanguageIcon />
+                      <UiIcon name="globe" />
                     </button>
                     {languageMenuOpen ? (
                       <div className="language-menu">
@@ -7435,22 +7426,22 @@ export default function App() {
                   </div>
                   <div className="settings-menu-wrap">
                     <button type="button" className="icon-button" aria-label={lt('설정')} title={lt('설정')} onClick={() => { setSettingsMenuOpen((prev) => !prev); setLanguageMenuOpen(false) }}>
-                      <SettingsIcon />
+                      <UiIcon name="settings" />
                     </button>
                     {settingsMenuOpen ? (
                       <div className="settings-menu">
                         <div className="settings-menu-section">
                           <span className="settings-menu-title">{lt('데이터 관리')}</span>
                           <button type="button" className="settings-action-item" onClick={() => { exportState(); setSettingsMenuOpen(false) }}>
-                            <strong>{lt('전체 데이터 내보내기')}</strong>
+                            <strong><UiIcon name="download" size={17} />{lt('전체 데이터 내보내기')}</strong>
                             <span>{lt('현재 작업 상태를 JSON으로 저장')}</span>
                           </button>
                           <button type="button" className="settings-action-item" onClick={() => { fileInputRef.current?.click(); setSettingsMenuOpen(false) }}>
-                            <strong>{lt('전체 데이터 불러오기')}</strong>
+                            <strong><UiIcon name="upload" size={17} />{lt('전체 데이터 불러오기')}</strong>
                             <span>{lt('저장한 JSON 상태 파일을 불러오기')}</span>
                           </button>
-                          <button type="button" className="settings-action-item danger" onClick={() => { resetAll(); setSettingsMenuOpen(false) }}>
-                            <strong>{lt('전체 데이터 초기화')}</strong>
+                          <button type="button" className="settings-action-item danger" onClick={() => { if (resetAll()) setSettingsMenuOpen(false) }}>
+                            <strong><UiIcon name="trash" size={17} />{lt('전체 데이터 초기화')}</strong>
                             <span>{lt('파티·상대·샘플을 전부 초기화')}</span>
                           </button>
                         </div>
@@ -7462,12 +7453,12 @@ export default function App() {
               </div>
               <div className="header-route-menu">
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
-                  <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
+                  <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" aria-current={mainSection === 'home' ? 'page' : undefined}><UiIcon name={homeRoute.icon} /><span>{lt(homeRoute.label)}</span></a>
                   {routeGroups.map(group => <div key={group.section} className="header-route-group" aria-label={lt(group.label)}>
                     {group.links.length > 1 ? <span className="header-route-group-label">{lt(group.label)}</span> : <span className="visually-hidden">{lt(group.label)}</span>}
                     <div className="header-route-group-links">{group.links.map(link => <a key={link.href} href={link.href}
                       className={`header-primary-tab ${mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'active' : ''}`}
-                      aria-current={mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'page' : undefined}>{lt(link.label)}</a>)}</div>
+                      aria-current={mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'page' : undefined}><UiIcon name={link.icon} /><span>{lt(link.label)}</span></a>)}</div>
                   </div>)}
                 </nav>
               </div>
@@ -7568,7 +7559,8 @@ export default function App() {
         magicPoints={key => magicEffortPoints(sampleRow, sampleForge, key)} /> : null}
 
       <main className="grid page-frame">
-        <PageHeading title={lt(mainSection === 'home' ? '홈' : mainSection === 'party' ? '내 파티' : mainSection === 'single' ? '대면' : mainSection === 'quickDamage' ? '계산기' : mainSection === 'speedLine' ? '스피드라인' : mainSection === 'sample' ? sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 연구소' : mainSection === 'dex' ? '도감' : '더블배틀')} />
+        <PageHeading title={lt(mainSection === 'home' ? '홈' : mainSection === 'party' ? '내 파티' : mainSection === 'single' ? '대면' : mainSection === 'quickDamage' ? '계산기' : mainSection === 'speedLine' ? '스피드라인' : mainSection === 'sample' ? sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 연구소' : mainSection === 'dex' ? '도감' : '더블배틀')}
+          icon={routeIconFor(mainSection, sampleWorkbenchTab)} />
         {(mainSection === 'party' || mainSection === 'single') ? <PartyContextBar
           language={siteLanguage} label={activePartyLabel} activeId={activePartyPresetId}
           records={savedPartyPresets} selectedMy={selectedMy} selectedOpp={selectedOpp}
@@ -7582,10 +7574,7 @@ export default function App() {
                 <div className="home-route-group-head"><h3>{lt(group.label)}</h3></div>
                 <div className="home-route-grid home-route-grid-compact">
                   {group.links.map(link => <a key={link.href} className="home-route-card calm" href={link.href}>
-                    <div className="home-route-card-copy">
-                      <strong>{lt(link.label)}</strong>
-                      <p>{lt(({ party: '내 포켓몬과 기술 기준을 정리합니다.', single: '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.', quickDamage: '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.', speedLine: '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.', dex: '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.' } as Record<string, string>)[link.section] ?? (link.tab === 'library' ? '검증된 빌드를 찾거나 원본 링크를 저장합니다.' : '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.'))}</p>
-                    </div>
+                    <UiIcon name={link.icon} /><strong>{lt(link.label)}</strong><UiIcon name="chevron" size={16} className="ui-icon home-route-chevron" />
                   </a>)}
                 </div>
               </section>)}
@@ -7692,7 +7681,7 @@ export default function App() {
                   />
                 </div>
               </div>
-              <div className="tab-bar section-menu-tabs dex-mode-tabs">
+              <div className="tab-bar section-menu-tabs dex-mode-tabs ui-segmented">
                 {([
                   ['pokemon', lt('포켓몬')],
                   ['move', lt('기술')],
@@ -7711,7 +7700,7 @@ export default function App() {
               tooltipPropsForItem={id => { const item = dexBrowseResults.find(result => result.id === id); return item?.kind === 'item' ? bindTooltip(itemTooltipData(item.item, siteLanguage)) : {} }} />
           </section></> : null}
           {dexSelectedValue ? <section className="panel wide dex-content-panel dex-detail-page">
-            <a href={dexListHref} className="chip-button dex-back-link" onClick={navigateDexBack}>{siteLanguage === 'en' ? '← Back to results' : siteLanguage === 'ja' ? '← 一覧へ戻る' : '← 목록으로 돌아가기'}</a>
+            <a href={dexListHref} className="chip-button dex-back-link" onClick={navigateDexBack}><UiIcon name="chevron" size={16} className="ui-icon ui-icon-back" />{siteLanguage === 'en' ? '← Back to results' : siteLanguage === 'ja' ? '← 一覧へ戻る' : '← 목록으로 돌아가기'}</a>
             <div className="dex-browser-detail">
               {dexSelectedRow ? <div className="dex-detail-card">
                 <div className="dex-detail-head">
@@ -7775,8 +7764,8 @@ export default function App() {
                         setSampleItemDraft(displayItemLabel(visibleChampionsItem(dexSelectedRow.key, ''), siteLanguage))
                         setSampleWorkbenchTab('builder')
                         setMainSection('sample')
-                      }}>{lt('샘플 편집기로 보내기')}</button>
-                      <button type="button" className="chip-button" aria-expanded={selectedDexPartySlot !== null} onClick={() => setSelectedDexPartySlot(selectedDexPartySlot === null ? selectedMy : null)}>{lt('파티 슬롯 선택')}</button>
+                      }}><UiIcon name="lab" size={17} />{lt('샘플 편집기로 보내기')}</button>
+                      <button type="button" className="chip-button" aria-expanded={selectedDexPartySlot !== null} onClick={() => setSelectedDexPartySlot(selectedDexPartySlot === null ? selectedMy : null)}><UiIcon name="party" size={17} />{lt('파티 슬롯 선택')}</button>
                     </div>
                     {selectedDexPartySlot !== null ? <div className="dex-party-target">
                       <label>{lt('교체할 내 파티 슬롯')}
@@ -7839,7 +7828,6 @@ export default function App() {
                   </div>
                   <div className="dex-detail-panel">
                     <strong>{lt('배우는 포켓몬')}</strong>
-                    {getDexGameMove(dexSelectedMove.name) ? <p className="dex-move-pool-warning">{siteLanguage === 'ko' ? `게임 데이터 스냅샷 · ${DEX_GAME_LEARNSET_SOURCE.date} · 현재 버전 일치 미검증` : siteLanguage === 'ja' ? `ゲームデータスナップショット · ${DEX_GAME_LEARNSET_SOURCE.date} · 現行版との一致未検証` : `Game data snapshot · ${DEX_GAME_LEARNSET_SOURCE.date} · current-version match unverified`}</p> : null}
                     <div className="pick-summary-badges">
                       {dexMoveLearnersStatus === 'loading' ? <span className="pick-badge">Loading…</span> : null}
                       {dexMoveLearnersStatus === 'missing' ? <span role="status">{siteLanguage === 'ko' ? '이 기술은 게임 스냅샷에 수록되지 않아 습득 포켓몬을 확인할 수 없습니다.' : siteLanguage === 'ja' ? 'この技はゲームスナップショットに未収録のため、習得ポケモンは未確認です。' : 'This move is not in the game snapshot; learners are unknown.'}</span> : null}
@@ -7927,7 +7915,7 @@ export default function App() {
 
               {!dexSelectedRow && !dexSelectedMove && !dexSelectedAbility && !dexSelectedItem ? <div className="dex-detail-card dex-placeholder-card">
                 <p className="muted">{siteLanguage === 'en' ? 'Unknown Dex entry.' : siteLanguage === 'ja' ? '登録が見つかりません。' : '도감 항목을 찾을 수 없습니다.'}</p>
-                <a href={dexListHref} onClick={navigateDexBack}>{siteLanguage === 'en' ? 'Back to results' : siteLanguage === 'ja' ? '一覧へ戻る' : '목록으로 돌아가기'}</a>
+                <a href={dexListHref} onClick={navigateDexBack}><UiIcon name="chevron" size={16} className="ui-icon ui-icon-back" />{siteLanguage === 'en' ? 'Back to results' : siteLanguage === 'ja' ? '一覧へ戻る' : '목록으로 돌아가기'}</a>
               </div> : null}
             </div>
           </section> : null}
@@ -7956,8 +7944,8 @@ export default function App() {
                   })}
                 </div>
                 <div className="team-strip-actions enemy">
-                  <button type="button" className="action-button subtle" onClick={() => clearOpponentSlot(selectedOpp)}>{lt('선택 슬롯 비우기')}</button>
-                  <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>{lt('상대 엔트리 초기화')}</button>
+                  <button type="button" className="action-button subtle" onClick={() => clearOpponentSlot(selectedOpp)}><UiIcon name="trash" size={17} />{lt('선택 슬롯 비우기')}</button>
+                  <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}><UiIcon name="trash" size={17} />{lt('상대 엔트리 초기화')}</button>
                 </div>
                 <div className="quick-opponent-search-bar compact embedded">
                   <PokemonSearchField id="opponent-strip-quick" className="species-picker" inputRef={opponentQuickInputRef}
@@ -8141,8 +8129,8 @@ export default function App() {
           <div className="party-columns party-manage-columns">
             <div className="section-head row-between party-actions-heading">
               <div className="inline-controls compact-actions">
-                <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}>{partyImageImportBusy ? lt('OCR 추출 중...') : lt('이미지에서 파티 가져오기')}</button>
-                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}>{lt('현재 파티 비우기')}</button>
+                <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}><UiIcon name="upload" size={17} />{partyImageImportBusy ? lt('OCR 추출 중...') : lt('이미지에서 파티 가져오기')}</button>
+                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}><UiIcon name="trash" size={17} />{lt('현재 파티 비우기')}</button>
               </div>
             </div>
             <div className="party-preset-board">
@@ -8156,7 +8144,7 @@ export default function App() {
                   onChange={(e) => setPartyPresetLabelDraft(e.target.value)}
                   placeholder={lt('파티 이름')}
                 />
-                <button type="button" className="pick-chip" onClick={createNewParty}>{lt('새 파티')}</button>
+                <button type="button" className="pick-chip" onClick={createNewParty}><UiIcon name="plus" size={17} />{lt('새 파티')}</button>
                 <label className="party-active-name">{lt('선택 파티 이름')}
                   <input aria-label={lt('선택 파티 이름')} value={partyNameDraft}
                     onChange={event => {
@@ -8174,7 +8162,6 @@ export default function App() {
                   if (window.confirm(lt('원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?'))) { setPersistenceStatus('saving'); setAllowRecoveryWrite(true) }
                 }}>{lt('원본 덮어쓰기 확인')}</button> : null}
               </div>
-              <span className="muted-inline">{lt('여러 스크린샷의 이름/상세 영역을 합쳐 종·도구·특성·기술·성격·노력치를 최대한 복원합니다.')}</span>
               {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
               <div className="party-preset-grid">
                 {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
@@ -8191,8 +8178,8 @@ export default function App() {
                       <span className="muted-inline">{leadMembers.length}/6</span>
                     </button>
                     <div className="party-preset-card-actions">
-                      <button type="button" className="pick-chip" onClick={() => renamePartyPreset(preset)}>{lt('저장 파티 이름 변경')}</button>
-                      <button type="button" className="pick-chip" onClick={() => {
+                      <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 이름 변경')}`} onClick={() => renamePartyPreset(preset)}><UiIcon name="edit" size={17} />{lt('이름 변경')}</button>
+                      <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 삭제')}`} onClick={() => {
                         if (!window.confirm(`${preset.label}: ${lt('저장 파티 삭제')}?`)) return
                         dispatchWorkspace({ type: 'DELETE', id: preset.id, emptyParty: cloneEmptyParty(), replacementId: `party-${crypto.randomUUID()}` })
                         if (preset.id === activePartyPresetId) {
@@ -8200,7 +8187,7 @@ export default function App() {
                           setPartySearch((next?.party ?? emptyParty).map(member => searchDisplayLabel(member.key, siteLanguage)))
                           setPartyItemDrafts((next?.party ?? emptyParty).map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
                         }
-                      }}>{lt('저장 파티 삭제')}</button>
+                      }}><UiIcon name="trash" size={17} />{lt('삭제')}</button>
                     </div>
                   </div>
                 }) : <p className="muted">{lt('아직 저장한 파티가 없습니다.')}</p>}
@@ -8222,7 +8209,7 @@ export default function App() {
                 return (
                   <div key={`${member.key}-${idx}`} id={`party-slot-${idx}`} className={`card entry-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
-                      actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null} name={
+                      actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}><UiIcon name="trash" size={17} /><span className="visually-hidden">{idx + 1} · {lt('슬롯 비우기')}</span></button> : null} name={
                             <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"
                               inputClassName="party-inline-species-input" value={partySearch[idx] ?? ''}
                               placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
@@ -8238,7 +8225,7 @@ export default function App() {
                       onAbility={ability => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, ability } : entry))}
                       onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature: nature as NatureId } } : entry))}
                       onItem={item => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, item: item ? resolveItemInput(entry.key, item, siteLanguage) : '' } : entry))}
-                      labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
+                      labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
                       itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(member.key, value)} fixedItem={fixedMegaStone}
                       itemError={heldItemError(member.key, member.item, siteLanguage)} repairLabel={siteLanguage === 'ko' ? `${fixedMegaStone} 장착` : siteLanguage === 'ja' ? `${fixedMegaStone} を装備` : `Equip ${fixedMegaStone}`}
                       abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, row) : null)}
@@ -8248,7 +8235,7 @@ export default function App() {
                     {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
                       <div className="row-between">
                         <strong>{lt('기술 배치')}</strong>
-                        {member.key ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null}
+                        {member.key ? learnsetStatusText(memberMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null : null}
                         {memberMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
                       </div>
                       <div className="registered-move-grid">
@@ -8317,7 +8304,7 @@ export default function App() {
           </div>
 
           <div className="inline-controls">
-            <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}>{lt('상대 엔트리 초기화')}</button>
+            <button type="button" className="action-button danger" onClick={resetOpponentsForFreshEntry}><UiIcon name="trash" size={17} />{lt('상대 엔트리 초기화')}</button>
             <span className="muted-inline">{lt('검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.')}</span>
           </div>
 
@@ -8661,13 +8648,13 @@ export default function App() {
           <div className="sample-content-panel">
           {sampleWorkbenchTab === 'library' ? <div className="creator-library">
             {librarySourceId ? <div className="creator-library-detail">
-              <a className="creator-library-back" href={libraryListHref(libraryContext)}>← {lt('샘플 라이브러리')} · {lt('목록으로')}</a>
+              <a className="creator-library-back" href={libraryListHref(libraryContext)}><UiIcon name="chevron" size={16} className="ui-icon ui-icon-back" />{lt('샘플 라이브러리')} · {lt('목록으로')}</a>
               {librarySource ? <>
                 <div className="section-head"><div><h2>{librarySource.title}</h2><p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
                 <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
-                <div className="creator-library-source-summary"><a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a><span>{lt('원본 ID')}: {librarySource.sourceId}</span></div>
+                <div className="creator-library-source-summary"><a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer"><UiIcon name="info" size={16} />{lt('원본 출처')}</a><span>{lt('원본 ID')}: {librarySource.sourceId}</span></div>
                 {librarySource.contentKind === 'party' ? <div className="creator-library-completeness"><span>{lt('구성 확인')} {librarySource.confirmedMemberCount}/{librarySource.partySize ?? 6}</span><span>{librarySource.completeMemberCount === librarySource.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div> : null}
-                {librarySource.contentKind === 'party' && librarySource.partySize === 6 && librarySource.completeMemberCount === 6 ? <button type="button" className="action-button creator-library-party-action" onClick={() => importCreatorParty(librarySource)}>{lt('저장 파티에 추가')}</button> : librarySource.contentKind === 'party' ? <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p> : null}
+                {librarySource.contentKind === 'party' && librarySource.partySize === 6 && librarySource.completeMemberCount === 6 ? <button type="button" className="action-button creator-library-party-action" onClick={() => importCreatorParty(librarySource)}><UiIcon name="plus" size={17} />{lt('저장 파티에 추가')}</button> : librarySource.contentKind === 'party' ? <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p> : null}
                 {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
                 <div className="creator-library-lineup">{librarySource.members.map(entry => <div key={entry.id} className="creator-library-member-card">
                   {creatorCard(entry)}
@@ -8687,7 +8674,7 @@ export default function App() {
                     setSampleItemDraft(displayItemLabel(entry.build.item, siteLanguage))
                     setLibrarySourceId(null)
                     setSampleWorkbenchTab('builder')
-                  }}>{lt('샘플 편집기에 가져오기')}</button> : <p className="muted">{indexByKey.has(entry.pokemonKey) ? lt('구성 미완성 · 불러올 수 없음') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.')}</p>}
+                  }}><UiIcon name="download" size={17} />{lt('샘플 편집기에 가져오기')}</button> : <p className="muted">{indexByKey.has(entry.pokemonKey) ? lt('구성 미완성 · 불러올 수 없음') : lt('지원되지 않는 폼으로 실수치를 계산하지 않습니다.')}</p>}
                     {(entry.build ?? entry.partialBuild)?.item === '자몽열매' ? <p className="muted">{lt('원본 도구 표기')}: 자몽열매 · {lt('도구 매핑')}: {displayItemLabel('オボンのみ', siteLanguage)}</p> : null}
                     <small className="muted" title={entry.provenance.evidence}>{lt('게시')}: {entry.provenance.publishedAt ?? lt('미확인')} · {lt('수집')}: {entry.provenance.collectedAt} · {lt('확인')}: {entry.provenance.verifiedAt || lt('미확인')}</small>
                     <div className="creator-library-evidence-links" aria-label={lt('출처 및 확인 기록')}>
@@ -8705,21 +8692,21 @@ export default function App() {
                     <span>{indexByKey.get(member.pokemonKey) ? displayName(indexByKey.get(member.pokemonKey)!, siteLanguage) : member.title}</span>
                     <small>{canImportCreatorSample(member) ? lt('구성 확인') : lt('부분 확인')}</small>
                   </a>)}</div>
-                  {relatedCreatorParties[librarySource.sourceId].completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(relatedCreatorParties[librarySource.sourceId])}>{lt('저장 파티에 추가')}</button> : <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p>}
+                  {relatedCreatorParties[librarySource.sourceId].completeMemberCount === 6 ? <button type="button" className="action-button" onClick={() => importCreatorParty(relatedCreatorParties[librarySource.sourceId])}><UiIcon name="plus" size={17} />{lt('저장 파티에 추가')}</button> : <p className="muted">{lt('전체 파티 구성 미확인')} · {lt('저장 파티에 추가')} {lt('불가')}</p>}
                   {creatorPartyImportError ? <p role="alert">{creatorPartyImportError}</p> : null}
                 </section> : null}
               </> : <p role="status">{lt('출처를 찾을 수 없습니다.')}</p>}
             </div> : <>
             <p className="muted">{lt('원본에서 확인된 구성만 빌더로 가져옵니다.')}</p>
             <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
-            <div className="creator-library-kind-tabs" role="group" aria-label={lt('샘플 라이브러리')}>
-              <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><span aria-hidden="true">◈ ◈ ◈</span> {lt('파티 소개')}</button>
-              <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><span aria-hidden="true">◉</span> {lt('개별 포켓몬 샘플')}</button>
+            <div className="creator-library-kind-tabs ui-segmented" role="group" aria-label={lt('샘플 라이브러리')}>
+              <button type="button" aria-label={lt('파티 소개')} aria-pressed={libraryContentKind === 'party'} onClick={() => setLibraryContentKind('party')}><UiIcon name="party" size={17} />{lt('파티 소개')}</button>
+              <button type="button" aria-label={lt('개별 포켓몬 샘플')} aria-pressed={libraryContentKind === 'pokemon'} onClick={() => setLibraryContentKind('pokemon')}><UiIcon name="dex" size={17} />{lt('개별 포켓몬 샘플')}</button>
             </div>
             <div className="creator-library-filters">
               <label>{lt('지역')} <select aria-label={lt('지역')} value={libraryLanguage} onChange={(e) => setLibraryLanguage(e.target.value as LibraryLanguage | 'all')}><option value="all">{lt('전체')}</option><option value="ko">KR</option><option value="ja">JP</option></select></label>
               <label>{lt('배틀 형식')} <select aria-label={lt('배틀 형식')} value={libraryFormat} onChange={(e) => setLibraryFormat(e.target.value as LibraryFormat | 'all')}><option value="all">{lt('전체')}</option><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select></label>
-              <label>{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
+              <label><UiIcon name="search" size={16} />{lt('포켓몬 / 텍스트 검색')} <input value={libraryQuery} onChange={(e) => setLibraryQuery(e.target.value)} placeholder={lt('포켓몬 / 텍스트 검색')} /></label>
             </div>
             <p className="creator-library-result-count" role="status">{lt('검색 결과')} {visibleSources.length} · {libraryContentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {lt('제목·제작자·포켓몬 이름 검색')}</p>
             <div className="creator-library-list">
@@ -8737,7 +8724,7 @@ export default function App() {
               {!visibleSources.length ? <p className="muted" role="status">{pendingCreatorLeads.length ? lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.') : lt('검색 결과 없음')}</p> : null}
             </div>
             {sampleWorkbenchTab === 'library' && pendingCreatorLeads.length > 0 ? <div className="creator-library-leads"><h3>{lt('분류·구성 확인 대기')}</h3><p className="muted">{lt('영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.')}</p>{pendingCreatorLeads.map((entry) => <p key={entry.id}>{entry.creator} · {entry.title} · <a href={entry.provenance.sourceUrl} target="_blank" rel="noopener noreferrer">{lt('원본 출처')}</a></p>)}</div> : null}
-            <section className="creator-library-personal"><h3>{lt('내 출처 링크')}</h3>
+            <section className="creator-library-personal"><h3><UiIcon name="info" size={18} />{lt('내 출처 링크')}</h3>
             {sampleWorkbenchTab === 'library' ? <form className="creator-library-submit" onSubmit={(event) => {
               event.preventDefault()
               const draft = createLinkDraft(linkDraftInput, draftLanguage, draftFormat)
@@ -8746,21 +8733,21 @@ export default function App() {
               setLinkDraftInput('')
               setLinkDraftError(false)
             }}>
-              <h3>{lt('출처 링크 보관')}</h3><p className="muted">{lt('이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.')}</p>
-              <div className="creator-library-submit-row"><select aria-label={lt('링크 지역')} value={draftLanguage} onChange={(e) => setDraftLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select><select aria-label={lt('링크 형식')} value={draftFormat} onChange={(e) => setDraftFormat(e.target.value as LibraryFormat)}><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select><input aria-label={lt('출처 URL')} type="url" value={linkDraftInput} onChange={(e) => { setLinkDraftInput(e.target.value); setLinkDraftError(false) }} placeholder="https://…" required /><button type="submit" className="action-button">{lt('출처 링크 저장')}</button></div>
+              <h3><UiIcon name="plus" size={18} />{lt('출처 링크 보관')}</h3><p className="muted">{lt('이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.')}</p>
+              <div className="creator-library-submit-row"><select aria-label={lt('링크 지역')} value={draftLanguage} onChange={(e) => setDraftLanguage(e.target.value as LibraryLanguage)}><option value="ko">KR</option><option value="ja">JP</option></select><select aria-label={lt('링크 형식')} value={draftFormat} onChange={(e) => setDraftFormat(e.target.value as LibraryFormat)}><option value="singles">{lt('싱글배틀')}</option><option value="doubles">{lt('더블배틀')}</option></select><input aria-label={lt('출처 URL')} type="url" value={linkDraftInput} onChange={(e) => { setLinkDraftInput(e.target.value); setLinkDraftError(false) }} placeholder="https://…" required /><button type="submit" className="action-button"><UiIcon name="plus" size={17} />{lt('출처 링크 저장')}</button></div>
               {linkDraftError ? <p role="alert">{lt('http 또는 https 주소를 입력하세요.')}</p> : null}
               <p className="muted">{lt('공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.')}{' '}<a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noopener noreferrer">{lt('제보 폼 열기')}</a></p>
             </form> : null}
-            {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => (libraryLanguage === 'all' || entry.language === libraryLanguage) && (libraryFormat === 'all' || entry.format === libraryFormat) && (!libraryQuery.trim() || entry.sourceUrl.toLocaleLowerCase().includes(libraryQuery.trim().toLocaleLowerCase()))).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')} · {draft.language === 'ko' ? 'KR' : 'JP'}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}>{lt('저장 링크 삭제')}</button></div>) : null}
+            {sampleWorkbenchTab === 'library' ? creatorLinkDrafts.filter((entry) => (libraryLanguage === 'all' || entry.language === libraryLanguage) && (libraryFormat === 'all' || entry.format === libraryFormat) && (!libraryQuery.trim() || entry.sourceUrl.toLocaleLowerCase().includes(libraryQuery.trim().toLocaleLowerCase()))).map((draft) => <div key={draft.sourceUrl} className="creator-library-card"><span className="pick-badge">{lt('부분 확인 · 개인 링크')} · {draft.language === 'ko' ? 'KR' : 'JP'}</span> <a href={draft.sourceUrl} target="_blank" rel="noopener noreferrer">{draft.sourceUrl}</a> <button type="button" className="pick-chip" onClick={() => setCreatorLinkDrafts((prev) => prev.filter((entry) => entry.sourceUrl !== draft.sourceUrl))}><UiIcon name="trash" size={16} />{lt('저장 링크 삭제')}</button></div>) : null}
             </section>
             </>}
           </div> : <>
-          <nav className="sample-lab-tabs" role="tablist" aria-label={lt('샘플 연구소')}>
+          <nav className="sample-lab-tabs ui-segmented" role="tablist" aria-label={lt('샘플 연구소')}>
             {([{ value: 'builder', label: '샘플 빌드' }, { value: 'speed', label: '샘플 스피드' }, { value: 'damage', label: '샘플 대미지 계산' }] as const).map(({ value, label }) =>
               <a key={value} id={`sample-workbench-tab-${value}`} href={`#/sample-builder?sampleTab=${value}`} role="tab" aria-selected={sampleWorkbenchTab === value} aria-controls={`sample-${value}-section`} className={`tab-chip ${sampleWorkbenchTab === value ? 'active' : ''}`}>{lt(label)}</a>
             )}
           </nav>
-          {sampleWorkbenchTab !== 'builder' ? <p className="sample-lab-build-link">{lt('현재 빌드')}: {displayName(sampleRow, siteLanguage)} · <a className="pick-chip" href="#/sample-builder?sampleTab=builder">{lt('샘플 빌드 편집')}</a></p> : null}
+          {sampleWorkbenchTab !== 'builder' ? <p className="sample-lab-build-link">{lt('현재 빌드')}: {displayName(sampleRow, siteLanguage)} · <a className="pick-chip" href="#/sample-builder?sampleTab=builder"><UiIcon name="edit" size={16} />{lt('샘플 빌드 편집')}</a></p> : null}
           {sampleWorkbenchTab === 'builder' ? <section id="sample-builder-section" role="tabpanel" aria-labelledby="sample-workbench-tab-builder" className="sample-lab-section" aria-label={lt('샘플 빌드')}>
 
             <div className="sample-builder-grid compact-sample-builder-grid">
@@ -8780,7 +8767,7 @@ export default function App() {
                 onAbility={ability => setSampleForge(prev => ({ ...prev, ability }))}
                 onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature: nature as NatureId } }))}
                 onItem={item => setSampleForge(prev => ({ ...prev, item: item ? resolveItemInput(prev.key, item, siteLanguage) : '' }))}
-                labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
+                labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
                 itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(sampleForge.key, value)} fixedItem={sampleFixedMegaStone}
                 itemError={heldItemError(sampleForge.key, sampleForge.item, siteLanguage)} repairLabel={siteLanguage === 'ko' ? `${sampleFixedMegaStone} 장착` : siteLanguage === 'ja' ? `${sampleFixedMegaStone} を装備` : `Equip ${sampleFixedMegaStone}`}
                 abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, sampleRow) : null)}
@@ -8801,7 +8788,7 @@ export default function App() {
                             <strong>{lt('기술 배치')}</strong>
                             <div className="pick-summary-badges sample-slot-target-badges">
                               <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
-                              {sampleForge.key ? <small className="quick-source-badge" role="status">{learnsetStatusText(sampleMovePool, siteLanguage)}</small> : null}
+                              {sampleForge.key ? learnsetStatusText(sampleMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(sampleMovePool, siteLanguage)}</small> : null : null}
                               {sampleMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
                               <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
                                 const current = [...prev]
@@ -8903,7 +8890,7 @@ export default function App() {
             </div>
             <div className="sample-builder-save-row">
               <input className="sample-label-input sample-builder-label-input" value={sampleLabelDraft} placeholder={lt('샘플 이름 예시')} onChange={(e) => setSampleLabelDraft(e.target.value)} />
-              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}>{lt('샘플 저장')}</button>
+              <button type="button" className="action-button sample-save-button sample-builder-save-button" onClick={saveCurrentSample}><UiIcon name="plus" size={17} />{lt('샘플 저장')}</button>
             </div>
             <div className="sample-builder-slot-grid">
               {party.map((member, idx) => {
@@ -8922,7 +8909,7 @@ export default function App() {
               })}
             </div>
             <p className="muted">{lt('편집 초안은 아직 파티에 반영되지 않았습니다. 저장은 개인 샘플에 복사하고 적용은 아래 선택 슬롯을 교체합니다.')}</p>
-            <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}>{putInPartySlotLabel(selectedMy, siteLanguage)}</button>
+            <button type="button" className="action-button sample-builder-apply-button" onClick={() => applySampleToPartySlot(selectedMy)}><UiIcon name="check" size={17} />{putInPartySlotLabel(selectedMy, siteLanguage)}</button>
           </div>
           </section> : null}
           {sampleWorkbenchTab === 'speed' ? <section id="sample-speed-section" role="tabpanel" aria-labelledby="sample-workbench-tab-speed" className="sample-lab-section" aria-label={lt('샘플 스피드')}>
@@ -8991,7 +8978,7 @@ export default function App() {
                         {entry.row.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
                         <strong>{displayName(entry.row, siteLanguage)}</strong>
                       </div>
-                      <button type="button" className="pick-chip" onClick={() => removeSampleSpeedTarget(entry.idx)}>{lt('삭제')}</button>
+                      <button type="button" className="pick-chip" onClick={() => removeSampleSpeedTarget(entry.idx)}><UiIcon name="trash" size={16} />{lt('삭제')}</button>
                     </div>
                     <div className="sample-speed-rank-row">
                       <label>
@@ -9125,7 +9112,7 @@ export default function App() {
                         {entry.row?.sprite ? <img src={entry.row.sprite} alt={displayName(entry.row, siteLanguage)} className="sample-compare-sprite" /> : null}
                         <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
                       </div>
-                      <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}>{lt('삭제')}</button>
+                      <button type="button" className="pick-chip" onClick={() => removeSampleDamageTarget(entry.idx)}><UiIcon name="trash" size={16} />{lt('삭제')}</button>
                     </div>
                     {entry.defenderStats && entry.opponentEffortsValid ? <div className="combat-index-strip opponent-combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                       <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${entry.defenderStats.hp} × ${entry.defenderStats.defense}` }]))}>
@@ -9144,7 +9131,7 @@ export default function App() {
                               itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(entry.member.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(entry.member.key, value) }))}
                               onAbility={() => {}} onNature={() => {}}
                               onItem={item => updateSampleDamageTarget(entry.idx, { item: item ? resolveItemInput(entry.member.key, item, siteLanguage) : '' })}
-                              labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('상대 도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정') }}
+                              labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('상대 도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
                               itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(entry.member.key, value)} fixedItem={requiredMegaStone(entry.member.key)}
                               itemError={heldItemError(entry.member.key, entry.member.item, siteLanguage)} repairLabel={requiredMegaStone(entry.member.key) ?? ''}
                               itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)} />
@@ -9156,7 +9143,7 @@ export default function App() {
                              <div className="sample-damage-direction-result" aria-label={lt('내 포켓몬 → 상대')}>
                                <strong>{lt('내 포켓몬 → 상대')}</strong>
                                {entry.forwardMoves.length ? entry.forwardMoves.map((move, slot) => <div key={`forward-${slot}`} className="sample-damage-move-result">
-                                 <strong>{move.moveName}</strong><span>{move.damage ? `${move.damage.min} ~ ${move.damage.max} · ${move.damage.minPct}% ~ ${move.damage.maxPct}% · ${move.verdict}` : move.unavailableReason}</span>
+                                 <strong>{move.moveName}</strong><span>{move.damage && move.defenderStats ? <><DamageRangeMeter damage={move.damage} targetHp={move.defenderStats.hp} language={siteLanguage} compact />{move.verdict ? <strong className="damage-verdict">{move.verdict}</strong> : null}</> : move.unavailableReason}</span>
                                  {move.damage ? <small>{lt('상대 적용 결정력')} {move.appliedDecisionPower == null ? '—' : formatBattleIndex(move.appliedDecisionPower, siteLanguage)} · {lt('적용 위력')} {move.effectivePower}</small> : null}
                                  {move.moveHitOptions?.length ? <label>{lt('타수')}<select value={move.moveHitCount ?? move.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'moveHits', Number(e.target.value))}>{move.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                  {move.moveRule ? <label>{lt(move.moveRule.label)}{move.moveRule.kind === 'count' ? <input type="number" min={move.moveRule.min ?? 0} max={move.moveRule.max ?? 999} value={Number(move.moveConditionValue ?? move.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(move.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', e.target.checked)} />}</label> : null}
@@ -9165,7 +9152,7 @@ export default function App() {
                              </div>
                              <div className="sample-damage-direction-result" aria-label={lt('상대 → 내 포켓몬')}>
                                <strong>{lt('상대 → 내 포켓몬')}</strong>
-                               <small role="status">{learnsetStatusText(entry.reverse.opponentPool, siteLanguage)} · {`EV ${entry.member.attackEv}/${entry.member.spAttackEv} · 성격 ${entry.member.attackNature}/${entry.member.spAttackNature} · ${entry.member.speedEv} Speed EV · ${conciseSpeedLabels[siteLanguage].lab}`}</small>
+                               <small role="status">{learnsetStatusText(entry.reverse.opponentPool, siteLanguage) ? `${learnsetStatusText(entry.reverse.opponentPool, siteLanguage)} · ` : ''}{`EV ${entry.member.attackEv}/${entry.member.spAttackEv} · 성격 ${entry.member.attackNature}/${entry.member.spAttackNature} · ${entry.member.speedEv} Speed EV · ${conciseSpeedLabels[siteLanguage].lab}`}</small>
                                {!entry.opponentEffortsValid ? <p role="alert">{lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')}</p> : null}
                                <div className="registered-move-grid sample-registered-move-grid sample-opponent-move-grid">
                                  {entry.member.opponentMoves.map((move, slot) => {
@@ -9184,7 +9171,7 @@ export default function App() {
                                          onChange: event => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: event.target.value }),
                                          onBlur: event => { if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value); else setSampleOpponentMoveDraft(null) },
                                        }} >{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null}</RegisteredMoveSlot>
-                                     {move ? <div className="sample-damage-move-result"><span>{result?.damage ? `${result.damage.min} ~ ${result.damage.max} · ${result.damage.minPct}% ~ ${result.damage.maxPct}% · ${result.verdict}` : result?.reason}</span>
+                                     {move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.reason}</span>
                                        {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                        {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
                                      </div> : null}
@@ -9321,9 +9308,9 @@ export default function App() {
                       setSampleLockedMoves(entry.lockedMoves.filter(Boolean).slice(0, 4))
                       setSampleItemDraft(displayItemLabel(visibleChampionsItem(entry.member.key, entry.member.item), siteLanguage))
                       setSampleSearch(searchDisplayLabel(entry.member.key, siteLanguage))
-                    }}>{lt('샘플 불러오기')}</button>
-                    <button type="button" className="action-button sample-saved-apply-button" onClick={() => confirmPartySlotReplacement(entry.member, selectedMy, entry.lockedMoves)}>{putInPartySlotLabel(selectedMy, siteLanguage)}</button>
-                    <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}>{lt('저장 샘플 삭제')}</button>
+                    }}><UiIcon name="download" size={17} />{lt('샘플 불러오기')}</button>
+                    <button type="button" className="action-button sample-saved-apply-button" onClick={() => confirmPartySlotReplacement(entry.member, selectedMy, entry.lockedMoves)}><UiIcon name="check" size={17} />{putInPartySlotLabel(selectedMy, siteLanguage)}</button>
+                    <button type="button" className="pick-chip" onClick={() => setSavedSamples((prev) => prev.filter((saved) => saved.id !== entry.id))}><UiIcon name="trash" size={17} />{lt('저장 샘플 삭제')}</button>
                   </div>
                 </div>
               )
@@ -9513,7 +9500,7 @@ export default function App() {
                 </div>
               </div>
               {!attackFromOpponent ? <div className="damage-side-moves damage-side-moves-player">
-                {myMember.key ? <small className="quick-source-badge" role="status">{learnsetStatusText(myMovePool, siteLanguage)}</small> : null}
+                {myMember.key ? learnsetStatusText(myMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(myMovePool, siteLanguage)}</small> : null : null}
                 {myMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
                 {myRegisteredDamageMoves.length ? myRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, myMoveOptions, movePoolByKey)
@@ -9559,7 +9546,7 @@ export default function App() {
                 </div>
               </div>
               {attackFromOpponent ? <div className="damage-side-moves damage-side-moves-opponent">
-                {oppMember.key ? <small className="quick-source-badge" role="status">{learnsetStatusText(oppMovePool, siteLanguage)}</small> : null}
+                {oppMember.key ? learnsetStatusText(oppMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(oppMovePool, siteLanguage)}</small> : null : null}
                 {oppMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
                 {opponentRegisteredDamageMoves.length ? opponentRegisteredDamageMoves.map((move) => {
                   const moveType = resolveMoveType(move, oppMoveOptions, movePoolByKey)
@@ -9986,6 +9973,7 @@ export default function App() {
           </div> : null}
         </div> : null}
       </main>
+      <footer className="app-data-notice"><UiIcon name="info" size={16} /><span>{siteLanguage === 'ko' ? '기술 데이터' : siteLanguage === 'ja' ? 'わざデータ' : 'Move data'}</span><a href={`https://github.com/projectpokemon/champout/tree/${LEARNSET_SOURCE.commit}`} target="_blank" rel="noopener noreferrer" aria-label={siteLanguage === 'ko' ? '기술 데이터 원본' : siteLanguage === 'ja' ? 'わざデータの出典' : 'Move data source'}>{LEARNSET_SOURCE.date}</a><span>· {siteLanguage === 'ko' ? '최신판과 다를 수 있음' : siteLanguage === 'ja' ? '現行版と異なる場合があります' : 'May differ from the current game'}</span></footer>
     </div>
   )
 }

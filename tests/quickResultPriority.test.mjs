@@ -126,6 +126,18 @@ test('localized non-KO and uncertain cases do not claim a certain one-hit result
   }
 })
 
+test('meter-equipped move preview still selects the opposite direction through the real callback', async () => {
+  const view = await mount()
+  try {
+    const target = view.host.querySelectorAll('.quick-side-card .quick-move-preview')[4]
+    assert.ok(target && !target.disabled)
+    await act(async () => target.click())
+    assert.equal(target.getAttribute('aria-pressed'), 'true')
+    assert.match(view.host.querySelector('.quick-result-head')?.textContent ?? '', /패리퍼 → 아쿠스타/)
+    assert.ok(view.host.querySelector('.quick-result .damage-range-meter'))
+  } finally { await view.close() }
+})
+
 test('Speed controls use field labels rather than assumption/scenario prose in KO/EN/JA', async () => {
   for (const comparisonMode of [false, true]) for (const [language, nature, scarf, inactive, active] of [
     ['ko', '성격 보정', '구애스카프', '미적용', '적용'],
