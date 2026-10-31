@@ -25,7 +25,7 @@ const oneColumn = 'minmax(0, 1fr)'
 
 test('party registered moves use four full-width rows only below 360px', () => {
   const party = app.split('className="entry-grid manage-entry-grid"')[1].split('className="registered-move-grid"')[0]
-  assert.match(party, /className="card entry-card"/)
+  assert.match(party, /id=\{`party-slot-\$\{idx\}`\} className=\{`card entry-card /)
   assert.match(app, /<div className="registered-move-grid">\s*\{registeredMoves\.map\(/)
   assert.match(app, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
   const selector = '.manage-entry-grid .registered-move-grid'

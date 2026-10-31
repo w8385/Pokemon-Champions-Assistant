@@ -1,9 +1,9 @@
 export const routeGroups = [
-  { label: '배틀 준비', section: 'battle', links: [
+  { label: '배틀', section: 'battle', links: [
     { label: '내 파티', href: '#/party', section: 'party', tab: '' },
     { label: '대면', href: '#/single?tab=party', section: 'single', tab: 'party' },
   ] },
-  { label: '도구/자료', section: 'tools', links: [
+  { label: '분석 도구', section: 'tools', links: [
     { label: '계산기', href: '#/damage', section: 'quickDamage', tab: '' },
     { label: '스피드라인', href: '#/speed-line', section: 'speedLine', tab: '' },
   ] },

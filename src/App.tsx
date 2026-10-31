@@ -188,7 +188,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '내 속도 조정': 'Adjust my Speed', '상대 속도 조정': 'Adjust opponent Speed', '속도 보정 기준': 'Speed calculation basis', '양쪽 상태·랭크·장막 없음': 'No status, stages or screens on either side',
     '대면 가정 · 저장 기록 미변경': 'Matchup assumption · saved records unchanged', '가정의 출처와 한계': 'Assumptions and limits', '계산 한계': 'Calculation limits', '계산 조건': 'Calculation conditions', '계산 조건 바꾸기': 'Adjust calculation conditions', '상태·랭크·장막 없음': 'No status, stages or screens', '기술 등록 →': 'Register a move →', '기술을 등록하거나 선택하세요.': 'Register or select a move.', '양쪽 포켓몬을 선택하세요.': 'Choose both Pokémon.', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'This move is unsupported under current conditions or is a status move.', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in My Party.', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in Opponent Entry.',
     '대면비교': 'Matchup Comparison', '비교 불가': 'Cannot compare', '원본 특성 미확인': 'Unresolved source ability', '종·폼 검색': 'Search species or form', '엔트리 저장': 'Save entry', '변경 취소': 'Cancel changes', '저장 전 변경 · 대면 가정은 저장되지 않음': 'Unsaved entry changes · battle assumptions are temporary', '저장된 엔트리 · 전투 가정은 임시': 'Saved entry · battle assumptions are temporary', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': 'Same-species slots share moves. Move edits affect all of them.', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': 'Opponent full nature and offense effort unknown; recorded Def/Sp. Def modifiers apply. Modal edits affect only this matchup.', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': 'Full nature is a matchup assumption, not the saved entry; offense effort unknown and assumed zero.', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'Entry-backed · changes to assumptions do not edit saved entries', '속도 성격 가정': 'Speed nature assumption', '스카프 시나리오': 'Scarf scenario', '(전제 조건 미충족 · 미적용)': '(Prerequisite unmet · not applied)', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'Unburden requires no currently held item.',
-    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '링크 지역': 'Link region',
+    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '링크 지역': 'Link region', '배틀': 'Battle', '분석 도구': 'Analysis Tools', '사용 중인 파티': 'Active Party', '이 파티로 대면 보기': 'View matchup with this party', '선택 내 슬롯 파티 편집': 'Edit selected party slot',
     '선택 기술 상세': 'Selected move details', '속도 가정 조정': 'Adjust Speed assumptions',
     '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
     '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
@@ -281,6 +281,7 @@ const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
     '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
     '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '파티 관리': 'パーティ管理', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。', '현재 흐름': '現在のフロー', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'まず自分のパーティを埋め、相手の公開情報を書いてから計算に進む。', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'ダブルはパーティと相手情報を整えたあと、プランナーでターンの流れを見る。', '내 포켓몬과 기술 기준을 정리합니다.': '自分のポケモンと技の基準を整える。', '상대 공개 정보와 가정을 정리합니다.': '相手の公開情報と想定を整理する。', '추월컷과 속도선을 확인합니다.': '抜きラインと素早さ帯を確認する。', '기술 대미지와 조건을 맞춥니다.': '技ダメージと条件を合わせる。', '더블 기준 화력과 행동순을 정리합니다.': 'ダブル基準の火力と行動順を整理する。', '이 화면에서 하는 일': 'この画面でやること', '입력 순서': '入力順', '현재 기준 정보': '現在の基準情報', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': '自分のパーティと相手エントリーを先に整えると計算がぶれにくい。', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': '自分の技選択 → 相手基準確認 → 火力条件調整の順で見ればいい。', '선택된 기술': '選択中の技',
+    '배틀': 'バトル', '분석 도구': '分析ツール', '사용 중인 파티': '使用中のパーティ', '이 파티로 대면 보기': 'このパーティで対面を見る', '선택 내 슬롯 파티 편집': '選択中の自分の枠を編集',
     '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
   },
 }
@@ -1753,6 +1754,10 @@ function syncViewStateToUrl(viewState: ViewState) {
   if (viewState.mainSection === 'dex' && viewState.dexSelectedValue) params.set('sel', viewState.dexSelectedValue)
   if (typeof viewState.selectedMy === 'number') params.set('my', String(viewState.selectedMy))
   if (typeof viewState.selectedOpp === 'number') params.set('opp', String(viewState.selectedOpp))
+  if (routePath === '/party') {
+    const current = new URL(window.location.hash.replace(/^#/, '') || '/', window.location.href)
+    if (current.pathname === '/party' && current.searchParams.get('edit') === String(viewState.selectedMy)) params.set('edit', String(viewState.selectedMy))
+  }
   if (viewState.mainSection === 'speedLine' && viewState.speedLineState) writeSpeedLineState(params, viewState.speedLineState)
   const nextHash = `${routePath}${params.toString() ? `?${params.toString()}` : ''}`
   if ((window.location.hash.replace(/^#/, '') || '/') === nextHash) return
@@ -4055,7 +4060,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     if (!row) return null
     const scarf = scarfFor(entry), ability = abilityFor(entry, row)
     return <div className="quick-speed-card">
-      <strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)} <small>{lt('스피드 종족값')} {row.speed}</small></strong>
+      <div className="quick-speed-card-heading"><strong>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)}</strong><span className="quick-speed-base-badge">{lt('스피드 종족값')} {row.speed}</span></div>
       <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{lt('속도 성격 가정')}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{lt('스카프 시나리오')}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{lt('일반')}</option><option value="scarf">{lt('스카프 가정')}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
     </div>
   }
@@ -4159,6 +4164,23 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
       const row = indexByKey.get(entry.key)!
       return <EffortTuningModal evs={entry.evs} nature={entry.nature} natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, language) }))} actualValue={(key, effort) => effort === undefined ? quickStat(entry, row, key) : actualStat(row[key], effort, quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key)), key === 'hp')} onEffort={(key, value) => { markDirty(modalSide, key); setSide(modalSide, prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) })) }} onNature={nature => { markDirty(modalSide, 'nature'); setSide(modalSide, prev => ({ ...prev, nature, statNatureMultipliers: {}, speedNatureKnown: true })) }} override={entry.actual} onOverride={(key, value) => setSide(modalSide, prev => { const actual = { ...prev.actual }; if (value === '') delete actual[key]; else actual[key] = value; return { ...prev, actual } })} onClose={() => setModalSide(null)} translate={lt} statTheme={statThemeClass} title={`${displayName(row, language)} · ${lt('노력치 보정')}`} opener={opener.current} />
     })() : null}
+  </section>
+}
+
+function PartyContextBar({ language, label, activeId, records, selectedMy, selectedOpp, mode, onSelect }: {
+  language: SiteLanguage; label: string; activeId: string; records: SavedPartyPreset[];
+  selectedMy: number; selectedOpp: number; mode: 'party' | 'single'; onSelect: (id: string) => void
+}) {
+  const lt = (text: string) => translateText(language, text)
+  const query = new URLSearchParams({ my: String(selectedMy), opp: String(selectedOpp) })
+  const href = mode === 'party' ? `#/single?tab=party&${query}` : `#/party?${query}&edit=${selectedMy}`
+  return <section className="party-context-bar" aria-label={lt('사용 중인 파티')}>
+    <label className="party-context-selector"><span>{lt('사용 중인 파티')} · <strong>{label}</strong></span>
+      <select aria-label={lt('사용 중인 파티')} value={activeId} onChange={event => onSelect(event.target.value)}>
+        {records.map(record => <option key={record.id} value={record.id}>{record.label}</option>)}
+      </select>
+    </label>
+    <a className="action-button party-context-link" href={href}>{lt(mode === 'party' ? '이 파티로 대면 보기' : '선택 내 슬롯 파티 편집')}</a>
   </section>
 }
 
@@ -5412,6 +5434,16 @@ export default function App() {
     if (typeof window === 'undefined') return
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
   }, [mainSection, activeTab, sampleWorkbenchTab, dexSearchMode])
+  React.useEffect(() => {
+    if (mainSection !== 'party') return
+    const route = new URL(window.location.hash.replace(/^#/, '') || '/party', window.location.href)
+    if (route.pathname !== '/party' || route.searchParams.get('edit') !== String(selectedMy)) return
+    const target = document.getElementById(`party-slot-${selectedMy}`)
+    const input = target?.querySelector<HTMLInputElement>(`#party-species-${selectedMy}`)
+    if (input) input.scrollIntoView?.({ block: 'center' })
+    else target?.scrollIntoView?.({ block: 'start' })
+    input?.focus({ preventScroll: true })
+  }, [mainSection, selectedMy])
   React.useEffect(() => {
     const pending = pendingDexScrollRestore.current
     if (!pending || !dexScrollRestoreReady(pending, { section: mainSection, selection: dexSelectedValue,
@@ -6746,7 +6778,7 @@ export default function App() {
 
   const applyPartyPreset = (presetId: string) => {
     const record = savedPartyPresets.find(entry => entry.id === presetId)
-    if (!record) return
+    if (!record || presetId === activePartyPresetId) return
     dispatchWorkspace({ type: 'SELECT', id: presetId })
     setPartySearch(record.party.map(member => searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts(record.party.map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
@@ -7423,9 +7455,12 @@ export default function App() {
               <div className="header-route-menu">
                 <nav id="primary-navigation" className="header-primary-tabs" aria-label={lt('모드 선택')}>
                   <a className={`header-primary-tab ${mainSection === 'home' ? 'active' : ''}`} href="#/" aria-current={mainSection === 'home' ? 'page' : undefined}>{lt('홈')}</a>
-                  {routeGroups.flatMap(group => [...group.links]).map(link => <a key={link.href} href={link.href}
-                    className={`header-primary-tab ${mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'active' : ''}`}
-                    aria-current={mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'page' : undefined}>{lt(link.label)}</a>)}
+                  {routeGroups.map(group => <div key={group.section} className="header-route-group" aria-label={lt(group.label)}>
+                    <span className="header-route-group-label">{lt(group.label)}</span>
+                    <div className="header-route-group-links">{group.links.map(link => <a key={link.href} href={link.href}
+                      className={`header-primary-tab ${mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'active' : ''}`}
+                      aria-current={mainSection === link.section && (link.section !== 'sample' || (link.tab === 'library' ? sampleWorkbenchTab === 'library' : sampleWorkbenchTab !== 'library')) ? 'page' : undefined}>{lt(link.label)}</a>)}</div>
+                  </div>)}
                 </nav>
               </div>
             </div>
@@ -7525,6 +7560,10 @@ export default function App() {
         magicPoints={key => magicEffortPoints(sampleRow, sampleForge, key)} /> : null}
 
       <main className="grid">
+        {(mainSection === 'party' || mainSection === 'single') ? <PartyContextBar
+          language={siteLanguage} label={activePartyLabel} activeId={activePartyPresetId}
+          records={savedPartyPresets} selectedMy={selectedMy} selectedOpp={selectedOpp}
+          mode={mainSection} onSelect={applyPartyPreset} /> : null}
         {mainSection === 'quickDamage' ? <QuickDamagePanel language={siteLanguage} tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} /> : null}
         {mainSection === 'home' ? (
         <>
@@ -8222,7 +8261,7 @@ export default function App() {
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
                 return (
-                  <div key={`${member.key}-${idx}`} className="card entry-card">
+                  <div key={`${member.key}-${idx}`} id={`party-slot-${idx}`} className={`card entry-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
                       actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}>×</button> : null} name={
                             <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"

@@ -24,5 +24,5 @@ test('saved party, all six editable cards, and the sole analysis panel appear in
   assert.equal(names.filter(name => name === 'PartyAnalysisPanel').length, 1)
   const gridSource = content[grid].getText(source)
   assert.match(gridSource, /party\.map\(\(member, idx\) =>/)
-  assert.match(gridSource, /className="card entry-card"/)
+  assert.match(gridSource, /id=\{`party-slot-\$\{idx\}`\} className=\{`card entry-card /)
 })

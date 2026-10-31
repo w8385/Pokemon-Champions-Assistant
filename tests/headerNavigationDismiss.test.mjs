@@ -7,7 +7,8 @@ const styles = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8
 const nav = source.slice(source.indexOf('<nav id="primary-navigation"'), source.indexOf('</nav>', source.indexOf('<nav id="primary-navigation"')))
 test('all header destinations are direct native anchors without opening a group or toggle', () => {
   assert.match(nav, /href="#\/"/)
-  assert.match(nav, /routeGroups\.flatMap\(group => \[\.\.\.group\.links\]\)\.map\(link => <a/)
+  assert.match(nav, /routeGroups\.map\(group => <div key=\{group\.section\} className="header-route-group"/)
+  assert.match(nav, /group\.links\.map\(link => <a/)
   assert.doesNotMatch(nav, /<details|<summary|<button|header-route-links|onClick=|preventDefault/)
   assert.doesNotMatch(source, /header-route-toggle|mobileNavOpen|setMobileNavOpen/)
 })
