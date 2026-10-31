@@ -4145,10 +4145,10 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     {!comparisonMode ? <div className="quick-heading-actions"><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}>{lt('공격측·방어측 바꾸기')}</button></div> : null}
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}>{lt('상대 초기화')}</button>)}
     <div className="quick-comparison-results">
-      {speedStrip}
       <div className="quick-speed-settings" aria-label={lt('스피드 조건')}>
         {speedCard('attacker', attacker, attackingRow)}{speedCard('defender', defender, defendingRow)}
       </div>
+      {speedStrip}
       <div className={`quick-result${selectedVerdict ? ` quick-ko-${selectedVerdict}` : ''}`} aria-live="polite"><div className="quick-result-head"><strong>{lt('대미지 결과')} · {selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')} · {moveLabel(selectedMove) || lt('기술 선택')}</strong></div>{result ? <><h3>{result.damage.min}–{result.damage.max} ({result.damage.minPct}–{result.damage.maxPct}%){selectedVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][selectedVerdict]}</strong> : null}</h3><p>{lt('상대 체력')} {result.targetHp} · {lt('상성')} ×{result.effectiveness}</p><p>{result.hits > 1 ? lt('연속기는 기절 확률 계산 제외') : `${lt('1타 확률')} ${result.damage.rolls.filter(roll => roll >= result.targetHp).length}/16 (${(result.damage.rolls.filter(roll => roll >= result.targetHp).length / 16 * 100).toFixed(1)}%)`}</p><div className="quick-rolls"><strong>{lt('16개 난수 피해')}</strong><small>{result.damage.rolls.join(', ')}</small></div></> : <p role="status">{selectedReason}</p>}</div>
     </div>
     <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>

@@ -38,7 +38,7 @@ test('speed scenario editors live once per owner adjacent to the shared results,
   assert.match(speed, /quick-speed-assumptions/)
   assert.match(speed, /스피드 종족값/)
   assert.match(speed, /전제 조건 미충족/)
-  assert.match(results, /\{speedStrip\}[\s\S]*speedCard\('attacker', attacker, attackingRow\)[\s\S]*speedCard\('defender', defender, defendingRow\)[\s\S]*quick-result\$\{selectedVerdict/)
+  assert.match(results, /speedCard\('attacker', attacker, attackingRow\)[\s\S]*speedCard\('defender', defender, defendingRow\)[\s\S]*\{speedStrip\}[\s\S]*quick-result\$\{selectedVerdict/)
   assert.match(panel, /<PokemonStatGrid showEffort/)
   assert.match(panel, /<RegisteredMoveSlot/)
 })
