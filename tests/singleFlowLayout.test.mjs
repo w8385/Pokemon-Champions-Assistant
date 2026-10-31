@@ -18,7 +18,7 @@ test('single pair has no saved-record editing detour', () => {
 test('one Speed comparison, compact provenance and battle conditions are expanded by default', () => {
   assert.match(panel, /className="quick-speed-summary"/)
   assert.match(panel, /className="quick-speed-card"/)
-  assert.match(panel, /className="quick-rolls"/)
+  assert.doesNotMatch(panel, /className="quick-rolls"/)
   assert.match(panel, /className="quick-condition-grid"/)
   assert.doesNotMatch(panel, /className="quick-source-badges"/)
   assert.match(panel, /sourceStatus\('nature'\)/)

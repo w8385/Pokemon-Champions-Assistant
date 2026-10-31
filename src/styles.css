@@ -8739,6 +8739,7 @@ html {
 .quick-moves .move-chip[aria-pressed='true'] { outline: 2px solid currentColor; outline-offset: -2px; }
 .quick-result { min-width: 0; overflow-wrap: anywhere; }
 .quick-result h3 { font-size: clamp(1.25rem, 3vw, 1.9rem); margin: 8px 0; }
+.quick-result-head > span { color: var(--muted, #aab5c4); font-size: .85rem; }
 .quick-result small { display: block; line-height: 1.6; }
 .quick-result.quick-ko-certain, .quick-move-preview.quick-ko-certain { border-color: #54d99a; background: rgba(38, 161, 103, .17); }
 .quick-result.quick-ko-possible, .quick-move-preview.quick-ko-possible { border-color: #f4bd65; background: rgba(210, 133, 32, .16); }

@@ -26,7 +26,8 @@ test('both modes retain independent state owners and condition controls after la
   assert.match(panel, /\{entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(panel, /\{comparisonMode \? null : speciesSearch\(side/)
   assert.match(panel, /\{sideBattleControls\('attacker'\)\}\{sideBattleControls\('defender'\)\}/)
-  assert.match(panel, /result\.damage\.rolls\.join\(', '\)/)
+  assert.doesNotMatch(panel, /result\.damage\.rolls\.join\(', '\)/)
+  assert.match(panel, /result\.damage\.rolls\.filter\(roll => roll >= result\.targetHp\)/)
 })
 
 test('speed scenario editors live once per owner adjacent to the shared results, without redundant chips', () => {

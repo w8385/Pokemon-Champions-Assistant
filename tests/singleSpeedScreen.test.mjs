@@ -25,8 +25,8 @@ const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const speedScreen = app.slice(app.indexOf("(mainSection === 'single' && activeTab === 'speed') ? <section"), app.indexOf("(mainSection === 'single' && activeTab === 'power') ? <section"))
 test('single speed screen owns independent assumption controls and derives its verdict and graph from them', () => {
   assert.match(app, /compareSingleSpeed\(/)
-  assert.match(speedScreen, /aria-label=\{lt\('상대 성격 가정'\)\}/)
-  assert.match(speedScreen, /aria-label=\{lt\('상대 도구 가정'\)\}/)
+  assert.match(speedScreen, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.nature\}/)
+  assert.match(speedScreen, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.item\}/)
   assert.match(speedScreen, /singleSpeedComparison\.verdict/)
   assert.match(speedScreen, /singleSpeedComparison\.passEffort/)
   assert.match(speedScreen, /현재 투자로 이미 추월'\)} · \$\{lt\('엄격히 추월할 최소 스피드 노력/)
@@ -43,7 +43,7 @@ test('screen assumptions reset on every target identity and route exit', () => {
 })
 
 test('conditional opponent ability control explicitly feeds selected verdict and graph', () => {
-  assert.match(speedScreen, /aria-label=\{lt\('상대 특성 발동 가정'\)\}/)
+  assert.match(speedScreen, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.ability\}/)
   assert.match(app, /speedAbilityCandidate\(oppRow, siteLanguage\)/)
   assert.match(app, /active: singleSpeedAbilityActive/)
   assert.match(speedScreen, /singleSpeedComparison\.targetSpeed/)
@@ -66,20 +66,20 @@ test('both existing cards show matching at-a-glance speed rows and card-local as
   assert.equal(cards.length, 2)
   const first = speedScreen.slice(cards[0].index, cards[1].index)
   const second = speedScreen.slice(cards[1].index, speedScreen.indexOf('className="speed-context-card single-speed-result"'))
-  const labels = ['스피드 종족값', '성격 보정', '스피드 노력', '스피드 랭크', '스카프 가정', '실수치 스피드', '최종 스피드']
+  const labels = ['스피드 종족값', '성격 보정', '스피드 노력', '스피드 랭크', 'conciseSpeedLabels[siteLanguage].scarf', '실수치 스피드', '최종 스피드']
   for (const card of [first, second]) {
     let last = -1
     for (const label of labels) {
-      const next = card.indexOf(`lt('${label}')`)
+      const next = card.indexOf(label.startsWith('conciseSpeedLabels') ? label : `lt('${label}')`)
       assert.ok(next > last, `${label} must appear in matching order in each card`)
       last = next
     }
   }
-  assert.match(first, /aria-label=\{lt\('내 스카프 가정'\)\}/)
-  assert.match(second, /aria-label=\{lt\('상대 성격 가정'\)\}/)
-  assert.match(second, /aria-label=\{lt\('상대 도구 가정'\)\}/)
+  assert.match(first, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.scarf\}/)
+  assert.match(second, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.nature\}/)
+  assert.match(second, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.item\}/)
   const result = speedScreen.slice(speedScreen.indexOf('className="speed-context-card single-speed-result"'))
-  assert.doesNotMatch(result, /aria-label=\{lt\('상대 성격 가정'\)\}|aria-label=\{lt\('상대 도구 가정'\)\}/)
+  assert.doesNotMatch(result, /aria-label=\{conciseSpeedLabels\[siteLanguage\]\.(?:nature|item)\}/)
 })
 
 test('own screen-only scarf choice drives comparison and graph and resets on slot, form and route', () => {

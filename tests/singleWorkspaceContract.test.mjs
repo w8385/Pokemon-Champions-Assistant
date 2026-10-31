@@ -29,11 +29,11 @@ test('unknown sources are localized beside build values and temporary battle con
   assert.match(quick, /계산 조건 · 이 대면만/)
 })
 
-test('single speed shares one scale and build cards hold speed controls; rolls remain visible', () => {
+test('single speed shares one scale and build cards hold speed controls; selected damage omits raw rolls', () => {
   assert.match(quick, /quick-speed-summary/)
   assert.match(quick, /quick-speed-card/)
   assert.match(quick, /className="quick-speed-assumptions"/)
   assert.match(quick, /<div className=\{`quick-result\$\{selectedVerdict[^]*?aria-live="polite"/)
-  assert.match(quick, /className="quick-rolls"/)
+  assert.doesNotMatch(quick, /className="quick-rolls"/)
   assert.match(css, /\.single-workspace/)
 })
