@@ -1,9 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import vm from 'node:vm'
-import { createRequire } from 'node:module'
-const ts = createRequire(import.meta.url)('typescript')
+import { calcDamage } from '../src/domain/battle/damageCore.ts'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const types = readFileSync(new URL('../src/app/types.ts', import.meta.url), 'utf8')
 
@@ -52,19 +50,9 @@ test('reverse conditions have independent owners and editable controls', () => {
 })
 
 test('four forward and reverse damage previews use distinct numerical outputs from the existing engine', () => {
-  const tree = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const names = ['pokeRound', 'chainMods', 'fixedMod', 'applyFixedMod', 'engineMovePower', 'getBaseDamage', 'getFinalDamageRoll', 'calcDamage']
-  const functions = names.map(name => {
-    const node = tree.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === name)
-    assert.ok(node, name)
-    return node.getText(tree)
-  }).join('\n')
-  const code = ts.transpileModule(`const DAMAGE_MOD_SCALE = 4096;\n${functions}\nglobalThis.damage = calcDamage`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
-  const context = {}
-  vm.runInNewContext(code, context)
   const own = { hp: 150, attack: 150, defense: 110, spAttack: 80, spDefense: 90 }
   const foe = { hp: 160, attack: 100, defense: 120, spAttack: 90, spDefense: 110 }
-  const preview = (attacker, defender, power) => context.damage(attacker, defender, power, 'physical', 1, 1, { power, category: 'physical' }, {})
+  const preview = (attacker, defender, power) => calcDamage(attacker, defender, power, 'physical', 1, 1, { power, category: 'physical' }, {})
   const forward = [40, 65, 80, 120].map(power => preview(own, foe, power))
   const reverse = [40, 65, 80, 120].map(power => preview(foe, own, power))
   for (const attacks of [forward, reverse]) {

@@ -7,6 +7,7 @@ import path from 'node:path'
 import vm from 'node:vm'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
+import { calcDamage, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const require = createRequire(import.meta.url)
@@ -19,7 +20,7 @@ if (digest(fs.readFileSync(path.join(fixtureDir, 'LICENSE'))) !== fixture.source
 
 export function loadAppDamageEngine() {
   const text = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8')
-  const names = ['pokeRound', 'chainMods', 'fixedMod', 'applyFixedMod', 'engineMovePower', 'getBaseDamage', 'getFinalDamageRoll', 'calcDamage', 'battleStageMultiplier', 'resolveDamageModifiers', 'knockOffPowerMultiplier', 'isDamageGrounded', 'typeEffectiveness', 'abilityAdjustedTypeEffectiveness', 'effectiveDefenderAbility']
+  const names = ['battleStageMultiplier', 'resolveDamageModifiers', 'knockOffPowerMultiplier', 'isDamageGrounded', 'typeEffectiveness', 'abilityAdjustedTypeEffectiveness', 'effectiveDefenderAbility']
   const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
   const found = new Map()
   function visit(n) {
@@ -31,7 +32,7 @@ export function loadAppDamageEngine() {
   // same live App AST; no second parity-only implementation is compiled here.
   for (const n of names) if (!found.has(n)) throw Error(`Missing actual App declaration: ${n}`)
   const context = {
-    console, Math, DAMAGE_MOD_SCALE: Number(text.match(/const DAMAGE_MOD_SCALE = (\d+)/)?.[1]),
+    console, Math, DAMAGE_MOD_SCALE, calcDamage,
     canonicalChampionsItemName: (s) => s === 'たつじんのおび' ? 'たつじんのおび' : s,
     classifyHeldItem: () => ({ status: 'allowed' }), abilityNoteLabel: s => s,
     moveMatchesTaggedSet: () => false,

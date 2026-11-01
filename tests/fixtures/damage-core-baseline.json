@@ -1,0 +1,333 @@
+{
+  "commit": "2371a759f754770420bd30e810e1c383923ba636",
+  "appSHA256": "a633fd9cd1b29ef06793112ed71ad3be8a8d276f689d0e14f1404103a3e2d528",
+  "functions": {
+    "pokeRound": {
+      "bodySHA256": "c802aa6fc41f215b20aec41e7cd6e1a3c31a3ad9c5687a2f3227e09dfef1866e"
+    },
+    "chainMods": {
+      "bodySHA256": "d6b26eb4abaeed71fb1c6aaf7206e5a9f0dde80d2737866336949d85ee5f1f7b"
+    },
+    "fixedMod": {
+      "bodySHA256": "09bd6125e0f5cbbaa7ce970584061cde9cca540fe90b4d918c73ab6780f4b849"
+    },
+    "applyFixedMod": {
+      "bodySHA256": "c8df59205aae255c2f6f69a0f9f0f73b633abd853b7e8075011f3f8744a6d525"
+    },
+    "engineMovePower": {
+      "bodySHA256": "634dad91b31f70d6739c0189ec8228631aa2ce2c7fb7d0dbc242a41504b9430b"
+    },
+    "getBaseDamage": {
+      "bodySHA256": "17e9fe0b8cdd963f5d6bf325c66efb9d9ffd58fb416d551a74dd217ef769cfee"
+    },
+    "getFinalDamageRoll": {
+      "bodySHA256": "774faf56ff2afe3bbcbb50b31b1c0a836f8565afffdccea6b9ef9a496a248316"
+    },
+    "calcDamage": {
+      "bodySHA256": "fbb325e97f6b0c285728fa4bce7f8fe599d2975692bf28e7c1658326dea055a9"
+    }
+  },
+  "stats": {
+    "hp": 160,
+    "attack": 150,
+    "defense": 120,
+    "spAttack": 130,
+    "spDefense": 110
+  },
+  "cases": [
+    [
+      "ordinary",
+      80,
+      "physical",
+      1.5,
+      1,
+      {
+        "power": 80,
+        "category": "physical"
+      },
+      {}
+    ],
+    [
+      "immune",
+      80,
+      "physical",
+      1.5,
+      0,
+      {
+        "power": 80,
+        "category": "physical"
+      },
+      {}
+    ],
+    [
+      "unsupported",
+      0,
+      "physical",
+      1.5,
+      1,
+      {
+        "power": null,
+        "category": "status"
+      },
+      {}
+    ],
+    [
+      "critical-screen",
+      80,
+      "physical",
+      1.5,
+      1,
+      {
+        "power": 80,
+        "category": "physical"
+      },
+      {
+        "critical": true,
+        "finalMultiplier": 0.5
+      }
+    ],
+    [
+      "weather-spread-burn",
+      90,
+      "physical",
+      1.5,
+      1,
+      {
+        "power": 90,
+        "category": "physical"
+      },
+      {
+        "weatherMod": 2048,
+        "spreadMod": 3072,
+        "burned": true
+      }
+    ],
+    [
+      "multi-hit",
+      25,
+      "physical",
+      1.5,
+      2,
+      {
+        "power": 25,
+        "category": "physical",
+        "hitPowers": [
+          25,
+          50,
+          75
+        ]
+      },
+      {
+        "ignoreFirstHitDamage": true,
+        "fixedBpMods": [
+          5325
+        ]
+      }
+    ],
+    [
+      "special-defense",
+      80,
+      "special",
+      1,
+      0.5,
+      {
+        "power": 80,
+        "category": "special",
+        "targetsDefenseStat": "defense"
+      },
+      {
+        "attackMultiplier": 1.5,
+        "defenseMultiplier": 0.75,
+        "fixedFinalMods": [
+          4915
+        ]
+      }
+    ],
+    [
+      "body-press",
+      80,
+      "physical",
+      1,
+      1,
+      {
+        "power": 80,
+        "category": "physical",
+        "usesDefenseAsAttack": true
+      },
+      {
+        "powerMultiplier": 1.5
+      }
+    ]
+  ],
+  "outcomes": {
+    "ordinary": {
+      "min": 58,
+      "max": 69,
+      "rolls": [
+        58,
+        58,
+        60,
+        60,
+        60,
+        61,
+        61,
+        63,
+        63,
+        64,
+        64,
+        66,
+        66,
+        67,
+        67,
+        69
+      ],
+      "minPct": "36.3",
+      "maxPct": "43.1"
+    },
+    "immune": {
+      "min": 0,
+      "max": 0,
+      "rolls": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "minPct": "0.0",
+      "maxPct": "0.0"
+    },
+    "unsupported": null,
+    "critical-screen": {
+      "min": 43,
+      "max": 51,
+      "rolls": [
+        43,
+        44,
+        45,
+        45,
+        45,
+        46,
+        46,
+        47,
+        48,
+        48,
+        48,
+        49,
+        49,
+        50,
+        51,
+        51
+      ],
+      "minPct": "26.9",
+      "maxPct": "31.9"
+    },
+    "weather-spread-burn": {
+      "min": 12,
+      "max": 14,
+      "rolls": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        13,
+        14
+      ],
+      "minPct": "7.5",
+      "maxPct": "8.8"
+    },
+    "multi-hit": {
+      "min": 230,
+      "max": 274,
+      "rolls": [
+        230,
+        232,
+        236,
+        240,
+        240,
+        244,
+        248,
+        252,
+        254,
+        254,
+        260,
+        260,
+        262,
+        266,
+        270,
+        274
+      ],
+      "minPct": "143.8",
+      "maxPct": "171.3"
+    },
+    "special-defense": {
+      "min": 40,
+      "max": 47,
+      "rolls": [
+        40,
+        40,
+        40,
+        41,
+        41,
+        42,
+        42,
+        42,
+        43,
+        43,
+        44,
+        44,
+        44,
+        46,
+        46,
+        47
+      ],
+      "minPct": "25.0",
+      "maxPct": "29.4"
+    },
+    "body-press": {
+      "min": 45,
+      "max": 54,
+      "rolls": [
+        45,
+        46,
+        46,
+        47,
+        48,
+        48,
+        49,
+        49,
+        50,
+        50,
+        51,
+        51,
+        52,
+        52,
+        53,
+        54
+      ],
+      "minPct": "28.1",
+      "maxPct": "33.8"
+    }
+  }
+}

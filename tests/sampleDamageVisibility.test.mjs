@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import { createRequire } from 'node:module'
 import { classifyHeldItem } from '../src/itemIdentity.ts'
+import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
 const require = createRequire(import.meta.url)
 const ts = require('typescript')
 
@@ -71,21 +72,21 @@ test('Knock Off power depends on an allowed removable target item, not no item o
 
 test('Knock Off item branches feed the existing damage and decision-power engines', () => {
   const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const names = ['knockOffPowerMultiplier', 'pokeRound', 'chainMods', 'fixedMod', 'applyFixedMod', 'engineMovePower', 'getBaseDamage', 'getFinalDamageRoll', 'calcDamage', 'decisionPowerIndex']
+  const names = ['knockOffPowerMultiplier', 'decisionPowerIndex']
   const functions = names.map(name => {
     const node = source.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === name)
     assert.ok(node, name)
     return node.getText(source)
   }).join('\n')
-  const code = ts.transpileModule(`const DAMAGE_MOD_SCALE = 4096;\n${functions}\nglobalThis.engines = { knockOffPowerMultiplier, calcDamage, decisionPowerIndex, engineMovePower }`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
-  const context = { classifyHeldItem }
+  const code = ts.transpileModule(`${functions}\nglobalThis.engines = { knockOffPowerMultiplier, decisionPowerIndex }`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
+  const context = { classifyHeldItem, chainMods, DAMAGE_MOD_SCALE }
   vm.runInNewContext(code, context)
-  const { knockOffPowerMultiplier, calcDamage, decisionPowerIndex, engineMovePower } = context.engines
+  const { knockOffPowerMultiplier, decisionPowerIndex } = context.engines
   assert.equal(engineMovePower(65, 1.5), 97)
   // champions.ts:640–652 chains fixed BP modifiers before rounding; the same
   // optional BP chain now reaches the display and actual damage engine.
   assert.match(app, /const effectivePower = engineMovePower\(movePower, modifierPack\.powerMultiplier \?\? 1, modifierPack\.fixedBpMods\)/)
-  assert.match(app, /const scaledPower = engineMovePower\(power, modifiers\?\.powerMultiplier \?\? 1, modifiers\?\.fixedBpMods\)/)
+  assert.match(readFileSync(new URL('../src/domain/battle/damageCore.ts', import.meta.url), 'utf8'), /const scaledPower = engineMovePower\(power, modifiers\?\.powerMultiplier \?\? 1, modifiers\?\.fixedBpMods\)/)
   assert.match(app, /\{lt\('상대 적용 결정력'\)\} \{result\.appliedDecisionPower/)
   const attacker = { hp: 150, attack: 150, defense: 110, spAttack: 80, spDefense: 90 }
   const defender = { hp: 160, attack: 100, defense: 120, spAttack: 90, spDefense: 110 }
