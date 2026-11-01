@@ -21,6 +21,19 @@ export function createReadonlyCardStats(
 /** Shared registered slot for party, sample builder and read-only creator builds. */
 export type RegisteredMoveSearch = Omit<SearchComboboxProps<SearchOption>, 'value' | 'onChange' | 'inputProps' | 'label'>
 
+/** One candidate presentation for every editable move pool; no eligibility lives here. */
+export function MoveCandidateRow({ name, type, meta, labels }: {
+  name: string; type?: string | null; meta?: MoveMeta | null
+  labels: { category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
+}) {
+  return <span className="move-candidate-row">
+    {type ? <img src={getTypeBadgeSrc(type)} alt={getTypeBadgeLabel(type)} title={getTypeBadgeLabel(type)} className="type-badge-image-small" /> : null}
+    <span className="move-candidate-text"><strong>{name}</strong><small className="move-candidate-meta">
+      {meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}
+    </small></span>
+  </span>
+}
+
 export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels, search }: {
   number: number; name: string; type?: string | null; meta?: MoveMeta | null; inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>; tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; children?: ReactNode; className?: string
   search?: RegisteredMoveSearch
@@ -29,6 +42,8 @@ export function RegisteredMoveSlot({ number, name, type, meta, inputProps, toolt
   const sharedInputProps = { ...inputProps, ...tooltipProps,
     onFocus: (event: React.FocusEvent<HTMLInputElement>) => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) },
     onBlur: (event: React.FocusEvent<HTMLInputElement>) => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) },
+    onMouseEnter: (event: React.MouseEvent<HTMLInputElement>) => { tooltipProps?.onMouseEnter?.(event); inputProps.onMouseEnter?.(event) },
+    onMouseLeave: (event: React.MouseEvent<HTMLInputElement>) => { tooltipProps?.onMouseLeave?.(event); inputProps.onMouseLeave?.(event) },
   }
   const content = <>
     <div className="registered-move-slot-head">{search && !inputProps.readOnly ? <label htmlFor={search.id}><span>{number}{labels.slot}</span></label> : <span>{number}{labels.slot}</span>}

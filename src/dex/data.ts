@@ -1,4 +1,7 @@
 import type { DexDescriptionBundle, MoveMeta } from '../app/types'
+import { CHAMPIONS_ITEM_OPTIONS } from '../championsItems'
+import { championsData, additionalFormSpecs } from '../effectiveRoster'
+import { requiredMegaStone } from '../itemIdentity'
 
 let usageTopMovesByKeyCache: Record<string, { moves?: string[], sourceFormat?: string, sourcePokemon?: string, fallback?: boolean }> | null = null
 
@@ -47,10 +50,14 @@ export async function loadSpriteHashIndex() {
 
 
 function normalizeSearchText(value: string) {
-  return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
+  return value.normalize('NFKC').toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
 }
 
 let itemIndexCache: { byKey: Map<string, DexDescriptionBundle['items'][string]>; byNormalized: Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }> } | null = null
+const offeredItemKeys = new Set<string>([
+  ...CHAMPIONS_ITEM_OPTIONS,
+  ...[...championsData.rows, ...additionalFormSpecs].map(row => requiredMegaStone(row.key)).filter((stone): stone is string => Boolean(stone)),
+])
 
 export function getItemIndexSync() {
   if (itemIndexCache) return itemIndexCache
@@ -58,10 +65,18 @@ export function getItemIndexSync() {
   if (!bundle) return null
   const byKey = new Map<string, DexDescriptionBundle['items'][string]>()
   const byNormalized = new Map<string, { key: string; entry: DexDescriptionBundle['items'][string] }>()
+  const ambiguous = new Set<string>()
   for (const [key, entry] of Object.entries(bundle.items)) {
+    if (!offeredItemKeys.has(key)) continue
     byKey.set(key, entry)
     for (const candidate of [key, entry.nameKo, entry.nameEn, entry.nameJa]) {
-      byNormalized.set(normalizeSearchText(candidate), { key, entry })
+      const token = normalizeSearchText(candidate)
+      if (!token || ambiguous.has(token)) continue
+      const previous = byNormalized.get(token)
+      if (previous && previous.key !== key) {
+        byNormalized.delete(token)
+        ambiguous.add(token)
+      } else byNormalized.set(token, { key, entry })
     }
   }
   itemIndexCache = { byKey, byNormalized }

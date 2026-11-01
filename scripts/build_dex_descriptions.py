@@ -129,7 +129,11 @@ def main():
     move_aliases = json.loads((SRC / 'championsMoveMetaNameAliases.json').read_text())
     move_name_overrides = json.loads((SRC / 'championsMoveNameOverrides.json').read_text())
     item_ts = (SRC / 'championsItems.ts').read_text()
+    # Historical API labels are not evidence of Champions introduction.
+    approval = json.loads((ROOT / 'data/champions-item-approval.json').read_text())
     item_names_jp = set(parse_ts_array(item_ts, 'CHAMPIONS_ITEM_OPTIONS'))
+    if item_names_jp != {row['canonical'] for row in approval['approvedOrdinary']}:
+        raise RuntimeError('ordinary item membership differs from pinned provisional approval')
     ability_slugs = sorted({ability for row in rows for ability in row.get('abilities', [])})
     move_names_ko = sorted(move_meta.keys())
 
@@ -139,9 +143,6 @@ def main():
     abilities = fetch_csv('abilities')
     ability_names = fetch_csv('ability_names')
     ability_prose = fetch_csv('ability_prose')
-    items = fetch_csv('items')
-    item_names = fetch_csv('item_names')
-    item_prose = fetch_csv('item_prose')
 
     move_by_id = {row['id']: row for row in moves}
     move_effect_by_id = {row['move_effect_id']: row for row in move_effects if row['local_language_id'] == '9'}
@@ -150,13 +151,6 @@ def main():
     for row in ability_names:
         ability_names_by_id.setdefault(row['ability_id'], {})[row['local_language_id']] = row['name']
     ability_prose_by_id = {row['ability_id']: row for row in ability_prose if row['local_language_id'] == '9'}
-    item_names_by_id = {}
-    item_names_ja_to_id = {}
-    for row in item_names:
-        item_names_by_id.setdefault(row['item_id'], {})[row['local_language_id']] = row['name']
-        if row['local_language_id'] == '1':
-            item_names_ja_to_id[row['name']] = row['item_id']
-    item_prose_by_id = {row['item_id']: row for row in item_prose if row['local_language_id'] == '9'}
 
     move_ko_to_id = {}
     move_en_by_id = {}
@@ -244,35 +238,14 @@ def main():
             'text': localized_text(summary, detail),
         }
 
-    print(f'fetching localized item descriptions: {len(item_names_jp)} entries')
-    for idx, item_jp in enumerate(sorted(item_names_jp), start=1):
-        item_id = item_names_ja_to_id.get(item_jp)
-        if not item_id:
-            continue
-        if idx % 25 == 0:
-            print(f'  items {idx}/{len(item_names_jp)}')
-        prose = item_prose_by_id.get(item_id)
-        names = item_names_by_id.get(item_id, {})
-        api = fetch_json(f'{POKEAPI}/item/{item_id}')
-        flavor = pick_latest_flavor(api.get('flavor_text_entries', []), 'text')
-        effects = pick_effect_entries(api.get('effect_entries', []))
-        summary = {
-            'ko': first_text(flavor.get('ko', '')),
-            'en': first_text(effects['short'].get('en', ''), clean_text(prose['short_effect']) if prose else '', flavor.get('en', '')),
-            'ja': first_text(flavor.get('ja', '')),
-        }
-        detail = {
-            'ko': first_text(effects['long'].get('ko', ''), flavor.get('ko', '')),
-            'en': first_text(effects['long'].get('en', ''), clean_text(prose['effect']) if prose else '', flavor.get('en', '')),
-            'ja': first_text(effects['long'].get('ja', ''), flavor.get('ja', '')),
-        }
-        output['items'][item_jp] = {
-            'itemId': int(item_id),
-            'nameKo': names.get('3', ''),
-            'nameEn': names.get('9', ''),
-            'nameJa': names.get('1', item_jp),
-            'text': localized_text(summary, detail),
-        }
+    # Shared pinned offline authority: never regenerate items from historical PokeAPI IDs.
+    from build_item_descriptions import DATA, build, read_verified
+    manifest = json.loads((DATA / 'item-description-manifest.json').read_text())
+    fixture = read_verified(DATA / 'item-description-primary.json', manifest['fixtureSha256'])
+    if fixture['sourceCommit'] != manifest['sourceCommit'] or len(manifest['primaryFiles']) != 7:
+        raise ValueError('item primary revision/manifest mismatch')
+    historic = read_verified(DATA / 'item-description-historical.json', manifest['historicalSha256'])
+    output = json.loads(build(fixture, historic, output))
 
     (SRC / 'dexDescriptions.json').write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
     print(f'wrote {SRC / "dexDescriptions.json"}')

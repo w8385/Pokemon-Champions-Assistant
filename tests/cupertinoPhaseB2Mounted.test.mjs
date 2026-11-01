@@ -57,7 +57,7 @@ test('all eight destinations retain concrete source consumers, not just heading 
   assert.match(css, /\.party-preset-grid\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/)
   assert.match(css, /\.party-preset-card\s*\{[^}]*min-height: 64px/)
   assert.match(src, /aria-label=\{`\$\{preset\.label\}: \$\{lt\('저장 파티 삭제'\)\}`\}/)
-  assert.match(src, /className="app-data-notice"/)
+  assert.doesNotMatch(src, /className="app-data-notice"/)
   assert.doesNotMatch(src, /ready: '폼별 기술 · 2026-09-09/)
 })
 

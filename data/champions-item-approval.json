@@ -1,0 +1,1496 @@
+{
+  "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+  "rawItemSha256": "556ad830a535d6280310379f8dfa738f45ef3f38896b86f4a3981aae8269df5e",
+  "rawJapaneseNamesSha256": "4de61e0bb29d93ef7c494a3d0168d9e2bd5093943356543508ed6da8657e2b3c",
+  "sourceRows": [
+    {
+      "sourceItemId": 214,
+      "nameJa": "しろいハーブ",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 287,
+      "nameJa": "こだわりスカーフ",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 881,
+      "nameJa": "エレキシード",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 882,
+      "nameJa": "サイコシード",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 883,
+      "nameJa": "ミストシード",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 884,
+      "nameJa": "グラスシード",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 251,
+      "nameJa": "シルクのスカーフ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 239,
+      "nameJa": "きせきのタネ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 249,
+      "nameJa": "もくたん",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 243,
+      "nameJa": "しんぴのしずく",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 242,
+      "nameJa": "じしゃく",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 222,
+      "nameJa": "ぎんのこな",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 244,
+      "nameJa": "するどいくちばし",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 238,
+      "nameJa": "かたいいし",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 245,
+      "nameJa": "どくバリ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 237,
+      "nameJa": "やわらかいすな",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 246,
+      "nameJa": "とけないこおり",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 241,
+      "nameJa": "くろおび",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 248,
+      "nameJa": "まがったスプーン",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 247,
+      "nameJa": "のろいのおふだ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 250,
+      "nameJa": "りゅうのキバ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 240,
+      "nameJa": "くろいメガネ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 233,
+      "nameJa": "メタルコート",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 2401,
+      "nameJa": "ようせいのハネ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 564,
+      "nameJa": "ノーマルジュエル",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 266,
+      "nameJa": "ちからのハチマキ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 267,
+      "nameJa": "ものしりメガネ",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 268,
+      "nameJa": "たつじんのおび",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 270,
+      "nameJa": "いのちのたま",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 277,
+      "nameJa": "メトロノーム",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 544,
+      "nameJa": "しめつけバンド",
+      "categoryA": "2"
+    },
+    {
+      "sourceItemId": 230,
+      "nameJa": "きあいのハチマキ",
+      "categoryA": "3"
+    },
+    {
+      "sourceItemId": 275,
+      "nameJa": "きあいのタスキ",
+      "categoryA": "3"
+    },
+    {
+      "sourceItemId": 219,
+      "nameJa": "メンタルハーブ",
+      "categoryA": "4"
+    },
+    {
+      "sourceItemId": 234,
+      "nameJa": "たべのこし",
+      "categoryA": "4"
+    },
+    {
+      "sourceItemId": 253,
+      "nameJa": "かいがらのすず",
+      "categoryA": "4"
+    },
+    {
+      "sourceItemId": 296,
+      "nameJa": "おおきなねっこ",
+      "categoryA": "4"
+    },
+    {
+      "sourceItemId": 269,
+      "nameJa": "ひかりのねんど",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 284,
+      "nameJa": "あついいわ",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 285,
+      "nameJa": "しめったいわ",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 283,
+      "nameJa": "さらさらいわ",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 282,
+      "nameJa": "つめたいいわ",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 879,
+      "nameJa": "グランドコート",
+      "categoryA": "5"
+    },
+    {
+      "sourceItemId": 149,
+      "nameJa": "クラボのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 150,
+      "nameJa": "カゴのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 151,
+      "nameJa": "モモンのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 152,
+      "nameJa": "チーゴのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 153,
+      "nameJa": "ナナシのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 156,
+      "nameJa": "キーのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 157,
+      "nameJa": "ラムのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 154,
+      "nameJa": "ヒメリのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 155,
+      "nameJa": "オレンのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 158,
+      "nameJa": "オボンのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 200,
+      "nameJa": "ホズのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 187,
+      "nameJa": "リンドのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 184,
+      "nameJa": "オッカのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 185,
+      "nameJa": "イトケのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 186,
+      "nameJa": "ソクノのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 194,
+      "nameJa": "タンガのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 192,
+      "nameJa": "バコウのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 195,
+      "nameJa": "ヨロギのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 190,
+      "nameJa": "ビアーのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 191,
+      "nameJa": "シュカのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 188,
+      "nameJa": "ヤチェのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 189,
+      "nameJa": "ヨプのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 193,
+      "nameJa": "ウタンのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 196,
+      "nameJa": "カシブのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 197,
+      "nameJa": "ハバンのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 198,
+      "nameJa": "ナモのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 199,
+      "nameJa": "リリバのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 686,
+      "nameJa": "ロゼルのみ",
+      "categoryA": "6"
+    },
+    {
+      "sourceItemId": 213,
+      "nameJa": "ひかりのこな",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 217,
+      "nameJa": "せんせいのツメ",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 221,
+      "nameJa": "おうじゃのしるし",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 232,
+      "nameJa": "ピントレンズ",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 265,
+      "nameJa": "こうかくレンズ",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 276,
+      "nameJa": "フォーカスレンズ",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 278,
+      "nameJa": "くろいてっきゅう",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 295,
+      "nameJa": "きれいなぬけがら",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 540,
+      "nameJa": "ゴツゴツメット",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 541,
+      "nameJa": "ふうせん",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 542,
+      "nameJa": "レッドカード",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 547,
+      "nameJa": "だっしゅつボタン",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 659,
+      "nameJa": "フシギバナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 660,
+      "nameJa": "リザードナイトＸ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 678,
+      "nameJa": "リザードナイトＹ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 661,
+      "nameJa": "カメックスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 770,
+      "nameJa": "スピアナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 762,
+      "nameJa": "ピジョットナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 236,
+      "nameJa": "でんきだま",
+      "categoryA": "1"
+    },
+    {
+      "sourceItemId": 2635,
+      "nameJa": "ライチュウナイトＸ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2636,
+      "nameJa": "ライチュウナイトＹ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2559,
+      "nameJa": "ピクシナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 679,
+      "nameJa": "フーディナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2560,
+      "nameJa": "ウツボットナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 760,
+      "nameJa": "ヤドランナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 259,
+      "nameJa": "ながねぎ",
+      "categoryA": "10"
+    },
+    {
+      "sourceItemId": 656,
+      "nameJa": "ゲンガナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 675,
+      "nameJa": "ガルーラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2561,
+      "nameJa": "スターミナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 671,
+      "nameJa": "カイロスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 676,
+      "nameJa": "ギャラドスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 672,
+      "nameJa": "プテラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2562,
+      "nameJa": "カイリュナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2563,
+      "nameJa": "メガニウムナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2564,
+      "nameJa": "オーダイルナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 658,
+      "nameJa": "デンリュウナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 761,
+      "nameJa": "ハガネールナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 670,
+      "nameJa": "ハッサムナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 680,
+      "nameJa": "ヘラクロスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2565,
+      "nameJa": "エアームドナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 666,
+      "nameJa": "ヘルガナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 669,
+      "nameJa": "バンギラスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 753,
+      "nameJa": "ジュカインナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 664,
+      "nameJa": "バシャーモナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 752,
+      "nameJa": "ラグラージナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 657,
+      "nameJa": "サーナイトナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 754,
+      "nameJa": "ヤミラミナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 681,
+      "nameJa": "クチートナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 667,
+      "nameJa": "ボスゴドラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 665,
+      "nameJa": "チャーレムナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 682,
+      "nameJa": "ライボルトナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 759,
+      "nameJa": "サメハダナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 767,
+      "nameJa": "バクーダナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 755,
+      "nameJa": "チルタリスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 668,
+      "nameJa": "ジュペッタナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2637,
+      "nameJa": "チリーンナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 677,
+      "nameJa": "アブソルナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2638,
+      "nameJa": "アブソルナイトＺ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 763,
+      "nameJa": "オニゴーリナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 769,
+      "nameJa": "ボーマンダナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 758,
+      "nameJa": "メタグロスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2639,
+      "nameJa": "ムクホークナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 768,
+      "nameJa": "ミミロップナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 683,
+      "nameJa": "ガブリアスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2640,
+      "nameJa": "ガブリアスナイトＺ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 673,
+      "nameJa": "ルカリオナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2641,
+      "nameJa": "ルカリオナイトＺ",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 674,
+      "nameJa": "ユキノオナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 756,
+      "nameJa": "エルレイドナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2566,
+      "nameJa": "ユキメノコナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2569,
+      "nameJa": "エンブオナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2570,
+      "nameJa": "ドリュウズナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 757,
+      "nameJa": "タブンネナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2571,
+      "nameJa": "ペンドラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2572,
+      "nameJa": "ズルズキナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2573,
+      "nameJa": "シビルドナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2574,
+      "nameJa": "シャンデラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2642,
+      "nameJa": "ゴルーグナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2575,
+      "nameJa": "ブリガロナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2576,
+      "nameJa": "マフォクシナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2577,
+      "nameJa": "ゲッコウガナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2578,
+      "nameJa": "カエンジシナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2579,
+      "nameJa": "フラエッテナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2643,
+      "nameJa": "ニャオニクスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2580,
+      "nameJa": "カラマネナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2581,
+      "nameJa": "ガメノデスナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2582,
+      "nameJa": "ドラミドナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2583,
+      "nameJa": "ルチャブルナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2644,
+      "nameJa": "ケケンカニナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2645,
+      "nameJa": "グソクムシャナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2585,
+      "nameJa": "ジジーロナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2587,
+      "nameJa": "タイレーツナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2647,
+      "nameJa": "スコヴィラナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2648,
+      "nameJa": "セグレイブナイト",
+      "categoryA": "8"
+    },
+    {
+      "sourceItemId": 2650,
+      "nameJa": "キラフロルナイト",
+      "categoryA": "8"
+    }
+  ],
+  "approvedOrdinary": [
+    {
+      "canonical": "あついいわ",
+      "sourceItemId": 284
+    },
+    {
+      "canonical": "イトケのみ",
+      "sourceItemId": 185
+    },
+    {
+      "canonical": "いのちのたま",
+      "sourceItemId": 270
+    },
+    {
+      "canonical": "ウタンのみ",
+      "sourceItemId": 193
+    },
+    {
+      "canonical": "エレキシード",
+      "sourceItemId": 881
+    },
+    {
+      "canonical": "おうじゃのしるし",
+      "sourceItemId": 221
+    },
+    {
+      "canonical": "おおきなねっこ",
+      "sourceItemId": 296
+    },
+    {
+      "canonical": "オッカのみ",
+      "sourceItemId": 184
+    },
+    {
+      "canonical": "オボンのみ",
+      "sourceItemId": 158
+    },
+    {
+      "canonical": "オレンのみ",
+      "sourceItemId": 155
+    },
+    {
+      "canonical": "かいがらのすず",
+      "sourceItemId": 253
+    },
+    {
+      "canonical": "カゴのみ",
+      "sourceItemId": 150
+    },
+    {
+      "canonical": "カシブのみ",
+      "sourceItemId": 196
+    },
+    {
+      "canonical": "かたいいし",
+      "sourceItemId": 238
+    },
+    {
+      "canonical": "きあいのタスキ",
+      "sourceItemId": 275
+    },
+    {
+      "canonical": "きあいのハチマキ",
+      "sourceItemId": 230
+    },
+    {
+      "canonical": "キーのみ",
+      "sourceItemId": 156
+    },
+    {
+      "canonical": "きせきのタネ",
+      "sourceItemId": 239
+    },
+    {
+      "canonical": "きれいなぬけがら",
+      "sourceItemId": 295
+    },
+    {
+      "canonical": "ぎんのこな",
+      "sourceItemId": 222
+    },
+    {
+      "canonical": "グラスシード",
+      "sourceItemId": 884
+    },
+    {
+      "canonical": "グランドコート",
+      "sourceItemId": 879
+    },
+    {
+      "canonical": "くろいてっきゅう",
+      "sourceItemId": 278
+    },
+    {
+      "canonical": "くろいメガネ",
+      "sourceItemId": 240
+    },
+    {
+      "canonical": "くろおび",
+      "sourceItemId": 241
+    },
+    {
+      "canonical": "こうかくレンズ",
+      "sourceItemId": 265
+    },
+    {
+      "canonical": "こだわりスカーフ",
+      "sourceItemId": 287
+    },
+    {
+      "canonical": "ゴツゴツメット",
+      "sourceItemId": 540
+    },
+    {
+      "canonical": "サイコシード",
+      "sourceItemId": 882
+    },
+    {
+      "canonical": "さらさらいわ",
+      "sourceItemId": 283
+    },
+    {
+      "canonical": "じしゃく",
+      "sourceItemId": 242
+    },
+    {
+      "canonical": "しめつけバンド",
+      "sourceItemId": 544
+    },
+    {
+      "canonical": "しめったいわ",
+      "sourceItemId": 285
+    },
+    {
+      "canonical": "シュカのみ",
+      "sourceItemId": 191
+    },
+    {
+      "canonical": "シルクのスカーフ",
+      "sourceItemId": 251
+    },
+    {
+      "canonical": "しろいハーブ",
+      "sourceItemId": 214
+    },
+    {
+      "canonical": "しんぴのしずく",
+      "sourceItemId": 243
+    },
+    {
+      "canonical": "するどいくちばし",
+      "sourceItemId": 244
+    },
+    {
+      "canonical": "せんせいのツメ",
+      "sourceItemId": 217
+    },
+    {
+      "canonical": "ソクノのみ",
+      "sourceItemId": 186
+    },
+    {
+      "canonical": "だっしゅつボタン",
+      "sourceItemId": 547
+    },
+    {
+      "canonical": "たつじんのおび",
+      "sourceItemId": 268
+    },
+    {
+      "canonical": "たべのこし",
+      "sourceItemId": 234
+    },
+    {
+      "canonical": "タンガのみ",
+      "sourceItemId": 194
+    },
+    {
+      "canonical": "ちからのハチマキ",
+      "sourceItemId": 266
+    },
+    {
+      "canonical": "つめたいいわ",
+      "sourceItemId": 282
+    },
+    {
+      "canonical": "でんきだま",
+      "sourceItemId": 236
+    },
+    {
+      "canonical": "どくバリ",
+      "sourceItemId": 245
+    },
+    {
+      "canonical": "とけないこおり",
+      "sourceItemId": 246
+    },
+    {
+      "canonical": "ながねぎ",
+      "sourceItemId": 259
+    },
+    {
+      "canonical": "ナモのみ",
+      "sourceItemId": 198
+    },
+    {
+      "canonical": "ノーマルジュエル",
+      "sourceItemId": 564
+    },
+    {
+      "canonical": "のろいのおふだ",
+      "sourceItemId": 247
+    },
+    {
+      "canonical": "バコウのみ",
+      "sourceItemId": 192
+    },
+    {
+      "canonical": "ハバンのみ",
+      "sourceItemId": 197
+    },
+    {
+      "canonical": "ビアーのみ",
+      "sourceItemId": 190
+    },
+    {
+      "canonical": "ひかりのこな",
+      "sourceItemId": 213
+    },
+    {
+      "canonical": "ひかりのねんど",
+      "sourceItemId": 269
+    },
+    {
+      "canonical": "ヒメリのみ",
+      "sourceItemId": 154
+    },
+    {
+      "canonical": "ピントレンズ",
+      "sourceItemId": 232
+    },
+    {
+      "canonical": "ふうせん",
+      "sourceItemId": 541
+    },
+    {
+      "canonical": "フォーカスレンズ",
+      "sourceItemId": 276
+    },
+    {
+      "canonical": "ホズのみ",
+      "sourceItemId": 200
+    },
+    {
+      "canonical": "まがったスプーン",
+      "sourceItemId": 248
+    },
+    {
+      "canonical": "ミストシード",
+      "sourceItemId": 883
+    },
+    {
+      "canonical": "メタルコート",
+      "sourceItemId": 233
+    },
+    {
+      "canonical": "メトロノーム",
+      "sourceItemId": 277
+    },
+    {
+      "canonical": "メンタルハーブ",
+      "sourceItemId": 219
+    },
+    {
+      "canonical": "もくたん",
+      "sourceItemId": 249
+    },
+    {
+      "canonical": "ものしりメガネ",
+      "sourceItemId": 267
+    },
+    {
+      "canonical": "ヤチェのみ",
+      "sourceItemId": 188
+    },
+    {
+      "canonical": "やわらかいすな",
+      "sourceItemId": 237
+    },
+    {
+      "canonical": "ようせいのハネ",
+      "sourceItemId": 2401
+    },
+    {
+      "canonical": "ヨプのみ",
+      "sourceItemId": 189
+    },
+    {
+      "canonical": "ヨロギのみ",
+      "sourceItemId": 195
+    },
+    {
+      "canonical": "ラムのみ",
+      "sourceItemId": 157
+    },
+    {
+      "canonical": "りゅうのキバ",
+      "sourceItemId": 250
+    },
+    {
+      "canonical": "リリバのみ",
+      "sourceItemId": 199
+    },
+    {
+      "canonical": "リンドのみ",
+      "sourceItemId": 187
+    },
+    {
+      "canonical": "レッドカード",
+      "sourceItemId": 542
+    },
+    {
+      "canonical": "ロゼルのみ",
+      "sourceItemId": 686
+    }
+  ],
+  "requiredStones": [
+    {
+      "canonical": "가디안나이트",
+      "sourceItemId": 657
+    },
+    {
+      "canonical": "갑주무사나이트",
+      "sourceItemId": 2645
+    },
+    {
+      "canonical": "강철톤나이트",
+      "sourceItemId": 761
+    },
+    {
+      "canonical": "개굴닌자나이트",
+      "sourceItemId": 2577
+    },
+    {
+      "canonical": "갸라도스나이트",
+      "sourceItemId": 676
+    },
+    {
+      "canonical": "거북손데스나이트",
+      "sourceItemId": 2581
+    },
+    {
+      "canonical": "거북왕나이트",
+      "sourceItemId": 661
+    },
+    {
+      "canonical": "곤율거니나이트",
+      "sourceItemId": 2572
+    },
+    {
+      "canonical": "골루그나이트",
+      "sourceItemId": 2642
+    },
+    {
+      "canonical": "깜까미나이트",
+      "sourceItemId": 754
+    },
+    {
+      "canonical": "나무킹나이트",
+      "sourceItemId": 753
+    },
+    {
+      "canonical": "냐오닉스나이트",
+      "sourceItemId": 2643
+    },
+    {
+      "canonical": "눈설왕나이트",
+      "sourceItemId": 674
+    },
+    {
+      "canonical": "눈여아나이트",
+      "sourceItemId": 2566
+    },
+    {
+      "canonical": "다부니나이트",
+      "sourceItemId": 757
+    },
+    {
+      "canonical": "다크펫나이트",
+      "sourceItemId": 668
+    },
+    {
+      "canonical": "대여르나이트",
+      "sourceItemId": 2587
+    },
+    {
+      "canonical": "대짱이나이트",
+      "sourceItemId": 752
+    },
+    {
+      "canonical": "독침붕나이트",
+      "sourceItemId": 770
+    },
+    {
+      "canonical": "드닐레이브나이트",
+      "sourceItemId": 2648
+    },
+    {
+      "canonical": "드래캄나이트",
+      "sourceItemId": 2582
+    },
+    {
+      "canonical": "라이츄나이트X",
+      "sourceItemId": 2635
+    },
+    {
+      "canonical": "라이츄나이트Y",
+      "sourceItemId": 2636
+    },
+    {
+      "canonical": "루차불나이트",
+      "sourceItemId": 2583
+    },
+    {
+      "canonical": "루카리오나이트",
+      "sourceItemId": 673
+    },
+    {
+      "canonical": "루카리오나이트Z",
+      "sourceItemId": 2641
+    },
+    {
+      "canonical": "리자몽나이트X",
+      "sourceItemId": 660
+    },
+    {
+      "canonical": "리자몽나이트Y",
+      "sourceItemId": 678
+    },
+    {
+      "canonical": "마기라스나이트",
+      "sourceItemId": 669
+    },
+    {
+      "canonical": "마폭시나이트",
+      "sourceItemId": 2576
+    },
+    {
+      "canonical": "망나뇽나이트",
+      "sourceItemId": 2562
+    },
+    {
+      "canonical": "메가니움나이트",
+      "sourceItemId": 2563
+    },
+    {
+      "canonical": "메타그로스나이트",
+      "sourceItemId": 758
+    },
+    {
+      "canonical": "모단단게나이트",
+      "sourceItemId": 2644
+    },
+    {
+      "canonical": "몰드류나이트",
+      "sourceItemId": 2570
+    },
+    {
+      "canonical": "무장조나이트",
+      "sourceItemId": 2565
+    },
+    {
+      "canonical": "번치코나이트",
+      "sourceItemId": 664
+    },
+    {
+      "canonical": "보만다나이트",
+      "sourceItemId": 769
+    },
+    {
+      "canonical": "보스로라나이트",
+      "sourceItemId": 667
+    },
+    {
+      "canonical": "브리가론나이트",
+      "sourceItemId": 2575
+    },
+    {
+      "canonical": "쁘사이저나이트",
+      "sourceItemId": 671
+    },
+    {
+      "canonical": "샤크니아나이트",
+      "sourceItemId": 759
+    },
+    {
+      "canonical": "샹델라나이트",
+      "sourceItemId": 2574
+    },
+    {
+      "canonical": "스코빌런나이트",
+      "sourceItemId": 2647
+    },
+    {
+      "canonical": "썬더볼트나이트",
+      "sourceItemId": 682
+    },
+    {
+      "canonical": "아쿠스타나이트",
+      "sourceItemId": 2561
+    },
+    {
+      "canonical": "앱솔나이트",
+      "sourceItemId": 677
+    },
+    {
+      "canonical": "앱솔나이트Z",
+      "sourceItemId": 2638
+    },
+    {
+      "canonical": "야도란나이트",
+      "sourceItemId": 760
+    },
+    {
+      "canonical": "얼음귀신나이트",
+      "sourceItemId": 763
+    },
+    {
+      "canonical": "엘레이드나이트",
+      "sourceItemId": 756
+    },
+    {
+      "canonical": "염무왕나이트",
+      "sourceItemId": 2569
+    },
+    {
+      "canonical": "요가램나이트",
+      "sourceItemId": 665
+    },
+    {
+      "canonical": "우츠보트나이트",
+      "sourceItemId": 2560
+    },
+    {
+      "canonical": "이상해꽃나이트",
+      "sourceItemId": 659
+    },
+    {
+      "canonical": "이어롭나이트",
+      "sourceItemId": 768
+    },
+    {
+      "canonical": "입치트나이트",
+      "sourceItemId": 681
+    },
+    {
+      "canonical": "장크로다일나이트",
+      "sourceItemId": 2564
+    },
+    {
+      "canonical": "저리더프나이트",
+      "sourceItemId": 2573
+    },
+    {
+      "canonical": "전룡나이트",
+      "sourceItemId": 658
+    },
+    {
+      "canonical": "찌르호크나이트",
+      "sourceItemId": 2639
+    },
+    {
+      "canonical": "치렁나이트",
+      "sourceItemId": 2637
+    },
+    {
+      "canonical": "칼라마네로나이트",
+      "sourceItemId": 2580
+    },
+    {
+      "canonical": "캥카나이트",
+      "sourceItemId": 675
+    },
+    {
+      "canonical": "킬라플로르나이트",
+      "sourceItemId": 2650
+    },
+    {
+      "canonical": "파비코리나이트",
+      "sourceItemId": 755
+    },
+    {
+      "canonical": "팬텀나이트",
+      "sourceItemId": 656
+    },
+    {
+      "canonical": "펜드라나이트",
+      "sourceItemId": 2571
+    },
+    {
+      "canonical": "폭타나이트",
+      "sourceItemId": 767
+    },
+    {
+      "canonical": "프테라나이트",
+      "sourceItemId": 672
+    },
+    {
+      "canonical": "플라엣테나이트",
+      "sourceItemId": 2579
+    },
+    {
+      "canonical": "피죤투나이트",
+      "sourceItemId": 762
+    },
+    {
+      "canonical": "픽시나이트",
+      "sourceItemId": 2559
+    },
+    {
+      "canonical": "한카리아스나이트",
+      "sourceItemId": 683
+    },
+    {
+      "canonical": "한카리아스나이트Z",
+      "sourceItemId": 2640
+    },
+    {
+      "canonical": "할비롱나이트",
+      "sourceItemId": 2585
+    },
+    {
+      "canonical": "핫삼나이트",
+      "sourceItemId": 670
+    },
+    {
+      "canonical": "헤라크로스나이트",
+      "sourceItemId": 680
+    },
+    {
+      "canonical": "헬가나이트",
+      "sourceItemId": 666
+    },
+    {
+      "canonical": "화염레오나이트",
+      "sourceItemId": 2578
+    },
+    {
+      "canonical": "후딘나이트",
+      "sourceItemId": 679
+    }
+  ],
+  "sourceOnlyUnconfirmed": [
+    "クラボのみ",
+    "モモンのみ",
+    "チーゴのみ",
+    "ナナシのみ"
+  ],
+  "note": "Pinned source row presence plus separately checked-in provisional ordinary allowset; not current regulation or equip legality. Raw hashes identify upstream bytes, not this reduced extraction."
+}

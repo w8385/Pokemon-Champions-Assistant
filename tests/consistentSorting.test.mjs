@@ -82,6 +82,8 @@ test('item and ability option defaults sort visible labels without changing sear
     byDisplayName, compareDisplayName,
     CHAMPIONS_ITEM_OPTIONS:items, CHAMPIONS_ITEM_ALIASES:{},
     localizedChampionsItemLabel:(item,lang)=>lang==='en' ? labels[item] : item,
+    canonicalChampionsItemName:item=>item,
+    resolveItemInfo:()=>null,
     translateText:(_language,item)=>item,
     matchesLooseQuery:(source,query)=>source.includes(query),
   }

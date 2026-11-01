@@ -48,7 +48,7 @@ export const CHAMPIONS_ITEM_OPTIONS = [
   "でんきだま",
   "どくバリ",
   "とけないこおり",
-  "とつげきチョッキ",
+
   "ながねぎ",
   "ナモのみ",
   "ノーマルジュエル",
@@ -135,7 +135,7 @@ export const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {
   "でんきだま": "전기구슬",
   "どくバリ": "독바늘",
   "とけないこおり": "녹지않는얼음",
-  "とつげきチョッキ": "돌격조끼",
+
   "ながねぎ": "대파",
   "ナモのみ": "마코열매",
   "ノーマルジュエル": "노말주얼",
@@ -220,7 +220,7 @@ export const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {
   "でんきだま": "Light Ball",
   "どくバリ": "Poison Barb",
   "とけないこおり": "Never-Melt Ice",
-  "とつげきチョッキ": "Assault Vest",
+
   "ながねぎ": "Leek",
   "ナモのみ": "Colbur Berry",
   "ノーマルジュエル": "Normal Gem",
@@ -307,7 +307,7 @@ export const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = 
   "でんきだま": ["전기구슬", "Light Ball"],
   "どくバリ": ["독바늘", "Poison Barb"],
   "とけないこおり": ["녹지않는얼음", "Never-Melt Ice"],
-  "とつげきチョッキ": ["돌격조끼", "Assault Vest"],
+
   "ながねぎ": ["대파", "Leek"],
   "ナモのみ": ["마코열매", "Colbur Berry"],
   "ノーマルジュエル": ["노말주얼", "Normal Gem"],
@@ -392,7 +392,7 @@ export const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> =
   "でんきだま": "light-ball",
   "どくバリ": "poison-barb",
   "とけないこおり": "never-melt-ice",
-  "とつげきチョッキ": "assault-vest",
+
   "ながねぎ": "stick",
   "ナモのみ": "colbur-berry",
   "ノーマルジュエル": "normal-gem",

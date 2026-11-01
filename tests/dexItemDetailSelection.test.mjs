@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/championsItems.ts'
-import { canonicalHeldItem } from '../src/itemIdentity.ts'
+import { canonicalHeldItem, classifyHeldItem, requiredMegaStone } from '../src/itemIdentity.ts'
+import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
 import { parseDexSelectionId } from '../src/dex/helpers.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
@@ -25,6 +26,7 @@ const program = ts.transpileModule(`
   const canonicalChampionsItemName = canonicalHeldItem;
   ${declaration(dataAst, 'normalizeSearchText')}
   let itemIndexCache = null;
+  ${declaration(dataAst, 'offeredItemKeys')};
   ${declaration(dataAst, 'getItemIndexSync')}
   ${declaration(dataAst, 'resolveItemInfo')}
   const resolve = ${(() => {
@@ -42,6 +44,7 @@ const program = ts.transpileModule(`
 function selected(raw, overrides = {}) {
   const context = vm.createContext({
     CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel, canonicalHeldItem,
+    classifyHeldItem, requiredMegaStone, championsData, additionalFormSpecs,
     getDexDescriptionsSync: () => descriptions,
     dexSelectedValue: `item:${raw}`, dexSearchMode: 'item',
     parseDexSelectionId, dexSelectionId: (kind, key) => `${kind}:${key}`,
@@ -52,9 +55,9 @@ function selected(raw, overrides = {}) {
   return context.resolve()
 }
 
-test('actual first Japanese item card opens detail even when description metadata is absent', () => {
+test('Japanese item card opens detail with pinned primary text', () => {
   assert.equal(CHAMPIONS_ITEM_OPTIONS[0], 'あついいわ')
-  assert.equal(descriptions.items['あついいわ'], undefined)
+  assert.ok(descriptions.items['あついいわ']?.text.ko.summary)
   const result = selected('あついいわ')
   assert.equal(result?.kind, 'item')
   assert.equal(result?.item, 'あついいわ')
@@ -66,6 +69,8 @@ test('documented KO and EN item aliases resolve without changing the source sele
     assert.ok(CHAMPIONS_ITEM_ALIASES['あついいわ'].includes(raw))
     assert.equal(selected(raw)?.item, raw)
   }
+  assert.equal(selected('후디나이트')?.item, '후디나이트')
+  assert.equal(selected('Alakazite')?.item, 'Alakazite')
 })
 
 test('a description-backed entry and a roster-only item outside search results remain selectable', () => {
@@ -76,4 +81,5 @@ test('a description-backed entry and a roster-only item outside search results r
 test('unknown token and mismatched category show recovery instead of selecting another item', () => {
   assert.equal(selected('not-a-dex-item'), null)
   assert.equal(selected('あついいわ', { dexSearchMode: 'pokemon' }), null)
+  for (const raw of ['とつげきチョッキ', '돌격조끼', 'Assault Vest']) assert.equal(selected(raw), null)
 })

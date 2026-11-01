@@ -1,0 +1,288 @@
+[
+  {
+    "sourceId": "HQDEZg-Zgv8",
+    "sourceCardId": "youtube:https://www.youtube.com/watch?v=HQDEZg-Zgv8",
+    "originalTitle": "\"세계 1위\"",
+    "canonicalUrl": "https://www.youtube.com/watch?v=HQDEZg-Zgv8",
+    "format": null,
+    "memberIds": [
+      "youtube-HQDEZg-Zgv8-greninja",
+      "youtube-HQDEZg-Zgv8-mimikyu",
+      "youtube-HQDEZg-Zgv8-mega-charizard-x",
+      "youtube-HQDEZg-Zgv8-gyarados",
+      "youtube-HQDEZg-Zgv8-mega-kangaskhan",
+      "youtube-HQDEZg-Zgv8-aegislash"
+    ],
+    "metadata": {
+      "seasonId": null,
+      "placement": 1,
+      "placementScope": "world_unspecified",
+      "claimEvidence": "title_claim",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "224319761655",
+    "sourceCardId": "blog:https://m.blog.naver.com/2tjqja/224319761655",
+    "originalTitle": "시즌2 싱글 파티",
+    "canonicalUrl": "https://m.blog.naver.com/2tjqja/224319761655",
+    "format": "singles",
+    "memberIds": [
+      "blog-224319761655-mega-scizor",
+      "blog-224319761655-ceruledge",
+      "blog-224319761655-garchomp",
+      "blog-224319761655-mega-floette",
+      "blog-224319761655-rotom-wash",
+      "blog-224319761655-mega-starmie"
+    ],
+    "metadata": {
+      "seasonId": "시즌 2",
+      "placement": 1,
+      "placementScope": "final",
+      "claimEvidence": "title_claim",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "y2c5sLKYr7s",
+    "sourceCardId": "youtube:https://www.youtube.com/watch?v=y2c5sLKYr7s",
+    "originalTitle": "[세계 53위, 레이팅 2467점] 리자캥카쿠치 대면구축 파티소개",
+    "canonicalUrl": "https://www.youtube.com/watch?v=y2c5sLKYr7s",
+    "format": null,
+    "memberIds": [
+      "youtube-y2c5sLKYr7s-primarina",
+      "youtube-y2c5sLKYr7s-mega-kangaskhan",
+      "youtube-y2c5sLKYr7s-mimikyu",
+      "youtube-y2c5sLKYr7s-mega-charizard-x",
+      "youtube-y2c5sLKYr7s-archaludon",
+      "youtube-y2c5sLKYr7s-mega-mawile"
+    ],
+    "metadata": {
+      "seasonId": null,
+      "placement": 53,
+      "placementScope": "world_unspecified",
+      "claimEvidence": "title_claim",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-eFF4DcKeQM1cwSf-20261010-081058",
+    "sourceCardId": "blog:https://eff4dckeqm1cwsf.hatenablog.com/entry/2026/10/10/081058",
+    "originalTitle": "시즌 M-6 싱글 · シーズン6　最終2位使用構築　波動一閃カバルカミミ対面構築　レート2554",
+    "canonicalUrl": "https://eff4dckeqm1cwsf.hatenablog.com/entry/2026/10/10/081058",
+    "format": "singles",
+    "memberIds": [
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot1-mega-lucario-z",
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot2-hippowdon",
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot3-mega-dragonite",
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot4-aegislash",
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot5-basculegion",
+      "blog-eFF4DcKeQM1cwSf-20261010-081058-slot6-mimikyu"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 2,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-ebapoke-20261008-223301",
+    "sourceCardId": "blog:https://ebapoke.hatenablog.com/entry/2026/10/08/223301",
+    "originalTitle": "시즌 M-6 싱글 · 【シーズンM-6最終41位】真•滅びゲンガースタン【ポケモンチャンピオンズ】",
+    "canonicalUrl": "https://ebapoke.hatenablog.com/entry/2026/10/08/223301",
+    "format": "singles",
+    "memberIds": [
+      "blog-ebapoke-20261008-223301-slot1-mega-gengar",
+      "blog-ebapoke-20261008-223301-slot2-bellibolt",
+      "blog-ebapoke-20261008-223301-slot3-umbreon",
+      "blog-ebapoke-20261008-223301-slot4-mega-salamence",
+      "blog-ebapoke-20261008-223301-slot5-archaludon",
+      "blog-ebapoke-20261008-223301-slot6-primarina"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 41,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-pkmn-ys1224-20261008-180309",
+    "sourceCardId": "blog:https://pkmn-ys1224.hatenablog.com/entry/2026/10/08/180309",
+    "originalTitle": "시즌 M-6 싱글 · 【M-6最終71位、レート2436】Zの鬼-ルカリオアブソルガブリアス？【ポケモンチャンピオンズ】",
+    "canonicalUrl": "https://pkmn-ys1224.hatenablog.com/entry/2026/10/08/180309",
+    "format": "singles",
+    "memberIds": [
+      "blog-pkmn-ys1224-20261008-180309-slot1-mega-lucario-z",
+      "blog-pkmn-ys1224-20261008-180309-slot2-mega-absol-z",
+      "blog-pkmn-ys1224-20261008-180309-slot3-garchomp",
+      "blog-pkmn-ys1224-20261008-180309-slot4-gyarados",
+      "blog-pkmn-ys1224-20261008-180309-slot5-ninetales-alolan",
+      "blog-pkmn-ys1224-20261008-180309-slot6-glimmora"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 71,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-1-n68915c0c22e4",
+    "sourceCardId": "blog:https://note.com/abclil/n/n68915c0c22e4",
+    "originalTitle": "시즌 M-6 싱글 · 【M-6 最終1位】リザYブリムオン",
+    "canonicalUrl": "https://note.com/abclil/n/n68915c0c22e4",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-1-n68915c0c22e4-slot1-mega-charizard-y",
+      "blog-m6-1-n68915c0c22e4-slot2-hippowdon",
+      "blog-m6-1-n68915c0c22e4-slot3-basculegion",
+      "blog-m6-1-n68915c0c22e4-slot4-mega-kangaskhan",
+      "blog-m6-1-n68915c0c22e4-slot5-hatterene",
+      "blog-m6-1-n68915c0c22e4-slot6-hydreigon"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 1,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-3-2026-10-08-115914",
+    "sourceCardId": "blog:https://meltdowner.hatenablog.com/entry/2026/10/08/115914",
+    "originalTitle": "시즌 M-6 싱글 · 【M-6 シングル最終3位】カバ武者スタン",
+    "canonicalUrl": "https://meltdowner.hatenablog.com/entry/2026/10/08/115914",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-3-2026-10-08-115914-slot1-hippowdon",
+      "blog-m6-3-2026-10-08-115914-slot2-mega-glimmora",
+      "blog-m6-3-2026-10-08-115914-slot3-corviknight",
+      "blog-m6-3-2026-10-08-115914-slot4-primarina",
+      "blog-m6-3-2026-10-08-115914-slot5-indeedee-male",
+      "blog-m6-3-2026-10-08-115914-slot6-mega-golisopod"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 3,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-4-2026-10-09-232857",
+    "sourceCardId": "blog:https://cresseliapoke.hatenablog.com/entry/2026/10/09/232857",
+    "originalTitle": "시즌 M-6 싱글 · M-6 最終4位 カバルカロジック",
+    "canonicalUrl": "https://cresseliapoke.hatenablog.com/entry/2026/10/09/232857",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-4-2026-10-09-232857-slot1-hippowdon",
+      "blog-m6-4-2026-10-09-232857-slot2-mega-lucario-z",
+      "blog-m6-4-2026-10-09-232857-slot3-basculegion",
+      "blog-m6-4-2026-10-09-232857-slot4-meowscarada",
+      "blog-m6-4-2026-10-09-232857-slot5-archaludon",
+      "blog-m6-4-2026-10-09-232857-slot6-mega-charizard-y"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 4,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-5-n6d45e911cbd1",
+    "sourceCardId": "blog:https://note.com/rokuromu/n/n6d45e911cbd1",
+    "originalTitle": "시즌 M-6 싱글 · M-6 最終5位 カバルカマスカイダイ",
+    "canonicalUrl": "https://note.com/rokuromu/n/n6d45e911cbd1",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-5-n6d45e911cbd1-slot1-meowscarada",
+      "blog-m6-5-n6d45e911cbd1-slot2-mega-lucario-z",
+      "blog-m6-5-n6d45e911cbd1-slot3-basculegion",
+      "blog-m6-5-n6d45e911cbd1-slot4-hippowdon",
+      "blog-m6-5-n6d45e911cbd1-slot5-mega-metagross",
+      "blog-m6-5-n6d45e911cbd1-slot6-rotom-heat"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 5,
+      "placementScope": "final",
+      "claimEvidence": "title_claim",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6",
+    "sourceCardId": "blog:https://claris-bradbury.hatenablog.com/entry/2026/10/07/%E3%80%90M-6_%E6%9C%80%E7%B5%826%E4%BD%8D%E3%80%91G%E7%B7%9A%E4%B8%8A%E3%81%AE%E9%AD%94%E7%8E%8B",
+    "originalTitle": "시즌 M-6 싱글 · 【M-6 最終6位】G線上の魔王",
+    "canonicalUrl": "https://claris-bradbury.hatenablog.com/entry/2026/10/07/%E3%80%90M-6_%E6%9C%80%E7%B5%826%E4%BD%8D%E3%80%91G%E7%B7%9A%E4%B8%8A%E3%81%AE%E9%AD%94%E7%8E%8B",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot1-mega-dragonite",
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot2-mega-lucario",
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot3-primarina",
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot4-basculegion",
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot5-rillaboom",
+      "blog-m6-6-Claris_bradbury:2026-10-07:M-6-6-slot6-archaludon"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 6,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-7-Muu_poke:2026-10-08:204225",
+    "sourceCardId": "blog:https://muu-poke.hatenablog.com/entry/2026/10/08/204225",
+    "originalTitle": "시즌 M-6 싱글 · 【S-6】最終7位 轟竜エッテガブZ",
+    "canonicalUrl": "https://muu-poke.hatenablog.com/entry/2026/10/08/204225",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot1-mega-floette",
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot2-hippowdon",
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot3-samurott-hisui",
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot4-toxapex",
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot5-mega-garchomp-z",
+      "blog-m6-7-Muu_poke:2026-10-08:204225-slot6-gholdengo"
+    ],
+    "metadata": {
+      "seasonId": null,
+      "placement": 7,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  },
+  {
+    "sourceId": "blog-m6-9-tixyoca-2026-10-08-163644",
+    "sourceCardId": "blog:https://tixyoca.hatenablog.com/entry/2026/10/08/163644",
+    "originalTitle": "시즌 M-6 싱글 · M-6 最終9位　スコさんほんまスコ",
+    "canonicalUrl": "https://tixyoca.hatenablog.com/entry/2026/10/08/163644",
+    "format": "singles",
+    "memberIds": [
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot1-scovillain",
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot2-sneasler",
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot3-gholdengo",
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot4-gyarados",
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot5-bellibolt",
+      "blog-m6-9-tixyoca-2026-10-08-163644-slot6-gengar"
+    ],
+    "metadata": {
+      "seasonId": "M-6",
+      "placement": 9,
+      "placementScope": "final",
+      "claimEvidence": "author_result_image",
+      "independentlyVerified": false
+    }
+  }
+]

@@ -16583,6 +16583,2981 @@
           "detail": "ポケモンに 持たせると 効果バツグンの フェアリー技を 受けたとき 威力が 弱まる。"
         }
       }
+    },
+    "あついいわ": {
+      "sourceItemId": 284,
+      "sourceLabels": {
+        "name": "ITEMNAME_284",
+        "description": "ITEMINFO_SYN_284"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "뜨거운바위",
+      "nameEn": "Heat Rock",
+      "nameJa": "あついいわ",
+      "text": {
+        "ko": {
+          "summary": "기술이나 특성으로 쾌청 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "기술이나 특성으로 쾌청 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder summons harsh sunlight with its moves\nor Ability, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder summons harsh sunlight with its moves\nor Ability, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "技や特性で　にほんばれ状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "技や特性で　にほんばれ状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "いのちのたま": {
+      "sourceItemId": 270,
+      "sourceLabels": {
+        "name": "ITEMNAME_270",
+        "description": "ITEMINFO_SYN_270"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "생명의구슬",
+      "nameEn": "Life Orb",
+      "nameJa": "いのちのたま",
+      "text": {
+        "ko": {
+          "summary": "기술의 위력이 1.3배가 되지만\n공격이 성공할 때마다\n최대 HP의 1/10만큼 HP가 줄어든다.",
+          "detail": "기술의 위력이 1.3배가 되지만\n공격이 성공할 때마다\n최대 HP의 1/10만큼 HP가 줄어든다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s moves by 30%.\nHowever, the holder also loses 1/10 of its max HP\neach time it successfully lands an attack.",
+          "detail": "Boosts the power of the holder’s moves by 30%.\nHowever, the holder also loses 1/10 of its max HP\neach time it successfully lands an attack."
+        },
+        "ja": {
+          "summary": "技の威力が１．３倍になるが\n攻撃が成功するたび\n最大ＨＰの１／１０減る。",
+          "detail": "技の威力が１．３倍になるが\n攻撃が成功するたび\n最大ＨＰの１／１０減る。"
+        }
+      }
+    },
+    "ウタンのみ": {
+      "sourceItemId": 193,
+      "sourceLabels": {
+        "name": "ITEMNAME_193",
+        "description": "ITEMINFO_SYN_193"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "야파열매",
+      "nameEn": "Payapa Berry",
+      "nameJa": "ウタンのみ",
+      "text": {
+        "ko": {
+          "summary": "효과가 굉장한 에스퍼타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "효과가 굉장한 에스퍼타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Halves the damage taken when the holder is hit with a\nsupereffective Psychic-type move. Disappears for the\nduration of the battle after a single use.",
+          "detail": "Halves the damage taken when the holder is hit with a\nsupereffective Psychic-type move. Disappears for the\nduration of the battle after a single use."
+        },
+        "ja": {
+          "summary": "効果バツグンのエスパータイプの技を\n受けた時　ダメージが半減する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "効果バツグンのエスパータイプの技を\n受けた時　ダメージが半減する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "エレキシード": {
+      "sourceItemId": 881,
+      "sourceLabels": {
+        "name": "ITEMNAME_881",
+        "description": "ITEMINFO_SYN_881"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "일렉트릭시드",
+      "nameEn": "Electric Seed",
+      "nameJa": "エレキシード",
+      "text": {
+        "ko": {
+          "summary": "일렉트릭필드 상태일 때\n방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "일렉트릭필드 상태일 때\n방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Boosts the holder’s Defense stat by 1 stage on Electric\nTerrain. Disappears for the duration of the battle after a\nsingle use.",
+          "detail": "Boosts the holder’s Defense stat by 1 stage on Electric\nTerrain. Disappears for the duration of the battle after a\nsingle use."
+        },
+        "ja": {
+          "summary": "エレキフィールド状態の時に\n防御が１段階上がる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "エレキフィールド状態の時に\n防御が１段階上がる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "おおきなねっこ": {
+      "sourceItemId": 296,
+      "sourceLabels": {
+        "name": "ITEMNAME_296",
+        "description": "ITEMINFO_SYN_296"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "큰뿌리",
+      "nameEn": "Big Root",
+      "nameJa": "おおきなねっこ",
+      "text": {
+        "ko": {
+          "summary": "HP를 흡수하는 기술의 회복량이 1.3배가 된다.\n뿌리박기, 힘흡수 등도 1.3배가 된다.",
+          "detail": "HP를 흡수하는 기술의 회복량이 1.3배가 된다.\n뿌리박기, 힘흡수 등도 1.3배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the amount of HP restored through HP-absorbing\nmoves by 30%. HP restored by moves such as Ingrain\nand Strength Sap will also be boosted by 30%.",
+          "detail": "Boosts the amount of HP restored through HP-absorbing\nmoves by 30%. HP restored by moves such as Ingrain\nand Strength Sap will also be boosted by 30%."
+        },
+        "ja": {
+          "summary": "ＨＰを吸い取る技で回復する量が\n１．３倍になる。ねをはる\nちからをすいとる等も１．３倍になる。",
+          "detail": "ＨＰを吸い取る技で回復する量が\n１．３倍になる。ねをはる\nちからをすいとる等も１．３倍になる。"
+        }
+      }
+    },
+    "オレンのみ": {
+      "sourceItemId": 155,
+      "sourceLabels": {
+        "name": "ITEMNAME_155",
+        "description": "ITEMINFO_SYN_155"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "오랭열매",
+      "nameEn": "Oran Berry",
+      "nameJa": "オレンのみ",
+      "text": {
+        "ko": {
+          "summary": "남은 HP가 최대 HP의 1/2 이하가 되었을 때\nHP를 10 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "남은 HP가 최대 HP의 1/2 이하가 되었을 때\nHP를 10 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Restores 10 HP to the holder when its HP drops to 1/2\nor less of its max. Disappears for the duration of the\nbattle after a single use.",
+          "detail": "Restores 10 HP to the holder when its HP drops to 1/2\nor less of its max. Disappears for the duration of the\nbattle after a single use."
+        },
+        "ja": {
+          "summary": "残りＨＰが最大ＨＰの１／２以下になった時\n１０回復する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "残りＨＰが最大ＨＰの１／２以下になった時\n１０回復する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "かいがらのすず": {
+      "sourceItemId": 253,
+      "sourceLabels": {
+        "name": "ITEMNAME_253",
+        "description": "ITEMINFO_SYN_253"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "조개껍질방울",
+      "nameEn": "Shell Bell",
+      "nameJa": "かいがらのすず",
+      "text": {
+        "ko": {
+          "summary": "기술로 데미지를 주었을 때\n그 데미지의 1/8만큼\n자신의 HP를 회복한다.",
+          "detail": "기술로 데미지를 주었을 때\n그 데미지의 1/8만큼\n자신의 HP를 회복한다."
+        },
+        "en": {
+          "summary": "When the holder deals damage with its moves, its HP is\nrestored by 1/8 of the damage dealt.",
+          "detail": "When the holder deals damage with its moves, its HP is\nrestored by 1/8 of the damage dealt."
+        },
+        "ja": {
+          "summary": "技でダメージを与えた時\nそのダメージの１／８\n自分のＨＰを回復する。",
+          "detail": "技でダメージを与えた時\nそのダメージの１／８\n自分のＨＰを回復する。"
+        }
+      }
+    },
+    "かたいいし": {
+      "sourceItemId": 238,
+      "sourceLabels": {
+        "name": "ITEMNAME_238",
+        "description": "ITEMINFO_SYN_238"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "딱딱한돌",
+      "nameEn": "Hard Stone",
+      "nameJa": "かたいいし",
+      "text": {
+        "ko": {
+          "summary": "바위타입 기술의 위력이 1.2배가 된다.",
+          "detail": "바위타입 기술의 위력이 1.2배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s Rock-type moves\nby 20%.",
+          "detail": "Boosts the power of the holder’s Rock-type moves\nby 20%."
+        },
+        "ja": {
+          "summary": "いわタイプの技の威力が\n１．２倍になる。",
+          "detail": "いわタイプの技の威力が\n１．２倍になる。"
+        }
+      }
+    },
+    "きあいのハチマキ": {
+      "sourceItemId": 230,
+      "sourceLabels": {
+        "name": "ITEMNAME_230",
+        "description": "ITEMINFO_SYN_230"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "기합의머리띠",
+      "nameEn": "Focus Band",
+      "nameJa": "きあいのハチマキ",
+      "text": {
+        "ko": {
+          "summary": "기절할 듯한 기술로 데미지를 입으면\n10% 확률로 HP를 1 남기고 버틴다.",
+          "detail": "기절할 듯한 기술로 데미지를 입으면\n10% 확률로 HP를 1 남기고 버틴다."
+        },
+        "en": {
+          "summary": "If the holder takes damage from a move that would\nknock it out, there’s a 10% chance the holder will\nendure the hit with 1 HP.",
+          "detail": "If the holder takes damage from a move that would\nknock it out, there’s a 10% chance the holder will\nendure the hit with 1 HP."
+        },
+        "ja": {
+          "summary": "ひんしになる技のダメージを受けると\n１０％の確率でＨＰを１残して耐える。",
+          "detail": "ひんしになる技のダメージを受けると\n１０％の確率でＨＰを１残して耐える。"
+        }
+      }
+    },
+    "キーのみ": {
+      "sourceItemId": 156,
+      "sourceLabels": {
+        "name": "ITEMNAME_156",
+        "description": "ITEMINFO_SYN_156"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "시몬열매",
+      "nameEn": "Persim Berry",
+      "nameJa": "キーのみ",
+      "text": {
+        "ko": {
+          "summary": "혼란 상태를 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "혼란 상태를 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Cures being confused. Disappears for the duration of the\nbattle after a single use.",
+          "detail": "Cures being confused. Disappears for the duration of the\nbattle after a single use."
+        },
+        "ja": {
+          "summary": "こんらん状態を回復する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "こんらん状態を回復する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "きれいなぬけがら": {
+      "sourceItemId": 295,
+      "sourceLabels": {
+        "name": "ITEMNAME_295",
+        "description": "ITEMINFO_SYN_295"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "아름다운허물",
+      "nameEn": "Shed Shell",
+      "nameJa": "きれいなぬけがら",
+      "text": {
+        "ko": {
+          "summary": "교체를 방해하는 효과를 무시하고\n다른 지닌 포켓몬과 교체할 수 있게 된다.",
+          "detail": "교체를 방해하는 효과를 무시하고\n다른 지닌 포켓몬과 교체할 수 있게 된다."
+        },
+        "en": {
+          "summary": "Enables the holder to ignore any effects that would\nusually prevent it from switching out of battle and being\nreplaced by another party Pokémon.",
+          "detail": "Enables the holder to ignore any effects that would\nusually prevent it from switching out of battle and being\nreplaced by another party Pokémon."
+        },
+        "ja": {
+          "summary": "交代を邪魔する効果を無視して\n手持ちの他のポケモンと\n交代することができる。",
+          "detail": "交代を邪魔する効果を無視して\n手持ちの他のポケモンと\n交代することができる。"
+        }
+      }
+    },
+    "ぎんのこな": {
+      "sourceItemId": 222,
+      "sourceLabels": {
+        "name": "ITEMNAME_222",
+        "description": "ITEMINFO_SYN_222"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "은빛가루",
+      "nameEn": "Silver Powder",
+      "nameJa": "ぎんのこな",
+      "text": {
+        "ko": {
+          "summary": "벌레타입 기술의 위력이 1.2배가 된다.",
+          "detail": "벌레타입 기술의 위력이 1.2배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s Bug-type moves\nby 20%.",
+          "detail": "Boosts the power of the holder’s Bug-type moves\nby 20%."
+        },
+        "ja": {
+          "summary": "むしタイプの技の威力が\n１．２倍になる。",
+          "detail": "むしタイプの技の威力が\n１．２倍になる。"
+        }
+      }
+    },
+    "グラスシード": {
+      "sourceItemId": 884,
+      "sourceLabels": {
+        "name": "ITEMNAME_884",
+        "description": "ITEMINFO_SYN_884"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "그래스시드",
+      "nameEn": "Grassy Seed",
+      "nameJa": "グラスシード",
+      "text": {
+        "ko": {
+          "summary": "그래스필드 상태일 때\n방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "그래스필드 상태일 때\n방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Boosts the holder’s Defense stat by 1 stage on Grassy\nTerrain. Disappears for the duration of the battle after a\nsingle use.",
+          "detail": "Boosts the holder’s Defense stat by 1 stage on Grassy\nTerrain. Disappears for the duration of the battle after a\nsingle use."
+        },
+        "ja": {
+          "summary": "グラスフィールド状態の時に\n防御が１段階上がる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "グラスフィールド状態の時に\n防御が１段階上がる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "グランドコート": {
+      "sourceItemId": 879,
+      "sourceLabels": {
+        "name": "ITEMNAME_879",
+        "description": "ITEMINFO_SYN_879"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "그라운드코트",
+      "nameEn": "Terrain Extender",
+      "nameJa": "グランドコート",
+      "text": {
+        "ko": {
+          "summary": "기술이나 특성으로 필드를 전개했을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "기술이나 특성으로 필드를 전개했을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder creates terrain with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder creates terrain with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "技や特性でフィールドを張った時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "技や特性でフィールドを張った時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "くろいてっきゅう": {
+      "sourceItemId": 278,
+      "sourceLabels": {
+        "name": "ITEMNAME_278",
+        "description": "ITEMINFO_SYN_278"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "검은철구",
+      "nameEn": "Iron Ball",
+      "nameJa": "くろいてっきゅう",
+      "text": {
+        "ko": {
+          "summary": "스피드가 1/2이 된다.\n땅 위에 있지 않은 포켓몬은 땅 위에 있게 되어\n땅타입 기술, 압정뿌리기, 독압정,\n끈적끈적네트 상태의 효과를 받게 된다.",
+          "detail": "스피드가 1/2이 된다.\n땅 위에 있지 않은 포켓몬은 땅 위에 있게 되어\n땅타입 기술, 압정뿌리기, 독압정,\n끈적끈적네트 상태의 효과를 받게 된다."
+        },
+        "en": {
+          "summary": "Halves the holder’s Speed stat. If the holder is off the\nground, it will be grounded, meaning it can be affected\nby Ground-type moves, as well as the Spikes, Toxic\nSpikes, and Sticky Web statuses.",
+          "detail": "Halves the holder’s Speed stat. If the holder is off the\nground, it will be grounded, meaning it can be affected\nby Ground-type moves, as well as the Spikes, Toxic\nSpikes, and Sticky Web statuses."
+        },
+        "ja": {
+          "summary": "素早さが１／２になる。地面にいないポケモンは\n地面にいることになり　じめんタイプの技\nまきびし　どくびし　ねばねばネット状態が\n効くようになる。",
+          "detail": "素早さが１／２になる。地面にいないポケモンは\n地面にいることになり　じめんタイプの技\nまきびし　どくびし　ねばねばネット状態が\n効くようになる。"
+        }
+      }
+    },
+    "こうかくレンズ": {
+      "sourceItemId": 265,
+      "sourceLabels": {
+        "name": "ITEMNAME_265",
+        "description": "ITEMINFO_SYN_265"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "광각렌즈",
+      "nameEn": "Wide Lens",
+      "nameJa": "こうかくレンズ",
+      "text": {
+        "ko": {
+          "summary": "기술의 명중률이 1.1배가 된다.",
+          "detail": "기술의 명중률이 1.1배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the accuracy of the holder’s moves by 10%.",
+          "detail": "Boosts the accuracy of the holder’s moves by 10%."
+        },
+        "ja": {
+          "summary": "技の命中率が\n１．１倍になる。",
+          "detail": "技の命中率が\n１．１倍になる。"
+        }
+      }
+    },
+    "ゴツゴツメット": {
+      "sourceItemId": 540,
+      "sourceLabels": {
+        "name": "ITEMNAME_540",
+        "description": "ITEMINFO_SYN_540"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "울퉁불퉁멧",
+      "nameEn": "Rocky Helmet",
+      "nameJa": "ゴツゴツメット",
+      "text": {
+        "ko": {
+          "summary": "접촉 기술을 받으면\n상대 최대 HP의 1/6만큼 데미지를 준다.",
+          "detail": "접촉 기술을 받으면\n상대 최대 HP의 1/6만큼 데미지를 준다."
+        },
+        "en": {
+          "summary": "When the holder is hit by a contact move, the attacker\ntakes damage equal to 1/6 of its max HP.",
+          "detail": "When the holder is hit by a contact move, the attacker\ntakes damage equal to 1/6 of its max HP."
+        },
+        "ja": {
+          "summary": "接触技を受けると\n相手の最大ＨＰの\n１／６のダメージを与える。",
+          "detail": "接触技を受けると\n相手の最大ＨＰの\n１／６のダメージを与える。"
+        }
+      }
+    },
+    "サイコシード": {
+      "sourceItemId": 882,
+      "sourceLabels": {
+        "name": "ITEMNAME_882",
+        "description": "ITEMINFO_SYN_882"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "사이코시드",
+      "nameEn": "Psychic Seed",
+      "nameJa": "サイコシード",
+      "text": {
+        "ko": {
+          "summary": "사이코필드 상태일 때\n특수방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "사이코필드 상태일 때\n특수방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Boosts the holder’s Sp. Def stat by 1 stage on Psychic\nTerrain. Disappears for the duration of the battle after a\nsingle use.",
+          "detail": "Boosts the holder’s Sp. Def stat by 1 stage on Psychic\nTerrain. Disappears for the duration of the battle after a\nsingle use."
+        },
+        "ja": {
+          "summary": "サイコフィールド状態の時に\n特防が１段階上がる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "サイコフィールド状態の時に\n特防が１段階上がる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "さらさらいわ": {
+      "sourceItemId": 283,
+      "sourceLabels": {
+        "name": "ITEMNAME_283",
+        "description": "ITEMINFO_SYN_283"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "보송보송바위",
+      "nameEn": "Smooth Rock",
+      "nameJa": "さらさらいわ",
+      "text": {
+        "ko": {
+          "summary": "기술이나 특성으로 모래바람 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "기술이나 특성으로 모래바람 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder summons a sandstorm with its moves\nor Ability, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder summons a sandstorm with its moves\nor Ability, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "技や特性で　すなあらし状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "技や特性で　すなあらし状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "しめつけバンド": {
+      "sourceItemId": 544,
+      "sourceLabels": {
+        "name": "ITEMNAME_544",
+        "description": "ITEMINFO_SYN_544"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "조임밴드",
+      "nameEn": "Binding Band",
+      "nameJa": "しめつけバンド",
+      "text": {
+        "ko": {
+          "summary": "바인드 상태로 주는 데미지가\n상대 최대 HP의 1/8이 아니라 1/6이 된다.",
+          "detail": "바인드 상태로 주는 데미지가\n상대 최대 HP의 1/8이 아니라 1/6이 된다."
+        },
+        "en": {
+          "summary": "Increases the damage dealt to targets that have the\nBound status. Targets will take damage equal to 1/6 of\ntheir max HP instead of 1/8 of their max HP.",
+          "detail": "Increases the damage dealt to targets that have the\nBound status. Targets will take damage equal to 1/6 of\ntheir max HP instead of 1/8 of their max HP."
+        },
+        "ja": {
+          "summary": "バインド状態で与えるダメージが\n相手の最大ＨＰの１／８ではなく\n１／６になる。",
+          "detail": "バインド状態で与えるダメージが\n相手の最大ＨＰの１／８ではなく\n１／６になる。"
+        }
+      }
+    },
+    "しめったいわ": {
+      "sourceItemId": 285,
+      "sourceLabels": {
+        "name": "ITEMNAME_285",
+        "description": "ITEMINFO_SYN_285"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "축축한바위",
+      "nameEn": "Damp Rock",
+      "nameJa": "しめったいわ",
+      "text": {
+        "ko": {
+          "summary": "기술이나 특성으로 비 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "기술이나 특성으로 비 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder summons rain with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder summons rain with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "技や特性で　あめ状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "技や特性で　あめ状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "だっしゅつボタン": {
+      "sourceItemId": 547,
+      "sourceLabels": {
+        "name": "ITEMNAME_547",
+        "description": "ITEMINFO_SYN_547"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "탈출버튼",
+      "nameEn": "Eject Button",
+      "nameJa": "だっしゅつボタン",
+      "text": {
+        "ko": {
+          "summary": "기술로 데미지를 입으면\n지닌 포켓몬으로 돌아간다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "기술로 데미지를 입으면\n지닌 포켓몬으로 돌아간다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Switches the holder out of battle when the holder takes\ndamage from a move. Disappears for the duration of the\nbattle after a single use.",
+          "detail": "Switches the holder out of battle when the holder takes\ndamage from a move. Disappears for the duration of the\nbattle after a single use."
+        },
+        "ja": {
+          "summary": "技でダメージを受けた時　手持ちに戻る。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "技でダメージを受けた時　手持ちに戻る。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "たつじんのおび": {
+      "sourceItemId": 268,
+      "sourceLabels": {
+        "name": "ITEMNAME_268",
+        "description": "ITEMINFO_SYN_268"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "달인의띠",
+      "nameEn": "Expert Belt",
+      "nameJa": "たつじんのおび",
+      "text": {
+        "ko": {
+          "summary": "사용한 기술이 효과가 굉장했을 때\n위력이 1.2배가 된다.",
+          "detail": "사용한 기술이 효과가 굉장했을 때\n위력이 1.2배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s supereffective moves\nby 20%.",
+          "detail": "Boosts the power of the holder’s supereffective moves\nby 20%."
+        },
+        "ja": {
+          "summary": "使った技が効果バツグンの時\n威力が１．２倍になる。",
+          "detail": "使った技が効果バツグンの時\n威力が１．２倍になる。"
+        }
+      }
+    },
+    "タンガのみ": {
+      "sourceItemId": 194,
+      "sourceLabels": {
+        "name": "ITEMNAME_194",
+        "description": "ITEMINFO_SYN_194"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "리체열매",
+      "nameEn": "Tanga Berry",
+      "nameJa": "タンガのみ",
+      "text": {
+        "ko": {
+          "summary": "효과가 굉장한 벌레타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "효과가 굉장한 벌레타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Halves the damage taken when the holder is hit with\na supereffective Bug-type move. Disappears for the\nduration of the battle after a single use.",
+          "detail": "Halves the damage taken when the holder is hit with\na supereffective Bug-type move. Disappears for the\nduration of the battle after a single use."
+        },
+        "ja": {
+          "summary": "効果バツグンのむしタイプの技を\n受けた時　ダメージが半減する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "効果バツグンのむしタイプの技を\n受けた時　ダメージが半減する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "ちからのハチマキ": {
+      "sourceItemId": 266,
+      "sourceLabels": {
+        "name": "ITEMNAME_266",
+        "description": "ITEMINFO_SYN_266"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "힘의머리띠",
+      "nameEn": "Muscle Band",
+      "nameJa": "ちからのハチマキ",
+      "text": {
+        "ko": {
+          "summary": "물리 기술의 위력이 1.1배가 된다.",
+          "detail": "물리 기술의 위력이 1.1배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s physical moves by 10%.",
+          "detail": "Boosts the power of the holder’s physical moves by 10%."
+        },
+        "ja": {
+          "summary": "物理技の威力が\n１．１倍になる。",
+          "detail": "物理技の威力が\n１．１倍になる。"
+        }
+      }
+    },
+    "つめたいいわ": {
+      "sourceItemId": 282,
+      "sourceLabels": {
+        "name": "ITEMNAME_282",
+        "description": "ITEMINFO_SYN_282"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "차가운바위",
+      "nameEn": "Icy Rock",
+      "nameJa": "つめたいいわ",
+      "text": {
+        "ko": {
+          "summary": "기술이나 특성으로 눈 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "기술이나 특성으로 눈 상태로 만들었을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder summons snow with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder summons snow with its moves or\nAbility, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "技や特性で　ゆき状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "技や特性で　ゆき状態にした時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "ながねぎ": {
+      "sourceItemId": 259,
+      "sourceLabels": {
+        "name": "ITEMNAME_259",
+        "description": "ITEMINFO_SYN_259"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "대파",
+      "nameEn": "Leek",
+      "nameJa": "ながねぎ",
+      "text": {
+        "ko": {
+          "summary": "파오리, 창파나이트가\n급소업+2가 된다.",
+          "detail": "파오리, 창파나이트가\n급소업+2가 된다."
+        },
+        "en": {
+          "summary": "When held by a Farfetch’d or Sirfetch’d, gives the holder\na 2-stage Critical-Hit Ratio Boost.",
+          "detail": "When held by a Farfetch’d or Sirfetch’d, gives the holder\na 2-stage Critical-Hit Ratio Boost."
+        },
+        "ja": {
+          "summary": "カモネギ　ネギガナイトが\nきゅうしょアップ＋２　になる。",
+          "detail": "カモネギ　ネギガナイトが\nきゅうしょアップ＋２　になる。"
+        }
+      }
+    },
+    "ノーマルジュエル": {
+      "sourceItemId": 564,
+      "sourceLabels": {
+        "name": "ITEMNAME_564",
+        "description": "ITEMINFO_SYN_564"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "노말주얼",
+      "nameEn": "Normal Gem",
+      "nameJa": "ノーマルジュエル",
+      "text": {
+        "ko": {
+          "summary": "노말타입 기술의 위력이 1.3배가 된다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "노말타입 기술의 위력이 1.3배가 된다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s Normal-type moves by\n30%. Disappears for the duration of the battle after a\nsingle use.",
+          "detail": "Boosts the power of the holder’s Normal-type moves by\n30%. Disappears for the duration of the battle after a\nsingle use."
+        },
+        "ja": {
+          "summary": "ノーマルタイプの技の威力が１．３倍になる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "ノーマルタイプの技の威力が１．３倍になる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "ひかりのねんど": {
+      "sourceItemId": 269,
+      "sourceLabels": {
+        "name": "ITEMNAME_269",
+        "description": "ITEMINFO_SYN_269"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "빛의점토",
+      "nameEn": "Light Clay",
+      "nameJa": "ひかりのねんど",
+      "text": {
+        "ko": {
+          "summary": "빛의장막, 리플렉터, 오로라베일을 사용했을 때\n지속 시간이 3턴 증가한다. (총 8턴)",
+          "detail": "빛의장막, 리플렉터, 오로라베일을 사용했을 때\n지속 시간이 3턴 증가한다. (총 8턴)"
+        },
+        "en": {
+          "summary": "When the holder uses Light Screen, Reflect, or\nAurora Veil, the duration is extended by 3 turns.\n(Total duration: 8 turns)",
+          "detail": "When the holder uses Light Screen, Reflect, or\nAurora Veil, the duration is extended by 3 turns.\n(Total duration: 8 turns)"
+        },
+        "ja": {
+          "summary": "ひかりのかべ　リフレクター\nオーロラベール　を使った時\n継続時間が３ターン長くなる。\n（合計８ターン）",
+          "detail": "ひかりのかべ　リフレクター\nオーロラベール　を使った時\n継続時間が３ターン長くなる。\n（合計８ターン）"
+        }
+      }
+    },
+    "ヒメリのみ": {
+      "sourceItemId": 154,
+      "sourceLabels": {
+        "name": "ITEMNAME_154",
+        "description": "ITEMINFO_SYN_154"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "과사열매",
+      "nameEn": "Leppa Berry",
+      "nameJa": "ヒメリのみ",
+      "text": {
+        "ko": {
+          "summary": "PP가 0이 된 기술의 PP를 10 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "PP가 0이 된 기술의 PP를 10 회복한다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Restores 10 PP to a move when its PP is fully depleted.\nDisappears for the duration of the battle after a single use.",
+          "detail": "Restores 10 PP to a move when its PP is fully depleted.\nDisappears for the duration of the battle after a single use."
+        },
+        "ja": {
+          "summary": "ＰＰが０になった技のＰＰを１０回復する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "ＰＰが０になった技のＰＰを１０回復する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "ふうせん": {
+      "sourceItemId": 541,
+      "sourceLabels": {
+        "name": "ITEMNAME_541",
+        "description": "ITEMINFO_SYN_541"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "풍선",
+      "nameEn": "Air Balloon",
+      "nameJa": "ふうせん",
+      "text": {
+        "ko": {
+          "summary": "땅 위에 있지 않게 되어\n땅타입 기술, 압정뿌리기, 독압정,\n끈적끈적네트 상태의 효과를 받지 않는다.\n기술로 데미지를 입으면\n그 대전 중에는 사라진다.",
+          "detail": "땅 위에 있지 않게 되어\n땅타입 기술, 압정뿌리기, 독압정,\n끈적끈적네트 상태의 효과를 받지 않는다.\n기술로 데미지를 입으면\n그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Causes the holder to float off the ground, making it\nimmune to Ground-type moves, as well as the Spikes,\nToxic Spikes, and Sticky Web statuses. Disappears for\nthe duration of the battle if the holder takes damage\nfrom a move.",
+          "detail": "Causes the holder to float off the ground, making it\nimmune to Ground-type moves, as well as the Spikes,\nToxic Spikes, and Sticky Web statuses. Disappears for\nthe duration of the battle if the holder takes damage\nfrom a move."
+        },
+        "ja": {
+          "summary": "地面にいないことになり\nじめんタイプの技　まきびし　どくびし\nねばねばネット状態が効かない。\n技のダメージを受けると\nその対戦中は　無くなる。",
+          "detail": "地面にいないことになり\nじめんタイプの技　まきびし　どくびし\nねばねばネット状態が効かない。\n技のダメージを受けると\nその対戦中は　無くなる。"
+        }
+      }
+    },
+    "フォーカスレンズ": {
+      "sourceItemId": 276,
+      "sourceLabels": {
+        "name": "ITEMNAME_276",
+        "description": "ITEMINFO_SYN_276"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "포커스렌즈",
+      "nameEn": "Zoom Lens",
+      "nameJa": "フォーカスレンズ",
+      "text": {
+        "ko": {
+          "summary": "상대보다 행동 순서가 늦으면\n기술의 명중률이 1.2배가 된다.",
+          "detail": "상대보다 행동 순서가 늦으면\n기술의 명중률이 1.2배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the accuracy of the holder’s moves by 20% when\nthe holder acts after the targets.",
+          "detail": "Boosts the accuracy of the holder’s moves by 20% when\nthe holder acts after the targets."
+        },
+        "ja": {
+          "summary": "相手よりも　行動順が遅い時\n技の命中率が１．２倍になる。",
+          "detail": "相手よりも　行動順が遅い時\n技の命中率が１．２倍になる。"
+        }
+      }
+    },
+    "ホズのみ": {
+      "sourceItemId": 200,
+      "sourceLabels": {
+        "name": "ITEMNAME_200",
+        "description": "ITEMINFO_SYN_200"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "카리열매",
+      "nameEn": "Chilan Berry",
+      "nameJa": "ホズのみ",
+      "text": {
+        "ko": {
+          "summary": "노말타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "노말타입 기술을 받으면\n데미지가 반감된다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Halves the damage taken when the holder is hit with a\nNormal-type move. Disappears for the duration of the\nbattle after a single use.",
+          "detail": "Halves the damage taken when the holder is hit with a\nNormal-type move. Disappears for the duration of the\nbattle after a single use."
+        },
+        "ja": {
+          "summary": "ノーマルタイプの技を受けた時\nダメージが半減する。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "ノーマルタイプの技を受けた時\nダメージが半減する。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "ミストシード": {
+      "sourceItemId": 883,
+      "sourceLabels": {
+        "name": "ITEMNAME_883",
+        "description": "ITEMINFO_SYN_883"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "미스트시드",
+      "nameEn": "Misty Seed",
+      "nameJa": "ミストシード",
+      "text": {
+        "ko": {
+          "summary": "미스트필드 상태일 때\n특수방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "미스트필드 상태일 때\n특수방어가 1단계 올라간다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "Boosts the holder’s Sp. Def stat by 1 stage on Misty\nTerrain. Disappears for the duration of the battle after a\nsingle use.",
+          "detail": "Boosts the holder’s Sp. Def stat by 1 stage on Misty\nTerrain. Disappears for the duration of the battle after a\nsingle use."
+        },
+        "ja": {
+          "summary": "ミストフィールド状態の時に\n特防が１段階上がる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "ミストフィールド状態の時に\n特防が１段階上がる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "メトロノーム": {
+      "sourceItemId": 277,
+      "sourceLabels": {
+        "name": "ITEMNAME_277",
+        "description": "ITEMINFO_SYN_277"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "메트로놈",
+      "nameEn": "Metronome",
+      "nameJa": "メトロノーム",
+      "text": {
+        "ko": {
+          "summary": "같은 기술을 연속해서 사용하면 위력이 올라간다.\n2회 연속 시 1.2배, 3회 연속 시 1.4배가 올라가며\n최대 2배까지 올라간다. 멈추면 원래대로 돌아온다.",
+          "detail": "같은 기술을 연속해서 사용하면 위력이 올라간다.\n2회 연속 시 1.2배, 3회 연속 시 1.4배가 올라가며\n최대 2배까지 올라간다. 멈추면 원래대로 돌아온다."
+        },
+        "en": {
+          "summary": "Boosts the power of a move that is used repeatedly.\nThis boost will be 20% on the second usage, 40% on\nthe third, and so on, up to a maximum boost of 100%.\nIf the streak is broken, the move’s power returns to its\nusual value.",
+          "detail": "Boosts the power of a move that is used repeatedly.\nThis boost will be 20% on the second usage, 40% on\nthe third, and so on, up to a maximum boost of 100%.\nIf the streak is broken, the move’s power returns to its\nusual value."
+        },
+        "ja": {
+          "summary": "同じ技を連続で使った場合　威力が上がる。\n２回目で１．２倍　３回目で１．４倍と上がり\n最大で２倍まで上がる。やめると元に戻る。",
+          "detail": "同じ技を連続で使った場合　威力が上がる。\n２回目で１．２倍　３回目で１．４倍と上がり\n最大で２倍まで上がる。やめると元に戻る。"
+        }
+      }
+    },
+    "ものしりメガネ": {
+      "sourceItemId": 267,
+      "sourceLabels": {
+        "name": "ITEMNAME_267",
+        "description": "ITEMINFO_SYN_267"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "박식안경",
+      "nameEn": "Wise Glasses",
+      "nameJa": "ものしりメガネ",
+      "text": {
+        "ko": {
+          "summary": "특수 기술의 위력이 1.1배가 된다.",
+          "detail": "특수 기술의 위력이 1.1배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s special moves by 10%.",
+          "detail": "Boosts the power of the holder’s special moves by 10%."
+        },
+        "ja": {
+          "summary": "特殊技の威力が\n１．１倍になる。",
+          "detail": "特殊技の威力が\n１．１倍になる。"
+        }
+      }
+    },
+    "ようせいのハネ": {
+      "sourceItemId": 2401,
+      "sourceLabels": {
+        "name": "ITEMNAME_2401",
+        "description": "ITEMINFO_SYN_2401"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "요정의깃털",
+      "nameEn": "Fairy Feather",
+      "nameJa": "ようせいのハネ",
+      "text": {
+        "ko": {
+          "summary": "페어리타입 기술의 위력이 1.2배가 된다.",
+          "detail": "페어리타입 기술의 위력이 1.2배가 된다."
+        },
+        "en": {
+          "summary": "Boosts the power of the holder’s Fairy-type moves\nby 20%.",
+          "detail": "Boosts the power of the holder’s Fairy-type moves\nby 20%."
+        },
+        "ja": {
+          "summary": "フェアリータイプの技の威力が\n１．２倍になる。",
+          "detail": "フェアリータイプの技の威力が\n１．２倍になる。"
+        }
+      }
+    },
+    "レッドカード": {
+      "sourceItemId": 542,
+      "sourceLabels": {
+        "name": "ITEMNAME_542",
+        "description": "ITEMINFO_SYN_542"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "레드카드",
+      "nameEn": "Red Card",
+      "nameJa": "レッドカード",
+      "text": {
+        "ko": {
+          "summary": "자신에게 기술로 데미지를 준 상대를 교체시킨다.\n한 번 사용하면 그 대전 중에는 사라진다.",
+          "detail": "자신에게 기술로 데미지를 준 상대를 교체시킨다.\n한 번 사용하면 그 대전 중에는 사라진다."
+        },
+        "en": {
+          "summary": "When the holder takes damage from a move, the\nattacker is forced to switch out of battle. Disappears\nfor the duration of the battle after a single use.",
+          "detail": "When the holder takes damage from a move, the\nattacker is forced to switch out of battle. Disappears\nfor the duration of the battle after a single use."
+        },
+        "ja": {
+          "summary": "技でダメージを与えてきた相手を交代させる。\n１度使うと　その対戦中は　無くなる。",
+          "detail": "技でダメージを与えてきた相手を交代させる。\n１度使うと　その対戦中は　無くなる。"
+        }
+      }
+    },
+    "가디안나이트": {
+      "sourceItemId": 657,
+      "sourceLabels": {
+        "name": "ITEMNAME_657",
+        "description": "ITEMINFO_SYN_657"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "가디안나이트",
+      "nameEn": "Gardevoirite",
+      "nameJa": "サーナイトナイト",
+      "text": {
+        "ko": {
+          "summary": "가디안이 메가진화할 수 있게 되는 도구.",
+          "detail": "가디안이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Gardevoir to Mega Evolve.",
+          "detail": "A held item that allows Gardevoir to Mega Evolve."
+        },
+        "ja": {
+          "summary": "サーナイトが\nメガシンカすることができる持ち物。",
+          "detail": "サーナイトが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "갑주무사나이트": {
+      "sourceItemId": 2645,
+      "sourceLabels": {
+        "name": "ITEMNAME_2645",
+        "description": "ITEMINFO_SYN_2645"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "갑주무사나이트",
+      "nameEn": "Golisopite",
+      "nameJa": "グソクムシャナイト",
+      "text": {
+        "ko": {
+          "summary": "갑주무사가 메가진화할 수 있게 되는 도구.",
+          "detail": "갑주무사가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Golisopod to Mega Evolve.",
+          "detail": "A held item that allows Golisopod to Mega Evolve."
+        },
+        "ja": {
+          "summary": "グソクムシャが\nメガシンカすることができる持ち物。",
+          "detail": "グソクムシャが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "강철톤나이트": {
+      "sourceItemId": 761,
+      "sourceLabels": {
+        "name": "ITEMNAME_761",
+        "description": "ITEMINFO_SYN_761"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "강철톤나이트",
+      "nameEn": "Steelixite",
+      "nameJa": "ハガネールナイト",
+      "text": {
+        "ko": {
+          "summary": "강철톤이 메가진화할 수 있게 되는 도구.",
+          "detail": "강철톤이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Steelix to Mega Evolve.",
+          "detail": "A held item that allows Steelix to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ハガネールが\nメガシンカすることができる持ち物。",
+          "detail": "ハガネールが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "개굴닌자나이트": {
+      "sourceItemId": 2577,
+      "sourceLabels": {
+        "name": "ITEMNAME_2577",
+        "description": "ITEMINFO_SYN_2577"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "개굴닌자나이트",
+      "nameEn": "Greninjite",
+      "nameJa": "ゲッコウガナイト",
+      "text": {
+        "ko": {
+          "summary": "개굴닌자가 메가진화할 수 있게 되는 도구.",
+          "detail": "개굴닌자가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Greninja to Mega Evolve.",
+          "detail": "A held item that allows Greninja to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ゲッコウガが\nメガシンカすることができる持ち物。",
+          "detail": "ゲッコウガが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "갸라도스나이트": {
+      "sourceItemId": 676,
+      "sourceLabels": {
+        "name": "ITEMNAME_676",
+        "description": "ITEMINFO_SYN_676"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "갸라도스나이트",
+      "nameEn": "Gyaradosite",
+      "nameJa": "ギャラドスナイト",
+      "text": {
+        "ko": {
+          "summary": "갸라도스가 메가진화할 수 있게 되는 도구.",
+          "detail": "갸라도스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Gyarados to Mega Evolve.",
+          "detail": "A held item that allows Gyarados to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ギャラドスが\nメガシンカすることができる持ち物。",
+          "detail": "ギャラドスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "거북손데스나이트": {
+      "sourceItemId": 2581,
+      "sourceLabels": {
+        "name": "ITEMNAME_2581",
+        "description": "ITEMINFO_SYN_2581"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "거북손데스나이트",
+      "nameEn": "Barbaracite",
+      "nameJa": "ガメノデスナイト",
+      "text": {
+        "ko": {
+          "summary": "거북손데스가 메가진화할 수 있게 되는 도구.",
+          "detail": "거북손데스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Barbaracle to Mega Evolve.",
+          "detail": "A held item that allows Barbaracle to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ガメノデスが\nメガシンカすることができる持ち物。",
+          "detail": "ガメノデスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "거북왕나이트": {
+      "sourceItemId": 661,
+      "sourceLabels": {
+        "name": "ITEMNAME_661",
+        "description": "ITEMINFO_SYN_661"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "거북왕나이트",
+      "nameEn": "Blastoisinite",
+      "nameJa": "カメックスナイト",
+      "text": {
+        "ko": {
+          "summary": "거북왕이 메가진화할 수 있게 되는 도구.",
+          "detail": "거북왕이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Blastoise to Mega Evolve.",
+          "detail": "A held item that allows Blastoise to Mega Evolve."
+        },
+        "ja": {
+          "summary": "カメックスが\nメガシンカすることができる持ち物。",
+          "detail": "カメックスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "곤율거니나이트": {
+      "sourceItemId": 2572,
+      "sourceLabels": {
+        "name": "ITEMNAME_2572",
+        "description": "ITEMINFO_SYN_2572"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "곤율거니나이트",
+      "nameEn": "Scraftinite",
+      "nameJa": "ズルズキナイト",
+      "text": {
+        "ko": {
+          "summary": "곤율거니가 메가진화할 수 있게 되는 도구.",
+          "detail": "곤율거니가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Scrafty to Mega Evolve.",
+          "detail": "A held item that allows Scrafty to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ズルズキンが\nメガシンカすることができる持ち物。",
+          "detail": "ズルズキンが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "골루그나이트": {
+      "sourceItemId": 2642,
+      "sourceLabels": {
+        "name": "ITEMNAME_2642",
+        "description": "ITEMINFO_SYN_2642"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "골루그나이트",
+      "nameEn": "Golurkite",
+      "nameJa": "ゴルーグナイト",
+      "text": {
+        "ko": {
+          "summary": "골루그가 메가진화할 수 있게 되는 도구.",
+          "detail": "골루그가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Golurk to Mega Evolve.",
+          "detail": "A held item that allows Golurk to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ゴルーグが\nメガシンカすることができる持ち物。",
+          "detail": "ゴルーグが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "깜까미나이트": {
+      "sourceItemId": 754,
+      "sourceLabels": {
+        "name": "ITEMNAME_754",
+        "description": "ITEMINFO_SYN_754"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "깜까미나이트",
+      "nameEn": "Sablenite",
+      "nameJa": "ヤミラミナイト",
+      "text": {
+        "ko": {
+          "summary": "깜까미가 메가진화할 수 있게 되는 도구.",
+          "detail": "깜까미가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Sableye to Mega Evolve.",
+          "detail": "A held item that allows Sableye to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ヤミラミが\nメガシンカすることができる持ち物。",
+          "detail": "ヤミラミが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "나무킹나이트": {
+      "sourceItemId": 753,
+      "sourceLabels": {
+        "name": "ITEMNAME_753",
+        "description": "ITEMINFO_SYN_753"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "나무킹나이트",
+      "nameEn": "Sceptilite",
+      "nameJa": "ジュカインナイト",
+      "text": {
+        "ko": {
+          "summary": "나무킹이 메가진화할 수 있게 되는 도구.",
+          "detail": "나무킹이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Sceptile to Mega Evolve.",
+          "detail": "A held item that allows Sceptile to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ジュカインが\nメガシンカすることができる持ち物。",
+          "detail": "ジュカインが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "냐오닉스나이트": {
+      "sourceItemId": 2643,
+      "sourceLabels": {
+        "name": "ITEMNAME_2643",
+        "description": "ITEMINFO_SYN_2643"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "냐오닉스나이트",
+      "nameEn": "Meowsticite",
+      "nameJa": "ニャオニクスナイト",
+      "text": {
+        "ko": {
+          "summary": "냐오닉스가 메가진화할 수 있게 되는 도구.",
+          "detail": "냐오닉스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Meowstic to Mega Evolve.",
+          "detail": "A held item that allows Meowstic to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ニャオニクスが\nメガシンカすることができる持ち物。",
+          "detail": "ニャオニクスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "눈설왕나이트": {
+      "sourceItemId": 674,
+      "sourceLabels": {
+        "name": "ITEMNAME_674",
+        "description": "ITEMINFO_SYN_674"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "눈설왕나이트",
+      "nameEn": "Abomasite",
+      "nameJa": "ユキノオナイト",
+      "text": {
+        "ko": {
+          "summary": "눈설왕이 메가진화할 수 있게 되는 도구.",
+          "detail": "눈설왕이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Abomasnow to Mega Evolve.",
+          "detail": "A held item that allows Abomasnow to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ユキノオーが\nメガシンカすることができる持ち物。",
+          "detail": "ユキノオーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "눈여아나이트": {
+      "sourceItemId": 2566,
+      "sourceLabels": {
+        "name": "ITEMNAME_2566",
+        "description": "ITEMINFO_SYN_2566"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "눈여아나이트",
+      "nameEn": "Froslassite",
+      "nameJa": "ユキメノコナイト",
+      "text": {
+        "ko": {
+          "summary": "눈여아가 메가진화할 수 있게 되는 도구.",
+          "detail": "눈여아가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Froslass to Mega Evolve.",
+          "detail": "A held item that allows Froslass to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ユキメノコが\nメガシンカすることができる持ち物。",
+          "detail": "ユキメノコが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "다부니나이트": {
+      "sourceItemId": 757,
+      "sourceLabels": {
+        "name": "ITEMNAME_757",
+        "description": "ITEMINFO_SYN_757"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "다부니나이트",
+      "nameEn": "Audinite",
+      "nameJa": "タブンネナイト",
+      "text": {
+        "ko": {
+          "summary": "다부니가 메가진화할 수 있게 되는 도구.",
+          "detail": "다부니가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Audino to Mega Evolve.",
+          "detail": "A held item that allows Audino to Mega Evolve."
+        },
+        "ja": {
+          "summary": "タブンネが\nメガシンカすることができる持ち物。",
+          "detail": "タブンネが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "다크펫나이트": {
+      "sourceItemId": 668,
+      "sourceLabels": {
+        "name": "ITEMNAME_668",
+        "description": "ITEMINFO_SYN_668"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "다크펫나이트",
+      "nameEn": "Banettite",
+      "nameJa": "ジュペッタナイト",
+      "text": {
+        "ko": {
+          "summary": "다크펫이 메가진화할 수 있게 되는 도구.",
+          "detail": "다크펫이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Banette to Mega Evolve.",
+          "detail": "A held item that allows Banette to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ジュペッタが\nメガシンカすることができる持ち物。",
+          "detail": "ジュペッタが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "대여르나이트": {
+      "sourceItemId": 2587,
+      "sourceLabels": {
+        "name": "ITEMNAME_2587",
+        "description": "ITEMINFO_SYN_2587"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "대여르나이트",
+      "nameEn": "Falinksite",
+      "nameJa": "タイレーツナイト",
+      "text": {
+        "ko": {
+          "summary": "대여르가 메가진화할 수 있게 되는 도구.",
+          "detail": "대여르가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Falinks to Mega Evolve.",
+          "detail": "A held item that allows Falinks to Mega Evolve."
+        },
+        "ja": {
+          "summary": "タイレーツが\nメガシンカすることができる持ち物。",
+          "detail": "タイレーツが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "대짱이나이트": {
+      "sourceItemId": 752,
+      "sourceLabels": {
+        "name": "ITEMNAME_752",
+        "description": "ITEMINFO_SYN_752"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "대짱이나이트",
+      "nameEn": "Swampertite",
+      "nameJa": "ラグラージナイト",
+      "text": {
+        "ko": {
+          "summary": "대짱이가 메가진화할 수 있게 되는 도구.",
+          "detail": "대짱이가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Swampert to Mega Evolve.",
+          "detail": "A held item that allows Swampert to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ラグラージが\nメガシンカすることができる持ち物。",
+          "detail": "ラグラージが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "독침붕나이트": {
+      "sourceItemId": 770,
+      "sourceLabels": {
+        "name": "ITEMNAME_770",
+        "description": "ITEMINFO_SYN_770"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "독침붕나이트",
+      "nameEn": "Beedrillite",
+      "nameJa": "スピアナイト",
+      "text": {
+        "ko": {
+          "summary": "독침붕이 메가진화할 수 있게 되는 도구.",
+          "detail": "독침붕이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Beedrill to Mega Evolve.",
+          "detail": "A held item that allows Beedrill to Mega Evolve."
+        },
+        "ja": {
+          "summary": "スピアーが\nメガシンカすることができる持ち物。",
+          "detail": "スピアーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "드닐레이브나이트": {
+      "sourceItemId": 2648,
+      "sourceLabels": {
+        "name": "ITEMNAME_2648",
+        "description": "ITEMINFO_SYN_2648"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "드닐레이브나이트",
+      "nameEn": "Baxcalibrite",
+      "nameJa": "セグレイブナイト",
+      "text": {
+        "ko": {
+          "summary": "드닐레이브가 메가진화할 수 있게 되는 도구.",
+          "detail": "드닐레이브가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Baxcalibur to Mega Evolve.",
+          "detail": "A held item that allows Baxcalibur to Mega Evolve."
+        },
+        "ja": {
+          "summary": "セグレイブが\nメガシンカすることができる持ち物。",
+          "detail": "セグレイブが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "드래캄나이트": {
+      "sourceItemId": 2582,
+      "sourceLabels": {
+        "name": "ITEMNAME_2582",
+        "description": "ITEMINFO_SYN_2582"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "드래캄나이트",
+      "nameEn": "Dragalgite",
+      "nameJa": "ドラミドナイト",
+      "text": {
+        "ko": {
+          "summary": "드래캄이 메가진화할 수 있게 되는 도구.",
+          "detail": "드래캄이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Dragalge to Mega Evolve.",
+          "detail": "A held item that allows Dragalge to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ドラミドロが\nメガシンカすることができる持ち物。",
+          "detail": "ドラミドロが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "라이츄나이트X": {
+      "sourceItemId": 2635,
+      "sourceLabels": {
+        "name": "ITEMNAME_2635",
+        "description": "ITEMINFO_SYN_2635"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "라이츄나이트X",
+      "nameEn": "Raichunite X",
+      "nameJa": "ライチュウナイトＸ",
+      "text": {
+        "ko": {
+          "summary": "라이츄가 메가진화할 수 있게 되는 도구.\n알로라의 모습에게는 효과가 없다.\n(메가라이츄X)",
+          "detail": "라이츄가 메가진화할 수 있게 되는 도구.\n알로라의 모습에게는 효과가 없다.\n(메가라이츄X)"
+        },
+        "en": {
+          "summary": "A held item that allows Raichu to Mega Evolve into\nMega Raichu X. It has no effect on Alolan Raichu.",
+          "detail": "A held item that allows Raichu to Mega Evolve into\nMega Raichu X. It has no effect on Alolan Raichu."
+        },
+        "ja": {
+          "summary": "ライチュウが\nメガシンカすることができる持ち物。\nアローラのすがたには効果がない。\n（メガライチュウＸ）",
+          "detail": "ライチュウが\nメガシンカすることができる持ち物。\nアローラのすがたには効果がない。\n（メガライチュウＸ）"
+        }
+      }
+    },
+    "라이츄나이트Y": {
+      "sourceItemId": 2636,
+      "sourceLabels": {
+        "name": "ITEMNAME_2636",
+        "description": "ITEMINFO_SYN_2636"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "라이츄나이트Y",
+      "nameEn": "Raichunite Y",
+      "nameJa": "ライチュウナイトＹ",
+      "text": {
+        "ko": {
+          "summary": "라이츄가 메가진화할 수 있게 되는 도구.\n알로라의 모습에게는 효과가 없다.\n(메가라이츄Y)",
+          "detail": "라이츄가 메가진화할 수 있게 되는 도구.\n알로라의 모습에게는 효과가 없다.\n(메가라이츄Y)"
+        },
+        "en": {
+          "summary": "A held item that allows Raichu to Mega Evolve into\nMega Raichu Y. It has no effect on Alolan Raichu.",
+          "detail": "A held item that allows Raichu to Mega Evolve into\nMega Raichu Y. It has no effect on Alolan Raichu."
+        },
+        "ja": {
+          "summary": "ライチュウが\nメガシンカすることができる持ち物。\nアローラのすがたには効果がない。\n（メガライチュウＹ）",
+          "detail": "ライチュウが\nメガシンカすることができる持ち物。\nアローラのすがたには効果がない。\n（メガライチュウＹ）"
+        }
+      }
+    },
+    "루차불나이트": {
+      "sourceItemId": 2583,
+      "sourceLabels": {
+        "name": "ITEMNAME_2583",
+        "description": "ITEMINFO_SYN_2583"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "루차불나이트",
+      "nameEn": "Hawluchanite",
+      "nameJa": "ルチャブルナイト",
+      "text": {
+        "ko": {
+          "summary": "루차불이 메가진화할 수 있게 되는 도구.",
+          "detail": "루차불이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Hawlucha to Mega Evolve.",
+          "detail": "A held item that allows Hawlucha to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ルチャブルが\nメガシンカすることができる持ち物。",
+          "detail": "ルチャブルが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "루카리오나이트": {
+      "sourceItemId": 673,
+      "sourceLabels": {
+        "name": "ITEMNAME_673",
+        "description": "ITEMINFO_SYN_673"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "루카리오나이트",
+      "nameEn": "Lucarionite",
+      "nameJa": "ルカリオナイト",
+      "text": {
+        "ko": {
+          "summary": "루카리오가 메가진화할 수 있게 되는 도구.\n(메가루카리오)",
+          "detail": "루카리오가 메가진화할 수 있게 되는 도구.\n(메가루카리오)"
+        },
+        "en": {
+          "summary": "A held item that allows Lucario to Mega Evolve into\nMega Lucario.",
+          "detail": "A held item that allows Lucario to Mega Evolve into\nMega Lucario."
+        },
+        "ja": {
+          "summary": "ルカリオが\nメガシンカすることができる持ち物。\n（メガルカリオ）",
+          "detail": "ルカリオが\nメガシンカすることができる持ち物。\n（メガルカリオ）"
+        }
+      }
+    },
+    "루카리오나이트Z": {
+      "sourceItemId": 2641,
+      "sourceLabels": {
+        "name": "ITEMNAME_2641",
+        "description": "ITEMINFO_SYN_2641"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "루카리오나이트Z",
+      "nameEn": "Lucarionite Z",
+      "nameJa": "ルカリオナイトＺ",
+      "text": {
+        "ko": {
+          "summary": "루카리오가 메가진화할 수 있게 되는 도구.\n(메가루카리오Z)",
+          "detail": "루카리오가 메가진화할 수 있게 되는 도구.\n(메가루카리오Z)"
+        },
+        "en": {
+          "summary": "A held item that allows Lucario to Mega Evolve into\nMega Lucario Z.",
+          "detail": "A held item that allows Lucario to Mega Evolve into\nMega Lucario Z."
+        },
+        "ja": {
+          "summary": "ルカリオが\nメガシンカすることができる持ち物。\n（メガルカリオＺ）",
+          "detail": "ルカリオが\nメガシンカすることができる持ち物。\n（メガルカリオＺ）"
+        }
+      }
+    },
+    "리자몽나이트X": {
+      "sourceItemId": 660,
+      "sourceLabels": {
+        "name": "ITEMNAME_660",
+        "description": "ITEMINFO_SYN_660"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "리자몽나이트X",
+      "nameEn": "Charizardite X",
+      "nameJa": "リザードナイトＸ",
+      "text": {
+        "ko": {
+          "summary": "리자몽이 메가진화할 수 있게 되는 도구.\n(메가리자몽X)",
+          "detail": "리자몽이 메가진화할 수 있게 되는 도구.\n(메가리자몽X)"
+        },
+        "en": {
+          "summary": "A held item that allows Charizard to Mega Evolve into\nMega Charizard X.",
+          "detail": "A held item that allows Charizard to Mega Evolve into\nMega Charizard X."
+        },
+        "ja": {
+          "summary": "リザードンが\nメガシンカすることができる持ち物。\n（メガリザードンＸ）",
+          "detail": "リザードンが\nメガシンカすることができる持ち物。\n（メガリザードンＸ）"
+        }
+      }
+    },
+    "리자몽나이트Y": {
+      "sourceItemId": 678,
+      "sourceLabels": {
+        "name": "ITEMNAME_678",
+        "description": "ITEMINFO_SYN_678"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "리자몽나이트Y",
+      "nameEn": "Charizardite Y",
+      "nameJa": "リザードナイトＹ",
+      "text": {
+        "ko": {
+          "summary": "리자몽이 메가진화할 수 있게 되는 도구.\n(메가리자몽Y)",
+          "detail": "리자몽이 메가진화할 수 있게 되는 도구.\n(메가리자몽Y)"
+        },
+        "en": {
+          "summary": "A held item that allows Charizard to Mega Evolve into\nMega Charizard Y.",
+          "detail": "A held item that allows Charizard to Mega Evolve into\nMega Charizard Y."
+        },
+        "ja": {
+          "summary": "リザードンが\nメガシンカすることができる持ち物。\n（メガリザードンＹ）",
+          "detail": "リザードンが\nメガシンカすることができる持ち物。\n（メガリザードンＹ）"
+        }
+      }
+    },
+    "마기라스나이트": {
+      "sourceItemId": 669,
+      "sourceLabels": {
+        "name": "ITEMNAME_669",
+        "description": "ITEMINFO_SYN_669"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "마기라스나이트",
+      "nameEn": "Tyranitarite",
+      "nameJa": "バンギラスナイト",
+      "text": {
+        "ko": {
+          "summary": "마기라스가 메가진화할 수 있게 되는 도구.",
+          "detail": "마기라스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Tyranitar to Mega Evolve.",
+          "detail": "A held item that allows Tyranitar to Mega Evolve."
+        },
+        "ja": {
+          "summary": "バンギラスが\nメガシンカすることができる持ち物。",
+          "detail": "バンギラスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "마폭시나이트": {
+      "sourceItemId": 2576,
+      "sourceLabels": {
+        "name": "ITEMNAME_2576",
+        "description": "ITEMINFO_SYN_2576"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "마폭시나이트",
+      "nameEn": "Delphoxite",
+      "nameJa": "マフォクシナイト",
+      "text": {
+        "ko": {
+          "summary": "마폭시가 메가진화할 수 있게 되는 도구.",
+          "detail": "마폭시가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Delphox to Mega Evolve.",
+          "detail": "A held item that allows Delphox to Mega Evolve."
+        },
+        "ja": {
+          "summary": "マフォクシーが\nメガシンカすることができる持ち物。",
+          "detail": "マフォクシーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "망나뇽나이트": {
+      "sourceItemId": 2562,
+      "sourceLabels": {
+        "name": "ITEMNAME_2562",
+        "description": "ITEMINFO_SYN_2562"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "망나뇽나이트",
+      "nameEn": "Dragoninite",
+      "nameJa": "カイリュナイト",
+      "text": {
+        "ko": {
+          "summary": "망나뇽이 메가진화할 수 있게 되는 도구.",
+          "detail": "망나뇽이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Dragonite to Mega Evolve.",
+          "detail": "A held item that allows Dragonite to Mega Evolve."
+        },
+        "ja": {
+          "summary": "カイリューが\nメガシンカすることができる持ち物。",
+          "detail": "カイリューが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "메가니움나이트": {
+      "sourceItemId": 2563,
+      "sourceLabels": {
+        "name": "ITEMNAME_2563",
+        "description": "ITEMINFO_SYN_2563"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "메가니움나이트",
+      "nameEn": "Meganiumite",
+      "nameJa": "メガニウムナイト",
+      "text": {
+        "ko": {
+          "summary": "메가니움이 메가진화할 수 있게 되는 도구.",
+          "detail": "메가니움이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Meganium to Mega Evolve.",
+          "detail": "A held item that allows Meganium to Mega Evolve."
+        },
+        "ja": {
+          "summary": "メガニウムが\nメガシンカすることができる持ち物。",
+          "detail": "メガニウムが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "메타그로스나이트": {
+      "sourceItemId": 758,
+      "sourceLabels": {
+        "name": "ITEMNAME_758",
+        "description": "ITEMINFO_SYN_758"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "메타그로스나이트",
+      "nameEn": "Metagrossite",
+      "nameJa": "メタグロスナイト",
+      "text": {
+        "ko": {
+          "summary": "메타그로스가 메가진화할 수 있게 되는 도구.",
+          "detail": "메타그로스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Metagross to Mega Evolve.",
+          "detail": "A held item that allows Metagross to Mega Evolve."
+        },
+        "ja": {
+          "summary": "メタグロスが\nメガシンカすることができる持ち物。",
+          "detail": "メタグロスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "모단단게나이트": {
+      "sourceItemId": 2644,
+      "sourceLabels": {
+        "name": "ITEMNAME_2644",
+        "description": "ITEMINFO_SYN_2644"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "모단단게나이트",
+      "nameEn": "Crabominite",
+      "nameJa": "ケケンカニナイト",
+      "text": {
+        "ko": {
+          "summary": "모단단게가 메가진화할 수 있게 되는 도구.",
+          "detail": "모단단게가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Crabominable to Mega Evolve.",
+          "detail": "A held item that allows Crabominable to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ケケンカニが\nメガシンカすることができる持ち物。",
+          "detail": "ケケンカニが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "몰드류나이트": {
+      "sourceItemId": 2570,
+      "sourceLabels": {
+        "name": "ITEMNAME_2570",
+        "description": "ITEMINFO_SYN_2570"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "몰드류나이트",
+      "nameEn": "Excadrite",
+      "nameJa": "ドリュウズナイト",
+      "text": {
+        "ko": {
+          "summary": "몰드류가 메가진화할 수 있게 되는 도구.",
+          "detail": "몰드류가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Excadrill to Mega Evolve.",
+          "detail": "A held item that allows Excadrill to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ドリュウズが\nメガシンカすることができる持ち物。",
+          "detail": "ドリュウズが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "무장조나이트": {
+      "sourceItemId": 2565,
+      "sourceLabels": {
+        "name": "ITEMNAME_2565",
+        "description": "ITEMINFO_SYN_2565"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "무장조나이트",
+      "nameEn": "Skarmorite",
+      "nameJa": "エアームドナイト",
+      "text": {
+        "ko": {
+          "summary": "무장조가 메가진화할 수 있게 되는 도구.",
+          "detail": "무장조가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Skarmory to Mega Evolve.",
+          "detail": "A held item that allows Skarmory to Mega Evolve."
+        },
+        "ja": {
+          "summary": "エアームドが\nメガシンカすることができる持ち物。",
+          "detail": "エアームドが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "번치코나이트": {
+      "sourceItemId": 664,
+      "sourceLabels": {
+        "name": "ITEMNAME_664",
+        "description": "ITEMINFO_SYN_664"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "번치코나이트",
+      "nameEn": "Blazikenite",
+      "nameJa": "バシャーモナイト",
+      "text": {
+        "ko": {
+          "summary": "번치코가 메가진화할 수 있게 되는 도구.",
+          "detail": "번치코가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Blaziken to Mega Evolve.",
+          "detail": "A held item that allows Blaziken to Mega Evolve."
+        },
+        "ja": {
+          "summary": "バシャーモが\nメガシンカすることができる持ち物。",
+          "detail": "バシャーモが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "보만다나이트": {
+      "sourceItemId": 769,
+      "sourceLabels": {
+        "name": "ITEMNAME_769",
+        "description": "ITEMINFO_SYN_769"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "보만다나이트",
+      "nameEn": "Salamencite",
+      "nameJa": "ボーマンダナイト",
+      "text": {
+        "ko": {
+          "summary": "보만다가 메가진화할 수 있게 되는 도구.",
+          "detail": "보만다가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Salamence to Mega Evolve.",
+          "detail": "A held item that allows Salamence to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ボーマンダが\nメガシンカすることができる持ち物。",
+          "detail": "ボーマンダが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "보스로라나이트": {
+      "sourceItemId": 667,
+      "sourceLabels": {
+        "name": "ITEMNAME_667",
+        "description": "ITEMINFO_SYN_667"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "보스로라나이트",
+      "nameEn": "Aggronite",
+      "nameJa": "ボスゴドラナイト",
+      "text": {
+        "ko": {
+          "summary": "보스로라가 메가진화할 수 있게 되는 도구.",
+          "detail": "보스로라가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Aggron to Mega Evolve.",
+          "detail": "A held item that allows Aggron to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ボスゴドラが\nメガシンカすることができる持ち物。",
+          "detail": "ボスゴドラが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "브리가론나이트": {
+      "sourceItemId": 2575,
+      "sourceLabels": {
+        "name": "ITEMNAME_2575",
+        "description": "ITEMINFO_SYN_2575"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "브리가론나이트",
+      "nameEn": "Chesnaughtite",
+      "nameJa": "ブリガロナイト",
+      "text": {
+        "ko": {
+          "summary": "브리가론이 메가진화할 수 있게 되는 도구.",
+          "detail": "브리가론이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Chesnaught to Mega Evolve.",
+          "detail": "A held item that allows Chesnaught to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ブリガロンが\nメガシンカすることができる持ち物。",
+          "detail": "ブリガロンが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "쁘사이저나이트": {
+      "sourceItemId": 671,
+      "sourceLabels": {
+        "name": "ITEMNAME_671",
+        "description": "ITEMINFO_SYN_671"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "쁘사이저나이트",
+      "nameEn": "Pinsirite",
+      "nameJa": "カイロスナイト",
+      "text": {
+        "ko": {
+          "summary": "쁘사이저가 메가진화할 수 있게 되는 도구.",
+          "detail": "쁘사이저가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Pinsir to Mega Evolve.",
+          "detail": "A held item that allows Pinsir to Mega Evolve."
+        },
+        "ja": {
+          "summary": "カイロスが\nメガシンカすることができる持ち物。",
+          "detail": "カイロスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "샤크니아나이트": {
+      "sourceItemId": 759,
+      "sourceLabels": {
+        "name": "ITEMNAME_759",
+        "description": "ITEMINFO_SYN_759"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "샤크니아나이트",
+      "nameEn": "Sharpedonite",
+      "nameJa": "サメハダナイト",
+      "text": {
+        "ko": {
+          "summary": "샤크니아가 메가진화할 수 있게 되는 도구.",
+          "detail": "샤크니아가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Sharpedo to Mega Evolve.",
+          "detail": "A held item that allows Sharpedo to Mega Evolve."
+        },
+        "ja": {
+          "summary": "サメハダーが\nメガシンカすることができる持ち物。",
+          "detail": "サメハダーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "샹델라나이트": {
+      "sourceItemId": 2574,
+      "sourceLabels": {
+        "name": "ITEMNAME_2574",
+        "description": "ITEMINFO_SYN_2574"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "샹델라나이트",
+      "nameEn": "Chandelurite",
+      "nameJa": "シャンデラナイト",
+      "text": {
+        "ko": {
+          "summary": "샹델라가 메가진화할 수 있게 되는 도구.",
+          "detail": "샹델라가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Chandelure to Mega Evolve.",
+          "detail": "A held item that allows Chandelure to Mega Evolve."
+        },
+        "ja": {
+          "summary": "シャンデラが\nメガシンカすることができる持ち物。",
+          "detail": "シャンデラが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "스코빌런나이트": {
+      "sourceItemId": 2647,
+      "sourceLabels": {
+        "name": "ITEMNAME_2647",
+        "description": "ITEMINFO_SYN_2647"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "스코빌런나이트",
+      "nameEn": "Scovillainite",
+      "nameJa": "スコヴィラナイト",
+      "text": {
+        "ko": {
+          "summary": "스코빌런이 메가진화할 수 있게 되는 도구.",
+          "detail": "스코빌런이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Scovillain to Mega Evolve.",
+          "detail": "A held item that allows Scovillain to Mega Evolve."
+        },
+        "ja": {
+          "summary": "スコヴィランが\nメガシンカすることができる持ち物。",
+          "detail": "スコヴィランが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "썬더볼트나이트": {
+      "sourceItemId": 682,
+      "sourceLabels": {
+        "name": "ITEMNAME_682",
+        "description": "ITEMINFO_SYN_682"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "썬더볼트나이트",
+      "nameEn": "Manectite",
+      "nameJa": "ライボルトナイト",
+      "text": {
+        "ko": {
+          "summary": "썬더볼트가 메가진화할 수 있게 되는 도구.",
+          "detail": "썬더볼트가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Manectric to Mega Evolve.",
+          "detail": "A held item that allows Manectric to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ライボルトが\nメガシンカすることができる持ち物。",
+          "detail": "ライボルトが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "아쿠스타나이트": {
+      "sourceItemId": 2561,
+      "sourceLabels": {
+        "name": "ITEMNAME_2561",
+        "description": "ITEMINFO_SYN_2561"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "아쿠스타나이트",
+      "nameEn": "Starminite",
+      "nameJa": "スターミナイト",
+      "text": {
+        "ko": {
+          "summary": "아쿠스타가 메가진화할 수 있게 되는 도구.",
+          "detail": "아쿠스타가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Starmie to Mega Evolve.",
+          "detail": "A held item that allows Starmie to Mega Evolve."
+        },
+        "ja": {
+          "summary": "スターミーが\nメガシンカすることができる持ち物。",
+          "detail": "スターミーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "앱솔나이트": {
+      "sourceItemId": 677,
+      "sourceLabels": {
+        "name": "ITEMNAME_677",
+        "description": "ITEMINFO_SYN_677"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "앱솔나이트",
+      "nameEn": "Absolite",
+      "nameJa": "アブソルナイト",
+      "text": {
+        "ko": {
+          "summary": "앱솔이 메가진화할 수 있게 되는 도구.\n(메가앱솔)",
+          "detail": "앱솔이 메가진화할 수 있게 되는 도구.\n(메가앱솔)"
+        },
+        "en": {
+          "summary": "A held item that allows Absol to Mega Evolve into\nMega Absol.",
+          "detail": "A held item that allows Absol to Mega Evolve into\nMega Absol."
+        },
+        "ja": {
+          "summary": "アブソルが\nメガシンカすることができる持ち物。\n（メガアブソル）",
+          "detail": "アブソルが\nメガシンカすることができる持ち物。\n（メガアブソル）"
+        }
+      }
+    },
+    "앱솔나이트Z": {
+      "sourceItemId": 2638,
+      "sourceLabels": {
+        "name": "ITEMNAME_2638",
+        "description": "ITEMINFO_SYN_2638"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "앱솔나이트Z",
+      "nameEn": "Absolite Z",
+      "nameJa": "アブソルナイトＺ",
+      "text": {
+        "ko": {
+          "summary": "앱솔이 메가진화할 수 있게 되는 도구.\n(메가앱솔Z)",
+          "detail": "앱솔이 메가진화할 수 있게 되는 도구.\n(메가앱솔Z)"
+        },
+        "en": {
+          "summary": "A held item that allows Absol to Mega Evolve into\nMega Absol Z.",
+          "detail": "A held item that allows Absol to Mega Evolve into\nMega Absol Z."
+        },
+        "ja": {
+          "summary": "アブソルが\nメガシンカすることができる持ち物。\n（メガアブソルＺ）",
+          "detail": "アブソルが\nメガシンカすることができる持ち物。\n（メガアブソルＺ）"
+        }
+      }
+    },
+    "야도란나이트": {
+      "sourceItemId": 760,
+      "sourceLabels": {
+        "name": "ITEMNAME_760",
+        "description": "ITEMINFO_SYN_760"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "야도란나이트",
+      "nameEn": "Slowbronite",
+      "nameJa": "ヤドランナイト",
+      "text": {
+        "ko": {
+          "summary": "야도란이 메가진화할 수 있게 되는 도구.\n가라르의 모습에게는 효과가 없다.",
+          "detail": "야도란이 메가진화할 수 있게 되는 도구.\n가라르의 모습에게는 효과가 없다."
+        },
+        "en": {
+          "summary": "A held item that allows Slowbro to Mega Evolve.\nIt has no effect on Galarian Slowbro.",
+          "detail": "A held item that allows Slowbro to Mega Evolve.\nIt has no effect on Galarian Slowbro."
+        },
+        "ja": {
+          "summary": "ヤドランが\nメガシンカすることができる持ち物。\nガラルのすがたには効果がない。",
+          "detail": "ヤドランが\nメガシンカすることができる持ち物。\nガラルのすがたには効果がない。"
+        }
+      }
+    },
+    "얼음귀신나이트": {
+      "sourceItemId": 763,
+      "sourceLabels": {
+        "name": "ITEMNAME_763",
+        "description": "ITEMINFO_SYN_763"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "얼음귀신나이트",
+      "nameEn": "Glalitite",
+      "nameJa": "オニゴーリナイト",
+      "text": {
+        "ko": {
+          "summary": "얼음귀신이 메가진화할 수 있게 되는 도구.",
+          "detail": "얼음귀신이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Glalie to Mega Evolve.",
+          "detail": "A held item that allows Glalie to Mega Evolve."
+        },
+        "ja": {
+          "summary": "オニゴーリが\nメガシンカすることができる持ち物。",
+          "detail": "オニゴーリが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "엘레이드나이트": {
+      "sourceItemId": 756,
+      "sourceLabels": {
+        "name": "ITEMNAME_756",
+        "description": "ITEMINFO_SYN_756"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "엘레이드나이트",
+      "nameEn": "Galladite",
+      "nameJa": "エルレイドナイト",
+      "text": {
+        "ko": {
+          "summary": "엘레이드가 메가진화할 수 있게 되는 도구.",
+          "detail": "엘레이드가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Gallade to Mega Evolve.",
+          "detail": "A held item that allows Gallade to Mega Evolve."
+        },
+        "ja": {
+          "summary": "エルレイドが\nメガシンカすることができる持ち物。",
+          "detail": "エルレイドが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "염무왕나이트": {
+      "sourceItemId": 2569,
+      "sourceLabels": {
+        "name": "ITEMNAME_2569",
+        "description": "ITEMINFO_SYN_2569"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "염무왕나이트",
+      "nameEn": "Emboarite",
+      "nameJa": "エンブオナイト",
+      "text": {
+        "ko": {
+          "summary": "염무왕이 메가진화할 수 있게 되는 도구.",
+          "detail": "염무왕이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Emboar to Mega Evolve.",
+          "detail": "A held item that allows Emboar to Mega Evolve."
+        },
+        "ja": {
+          "summary": "エンブオーが\nメガシンカすることができる持ち物。",
+          "detail": "エンブオーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "요가램나이트": {
+      "sourceItemId": 665,
+      "sourceLabels": {
+        "name": "ITEMNAME_665",
+        "description": "ITEMINFO_SYN_665"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "요가램나이트",
+      "nameEn": "Medichamite",
+      "nameJa": "チャーレムナイト",
+      "text": {
+        "ko": {
+          "summary": "요가램이 메가진화할 수 있게 되는 도구.",
+          "detail": "요가램이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Medicham to Mega Evolve.",
+          "detail": "A held item that allows Medicham to Mega Evolve."
+        },
+        "ja": {
+          "summary": "チャーレムが\nメガシンカすることができる持ち物。",
+          "detail": "チャーレムが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "우츠보트나이트": {
+      "sourceItemId": 2560,
+      "sourceLabels": {
+        "name": "ITEMNAME_2560",
+        "description": "ITEMINFO_SYN_2560"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "우츠보트나이트",
+      "nameEn": "Victreebelite",
+      "nameJa": "ウツボットナイト",
+      "text": {
+        "ko": {
+          "summary": "우츠보트가 메가진화할 수 있게 되는 도구.",
+          "detail": "우츠보트가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Victreebel to Mega Evolve.",
+          "detail": "A held item that allows Victreebel to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ウツボットが\nメガシンカすることができる持ち物。",
+          "detail": "ウツボットが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "이상해꽃나이트": {
+      "sourceItemId": 659,
+      "sourceLabels": {
+        "name": "ITEMNAME_659",
+        "description": "ITEMINFO_SYN_659"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "이상해꽃나이트",
+      "nameEn": "Venusaurite",
+      "nameJa": "フシギバナイト",
+      "text": {
+        "ko": {
+          "summary": "이상해꽃이 메가진화할 수 있게 되는 도구.",
+          "detail": "이상해꽃이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Venusaur to Mega Evolve.",
+          "detail": "A held item that allows Venusaur to Mega Evolve."
+        },
+        "ja": {
+          "summary": "フシギバナが\nメガシンカすることができる持ち物。",
+          "detail": "フシギバナが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "이어롭나이트": {
+      "sourceItemId": 768,
+      "sourceLabels": {
+        "name": "ITEMNAME_768",
+        "description": "ITEMINFO_SYN_768"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "이어롭나이트",
+      "nameEn": "Lopunnite",
+      "nameJa": "ミミロップナイト",
+      "text": {
+        "ko": {
+          "summary": "이어롭이 메가진화할 수 있게 되는 도구.",
+          "detail": "이어롭이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Lopunny to Mega Evolve.",
+          "detail": "A held item that allows Lopunny to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ミミロップが\nメガシンカすることができる持ち物。",
+          "detail": "ミミロップが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "입치트나이트": {
+      "sourceItemId": 681,
+      "sourceLabels": {
+        "name": "ITEMNAME_681",
+        "description": "ITEMINFO_SYN_681"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "입치트나이트",
+      "nameEn": "Mawilite",
+      "nameJa": "クチートナイト",
+      "text": {
+        "ko": {
+          "summary": "입치트가 메가진화할 수 있게 되는 도구.",
+          "detail": "입치트가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Mawile to Mega Evolve.",
+          "detail": "A held item that allows Mawile to Mega Evolve."
+        },
+        "ja": {
+          "summary": "クチートが\nメガシンカすることができる持ち物。",
+          "detail": "クチートが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "장크로다일나이트": {
+      "sourceItemId": 2564,
+      "sourceLabels": {
+        "name": "ITEMNAME_2564",
+        "description": "ITEMINFO_SYN_2564"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "장크로다일나이트",
+      "nameEn": "Feraligite",
+      "nameJa": "オーダイルナイト",
+      "text": {
+        "ko": {
+          "summary": "장크로다일이 메가진화할 수 있게 되는 도구.",
+          "detail": "장크로다일이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Feraligatr to Mega Evolve.",
+          "detail": "A held item that allows Feraligatr to Mega Evolve."
+        },
+        "ja": {
+          "summary": "オーダイルが\nメガシンカすることができる持ち物。",
+          "detail": "オーダイルが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "저리더프나이트": {
+      "sourceItemId": 2573,
+      "sourceLabels": {
+        "name": "ITEMNAME_2573",
+        "description": "ITEMINFO_SYN_2573"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "저리더프나이트",
+      "nameEn": "Eelektrossite",
+      "nameJa": "シビルドナイト",
+      "text": {
+        "ko": {
+          "summary": "저리더프가 메가진화할 수 있게 되는 도구.",
+          "detail": "저리더프가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Eelektross to Mega Evolve.",
+          "detail": "A held item that allows Eelektross to Mega Evolve."
+        },
+        "ja": {
+          "summary": "シビルドンが\nメガシンカすることができる持ち物。",
+          "detail": "シビルドンが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "전룡나이트": {
+      "sourceItemId": 658,
+      "sourceLabels": {
+        "name": "ITEMNAME_658",
+        "description": "ITEMINFO_SYN_658"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "전룡나이트",
+      "nameEn": "Ampharosite",
+      "nameJa": "デンリュウナイト",
+      "text": {
+        "ko": {
+          "summary": "전룡이 메가진화할 수 있게 되는 도구.",
+          "detail": "전룡이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Ampharos to Mega Evolve.",
+          "detail": "A held item that allows Ampharos to Mega Evolve."
+        },
+        "ja": {
+          "summary": "デンリュウが\nメガシンカすることができる持ち物。",
+          "detail": "デンリュウが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "찌르호크나이트": {
+      "sourceItemId": 2639,
+      "sourceLabels": {
+        "name": "ITEMNAME_2639",
+        "description": "ITEMINFO_SYN_2639"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "찌르호크나이트",
+      "nameEn": "Staraptite",
+      "nameJa": "ムクホークナイト",
+      "text": {
+        "ko": {
+          "summary": "찌르호크가 메가진화할 수 있게 되는 도구.",
+          "detail": "찌르호크가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Staraptor to Mega Evolve.",
+          "detail": "A held item that allows Staraptor to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ムクホークが\nメガシンカすることができる持ち物。",
+          "detail": "ムクホークが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "치렁나이트": {
+      "sourceItemId": 2637,
+      "sourceLabels": {
+        "name": "ITEMNAME_2637",
+        "description": "ITEMINFO_SYN_2637"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "치렁나이트",
+      "nameEn": "Chimechite",
+      "nameJa": "チリーンナイト",
+      "text": {
+        "ko": {
+          "summary": "치렁이 메가진화할 수 있게 되는 도구.",
+          "detail": "치렁이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Chimecho to Mega Evolve.",
+          "detail": "A held item that allows Chimecho to Mega Evolve."
+        },
+        "ja": {
+          "summary": "チリーンが\nメガシンカすることができる持ち物。",
+          "detail": "チリーンが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "칼라마네로나이트": {
+      "sourceItemId": 2580,
+      "sourceLabels": {
+        "name": "ITEMNAME_2580",
+        "description": "ITEMINFO_SYN_2580"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "칼라마네로나이트",
+      "nameEn": "Malamarite",
+      "nameJa": "カラマネナイト",
+      "text": {
+        "ko": {
+          "summary": "칼라마네로가 메가진화할 수 있게 되는 도구.",
+          "detail": "칼라마네로가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Malamar to Mega Evolve.",
+          "detail": "A held item that allows Malamar to Mega Evolve."
+        },
+        "ja": {
+          "summary": "カラマネロが\nメガシンカすることができる持ち物。",
+          "detail": "カラマネロが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "캥카나이트": {
+      "sourceItemId": 675,
+      "sourceLabels": {
+        "name": "ITEMNAME_675",
+        "description": "ITEMINFO_SYN_675"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "캥카나이트",
+      "nameEn": "Kangaskhanite",
+      "nameJa": "ガルーラナイト",
+      "text": {
+        "ko": {
+          "summary": "캥카가 메가진화할 수 있게 되는 도구.",
+          "detail": "캥카가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Kangaskhan to Mega Evolve.",
+          "detail": "A held item that allows Kangaskhan to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ガルーラが\nメガシンカすることができる持ち物。",
+          "detail": "ガルーラが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "킬라플로르나이트": {
+      "sourceItemId": 2650,
+      "sourceLabels": {
+        "name": "ITEMNAME_2650",
+        "description": "ITEMINFO_SYN_2650"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "킬라플로르나이트",
+      "nameEn": "Glimmoranite",
+      "nameJa": "キラフロルナイト",
+      "text": {
+        "ko": {
+          "summary": "킬라플로르가 메가진화할 수 있게 되는 도구.",
+          "detail": "킬라플로르가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Glimmora to Mega Evolve.",
+          "detail": "A held item that allows Glimmora to Mega Evolve."
+        },
+        "ja": {
+          "summary": "キラフロルが\nメガシンカすることができる持ち物。",
+          "detail": "キラフロルが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "파비코리나이트": {
+      "sourceItemId": 755,
+      "sourceLabels": {
+        "name": "ITEMNAME_755",
+        "description": "ITEMINFO_SYN_755"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "파비코리나이트",
+      "nameEn": "Altarianite",
+      "nameJa": "チルタリスナイト",
+      "text": {
+        "ko": {
+          "summary": "파비코리가 메가진화할 수 있게 되는 도구.",
+          "detail": "파비코리가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Altaria to Mega Evolve.",
+          "detail": "A held item that allows Altaria to Mega Evolve."
+        },
+        "ja": {
+          "summary": "チルタリスが\nメガシンカすることができる持ち物。",
+          "detail": "チルタリスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "팬텀나이트": {
+      "sourceItemId": 656,
+      "sourceLabels": {
+        "name": "ITEMNAME_656",
+        "description": "ITEMINFO_SYN_656"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "팬텀나이트",
+      "nameEn": "Gengarite",
+      "nameJa": "ゲンガナイト",
+      "text": {
+        "ko": {
+          "summary": "팬텀이 메가진화할 수 있게 되는 도구.",
+          "detail": "팬텀이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Gengar to Mega Evolve.",
+          "detail": "A held item that allows Gengar to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ゲンガーが\nメガシンカすることができる持ち物。",
+          "detail": "ゲンガーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "펜드라나이트": {
+      "sourceItemId": 2571,
+      "sourceLabels": {
+        "name": "ITEMNAME_2571",
+        "description": "ITEMINFO_SYN_2571"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "펜드라나이트",
+      "nameEn": "Scolipite",
+      "nameJa": "ペンドラナイト",
+      "text": {
+        "ko": {
+          "summary": "펜드라가 메가진화할 수 있게 되는 도구.",
+          "detail": "펜드라가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Scolipede to Mega Evolve.",
+          "detail": "A held item that allows Scolipede to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ペンドラーが\nメガシンカすることができる持ち物。",
+          "detail": "ペンドラーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "폭타나이트": {
+      "sourceItemId": 767,
+      "sourceLabels": {
+        "name": "ITEMNAME_767",
+        "description": "ITEMINFO_SYN_767"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "폭타나이트",
+      "nameEn": "Cameruptite",
+      "nameJa": "バクーダナイト",
+      "text": {
+        "ko": {
+          "summary": "폭타가 메가진화할 수 있게 되는 도구.",
+          "detail": "폭타가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Camerupt to Mega Evolve.",
+          "detail": "A held item that allows Camerupt to Mega Evolve."
+        },
+        "ja": {
+          "summary": "バクーダが\nメガシンカすることができる持ち物。",
+          "detail": "バクーダが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "프테라나이트": {
+      "sourceItemId": 672,
+      "sourceLabels": {
+        "name": "ITEMNAME_672",
+        "description": "ITEMINFO_SYN_672"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "프테라나이트",
+      "nameEn": "Aerodactylite",
+      "nameJa": "プテラナイト",
+      "text": {
+        "ko": {
+          "summary": "프테라가 메가진화할 수 있게 되는 도구.",
+          "detail": "프테라가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Aerodactyl to Mega Evolve.",
+          "detail": "A held item that allows Aerodactyl to Mega Evolve."
+        },
+        "ja": {
+          "summary": "プテラが\nメガシンカすることができる持ち物。",
+          "detail": "プテラが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "플라엣테나이트": {
+      "sourceItemId": 2579,
+      "sourceLabels": {
+        "name": "ITEMNAME_2579",
+        "description": "ITEMINFO_SYN_2579"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "플라엣테나이트",
+      "nameEn": "Floettite",
+      "nameJa": "フラエッテナイト",
+      "text": {
+        "ko": {
+          "summary": "플라엣테(영원의 꽃)가 메가진화할 수 있게 되는 도구.",
+          "detail": "플라엣테(영원의 꽃)가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Eternal Flower Floette to\nMega Evolve.",
+          "detail": "A held item that allows Eternal Flower Floette to\nMega Evolve."
+        },
+        "ja": {
+          "summary": "フラエッテ　えいえんのはな　が\nメガシンカすることができる持ち物。",
+          "detail": "フラエッテ　えいえんのはな　が\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "피죤투나이트": {
+      "sourceItemId": 762,
+      "sourceLabels": {
+        "name": "ITEMNAME_762",
+        "description": "ITEMINFO_SYN_762"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "피죤투나이트",
+      "nameEn": "Pidgeotite",
+      "nameJa": "ピジョットナイト",
+      "text": {
+        "ko": {
+          "summary": "피죤투가 메가진화할 수 있게 되는 도구.",
+          "detail": "피죤투가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Pidgeot to Mega Evolve.",
+          "detail": "A held item that allows Pidgeot to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ピジョットが\nメガシンカすることができる持ち物。",
+          "detail": "ピジョットが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "픽시나이트": {
+      "sourceItemId": 2559,
+      "sourceLabels": {
+        "name": "ITEMNAME_2559",
+        "description": "ITEMINFO_SYN_2559"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "픽시나이트",
+      "nameEn": "Clefablite",
+      "nameJa": "ピクシナイト",
+      "text": {
+        "ko": {
+          "summary": "픽시가 메가진화할 수 있게 되는 도구.",
+          "detail": "픽시가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Clefable to Mega Evolve.",
+          "detail": "A held item that allows Clefable to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ピクシーが\nメガシンカすることができる持ち物。",
+          "detail": "ピクシーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "한카리아스나이트": {
+      "sourceItemId": 683,
+      "sourceLabels": {
+        "name": "ITEMNAME_683",
+        "description": "ITEMINFO_SYN_683"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "한카리아스나이트",
+      "nameEn": "Garchompite",
+      "nameJa": "ガブリアスナイト",
+      "text": {
+        "ko": {
+          "summary": "한카리아스가 메가진화할 수 있게 되는 도구.\n(메가한카리아스)",
+          "detail": "한카리아스가 메가진화할 수 있게 되는 도구.\n(메가한카리아스)"
+        },
+        "en": {
+          "summary": "A held item that allows Garchomp to Mega Evolve into\nMega Garchomp.",
+          "detail": "A held item that allows Garchomp to Mega Evolve into\nMega Garchomp."
+        },
+        "ja": {
+          "summary": "ガブリアスが\nメガシンカすることができる持ち物。\n（メガガブリアス）",
+          "detail": "ガブリアスが\nメガシンカすることができる持ち物。\n（メガガブリアス）"
+        }
+      }
+    },
+    "한카리아스나이트Z": {
+      "sourceItemId": 2640,
+      "sourceLabels": {
+        "name": "ITEMNAME_2640",
+        "description": "ITEMINFO_SYN_2640"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "한카리아스나이트Z",
+      "nameEn": "Garchompite Z",
+      "nameJa": "ガブリアスナイトＺ",
+      "text": {
+        "ko": {
+          "summary": "한카리아스가 메가진화할 수 있게 되는 도구.\n(메가한카리아스Z)",
+          "detail": "한카리아스가 메가진화할 수 있게 되는 도구.\n(메가한카리아스Z)"
+        },
+        "en": {
+          "summary": "A held item that allows Garchomp to Mega Evolve into\nMega Garchomp Z.",
+          "detail": "A held item that allows Garchomp to Mega Evolve into\nMega Garchomp Z."
+        },
+        "ja": {
+          "summary": "ガブリアスが\nメガシンカすることができる持ち物。\n（メガガブリアスＺ）",
+          "detail": "ガブリアスが\nメガシンカすることができる持ち物。\n（メガガブリアスＺ）"
+        }
+      }
+    },
+    "할비롱나이트": {
+      "sourceItemId": 2585,
+      "sourceLabels": {
+        "name": "ITEMNAME_2585",
+        "description": "ITEMINFO_SYN_2585"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "할비롱나이트",
+      "nameEn": "Drampanite",
+      "nameJa": "ジジーロナイト",
+      "text": {
+        "ko": {
+          "summary": "할비롱이 메가진화할 수 있게 되는 도구.",
+          "detail": "할비롱이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Drampa to Mega Evolve.",
+          "detail": "A held item that allows Drampa to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ジジーロンが\nメガシンカすることができる持ち物。",
+          "detail": "ジジーロンが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "핫삼나이트": {
+      "sourceItemId": 670,
+      "sourceLabels": {
+        "name": "ITEMNAME_670",
+        "description": "ITEMINFO_SYN_670"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "핫삼나이트",
+      "nameEn": "Scizorite",
+      "nameJa": "ハッサムナイト",
+      "text": {
+        "ko": {
+          "summary": "핫삼이 메가진화할 수 있게 되는 도구.",
+          "detail": "핫삼이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Scizor to Mega Evolve.",
+          "detail": "A held item that allows Scizor to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ハッサムが\nメガシンカすることができる持ち物。",
+          "detail": "ハッサムが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "헤라크로스나이트": {
+      "sourceItemId": 680,
+      "sourceLabels": {
+        "name": "ITEMNAME_680",
+        "description": "ITEMINFO_SYN_680"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "헤라크로스나이트",
+      "nameEn": "Heracronite",
+      "nameJa": "ヘラクロスナイト",
+      "text": {
+        "ko": {
+          "summary": "헤라크로스가 메가진화할 수 있게 되는 도구.",
+          "detail": "헤라크로스가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Heracross to Mega Evolve.",
+          "detail": "A held item that allows Heracross to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ヘラクロスが\nメガシンカすることができる持ち物。",
+          "detail": "ヘラクロスが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "헬가나이트": {
+      "sourceItemId": 666,
+      "sourceLabels": {
+        "name": "ITEMNAME_666",
+        "description": "ITEMINFO_SYN_666"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "헬가나이트",
+      "nameEn": "Houndoominite",
+      "nameJa": "ヘルガナイト",
+      "text": {
+        "ko": {
+          "summary": "헬가가 메가진화할 수 있게 되는 도구.",
+          "detail": "헬가가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Houndoom to Mega Evolve.",
+          "detail": "A held item that allows Houndoom to Mega Evolve."
+        },
+        "ja": {
+          "summary": "ヘルガーが\nメガシンカすることができる持ち物。",
+          "detail": "ヘルガーが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "화염레오나이트": {
+      "sourceItemId": 2578,
+      "sourceLabels": {
+        "name": "ITEMNAME_2578",
+        "description": "ITEMINFO_SYN_2578"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "화염레오나이트",
+      "nameEn": "Pyroarite",
+      "nameJa": "カエンジシナイト",
+      "text": {
+        "ko": {
+          "summary": "화염레오가 메가진화할 수 있게 되는 도구.",
+          "detail": "화염레오가 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Pyroar to Mega Evolve.",
+          "detail": "A held item that allows Pyroar to Mega Evolve."
+        },
+        "ja": {
+          "summary": "カエンジシが\nメガシンカすることができる持ち物。",
+          "detail": "カエンジシが\nメガシンカすることができる持ち物。"
+        }
+      }
+    },
+    "후딘나이트": {
+      "sourceItemId": 679,
+      "sourceLabels": {
+        "name": "ITEMNAME_679",
+        "description": "ITEMINFO_SYN_679"
+      },
+      "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "nameKo": "후디나이트",
+      "nameEn": "Alakazite",
+      "nameJa": "フーディナイト",
+      "text": {
+        "ko": {
+          "summary": "후딘이 메가진화할 수 있게 되는 도구.",
+          "detail": "후딘이 메가진화할 수 있게 되는 도구."
+        },
+        "en": {
+          "summary": "A held item that allows Alakazam to Mega Evolve.",
+          "detail": "A held item that allows Alakazam to Mega Evolve."
+        },
+        "ja": {
+          "summary": "フーディンが\nメガシンカすることができる持ち物。",
+          "detail": "フーディンが\nメガシンカすることができる持ち物。"
+        }
+      }
     }
   }
 }

@@ -32,7 +32,7 @@ const abilities = Array.from({length:70},(_,i)=>option(`a${i}`))
 const items = Array.from({length:65},(_,i)=>`i${i}`)
 const filters = {
   filterSpeciesOptions:()=>roster, filterDexMoveOptions:()=>moves,
-  filterDexAbilityOptions:()=>abilities, filterItemOptions:()=>items,
+  filterDexAbilityOptions:()=>abilities, filterItemOptions:()=>items, filterDexItemOptions:()=>items,
   siteLanguage:'ko', deferredDexSearch:'', asyncDataVersion:0,
 }
 

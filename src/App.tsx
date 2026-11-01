@@ -5,6 +5,8 @@ import { sampleMoves } from './sampleMoves'
 import { dataSourcePolicy } from './dataSources'
 import { defaultEvs, type EffortValues } from './myPartyChampionsSamples'
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './creatorSampleLibrary'
+import { SourcePlacementBadge } from './SourcePlacementBadge'
+import { CreatorPartySpriteStrip } from './CreatorPartySpriteStrip'
 import { prepareCreatorParty } from './creatorPartyImport'
 import { homeRoute, normalizeRoute, routeGroups, routeIconFor } from './navigation'
 import { PageHeading } from './PageHeading'
@@ -24,6 +26,7 @@ import { effectiveComparisonSpeed } from './unifiedComparisonSpeed'
 import { presentDoubleActionOrder } from './doubleOrderPresentation'
 import { compareSpeedVisual } from './speedVisual'
 import { EffortTuningModal } from './EffortTuningModal'
+import { magicEffortCandidate, magicEffortMarkers, namedNatureMagicAvailable } from './effortMagic'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import { analyzePartyMatchups } from './partyAnalysis'
 import { PartyAnalysisPanel } from './PartyAnalysisPanel'
@@ -32,7 +35,7 @@ import { actualStat } from './statMechanics'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './statPresentation'
 import { getSpeedAbility, speedActivationAllowed } from './speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './singleSpeedComparison'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, MoveCandidateRow, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import SpeedLinePanel from './SpeedLinePanel'
 import PokemonSearchField from './PokemonSearchField'
 import SearchCombobox from './SearchCombobox'
@@ -2038,59 +2041,12 @@ function opponentStatValue(row: Row, entry: Pick<OpponentState, 'hpEv' | 'defens
 }
 
 function findMagicNumberCandidate(row: Row, member: PartyMember) {
-  const boostedStat = boostedStatForNature(member.config.nature)
-  if (!boostedStat) return null
-
-  const currentActual = partyStatValue(row, member, boostedStat)
-  const currentEffort = member.evs[boostedStat]
-  const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(member.evs, boostedStat))
-  const currentHit = currentActual % 11 === 0
-
-  let nextEffort = currentEffort
-  let nextActual = currentActual
-  if (!currentHit) {
-    let found = false
-    for (let effort = currentEffort; effort <= availableCap; effort += 1) {
-      const candidateMember = { ...member, evs: { ...member.evs, [boostedStat]: effort } }
-      const actual = partyStatValue(row, candidateMember, boostedStat)
-      if (actual % 11 === 0) {
-        nextEffort = effort
-        nextActual = actual
-        found = true
-        break
-      }
-    }
-    if (!found) return {
-      stat: boostedStat,
-      reached: false,
-      currentActual,
-      currentEffort,
-      nextEffort: null,
-      nextActual: null,
-    }
-  }
-
-  return {
-    stat: boostedStat,
-    reached: currentHit,
-    currentActual,
-    currentEffort,
-    nextEffort,
-    nextActual,
-  }
+  const boosted = boostedStatForNature(member.config.nature)
+  return magicEffortCandidate(boosted, member.evs, effort => partyStatValue(row, { ...member, evs: { ...member.evs, [boosted!]: effort } }, boosted!))
 }
 
 function magicEffortPoints(row: Row, member: PartyMember, stat: EffortStatKey) {
-  const boostedStat = boostedStatForNature(member.config.nature)
-  if (boostedStat !== stat) return [] as number[]
-
-  const points: number[] = []
-  for (let effort = 1; effort <= CHAMPIONS_EFFORT_PER_STAT_CAP; effort += 1) {
-    const candidateMember = { ...member, evs: { ...member.evs, [stat]: effort } }
-    const actual = partyStatValue(row, candidateMember, stat)
-    if (actual % 11 === 0) points.push(effort)
-  }
-  return points
+  return magicEffortMarkers(boostedStatForNature(member.config.nature), stat, effort => partyStatValue(row, { ...member, evs: { ...member.evs, [stat]: effort } }, stat))
 }
 
 function typeEffectiveness(attackType: string, defendTypes: string[]) {
@@ -3085,7 +3041,10 @@ function filterSpeciesOptions(query: string, options?: { includeMega?: boolean; 
 
 function displayItemLabel(item: string, language: SiteLanguage) {
   const localized = localizedChampionsItemLabel(item, language)
-  return localized !== item ? localized : translateText(language, item)
+  if (localized !== item) return localized
+  const source = resolveItemInfo(canonicalChampionsItemName(item))?.entry ?? resolveItemInfo(item)?.entry
+  const sourceName = language === 'ko' ? source?.nameKo : language === 'en' ? source?.nameEn : source?.nameJa
+  return sourceName || translateText(language, item)
 }
 
 function filterItemOptions(query: string, language: SiteLanguage = 'ko', options?: { fallbackToAll?: boolean; allowLoose?: boolean }) {
@@ -3110,6 +3069,22 @@ function filterItemOptions(query: string, language: SiteLanguage = 'ko', options
     .sort((a, b) => a.score - b.score || compareDisplayName(a.item, b.item, item => displayItemLabel(item, language), item => item, language))
     .map((entry) => entry.item)
   return matched.length ? matched : (fallbackToAll ? byDisplayName(CHAMPIONS_ITEM_OPTIONS, item => displayItemLabel(item, language), item => item, language) : [])
+}
+
+function filterDexItemOptions(query: string, language: SiteLanguage) {
+  const stones = [...new Set(rows.map(row => requiredMegaStone(row.key)).filter((item): item is string => Boolean(item)))]
+  const items = [...CHAMPIONS_ITEM_OPTIONS, ...stones]
+  const normalizeItemSearch = (value: string) => normalizeSearchText(value.normalize('NFKC'))
+  const needle = normalizeItemSearch(query)
+  const matches = !needle ? items : items.filter(item => {
+    const entry = itemDescriptionFor(item)
+    return [item, displayItemLabel(item, language), entry?.nameKo, entry?.nameEn, entry?.nameJa]
+      .some(name => name && normalizeItemSearch(name).includes(needle))
+  })
+  return byDisplayName(matches, item => {
+    const entry = itemDescriptionFor(item)
+    return (language === 'ko' ? entry?.nameKo : language === 'en' ? entry?.nameEn : entry?.nameJa) || displayItemLabel(item, language)
+  }, item => item, language)
 }
 
 function resolveItemInput(key: string, raw: string, _language: SiteLanguage = 'ko') {
@@ -3796,6 +3771,16 @@ function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defend
     speedScarfOverride: speciesChanged ? null : seed.speedScarfOverride,
     speedAbilityActive: false, knownOffense: speciesChanged ? { attack: false, spAttack: false } : seed.knownOffense } as QuickSide }
 }
+function quickMagicProjection(side: QuickSide, row: Row) {
+  const boosted = boostedStatForNature(side.nature)
+  const magic = boosted && namedNatureMagicAvailable(boosted, side) ? boosted : null
+  const actualAt = (stat: EffortStatKey, effort: number) => actualStat(row[stat], effort, stat === 'hp' ? 1 : natureMultiplier(side.nature, stat), stat === 'hp')
+  return {
+    candidate: magic ? magicEffortCandidate(magic, side.evs, effort => actualAt(magic, effort)) : null,
+    points: (stat: EffortStatKey) => magic ? magicEffortMarkers(magic, stat, effort => actualAt(stat, effort)) : [],
+  }
+}
+
 function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
   const override = side.actual[key]
   if (override !== undefined) return /^\d+$/.test(override) && Number(override) >= 1 && Number(override) <= 999 ? Number(override) : null
@@ -3820,7 +3805,7 @@ const conciseSpeedLabels = {
   ja: { nature: '性格補正', scarf: 'こだわりスカーフ', off: '未適用', on: '適用', partyNote: 'パーティの持ち物は変更なし', entryNote: 'エントリーは変更なし', opponentSpeed: '相手の素早さ', item: '相手の持ち物', ability: '相手の特性発動', active: '発動', battle: '戦闘条件', lab: '比較用設定 · 元のビルドではありません' },
 } as const
 
-export function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
+export function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.HTMLAttributes<HTMLElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
   const lt = (text: string) => translateText(language, text)
 
   const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
@@ -4111,7 +4096,8 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
               search={{ id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                 onSelect: option => { const found = options.find(move => move.name === option.key); if (found) commit(index, found) },
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
-                renderOption: option => <span className="move-autocomplete-main">{options.find(move => move.name === option.key)?.type ? <SmallTypeBadgeImage type={options.find(move => move.name === option.key)!.type!} /> : null}<span>{option.label}</span></span> }}
+                renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
+                optionProps: option => tooltipForMove(option.key) }}
               inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
             <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
           </div>
@@ -4172,7 +4158,8 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     {modalSide && modalKey === (modalSide === 'attacker' ? attacker : defender).key && indexByKey.get(modalKey) ? (() => {
       const entry = modalSide === 'attacker' ? attacker : defender
       const row = indexByKey.get(entry.key)!
-      return <EffortTuningModal evs={entry.evs} nature={entry.nature} natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, language) }))} actualValue={(key, effort) => effort === undefined ? quickStat(entry, row, key) : actualStat(row[key], effort, quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key)), key === 'hp')} onEffort={(key, value) => { markDirty(modalSide, key); setSide(modalSide, prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) })) }} onNature={nature => { markDirty(modalSide, 'nature'); setSide(modalSide, prev => ({ ...prev, nature, statNatureMultipliers: {}, speedNatureKnown: true })) }} override={entry.actual} onOverride={(key, value) => setSide(modalSide, prev => { const actual = { ...prev.actual }; if (value === '') delete actual[key]; else actual[key] = value; return { ...prev, actual } })} onClose={() => setModalSide(null)} translate={lt} statTheme={statThemeClass} title={`${displayName(row, language)} · ${lt('노력치 보정')}`} opener={opener.current} />
+      const magic = quickMagicProjection(entry, row)
+      return <EffortTuningModal evs={entry.evs} nature={entry.nature} magicCandidate={magic.candidate} magicPoints={magic.points} natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, language) }))} actualValue={(key, effort) => effort === undefined ? quickStat(entry, row, key) : actualStat(row[key], effort, quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key)), key === 'hp')} onEffort={(key, value) => { markDirty(modalSide, key); setSide(modalSide, prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) })) }} onNature={nature => { markDirty(modalSide, 'nature'); setSide(modalSide, prev => ({ ...prev, nature, statNatureMultipliers: {}, speedNatureKnown: true })) }} override={entry.actual} onOverride={(key, value) => setSide(modalSide, prev => { const actual = { ...prev.actual }; if (value === '') delete actual[key]; else actual[key] = value; return { ...prev, actual } })} onClose={() => setModalSide(null)} translate={lt} statTheme={statThemeClass} title={`${displayName(row, language)} · ${lt('노력치 보정')}`} opener={opener.current} />
     })() : null}
   </section>
 }
@@ -4354,9 +4341,7 @@ export default function App() {
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [opponentAbilityDrafts, setOpponentAbilityDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => member.ability ?? ''))
   const [opponentMoveDraft, setOpponentMoveDraft] = React.useState('')
-  const [opponentMoveInputFocused, setOpponentMoveInputFocused] = React.useState(false)
   const [calcOpponentMoveDraft, setCalcOpponentMoveDraft] = React.useState('')
-  const [calcOpponentMoveInputFocused, setCalcOpponentMoveInputFocused] = React.useState(false)
   const [activeMoveField, setActiveMoveField] = React.useState<MoveFieldTarget>(null)
   const [moveInputDraft, setMoveInputDraft] = React.useState<string | null>(null)
   const [moveCommitNotice, setMoveCommitNotice] = React.useState<MoveFieldTarget>(null)
@@ -4477,14 +4462,14 @@ export default function App() {
   const dexSpeciesOptions = React.useMemo(() => filterSpeciesOptions(deferredDexSearch, { includeMega: true, allowLoose: false }), [deferredDexSearch])
   const dexMoveOptions = React.useMemo(() => filterDexMoveOptions(deferredDexSearch, { allowLoose: false }), [asyncDataVersion, deferredDexSearch])
   const dexAbilityOptions = React.useMemo(() => filterDexAbilityOptions(deferredDexSearch, { allowLoose: false }), [asyncDataVersion, deferredDexSearch])
-  const dexItemOptions = React.useMemo(() => filterItemOptions(deferredDexSearch, siteLanguage, { fallbackToAll: false, allowLoose: false }), [deferredDexSearch, siteLanguage])
+  const dexItemOptions = React.useMemo(() => filterDexItemOptions(deferredDexSearch, siteLanguage), [asyncDataVersion, deferredDexSearch, siteLanguage])
   const dexAllResults = React.useMemo<DexResultItem[]>(() => {
     const unifiedQuery = deferredDexUnifiedSearch.trim()
     if (!unifiedQuery) return []
     const speciesOptions = filterSpeciesOptions(unifiedQuery, { includeMega: true, allowLoose: false })
     const moveOptions = filterDexMoveOptions(unifiedQuery, { allowLoose: false })
     const abilityOptions = filterDexAbilityOptions(unifiedQuery, { allowLoose: false })
-    const itemOptions = filterItemOptions(unifiedQuery, siteLanguage, { fallbackToAll: false, allowLoose: false })
+    const itemOptions = filterDexItemOptions(unifiedQuery, siteLanguage)
     const pokemonResults: Extract<DexResultItem, { kind: 'pokemon' }>[] = speciesOptions
       .map((option, idx) => {
         const row = indexByKey.get(option.key)
@@ -4607,9 +4592,9 @@ export default function App() {
   }, [mainSection, dexSelectedRow?.key])
   const dexSelectedPool = dexSelectedRow ? dexPoolByKey[dexSelectedRow.key] : undefined
   const dexTopMoves = React.useMemo(() => dexSelectedRow ? usageTopMovesForKey(dexSelectedRow.key, 10) : [], [asyncDataVersion, dexSelectedRow])
-  const dexSelectedMoveDescription = React.useMemo(() => dexSelectedMove ? moveDescriptionFor(dexSelectedMove.name) : null, [dexSelectedMove])
-  const dexSelectedAbilityDescription = React.useMemo(() => dexSelectedAbility ? abilityDescriptionFor(dexSelectedAbility.key) : null, [dexSelectedAbility])
-  const dexSelectedItemDescription = React.useMemo(() => dexSelectedItem ? itemDescriptionFor(dexSelectedItem) : null, [dexSelectedItem])
+  const dexSelectedMoveDescription = React.useMemo(() => dexSelectedMove ? moveDescriptionFor(dexSelectedMove.name) : null, [dexSelectedMove, asyncDataVersion])
+  const dexSelectedAbilityDescription = React.useMemo(() => dexSelectedAbility ? abilityDescriptionFor(dexSelectedAbility.key) : null, [dexSelectedAbility, asyncDataVersion])
+  const dexSelectedItemDescription = React.useMemo(() => dexSelectedItem ? itemDescriptionFor(dexSelectedItem) : null, [dexSelectedItem, asyncDataVersion])
   const dexSelectedMoveText = React.useMemo(() => localizedDexText(dexSelectedMoveDescription, siteLanguage), [dexSelectedMoveDescription, siteLanguage])
   const dexSelectedAbilityText = React.useMemo(() => localizedDexText(dexSelectedAbilityDescription, siteLanguage), [dexSelectedAbilityDescription, siteLanguage])
   const dexSelectedItemText = React.useMemo(() => localizedDexText(dexSelectedItemDescription, siteLanguage), [dexSelectedItemDescription, siteLanguage])
@@ -5539,9 +5524,7 @@ export default function App() {
 
   React.useEffect(() => {
     setOpponentMoveDraft('')
-    setOpponentMoveInputFocused(false)
     setCalcOpponentMoveDraft('')
-    setCalcOpponentMoveInputFocused(false)
   }, [selectedOpp, oppMember.key])
 
   const mySpeed = partySpeedValue(myRow, myMember)
@@ -5608,6 +5591,9 @@ export default function App() {
   const oppMoveSet = sampleMoves.find((entry) => entry.key === oppMember.key)
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = choicesForPool(oppMovePool)
+  const revealedMoveCandidates = (query: string) => oppMovePool?.status === 'ready-verified' && oppMember.revealedMoves.length < 4 && query.trim()
+    ? filterMoveOptions(query, oppMoveOptions).filter(option => !oppMember.revealedMoves.includes(option.name)).slice(0, 8)
+    : []
   const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
   const myCalcAbility = calcMyKey === myMember.key ? myMember.ability : defaultAbilityForKey(calcMyKey)
   const oppCalcAbility = calcOppKey === oppMember.key ? oppMember.ability : defaultAbilityForKey(calcOppKey)
@@ -5777,22 +5763,20 @@ export default function App() {
     return true
   }
   const commitOpponentMoveDraft = () => {
-    const top = filterMoveOptions(opponentMoveDraft, oppMoveOptions)[0]
+    const top = revealedMoveCandidates(opponentMoveDraft)[0]
     if (!top) return false
     const added = addOpponentRevealedMove(top.name)
     if (added) {
       setOpponentMoveDraft('')
-      setOpponentMoveInputFocused(false)
     }
     return added
   }
   const commitCalcOpponentMoveDraft = () => {
-    const top = filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)[0]
+    const top = revealedMoveCandidates(calcOpponentMoveDraft)[0]
     if (!top) return false
     const added = addOpponentRevealedMove(top.name)
     if (added) {
       setCalcOpponentMoveDraft('')
-      setCalcOpponentMoveInputFocused(false)
     }
     return added
   }
@@ -5893,7 +5877,15 @@ export default function App() {
   const commitOpponentItemInput = (idx: number, rawValue?: string) => {
     const member = opponents[idx]
     if (!member) return false
-    const resolved = resolveItemInput(member.key, rawValue ?? opponentItemDrafts[idx] ?? '', siteLanguage)
+    const draft = rawValue ?? opponentItemDrafts[idx] ?? ''
+    // An untouched legacy value is display-only; only an explicit new valid choice/clear is committed.
+    if (draft === displayItemLabel(member.item, siteLanguage)) return true
+    const identity = classifyHeldItem(member.key, draft)
+    if (!['none', 'allowed', 'required-stone'].includes(identity.status)) {
+      setOpponentItemDrafts(prev => prev.map((value, slot) => slot === idx ? displayItemLabel(member.item, siteLanguage) : value))
+      return false
+    }
+    const resolved = resolveItemInput(member.key, draft, siteLanguage)
     const next = [...opponents]
     next[idx] = { ...member, item: resolved }
     setOpponents(next)
@@ -6298,7 +6290,7 @@ export default function App() {
                                 search={{ id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                                   onSelect: option => selectSampleMoveOption(moveIdx, option.key),
                                   optionClassName: option => moveTypeThemeClass(sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
-                                  renderOption: option => <span className="move-autocomplete-main">{sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
+                                  renderOption: option => <MoveCandidateRow name={option.label} type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
                                   optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
                                 inputProps={{
                                   placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
@@ -7522,11 +7514,13 @@ export default function App() {
                 const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(modalEvs, stat.key))
                 const additionalAvailable = Math.max(0, availableCap - currentEffort)
                 const actualValue = opponentStatValue(modalRow, modalEntry, stat.key)
+                const boosted = stat.key === 'defense' ? modalEntry.defenseNature === 1.1 : stat.key === 'spDefense' ? modalEntry.spDefenseNature === 1.1 : stat.key === 'speed' && modalEntry.natureBoost
+                const magicPoints = boosted ? magicEffortMarkers(stat.key, stat.key, effort => opponentStatValue(modalRow, { ...modalEntry, ...opponentPatchFromEffortValues({ ...modalEvs, [stat.key]: effort }) }, stat.key)) : []
                 return <div key={`double-opponent-effort-${modalSlot}-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)}`}>
                   <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
                   <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
                     <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateDoubleOpponentEffortFromPointer(modalSlot, stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
-                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); return <span key={`double-opponent-effort-cell-${modalSlot}-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
+                      <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); return <span key={`double-opponent-effort-cell-${modalSlot}-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', magicPoints.includes(point) ? 'magic' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
                       <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeDoubleOpponentEffort(modalSlot, stat.key, 1, availableCap) } }} onChange={(e) => { const evs = applyChampionsEffort(modalEvs, stat.key, e.target.value); updateDoubleOpponentBulk(modalSlot, opponentPatchFromEffortValues(evs)) }} />
                     </div>
                     <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => <div key={`double-opponent-effort-scale-${modalSlot}-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{opponentStatValue(modalRow, { ...modalEntry, ...opponentPatchFromEffortValues({ ...modalEvs, [stat.key]: checkpoint }) }, stat.key)}</small></div>)}</div>
@@ -7581,8 +7575,8 @@ export default function App() {
             </div>
           </section>
 
-          <details className="home-footer-text-block home-footer-text-block-quiet">
-            <summary>{lt('프로젝트 정보')}</summary>
+          <section className="home-footer-text-block home-footer-text-block-quiet" aria-labelledby="project-information-heading">
+            <h3 id="project-information-heading">{lt('프로젝트 정보')}</h3>
             <div className="home-footer-text-row home-footer-links-quiet">
               <span className="home-footer-label">{lt('프로젝트 링크')}</span>
               <div className="home-link-list text-only">
@@ -7607,7 +7601,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </details>
+          </section>
         </>
         ) : null}
         {mainSection === 'double' ? <section className="panel wide workflow-shell-panel">
@@ -8246,7 +8240,7 @@ export default function App() {
                             search={{ id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                               onSelect: option => { selectMoveOption(member.key, moveIdx, option.key); setActiveMoveField(null) },
                               optionClassName: option => moveTypeThemeClass(memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
-                              renderOption: option => <span className="move-autocomplete-main">{memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type ? <SmallTypeBadgeImage type={memberMoveOptions.find(moveOption => moveOption.name === option.key)!.type!} /> : null}<span>{option.label}</span></span>,
+                              renderOption: option => <MoveCandidateRow name={option.label} type={memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
                               optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
                             inputProps={{
                               placeholder: memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
@@ -8396,23 +8390,32 @@ export default function App() {
                           setAutocompleteMenuOpen(`opponent-item-${selectedOpp}`)
                         }}
                         onKeyDown={(e) => {
-                          const options = filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8)
-                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                            e.preventDefault()
-                            moveAutocompleteMenuHighlight(`opponent-item-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                          const menuId = `opponent-item-${selectedOpp}`
+                          if (e.key === 'Escape' || e.key === 'Tab') {
+                            setActiveItemField(null)
+                            closeAutocompleteMenu(menuId)
                             return
                           }
-                          if (e.key !== 'Enter') return
+                          const options = filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage, { fallbackToAll: false }).filter(item => isAllowedChampionsItem(oppMember.key, item)).slice(0, 8)
+                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                            if (!sameItemField(activeItemField, 'opponent', selectedOpp) || autocompleteHighlight?.id !== menuId) return
+                            e.preventDefault()
+                            moveAutocompleteMenuHighlight(menuId, options.length, e.key === 'ArrowDown' ? 1 : -1)
+                            return
+                          }
+                          if (e.key !== 'Enter' || e.nativeEvent.isComposing || e.keyCode === 229) return
+                          if (!sameItemField(activeItemField, 'opponent', selectedOpp) || autocompleteHighlight?.id !== menuId) return
                           e.preventDefault()
-                          const highlightedItem = options[highlightedAutocompleteIndex(autocompleteHighlight, `opponent-item-${selectedOpp}`)]
+                          const highlightedItem = opponentItemDrafts[selectedOpp]?.trim()
+                            ? options[highlightedAutocompleteIndex(autocompleteHighlight, menuId)] : null
                           if (highlightedItem) {
                             selectOpponentItemOption(selectedOpp, highlightedItem)
-                            closeAutocompleteMenu(`opponent-item-${selectedOpp}`)
+                            closeAutocompleteMenu(menuId)
                             return
                           }
                           commitOpponentItemInput(selectedOpp)
                           setActiveItemField(null)
-                          closeAutocompleteMenu(`opponent-item-${selectedOpp}`)
+                          closeAutocompleteMenu(menuId)
                         }}
                       />
                       {oppMember.key && (opponentItemDrafts[selectedOpp] || oppMember.item) ? <button type="button" className="meta-item-clear-button" aria-label="clear item" onMouseDown={(e) => {
@@ -8420,8 +8423,8 @@ export default function App() {
                         clearOpponentItemInput(selectedOpp)
                       }}>×</button> : null}
                     </div>
-                    {oppMember.key && sameItemField(activeItemField, 'opponent', selectedOpp) ? <div className="move-autocomplete-menu unified-dropdown-menu">
-                      {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage).slice(0, 8).map((item, optionIdx) => (
+                    {oppMember.key && sameItemField(activeItemField, 'opponent', selectedOpp) && autocompleteHighlight?.id === `opponent-item-${selectedOpp}` ? <div className="move-autocomplete-menu unified-dropdown-menu">
+                      {filterItemOptions(opponentItemDrafts[selectedOpp] || '', siteLanguage, { fallbackToAll: false }).filter(item => isAllowedChampionsItem(oppMember.key, item)).slice(0, 8).map((item, optionIdx) => (
                         <button key={`opp-item-suggest-${selectedOpp}-${item}`} type="button" className={`move-autocomplete-item item-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opponent-item-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => selectOpponentItemOption(selectedOpp, item)}>
                           <span className="move-autocomplete-main">
                             <img src={itemSpriteSrc(oppMember.key, item)} alt={itemAutocompletePrimaryLabel(item, siteLanguage)} className="item-autocomplete-sprite" onError={(e) => { e.currentTarget.src = `${import.meta.env.BASE_URL}item-generic.svg` }} />
@@ -8514,75 +8517,22 @@ export default function App() {
                         </div>
                       </details> : null}
                       {opponentMoveNotice?.key === oppMember.key && opponentMoveNotice.index === selectedOpp ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}
-                      <label className="damage-opponent-move-entry">
-                        <span>{lt('상대 기술 추가')}</span>
+                      <div className="damage-opponent-move-entry">
+                        <span id="opp-entry-move-label">{lt('상대 기술 추가')}</span>
                         <div className="damage-opponent-move-input-row">
-                          <input
-                            value={opponentMoveDraft}
-                            placeholder={lt('사용 가능 기술 검색')}
-                            disabled={!oppMember.key || oppMember.revealedMoves.length >= 4}
-                            onFocus={() => {
-                              setOpponentMoveInputFocused(true)
-                              setAutocompleteMenuOpen(`opp-entry-move-${selectedOpp}`)
-                            }}
-                            onBlur={() => {
-                              setTimeout(() => setOpponentMoveInputFocused(false), 120)
-                              setTimeout(() => closeAutocompleteMenu(`opp-entry-move-${selectedOpp}`), 120)
-                            }}
-                            onChange={(e) => {
-                              setOpponentMoveDraft(e.target.value)
-                              setAutocompleteMenuOpen(`opp-entry-move-${selectedOpp}`)
-                            }}
-                            onKeyDown={(e) => {
-                              const options = filterMoveOptions(opponentMoveDraft, oppMoveOptions)
-                                .filter((option) => !oppMember.revealedMoves.includes(option.name))
-                                .slice(0, 8)
-                              if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                                e.preventDefault()
-                                moveAutocompleteMenuHighlight(`opp-entry-move-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
-                                return
-                              }
-                              if (e.key !== 'Enter') return
-                              e.preventDefault()
-                              const highlightedMove = options[highlightedAutocompleteIndex(autocompleteHighlight, `opp-entry-move-${selectedOpp}`)]
-                              if (highlightedMove) {
-                                addOpponentRevealedMove(highlightedMove.name)
-                                setOpponentMoveDraft('')
-                                setOpponentMoveInputFocused(false)
-                                closeAutocompleteMenu(`opp-entry-move-${selectedOpp}`)
-                                return
-                              }
-                              commitOpponentMoveDraft()
-                            }}
-                          />
-                          <button
-                            type="button"
-                            className="pick-chip"
-                            onMouseDown={(e) => e.preventDefault()}
+                          <SearchCombobox id={`opp-entry-move-${selectedOpp}`} value={opponentMoveDraft} onChange={setOpponentMoveDraft}
+                            options={revealedMoveCandidates(opponentMoveDraft).map(option => ({ key: option.name, label: option.name }))}
+                            onSelect={option => { if (addOpponentRevealedMove(option.key)) setOpponentMoveDraft('') }}
+                            optionClassName={option => `move-autocomplete-item ${moveTypeThemeClass(oppMoveOptions.find(move => move.name === option.key)?.type)}`}
+                            renderOption={option => <MoveCandidateRow name={option.label} type={oppMoveOptions.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, oppMoveOptions, movePoolByKey)} labels={moveSlotLabels} />}
+                            optionProps={option => bindTooltip(moveTooltipData(option.key, siteLanguage))}
+                            menuClassName="move-autocomplete-menu damage-opponent-move-menu"
+                            inputProps={{ 'aria-labelledby': 'opp-entry-move-label', placeholder: lt('사용 가능 기술 검색'), disabled: !oppMember.key || oppMember.revealedMoves.length >= 4 || oppMovePool?.status !== 'ready-verified' }} />
+                          <button type="button" className="pick-chip" onMouseDown={e => e.preventDefault()}
                             onClick={() => commitOpponentMoveDraft()}
-                            disabled={!oppMember.key || oppMember.revealedMoves.length >= 4}
-                          >
-                            {lt('추가')}
-                          </button>
+                            disabled={!revealedMoveCandidates(opponentMoveDraft).length}>{lt('추가')}</button>
                         </div>
-                      </label>
-                      {oppMember.key && opponentMoveInputFocused && opponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu unified-dropdown-menu damage-opponent-move-menu">
-                        {filterMoveOptions(opponentMoveDraft, oppMoveOptions)
-                          .filter((option) => !oppMember.revealedMoves.includes(option.name))
-                          .slice(0, 8)
-                          .map((option, optionIdx) => (
-                            <button key={`opp-entry-move-suggest-${oppMember.key}-${option.name}`} type="button" className={`move-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `opp-entry-move-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => {
-                              addOpponentRevealedMove(option.name)
-                              setOpponentMoveDraft('')
-                              setOpponentMoveInputFocused(false)
-                            }}>
-                              <span className="move-autocomplete-main">
-                                <strong>{option.name}</strong>
-                                {option.type ? <span className="move-autocomplete-meta">{option.type}</span> : null}
-                              </span>
-                            </button>
-                          ))}
-                      </div> : null}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -8650,7 +8600,7 @@ export default function App() {
             {librarySourceId ? <div className="creator-library-detail">
               <a className="creator-library-back" href={libraryListHref(libraryContext)}><UiIcon name="chevron" size={16} className="ui-icon ui-icon-back" />{lt('샘플 라이브러리')} · {lt('목록으로')}</a>
               {librarySource ? <>
-                <div className="section-head"><div><h2>{librarySource.title}</h2><p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
+                <div className="section-head"><div><h2>{librarySource.title}</h2>{librarySource.contentKind === 'party' ? <SourcePlacementBadge placement={librarySource.placement} language={siteLanguage} /> : null}<p className="muted">{librarySource.creator ?? lt('제작자 미확인')} · {librarySource.platform} · {librarySource.contentKind === 'party' ? lt('파티 소개') : lt('개별 포켓몬 샘플')} · {librarySource.format === 'singles' ? lt('싱글배틀') : librarySource.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인: 원본에 싱글/더블 표기 없음')}</p></div></div>
                 <p className="creator-library-trust-note">{lt('구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.')}</p>
                 <div className="creator-library-source-summary"><a href={librarySource.canonicalUrl} target="_blank" rel="noopener noreferrer"><UiIcon name="info" size={16} />{lt('원본 출처')}</a><span>{lt('원본 ID')}: {librarySource.sourceId}</span></div>
                 {librarySource.contentKind === 'party' ? <div className="creator-library-completeness"><span>{lt('구성 확인')} {librarySource.confirmedMemberCount}/{librarySource.partySize ?? 6}</span><span>{librarySource.completeMemberCount === librarySource.partySize ? lt('전체 파티 구성 확인') : lt('전체 파티 구성 미확인')}</span></div> : null}
@@ -8716,9 +8666,10 @@ export default function App() {
                   libraryScrollRef.current = window.scrollY
                   window.history.replaceState({ ...window.history.state, libraryScroll: window.scrollY }, '', window.location.href)
                 }}>
-                  <span className="creator-library-sprites">{source.members.map(member => { const row = indexByKey.get(member.pokemonKey); return row?.sprite ? <img key={member.id} src={row.sprite} alt="" /> : null })}</span>
+                  {source.contentKind === 'party' ? <CreatorPartySpriteStrip members={source.members.map(member => ({ id: member.id, sprite: indexByKey.get(member.pokemonKey)?.sprite }))} /> : <span className="creator-library-sprites">{source.members.map(member => { const row = indexByKey.get(member.pokemonKey); return row?.sprite ? <img key={member.id} src={row.sprite} alt="" /> : null })}</span>}
                   <strong>{source.title}</strong>
-                </a>
+                  </a>
+                  {source.contentKind === 'party' ? <SourcePlacementBadge placement={source.placement} language={siteLanguage} /> : null}
                 <span className="creator-library-row-meta">{source.creator ?? lt('제작자 미확인')} · {source.language === 'ko' ? 'KR' : 'JP'} · {source.format === 'singles' ? lt('싱글배틀') : source.format === 'doubles' ? lt('더블배틀') : lt('형식 미확인')} · {source.completeMemberCount === source.members.length ? lt('구성 확인') : lt('부분 확인')}</span>
               </article>)}
               {!visibleSources.length ? <p className="muted" role="status">{pendingCreatorLeads.length ? lt('이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.') : lt('검색 결과 없음')}</p> : null}
@@ -9164,7 +9115,10 @@ export default function App() {
                                      <RegisteredMoveSlot number={slot + 1} name={input} type={meta?.type} meta={meta} labels={moveSlotLabels}
                                        className={moveTypeThemeClass(meta?.type)}
                                        search={{ id: `sample-opponent-move-${entry.member.key}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                                         onSelect: option => selectSampleOpponentMove(entry.idx, slot, option.key) }}
+                                         onSelect: option => selectSampleOpponentMove(entry.idx, slot, option.key),
+                                         optionClassName: option => moveTypeThemeClass(entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type),
+                                         renderOption: option => <MoveCandidateRow name={option.label} type={entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type} meta={resolveMoveMeta(option.key, entry.reverse.opponentOptions, movePoolByKey)} labels={moveSlotLabels} />,
+                                         optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
                                        tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
                                        inputProps={{ placeholder: lt('상대 기술 검색'),
                                          onFocus: () => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: move }),
@@ -9613,75 +9567,22 @@ export default function App() {
                     </div>
                   </details> : null}
                   {opponentMoveNotice?.key === oppMember.key && opponentMoveNotice.index === selectedOpp ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}
-                  <label className="damage-opponent-move-entry">
-                    <span>{lt('상대 기술 추가')}</span>
+                  <div className="damage-opponent-move-entry">
+                    <span id="calc-opp-move-label">{lt('상대 기술 추가')}</span>
                     <div className="damage-opponent-move-input-row">
-                      <input
-                        value={calcOpponentMoveDraft}
-                        placeholder={lt('사용 가능 기술 검색')}
-                        disabled={!oppMember.key || opponentRegisteredDamageMoves.length >= 4}
-                        onFocus={() => {
-                          setCalcOpponentMoveInputFocused(true)
-                          setAutocompleteMenuOpen(`calc-opp-move-${selectedOpp}`)
-                        }}
-                        onBlur={() => {
-                          setTimeout(() => setCalcOpponentMoveInputFocused(false), 120)
-                          setTimeout(() => closeAutocompleteMenu(`calc-opp-move-${selectedOpp}`), 120)
-                        }}
-                        onChange={(e) => {
-                          setCalcOpponentMoveDraft(e.target.value)
-                          setAutocompleteMenuOpen(`calc-opp-move-${selectedOpp}`)
-                        }}
-                        onKeyDown={(e) => {
-                          const options = filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)
-                            .filter((option) => !opponentRegisteredDamageMoves.includes(option.name))
-                            .slice(0, 8)
-                          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                            e.preventDefault()
-                            moveAutocompleteMenuHighlight(`calc-opp-move-${selectedOpp}`, options.length, e.key === 'ArrowDown' ? 1 : -1)
-                            return
-                          }
-                          if (e.key !== 'Enter') return
-                          e.preventDefault()
-                          const highlightedMove = options[highlightedAutocompleteIndex(autocompleteHighlight, `calc-opp-move-${selectedOpp}`)]
-                          if (highlightedMove) {
-                            addOpponentRevealedMove(highlightedMove.name)
-                            setCalcOpponentMoveDraft('')
-                            setCalcOpponentMoveInputFocused(false)
-                            closeAutocompleteMenu(`calc-opp-move-${selectedOpp}`)
-                            return
-                          }
-                          commitCalcOpponentMoveDraft()
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="pick-chip"
-                        onMouseDown={(e) => e.preventDefault()}
+                      <SearchCombobox id={`calc-opp-move-${selectedOpp}`} value={calcOpponentMoveDraft} onChange={setCalcOpponentMoveDraft}
+                        options={revealedMoveCandidates(calcOpponentMoveDraft).map(option => ({ key: option.name, label: option.name }))}
+                        onSelect={option => { if (addOpponentRevealedMove(option.key)) setCalcOpponentMoveDraft('') }}
+                        optionClassName={option => `move-autocomplete-item ${moveTypeThemeClass(oppMoveOptions.find(move => move.name === option.key)?.type)}`}
+                        renderOption={option => <MoveCandidateRow name={option.label} type={oppMoveOptions.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, oppMoveOptions, movePoolByKey)} labels={moveSlotLabels} />}
+                        optionProps={option => bindTooltip(moveTooltipData(option.key, siteLanguage))}
+                        menuClassName="move-autocomplete-menu damage-opponent-move-menu"
+                        inputProps={{ 'aria-labelledby': 'calc-opp-move-label', placeholder: lt('사용 가능 기술 검색'), disabled: !oppMember.key || oppMember.revealedMoves.length >= 4 || oppMovePool?.status !== 'ready-verified' }} />
+                      <button type="button" className="pick-chip" onMouseDown={e => e.preventDefault()}
                         onClick={() => commitCalcOpponentMoveDraft()}
-                        disabled={!oppMember.key || opponentRegisteredDamageMoves.length >= 4}
-                      >
-                        {lt('추가')}
-                      </button>
+                        disabled={!revealedMoveCandidates(calcOpponentMoveDraft).length}>{lt('추가')}</button>
                     </div>
-                  </label>
-                  {oppMember.key && calcOpponentMoveInputFocused && calcOpponentMoveDraft && oppMoveOptions.length ? <div className="move-autocomplete-menu unified-dropdown-menu damage-opponent-move-menu">
-                    {filterMoveOptions(calcOpponentMoveDraft, oppMoveOptions)
-                      .filter((option) => !opponentRegisteredDamageMoves.includes(option.name))
-                      .slice(0, 8)
-                      .map((option, optionIdx) => (
-                        <button key={`calc-opp-move-suggest-${oppMember.key}-${option.name}`} type="button" className={`move-autocomplete-item ${highlightedAutocompleteIndex(autocompleteHighlight, `calc-opp-move-${selectedOpp}`) === optionIdx ? 'active' : ''}`} onMouseDown={() => {
-                          addOpponentRevealedMove(option.name)
-                          setCalcOpponentMoveDraft('')
-                          setCalcOpponentMoveInputFocused(false)
-                        }}>
-                          <span className="move-autocomplete-main">
-                            <strong>{option.name}</strong>
-                            {option.type ? <span className="move-autocomplete-meta">{option.type}</span> : null}
-                          </span>
-                        </button>
-                      ))}
-                  </div> : null}
+                  </div>
                 </div>
               </div> : null}
             </div>
@@ -9973,7 +9874,6 @@ export default function App() {
           </div> : null}
         </div> : null}
       </main>
-      <footer className="app-data-notice"><UiIcon name="info" size={16} /><span>{siteLanguage === 'ko' ? '기술 데이터' : siteLanguage === 'ja' ? 'わざデータ' : 'Move data'}</span><a href={`https://github.com/projectpokemon/champout/tree/${LEARNSET_SOURCE.commit}`} target="_blank" rel="noopener noreferrer" aria-label={siteLanguage === 'ko' ? '기술 데이터 원본' : siteLanguage === 'ja' ? 'わざデータの出典' : 'Move data source'}>{LEARNSET_SOURCE.date}</a><span>· {siteLanguage === 'ko' ? '최신판과 다를 수 있음' : siteLanguage === 'ja' ? '現行版と異なる場合があります' : 'May differ from the current game'}</span></footer>
     </div>
   )
 }

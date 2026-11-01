@@ -162,7 +162,7 @@ export type HoverTooltipCard = {
 export type DexDescriptionBundle = {
   moves: Record<string, { moveId: number; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }>; effectChance?: number | null }>
   abilities: Record<string, { abilityId: number; nameKo: string; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }> }>
-  items: Record<string, { itemId: number; nameKo: string; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }> }>
+  items: Record<string, { itemId?: number; sourceItemId?: number; sourceLabels?: { name: string; description: string }; sourceCommit?: string; nameKo: string; nameEn: string; nameJa: string; text: Record<SiteLanguage, { summary: string; detail: string }> }>
 }
 
 export type PersistedState = {

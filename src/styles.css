@@ -450,14 +450,12 @@ header p {
 .home-footer-text-block-quiet {
   margin-top: 22px;
 }
-.home-footer-text-block > summary {
-  cursor: pointer;
+.home-footer-text-block > h3 {
+  margin: 0 0 16px;
   color: var(--muted);
-  font-weight: 700;
-  width: fit-content;
+  font-size: .95rem;
+  font-weight: 600;
 }
-.home-footer-text-block[open] > summary { margin-bottom: 16px; }
-.home-footer-text-block:not([open]) > :not(summary) { display: none; }
 .home-footer-text-row {
   display: grid;
   gap: 10px;
@@ -1476,9 +1474,19 @@ header p {
 .creator-library-list { display: grid; gap: 10px; }
 .creator-library-source-link { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; text-decoration: none; }
 .creator-library-source-link strong { min-width: 0; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
-.creator-library-sprites { display: flex; flex: 0 0 auto; align-items: center; max-width: 144px; overflow: hidden; }
-.creator-library-sprites img { width: 38px; height: 38px; object-fit: contain; margin-right: -13px; }
-.creator-library-sprites img:last-child { margin-right: 0; }
+.creator-library-sprites { display: flex; flex: 0 0 auto; align-items: center; }
+.creator-library-sprites img { width: 38px; height: 38px; object-fit: contain; }
+.creator-library-card--party .creator-library-source-link { display: grid; grid-template-columns: 144px minmax(0, 1fr); align-items: start; gap: 8px; }
+.creator-library-card--party .creator-library-sprites { display: grid; grid-template-columns: repeat(6, 24px); width: 144px; max-width: none; overflow: visible; }
+.creator-library-card--party .creator-library-sprite-slot { display: block; width: 24px; height: 24px; }
+.creator-library-card--party .creator-library-sprite-slot img { display: block; width: 24px; height: 24px; max-width: 100%; object-fit: contain; margin: 0; }
+.creator-library-placement { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-width: 0; font-size: 12px; }
+.creator-library-placement-chip { padding: 2px 7px; border: 1px solid #42536a; border-radius: 6px; background: #162c40; color: #d6e7fb; }
+.creator-library-placement-evidence, .creator-library-placement small { color: #b9c9dc; }
+.creator-library-detail .creator-library-placement { margin: 6px 0; }
+@media (max-width: 390px) {
+  .creator-library-card--party .creator-library-source-link { grid-template-columns: minmax(0, 1fr); }
+}
 .creator-library-list .creator-library-card { padding: 8px 12px; min-height: 58px; display: grid; gap: 2px; align-content: center; }
 .creator-library-back { display: inline-block; margin-bottom: 18px; }
 .creator-library-detail { display: grid; gap: 12px; min-width: 0; }
@@ -1505,7 +1513,7 @@ header p {
 .creator-library-personal { border-top: 1px solid #42536a; padding-top: 16px; display: grid; gap: 10px; min-width: 0; }
 .creator-library-personal > h3 { margin: 0; }
 .creator-library-result-count, .creator-library-row-meta { margin: 0; color: #b9c9dc; font-size: 12px; }
-.creator-library-row-meta { padding-left: 50px; min-width: 0; overflow-wrap: anywhere; }
+.creator-library-row-meta { min-width: 0; overflow-wrap: anywhere; }
 .creator-library-card, .creator-library-submit { border: 1px solid #42536a; border-radius: 12px; padding: 16px; background: #101d2c; overflow-wrap: anywhere; }
 .creator-library-card { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .creator-library-card--party { border-left: 4px solid #68b8d8; }
@@ -6791,12 +6799,17 @@ textarea { min-height: 72px; resize: vertical; }
 .damage-opponent-move-entry {
   padding-top: 10px;
   border-top: 1px solid rgba(51, 65, 85, 0.48);
+  display: grid;
+  gap: 6px;
 }
 .damage-opponent-move-input-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
+  align-items: start;
 }
+.damage-opponent-move-input-row .pokemon-search-field { min-width: 0; }
+.damage-opponent-move-input-row .pick-chip { min-height: 44px; }
 .damage-opponent-move-input-row input {
   width: 100%;
   min-width: 0;
@@ -8997,6 +9010,13 @@ html {
 .pokemon-search-field .autocomplete-item { min-height: 40px; border: 0; border-radius: 0; background: transparent; }
 .pokemon-search-field .autocomplete-item + .autocomplete-item { border-top: 1px solid var(--ui-separator); }
 .pokemon-search-field .autocomplete-item[aria-selected="true"], .pokemon-search-field .autocomplete-item:hover { background: var(--ui-selection); color: #fff; }
+.pokemon-search-field .move-autocomplete-item[class*="move-type-"] { background: color-mix(in srgb, var(--move-bg) 34%, var(--ui-group)); border-left: 3px solid var(--move-border); }
+.pokemon-search-field .move-autocomplete-item[class*="move-type-"]:is(:hover, [aria-selected="true"]) { background: color-mix(in srgb, var(--move-bg) 52%, var(--ui-selection)); }
+.move-autocomplete-item .move-candidate-row { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+.move-autocomplete-item .move-candidate-row > img { flex: 0 0 auto; }
+.move-autocomplete-item .move-candidate-text { display: grid; gap: 2px; min-width: 0; }
+.move-autocomplete-item .move-candidate-text strong { font-size: 12px; line-height: 1.25; overflow-wrap: anywhere; }
+.move-autocomplete-item .move-candidate-meta { color: var(--muted); font-size: 10px; line-height: 1.25; white-space: normal; }
 .pokemon-build-fields .party-meta-chip { background: var(--ui-elevated); border-color: var(--ui-separator); border-radius: var(--radius-card); }
 .pokemon-build-fields .party-meta-chip-button { position: relative; padding-inline-end: 27px; }
 .pokemon-build-fields .meta-field-chevron { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--muted); }
@@ -9049,8 +9069,6 @@ html {
 .sample-damage-move-result .damage-range-meter { width: min(100%, 240px); }
 .sample-damage-move-result > span { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .damage-verdict { font-size: .82em; color: var(--control-text); }
-.app-data-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 16px 2px 12px; color: var(--muted); font-size: .8rem; line-height: 1.4; }
-.app-data-notice a { color: var(--link); text-decoration: underline; }
 :is(.settings-action-item strong, .sample-saved-actions, .party-preset-card-actions, .creator-library-submit-row, .sample-builder-action-card, .sample-lab-build-link, .dex-back-link, .creator-library-back) .ui-icon { vertical-align: middle; }
 :is(.action-button, .pick-chip, .settings-action-item, .sample-saved-actions button, .party-preset-card-actions button):has(> .ui-icon) { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .settings-action-item strong { display: inline-flex; align-items: center; gap: 7px; }

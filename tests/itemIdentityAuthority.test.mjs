@@ -19,7 +19,15 @@ test('original held item is classified before Mega stone normalization', () => {
 })
 
 test('all ordinary options stay valid independently of missing description metadata', () => {
-  assert.equal(CHAMPIONS_ITEM_OPTIONS.length, 82)
+  assert.equal(CHAMPIONS_ITEM_OPTIONS.length, 81)
+  for (const raw of ['とつげきチョッキ', '돌격조끼', 'Assault Vest']) {
+    assert.deepEqual(classifyHeldItem('garchomp', raw), { status: 'unknown', raw, canonical: null, requiredStone: null })
+    assert.equal(classifyHeldItem('mega-gyarados', raw).status, 'incompatible')
+    assert.equal(isCalculableHeldItem('garchomp', raw), false)
+    assert.equal(quickItem(raw, null, CHAMPIONS_ITEM_OPTIONS), raw)
+  }
+  assert.equal(classifyHeldItem('garchomp', '').status, 'none')
+  assert.equal(classifyHeldItem('garchomp', '구애스카프').status, 'allowed')
   for (const item of CHAMPIONS_ITEM_OPTIONS) assert.equal(classifyHeldItem('garchomp', item).status, 'allowed', item)
 })
 

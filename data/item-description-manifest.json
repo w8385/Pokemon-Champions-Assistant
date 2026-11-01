@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+  "primaryFiles": {
+    "masterdata/item.json": "556ad830a535d6280310379f8dfa738f45ef3f38896b86f4a3981aae8269df5e",
+    "rom-txt/jpn/iteminfo_syn.json": "719f92b01ecddbbc7ee300fcea27d698fa9875d2a0da133c07b924e6e75b670c",
+    "rom-txt/jpn/itemname.json": "4de61e0bb29d93ef7c494a3d0168d9e2bd5093943356543508ed6da8657e2b3c",
+    "rom-txt/kor/iteminfo_syn.json": "29f43b048050fed24a20c1e7079407eddc943cb56703ab9aa8e061de7eba04af",
+    "rom-txt/kor/itemname.json": "37dc319f67326a08ac7879ee63a46b8f4f736ea15c4c6cb09496f08f1ffc2879",
+    "rom-txt/usa/iteminfo_syn.json": "5525dc9d70090c9168595046f5190ea22515241763242644cc3d41592a6545af",
+    "rom-txt/usa/itemname.json": "bb2112743bf62fe2d1cfa2e760749d643b5f705a5c766c432e348eddee543b17"
+  },
+  "fixtureSha256": "c67dcf5ef5f2dcf06c037e35cb4070e32480cb4bbd46c04db227451a17cc9f4c",
+  "historicalSha256": "4df9c5ca982df11bea058d90092f8c84fa7a5cf3ba72245cd4d89bf341ae271a"
+}

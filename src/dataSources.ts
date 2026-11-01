@@ -45,10 +45,10 @@ export const dataSourcePolicy = {
   },
   itemWhitelist: {
     sourceOfTruth: 'src/championsItems.ts',
-    report: 'reports/championsItemWhitelistReport.json',
-    primary: '레귤레이션 M-C 사용 가능 도구와 기존 포챔스 도구 화이트리스트의 합집합',
-    supplements: ['https://www.pokesuku.com/champions/regulation/m-c', 'PokeAPI 다국어 이름·일반 도구 sprite', 'Serebii 신규 메가스톤 sprite'],
-    caveat: 'M-C 신규 일반 도구 12종을 포함한다. 메가스톤은 종 고정 도구로 앱에서 별도 처리하며, `持ち物なし`는 빈 값으로 처리한다.',
+    report: 'reports/championsOnlyItemApprovalReport.json',
+    primary: '고정 게임 원본 ID·일본어 이름과 별도 체크인 잠정 승인목록의 교집합: 일반 도구 81개',
+    supplements: ['data/champions-item-approval.json (166 원본 행, 81 일반 잠정 허용, 81 필요 스톤, 4 보류)', 'PokeAPI 이름·sprite는 표시용이며 도입 근거가 아님'],
+    caveat: '과거 82개 보고서는 이력으로 보존하되 당시 사용률/오픈데이터 수집 0건은 승인 근거가 아닙니다. 돌격조끼는 사용자 비도입 신고와 고정 원본 행 부재로 신규 선택·도감·계산에서 제외하며 과거 저장 원문은 유지합니다. 81개는 현행 버전/규정 장착 합법성 전수 검증이 아닙니다.',
   },
   verifiedSpecies: {
     sourceOfTruth: 'src/pokemon_champions_verified_data.json',

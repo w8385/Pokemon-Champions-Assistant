@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
 const source = await fs.readFile(path.join(rootDir, 'src', 'championsItems.ts'), 'utf8')
@@ -8,6 +9,9 @@ const pokemonData = JSON.parse(await fs.readFile(path.join(rootDir, 'src', 'poke
 const optionsMatch = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
 if (!optionsMatch) throw new Error('Could not find CHAMPIONS_ITEM_OPTIONS')
 const options = [...optionsMatch[1].matchAll(/["']([^"']+)["']/g)].map((entry) => entry[1])
+const approvalBytes = await fs.readFile(path.join(rootDir, 'data', 'champions-item-approval.json'))
+if (createHash('sha256').update(approvalBytes).digest('hex') !== '1afd0b574b7b01c25f9feb68a5811832d2e6cc64096b4bbb770e4e561caab79c') throw new Error('pinned approval fixture changed')
+const approval = JSON.parse(approvalBytes)
 
 function parseRecord(name) {
   const match = source.match(new RegExp(`export const ${name}[^=]*= \\{([\\s\\S]*?)\\n\\}`))
@@ -75,7 +79,14 @@ if (!appSource.includes("finalMultiplier *= 1.3\n    notes.push('생명의구슬
 if (!appSource.includes("'いのちのたま': { ko: '공격 기술의 대미지 30% 증가.")) {
   failures.push('Life Orb tooltip summary is missing')
 }
-if (options.length !== 82) failures.push(`M-C held-item count mismatch: expected 82, got ${options.length}`)
+const expected = approval.approvedOrdinary.map(row => row.canonical)
+if (options.length !== 81 || new Set(options).size !== 81 || options.some(item => !expected.includes(item))) failures.push(`approved ordinary item set mismatch: expected exact 81, got ${options.length}`)
+if (approval.requiredStones.length !== 81 || new Set(approval.requiredStones.map(row => row.canonical)).size !== 81) failures.push('required stone set mismatch')
+for (const excluded of ['とつげきチョッキ', '돌격조끼', 'Assault Vest', ...approval.sourceOnlyUnconfirmed]) {
+  if (options.includes(excluded) || source.includes(JSON.stringify(excluded))) failures.push(`unapproved item in registry: ${excluded}`)
+}
+const pinned = new Map(approval.sourceRows.map(row => [row.sourceItemId, row.nameJa]))
+if (approval.sourceRows.length !== 166 || pinned.size !== 166 || approval.approvedOrdinary.some(row => pinned.get(row.sourceItemId) !== row.canonical)) failures.push('pinned source namespace/label mismatch')
 if (!appSource.includes("canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal'")) {
   failures.push('Damage calculator does not apply Normal Gem')
 }

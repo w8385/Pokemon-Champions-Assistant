@@ -71,7 +71,8 @@ test('number draft suppresses stale result; slider, effort group and cut selecti
     assert.equal(state.referenceEffort, 20)
     const params = new URLSearchParams()
     writeSpeedLineState(params,state)
-    assert.equal(params.get('view'),'ranges')
+    assert.equal(params.get('view'),'detail')
+    assert.equal(parseSpeedLineState(params).state.view, 'detail')
     assert.equal(params.get('refEp'),'20')
     assert.equal(parseSpeedLineState(params).state.referenceEffort,20)
   } finally {

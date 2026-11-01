@@ -4,6 +4,7 @@ import { additionalCreatorSamples } from './additionalCreatorSamples.ts'
 import { previousSeasonRankerSamples } from './previousSeasonRankerSamples.ts'
 import { m6TopTenSamples } from './m6TopTenSamples.ts'
 import { validCompleteEfforts } from './buildRules.ts'
+import { partyPlacementClaims, type SourcePlacement } from './creatorSourcePlacement.ts'
 
 export type LibraryLanguage = 'ko' | 'ja'
 export type LibraryFormat = 'singles' | 'doubles'
@@ -264,7 +265,24 @@ export type CreatorSource = {
   id: string; platform: SourcePlatform; sourceId: string; canonicalUrl: string
   title: string; creator: string | null; language: LibraryLanguage; format: LibraryFormat | null
   contentKind: ContentKind; partySize: number | null
+  placement?: SourcePlacement
   members: CreatorSample[]; confirmedMemberCount: number; completeMemberCount: number
+}
+
+function sourcePlacement(entry: CreatorSample): SourcePlacement | undefined {
+  if (entry.contentKind !== 'party') return undefined
+  const claim = partyPlacementClaims[entry.provenance.sourceId]
+  if (!claim) return undefined
+  if (claim.url !== entry.provenance.canonicalUrl) throw new Error(`Conflicting source URL: ${entry.provenance.sourceId}`)
+  const titleEvidence = entry.provenance.fields.title ?? null
+  const rankEvidence = entry.provenance.fields.rank ?? null
+  if (!titleEvidence || (claim.claimEvidence === 'author_result_image' && !rankEvidence)) throw new Error(`Conflicting source evidence: ${entry.provenance.sourceId}`)
+  return { seasonId: claim.seasonId, placement: claim.placement, placementScope: claim.placementScope,
+    claimEvidence: claim.claimEvidence, independentlyVerified: false,
+    seasonEvidence: claim.seasonId === null && entry.provenance.sourceId.includes('Muu_poke') ? null : titleEvidence,
+    placementEvidence: claim.claimEvidence === 'author_result_image' ? rankEvidence : titleEvidence,
+    ...(entry.provenance.sourceId.includes('Muu_poke') ? { note: 'S-6 / M-6 conflict' } : {}),
+  }
 }
 
 export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
@@ -278,11 +296,16 @@ export function groupCreatorSources(entries: CreatorSample[]): CreatorSource[] {
       source = { id, platform: entry.platform, sourceId, canonicalUrl,
         title: entry.contentKind === 'party' ? entry.title.split(' — ')[0] : entry.title,
         creator: entry.creator, language: entry.language, format: entry.format, contentKind: entry.contentKind,
-        partySize: entry.contentKind === 'party' ? entry.partySize ?? null : null, members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
+        partySize: entry.contentKind === 'party' ? entry.partySize ?? null : null, placement: sourcePlacement(entry), members: [], confirmedMemberCount: 0, completeMemberCount: 0 }
       sources.set(id, source)
     }
     if (source.contentKind !== entry.contentKind) throw new Error(`Conflicting source content kinds: ${id}`)
     if (entry.contentKind === 'party' && source.partySize !== (entry.partySize ?? null)) throw new Error(`Conflicting party sizes: ${id}`)
+    if (source.sourceId !== sourceId || source.format !== entry.format || source.language !== entry.language || source.creator !== entry.creator ||
+        source.title !== (entry.contentKind === 'party' ? entry.title.split(' — ')[0] : entry.title)) throw new Error(`Conflicting source identity: ${id}`)
+    if (source.members.length && (source.members[0].rank !== entry.rank ||
+        JSON.stringify(source.members[0].provenance.fields.rank ?? null) !== JSON.stringify(entry.provenance.fields.rank ?? null) ||
+        JSON.stringify(source.members[0].provenance.fields.format ?? null) !== JSON.stringify(entry.provenance.fields.format ?? null))) throw new Error(`Conflicting source claims: ${id}`)
     source.members.push(entry)
     if (entry.partialBuild || entry.build) source.confirmedMemberCount += 1
     if (canImportCreatorSample(entry)) source.completeMemberCount += 1
@@ -298,7 +321,7 @@ export function individualCreatorSources(entries: CreatorSample[]): CreatorSourc
     id: `individual:${entry.id}`, platform: entry.platform, sourceId: entry.provenance.sourceId,
     canonicalUrl: entry.provenance.canonicalUrl, title: entry.title, creator: entry.creator,
     language: entry.language, format: entry.format, contentKind: 'pokemon' as const, partySize: null,
-    members: [entry], confirmedMemberCount: 1, completeMemberCount: Number(canImportCreatorSample(entry)),
+    placement: sourcePlacement(entry), members: [entry], confirmedMemberCount: 1, completeMemberCount: Number(canImportCreatorSample(entry)),
   }))
 }
 

@@ -37,6 +37,12 @@ async function mapWithConcurrency(items, limit, worker) {
 
 const source = await fs.readFile(sourcePath, 'utf8')
 const options = parseOptions(source)
+// This utility may refresh labels/sprites only, never approve membership from PokéAPI.
+const approval = JSON.parse(await fs.readFile(path.join(rootDir, 'data/champions-item-approval.json'), 'utf8'))
+const allowed = new Set(approval.approvedOrdinary.map(row => row.canonical))
+if (options.length !== 81 || allowed.size !== 81 || options.some(item => !allowed.has(item))) {
+  throw new Error('item membership differs from pinned provisional approval; refusing metadata repair')
+}
 const itemList = await getJson(itemListUrl)
 const details = await mapWithConcurrency(itemList.results, 24, async (entry) => {
   try {

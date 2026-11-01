@@ -8,7 +8,8 @@ test('party tuning passes existing magic candidate and 11-multiple points to sha
   assert.match(app, /magicCandidate=\{magicCandidate\}/)
   assert.match(app, /magicPoints=\{key => magicEffortPoints\(tuningRow, tuningMember, key\)\}/)
   assert.match(modal, /className=\{\['effort-gauge-cell'[^]*points\.includes\(i \+ 1\) \? 'magic'/)
-  assert.match(modal, /targetEffort \? <span className="magic-inline"/)
+  assert.match(modal, /isMagicStat \? <span className="magic-inline"/)
+  assert.match(modal, /targetEffort !== null \? <span className="magic-inline"/)
 })
 test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {
   assert.match(quick, /quickStagePair\(source\.battle, target\.battle/)

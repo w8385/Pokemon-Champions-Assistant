@@ -84,16 +84,13 @@ test('effort dialog retains six gauges, 66/32 budget, checkpoints, nature and fo
 test('purpose segments decorate existing native controls without replacing handlers or URLs', () => {
   const src = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const detail = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
-  const ranges = readFileSync(new URL('../src/SpeedLineRangesPanel.tsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
   assert.match(css, /\.dex-mode-tabs\.ui-segmented > \.tab-chip\s*\{[^}]*min-height: 44px/, 'override the older 42px Dex selector at the actual scoped control')
   for (const selector of ['dex-mode-tabs', 'creator-library-kind-tabs', 'sample-lab-tabs']) assert.match(src, new RegExp(`${selector} ui-segmented`))
   assert.match(src, /href=\{`#\/sample-builder\?sampleTab=\$\{value\}`\} role="tab" aria-selected/)
   assert.match(src, /aria-pressed=\{libraryContentKind === 'pokemon'\} onClick=\{\(\) => setLibraryContentKind\('pokemon'\)\}/)
   assert.match(src, /onClick=\{\(\) => \{ if \(mode === dexSearchMode\) return;/)
-  for (const panel of [detail, ranges]) assert.match(panel, /speed-line-view-switch ui-segmented/)
-  assert.match(detail, /onClick=\{\(\) => update\(\{ view: 'ranges' \}\)\}/)
-  assert.match(ranges, /onClick=\{\(\) => update\(\{ view: 'detail' \}\)\}/)
+  assert.doesNotMatch(detail, /speed-line-view-switch|SpeedLineRangesPanel|view: 'ranges'/)
 })
 
 

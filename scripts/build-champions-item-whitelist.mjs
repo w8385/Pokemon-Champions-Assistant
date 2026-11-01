@@ -1,376 +1,67 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 
-const GUIDE_URL = 'https://champs.pokedb.tokyo/guide/opendata'
-const ROOT_URL = 'https://champs.pokedb.tokyo'
-const POKEMON_LIST_URL = `${ROOT_URL}/pokemon/list`
-const POKEAPI_ITEM_LIST_URL = 'https://pokeapi.co/api/v2/item?limit=2200'
-const REGULATION_MC_SOURCE_URL = 'https://www.pokesuku.com/champions/regulation/m-c'
-const REGULATION_MC_GENERAL_ITEMS = [
-  'ながねぎ', 'ゴツゴツメット', 'ふうせん', 'レッドカード', 'しめつけバンド', 'だっしゅつボタン',
-  'ノーマルジュエル', 'グランドコート', 'エレキシード', 'サイコシード', 'ミストシード', 'グラスシード',
-]
-
-const MANUAL_SHORT_ALIASES = {
-  'きあいのタスキ': ['기띠', '띠'],
-  'こだわりスカーフ': ['스카프'],
-  'たべのこし': ['먹밥', '남은음식'],
-  'ひかりのこな': ['반짝가루'],
-  'メタルコート': ['금속코트'],
-  'メンタルハーブ': ['멘탈허브'],
-  'ようせいのハネ': ['요정의깃털'],
+// Offline, fail-closed membership audit. Historical network/PokeAPI reports remain untouched.
+const root = path.resolve(new URL('..', import.meta.url).pathname)
+const approvalBytes = await fs.readFile(path.join(root, 'data/champions-item-approval.json'))
+if (createHash('sha256').update(approvalBytes).digest('hex') !== '1afd0b574b7b01c25f9feb68a5811832d2e6cc64096b4bbb770e4e561caab79c') {
+  throw new Error('pinned approval fixture changed; independent review required')
 }
-
-const MANUAL_KO_LABELS = {
-  'ようせいのハネ': '요정의깃털',
+const approval = JSON.parse(approvalBytes)
+const source = await fs.readFile(path.join(root, 'src/championsItems.ts'), 'utf8')
+const match = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
+if (!match) throw new Error('missing Champions item registry')
+const options = [...match[1].matchAll(/"([^"]+)"/g)].map(row => row[1])
+const rows = approval.sourceRows
+const ordinary = approval.approvedOrdinary
+const stones = approval.requiredStones
+const held = new Map(rows.map(row => [row.sourceItemId, row]))
+const ids = new Set(rows.map(row => row.sourceItemId))
+const names = new Set(rows.map(row => row.nameJa))
+const approved = ordinary.map(row => row.canonical)
+const pending = approval.sourceOnlyUnconfirmed
+const equalSet = (a, b) => a.length === b.length && new Set(a).size === a.length && a.every(value => b.includes(value))
+if (approval.sourceCommit !== '50e7233b78c3b81df29563f9695386c28e77fc95' ||
+    approval.rawItemSha256 !== '556ad830a535d6280310379f8dfa738f45ef3f38896b86f4a3981aae8269df5e' ||
+    approval.rawJapaneseNamesSha256 !== '4de61e0bb29d93ef7c494a3d0168d9e2bd5093943356543508ed6da8657e2b3c' ||
+    rows.length !== 166 || ids.size !== 166 || names.size !== 166 ||
+    ordinary.length !== 81 || stones.length !== 81 || pending.length !== 4 ||
+    !equalSet(options, approved) ||
+    !ordinary.every(({ canonical, sourceItemId }) => held.get(sourceItemId)?.nameJa === canonical && held.get(sourceItemId)?.categoryA !== '8') ||
+    !stones.every(({ sourceItemId }) => held.get(sourceItemId)?.categoryA === '8') ||
+    !pending.every(name => names.has(name) && !approved.includes(name)) ||
+    ordinary.some(row => !Number.isInteger(row.sourceItemId)) ||
+    !equalSet(rows.filter(row => row.categoryA === '8').map(row => row.sourceItemId), stones.map(row => row.sourceItemId)) ||
+    !equalSet(rows.filter(row => row.categoryA !== '8').map(row => row.nameJa), [...approved, ...pending]) ||
+    ['とつげきチョッキ', '돌격조끼', 'Assault Vest'].some(name => source.includes(JSON.stringify(name)))) {
+  throw new Error('unapproved/missing item, source collision or pinned snapshot mismatch; no files written')
 }
-
-const MANUAL_SPRITE_PATHS = {
-  'こだわりスカーフ': 'choice-scarf',
-  'ようせいのハネ': 'fairy-feather',
-}
-
-const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
-const srcPath = path.join(rootDir, 'src', 'championsItems.ts')
-const reportPath = path.join(rootDir, 'reports', 'championsItemWhitelistReport.json')
-
-function absoluteUrl(href) {
-  return new URL(href, ROOT_URL).toString()
-}
-
-function uniqueSorted(values, locale = 'ja') {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b, locale))
-}
-
-function isMegaStone(item) {
-  return item.includes('ナイト')
-}
-
-function toTsStringArray(items, indent = '  ') {
-  return items.map((item) => `${indent}${JSON.stringify(item)},`).join('\n')
-}
-
-async function fetchWithRetry(url, attempts = 3) {
-  let lastError
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const res = await fetch(url)
-      if (!res.ok) throw new Error(`Fetch failed ${res.status}: ${url}`)
-      return res
-    } catch (error) {
-      lastError = error
-      if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, attempt * 300))
-    }
-  }
-  throw lastError
-}
-
-async function getJson(url) {
-  return (await fetchWithRetry(url)).json()
-}
-
-async function getText(url) {
-  return (await fetchWithRetry(url)).text()
-}
-
-function getLocalizedName(names, lang) {
-  return names.find((entry) => entry.language?.name === lang)?.name ?? null
-}
-
-function decodeHtmlEntities(value) {
-  return value
-    .replaceAll('&quot;', '"')
-    .replaceAll('&#34;', '"')
-    .replaceAll('&amp;', '&')
-    .replaceAll('&lt;', '<')
-    .replaceAll('&gt;', '>')
-}
-
-function parseUsagePieCharts(html) {
-  const arrays = [...html.matchAll(/usagePieChart\((\[.*?\])\)/g)].map((match) => match[1])
-  return arrays
-    .map((encoded) => {
-      try {
-        return JSON.parse(decodeHtmlEntities(encoded))
-      } catch {
-        return null
-      }
-    })
-    .filter(Boolean)
-}
-
-function parseCurrentSeasonNumber(listHtml) {
-  const seasonMatches = [...listHtml.matchAll(/\/pokemon\/show\/\d{4}-\d{2}\?season=(\d+)&rule=0/g)].map((match) => Number(match[1]))
-  const maxSeason = Math.max(...seasonMatches, 0)
-  if (!maxSeason) throw new Error('Failed to detect current season from pokemon list page')
-  return maxSeason
-}
-
-function extractShowUrls(listHtml, season, rule) {
-  const pattern = new RegExp(`/pokemon/show/\\d{4}-\\d{2}\\?season=${season}&rule=${rule}`, 'g')
-  return uniqueSorted([...listHtml.matchAll(pattern)].map((match) => absoluteUrl(match[0])))
-}
-
-async function mapWithConcurrency(items, limit, worker) {
-  const results = new Array(items.length)
-  let cursor = 0
-  async function run() {
-    while (cursor < items.length) {
-      const index = cursor
-      cursor += 1
-      results[index] = await worker(items[index], index)
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length || 1) }, () => run()))
-  return results
-}
-
-let guideHtml = ''
-let listHtmlCurrentSingle = ''
-let currentSeasonNumber = null
-try {
-  guideHtml = await getText(GUIDE_URL)
-  listHtmlCurrentSingle = await getText(`${POKEMON_LIST_URL}?rule=0`)
-  currentSeasonNumber = parseCurrentSeasonNumber(listHtmlCurrentSingle)
-} catch {
-  // The historical community source can become unavailable. Preserve the
-  // existing whitelist and still merge the independently verified M-C items.
-}
-
-const jsonUrls = uniqueSorted(
-  [...guideHtml.matchAll(/href="(\/opendata\/[^\"]+\.json)"/g)].map((match) => absoluteUrl(match[1])),
-)
-
-const usageListPages = []
-for (let season = 1; season <= (currentSeasonNumber ?? 0); season += 1) {
-  for (const rule of [0, 1]) {
-    const url = `${POKEMON_LIST_URL}?season=${season}&rule=${rule}`
-    const html = season === currentSeasonNumber && rule === 0 ? listHtmlCurrentSingle : await getText(url)
-    const showUrls = extractShowUrls(html, season, rule)
-    usageListPages.push({
-      url,
-      season,
-      rule,
-      showPageCount: showUrls.length,
-      showUrls,
-    })
-  }
-}
-
-const datasets = []
-const opendataItems = []
-for (const url of jsonUrls) {
-  const data = await getJson(url)
-  const items = []
-  for (const teamEntry of data.teams ?? []) {
-    for (const member of teamEntry.team ?? []) {
-      if (typeof member.item === 'string' && member.item.trim()) items.push(member.item.trim())
-    }
-  }
-  const uniqueItems = uniqueSorted(items)
-  datasets.push({
-    url,
-    season: data.season ?? null,
-    rule: data.rule ?? null,
-    updatedAt: data.updated_at ?? null,
-    uniqueItemCount: uniqueItems.length,
-    uniqueItems,
-  })
-  opendataItems.push(...uniqueItems)
-}
-
-const usagePageRecords = await mapWithConcurrency(
-  usageListPages.flatMap((page) => page.showUrls.map((showUrl) => ({ season: page.season, rule: page.rule, showUrl }))),
-  6,
-  async ({ season, rule, showUrl }) => {
-    const html = await getText(showUrl)
-    const itemCharts = parseUsagePieCharts(html).filter((rows) => rows[0] && typeof rows[0].item_key === 'number')
-    const items = []
-    for (const rows of itemCharts) {
-      for (const row of rows) {
-        if (typeof row?.name !== 'string' || typeof row?.item_key !== 'number') continue
-        items.push({
-          itemKey: row.item_key,
-          name: row.name,
-          rank: row.rank ?? null,
-          rate: row.rate ?? null,
-        })
-      }
-    }
-    return { season, rule, showUrl, items }
-  },
-)
-
-const usageItemMap = new Map()
-for (const record of usagePageRecords) {
-  for (const item of record.items) {
-    const current = usageItemMap.get(item.name) ?? {
-      itemKeys: new Set(),
-      pages: [],
-      seasonRules: new Set(),
-      bestRank: Number.POSITIVE_INFINITY,
-      highestRate: 0,
-    }
-    current.itemKeys.add(item.itemKey)
-    current.pages.push({ url: record.showUrl, season: record.season, rule: record.rule, rank: item.rank, rate: item.rate })
-    current.seasonRules.add(`S${record.season}-R${record.rule}`)
-    if (typeof item.rank === 'number') current.bestRank = Math.min(current.bestRank, item.rank)
-    if (typeof item.rate === 'number') current.highestRate = Math.max(current.highestRate, item.rate)
-    usageItemMap.set(item.name, current)
-  }
-}
-
-const currentSource = await fs.readFile(srcPath, 'utf8')
-const currentOptionsMatch = currentSource.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
-const existingItems = currentOptionsMatch
-  ? [...currentOptionsMatch[1].matchAll(/["']([^"']+)["']/g)].map((match) => match[1])
-  : []
-const usageItems = uniqueSorted([...usageItemMap.keys()])
-const opendataUniqueItems = uniqueSorted(opendataItems)
-const combinedItems = uniqueSorted([...existingItems, ...usageItems, ...opendataUniqueItems, ...REGULATION_MC_GENERAL_ITEMS])
-const excludedMegaStones = combinedItems.filter(isMegaStone)
-const excludedNoItem = combinedItems.filter((item) => item === '持ち物なし')
-const whitelistItems = combinedItems.filter((item) => item !== '持ち物なし' && !isMegaStone(item))
-
-const onlyInUsagePages = whitelistItems.filter((item) => usageItemMap.has(item) && !opendataUniqueItems.includes(item))
-const onlyInOpenData = whitelistItems.filter((item) => opendataUniqueItems.includes(item) && !usageItemMap.has(item))
-const inBothSources = whitelistItems.filter((item) => usageItemMap.has(item) && opendataUniqueItems.includes(item))
-
-const itemList = await getJson(POKEAPI_ITEM_LIST_URL)
-const detailsByJa = new Map()
-const detailsById = new Map()
-let cursor = 0
-const concurrency = 24
-
-async function worker() {
-  while (cursor < itemList.results.length) {
-    const index = cursor
-    cursor += 1
-    const entry = itemList.results[index]
-    try {
-      const data = await getJson(entry.url)
-      const ja = getLocalizedName(data.names, 'ja-Hrkt') ?? getLocalizedName(data.names, 'ja')
-      const detail = {
-        id: data.id,
-        apiName: entry.name,
-        ko: getLocalizedName(data.names, 'ko'),
-        en: getLocalizedName(data.names, 'en'),
-      }
-      detailsById.set(data.id, detail)
-      if (ja) detailsByJa.set(ja, detail)
-    } catch {
-      // skip bad item detail; report will show missing label
-    }
-  }
-}
-
-await Promise.all(Array.from({ length: concurrency }, () => worker()))
-
-function detailForItem(item) {
-  // Usage-site item_key values are not PokéAPI item IDs. Prefer the exact
-  // Japanese localized name match; treating item_key as a PokéAPI ID shifts
-  // labels and sprites onto unrelated items.
-  return detailsByJa.get(item) ?? null
-}
-
-const koLabelEntries = whitelistItems
-  .map((item) => [item, MANUAL_KO_LABELS[item] ?? detailForItem(item)?.ko ?? null])
-  .filter(([, ko]) => typeof ko === 'string' && ko)
-
-const enLabelEntries = whitelistItems
-  .map((item) => [item, detailForItem(item)?.en ?? null])
-  .filter(([, en]) => typeof en === 'string' && en)
-
-const aliasEntries = whitelistItems.map((item) => {
-  const detail = detailForItem(item)
-  const aliases = uniqueSorted([
-    ...(detail?.ko ? [detail.ko] : []),
-    ...(detail?.en ? [detail.en] : []),
-    ...(MANUAL_SHORT_ALIASES[item] ?? []),
-  ], 'ko')
-  return [item, aliases]
-}).filter(([, aliases]) => aliases.length)
-
-const spriteEntries = whitelistItems
-  .map((item) => {
-    const detail = detailForItem(item)
-    return [item, MANUAL_SPRITE_PATHS[item] ?? detail?.apiName ?? null]
-  })
-  .filter(([, apiName]) => typeof apiName === 'string' && apiName)
-
-const ts = `export const CHAMPIONS_ITEM_OPTIONS = [\n${toTsStringArray(whitelistItems)}\n] as const\n\nexport type ChampionsItem = typeof CHAMPIONS_ITEM_OPTIONS[number]\n\nexport const CHAMPIONS_ITEM_LABEL_KO: Partial<Record<ChampionsItem, string>> = {\n${koLabelEntries.map(([item, ko]) => `  ${JSON.stringify(item)}: ${JSON.stringify(ko)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_LABEL_EN: Partial<Record<ChampionsItem, string>> = {\n${enLabelEntries.map(([item, en]) => `  ${JSON.stringify(item)}: ${JSON.stringify(en)},`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_ALIASES: Partial<Record<ChampionsItem, string[]>> = {\n${aliasEntries.map(([item, aliases]) => `  ${JSON.stringify(item)}: [${aliases.map((alias) => JSON.stringify(alias)).join(', ')}],`).join('\n')}\n}\n\nexport const CHAMPIONS_ITEM_SPRITE_MAP: Partial<Record<ChampionsItem, string>> = {\n${spriteEntries.map(([item, slug]) => `  ${JSON.stringify(item)}: ${JSON.stringify(slug)},`).join('\n')}\n}\n\nexport function localizedChampionsItemLabel(item: string, language: 'ko' | 'en' | 'ja' = 'ko') {\n  if (language === 'ja') return item\n  if (language === 'ko') return CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n  return CHAMPIONS_ITEM_LABEL_EN[item as ChampionsItem] ?? CHAMPIONS_ITEM_LABEL_KO[item as ChampionsItem] ?? item\n}\n`
-
-const missingKoLabels = whitelistItems.filter((item) => !(MANUAL_KO_LABELS[item] ?? detailForItem(item)?.ko))
-
 const report = {
-  generatedAt: new Date().toISOString(),
-  currentSeasonNumber,
-  sourceGuideUrl: GUIDE_URL,
-  sourceJsonUrls: jsonUrls,
-  sourcePokemonListBaseUrl: POKEMON_LIST_URL,
-  sourcePokeApiItemListUrl: POKEAPI_ITEM_LIST_URL,
-  regulationMcSourceUrl: REGULATION_MC_SOURCE_URL,
-  datasets,
-  usageListPages: usageListPages.map((page) => ({
-    url: page.url,
-    season: page.season,
-    rule: page.rule,
-    showPageCount: page.showPageCount,
-  })),
-  usagePageCount: usagePageRecords.length,
-  extractedItemCount: combinedItems.length,
-  opendataItemCount: opendataUniqueItems.length,
-  usagePageItemCount: usageItems.length,
-  whitelistItemCount: whitelistItems.length,
-  onlyInUsagePagesCount: onlyInUsagePages.length,
-  onlyInUsagePages,
-  onlyInOpenDataCount: onlyInOpenData.length,
-  onlyInOpenData,
-  inBothSourcesCount: inBothSources.length,
-  excludedMegaStoneCount: excludedMegaStones.length,
-  excludedMegaStones,
-  excludedNoItemCount: excludedNoItem.length,
-  excludedNoItem,
-  whitelistItems,
-  verifiedKoLabels: Object.fromEntries(koLabelEntries),
-  missingKoLabels,
-  manualSpritePaths: MANUAL_SPRITE_PATHS,
-  sourceSummaryByItem: Object.fromEntries(whitelistItems.map((item) => {
-    const usageEntry = usageItemMap.get(item)
-    const detail = detailForItem(item)
-    return [item, {
-      sources: [usageEntry ? 'usage-pages' : null, opendataUniqueItems.includes(item) ? 'opendata' : null].filter(Boolean),
-      usagePageReferences: usageEntry ? {
-        itemKeys: [...usageEntry.itemKeys].sort((a, b) => a - b),
-        pageCount: usageEntry.pages.length,
-        bestRank: Number.isFinite(usageEntry.bestRank) ? usageEntry.bestRank : null,
-        highestRate: usageEntry.highestRate || null,
-        seasonRuleCount: usageEntry.seasonRules.size,
-        samplePages: usageEntry.pages.slice(0, 5),
-      } : null,
-      pokeApi: detail ? {
-        id: detail.id,
-        apiName: detail.apiName,
-        ko: detail.ko,
-        en: detail.en,
-      } : null,
-    }]
-  })),
-  notes: [
-    'Primary source is aggregated held-item usage from Pokémon pages on champs.pokedb.tokyo across seasons 1..current for both single(rule=0) and double(rule=1).',
-    'Usage pages are more reliable than top-team opendata alone because they surface broader per-species held-item usage.',
-    'Opendata remains as a supplement because some low-frequency items can appear there without surfacing in the usage-page top slices.',
-    'Japanese item names remain the source-of-truth for reverse-mapping Champions site data.',
-    'Korean and English labels are sourced from PokeAPI item names when available.',
-    'Mega stones are excluded because the app handles mega items separately via species-locked item generation.',
-    '持ち物なし is excluded because the app represents no-item as an empty value.',
-  ],
+  sourceCommit: approval.sourceCommit,
+  rawSourceSha256: approval.rawItemSha256,
+  rawJapaneseNamesSha256: approval.rawJapaneseNamesSha256,
+  evidence: 'Pinned game namespace ID + Japanese label intersect separately checked-in provisional ordinary approval; no fresh network collection',
+  currentVersionVerified: false,
+  currentSeasonNumber: null,
+  usagePageCount: 0,
+  opendataItemCount: 0,
+  sourceRowCount: rows.length,
+  approvedOrdinaryCount: approved.length,
+  requiredFormStoneCount: stones.length,
+  sourceOnlyUnconfirmed: pending,
+  excludedUserReportedNotIntroduced: ['とつげきチョッキ', '돌격조끼', 'Assault Vest'],
+  historicalReport: 'reports/championsItemWhitelistReport.json (82-item historical record retained, not current approval)',
+  approvedOrdinary: ordinary,
+  requiredStones: stones,
+  sourceSummaryByItem: Object.fromEntries(ordinary.map(row => [row.canonical, { sourceItemId: row.sourceItemId, sources: ['pinned-game-row', 'checked-in-provisional-approval'], usagePages: 0, opendata: 0 }])),
 }
-
-await fs.writeFile(srcPath, ts)
-await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`)
-console.log(`wrote ${path.relative(rootDir, srcPath)} (${whitelistItems.length} items)`) 
-console.log(`wrote ${path.relative(rootDir, reportPath)}`)
-console.log(`usage-page only items: ${onlyInUsagePages.length}`)
-console.log(`opendata only items: ${onlyInOpenData.length}`)
-if (missingKoLabels.length) console.log(`missing ko labels: ${missingKoLabels.join(', ')}`)
+const target = path.join(root, 'reports/championsOnlyItemApprovalReport.json')
+const bytes = `${JSON.stringify(report, null, 2)}\n`
+if (process.argv.includes('--check')) {
+  if (await fs.readFile(target, 'utf8') !== bytes) throw new Error('stale Champions item approval report')
+  console.log('Champions item approval: 81 ordinary, 81 form stones; offline unchanged')
+} else {
+  if (await fs.readFile(target, 'utf8').catch(() => null) !== bytes) await fs.writeFile(target, bytes)
+  console.log('Champions item approval: 81 ordinary, 81 form stones; offline report written')
+}

@@ -12,9 +12,9 @@ const App = (await server.ssrLoadModule('/src/App.tsx')).default
 const { LEARNSET_SOURCE } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
-async function mount() {
+async function mount(hash = '#/dex?dexTab=pokemon&sel=pokemon%3Agardevoir') {
   localStorage.clear()
-  window.location.hash = '#/dex?dexTab=pokemon&sel=pokemon%3Agardevoir'
+  window.location.hash = hash
   const quick = JSON.stringify({ attacker: { key: 'unresolved-form', ability: 'raw unknown' }, defender: { key: '' } })
   localStorage.setItem('pokemon-champions-quick-damage:v1', quick)
   const host = document.createElement('div'); document.body.append(host)
@@ -24,18 +24,27 @@ async function mount() {
 }
 async function click(element) { assert.ok(element); await act(async () => element.click()) }
 
-test('a fresh direct Dex detail has one visible source/date/current-version notice outside home', async () => {
+test('a direct Dex detail omits the rejected global snapshot banner without changing source metadata', async () => {
   const view = await mount()
   try {
-    const notices = view.host.querySelectorAll('footer.app-data-notice')
-    assert.equal(notices.length, 1)
-    const notice = notices[0]
-    assert.equal(notice.closest('main'), null, 'the notice is not inside a home-only branch')
-    assert.match(notice.textContent, /2026-09-09/)
-    assert.match(notice.textContent, /최신판과 다를 수 있음/)
-    assert.equal(notice.querySelector('a').getAttribute('href'), `https://github.com/projectpokemon/champout/tree/${LEARNSET_SOURCE.commit}`)
-    assert.equal(notice.querySelector('a').getAttribute('aria-label'), '기술 데이터 원본')
-    assert.equal(notice.hidden, false)
+    assert.ok(!view.host.querySelector('.app-data-notice'), 'remove the rejected global snapshot banner')
+    assert.doesNotMatch(view.host.textContent, /최신판과 다를 수 있음/)
+    assert.equal(LEARNSET_SOURCE.date, '2026-09-09')
+    assert.equal(LEARNSET_SOURCE.commit, '50e7233b78c3b81df29563f9695386c28e77fc95')
+  } finally { await view.close() }
+})
+
+test('Home project information is an ordinary visible section with its original links and copyright', async () => {
+  const view = await mount('#/')
+  try {
+    const project = view.host.querySelector('section.home-footer-text-block')
+    assert.ok(project)
+    assert.equal(project.closest('details'), null)
+    assert.match(project.querySelector('h3').textContent, /프로젝트 정보/)
+    assert.equal(project.querySelectorAll('a').length, 3)
+    assert.match(project.textContent, /비공식 팬메이드/)
+    assert.match(project.textContent, /PokéAPI/)
+    assert.ok(!view.host.querySelector('.app-data-notice'), 'remove the rejected global snapshot banner')
   } finally { await view.close() }
 })
 

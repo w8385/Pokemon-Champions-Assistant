@@ -1,0 +1,1408 @@
+{
+  "sourceCommit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+  "rawSourceSha256": "556ad830a535d6280310379f8dfa738f45ef3f38896b86f4a3981aae8269df5e",
+  "rawJapaneseNamesSha256": "4de61e0bb29d93ef7c494a3d0168d9e2bd5093943356543508ed6da8657e2b3c",
+  "evidence": "Pinned game namespace ID + Japanese label intersect separately checked-in provisional ordinary approval; no fresh network collection",
+  "currentVersionVerified": false,
+  "currentSeasonNumber": null,
+  "usagePageCount": 0,
+  "opendataItemCount": 0,
+  "sourceRowCount": 166,
+  "approvedOrdinaryCount": 81,
+  "requiredFormStoneCount": 81,
+  "sourceOnlyUnconfirmed": [
+    "クラボのみ",
+    "モモンのみ",
+    "チーゴのみ",
+    "ナナシのみ"
+  ],
+  "excludedUserReportedNotIntroduced": [
+    "とつげきチョッキ",
+    "돌격조끼",
+    "Assault Vest"
+  ],
+  "historicalReport": "reports/championsItemWhitelistReport.json (82-item historical record retained, not current approval)",
+  "approvedOrdinary": [
+    {
+      "canonical": "あついいわ",
+      "sourceItemId": 284
+    },
+    {
+      "canonical": "イトケのみ",
+      "sourceItemId": 185
+    },
+    {
+      "canonical": "いのちのたま",
+      "sourceItemId": 270
+    },
+    {
+      "canonical": "ウタンのみ",
+      "sourceItemId": 193
+    },
+    {
+      "canonical": "エレキシード",
+      "sourceItemId": 881
+    },
+    {
+      "canonical": "おうじゃのしるし",
+      "sourceItemId": 221
+    },
+    {
+      "canonical": "おおきなねっこ",
+      "sourceItemId": 296
+    },
+    {
+      "canonical": "オッカのみ",
+      "sourceItemId": 184
+    },
+    {
+      "canonical": "オボンのみ",
+      "sourceItemId": 158
+    },
+    {
+      "canonical": "オレンのみ",
+      "sourceItemId": 155
+    },
+    {
+      "canonical": "かいがらのすず",
+      "sourceItemId": 253
+    },
+    {
+      "canonical": "カゴのみ",
+      "sourceItemId": 150
+    },
+    {
+      "canonical": "カシブのみ",
+      "sourceItemId": 196
+    },
+    {
+      "canonical": "かたいいし",
+      "sourceItemId": 238
+    },
+    {
+      "canonical": "きあいのタスキ",
+      "sourceItemId": 275
+    },
+    {
+      "canonical": "きあいのハチマキ",
+      "sourceItemId": 230
+    },
+    {
+      "canonical": "キーのみ",
+      "sourceItemId": 156
+    },
+    {
+      "canonical": "きせきのタネ",
+      "sourceItemId": 239
+    },
+    {
+      "canonical": "きれいなぬけがら",
+      "sourceItemId": 295
+    },
+    {
+      "canonical": "ぎんのこな",
+      "sourceItemId": 222
+    },
+    {
+      "canonical": "グラスシード",
+      "sourceItemId": 884
+    },
+    {
+      "canonical": "グランドコート",
+      "sourceItemId": 879
+    },
+    {
+      "canonical": "くろいてっきゅう",
+      "sourceItemId": 278
+    },
+    {
+      "canonical": "くろいメガネ",
+      "sourceItemId": 240
+    },
+    {
+      "canonical": "くろおび",
+      "sourceItemId": 241
+    },
+    {
+      "canonical": "こうかくレンズ",
+      "sourceItemId": 265
+    },
+    {
+      "canonical": "こだわりスカーフ",
+      "sourceItemId": 287
+    },
+    {
+      "canonical": "ゴツゴツメット",
+      "sourceItemId": 540
+    },
+    {
+      "canonical": "サイコシード",
+      "sourceItemId": 882
+    },
+    {
+      "canonical": "さらさらいわ",
+      "sourceItemId": 283
+    },
+    {
+      "canonical": "じしゃく",
+      "sourceItemId": 242
+    },
+    {
+      "canonical": "しめつけバンド",
+      "sourceItemId": 544
+    },
+    {
+      "canonical": "しめったいわ",
+      "sourceItemId": 285
+    },
+    {
+      "canonical": "シュカのみ",
+      "sourceItemId": 191
+    },
+    {
+      "canonical": "シルクのスカーフ",
+      "sourceItemId": 251
+    },
+    {
+      "canonical": "しろいハーブ",
+      "sourceItemId": 214
+    },
+    {
+      "canonical": "しんぴのしずく",
+      "sourceItemId": 243
+    },
+    {
+      "canonical": "するどいくちばし",
+      "sourceItemId": 244
+    },
+    {
+      "canonical": "せんせいのツメ",
+      "sourceItemId": 217
+    },
+    {
+      "canonical": "ソクノのみ",
+      "sourceItemId": 186
+    },
+    {
+      "canonical": "だっしゅつボタン",
+      "sourceItemId": 547
+    },
+    {
+      "canonical": "たつじんのおび",
+      "sourceItemId": 268
+    },
+    {
+      "canonical": "たべのこし",
+      "sourceItemId": 234
+    },
+    {
+      "canonical": "タンガのみ",
+      "sourceItemId": 194
+    },
+    {
+      "canonical": "ちからのハチマキ",
+      "sourceItemId": 266
+    },
+    {
+      "canonical": "つめたいいわ",
+      "sourceItemId": 282
+    },
+    {
+      "canonical": "でんきだま",
+      "sourceItemId": 236
+    },
+    {
+      "canonical": "どくバリ",
+      "sourceItemId": 245
+    },
+    {
+      "canonical": "とけないこおり",
+      "sourceItemId": 246
+    },
+    {
+      "canonical": "ながねぎ",
+      "sourceItemId": 259
+    },
+    {
+      "canonical": "ナモのみ",
+      "sourceItemId": 198
+    },
+    {
+      "canonical": "ノーマルジュエル",
+      "sourceItemId": 564
+    },
+    {
+      "canonical": "のろいのおふだ",
+      "sourceItemId": 247
+    },
+    {
+      "canonical": "バコウのみ",
+      "sourceItemId": 192
+    },
+    {
+      "canonical": "ハバンのみ",
+      "sourceItemId": 197
+    },
+    {
+      "canonical": "ビアーのみ",
+      "sourceItemId": 190
+    },
+    {
+      "canonical": "ひかりのこな",
+      "sourceItemId": 213
+    },
+    {
+      "canonical": "ひかりのねんど",
+      "sourceItemId": 269
+    },
+    {
+      "canonical": "ヒメリのみ",
+      "sourceItemId": 154
+    },
+    {
+      "canonical": "ピントレンズ",
+      "sourceItemId": 232
+    },
+    {
+      "canonical": "ふうせん",
+      "sourceItemId": 541
+    },
+    {
+      "canonical": "フォーカスレンズ",
+      "sourceItemId": 276
+    },
+    {
+      "canonical": "ホズのみ",
+      "sourceItemId": 200
+    },
+    {
+      "canonical": "まがったスプーン",
+      "sourceItemId": 248
+    },
+    {
+      "canonical": "ミストシード",
+      "sourceItemId": 883
+    },
+    {
+      "canonical": "メタルコート",
+      "sourceItemId": 233
+    },
+    {
+      "canonical": "メトロノーム",
+      "sourceItemId": 277
+    },
+    {
+      "canonical": "メンタルハーブ",
+      "sourceItemId": 219
+    },
+    {
+      "canonical": "もくたん",
+      "sourceItemId": 249
+    },
+    {
+      "canonical": "ものしりメガネ",
+      "sourceItemId": 267
+    },
+    {
+      "canonical": "ヤチェのみ",
+      "sourceItemId": 188
+    },
+    {
+      "canonical": "やわらかいすな",
+      "sourceItemId": 237
+    },
+    {
+      "canonical": "ようせいのハネ",
+      "sourceItemId": 2401
+    },
+    {
+      "canonical": "ヨプのみ",
+      "sourceItemId": 189
+    },
+    {
+      "canonical": "ヨロギのみ",
+      "sourceItemId": 195
+    },
+    {
+      "canonical": "ラムのみ",
+      "sourceItemId": 157
+    },
+    {
+      "canonical": "りゅうのキバ",
+      "sourceItemId": 250
+    },
+    {
+      "canonical": "リリバのみ",
+      "sourceItemId": 199
+    },
+    {
+      "canonical": "リンドのみ",
+      "sourceItemId": 187
+    },
+    {
+      "canonical": "レッドカード",
+      "sourceItemId": 542
+    },
+    {
+      "canonical": "ロゼルのみ",
+      "sourceItemId": 686
+    }
+  ],
+  "requiredStones": [
+    {
+      "canonical": "가디안나이트",
+      "sourceItemId": 657
+    },
+    {
+      "canonical": "갑주무사나이트",
+      "sourceItemId": 2645
+    },
+    {
+      "canonical": "강철톤나이트",
+      "sourceItemId": 761
+    },
+    {
+      "canonical": "개굴닌자나이트",
+      "sourceItemId": 2577
+    },
+    {
+      "canonical": "갸라도스나이트",
+      "sourceItemId": 676
+    },
+    {
+      "canonical": "거북손데스나이트",
+      "sourceItemId": 2581
+    },
+    {
+      "canonical": "거북왕나이트",
+      "sourceItemId": 661
+    },
+    {
+      "canonical": "곤율거니나이트",
+      "sourceItemId": 2572
+    },
+    {
+      "canonical": "골루그나이트",
+      "sourceItemId": 2642
+    },
+    {
+      "canonical": "깜까미나이트",
+      "sourceItemId": 754
+    },
+    {
+      "canonical": "나무킹나이트",
+      "sourceItemId": 753
+    },
+    {
+      "canonical": "냐오닉스나이트",
+      "sourceItemId": 2643
+    },
+    {
+      "canonical": "눈설왕나이트",
+      "sourceItemId": 674
+    },
+    {
+      "canonical": "눈여아나이트",
+      "sourceItemId": 2566
+    },
+    {
+      "canonical": "다부니나이트",
+      "sourceItemId": 757
+    },
+    {
+      "canonical": "다크펫나이트",
+      "sourceItemId": 668
+    },
+    {
+      "canonical": "대여르나이트",
+      "sourceItemId": 2587
+    },
+    {
+      "canonical": "대짱이나이트",
+      "sourceItemId": 752
+    },
+    {
+      "canonical": "독침붕나이트",
+      "sourceItemId": 770
+    },
+    {
+      "canonical": "드닐레이브나이트",
+      "sourceItemId": 2648
+    },
+    {
+      "canonical": "드래캄나이트",
+      "sourceItemId": 2582
+    },
+    {
+      "canonical": "라이츄나이트X",
+      "sourceItemId": 2635
+    },
+    {
+      "canonical": "라이츄나이트Y",
+      "sourceItemId": 2636
+    },
+    {
+      "canonical": "루차불나이트",
+      "sourceItemId": 2583
+    },
+    {
+      "canonical": "루카리오나이트",
+      "sourceItemId": 673
+    },
+    {
+      "canonical": "루카리오나이트Z",
+      "sourceItemId": 2641
+    },
+    {
+      "canonical": "리자몽나이트X",
+      "sourceItemId": 660
+    },
+    {
+      "canonical": "리자몽나이트Y",
+      "sourceItemId": 678
+    },
+    {
+      "canonical": "마기라스나이트",
+      "sourceItemId": 669
+    },
+    {
+      "canonical": "마폭시나이트",
+      "sourceItemId": 2576
+    },
+    {
+      "canonical": "망나뇽나이트",
+      "sourceItemId": 2562
+    },
+    {
+      "canonical": "메가니움나이트",
+      "sourceItemId": 2563
+    },
+    {
+      "canonical": "메타그로스나이트",
+      "sourceItemId": 758
+    },
+    {
+      "canonical": "모단단게나이트",
+      "sourceItemId": 2644
+    },
+    {
+      "canonical": "몰드류나이트",
+      "sourceItemId": 2570
+    },
+    {
+      "canonical": "무장조나이트",
+      "sourceItemId": 2565
+    },
+    {
+      "canonical": "번치코나이트",
+      "sourceItemId": 664
+    },
+    {
+      "canonical": "보만다나이트",
+      "sourceItemId": 769
+    },
+    {
+      "canonical": "보스로라나이트",
+      "sourceItemId": 667
+    },
+    {
+      "canonical": "브리가론나이트",
+      "sourceItemId": 2575
+    },
+    {
+      "canonical": "쁘사이저나이트",
+      "sourceItemId": 671
+    },
+    {
+      "canonical": "샤크니아나이트",
+      "sourceItemId": 759
+    },
+    {
+      "canonical": "샹델라나이트",
+      "sourceItemId": 2574
+    },
+    {
+      "canonical": "스코빌런나이트",
+      "sourceItemId": 2647
+    },
+    {
+      "canonical": "썬더볼트나이트",
+      "sourceItemId": 682
+    },
+    {
+      "canonical": "아쿠스타나이트",
+      "sourceItemId": 2561
+    },
+    {
+      "canonical": "앱솔나이트",
+      "sourceItemId": 677
+    },
+    {
+      "canonical": "앱솔나이트Z",
+      "sourceItemId": 2638
+    },
+    {
+      "canonical": "야도란나이트",
+      "sourceItemId": 760
+    },
+    {
+      "canonical": "얼음귀신나이트",
+      "sourceItemId": 763
+    },
+    {
+      "canonical": "엘레이드나이트",
+      "sourceItemId": 756
+    },
+    {
+      "canonical": "염무왕나이트",
+      "sourceItemId": 2569
+    },
+    {
+      "canonical": "요가램나이트",
+      "sourceItemId": 665
+    },
+    {
+      "canonical": "우츠보트나이트",
+      "sourceItemId": 2560
+    },
+    {
+      "canonical": "이상해꽃나이트",
+      "sourceItemId": 659
+    },
+    {
+      "canonical": "이어롭나이트",
+      "sourceItemId": 768
+    },
+    {
+      "canonical": "입치트나이트",
+      "sourceItemId": 681
+    },
+    {
+      "canonical": "장크로다일나이트",
+      "sourceItemId": 2564
+    },
+    {
+      "canonical": "저리더프나이트",
+      "sourceItemId": 2573
+    },
+    {
+      "canonical": "전룡나이트",
+      "sourceItemId": 658
+    },
+    {
+      "canonical": "찌르호크나이트",
+      "sourceItemId": 2639
+    },
+    {
+      "canonical": "치렁나이트",
+      "sourceItemId": 2637
+    },
+    {
+      "canonical": "칼라마네로나이트",
+      "sourceItemId": 2580
+    },
+    {
+      "canonical": "캥카나이트",
+      "sourceItemId": 675
+    },
+    {
+      "canonical": "킬라플로르나이트",
+      "sourceItemId": 2650
+    },
+    {
+      "canonical": "파비코리나이트",
+      "sourceItemId": 755
+    },
+    {
+      "canonical": "팬텀나이트",
+      "sourceItemId": 656
+    },
+    {
+      "canonical": "펜드라나이트",
+      "sourceItemId": 2571
+    },
+    {
+      "canonical": "폭타나이트",
+      "sourceItemId": 767
+    },
+    {
+      "canonical": "프테라나이트",
+      "sourceItemId": 672
+    },
+    {
+      "canonical": "플라엣테나이트",
+      "sourceItemId": 2579
+    },
+    {
+      "canonical": "피죤투나이트",
+      "sourceItemId": 762
+    },
+    {
+      "canonical": "픽시나이트",
+      "sourceItemId": 2559
+    },
+    {
+      "canonical": "한카리아스나이트",
+      "sourceItemId": 683
+    },
+    {
+      "canonical": "한카리아스나이트Z",
+      "sourceItemId": 2640
+    },
+    {
+      "canonical": "할비롱나이트",
+      "sourceItemId": 2585
+    },
+    {
+      "canonical": "핫삼나이트",
+      "sourceItemId": 670
+    },
+    {
+      "canonical": "헤라크로스나이트",
+      "sourceItemId": 680
+    },
+    {
+      "canonical": "헬가나이트",
+      "sourceItemId": 666
+    },
+    {
+      "canonical": "화염레오나이트",
+      "sourceItemId": 2578
+    },
+    {
+      "canonical": "후딘나이트",
+      "sourceItemId": 679
+    }
+  ],
+  "sourceSummaryByItem": {
+    "あついいわ": {
+      "sourceItemId": 284,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "イトケのみ": {
+      "sourceItemId": 185,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "いのちのたま": {
+      "sourceItemId": 270,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ウタンのみ": {
+      "sourceItemId": 193,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "エレキシード": {
+      "sourceItemId": 881,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "おうじゃのしるし": {
+      "sourceItemId": 221,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "おおきなねっこ": {
+      "sourceItemId": 296,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "オッカのみ": {
+      "sourceItemId": 184,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "オボンのみ": {
+      "sourceItemId": 158,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "オレンのみ": {
+      "sourceItemId": 155,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "かいがらのすず": {
+      "sourceItemId": 253,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "カゴのみ": {
+      "sourceItemId": 150,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "カシブのみ": {
+      "sourceItemId": 196,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "かたいいし": {
+      "sourceItemId": 238,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "きあいのタスキ": {
+      "sourceItemId": 275,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "きあいのハチマキ": {
+      "sourceItemId": 230,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "キーのみ": {
+      "sourceItemId": 156,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "きせきのタネ": {
+      "sourceItemId": 239,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "きれいなぬけがら": {
+      "sourceItemId": 295,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ぎんのこな": {
+      "sourceItemId": 222,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "グラスシード": {
+      "sourceItemId": 884,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "グランドコート": {
+      "sourceItemId": 879,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "くろいてっきゅう": {
+      "sourceItemId": 278,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "くろいメガネ": {
+      "sourceItemId": 240,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "くろおび": {
+      "sourceItemId": 241,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "こうかくレンズ": {
+      "sourceItemId": 265,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "こだわりスカーフ": {
+      "sourceItemId": 287,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ゴツゴツメット": {
+      "sourceItemId": 540,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "サイコシード": {
+      "sourceItemId": 882,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "さらさらいわ": {
+      "sourceItemId": 283,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "じしゃく": {
+      "sourceItemId": 242,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "しめつけバンド": {
+      "sourceItemId": 544,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "しめったいわ": {
+      "sourceItemId": 285,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "シュカのみ": {
+      "sourceItemId": 191,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "シルクのスカーフ": {
+      "sourceItemId": 251,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "しろいハーブ": {
+      "sourceItemId": 214,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "しんぴのしずく": {
+      "sourceItemId": 243,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "するどいくちばし": {
+      "sourceItemId": 244,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "せんせいのツメ": {
+      "sourceItemId": 217,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ソクノのみ": {
+      "sourceItemId": 186,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "だっしゅつボタン": {
+      "sourceItemId": 547,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "たつじんのおび": {
+      "sourceItemId": 268,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "たべのこし": {
+      "sourceItemId": 234,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "タンガのみ": {
+      "sourceItemId": 194,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ちからのハチマキ": {
+      "sourceItemId": 266,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "つめたいいわ": {
+      "sourceItemId": 282,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "でんきだま": {
+      "sourceItemId": 236,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "どくバリ": {
+      "sourceItemId": 245,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "とけないこおり": {
+      "sourceItemId": 246,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ながねぎ": {
+      "sourceItemId": 259,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ナモのみ": {
+      "sourceItemId": 198,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ノーマルジュエル": {
+      "sourceItemId": 564,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "のろいのおふだ": {
+      "sourceItemId": 247,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "バコウのみ": {
+      "sourceItemId": 192,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ハバンのみ": {
+      "sourceItemId": 197,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ビアーのみ": {
+      "sourceItemId": 190,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ひかりのこな": {
+      "sourceItemId": 213,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ひかりのねんど": {
+      "sourceItemId": 269,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ヒメリのみ": {
+      "sourceItemId": 154,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ピントレンズ": {
+      "sourceItemId": 232,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ふうせん": {
+      "sourceItemId": 541,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "フォーカスレンズ": {
+      "sourceItemId": 276,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ホズのみ": {
+      "sourceItemId": 200,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "まがったスプーン": {
+      "sourceItemId": 248,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ミストシード": {
+      "sourceItemId": 883,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "メタルコート": {
+      "sourceItemId": 233,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "メトロノーム": {
+      "sourceItemId": 277,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "メンタルハーブ": {
+      "sourceItemId": 219,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "もくたん": {
+      "sourceItemId": 249,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ものしりメガネ": {
+      "sourceItemId": 267,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ヤチェのみ": {
+      "sourceItemId": 188,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "やわらかいすな": {
+      "sourceItemId": 237,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ようせいのハネ": {
+      "sourceItemId": 2401,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ヨプのみ": {
+      "sourceItemId": 189,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ヨロギのみ": {
+      "sourceItemId": 195,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ラムのみ": {
+      "sourceItemId": 157,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "りゅうのキバ": {
+      "sourceItemId": 250,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "リリバのみ": {
+      "sourceItemId": 199,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "リンドのみ": {
+      "sourceItemId": 187,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "レッドカード": {
+      "sourceItemId": 542,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    },
+    "ロゼルのみ": {
+      "sourceItemId": 686,
+      "sources": [
+        "pinned-game-row",
+        "checked-in-provisional-approval"
+      ],
+      "usagePages": 0,
+      "opendata": 0
+    }
+  }
+}

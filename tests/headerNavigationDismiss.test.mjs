@@ -28,18 +28,20 @@ test('header keeps an accessible name and working utilities without a duplicated
   assert.match(header, /fileInputRef\.current\?\.click\(\)/)
 })
 
-test('home preserves provenance and project links in a native disclosure', () => {
-  const footer = source.slice(source.indexOf('<details className="home-footer-text-block'), source.indexOf("mainSection !== 'home'", source.indexOf('<details className="home-footer-text-block')))
-  assert.match(footer, /<details[^>]*>\s*<summary>\{lt\('프로젝트 정보'\)\}<\/summary>/)
+test('home preserves provenance and project links in an ordinary visible section', () => {
+  const start = source.indexOf('<section className="home-footer-text-block')
+  const footer = source.slice(start, source.indexOf("mainSection === 'double'", start))
+  assert.match(footer, /<h3 id="project-information-heading">\{lt\('프로젝트 정보'\)\}<\/h3>/)
+  assert.doesNotMatch(footer, /<details|<summary/)
   assert.match(footer, /github\.com\/w8385\/Pokemon-Champions-Assistant/)
   assert.match(footer, /참고 데이터베이스/)
   assert.match(footer, /비공식 팬메이드/)
 })
 
-test('closed project details hide styled child links instead of overriding disclosure', () => {
+test('project information has no closed-disclosure hiding rules', () => {
   assert.match(styles, /\.home-footer-text-block\s*\{[^}]*display: block;/)
-  assert.doesNotMatch(styles, /\.home-footer-text-block\s*\{[^}]*display: grid;/)
-  assert.match(styles, /\.home-footer-text-block:not\(\[open\]\) > :not\(summary\)\s*\{\s*display: none;/)
+  assert.doesNotMatch(styles, /\.home-footer-text-block:not\(\[open\]\)/)
+  assert.match(styles, /\.home-footer-text-block > h3/)
 })
 
 test('project disclosure label is localized like the existing project links', () => {
