@@ -1,131 +1,86 @@
-import fs from 'node:fs/promises'
+// Frozen outputs of the pinned full calculateChampions engine versus live App declarations.
+// Synthetic species/type overrides and neutral tagged-move mocks: not a mounted caller
+// and not evidence of complete in-game mechanics parity.
+import fs from 'node:fs'
+import crypto from 'node:crypto'
 import path from 'node:path'
+import vm from 'node:vm'
+import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const root = path.resolve(__dirname, '..')
-const reportPath = path.join(root, 'reports', 'damageParityHarness.json')
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const require = createRequire(import.meta.url)
+const ts = require(path.join(root, 'node_modules/typescript'))
+const fixtureDir = path.join(root, 'tests/fixtures/damage-reference')
+const fixture = JSON.parse(fs.readFileSync(path.join(fixtureDir, 'cases.json'), 'utf8'))
+const digest = (s) => crypto.createHash('sha256').update(s).digest('hex')
+if (fixture.cases.length !== 18 || fixture.source.commit !== 'bacbbfc86f333cb0878cafba7b495a59a69111f0') throw Error('Unexpected frozen reference identity/count')
+if (digest(fs.readFileSync(path.join(fixtureDir, 'LICENSE'))) !== fixture.source.licenseSHA256) throw Error('Pinned MIT license changed')
 
-const SCALE = 4096
-
-function fixedMod(multiplier = 1) {
-  return Math.round(multiplier * SCALE)
-}
-
-function applyFixedMod(value, mod) {
-  return Math.floor((value * mod) / SCALE)
-}
-
-function pokeRound(num) {
-  return num % 1 > 0.5 ? Math.ceil(num) : Math.floor(num)
-}
-
-function chainMods(mods, lowerBound = 410, upperBound = 131172) {
-  let value = SCALE
-  for (const mod of mods) {
-    if (mod !== SCALE) value = (value * mod + 2048) >> 12
+export function loadAppDamageEngine() {
+  const text = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8')
+  const names = ['pokeRound', 'chainMods', 'fixedMod', 'applyFixedMod', 'engineMovePower', 'getBaseDamage', 'getFinalDamageRoll', 'calcDamage', 'battleStageMultiplier', 'resolveDamageModifiers', 'knockOffPowerMultiplier', 'isDamageGrounded', 'typeEffectiveness', 'abilityAdjustedTypeEffectiveness', 'effectiveDefenderAbility']
+  const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const found = new Map()
+  function visit(n) {
+    if (ts.isFunctionDeclaration(n) && names.includes(n.name?.text)) found.set(n.name.text, n.getText(ast))
+    ts.forEachChild(n, visit)
   }
-  return Math.max(Math.min(value, upperBound), lowerBound)
-}
-
-function getBaseDamage(level, basePower, attack, defense) {
-  return Math.floor(Math.floor(Math.floor(((2 * level) / 5 + 2) * basePower * attack / defense) / 50) + 2)
-}
-
-function getFinalDamageRoll(baseAmount, roll, effectiveness, isBurned, stabMod, finalMod) {
-  let damageAmount = Math.floor((baseAmount * roll) / 100)
-  if (stabMod !== SCALE) damageAmount = Math.floor((damageAmount * stabMod) / SCALE)
-  damageAmount = Math.floor(pokeRound(damageAmount) * effectiveness)
-  if (isBurned) damageAmount = Math.floor(damageAmount / 2)
-  return Math.max(1, pokeRound((damageAmount * finalMod) / SCALE))
-}
-
-function legacyCalc(input) {
-  const effectivePower = input.power * input.powerMultiplier
-  const effectiveAttack = input.attack * input.attackMultiplier
-  const effectiveDefense = input.defense * input.defenseMultiplier
-  const levelFactor = Math.floor((2 * input.level) / 5) + 2
-  const scaledAttack = Math.max(1, Math.floor(effectiveAttack))
-  const scaledDefense = Math.max(1, Math.floor(effectiveDefense))
-  const scaledPower = Math.max(1, Math.floor(effectivePower))
-  const base = Math.floor(Math.floor((levelFactor * scaledPower * scaledAttack) / scaledDefense) / 50) + 2
-  const critMultiplier = input.critical ? 1.5 : 1
-  const commonModifier = input.stab * input.effectiveness * critMultiplier * input.finalMultiplier * (input.burned ? 0.5 : 1)
-  return Array.from({ length: 16 }, (_, idx) => 85 + idx).map((roll) => Math.floor(base * commonModifier * (roll / 100)) * input.hits)
-}
-
-function parityCalc(input) {
-  const power = Math.max(1, applyFixedMod(input.power, fixedMod(input.powerMultiplier)))
-  const attack = Math.max(1, applyFixedMod(input.attack, fixedMod(input.attackMultiplier)))
-  const defense = Math.max(1, applyFixedMod(input.defense, fixedMod(input.defenseMultiplier)))
-  let base = getBaseDamage(input.level, power, attack, defense)
-  if (input.critical) base = applyFixedMod(base, fixedMod(1.5))
-  const finalMod = chainMods([fixedMod(input.finalMultiplier)])
-  const stabMod = fixedMod(input.stab)
-  return Array.from({ length: 16 }, (_, idx) => 85 + idx).map((roll) => getFinalDamageRoll(base, roll, input.effectiveness, input.burned, stabMod, finalMod) * input.hits)
-}
-
-const cases = [
-  { name: 'neutral-stab', level: 50, power: 90, attack: 172, defense: 120, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'super-effective', level: 50, power: 90, attack: 187, defense: 135, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 2, burned: false, critical: false, hits: 1 },
-  { name: 'burned-physical', level: 50, power: 80, attack: 178, defense: 172, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: true, critical: false, hits: 1 },
-  { name: 'sun-boosted-fire', level: 50, power: 110, attack: 194, defense: 137, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1.5, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'terrain-boosted-electric', level: 50, power: 90, attack: 205, defense: 125, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1.3, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'fairy-aura', level: 50, power: 95, attack: 194, defense: 148, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 4 / 3, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'fire-mane', level: 50, power: 90, attack: 194, defense: 148, attackMultiplier: 1.5, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'fluffy-contact', level: 50, power: 100, attack: 180, defense: 140, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 0.5, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'fluffy-fire-contact', level: 50, power: 120, attack: 180, defense: 140, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 2, burned: false, critical: false, hits: 1 },
-  { name: 'mega-sol-fire', level: 50, power: 100, attack: 194, defense: 148, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1.5, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'piercing-drill-protect', level: 50, power: 100, attack: 210, defense: 150, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 0.25, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'screened-hit', level: 50, power: 100, attack: 189, defense: 156, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 0.5, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'technician-item-stack', level: 50, power: 60, attack: 161, defense: 118, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1.5, finalMultiplier: 1.2, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 1 },
-  { name: 'always-crit', level: 50, power: 70, attack: 182, defense: 128, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: false, critical: true, hits: 1 },
-  { name: 'multi-hit', level: 50, power: 50, attack: 177, defense: 110, attackMultiplier: 1, defenseMultiplier: 1, powerMultiplier: 1, finalMultiplier: 1, stab: 1.5, effectiveness: 1, burned: false, critical: false, hits: 2 },
-]
-
-function summarizeDiff(reference, candidate) {
-  const deltas = reference.map((value, idx) => candidate[idx] - value)
-  const abs = deltas.map((value) => Math.abs(value))
-  return {
-    maxAbsDiff: Math.max(...abs),
-    meanAbsDiff: Number((abs.reduce((sum, value) => sum + value, 0) / abs.length).toFixed(3)),
-    rollDiffs: deltas,
+  visit(ast)
+  // The resolver, type projection and Mold Breaker authority all come from the
+  // same live App AST; no second parity-only implementation is compiled here.
+  for (const n of names) if (!found.has(n)) throw Error(`Missing actual App declaration: ${n}`)
+  const context = {
+    console, Math, DAMAGE_MOD_SCALE: Number(text.match(/const DAMAGE_MOD_SCALE = (\d+)/)?.[1]),
+    canonicalChampionsItemName: (s) => s === 'たつじんのおび' ? 'たつじんのおび' : s,
+    classifyHeldItem: () => ({ status: 'allowed' }), abilityNoteLabel: s => s,
+    moveMatchesTaggedSet: () => false,
   }
+  for (const name of ['CONTACT_MOVE_NAMES', 'SOUND_MOVE_NAMES', 'PUNCH_MOVE_NAMES', 'RECKLESS_MOVE_NAMES', 'SHEER_FORCE_MOVE_NAMES', 'BITE_MOVE_NAMES', 'PULSE_MOVE_NAMES', 'SLICING_MOVE_NAMES']) context[name] = new Set()
+  vm.createContext(context)
+  const declarations = [...ast.statements.filter(n => ts.isVariableStatement(n) && n.declarationList.declarations.some(d => ['typeChart', 'normalizedTypeChart'].includes(d.name.getText(ast)))).map(n => n.getText(ast)), ...names.filter(n => found.has(n)).map(n => found.get(n))].join('\n').replace(/\bexport /g, '')
+  vm.runInContext(ts.transpileModule(declarations, { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.None } }).outputText, context)
+  return context
 }
 
-const results = cases.map((entry) => {
-  const reference = parityCalc(entry)
-  const legacy = legacyCalc(entry)
-  const current = parityCalc(entry)
-  return {
-    case: entry.name,
-    input: entry,
-    reference,
-    legacy,
-    current,
-    legacyDiff: summarizeDiff(reference, legacy),
-    currentDiff: summarizeDiff(reference, current),
-  }
-})
-
-const report = {
-  generatedAt: new Date().toISOString(),
-  source: 'Showdown-style fixed-point parity harness for supported local modifiers',
-  totals: {
-    cases: results.length,
-    legacyMaxAbsDiff: Math.max(...results.map((entry) => entry.legacyDiff.maxAbsDiff)),
-    currentMaxAbsDiff: Math.max(...results.map((entry) => entry.currentDiff.maxAbsDiff)),
-    legacyMeanAbsDiff: Number((results.reduce((sum, entry) => sum + entry.legacyDiff.meanAbsDiff, 0) / results.length).toFixed(3)),
-    currentMeanAbsDiff: Number((results.reduce((sum, entry) => sum + entry.currentDiff.meanAbsDiff, 0) / results.length).toFixed(3)),
-  },
-  results,
+export function compareFrozenReference() {
+  const engine = loadAppDamageEngine()
+  const { hp, atk, def, spa, spd, spe } = fixture.fixtureStats
+  const stats = { hp, attack: atk, defense: def, spAttack: spa, spDefense: spd, speed: spe }
+  const outcomes = fixture.cases.map(({ id, input, attacker, defender, field, expectedDamage }) => {
+    const moveType = input.moveType.toLowerCase()
+    const attackerTypes = attacker.types.map(t => t.toLowerCase())
+    const defenderTypes = defender.types.map(t => t.toLowerCase())
+    const attackerAbility = input.attackerAbility?.toLowerCase().replaceAll(' ', '-') ?? ''
+    const defenderAbility = input.defenderAbility?.toLowerCase().replaceAll(' ', '-') ?? ''
+    const terrain = (field.terrain ?? 'none').toLowerCase()
+    const params = {
+      attackerAbility, attackerAllyAbility: '', attackerItem: input.attackerItem ? 'たつじんのおび' : '',
+      defenderAbility, defenderItem: '', defenderKey: 'target', moveName: '검증용',
+      moveMeta: { power: fixture.movePower, category: 'physical' }, baseMoveType: moveType,
+      moveType, movePower: fixture.movePower, mode: 'physical',
+      effectiveness: engine.abilityAdjustedTypeEffectiveness(moveType, defenderTypes, defenderAbility, attackerAbility),
+      attackStage: 0, defenseStage: 0, attackerTypes, defenderTypes, burned: !!input.burn,
+      attackerLowHp: false, targetPoisoned: false, defenderFullHp: true, movedAfterTarget: false,
+      faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: false,
+      electromorphosisCharged: false, weather: (field.weather ?? 'none').toLowerCase(), terrain,
+      reflect: !!field.defenderSide.isReflect, lightScreen: false, auroraVeil: false,
+      friendGuard: false, critical: !!input.critical, format: field.gameType,
+    }
+    const modifiers = engine.resolveDamageModifiers(params)
+    const stab = attackerTypes.includes(moveType) ? 1.5 : 1
+    const result = engine.calcDamage(stats, stats, fixture.movePower, 'physical', stab, modifiers.effectiveness, params.moveMeta, modifiers)
+    const expected = expectedDamage === 0 ? Array(16).fill(0) : expectedDamage
+    const actual = Array.from(result?.rolls ?? [])
+    return { id, match: JSON.stringify(actual) === JSON.stringify(expected), actual, expected, scalarZeroImmunity: expectedDamage === 0 }
+  })
+  return outcomes
 }
 
-await fs.mkdir(path.dirname(reportPath), { recursive: true })
-await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`)
-console.log(`wrote ${path.relative(root, reportPath)}`)
-console.log(`legacy max abs diff: ${report.totals.legacyMaxAbsDiff}`)
-console.log(`current max abs diff: ${report.totals.currentMaxAbsDiff}`)
-console.log(`legacy mean abs diff: ${report.totals.legacyMeanAbsDiff}`)
-console.log(`current mean abs diff: ${report.totals.currentMeanAbsDiff}`)
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const outcomes = compareFrozenReference()
+  for (const { id, match, actual, expected } of outcomes) console.log(`${match ? 'PASS' : 'FAIL'} ${id}: ${actual.join(',')} / ${expected.join(',')}`)
+  const failed = outcomes.filter(x => !x.match)
+  console.log(`${outcomes.length - failed.length}/${outcomes.length} pinned full-engine fixtures matched (three scalar-zero immunities normalized to zero-16)`)
+  if (failed.length) process.exitCode = 1
+}

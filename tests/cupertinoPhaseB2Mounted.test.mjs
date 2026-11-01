@@ -65,7 +65,7 @@ test('actual Quick and sample bilateral consumers share the visual without repla
   const src = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   assert.match(src, /quick-move-preview[\s\S]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
   assert.match(src, /className=\{`quick-result[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
-  assert.match(src, /entry\.forwardMoves\.length[\s\S]*?<DamageRangeMeter[^>]*damage=\{move\.damage\}/)
+  assert.match(src, /entry\.forwardMoves\.find[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
   assert.match(src, /entry\.reverseMoves\.find[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
   assert.match(src, /onClick=\{\(\) => setSelected\(\{ side, index \}\)\}/)
   assert.match(src, /onClick=\{\(\) => renamePartyPreset\(preset\)\}/)

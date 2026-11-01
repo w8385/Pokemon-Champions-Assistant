@@ -34,10 +34,37 @@ export function MoveCandidateRow({ name, type, meta, labels }: {
   </span>
 }
 
-export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels, search }: {
+export type RegisteredMoveLabels = { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
+export type MoveSlotView = {
+  id: string; name: string; type?: string | null; meta?: MoveMeta | null;
+  inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>;
+  tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>;
+  search?: RegisteredMoveSearch; children?: ReactNode; className?: string; preview?: ReactNode;
+}
+export function MoveSlotsEditor({ label, labels, slots, role, ownerId, selectedIndex = null, toolbar, belowGrid, onClick, className = '' }: {
+  label: string; labels: RegisteredMoveLabels; slots: readonly MoveSlotView[]; role: 'editable' | 'readonly'; ownerId: string;
+  selectedIndex?: number | null; toolbar?: ReactNode; belowGrid?: ReactNode; onClick?: React.MouseEventHandler<HTMLDivElement>; className?: string
+}) {
+  return <div className={`move-slots-editor ${className}`.trim()} aria-label={label} data-owner={ownerId} onClick={onClick}>
+    <div className="move-slots-editor-head"><strong>{label}</strong>{toolbar ? <div className="move-slots-editor-toolbar">{toolbar}</div> : null}</div>
+    <div className="move-slots-editor-grid">{Array.from({ length: 4 }, (_, index) => {
+      const slot = slots[index]
+      const selected = role === 'editable' && selectedIndex === index
+      return <div key={`${ownerId}-${slot?.id ?? index}`} className="move-slots-editor-cell" data-slot={index + 1}>
+        <RegisteredMoveSlot number={index + 1} name={slot?.name ?? ''} type={slot?.type} meta={slot?.meta} labels={labels}
+          className={`move-slots-editor-slot ${slot?.className ?? ''}`.trim()} data-selected={selected}
+          inputProps={{ ...slot?.inputProps, readOnly: role === 'readonly' || slot?.inputProps?.readOnly }}
+          tooltipProps={slot?.tooltipProps} search={role === 'editable' ? slot?.search : undefined}>{slot?.children}</RegisteredMoveSlot>
+        <div className="move-slots-editor-preview">{role === 'editable' ? slot?.preview : null}</div>
+      </div>
+    })}</div>{belowGrid}
+  </div>
+}
+
+export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels, search, ...surfaceProps }: {
   number: number; name: string; type?: string | null; meta?: MoveMeta | null; inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>; tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; children?: ReactNode; className?: string
   search?: RegisteredMoveSearch
-  labels: { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
+  labels: RegisteredMoveLabels; 'data-selected'?: boolean
 }) {
   const sharedInputProps = { ...inputProps, ...tooltipProps,
     onFocus: (event: React.FocusEvent<HTMLInputElement>) => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) },
@@ -54,14 +81,16 @@ export function RegisteredMoveSlot({ number, name, type, meta, inputProps, toolt
       optionClassName={(option, index) => `move-autocomplete-item ${typeof search.optionClassName === 'function' ? search.optionClassName(option, index) : search.optionClassName ?? ''}`.trim()} /> : <input {...inputProps} {...tooltipProps} value={name}
       onFocus={event => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) }}
       onBlur={event => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) }} />}
-    {children}
-    {name ? <small className="registered-move-meta">
+    <small className="registered-move-meta" aria-hidden={name ? undefined : true}>
+      {name ? <>
       {meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}
-    </small> : null}
+      </> : '\u00a0'}
+    </small>
+    {children}
   </>
   return search && !inputProps.readOnly
-    ? <div className={`registered-move-slot ${className}`.trim()}>{content}</div>
-    : <label className={`registered-move-slot ${className}`.trim()}>{content}</label>
+    ? <div {...surfaceProps} className={`registered-move-slot ${className}`.trim()}>{content}</div>
+    : <label {...surfaceProps} className={`registered-move-slot ${className}`.trim()}>{content}</label>
 }
 
 /** The party editor and source library share the same card heading, icons and stat tiles. */

@@ -85,7 +85,13 @@ async function build() {
   for (const [name,fields] of Object.entries(overrides)) {
     assert(Object.hasOwn(legacy,name),`override without evidence: ${name}`)
     assert(!Object.hasOwn(fields,'id') && !Object.hasOwn(fields,'type'),`override must not own ID/type: ${name}`)
-    for (const [field,value] of Object.entries(fields)) assert(JSON.stringify(legacy[name][field]) === JSON.stringify(value),`override differs from frozen evidence: ${name}.${field}`)
+    for (const [field,value] of Object.entries(fields)) {
+      // Pinned Showdown moves.ts: Frost Breath #524 and Storm Throw #480 willCrit.
+      // The frozen legacy extraction omitted these mechanics; never broaden this exception.
+      const pinnedCrit = { '얼음숨결': 524, '업어후리기': 480 }
+      if (field === 'alwaysCrit' && value === true && source[name]?.id === pinnedCrit[name]) continue
+      assert(JSON.stringify(legacy[name][field]) === JSON.stringify(value),`override differs from frozen evidence: ${name}.${field}`)
+    }
   }
   const aliasComponents = validateAliases(source,aliases)
   const generated = {}
@@ -99,6 +105,7 @@ async function build() {
   }
   // Historical raw names, including source-anchored aliases, retain their own exact rows.
   for (const name of historical) generated[name] = legacy[name]
+  for (const [name,fields] of Object.entries(overrides)) generated[name] = { ...generated[name], ...fields }
 
   const oldMatches = previousReport.generatedMoves
   assert(Array.isArray(oldMatches) && oldMatches.length === legacyNames.length,'historical match provenance missing')

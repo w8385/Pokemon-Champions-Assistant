@@ -35,7 +35,7 @@ import { actualStat } from './statMechanics'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './statPresentation'
 import { getSpeedAbility, speedActivationAllowed } from './speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './singleSpeedComparison'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, RegisteredMoveSlot, MoveCandidateRow, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, MoveSlotsEditor, MoveCandidateRow, createReadonlyCardStats, type CardStat } from './PokemonCardOverview'
 import SpeedLinePanel from './SpeedLinePanel'
 import PokemonSearchField from './PokemonSearchField'
 import SearchCombobox from './SearchCombobox'
@@ -111,7 +111,11 @@ type DamageCalcModifiers = {
   attackMultiplier?: number
   defenseMultiplier?: number
   powerMultiplier?: number
+  fixedBpMods?: number[]
   finalMultiplier?: number
+  fixedFinalMods?: number[]
+  spreadMod?: number
+  weatherMod?: number
   incomingScreenName?: string | null
   critical?: boolean
   burned?: boolean
@@ -2054,15 +2058,32 @@ function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (normalizedTypeChart[attackKey]?.[defendType.toLowerCase()] ?? 1), 1)
 }
 
+// Pinned Champions mechanics: Mold Breaker clears only the defender abilities
+// explicitly ignored by the original engine AND currently modeled for damage.
+// This is a hit-local projection, never a mutation of the recorded ability.
+function effectiveDefenderAbility(attackerAbility: string, defenderAbility: string): string {
+  if (attackerAbility !== 'mold-breaker') return defenderAbility
+  const ignored = new Set([
+    'aura-guard', 'battle-armor', 'disguise', 'dry-skin', 'earth-eater', 'eelevate',
+    'filter', 'flash-fire', 'fluffy', 'fur-coat', 'grass-pelt', 'heatproof',
+    'levitate', 'lightning-rod', 'marvel-scale', 'motor-drive', 'multiscale',
+    'punk-rock', 'purifying-salt', 'sap-sipper', 'shell-armor', 'solid-rock',
+    'soundproof', 'storm-drain', 'thick-fat', 'unaware', 'volt-absorb',
+    'water-absorb', '부유', '탈',
+  ])
+  return ignored.has(defenderAbility) ? '' : defenderAbility
+}
+
 function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes: string[], defenderAbility: string, attackerAbility = '') {
   const attackKey = attackType.toLowerCase()
+  const effectiveAbility = effectiveDefenderAbility(attackerAbility, defenderAbility)
   const attackerAbilityKey = attackerAbility.toLowerCase()
   const hasScrappy = attackerAbilityKey === 'scrappy' || attackerAbility === '배짱'
   const normalizedDefendTypes = hasScrappy && (attackKey === 'normal' || attackKey === 'fighting')
     ? defendTypes.filter((defendType) => defendType.toLowerCase() !== 'ghost')
     : defendTypes
   const baseEffectiveness = typeEffectiveness(attackType, normalizedDefendTypes)
-  if (attackKey === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유')) return 0
+  if (attackKey === 'ground' && (effectiveAbility === 'levitate' || effectiveAbility === '부유')) return 0
   return baseEffectiveness
 }
 
@@ -2225,7 +2246,8 @@ function applyFixedMod(value: number, mod: number) {
   return Math.floor((value * mod) / DAMAGE_MOD_SCALE)
 }
 
-function engineMovePower(power: number, multiplier = 1) {
+function engineMovePower(power: number, multiplier = 1, fixedBpMods: number[] = []) {
+  if (fixedBpMods.length) return Math.max(1, pokeRound(Math.floor(power) * chainMods([fixedMod(multiplier), ...fixedBpMods], 41, 2097152) / DAMAGE_MOD_SCALE))
   return Math.max(1, applyFixedMod(Math.floor(power), fixedMod(multiplier)))
 }
 
@@ -2259,13 +2281,15 @@ function calcDamage(attacker: BattleStatBlock, defender: BattleStatBlock, movePo
   const scaledAttack = Math.max(1, applyFixedMod(Math.floor(attackStat), attackMod))
   const scaledDefense = Math.max(1, applyFixedMod(Math.floor(defenseStat), defenseMod))
   const hitPowers = moveMeta?.hitPowers?.length ? moveMeta.hitPowers : Array.from({ length: Math.max(1, moveMeta?.hits ?? 1) }, () => resolvedPower)
-  const finalMod = chainMods([fixedMod(modifiers?.finalMultiplier ?? 1)])
+  const finalMod = chainMods([fixedMod(modifiers?.finalMultiplier ?? 1), ...(modifiers?.fixedFinalMods ?? [])], 41, 131072)
   const stabMod = fixedMod(stab)
   const rolls = Array.from({ length: 16 }, (_, idx) => 85 + idx).map((random) => hitPowers.reduce((sum, power, hitIdx) => {
     if (modifiers?.ignoreFirstHitDamage && hitIdx === 0) return sum
-    const scaledPower = engineMovePower(power, modifiers?.powerMultiplier ?? 1)
+    const scaledPower = engineMovePower(power, modifiers?.powerMultiplier ?? 1, modifiers?.fixedBpMods)
     let base = getBaseDamage(level, scaledPower, scaledAttack, scaledDefense)
-    if (moveMeta?.alwaysCrit || modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
+    if (modifiers?.spreadMod) base = pokeRound(base * modifiers.spreadMod / DAMAGE_MOD_SCALE)
+    if (modifiers?.weatherMod) base = pokeRound(base * modifiers.weatherMod / DAMAGE_MOD_SCALE)
+    if (modifiers?.critical) base = applyFixedMod(base, fixedMod(1.5))
     return sum + getFinalDamageRoll(base, random, effectiveness, Boolean(modifiers?.burned), stabMod, finalMod)
   }, 0))
   const min = rolls[0]
@@ -2434,6 +2458,12 @@ function knockOffPowerMultiplier(moveName: string, defenderKey: string, defender
   return moveName === '탁쳐서떨구기' && classifyHeldItem(defenderKey, defenderItem).status === 'allowed' ? 1.5 : 1
 }
 
+// No Gravity or airborne-status control exists in the supported calculation UI.
+// Missing type identity must not silently receive a grounded terrain bonus.
+function isDamageGrounded(types: string[] | undefined, ability: string, item: string): boolean {
+  return Boolean(types?.length && !types.includes('flying') && !['levitate', '부유', 'eelevate'].includes(ability) && item !== 'ふうせん')
+}
+
 function resolveDamageModifiers(params: {
   attackerAbility: string
   attackerAllyAbility?: string
@@ -2445,11 +2475,14 @@ function resolveDamageModifiers(params: {
   baseMoveType: string | null
   moveType: string | null
   movePower: number | null
+  moveMeta?: MoveMeta | null
   mode: CalcMode
   effectiveness: number
   attackStage: number
   defenseStage: number
+  attackerTypes?: string[]
   defenderTypes: string[]
+  format?: 'Singles' | 'Doubles'
   burned: boolean
   attackerLowHp: boolean
   targetPoisoned: boolean
@@ -2469,21 +2502,26 @@ function resolveDamageModifiers(params: {
   disguiseActive?: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility, defenderKey, defenderItem, moveName, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, defenderTypes, burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility: recordedDefenderAbility, defenderKey, defenderItem, moveName, moveMeta, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, attackerTypes, defenderTypes, format = 'Singles', burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const defenderAbility = effectiveDefenderAbility(attackerAbility, recordedDefenderAbility)
   const canonicalAttackerItem = canonicalChampionsItemName(attackerItem)
   const canonicalDefenderItem = canonicalChampionsItemName(defenderItem)
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
   const defenderIgnoresAttackStage = defenderAbility === 'unaware'
-  const criticalBlocked = critical && ['battle-armor', 'shell-armor'].includes(defenderAbility)
-  const effectiveCritical = Boolean(!criticalBlocked && (critical || (attackerAbility === 'merciless' && targetPoisoned)))
+  const wantsCritical = Boolean(critical || moveMeta?.alwaysCrit || (attackerAbility === 'merciless' && targetPoisoned))
+  const criticalBlocked = wantsCritical && ['battle-armor', 'shell-armor'].includes(defenderAbility)
+  const effectiveCritical = wantsCritical && !criticalBlocked
   const effectiveAttackStage = defenderIgnoresAttackStage ? 0 : effectiveCritical && attackStage < 0 ? 0 : attackStage
   const effectiveDefenseStage = attackerIgnoresDefenseStage ? 0 : effectiveCritical && defenseStage > 0 ? 0 : defenseStage
   let attackMultiplier = battleStageMultiplier(effectiveAttackStage)
   let defenseMultiplier = battleStageMultiplier(effectiveDefenseStage)
   let powerMultiplier = 1
+  const fixedBpMods: number[] = []
   const knockOffMultiplier = knockOffPowerMultiplier(moveName, defenderKey, defenderItem)
   powerMultiplier *= knockOffMultiplier
   let finalMultiplier = 1
+  const fixedFinalMods: number[] = []
+  let weatherMod: number | undefined
   let adjustedEffectiveness = effectiveness
   const notes: string[] = []
   if (knockOffMultiplier > 1) notes.push('탁쳐서떨구기(상대 도구)')
@@ -2519,7 +2557,7 @@ function resolveDamageModifiers(params: {
   const burnApplies = burned && mode === 'physical' && moveName !== '객기' && attackerAbility !== 'guts' && attackerAbility !== '근성' && attackerAbility !== 'water-bubble'
   if (burnApplies) notes.push('화상')
 
-  if (effectiveCritical) notes.push(attackerAbility === 'merciless' && targetPoisoned && !critical ? `${abilityNoteLabel(attackerAbility)}(급소)` : '급소')
+  if (effectiveCritical) notes.push(attackerAbility === 'merciless' && targetPoisoned && !critical && !moveMeta?.alwaysCrit ? `${abilityNoteLabel(attackerAbility)}(급소)` : '급소')
   if (criticalBlocked) notes.push(`${abilityNoteLabel(defenderAbility)}(급소 방지)`)
 
   if (mode === 'physical' && (attackerAbility === 'huge-power' || attackerAbility === 'pure-power')) {
@@ -2693,6 +2731,10 @@ function resolveDamageModifiers(params: {
     finalMultiplier *= 1.3
     notes.push('생명의구슬')
   }
+  if (canonicalAttackerItem === 'たつじんのおび' && adjustedEffectiveness > 1) {
+    fixedFinalMods.push(4915)
+    notes.push('달인의띠')
+  }
 
   if (canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal') {
     finalMultiplier *= 1.3
@@ -2701,20 +2743,20 @@ function resolveDamageModifiers(params: {
 
   if (offensiveWeather === 'sun') {
     if (moveType === 'fire') {
-      finalMultiplier *= 1.5
+      weatherMod = 6144
       notes.push(attackerAbility === 'mega-sol' ? `${abilityNoteLabel(attackerAbility)}(쾌청)` : '쾌청')
     } else if (moveType === 'water') {
-      finalMultiplier *= 0.5
+      weatherMod = 2048
       notes.push(attackerAbility === 'mega-sol' ? `${abilityNoteLabel(attackerAbility)}(쾌청)` : '쾌청')
     }
   }
 
   if (offensiveWeather === 'rain') {
     if (moveType === 'water') {
-      finalMultiplier *= 1.5
+      weatherMod = 6144
       notes.push('비')
     } else if (moveType === 'fire') {
-      finalMultiplier *= 0.5
+      weatherMod = 2048
       notes.push('비')
     }
   }
@@ -2724,21 +2766,29 @@ function resolveDamageModifiers(params: {
     notes.push('모래바람')
   }
 
-  if (terrain === 'electric' && moveType === 'electric') {
-    finalMultiplier *= 1.3
+  if (terrain === 'electric' && moveType === 'electric' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+    fixedBpMods.push(5325)
     notes.push('일렉트릭필드')
   }
-  if (terrain === 'grassy' && moveType === 'grass') {
-    finalMultiplier *= 1.3
+  if (terrain === 'grassy' && moveType === 'grass' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+    fixedBpMods.push(5325)
     notes.push('그래스필드')
   }
-  if (terrain === 'psychic' && moveType === 'psychic') {
-    finalMultiplier *= 1.3
+  if (terrain === 'psychic' && moveType === 'psychic' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+    fixedBpMods.push(5325)
     notes.push('사이코필드')
   }
-  if (terrain === 'misty' && moveType === 'dragon') {
-    finalMultiplier *= 0.5
+  if (terrain === 'misty' && moveType === 'dragon' && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem)) {
+    fixedBpMods.push(2048)
     notes.push('미스트필드')
+  }
+  if (terrain === 'grassy' && ['지진', '땅고르기'].includes(moveName) && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem)) {
+    fixedBpMods.push(2048)
+    notes.push('그래스필드(지면)')
+  }
+  if (adjustedEffectiveness > 0 && moveType === 'fire' && defenderAbility === 'dry-skin') {
+    fixedBpMods.push(5120)
+    notes.push(abilityNoteLabel(defenderAbility))
   }
 
   if (moveType === 'ground' && (defenderAbility === 'levitate' || defenderAbility === '부유' || defenderAbility === 'eelevate')) {
@@ -2911,9 +2961,12 @@ function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  const screenApplies = !effectiveCritical && (auroraVeil || (mode === 'physical' ? reflect : lightScreen))
+  // Brick Break/Psychic Fangs remove screens before their own hit; Infiltrator
+  // passes through without removing them. Neither mutates saved battle state.
+  const ignoresScreens = moveName === '깨트리다' || moveName === '사이코팽' || attackerAbility === 'infiltrator'
+  const screenApplies = !effectiveCritical && !ignoresScreens && (auroraVeil || (mode === 'physical' ? reflect : lightScreen))
   if (screenApplies) {
-    finalMultiplier *= 0.5
+    fixedFinalMods.push(format === 'Doubles' ? 2732 : 2048)
     incomingScreenName = auroraVeil ? '오로라베일' : mode === 'physical' ? '리플렉터' : '빛의장막'
     notes.push(incomingScreenName)
   }
@@ -2946,7 +2999,11 @@ function resolveDamageModifiers(params: {
     attackMultiplier,
     defenseMultiplier,
     powerMultiplier,
+    fixedBpMods,
     finalMultiplier,
+    fixedFinalMods,
+    spreadMod: undefined as number | undefined,
+    weatherMod,
     incomingScreenName,
     effectiveness: adjustedEffectiveness,
     critical: effectiveCritical,
@@ -2985,7 +3042,9 @@ function decisionPowerIndex(stats: BattleStatBlock, moveMeta: MoveMeta, stab: nu
     * stab
     * (modifiers.attackMultiplier ?? 1)
     * (modifiers.powerMultiplier ?? 1)
+    * chainMods(modifiers.fixedBpMods ?? []) / DAMAGE_MOD_SCALE
     * (modifiers.finalMultiplier ?? 1)
+    * chainMods(modifiers.fixedFinalMods ?? [], 41, 131072) / DAMAGE_MOD_SCALE
     / Math.max(0.01, modifiers.defenseMultiplier ?? 1)
   )
 }
@@ -3990,7 +4049,7 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
     const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, targetAbility, conditions.weather, conditions.terrain)
     const foulPlay = name === '속임수'
     const [attackStage, defenseStage] = quickStagePair(source.battle, target.battle, { ...meta, usesTargetAttack: foulPlay })
-    const modifiers = resolveDamageModifiers({ attackerAbility: sourceAbility, attackerItem: source.item, defenderAbility: targetAbility, defenderKey: target.key, defenderItem: target.item, moveName: name, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
+    const modifiers = resolveDamageModifiers({ attackerAbility: sourceAbility, attackerTypes: sourceTypes, attackerItem: source.item, defenderAbility: targetAbility, defenderKey: target.key, defenderItem: target.item, moveName: name, moveMeta: meta, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
     const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, sourceAbility, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
     return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness } : null
   }
@@ -4078,10 +4137,11 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
         {statCard(side, entry, row)}
-        {learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
-        {status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{language === 'ko' ? '다시 시도 (새로고침)' : language === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
-        {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}
-        <div className="registered-move-grid quick-registered-moves">{Array.from({ length: 4 }, (_, index) => {
+        <MoveSlotsEditor label={lt('기술 배치')} labels={labels} ownerId={`quick-${side}-${entry.key}`} role="editable" selectedIndex={selected.side === side ? selected.index : null}
+          toolbar={<>{learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
+            {status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{language === 'ko' ? '다시 시도 (새로고침)' : language === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
+            {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}</>}
+          slots={Array.from({ length: 4 }, (_, index) => {
           const name = entry.moves[index] ?? ''
           const draftKey = `${side}-${index}`
           const draft = drafts[draftKey] ?? ''
@@ -4089,19 +4149,18 @@ export function QuickDamagePanel({ language, tooltipForMove, initialSides, compa
           const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
           const preview = calculate(side, name)
           const previewVerdict = quickKoVerdict(preview)
-          return <div key={index} className={`quick-move-row ${selected.side === side && selected.index === index ? 'selected' : ''}`}>
-            {recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null}
-            <RegisteredMoveSlot number={index + 1} name={activeSlot?.side === side && activeSlot.index === index ? draft : name} type={meta?.type} meta={meta} labels={labels} className={moveTypeThemeClass(meta?.type)}
-              tooltipProps={tooltipForMove(name)}
-              search={{ id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+          return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
+              children: recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null,
+              tooltipProps: tooltipForMove(name),
+              search: { id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                 onSelect: option => { const found = options.find(move => move.name === option.key); if (found) commit(index, found) },
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
-                optionProps: option => tooltipForMove(option.key) }}
-              inputProps={{ 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) }} />
-            <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
-          </div>
-        })}</div>
+                optionProps: option => tooltipForMove(option.key) },
+              inputProps: { 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
+              preview: <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
+            }
+        })} />
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
     </section>
   }
@@ -4894,12 +4953,15 @@ export default function App() {
     const friendGuard = attackerMeta.side !== defenderMeta.side && friendGuardAvailable && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
     const modifiers = blockedByProtection ? null : resolveDamageModifiers({
       attackerAbility,
+      attackerTypes: resolveAbilityAdjustedTypes(attackerRow.types, attackerAbility, 'none', 'none'),
+      format: 'Doubles',
       attackerAllyAbility: attackerAllyMeta?.option?.row ? classifyAbilityForKey(attackerAllyMeta.option.row.key, attackerAllyAbility).slug ?? '' : '',
       attackerItem,
       defenderAbility,
       defenderKey,
       defenderItem,
       moveName,
+      moveMeta,
       baseMoveType: moveMeta?.type ?? moveType,
       moveType,
       movePower: moveMeta?.power ?? 0,
@@ -4926,14 +4988,14 @@ export default function App() {
       friendGuard,
       critical: false,
     })
-    if (modifiers && spreadMove) modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * 0.75
+    if (modifiers && spreadMove) modifiers.spreadMod = 3072
     if (modifiers && piercesProtection) {
       modifiers.finalMultiplier = (modifiers.finalMultiplier ?? 1) * protectionMultiplier
       modifiers.notes.push(`${abilityNoteLabel(attackerAbility)}(방어 관통 1/4)`)
     }
-    const damage = blockedByProtection ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, effectiveness, moveMeta, modifiers ?? undefined)
+    const damage = blockedByProtection ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, modifiers!.effectiveness, moveMeta, modifiers ?? undefined)
     const reason = blockedByProtection && guardedByWide ? lt('와이드가드로 차단됨') : blockedByProtection && protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
-    return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness }
+    return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness: modifiers?.effectiveness ?? effectiveness }
   }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey, asyncDataVersion])
   const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
   const doubleSpeedOrder = React.useMemo(() => {
@@ -6041,11 +6103,13 @@ export default function App() {
   const effectiveMovePower = activeDamageMovePower ?? 0
   const damageModifiers = singleItemError ? null : resolveDamageModifiers({
     attackerAbility: attackerAbilitySlug,
+    attackerTypes: effectiveAttackerTypes,
     attackerItem: attackFromOpponent ? oppMember.item : myMember.item,
     defenderAbility: defenderAbilitySlug,
     defenderKey: attackFromOpponent ? myMember.key : oppMember.key,
     defenderItem: attackFromOpponent ? myMember.item : oppMember.item,
     moveName: activeDamageMove,
+    moveMeta: activeDamageMoveMeta,
     baseMoveType: activeDamageMoveBaseType,
     moveType: activeDamageMoveType,
     movePower: effectiveMovePower,
@@ -6065,7 +6129,7 @@ export default function App() {
     parentalBond: calcParentalBond,
     defenderStatused: calcDefenderStatused,
     electromorphosisCharged: calcElectromorphosisCharged,
-    critical: calcCritical || activeDamageMoveAlwaysCrit,
+    critical: calcCritical,
     weather: calcWeather,
     terrain: calcTerrain,
     reflect: calcReflect,
@@ -6112,11 +6176,13 @@ export default function App() {
     const moveEffectiveness = moveType ? abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilitySlug, attackerAbilitySlug) : effectiveness
     const modifiers = resolveDamageModifiers({
       attackerAbility: attackerAbilitySlug,
+      attackerTypes: effectiveAttackerTypes,
       attackerItem: attackFromOpponent ? oppMember.item : myMember.item,
       defenderAbility: defenderAbilitySlug,
       defenderKey: attackFromOpponent ? myMember.key : oppMember.key,
       defenderItem: attackFromOpponent ? myMember.item : oppMember.item,
       moveName,
+      moveMeta,
       baseMoveType: baseMeta?.type ?? null,
       moveType,
       movePower,
@@ -6136,7 +6202,7 @@ export default function App() {
       parentalBond: calcParentalBond,
       defenderStatused: calcDefenderStatused,
       electromorphosisCharged: calcElectromorphosisCharged,
-      critical: calcCritical || Boolean(moveMeta?.alwaysCrit),
+      critical: calcCritical,
       weather: calcWeather,
       terrain: calcTerrain,
       reflect: calcReflect,
@@ -6282,17 +6348,24 @@ export default function App() {
     focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
   }
   const renderSampleMoveEditor = () => (
-    <>
-                          <div className="registered-move-grid sample-registered-move-grid sample-track-input-grid">
-                            {sampleRegisteredMoves.map((move, moveIdx) => (
-                              <RegisteredMoveSlot key={`sample-registered-move-${sampleForge.key}-${moveIdx}`} number={moveIdx + 1} name={sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move} type={sampleMoveType(move)} meta={resolveMoveMeta(move, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`sample-registered-move-slot ${moveTypeThemeClass(sampleMoveType(move))} ${activeSampleMoveSlotIdx === moveIdx ? 'active-target' : ''} ${sampleMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
-                                tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                                search={{ id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+    <MoveSlotsEditor label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`sample-${sampleForge.key}`} role="editable" selectedIndex={activeSampleMoveSlotIdx}
+      toolbar={<div className="pick-summary-badges sample-slot-target-badges">
+        <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
+        {sampleForge.key && learnsetStatusText(sampleMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(sampleMovePool, siteLanguage)}</small> : null}
+        {sampleMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
+        <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves(prev => {
+          const current = [...prev]; while (current.length < 4) current.push(''); current[activeSampleMoveSlotIdx] = ''; return normalizeMoveSlots(current)
+        })}>{lt('슬롯 비우기')}</button>
+      </div>}
+      slots={sampleRegisteredMoves.slice(0, 4).map((move, moveIdx) => ({
+                                id: `${moveIdx}`, name: sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, type: sampleMoveType(move), meta: resolveMoveMeta(move, sampleMoveOptions, movePoolByKey), className: moveTypeThemeClass(sampleMoveType(move)),
+                                tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
+                                search: { id: `sample-move-${sampleForge.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null ? moveInputDraft : move, sampleMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                                   onSelect: option => selectSampleMoveOption(moveIdx, option.key),
                                   optionClassName: option => moveTypeThemeClass(sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
                                   renderOption: option => <MoveCandidateRow name={option.label} type={sampleMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, sampleMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
-                                  optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
-                                inputProps={{
+                                  optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
+                                inputProps: {
                                   placeholder: sampleMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : sampleMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
                                   onFocus: () => {
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
@@ -6308,10 +6381,19 @@ export default function App() {
                                     setMoveInputDraft(e.target.value)
                                     setActiveMoveField({ key: sampleForge.key, slotIdx: moveIdx, scope: 'sample' })
                                   },
-                                }}>{recordedLearnsetText(move, sampleMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, sampleMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, sampleForge.key, moveIdx, 'sample') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</RegisteredMoveSlot>
-                            ))}
-                          </div>
-    </>
+                                }, children: <>{recordedLearnsetText(move, sampleMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, sampleMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, sampleForge.key, moveIdx, 'sample') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</>,
+                                preview: mainSection === 'sample' && sampleWorkbenchTab === 'damage' && move ? sampleDamageCalcs.map(entry => {
+                                  const result = entry.forwardMoves.find(item => item.moveName === move)
+                                  return <div key={`${entry.idx}-${moveIdx}`} className="sample-damage-move-result">
+                                    <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
+                                    <span>{result?.damage && result.defenderStats ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.unavailableReason}</span>
+                                    {result?.damage ? <small>{lt('상대 적용 결정력')} {result.appliedDecisionPower == null ? '—' : formatBattleIndex(result.appliedDecisionPower, siteLanguage)} · {lt('적용 위력')} {result.effectivePower}</small> : null}
+                                    {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
+                                    {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'conditionalValues', e.target.checked)} />}</label> : null}
+                                    {result && (result.moveRule || result.moveHitOptions?.length || move === '로우킥' || move === '풀묶기') ? <small>{variablePowerHint(move, lt, { targetWeightKnown: result.targetWeightKnown, resolvedPower: result.movePower, totalPower: result.moveHitSummary?.totalPower ?? null })}</small> : null}
+                                  </div>
+                                }) : null
+                            }))} />
   )
   const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
   const sampleCuratedMoveBuckets = [
@@ -6408,11 +6490,13 @@ export default function App() {
     const stab = resolveStabMultiplier(attackerTypes, moveMeta.type, sampleAttackerAbilityValue, true)
     const modifiers = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
+      attackerTypes,
       attackerItem: sampleCalcMember.item,
       defenderAbility: '',
       defenderKey: '', // Target-free baseline: never imply an equipped removable item.
       defenderItem: '',
       moveName,
+      moveMeta,
       baseMoveType: moveMetaBase?.type ?? moveMeta.type,
       moveType: moveMeta.type,
       movePower: moveMeta.power ?? null,
@@ -6525,15 +6609,16 @@ export default function App() {
       const reverseTargetTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain)
       const reverseSourceTypes = resolveAbilityAdjustedTypes(row.types, reverseAbility, calcWeather, calcTerrain)
       const reverseModifiers = resolveDamageModifiers({
-        attackerAbility: reverseAbility, attackerItem: member.item,
+        attackerAbility: reverseAbility, attackerTypes: reverseSourceTypes, attackerItem: member.item,
         defenderAbility: sampleAttackerAbilityValue, defenderKey: sampleForge.key, defenderItem: sampleForge.item,
         moveName: opponentMoveName, baseMoveType: reverseBase?.type ?? reverseMeta.type,
+        moveMeta: reverseMeta,
         moveType: reverseMeta.type, movePower: reverseMeta.power, mode: reverseMeta.category,
         effectiveness: abilityAdjustedTypeEffectiveness(reverseMeta.type, reverseTargetTypes, sampleAttackerAbilityValue, reverseAbility),
         attackStage: reverseProjection.attackStage, defenseStage: reverseProjection.defenseStage, defenderTypes: reverseTargetTypes,
         burned: opponentBattle.burned, attackerLowHp: opponentBattle.lowHp, targetPoisoned: ownBattle.poisoned, defenderFullHp: ownBattle.fullHp,
         movedAfterTarget: opponentBattle.movedAfterTarget, faintedAllies: opponentBattle.faintedAllies, rivalryMode: opponentBattle.rivalryMode, parentalBond: reverseAbility === 'parental-bond' && opponentBattle.parentalBond, defenderStatused: ownBattle.statused,
-        electromorphosisCharged: opponentBattle.electromorphosisCharged, critical: opponentBattle.critical || Boolean(reverseMeta.alwaysCrit), weather: calcWeather, terrain: calcTerrain,
+        electromorphosisCharged: opponentBattle.electromorphosisCharged, critical: opponentBattle.critical, weather: calcWeather, terrain: calcTerrain,
         reflect: ownBattle.reflect, lightScreen: ownBattle.lightScreen, auroraVeil: ownBattle.auroraVeil, friendGuard: false,
       })
       reverseDamage = calcDamage(reverseProjection.attacker, reverseProjection.defender,
@@ -6606,11 +6691,13 @@ export default function App() {
     const forwardProjection = sampleMoveStats(moveName, moveMeta!, damageSampleAttackerStats, defenderStats, ownBattle, opponentBattle)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
+      attackerTypes: effectiveAttackerTypes,
       attackerItem: sampleForge.item,
       defenderAbility: defenderAbilityValue,
       defenderKey: member.key,
       defenderItem: member.item,
       moveName,
+      moveMeta,
       baseMoveType: moveMetaBase?.type ?? moveType,
       moveType,
       movePower,
@@ -6630,7 +6717,7 @@ export default function App() {
       parentalBond: ownBattle.parentalBond,
       defenderStatused: opponentBattle.statused,
       electromorphosisCharged: ownBattle.electromorphosisCharged,
-      critical: ownBattle.critical || Boolean(moveMeta?.alwaysCrit),
+      critical: ownBattle.critical,
       weather: calcWeather,
       terrain: calcTerrain,
       reflect: opponentBattle.reflect,
@@ -6642,7 +6729,7 @@ export default function App() {
     const attackStatValue = moveMeta?.usesDefenseAsAttack ? forwardProjection.attacker.defense : moveName === '속임수' ? forwardProjection.defender.attack : moveCategory === 'physical' ? forwardProjection.attacker.attack : forwardProjection.attacker.spAttack
     const damage = calcDamage(forwardProjection.attacker, forwardProjection.defender, movePower, moveCategory, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack.effectiveness, moveMeta, modifierPack)
     // Use the exact fixed-point power path from calcDamage, not a second rounding rule.
-    const effectivePower = engineMovePower(movePower, modifierPack.powerMultiplier ?? 1)
+    const effectivePower = engineMovePower(movePower, modifierPack.powerMultiplier ?? 1, modifierPack.fixedBpMods)
     const appliedDecisionPower = damage && moveMeta ? decisionPowerIndex(forwardProjection.attacker, moveMeta, resolveStabMultiplier(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab), modifierPack) : null
     return { idx, member, row, reverse, moveName, moveCategory, movePower, effectivePower, appliedDecisionPower, attackStatLabel, attackStatValue, defenderStats, damage, verdict: damage ? resolveDamageVerdict(damage, defenderStats.hp, siteLanguage, Boolean(moveMeta?.hits && moveMeta.hits > 1)) : lt('대미지 계산 불가'), moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason: damage ? null : lt('대미지 계산 불가') }
     })
@@ -6867,6 +6954,18 @@ export default function App() {
     const range = element.querySelector<HTMLInputElement>('.effort-gauge-range')
     range?.focus()
   }
+
+  const renderSampleForgeNatureField = () => <PokemonBuildFields key={`sample-nature-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} natureOnly className="sample-own-nature-field"
+    ability={sampleForge.ability} nature={sampleForge.config.nature} item={sampleForge.item}
+    abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
+    natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
+    itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(sampleForge.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
+    onAbility={ability => setSampleForge(prev => ({ ...prev, ability }))}
+    onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature: nature as NatureId } }))}
+    onItem={item => setSampleForge(prev => ({ ...prev, item: item ? resolveItemInput(prev.key, item, siteLanguage) : '' }))}
+    labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택') }}
+    itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(sampleForge.key, value)}
+  />
 
   const renderSampleForgeEffortGrid = (scope: 'speed' | 'damage') => {
     if (!sampleRow) return null
@@ -7385,12 +7484,13 @@ export default function App() {
         <button type="button" aria-pressed={formKey === baseKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: false }))}>{lt('일반')} · {displayName(indexByKey.get(baseKey!)!, siteLanguage)}</button>
         <button type="button" aria-pressed={formKey === megaKey} onClick={() => setCreatorMegaSelection(prev => ({ ...prev, [entry.id]: true }))}>{lt('메가')} · {displayName(indexByKey.get(megaKey!)!, siteLanguage)}</button>
       </div> : null}
-      {build?.moves ? <div className="move-card inline-move-card creator-library-moves" aria-label={lt('기술 구성')}><strong>{lt('기술 구성')}</strong><div className="registered-move-grid">{build.moves.map((move, moveIdx) => {
+      {build?.moves ? <MoveSlotsEditor className="creator-library-moves" label={lt('기술 구성')} labels={moveSlotLabels} ownerId={`library-${entry.id}`} role="readonly" slots={Array.from({ length: 4 }, (_, moveIdx) => {
+        const move = build.moves?.[moveIdx] ?? ''
         const meta = resolveMoveMeta(move, [], movePoolByKey)
-        return <RegisteredMoveSlot key={`${entry.id}-${moveIdx}`} number={moveIdx + 1} name={move} type={meta?.type} meta={meta} className={moveTypeThemeClass(meta?.type)} labels={moveSlotLabels}
-          tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-          inputProps={{ readOnly: true, 'aria-label': `${lt('기술')} ${moveIdx + 1}` }} />
-      })}</div></div> : null}
+        return { id: `${moveIdx}`, name: move, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
+          tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
+          inputProps: { readOnly: true, 'aria-label': `${lt('기술')} ${moveIdx + 1}` } }
+      })} /> : null}
     </ReadonlyPokemonCard>
   }
 
@@ -8226,23 +8326,21 @@ export default function App() {
                       itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
                     />{memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}</> : null}
                     {row ? <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))} onTune={() => { partyTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setTuningModalIndex(idx) }} /> : null}
-                    {row ? <div className="move-card inline-move-card" onClick={(e) => e.stopPropagation()}>
-                      <div className="row-between">
-                        <strong>{lt('기술 배치')}</strong>
+                    {row ? <MoveSlotsEditor className="inline-move-card" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
+                      toolbar={<>
                         {member.key ? learnsetStatusText(memberMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null : null}
                         {memberMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
-                      </div>
-                      <div className="registered-move-grid">
-                        {registeredMoves.map((move, moveIdx) => {
+                      </>}
+                      slots={registeredMoves.slice(0, 4).map((move, moveIdx) => {
                           const moveType = findMoveType(move)
-                          return <RegisteredMoveSlot key={`registered-move-${member.key}-${moveIdx}`} number={moveIdx + 1} name={sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move} type={moveType} meta={resolveMoveMeta(move, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} className={`${moveTypeThemeClass(moveType)} ${memberMovePool?.status === 'loading' ? 'move-pool-loading' : ''}`}
-                            tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                            search={{ id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                          return { id: `${moveIdx}`, name: sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, type: moveType, meta: resolveMoveMeta(move, memberMoveOptions, movePoolByKey), className: moveTypeThemeClass(moveType),
+                            tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
+                            search: { id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                               onSelect: option => { selectMoveOption(member.key, moveIdx, option.key); setActiveMoveField(null) },
                               optionClassName: option => moveTypeThemeClass(memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
                               renderOption: option => <MoveCandidateRow name={option.label} type={memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
-                              optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
-                            inputProps={{
+                              optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
+                            inputProps: {
                               placeholder: memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
                               onFocus: () => {
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
@@ -8258,10 +8356,9 @@ export default function App() {
                                 setMoveInputDraft(e.target.value)
                                 setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
                               },
-                            }}>{recordedLearnsetText(move, memberMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, memberMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, member.key, moveIdx, 'party') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</RegisteredMoveSlot>
+                            }, children: <>{recordedLearnsetText(move, memberMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, memberMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, member.key, moveIdx, 'party') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</> }
                         })}
-                      </div>
-                      {memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
+                      belowGrid={memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
                         <div className="row-between sample-track-head compact-gap">
                           <strong>{lt('사용률 상위 기술')}</strong>
                           <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
@@ -8275,8 +8372,7 @@ export default function App() {
                             return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(member.key, move)} disabled={!eligible} title={!eligible ? reason : undefined} aria-label={!eligible ? `${move} — ${reason}` : move} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{moveType ? <SmallTypeBadgeImage type={moveType} /> : null}<span>{move}</span></button>
                           })}
                         </div>
-                      </div> : null}
-                    </div> : null}
+                      </div> : null} /> : null}
                   </div>
                 )
               })}
@@ -8734,24 +8830,7 @@ export default function App() {
                   <div className="sample-tracking-cluster">
                     <div className="sample-track-workspace">
                       <div className="sample-track-main-column">
-                        <div className="sample-track-card sample-track-editor-card">
-                          <div className="row-between sample-track-head">
-                            <strong>{lt('기술 배치')}</strong>
-                            <div className="pick-summary-badges sample-slot-target-badges">
-                              <span className="pick-badge sample-slot-target-badge active">{activeSampleMoveSlotIdx + 1}번 슬롯</span>
-                              {sampleForge.key ? learnsetStatusText(sampleMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(sampleMovePool, siteLanguage)}</small> : null : null}
-                              {sampleMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
-                              <button type="button" className="pick-badge sample-slot-clear-badge sample-slot-clear-action" onClick={() => setSampleLockedMoves((prev) => {
-                                const current = [...prev]
-                                while (current.length < 4) current.push('')
-                                current[activeSampleMoveSlotIdx] = ''
-                                return normalizeMoveSlots(current)
-                              })}>{lt('슬롯 비우기')}</button>
-                            </div>
-                          </div>
-                          {renderSampleMoveEditor()}
-                          {sampleMovePool?.status === 'loading' ? <div className="move-pool-helper sample-move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}
-                        </div>
+                        {renderSampleMoveEditor()}
                         {sampleCuratedMoveBuckets.length ? <div className="sample-track-card top-move-chip-card sample-track-secondary-section">
                           <div className="row-between sample-track-head compact-gap sample-candidate-head">
                             <strong>{lt('실전 후보')}</strong>
@@ -8877,6 +8956,7 @@ export default function App() {
                 <div className="sample-speed-toolbar sample-workbench-toolbar">
                   <div className="sample-speed-inline-controls sample-current-build-toolbar sample-current-build-toolbar-speed">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
+                      {renderSampleForgeNatureField()}
                       {renderSampleForgeEffortGrid('speed')}
                       <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                         <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
@@ -8896,6 +8976,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
+              {renderSampleMoveEditor()}
                 </div>
                 <div className="sample-calculator-side sample-calculator-target">
                   <div className="sample-calculator-side-heading enemy">
@@ -8988,6 +9069,7 @@ export default function App() {
                 <div className="sample-damage-adder sample-workbench-toolbar">
                   <div className="sample-speed-inline-controls sample-current-build-toolbar">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
+                    {renderSampleForgeNatureField()}
                     {renderSampleForgeEffortGrid('damage')}
                     <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                       <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
@@ -9000,7 +9082,7 @@ export default function App() {
                   </div>
                   </div>
                 </div>
-                <div className="move-card flat-sample-move-card sample-damage-own-moves"><strong>{lt('기술 배치')}</strong>{renderSampleMoveEditor()}</div>
+                {renderSampleMoveEditor()}
                 <div className="sample-power-index-panel sample-workbench-wide-card sample-workbench-section">
                   <div className="row-between sample-workbench-section-head">
                     <strong>{lt('기본 결정력')}</strong>
@@ -9091,47 +9173,35 @@ export default function App() {
                               {entry.member.ability && entry.row && !resolveFormAbility(entry.row, entry.member.ability, abilityDescriptionFor, rows).slug ? <option value={entry.member.ability}>{`${lt('원본 특성 표기')}: ${entry.member.ability}`}</option> : null}
                               {entry.row?.abilities.map(slug => <option key={slug} value={slug}>{localizedAbilityLabel(entry.row!, slug, siteLanguage, abilityDescriptionFor)}</option>)}
                             </select></label>
-                             <div className="sample-damage-direction-result" aria-label={lt('내 포켓몬 → 상대')}>
-                               <strong>{lt('내 포켓몬 → 상대')}</strong>
-                               {entry.forwardMoves.length ? entry.forwardMoves.map((move, slot) => <div key={`forward-${slot}`} className="sample-damage-move-result">
-                                 <strong>{move.moveName}</strong><span>{move.damage && move.defenderStats ? <><DamageRangeMeter damage={move.damage} targetHp={move.defenderStats.hp} language={siteLanguage} compact />{move.verdict ? <strong className="damage-verdict">{move.verdict}</strong> : null}</> : move.unavailableReason}</span>
-                                 {move.damage ? <small>{lt('상대 적용 결정력')} {move.appliedDecisionPower == null ? '—' : formatBattleIndex(move.appliedDecisionPower, siteLanguage)} · {lt('적용 위력')} {move.effectivePower}</small> : null}
-                                 {move.moveHitOptions?.length ? <label>{lt('타수')}<select value={move.moveHitCount ?? move.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'moveHits', Number(e.target.value))}>{move.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
-                                 {move.moveRule ? <label>{lt(move.moveRule.label)}{move.moveRule.kind === 'count' ? <input type="number" min={move.moveRule.min ?? 0} max={move.moveRule.max ?? 999} value={Number(move.moveConditionValue ?? move.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(move.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move.moveName, 'conditionalValues', e.target.checked)} />}</label> : null}
-                                 {(move.moveRule || move.moveHitOptions?.length || move.moveName === '로우킥' || move.moveName === '풀묶기') ? <small>{variablePowerHint(move.moveName, lt, { targetWeightKnown: move.targetWeightKnown, resolvedPower: move.movePower, totalPower: move.moveHitSummary?.totalPower ?? null })}</small> : null}
-                               </div>) : <p>{lt('등록 기술 없음')}</p>}
-                             </div>
+
                              <div className="sample-damage-direction-result" aria-label={lt('상대 → 내 포켓몬')}>
                                <strong>{lt('상대 → 내 포켓몬')}</strong>
                                <small role="status">{learnsetStatusText(entry.reverse.opponentPool, siteLanguage) ? `${learnsetStatusText(entry.reverse.opponentPool, siteLanguage)} · ` : ''}{`EV ${entry.member.attackEv}/${entry.member.spAttackEv} · 성격 ${entry.member.attackNature}/${entry.member.spAttackNature} · ${entry.member.speedEv} Speed EV · ${conciseSpeedLabels[siteLanguage].lab}`}</small>
                                {!entry.opponentEffortsValid ? <p role="alert">{lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')}</p> : null}
-                               <div className="registered-move-grid sample-registered-move-grid sample-opponent-move-grid">
-                                 {entry.member.opponentMoves.map((move, slot) => {
+                               <MoveSlotsEditor label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`sample-opponent-${entry.member.key}-${entry.idx}`} role="editable"
+                                 slots={entry.member.opponentMoves.slice(0, 4).map((move, slot) => {
                                    const editing = sampleOpponentMoveDraft?.key === entry.member.key && sampleOpponentMoveDraft.index === slot
                                    const input = editing ? sampleOpponentMoveDraft.text : move
                                    const meta = resolveMoveMeta(move, entry.reverse.opponentOptions, movePoolByKey)
                                    const result = entry.reverseMoves.find(item => item.moveName === move)
-                                   return <div key={`sample-opponent-move-${entry.member.key}-${slot}`} className="sample-opponent-move-cell">
-                                     <RegisteredMoveSlot number={slot + 1} name={input} type={meta?.type} meta={meta} labels={moveSlotLabels}
-                                       className={moveTypeThemeClass(meta?.type)}
-                                       search={{ id: `sample-opponent-move-${entry.member.key}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                                   return { id: `${slot}`, name: input, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
+                                       search: { id: `sample-opponent-move-${entry.member.key}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                                          onSelect: option => selectSampleOpponentMove(entry.idx, slot, option.key),
                                          optionClassName: option => moveTypeThemeClass(entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type),
                                          renderOption: option => <MoveCandidateRow name={option.label} type={entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type} meta={resolveMoveMeta(option.key, entry.reverse.opponentOptions, movePoolByKey)} labels={moveSlotLabels} />,
-                                         optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) }}
-                                       tooltipProps={bindTooltip(move ? moveTooltipData(move, siteLanguage) : null)}
-                                       inputProps={{ placeholder: lt('상대 기술 검색'),
+                                         optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
+                                       tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
+                                       inputProps: { placeholder: lt('상대 기술 검색'),
                                          onFocus: () => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: move }),
                                          onChange: event => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: event.target.value }),
                                          onBlur: event => { if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value); else setSampleOpponentMoveDraft(null) },
-                                       }} >{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null}</RegisteredMoveSlot>
-                                     {move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.reason}</span>
+                                       }, children: recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null,
+                                     preview: move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.reason}</span>
                                        {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                        {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
-                                     </div> : null}
-                                   </div>
+                                     </div> : null }
                                  })}
-                               </div>
+                               />
                              <div className="sample-opponent-offense-grid">
                                 {([{ key: 'attackEv', label: lt('상대 공격 EV') }, { key: 'spAttackEv', label: lt('상대 특공 EV') }] as const).map(({ key, label }) => <label key={key}>{label}<input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member[key]} onChange={e => updateSampleDamageTarget(entry.idx, { [key]: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} /></label>)}
                                 {([{ key: 'attackNature', label: lt('상대 공격 성격') }, { key: 'spAttackNature', label: lt('상대 특공 성격') }] as const).map(({ key, label }) => <label key={key}>{label}<select value={entry.member[key]} onChange={e => updateSampleDamageTarget(entry.idx, { [key]: Number(e.target.value) })}><option value={0.9}>−</option><option value={1}>{lt('중립')}</option><option value={1.1}>+</option></select></label>)}

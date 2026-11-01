@@ -100,7 +100,7 @@ test('mounted actual registered editor renders four inputs and edits a slot', as
     assert.equal((html.match(/<input\b/g) ?? []).length, 4)
     assert.match(html, /value="파도타기"/)
     assert.match(app, /const renderSampleMoveEditor = \(\) =>/)
-    assert.equal((app.match(/\{renderSampleMoveEditor\(\)\}/g) ?? []).length, 2)
+    assert.equal((app.match(/\{renderSampleMoveEditor\(\)\}/g) ?? []).length, 3)
     assert.doesNotMatch(app, /scrollIntoView\([^\n]*sample-moves-card/)
   } finally { await server.close() }
 })

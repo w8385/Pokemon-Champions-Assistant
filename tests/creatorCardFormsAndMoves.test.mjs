@@ -26,7 +26,7 @@ test('creator and party render the SAME registered move component and read-only 
   assert.match(card, /getTypeBadgeSrc\(type\)/)
   assert.match(card, /meta\?\.category/)
   assert.match(card, /meta\?\.accuracy/)
-  assert.ok((app.match(/<RegisteredMoveSlot/g) ?? []).length >= 3)
+  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
   assert.doesNotMatch(app, /build\.moves\.map\(move => <span key=\{move\}>\{move\}<\/span>\)/)
 })
 

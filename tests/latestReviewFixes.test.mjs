@@ -43,7 +43,7 @@ test('party route owns the original editor and real callbacks, not a copied comp
  assert.match(app,/mainSection === 'party' \|\| \(mainSection === 'double' && activeTab === 'party'\)/)
  assert.match(editor,/createNewParty/)
  assert.match(editor,/onClick=\{\(\) => applyPartyPreset\(preset.id\)\}/)
- assert.match(app,/mainSection === 'party'[^]*?RegisteredMoveSlot[^]*?setConfirmedMoveSlot/)
+ assert.match(app,/mainSection === 'party'[^]*?setConfirmedMoveSlot[^]*?<MoveSlotsEditor/)
  assert.match(app,/mainSection === 'party'[^]*?partyStatValue/)
  assert.match(app,/viewState\.mainSection === 'party' \? '\/party'/)
  assert.match(app,/routePath === '\/party'/)

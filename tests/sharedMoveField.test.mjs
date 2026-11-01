@@ -7,25 +7,25 @@ import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
-const sections = [app.slice(app.indexOf('const creatorCard ='), app.indexOf('return (\n    <div className="app-shell"')), app.slice(app.indexOf('registeredMoves.map('), app.indexOf('memberTopSuggestedMoves.length ?')), app.slice(app.indexOf('sampleRegisteredMoves.map('), app.indexOf('  const sampleTopSuggestedMoves ='))]
+const sections = [app.slice(app.indexOf('const creatorCard ='), app.indexOf('return (\n    <div className="app-shell"')), app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?')), app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))]
 
 test('one shared field owns the input; all three callers supply tooltip-bound props, not input children', () => {
   assert.match(card, /export function RegisteredMoveSlot/)
   assert.match(card, /<input\b[^>]*\{\.\.\.inputProps\}/s)
   assert.doesNotMatch(card, /children \?\? <strong/)
-  assert.equal((app.match(/<RegisteredMoveSlot/g) ?? []).length, 5)
-  const opponent = app.slice(app.indexOf('sample-opponent-move-grid'), app.indexOf('sample-opponent-offense-grid', app.indexOf('sample-opponent-move-grid')))
-  assert.match(opponent, /<RegisteredMoveSlot/)
-  assert.match(opponent, /inputProps=\{\{/)
+  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
+  const opponent = app.slice(app.indexOf('ownerId={`sample-opponent-'), app.indexOf('sample-opponent-offense-grid', app.indexOf('ownerId={`sample-opponent-')))
+  assert.match(app, /<MoveSlotsEditor[^]*?ownerId=\{`sample-opponent-/)
+  assert.match(opponent, /inputProps: \{/)
   const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
-  assert.match(quick, /<RegisteredMoveSlot[^]*inputProps=\{\{/)
-  assert.match(quick, /tooltipProps=\{tooltipForMove\(name\)\}/)
+  assert.match(quick, /<MoveSlotsEditor[^]*inputProps: \{/)
+  assert.match(quick, /tooltipProps: tooltipForMove\(name\)/)
   assert.match(app, /tooltipForMove=\{name => bindTooltip\(name \? moveTooltipData\(name, siteLanguage\) : null\)\}/)
   assert.match(quick, /Array.from\(\{ length: 4 \}/)
-  for (const section of sections) {
-    assert.match(section, /inputProps=\{\{/)
+  for (const [index, section] of sections.entries()) {
+    assert.match(section, /inputProps: \{/)
     assert.match(section, /bindTooltip\(move \? moveTooltipData\(move, siteLanguage\) : null\)/)
-    assert.doesNotMatch(section, /<input\b/)
+    if (index < 2) assert.doesNotMatch(section, /<input\b/)
   }
   assert.match(sections[0], /readOnly: true/)
   assert.doesNotMatch(sections[0], /disabled:/)

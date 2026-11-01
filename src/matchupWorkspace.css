@@ -41,7 +41,7 @@
   .quick-damage .quick-side-card .quick-registered-moves { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .quick-damage .quick-side-card .registered-move-slot .pokemon-search-field .move-autocomplete-menu { width: max-content; min-width: 100%; max-width: min(260px, calc(100vw - 32px)); max-height: min(50dvh, 320px); overflow-y: auto; }
   .quick-damage .quick-side-card:nth-child(2) .registered-move-slot .pokemon-search-field .move-autocomplete-menu { left: auto; right: 0; }
-  .quick-damage .quick-side-card .quick-move-row:nth-child(n + 3) .move-autocomplete-menu { top: auto; bottom: calc(100% - 1px); }
+  .quick-damage .quick-side-card .move-slots-editor-cell:nth-child(n + 3) .move-autocomplete-menu { top: auto; bottom: calc(100% - 1px); }
   .quick-damage .quick-speed-assumptions { grid-template-columns: minmax(0, 1fr); }
   .quick-damage .quick-speed-assumptions label:not(.quick-check) { width: 100%; }
   .quick-damage .quick-speed-overview-bars > div { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr) 4ch; }

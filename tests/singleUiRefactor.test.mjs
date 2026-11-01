@@ -17,7 +17,7 @@ test('one Speed/damage result precedes the real inline editing cards and battle 
   assert.match(view, /\{sideCard\('attacker', attacker, attackingRow, setAttacker\)\}\{sideCard\('defender', defender, defendingRow, setDefender\)\}/)
   assert.match(panel, /<PokemonBuildFields/)
   assert.match(panel, /<PokemonStatGrid/)
-  assert.match(panel, /className="registered-move-grid quick-registered-moves"/)
+  assert.match(panel, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
   assert.doesNotMatch(css, /\.quick-sides\s*\{\s*order:/)
 })
 

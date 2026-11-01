@@ -7,6 +7,8 @@
   "속이다": { "priority": 3 },
   "스케일샷": { "variablePower": true },
   "야습": { "priority": 1 },
+  "얼음숨결": { "alwaysCrit": true },
+  "업어후리기": { "alwaysCrit": true },
   "트리플악셀": { "variablePower": true },
   "트릭플라워": { "alwaysCrit": true }
 }

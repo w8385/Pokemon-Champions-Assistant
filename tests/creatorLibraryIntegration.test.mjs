@@ -22,7 +22,7 @@ test('ranker legacy links normalize but no ranker menu remains', () => {
 })
 test('sample cards show verified partial fields and separate source-only leads', () => {
   assert.match(app, /stats=\{stats\}/)
-  assert.match(app, /build\?\.moves\s*\?\s*<div className="move-card inline-move-card creator-library-moves"/)
+  assert.match(app, /build\?\.moves\s*\?\s*<MoveSlotsEditor className="creator-library-moves"/)
   assert.match(app, /catalog\.filter\(entry => !entry\.partialBuild && entry\.contentKind === 'unknown'\)/)
   assert.match(app, /pendingCreatorLeads\.length > 0/)
   assert.match(app, /노력 포인트 일부 또는 성격이 미확인되어 실수치를 계산하지 않습니다\./)
@@ -32,7 +32,7 @@ test('sample cards show verified partial fields and separate source-only leads',
 test('creator cards prefer recorded actual stats while retaining effort and moves independently of roster support', () => {
   assert.match(app, /createReadonlyCardStats\(EFFORT_STAT_OPTIONS/)
   assert.match(app, /statsLabel=\{/)
-  assert.match(app, /build\?\.moves\s*\?\s*<div className="move-card inline-move-card creator-library-moves"/)
+  assert.match(app, /build\?\.moves\s*\?\s*<MoveSlotsEditor className="creator-library-moves"/)
 })
 
 test('library separates compact source rows from full detail cards and provenance', () => {

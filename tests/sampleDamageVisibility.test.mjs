@@ -27,14 +27,14 @@ test('each target places four move results beside editable conditions and bulk',
   assert.doesNotMatch(section, /sample-damage-bulk-summary|<details/)
   const target = section.split('key={`sample-damage-target-${entry.idx}`}')[1]?.split(')}) : <div className="sample-empty-state')[0]
   assert.ok(target)
-  assert.match(target, /entry\.forwardMoves\.map\(\(move, slot\)/)
-  assert.match(target, /entry\.member\.opponentMoves\.map\(\(move, slot\)/)
+  assert.match(app, /entry\.forwardMoves\.find\(item => item\.moveName === move\)/)
+  assert.match(target, /entry\.member\.opponentMoves\.slice\(0, 4\)\.map\(\(move, slot\)/)
   assert.doesNotMatch(target, /공격 선택|moveName: e\.target\.value|sample-damage-metric-grid/)
   assert.match(target, /applySampleDamageBulkPresetSelection\(entry\.idx/)
   for (const field of ['hpEv', 'defenseEv', 'spDefenseEv', 'defenseNature', 'spDefenseNature']) {
     assert.match(target, new RegExp(`updateSampleDamageTarget\\(entry.idx, \\{ ${field}:`), field)
   }
-  for (const result of ['damage={move.damage}', 'damage={result.damage}', 'move.verdict', 'result.verdict']) assert.ok(target.includes(result), result)
+  for (const result of ['damage={result.damage}', 'result.verdict']) assert.ok(app.includes(result), result)
   assert.doesNotMatch(target, /sample-damage-context-row primary|sample-damage-target-summary-strip/)
   assert.match(css, /\.sample-calculator-target \.sample-damage-card-body\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/)
 })
@@ -64,8 +64,8 @@ test('Knock Off power depends on an allowed removable target item, not no item o
   assert.equal(context.knockOffPowerMultiplier('유턴', 'scizor', 'いのちのたま'), 1)
   assert.match(app, /powerMultiplier \*= knockOffMultiplier/)
   assert.match(app, /defenderKey: member.key/)
-  assert.match(section, /move\.effectivePower/)
-  assert.match(section, /move\.appliedDecisionPower/)
+  assert.match(app, /result\.effectivePower/)
+  assert.match(app, /result\.appliedDecisionPower/)
   assert.match(app, /decisionPowerIndex\(forwardProjection\.attacker, moveMeta, resolveStabMultiplier\(effectiveAttackerTypes, moveType, sampleAttackerAbilityValue, calcTypeChangeStab\), modifierPack\)/)
 })
 
@@ -82,9 +82,11 @@ test('Knock Off item branches feed the existing damage and decision-power engine
   vm.runInNewContext(code, context)
   const { knockOffPowerMultiplier, calcDamage, decisionPowerIndex, engineMovePower } = context.engines
   assert.equal(engineMovePower(65, 1.5), 97)
-  assert.match(app, /const effectivePower = engineMovePower\(movePower, modifierPack\.powerMultiplier \?\? 1\)/)
-  assert.match(app, /const scaledPower = engineMovePower\(power, modifiers\?\.powerMultiplier \?\? 1\)/)
-  assert.match(section, /\{lt\('상대 적용 결정력'\)\} \{move\.appliedDecisionPower/)
+  // champions.ts:640–652 chains fixed BP modifiers before rounding; the same
+  // optional BP chain now reaches the display and actual damage engine.
+  assert.match(app, /const effectivePower = engineMovePower\(movePower, modifierPack\.powerMultiplier \?\? 1, modifierPack\.fixedBpMods\)/)
+  assert.match(app, /const scaledPower = engineMovePower\(power, modifiers\?\.powerMultiplier \?\? 1, modifiers\?\.fixedBpMods\)/)
+  assert.match(app, /\{lt\('상대 적용 결정력'\)\} \{result\.appliedDecisionPower/)
   const attacker = { hp: 150, attack: 150, defense: 110, spAttack: 80, spDefense: 90 }
   const defender = { hp: 160, attack: 100, defense: 120, spAttack: 90, spDefense: 110 }
   const meta = { power: 65, category: 'physical' }

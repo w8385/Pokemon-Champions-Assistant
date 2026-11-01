@@ -1,0 +1,917 @@
+{
+  "source": {
+    "commit": "bacbbfc86f333cb0878cafba7b495a59a69111f0",
+    "sourceArchiveSHA256": "f51f1876a74ab20917f0fdd78ea49352d2f23f5bfed3d832f21131492eefc146",
+    "sourceURL": "https://raw.githubusercontent.com/smogon/damage-calc/bacbbfc86f333cb0878cafba7b495a59a69111f0/calc/src/mechanics/champions.ts",
+    "sourceSHA256": "f5de2e2ea6698eb034221905b0f45cb23286d533b89e9f0b5735a3f2d565a8c3",
+    "licenseURL": "https://raw.githubusercontent.com/smogon/damage-calc/bacbbfc86f333cb0878cafba7b495a59a69111f0/LICENSE",
+    "licenseSHA256": "c09470bbbd54fe28e8ca5d8a16b55f234150a0d82bc9b46e4b28c5475e6f0309",
+    "referenceEntrypoint": "calculateChampions",
+    "fixtureMethod": "Full pinned calculateChampions engine via fixed rawStats/stats; synthetic species/type overrides; only supported conditions; no game-wide parity",
+    "extraFixtureMethod": "Four additional cases: frozen extra-results.json full pinned calculateChampions output, same 160/150/120/150/120/100 rawStats/stats synthetic Arcanine/Pikachu override; not actual roster/build evidence",
+    "first14CanonicalSHA256": "2b22fbad0b59bd6d365373231a0c27b3aebb244406f5c0426f1510d8e7c400e3"
+  },
+  "fixtureStats": {
+    "hp": 160,
+    "atk": 150,
+    "def": 120,
+    "spa": 150,
+    "spd": 120,
+    "spe": 100
+  },
+  "level": 50,
+  "movePower": 80,
+  "cases": [
+    {
+      "id": "neutral",
+      "input": {
+        "id": "neutral",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ]
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        116,
+        116,
+        120,
+        120,
+        120,
+        122,
+        122,
+        126,
+        126,
+        128,
+        128,
+        132,
+        132,
+        134,
+        134,
+        138
+      ]
+    },
+    {
+      "id": "expert-belt",
+      "input": {
+        "id": "expert-belt",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "attackerItem": "Expert Belt"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "Expert Belt",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        139,
+        139,
+        144,
+        144,
+        144,
+        146,
+        146,
+        151,
+        151,
+        154,
+        154,
+        158,
+        158,
+        161,
+        161,
+        166
+      ]
+    },
+    {
+      "id": "dry-skin-fire",
+      "input": {
+        "id": "dry-skin-fire",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "defenderAbility": "Dry Skin"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Dry Skin"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        144,
+        146,
+        146,
+        150,
+        150,
+        152,
+        152,
+        156,
+        158,
+        158,
+        162,
+        162,
+        164,
+        164,
+        168,
+        170
+      ]
+    },
+    {
+      "id": "grassy-terrain",
+      "input": {
+        "id": "grassy-terrain",
+        "moveType": "Grass",
+        "attackerTypes": [
+          "Grass"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "terrain": "Grassy"
+      },
+      "attacker": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "terrain": "Grassy",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        75,
+        75,
+        76,
+        76,
+        78,
+        79,
+        79,
+        81,
+        81,
+        82,
+        84,
+        84,
+        85,
+        85,
+        87,
+        88
+      ]
+    },
+    {
+      "id": "double-water-absorb",
+      "input": {
+        "id": "double-water-absorb",
+        "moveType": "Water",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "defenderAbility": "Water Absorb",
+        "gameType": "Doubles"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": "Water Absorb"
+      },
+      "field": {
+        "gameType": "Doubles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": 0
+    },
+    {
+      "id": "double-flash-fire",
+      "input": {
+        "id": "double-flash-fire",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "defenderAbility": "Flash Fire",
+        "gameType": "Doubles"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": "Flash Fire"
+      },
+      "field": {
+        "gameType": "Doubles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": 0
+    },
+    {
+      "id": "double-earth-eater",
+      "input": {
+        "id": "double-earth-eater",
+        "moveType": "Ground",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "defenderAbility": "Earth Eater",
+        "gameType": "Doubles"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": "Earth Eater"
+      },
+      "field": {
+        "gameType": "Doubles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": 0
+    },
+    {
+      "id": "manual-crit",
+      "input": {
+        "id": "manual-crit",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "critical": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        174,
+        176,
+        180,
+        180,
+        182,
+        186,
+        186,
+        188,
+        192,
+        192,
+        194,
+        198,
+        198,
+        200,
+        204,
+        206
+      ]
+    },
+    {
+      "id": "reflect",
+      "input": {
+        "id": "reflect",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "reflect": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": true
+        }
+      },
+      "expectedDamage": [
+        58,
+        58,
+        60,
+        60,
+        60,
+        61,
+        61,
+        63,
+        63,
+        64,
+        64,
+        66,
+        66,
+        67,
+        67,
+        69
+      ]
+    },
+    {
+      "id": "burn",
+      "input": {
+        "id": "burn",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "burn": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": "brn"
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        58,
+        58,
+        60,
+        60,
+        60,
+        61,
+        61,
+        63,
+        63,
+        64,
+        64,
+        66,
+        66,
+        67,
+        67,
+        69
+      ]
+    },
+    {
+      "id": "no-stab",
+      "input": {
+        "id": "no-stab",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Normal"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ]
+      },
+      "attacker": {
+        "types": [
+          "Normal"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        78,
+        78,
+        80,
+        80,
+        80,
+        82,
+        82,
+        84,
+        84,
+        86,
+        86,
+        88,
+        88,
+        90,
+        90,
+        92
+      ]
+    },
+    {
+      "id": "sun",
+      "input": {
+        "id": "sun",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "weather": "Sun"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "weather": "Sun",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        174,
+        176,
+        180,
+        180,
+        182,
+        186,
+        186,
+        188,
+        192,
+        192,
+        194,
+        198,
+        198,
+        200,
+        204,
+        206
+      ]
+    },
+    {
+      "id": "rain",
+      "input": {
+        "id": "rain",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "weather": "Rain"
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "weather": "Rain",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        56,
+        56,
+        60,
+        60,
+        60,
+        60,
+        60,
+        62,
+        62,
+        62,
+        62,
+        66,
+        66,
+        66,
+        66,
+        68
+      ]
+    },
+    {
+      "id": "double-reflect",
+      "input": {
+        "id": "double-reflect",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "gameType": "Doubles",
+        "reflect": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Intimidate",
+        "item": "",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Doubles",
+        "defenderSide": {
+          "isReflect": true
+        }
+      },
+      "expectedDamage": [
+        77,
+        77,
+        80,
+        80,
+        80,
+        81,
+        81,
+        84,
+        84,
+        85,
+        85,
+        88,
+        88,
+        89,
+        89,
+        92
+      ]
+    },
+    {
+      "id": "mold-breaker-shell-armor-crit",
+      "input": {
+        "id": "mold-breaker-shell-armor-crit",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "attackerAbility": "Mold Breaker",
+        "defenderAbility": "Shell Armor",
+        "critical": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Mold Breaker",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": ""
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        174,
+        176,
+        180,
+        180,
+        182,
+        186,
+        186,
+        188,
+        192,
+        192,
+        194,
+        198,
+        198,
+        200,
+        204,
+        206
+      ]
+    },
+    {
+      "id": "mold-breaker-water-absorb",
+      "input": {
+        "id": "mold-breaker-water-absorb",
+        "moveType": "Water",
+        "attackerTypes": [
+          "Water"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "attackerAbility": "Mold Breaker",
+        "defenderAbility": "Water Absorb"
+      },
+      "attacker": {
+        "types": [
+          "Water"
+        ],
+        "ability": "Mold Breaker",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": ""
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        58,
+        58,
+        60,
+        60,
+        60,
+        61,
+        61,
+        63,
+        63,
+        64,
+        64,
+        66,
+        66,
+        67,
+        67,
+        69
+      ]
+    },
+    {
+      "id": "mold-breaker-levitate",
+      "input": {
+        "id": "mold-breaker-levitate",
+        "moveType": "Ground",
+        "attackerTypes": [
+          "Ground"
+        ],
+        "defenderTypes": [
+          "Normal"
+        ],
+        "attackerAbility": "Mold Breaker",
+        "defenderAbility": "Levitate"
+      },
+      "attacker": {
+        "types": [
+          "Ground"
+        ],
+        "ability": "Mold Breaker",
+        "status": ""
+      },
+      "defender": {
+        "types": [
+          "Normal"
+        ],
+        "ability": ""
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        58,
+        58,
+        60,
+        60,
+        60,
+        61,
+        61,
+        63,
+        63,
+        64,
+        64,
+        66,
+        66,
+        67,
+        67,
+        69
+      ]
+    },
+    {
+      "id": "guts-burn",
+      "input": {
+        "id": "guts-burn",
+        "moveType": "Fire",
+        "attackerTypes": [
+          "Fire"
+        ],
+        "defenderTypes": [
+          "Grass"
+        ],
+        "attackerAbility": "Guts",
+        "burn": true
+      },
+      "attacker": {
+        "types": [
+          "Fire"
+        ],
+        "ability": "Guts",
+        "status": "brn"
+      },
+      "defender": {
+        "types": [
+          "Grass"
+        ],
+        "ability": "Static"
+      },
+      "field": {
+        "gameType": "Singles",
+        "defenderSide": {
+          "isReflect": false
+        }
+      },
+      "expectedDamage": [
+        170,
+        174,
+        176,
+        176,
+        180,
+        182,
+        182,
+        186,
+        188,
+        188,
+        192,
+        194,
+        194,
+        198,
+        200,
+        204
+      ]
+    }
+  ]
+}

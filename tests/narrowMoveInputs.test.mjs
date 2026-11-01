@@ -23,27 +23,17 @@ function columnsAt(selector, width) {
 const twoColumns = 'repeat(2, minmax(0, 1fr))'
 const oneColumn = 'minmax(0, 1fr)'
 
-test('party registered moves use four full-width rows only below 360px', () => {
-  const party = app.split('className="entry-grid manage-entry-grid"')[1].split('className="registered-move-grid"')[0]
+test('party registered moves use the shared 600px policy', () => {
+  const party = app.split('className="entry-grid manage-entry-grid"')[1].split('ownerId={`party-${idx}-${member.key}`}')[0]
   assert.match(party, /id=\{`party-slot-\$\{idx\}`\} className=\{`card entry-card /)
-  assert.match(app, /<div className="registered-move-grid">\s*\{registeredMoves\.map\(/)
+  assert.match(app, /<MoveSlotsEditor className="inline-move-card"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
   assert.match(app, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
-  const selector = '.manage-entry-grid .registered-move-grid'
-  assert.deepEqual(columnsAt(selector, 320), { value: oneColumn, media: '(max-width: 359px)', important: false })
-  for (const width of [390, 1280]) {
-    assert.equal(columnsAt(selector, width), undefined)
-    assert.equal(columnsAt('.registered-move-grid', width)?.value, twoColumns)
-  }
+  for (const width of [320, 390, 600, 601, 1280]) assert.equal(columnsAt('.move-slots-editor-grid', width)?.value, width <= 600 ? oneColumn : twoColumns)
 })
 
-test('builder registered moves use four full-width rows only below 360px', () => {
-  const builder = app.split('id="sample-builder-section"')[1].split('className="registered-move-grid sample-registered-move-grid sample-track-input-grid"')[0]
+test('builder registered moves use the same shared 600px policy', () => {
+  const builder = app.split('id="sample-builder-section"')[1].split('{renderSampleMoveEditor()}')[0]
   assert.match(builder, /id="sample-builder-card"/)
-  assert.match(app, /\{sampleRegisteredMoves\.map\(\(move, moveIdx\) => \(/)
-  const selector = '#sample-builder-section .sample-track-input-grid'
-  assert.deepEqual(columnsAt(selector, 320), { value: oneColumn, media: '(max-width: 359px)', important: false })
-  for (const width of [390, 1280]) {
-    assert.equal(columnsAt(selector, width), undefined)
-    assert.equal(columnsAt('.sample-registered-move-grid', width)?.value, twoColumns)
-  }
+  assert.match(app, /slots=\{sampleRegisteredMoves\.slice\(0, 4\)\.map\(\(move, moveIdx\)/)
+  for (const width of [320, 390, 600, 601, 1280]) assert.equal(columnsAt('.move-slots-editor-grid', width)?.value, width <= 600 ? oneColumn : twoColumns)
 })

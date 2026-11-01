@@ -28,6 +28,6 @@ test('shared modal traps focus and restores connected opener; quick uses floatin
   assert.match(modal, /event\.key !== 'Tab'/)
   assert.match(modal, /\.isConnected/)
   assert.match(modal, /\.focus\(\)/)
-  assert.match(quick, /tooltipProps=\{tooltipForMove\(name\)\}/)
+  assert.match(quick, /tooltipProps: tooltipForMove\(name\)/)
   assert.match(app, /tooltipForMove=\{name => bindTooltip\(name \? moveTooltipData\(name, siteLanguage\) : null\)\}/)
 })

@@ -26,9 +26,9 @@ test('each shared speed lane can edit its own Speed stage', () => {
   assert.match(panel, /<select value=\{entry\.speedStage\} onChange=\{event => setSide\(side, prev => \(\{ \.\.\.prev, speedStage: Number\(event\.target\.value\) \}\)\)\}/)
 })
 test('four shared registered slots use a 2x2 grid and vertical preview without left-border shift', () => {
-  assert.match(app, /className="registered-move-grid quick-registered-moves"/)
-  assert.match(app, /<RegisteredMoveSlot number=\{index \+ 1\}/)
-  assert.match(css, /\.quick-registered-moves\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
-  assert.match(css, /\.quick-move-row\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+  assert.match(app, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
+  assert.match(app, /slots=\{Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
+  assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
+  assert.match(css, /\.move-slots-editor-cell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
   assert.doesNotMatch(css, /\.quick-move-row\.selected\s*\{[^}]*border-inline-start/)
 })

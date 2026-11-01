@@ -15,7 +15,7 @@ test('paired 390px cards retain two columns, but 320px cards stack for readable 
     assert.match(css, new RegExp(`\\.quick-damage \\.quick-side-card \\${selector}\\s*\\{[^}]*grid-template-columns:\\s*minmax\\(0,\\s*1fr\\)`))
   }
   assert.match(css, /\.quick-damage \.quick-side-card \.registered-move-slot \.pokemon-search-field \.move-autocomplete-menu/)
-  assert.match(panel, /<RegisteredMoveSlot[^]*?<button type="button" className=\{`quick-move-preview/)
+  assert.match(panel, /<MoveSlotsEditor[^]*?preview: <button type="button" className=\{`quick-move-preview/)
   assert.match(panel, /Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
   assert.match(panel, /<EffortTuningModal/)
 })
@@ -41,5 +41,5 @@ test('speed scenario editors live once per owner adjacent to the shared results,
   assert.match(speed, /전제 조건 미충족/)
   assert.match(results, /speedCard\('attacker', attacker, attackingRow\)[\s\S]*speedCard\('defender', defender, defendingRow\)[\s\S]*\{speedStrip\}[\s\S]*quick-result\$\{selectedVerdict/)
   assert.match(panel, /<PokemonStatGrid showEffort/)
-  assert.match(panel, /<RegisteredMoveSlot/)
+  assert.match(panel, /<MoveSlotsEditor/)
 })

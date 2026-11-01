@@ -2379,7 +2379,8 @@
     "category": "special",
     "power": 60,
     "accuracy": 90,
-    "pp": 10
+    "pp": 10,
+    "alwaysCrit": true
   },
   "얼음엄니": {
     "type": "ice",
@@ -2407,7 +2408,8 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "alwaysCrit": true
   },
   "엉겨붙기": {
     "type": "bug",

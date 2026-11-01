@@ -7,13 +7,13 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const quick = app.slice(app.indexOf('const sideCard ='), app.indexOf('const statCard ='))
-const party = app.slice(app.indexOf('registeredMoves.map('), app.indexOf('memberTopSuggestedMoves.length ?'))
-const builder = app.slice(app.indexOf('sampleRegisteredMoves.map('), app.indexOf('  const sampleTopSuggestedMoves ='))
+const party = app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?'))
+const builder = app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))
 const damage = app.slice(app.indexOf('sampleDamageCalcs[0]?.row ?'), app.indexOf('sample-overview-stack sample-workbench-section sample-compare-targets-section', app.indexOf('sampleDamageCalcs[0]?.row ?')))
 
 test('all editable move slots delegate the real input and option selection to one combobox', () => {
   for (const [section, callback] of [[quick, 'commit'], [party, 'selectMoveOption'], [builder, 'selectSampleMoveOption']]) {
-    assert.match(section, /<RegisteredMoveSlot[^]*?search=\{\{/)
+    assert.match(section, /search: \{ id:/)
     assert.match(section, new RegExp('onSelect:.*' + callback))
     assert.doesNotMatch(section, /<div className="move-autocomplete-menu/)
     assert.doesNotMatch(section, /onKeyDown:/)
