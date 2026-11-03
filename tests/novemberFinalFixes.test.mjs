@@ -11,6 +11,7 @@ import { byDisplayName, compareDisplayName } from '../src/shared/search/displayO
 const ast = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const itemAst = ts.createSourceFile('itemPresentation.ts', readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const entryAst = ts.createSourceFile('entryHelpers.tsx', readFileSync(new URL('../src/shared/display/entryHelpers.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const ownerAst = ts.createSourceFile('useOpponentEntries.ts', readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const declarations = new Map()
 let input
 function visit(node) {
@@ -24,11 +25,15 @@ itemVisit(itemAst)
 function entryVisit(node) { if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ts.isIdentifier(node.name)) declarations.set(node.name.text, { getText: () => node.getText(entryAst).replace(/^export /, '') })
   ts.forEachChild(node, entryVisit) }
 entryVisit(entryAst)
+function ownerVisit(node) { if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ts.isIdentifier(node.name)) declarations.set(node.name.text, { getText: () => node.getText(ownerAst).replace(/^export /, '') }); ts.forEachChild(node, ownerVisit) }
+ownerVisit(ownerAst)
 assert.match(readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), /from '\.\/shared\/display\/entryHelpers'/)
 assert.ok(input, 'actual opponent item input JSX')
 const attr = name => input.attributes.properties.find(p => ts.isJsxAttribute(p) && p.name.text === name)?.initializer?.expression
 const transpile = text => ts.transpileModule(text, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText
-const handlerCode = transpile([...['isAllowedChampionsItem', 'matchesLooseQuery', 'displayItemLabel', 'filterItemOptions', 'resolveItemInput', 'sameItemField', 'highlightedAutocompleteIndex', 'nextAutocompleteIndex'].map(name => declarations.get(name).getText(ast)), ...['selectOpponentItemOption', 'commitOpponentItemInput', 'setAutocompleteMenuOpen', 'moveAutocompleteMenuHighlight', 'closeAutocompleteMenu'].map(name => declarations.get(name).getText(ast)), `globalThis.keyDown = ${attr('onKeyDown').getText(ast)}; globalThis.focus = ${attr('onFocus').getText(ast)}; globalThis.blur = ${attr('onBlur').getText(ast)}; globalThis.change = ${attr('onChange').getText(ast)};`].join('\n'))
+const handlerNames = ['isAllowedChampionsItem', 'matchesLooseQuery', 'displayItemLabel', 'filterItemOptions', 'resolveItemInput', 'sameItemField', 'highlightedAutocompleteIndex', 'nextAutocompleteIndex', 'visibleChampionsItem', 'selectOpponentItemOption', 'commitOpponentItemInput', 'setAutocompleteMenuOpen', 'moveAutocompleteMenuHighlight', 'closeAutocompleteMenu']
+for (const name of handlerNames) assert.ok(declarations.has(name), `real handler declaration: ${name}`)
+const handlerCode = transpile([...handlerNames.map(name => declarations.get(name).getText(ast)), `globalThis.keyDown = ${attr('onKeyDown').getText(ast)}; globalThis.focus = ${attr('onFocus').getText(ast)}; globalThis.blur = ${attr('onBlur').getText(ast)}; globalThis.change = ${attr('onChange').getText(ast)};`].join('\n'))
 
 function itemFixture(item = '') {
   const record = { key: 'garchomp', item, ability: 'rough-skin', revealedMoves: ['a', '', '', ''], rawSource: { item } }
@@ -36,6 +41,7 @@ function itemFixture(item = '') {
   const context = vm.createContext({ ...state, oppMember: record, siteLanguage: 'ko', CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel, canonicalChampionsItemName: canonicalHeldItem, classifyHeldItem, isCalculableHeldItem, byDisplayName, compareDisplayName,
     resolveItemInfo: () => null, translateText: (_language, text) => text, React: { useCallback: callback => callback },
     setTimeout: callback => callback(),
+    onDismissOpponentItem: () => { state.activeItemField = null; context.activeItemField = null },
     setOpponents(update) { state.opponents = typeof update === 'function' ? update(state.opponents) : update; context.opponents = state.opponents; state.writes++ },
     setOpponentItemDrafts(update) { state.opponentItemDrafts = typeof update === 'function' ? update(state.opponentItemDrafts) : update; context.opponentItemDrafts = state.opponentItemDrafts },
     setActiveItemField(update) { state.activeItemField = typeof update === 'function' ? update(state.activeItemField) : update; context.activeItemField = state.activeItemField },

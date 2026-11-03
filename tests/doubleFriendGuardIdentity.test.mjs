@@ -6,12 +6,16 @@ import ts from 'typescript'
 import { createServer } from 'vite'
 
 const source = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const owner = ts.createSourceFile('useOpponentEntries.ts', readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const rows = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const maushold = rows.find(row => row.key === 'maushold')
 const garchomp = rows.find(row => row.key === 'garchomp')
 const compile = text => ts.transpileModule(text, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None, jsx: ts.JsxEmit.React } }).outputText
 let cardsMemo, availabilityMemo, select, checkbox, legacyNames
+let setOpponentField
+function visitOwner(node) { if (ts.isVariableDeclaration(node) && node.name.getText(owner) === 'setOpponentField') setOpponentField = node; ts.forEachChild(node, visitOwner) }
+visitOwner(owner)
 function visit(node) {
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleBoardStateCards') cardsMemo = node.initializer
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleFriendGuardAvailableOpp') availabilityMemo = node.initializer
@@ -21,7 +25,7 @@ function visit(node) {
   ts.forEachChild(node, visit)
 }
 visit(source)
-assert.ok(cardsMemo && availabilityMemo && select && checkbox)
+assert.ok(cardsMemo && availabilityMemo && select && checkbox && setOpponentField)
 
 function evaluate(raw, key, classifyAbilityForKey) {
   const opponent = { key, ability: raw, item: '', revealedMoves: [] }
@@ -32,11 +36,11 @@ function evaluate(raw, key, classifyAbilityForKey) {
     displayName: row => row.name_ko, siteLanguage: 'ko', lt: text => text, displayItemLabel: text => text,
     visibleChampionsItem: () => '', confirmedMovesByKey: {}, doubleSpeedBySlot: {}, doubleProtectBySlot: {}, doubleTailwindMy: false, doubleTailwindOpp: false,
     classifyAbilityForKey, asyncDataVersion: 0, doubleFriendGuardOpp: false, setDoubleFriendGuardOpp() {},
-    opponents: [opponent], oppMember: opponent, selectedOpp: 0, setOpponents(next) { context.opponents = next },
+    opponents: [opponent], oppMember: opponent, selectedOpp: 0, setOpponents(next) { context.opponents = typeof next === 'function' ? next(context.opponents) : next },
   })
   vm.runInContext(compile(`const doubleBoardStateCards = ${cardsMemo.getText(source)}; ${legacyNames ? `const FRIEND_GUARD_NAMES = ${legacyNames.getText(source)};` : ''} const doubleFriendGuardAvailableOpp = ${availabilityMemo.getText(source)}; globalThis.available = doubleFriendGuardAvailableOpp; globalThis.cards = doubleBoardStateCards;`), context)
   context.doubleFriendGuardAvailableOpp = context.available
-  vm.runInContext(compile(`globalThis.control = ${checkbox.getText(source)}; globalThis.change = ${select.attributes.properties.find(attr => attr.name?.text === 'onChange').initializer.expression.getText(source)}`), context)
+  vm.runInContext(compile(`const ${setOpponentField.getText(owner)}; globalThis.control = ${checkbox.getText(source)}; globalThis.change = ${select.attributes.properties.find(attr => attr.name?.text === 'onChange').initializer.expression.getText(source)}`), context)
   return context
 }
 

@@ -13,13 +13,20 @@ await server.close()
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const ownerSource = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
+const ownerAst = ts.createSourceFile('useOpponentEntries.ts', ownerSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const callbacks = new Map()
 function visit(node) {
-  if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && ['selectSpecies', 'nextOpponentSlotIndex', 'commitOpponentQuickSearch'].includes(node.name.text)) callbacks.set(node.name.text, node.getText(ast))
+  if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === 'selectSpecies') callbacks.set(node.name.text, node.getText(ast))
   ts.forEachChild(node, visit)
 }
 visit(ast)
-assert.equal(callbacks.size, 3, 'both live App callbacks and slot progression must be extracted from the AST')
+function visitOwner(node) {
+  if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && ['selectOpponentSpecies', 'nextOpponentSlotIndex', 'commitOpponentQuickSearch'].includes(node.name.text)) callbacks.set(node.name.text, node.getText(ownerAst))
+  ts.forEachChild(node, visitOwner)
+}
+visitOwner(ownerAst)
+assert.deepEqual([...callbacks.keys()].sort(), ['commitOpponentQuickSearch', 'nextOpponentSlotIndex', 'selectOpponentSpecies', 'selectSpecies'].sort(), 'App dispatcher and real owner commands must be extracted from their actual ASTs')
 const js = ts.transpileModule([...callbacks.values()].join('\n') + '\nglobalThis.detailSelect = selectSpecies; globalThis.quickSelect = commitOpponentQuickSearch;', { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
 
 function fixture(key, item, selectedOpp = 1) {

@@ -45,7 +45,10 @@ test('offline approval check is byte/mtime invariant; historical 82-item report 
 
 test('opponent item input rejects newly typed unknown without mutating restored raw', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const commit = app.slice(app.indexOf('const commitOpponentItemInput ='), app.indexOf('const commitOpponentAbilityInput ='))
+  const owner = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
+  const commit = owner.slice(owner.indexOf('const commitOpponentItemInput ='), owner.indexOf('const commitOpponentAbilityInput ='))
+  assert.match(app, /useOpponentEntries\(/)
+  assert.match(app, /commitOpponentItemInput\(selectedOpp/)
   assert.match(commit, /draft === displayItemLabel\(member\.item, siteLanguage\)/)
   assert.match(commit, /classifyHeldItem\(member\.key, draft\)/)
   assert.match(commit, /if \(!\['none', 'allowed', 'required-stone'\]\.includes\(identity\.status\)\)/)

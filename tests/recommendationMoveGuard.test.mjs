@@ -4,11 +4,13 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { createServer } from 'vite'
+import React from 'react'
+import { Window } from 'happy-dom'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const memberSource = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const names = ['applyMoveToSlot', 'selectMoveOption', 'commitEditorMove', 'selectSampleMoveOption', 'applySampleCandidateMove', 'addOpponentRevealedMove']
+const names = ['applyMoveToSlot', 'selectMoveOption', 'commitEditorMove', 'selectSampleMoveOption', 'applySampleCandidateMove']
 const declarations = new Map()
 function visit(node) {
   if (ts.isVariableDeclaration(node) && node.name && names.includes(node.name.getText(ast))) declarations.set(node.name.getText(ast), node.getText(ast))
@@ -77,13 +79,33 @@ test('all explicit choices share source identity gate; valid learned Aqua Jet en
 })
 
 test('opponent usage and picker callback cannot add unverified move while retaining revealed history', async () => {
-  const f = await fixture('ninetales-alolan', ['오래된 원문', '', '', ''])
+  const dom = new Window({ url: 'http://localhost/' })
+  const keys = ['window', 'document', 'navigator', 'HTMLElement', 'HTMLInputElement', 'localStorage', 'IS_REACT_ACT_ENVIRONMENT']
+  const saved = Object.fromEntries(keys.map(key => [key, globalThis[key]]))
+  for (const key of keys) if (key === 'navigator') Object.defineProperty(globalThis, key, { configurable: true, value: dom.navigator }); else globalThis[key] = key === 'IS_REACT_ACT_ENVIRONMENT' ? true : key === 'localStorage' ? dom.localStorage : dom[key]
+  const { createRoot } = await import('react-dom/client')
+  const server = await createServer({ server: { middlewareMode: true, hmr: false }, optimizeDeps: { noDiscovery: true, include: [] }, appType: 'custom', logLevel: 'silent' })
+  let root, node
   try {
-    assert.equal(f.handlers.addOpponentRevealedMove('화염방사'), false)
-    assert.deepEqual(f.state.opponents[0].revealedMoves, ['오래된 원문'])
-    assert.equal(f.handlers.addOpponentRevealedMove(f.pool.moves[0].name), true)
-    assert.deepEqual([...f.state.opponents[0].revealedMoves], ['오래된 원문', f.pool.moves[0].name])
-  } finally { await f.close() }
+    const { useOpponentEntries } = await server.ssrLoadModule('/src/features/single/useOpponentEntries.ts')
+    const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+    const pool = await loadFormLearnset('ninetales-alolan')
+    const empty = () => ({ key: '', item: '', ability: '', notes: '', revealedMoves: [], picked: false, hpEv: 0, defenseEv: 0, spDefenseEv: 0, speedEv: 0, natureBoost: false, scarf: false, speedStage: 0, defenseNature: 1, spDefenseNature: 1 })
+    const initial = [{ ...empty(), key: 'ninetales-alolan', revealedMoves: ['오래된 원문'] }, ...Array.from({ length: 5 }, empty)]
+    let state
+    const props = { initialOpponents: initial, initialSelectedOpp: 0, emptyOpponents: Array.from({ length: 6 }, empty), siteLanguage: 'ko', resolveSpeciesKey: () => null, resolveAbilityInput: () => '', movePoolByKey: { 'ninetales-alolan': pool }, onCloseOpponentItem() {}, onDismissOpponentItem() {}, onFocusOpponentItem() {}, onCloseOpponentMove() {} }
+    function Harness() { state = useOpponentEntries(props); return null }
+    node = dom.document.createElement('div'); dom.document.body.append(node); root = createRoot(node)
+    await React.act(async () => root.render(React.createElement(Harness)))
+    await React.act(async () => assert.equal(state.addOpponentRevealedMove('화염방사'), false))
+    assert.deepEqual(state.opponents[0].revealedMoves, ['오래된 원문'])
+    await React.act(async () => assert.equal(state.addOpponentRevealedMove(pool.moves[0].name), true))
+    assert.deepEqual(state.opponents[0].revealedMoves, ['오래된 원문', pool.moves[0].name])
+  } finally {
+    if (root) await React.act(async () => root.unmount())
+    node?.remove(); await server.close(); await Promise.resolve(); dom.close()
+    for (const [key, value] of Object.entries(saved)) if (key === 'navigator') Object.defineProperty(globalThis, key, { configurable: true, value }); else if (value === undefined) delete globalThis[key]; else globalThis[key] = value
+  }
 })
 
 test('suggestion chips are unavailable with a visible reason unless exact-form source authorizes move', () => {

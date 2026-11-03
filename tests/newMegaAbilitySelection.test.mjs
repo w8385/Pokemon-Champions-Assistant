@@ -9,6 +9,7 @@ const root = new URL('../', import.meta.url)
 const roster = JSON.parse(readFileSync(new URL('src/canonical-data/champions/pokemon_champions_verified_data.json', root)))
 const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('src/App.tsx', root), 'utf8')
+const opponentOwner = readFileSync(new URL('src/features/single/useOpponentEntries.ts', root), 'utf8')
 const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const generator = readFileSync(new URL('scripts/sync-champions-verified-data.mjs', root), 'utf8')
 const verified = JSON.parse(readFileSync(new URL('src/canonical-data/champions/verifiedAbilityLabels.json', root)))
@@ -34,7 +35,8 @@ test('explicit new Mega form selection resolves one canonical ability, not a bas
 
 test('actual Single registration and both Quick search callbacks use the form-specific selection only at explicit commit', () => {
   assert.match(quickHook, /const next = \{ \.\.\.quickBlank\(\), key, ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: megaStoneForKey\(key\)/)
-  assert.match(app, /registerOpponentSpecies\(opponents, current, key, \(\) => \(\{ \.\.\.blankOpponent\(\), ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: normalizeItemForKey\(key, ''\) \}\)\)/)
+  assert.match(app, /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
+  assert.match(opponentOwner, /registerOpponentSpecies\(opponents, current, key, \(\) => \(\{ \.\.\.blankOpponent\(\), ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: normalizeItemForKey\(key, ''\) \}\)\)/)
   const input = [{ key: 'charizard', ability: '', item: '', revealedMoves: ['파괴광선'] }, { key: '', ability: '', item: '', revealedMoves: [] }]
   const blank = () => ({ key: '', ability: '', item: 'starmienite', revealedMoves: [] })
   const selected = registration.registerOpponentSpecies(input, 0, 'mega-starmie', () => ({ ...blank(), ability: registration.soleAbilityForSelectedSpecies(row('mega-starmie')) }))

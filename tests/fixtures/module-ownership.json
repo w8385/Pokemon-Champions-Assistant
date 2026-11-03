@@ -114,6 +114,7 @@
     "src/features/party/usePartyWorkspace.ts",
     "src/features/samples/SourcePlacementBadge.tsx",
     "src/features/single/matchupWorkspace.css",
+    "src/features/single/useOpponentEntries.ts",
     "src/features/speedline/SpeedLinePanel.tsx",
     "src/features/speedline/SpeedLineRangesPanel.tsx",
     "src/features/speedline/speedLineRouteRestore.ts",

@@ -12,7 +12,11 @@ const storageFixture = () => {
 }
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
-const reset = source.slice(source.indexOf('  const resetSingleOpponentEntry = '), source.indexOf('  const resetPartyForFreshEntry = '))
+const owner = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
+const resetStart = owner.indexOf('  const resetSingleOpponentEntry = ')
+const resetEnd = owner.indexOf('  const clearOpponentSlot = ', resetStart)
+assert.ok(resetStart >= 0 && resetEnd > resetStart && source.includes('onResetOpponents={resetSingleOpponentEntry}'))
+const reset = owner.slice(resetStart, resetEnd)
 const revisionStart = quickHook.indexOf('  React.useEffect(() => {\n    if (!comparisonMode || !initialSides || !opponentResetRevision')
 const revision = quickHook.slice(revisionStart, quickHook.indexOf('  const opener = ', revisionStart))
 
