@@ -5,18 +5,14 @@ import vm from 'node:vm'
 import ts from 'typescript'
 import { classifyHeldItem, canonicalHeldItem } from '../src/domain/champions/itemIdentity.ts'
 import { loadAppDamageEngine } from '../scripts/check-damage-parity.mjs'
+import { resolveDamageModifiers } from '../src/domain/battle/modifierRules.ts'
 import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
 const metadata = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json', import.meta.url)))
 const index = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json', import.meta.url)))
 const getMoveMetadata = name => index[name] ? { id:index[name].id, meta:metadata[name] } : null
 const text = fs.readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const names = ['knockOffPowerMultiplier','battleStageMultiplier','abilityNoteLabel','effectiveDefenderAbility','resolveDamageModifiers']
-const declaration = name => { const node = ast.statements.find(s => ts.isFunctionDeclaration(s) && s.name?.text === name); assert.ok(node, name); return node.getText(ast) }
-const context = { classifyHeldItem, canonicalChampionsItemName: canonicalHeldItem, moveMatchesTaggedSet: () => false, SOUND_MOVE_NAMES: new Set(), PUNCH_MOVE_NAMES: new Set(), RECKLESS_MOVE_NAMES: new Set(), SHEER_FORCE_MOVE_NAMES: new Set(), BITE_MOVE_NAMES: new Set(), PULSE_MOVE_NAMES: new Set(), SLICING_MOVE_NAMES: new Set(), CONTACT_MOVE_NAMES: new Set() }
-Object.assign(context, { chainMods, DAMAGE_MOD_SCALE })
-vm.runInNewContext(ts.transpileModule(`${names.map(declaration).join('\n')}\nglobalThis.calculator={resolveDamageModifiers}`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context)
-const { resolveDamageModifiers } = context.calculator
+const context = { classifyHeldItem, canonicalChampionsItemName: canonicalHeldItem, chainMods, DAMAGE_MOD_SCALE }
 const attacker = {hp:150,attack:150,defense:110,spAttack:150,spDefense:90}
 const defender = {hp:160,attack:100,defense:120,spAttack:90,spDefense:120}
 function run(name, options = {}) {

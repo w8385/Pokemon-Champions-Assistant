@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import ts from 'typescript'
 import { createServer } from 'vite'
+import { weatherFromAbility, terrainFromAbility, deriveAutoWeatherFromAbilities, deriveAutoTerrainFromAbilities } from '../src/domain/battle/moveEffects.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
@@ -48,10 +49,6 @@ try {
   const { resolveFormAbility, localizedAbilityLabel, isCalculableAbility } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
   const abilityDescriptionFor = slug => descriptions[slug] ?? null
   const resolveSelectedAbility = actualFunction('resolveSelectedAbility', { resolveFormAbility, localizedAbilityLabel, abilityDescriptionFor, rows: roster })
-  const weatherFromAbility = actualFunction('weatherFromAbility', {})
-  const terrainFromAbility = actualFunction('terrainFromAbility', {})
-  const deriveAutoWeatherFromAbilities = actualFunction('deriveAutoWeatherFromAbilities', { weatherFromAbility })
-  const deriveAutoTerrainFromAbilities = actualFunction('deriveAutoTerrainFromAbilities', { terrainFromAbility })
   const resolve = (key, raw, lang = 'ko') => resolveSelectedAbility(row(key), raw, lang)
   const single = (myKey, myAbility, oppKey, oppAbility, calcSwapSides = false) => {
     const myRow = row(myKey), oppRow = row(oppKey), myMember = { key: myKey, ability: myAbility }, oppMember = { key: oppKey, ability: oppAbility }

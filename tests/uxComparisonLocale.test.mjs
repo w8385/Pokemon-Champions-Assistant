@@ -5,10 +5,11 @@ import vm from 'node:vm'
 import ts from 'typescript'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const start = source.indexOf('const UI_TRANSLATIONS')
-const end = source.indexOf('\nfunction titleCaseSlug', start)
-assert.ok(start >= 0 && end > start)
-const code = ts.transpileModule(source.slice(start, end), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText
+const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const dictionary = ast.statements.find(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(declaration => declaration.name.getText(ast) === 'UI_TRANSLATIONS'))
+const translator = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'translateText')
+assert.ok(dictionary && translator, 'App retains its actual UI dictionary and translator')
+const code = ts.transpileModule(`${dictionary.getText(ast)}\n${translator.getText(ast)}`, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText
 const context = vm.createContext({})
 vm.runInContext(`${code}\nthis.translate = translateText`, context)
 

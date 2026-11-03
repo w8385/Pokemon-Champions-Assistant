@@ -1,5 +1,5 @@
 import type { Row, SiteLanguage } from '../../app/types'
-import { normalizeSearchText } from '../../shared/search/pokemonSearch'
+import { normalizeSearchText } from '../battle/moveKey.ts'
 import verifiedAbilityLabels from '../../canonical-data/champions/verifiedAbilityLabels.json'
 
 export type AbilityRow = Pick<Row, 'key' | 'abilities' | 'abilities_ko'>

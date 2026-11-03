@@ -1,17 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import vm from 'node:vm'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 import { analyzePartyMatchups } from '../src/domain/party/partyAnalysis.ts'
+import { normalizedTypeChart as chart } from '../src/domain/battle/typeEffectiveness.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const literal = source.match(/const typeChart: Record<[^\n]+ = (\{[\s\S]*?\n\})\n\nconst normalizedTypeChart/)
-assert.ok(literal)
-const canonical = vm.runInNewContext(`(${literal[1]})`)
-const chart = Object.fromEntries(Object.entries(canonical).map(([attack, targets]) => [attack.toLowerCase(), Object.fromEntries(Object.entries(targets).map(([target, multiplier]) => [target.toLowerCase(), multiplier]))]))
 const member = (key, slot, types, ability = '', moves = []) => ({ key, name: key, slot, types, ability, moves })
 const move = (name, type, category = 'special') => ({ name, type, category })
 const members = [member('rotom', 0, ['electric', 'ghost'], 'levitate', [move('10만볼트', 'electric')]), member('dragon', 2, ['dragon', 'flying'], '', [move('프리즈드라이', 'ice')]), member('dragon', 5, ['dragon', 'flying'], '', [move('파멸의빛', 'fairy')])]

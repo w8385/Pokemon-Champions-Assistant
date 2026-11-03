@@ -2,15 +2,23 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
-import { createRequire } from 'node:module'
-import { classifyHeldItem } from '../src/domain/champions/itemIdentity.ts'
+import ts from 'typescript'
+import { knockOffPowerMultiplier } from '../src/domain/battle/modifierRules.ts'
 import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
-const require = createRequire(import.meta.url)
-const ts = require('typescript')
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const section = app.split('<section id="sample-damage-section"')[1]?.split('</section>')[0]
+const modifierRules = readFileSync(new URL('../src/domain/battle/modifierRules.ts', import.meta.url), 'utf8')
+function appDecisionPowerIndex() {
+  const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const node = source.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === 'decisionPowerIndex')
+  assert.ok(node, 'actual App decision-power caller')
+  const code = ts.transpileModule(`${node.getText(source)}\nglobalThis.decisionPowerIndex = decisionPowerIndex`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
+  const context = { chainMods, DAMAGE_MOD_SCALE }
+  vm.runInNewContext(code, context)
+  return context.decisionPowerIndex
+}
 
 test('sample damage shows the real condition controls without a disclosure or repeated condition summaries', () => {
   assert.ok(section)
@@ -49,21 +57,15 @@ test('sample target uses the shared item editor with the same item validation an
 })
 
 test('Knock Off power depends on an allowed removable target item, not no item or its required Mega Stone', () => {
-  const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const helper = source.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'knockOffPowerMultiplier')
-  assert.ok(helper, 'missing Knock Off mechanics helper')
-  const code = ts.transpileModule(`${helper.getText(source)}\nglobalThis.knockOffPowerMultiplier = knockOffPowerMultiplier`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
-  const context = { classifyHeldItem }
-  vm.runInNewContext(code, context)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', ''), 1)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', 'いのちのたま'), 1.5)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'mega-scizor', '핫삼나이트'), 1)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', 'いのちのたま', 'sticky-hold'), 1.5)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'mega-scizor', '핫삼나이트', 'sticky-hold'), 1)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', '', 'sticky-hold'), 1)
-  assert.equal(context.knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', '알 수 없는 도구'), 1)
-  assert.equal(context.knockOffPowerMultiplier('유턴', 'scizor', 'いのちのたま'), 1)
-  assert.match(app, /powerMultiplier \*= knockOffMultiplier/)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', ''), 1)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', 'いのちのたま'), 1.5)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'mega-scizor', '핫삼나이트'), 1)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', 'いのちのたま', 'sticky-hold'), 1.5)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'mega-scizor', '핫삼나이트', 'sticky-hold'), 1)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', '', 'sticky-hold'), 1)
+  assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', '알 수 없는 도구'), 1)
+  assert.equal(knockOffPowerMultiplier('유턴', 'scizor', 'いのちのたま'), 1)
+  assert.match(modifierRules, /powerMultiplier \*= knockOffMultiplier/)
   assert.match(app, /defenderKey: member.key/)
   assert.match(app, /result\.effectivePower/)
   assert.match(app, /result\.appliedDecisionPower/)
@@ -71,17 +73,8 @@ test('Knock Off power depends on an allowed removable target item, not no item o
 })
 
 test('Knock Off item branches feed the existing damage and decision-power engines', () => {
-  const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const names = ['knockOffPowerMultiplier', 'decisionPowerIndex']
-  const functions = names.map(name => {
-    const node = source.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === name)
-    assert.ok(node, name)
-    return node.getText(source)
-  }).join('\n')
-  const code = ts.transpileModule(`${functions}\nglobalThis.engines = { knockOffPowerMultiplier, decisionPowerIndex }`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
-  const context = { classifyHeldItem, chainMods, DAMAGE_MOD_SCALE }
-  vm.runInNewContext(code, context)
-  const { knockOffPowerMultiplier, decisionPowerIndex } = context.engines
+  // Execute the moved rule directly; the remaining decision-power caller stays in App.
+  const decisionPowerIndex = appDecisionPowerIndex()
   assert.equal(engineMovePower(65, 1.5), 97)
   // champions.ts:640–652 chains fixed BP modifiers before rounding; the same
   // optional BP chain now reaches the display and actual damage engine.

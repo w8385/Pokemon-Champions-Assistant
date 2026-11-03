@@ -1,17 +1,14 @@
-// Frozen outputs of the pinned full calculateChampions engine versus live App declarations.
-// Synthetic species/type overrides and neutral tagged-move mocks: not a mounted caller
-// and not evidence of complete in-game mechanics parity.
+// Pinned full calculateChampions outputs versus actual battle-rule imports.
+// Synthetic fixture inputs are not a mounted caller or evidence of in-game parity.
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import path from 'node:path'
-import vm from 'node:vm'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { calcDamage, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
+import { abilityAdjustedTypeEffectiveness, typeEffectiveness, effectiveDefenderAbility } from '../src/domain/battle/typeEffectiveness.ts'
+import { resolveDamageModifiers, battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded } from '../src/domain/battle/modifierRules.ts'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const require = createRequire(import.meta.url)
-const ts = require(path.join(root, 'node_modules/typescript'))
 const fixtureDir = path.join(root, 'tests/fixtures/damage-reference')
 const fixture = JSON.parse(fs.readFileSync(path.join(fixtureDir, 'cases.json'), 'utf8'))
 const digest = (s) => crypto.createHash('sha256').update(s).digest('hex')
@@ -19,29 +16,7 @@ if (fixture.cases.length !== 18 || fixture.source.commit !== 'bacbbfc86f333cb087
 if (digest(fs.readFileSync(path.join(fixtureDir, 'LICENSE'))) !== fixture.source.licenseSHA256) throw Error('Pinned MIT license changed')
 
 export function loadAppDamageEngine() {
-  const text = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8')
-  const names = ['battleStageMultiplier', 'resolveDamageModifiers', 'knockOffPowerMultiplier', 'isDamageGrounded', 'typeEffectiveness', 'abilityAdjustedTypeEffectiveness', 'effectiveDefenderAbility']
-  const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const found = new Map()
-  function visit(n) {
-    if (ts.isFunctionDeclaration(n) && names.includes(n.name?.text)) found.set(n.name.text, n.getText(ast))
-    ts.forEachChild(n, visit)
-  }
-  visit(ast)
-  // The resolver, type projection and Mold Breaker authority all come from the
-  // same live App AST; no second parity-only implementation is compiled here.
-  for (const n of names) if (!found.has(n)) throw Error(`Missing actual App declaration: ${n}`)
-  const context = {
-    console, Math, DAMAGE_MOD_SCALE, calcDamage,
-    canonicalChampionsItemName: (s) => s === 'たつじんのおび' ? 'たつじんのおび' : s,
-    classifyHeldItem: () => ({ status: 'allowed' }), abilityNoteLabel: s => s,
-    moveMatchesTaggedSet: () => false,
-  }
-  for (const name of ['CONTACT_MOVE_NAMES', 'SOUND_MOVE_NAMES', 'PUNCH_MOVE_NAMES', 'RECKLESS_MOVE_NAMES', 'SHEER_FORCE_MOVE_NAMES', 'BITE_MOVE_NAMES', 'PULSE_MOVE_NAMES', 'SLICING_MOVE_NAMES']) context[name] = new Set()
-  vm.createContext(context)
-  const declarations = [...ast.statements.filter(n => ts.isVariableStatement(n) && n.declarationList.declarations.some(d => ['typeChart', 'normalizedTypeChart'].includes(d.name.getText(ast)))).map(n => n.getText(ast)), ...names.filter(n => found.has(n)).map(n => found.get(n))].join('\n').replace(/\bexport /g, '')
-  vm.runInContext(ts.transpileModule(declarations, { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.None } }).outputText, context)
-  return context
+  return { calcDamage, DAMAGE_MOD_SCALE, abilityAdjustedTypeEffectiveness, typeEffectiveness, effectiveDefenderAbility, resolveDamageModifiers, battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded }
 }
 
 export function compareFrozenReference() {

@@ -5,6 +5,8 @@ import ts from 'typescript'
 import vm from 'node:vm'
 import { createServer } from 'vite'
 import { presentDoubleActionOrder } from '../src/domain/battle/doubleOrderPresentation.ts'
+import { moveNameCandidates } from '../src/domain/battle/moveAliases.ts'
+import { normalizeSearchText } from '../src/domain/battle/moveKey.ts'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url),'utf8')
 const ast = ts.createSourceFile('App.tsx',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
@@ -19,13 +21,12 @@ async function runtime() {
     const [{getDexGameMove,getDexGameMoveNames,getDexGameMoveIdentity},{getMoveMetadata}, {searchMoves}, {MOVE_META_BY_NAME}] = await Promise.all([
       server.ssrLoadModule('/src/domain/champions/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'),server.ssrLoadModule('/src/shared/search/moveSearch.ts'),server.ssrLoadModule('/src/adapters/catalog/data.ts')])
     Object.assign(MOVE_META_BY_NAME,legacy)
-    const context={MOVE_META_BY_NAME,getDexGameMove,getDexGameMoveNames,getDexGameMoveIdentity,getMoveMetadata,
-      normalizeSearchText: s=>s.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g,''),
-      MOVE_NAME_ALIASES:aliases,MOVE_NAME_ALIASES_BY_NORMALIZED:new Map(), searchMoves,
+    const context={MOVE_META_BY_NAME,getDexGameMove,getDexGameMoveNames,getDexGameMoveIdentity,getMoveMetadata,moveNameCandidates,normalizeSearchText,
+      searchMoves,
       byDisplayName:(items,name)=>items.sort((a,b)=>name(a).localeCompare(name(b),'ko')),
       moveDescriptionFor:()=>null, displayTypeName: t=>t, displayMoveCategoryName:c=>c ?? 'unknown',resolvedMovePower: m=>m.power,
       localizedDexText:()=>null,translateText:(_lang,s)=>s }
-    const code=ts.transpileModule(`${['moveNameCandidates','findMatchingMoveOption','lookupMoveMeta','resolveMoveType','resolveMoveMeta','moveSearchCandidates','dexMoveIndex','filterDexMoveOptions','moveTooltipData'].map(fn).join('\n')}\nglobalThis.api={lookupMoveMeta,resolveMoveType,resolveMoveMeta,filterDexMoveOptions,moveTooltipData}`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText
+    const code=ts.transpileModule(`${['findMatchingMoveOption','lookupMoveMeta','resolveMoveType','resolveMoveMeta','moveSearchCandidates','dexMoveIndex','filterDexMoveOptions','moveTooltipData'].map(fn).join('\n')}\nglobalThis.api={lookupMoveMeta,resolveMoveType,resolveMoveMeta,filterDexMoveOptions,moveTooltipData}`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText
     vm.runInNewContext(code,context)
     return {api:context.api,getMoveMetadata,getDexGameMoveIdentity}
   } finally {await server.close()}

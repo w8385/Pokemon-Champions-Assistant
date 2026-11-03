@@ -1,11 +1,11 @@
+import { normalizeSearchText } from '../../domain/battle/moveKey.ts'
+export { normalizeSearchText } from '../../domain/battle/moveKey.ts'
 import { getJaName } from '../display/jaLabels.ts'
 import type { SpeedLineSpecies } from '../../domain/battle/speed/speedLine.ts'
 import { normalizeMatchText, rankedSearch } from './searchMatching.ts'
 import { byDisplayName } from './displayOrder.ts'
 
-export function normalizeSearchText(value: string): string {
-  return value.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, '')
-}
+
 
 export function speciesSearchCandidates(row: SpeedLineSpecies): string[] {
   const base = [row.name_ko, row.name_en, row.name_ja, getJaName(row.key, row.name_ko, row.name_en), row.key].filter(Boolean) as string[]

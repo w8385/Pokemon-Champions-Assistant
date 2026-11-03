@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { calcDamage } from '../src/domain/battle/damageCore.ts'
+import { battleStageMultiplier } from '../src/domain/battle/modifierRules.ts'
 import vm from 'node:vm'
 const ts = createRequire(import.meta.url)('typescript')
 const source = readFileSync(new URL('../src/domain/battle/sampleDamageProjection.ts', import.meta.url), 'utf8')
@@ -51,17 +52,6 @@ test('move conditional keys encode source, target, direction and move without co
 })
 
 test('canonical App engine changes independently with Body Press and Foul Play actual stats and ranks in both directions', () => {
-  const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const tree = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const names = ['battleStageMultiplier']
-  const functions = names.map(name => {
-    const node = tree.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === name)
-    assert.ok(node, name)
-    return node.getText(tree)
-  }).join('\n')
-  const engine = {}
-  vm.runInNewContext(ts.transpileModule(`${functions}\nglobalThis.engine = { battleStageMultiplier }`, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText, engine)
-  const { battleStageMultiplier } = engine.engine
   const own = { hp: 150, attack: 85, defense: 130, spAttack: 100, spDefense: 95 }
   const foe = { hp: 160, attack: 125, defense: 105, spAttack: 110, spDefense: 100 }
   const preview = (name, meta, source, target, s, t) => {

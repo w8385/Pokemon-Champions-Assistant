@@ -1,14 +1,10 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import vm from 'node:vm'
-import { analyzePartyMatchups, alwaysOnAbilityImmunity } from '../src/domain/party/partyAnalysis.ts'
+import { analyzePartyMatchups } from '../src/domain/party/partyAnalysis.ts'
+import { alwaysOnAbilityImmunity } from '../src/domain/battle/abilityImmunities.ts'
+import { normalizedTypeChart as lowerChart } from '../src/domain/battle/typeEffectiveness.ts'
 
-// The production chart, not a second copy of matchup data.
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const chartLiteral = source.match(/const typeChart: Record<[^\n]+ = (\{[\s\S]*?\n\})\n\nconst normalizedTypeChart/)
-assert.ok(chartLiteral, 'canonical type chart available')
-const chart = vm.runInNewContext(`(${chartLiteral[1]})`)
-const lowerChart = Object.fromEntries(Object.entries(chart).map(([attack, targets]) => [attack.toLowerCase(), Object.fromEntries(Object.entries(targets).map(([defend, value]) => [defend.toLowerCase(), value]))]))
 const row = (key, types, ability = '') => ({ key, name: key, types, ability, sprite: '', moves: [] })
 const move = (name, type, category = 'physical') => ({ name, type, category })
 const run = (members, options = {}) => analyzePartyMatchups(members, lowerChart, options)

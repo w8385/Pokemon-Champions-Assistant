@@ -2,19 +2,14 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { typeChart } from '../src/domain/battle/typeEffectiveness.ts'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const root = path.resolve(__dirname, '..')
-const appPath = path.join(root, 'src', 'App.tsx')
 const reportPath = path.join(root, 'reports', 'typeEffectivenessHarness.json')
 
 const TYPES = ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy']
-
-function extractTypeChart(source) {
-  const match = source.match(/const typeChart:[\s\S]*?=\s*(\{[\s\S]*?\n\})\n\n(?:const|function) /)
-  if (!match) throw new Error('typeChart block not found')
-  return Function(`"use strict"; return (${match[1]});`)()
-}
 
 function buildMatrixFromChart(typeChart) {
   const normalizedChart = Object.fromEntries(
@@ -59,16 +54,14 @@ function diffMatrices(localMatrix, remoteMatrix) {
   return diffs
 }
 
-const source = await fs.readFile(appPath, 'utf8')
-const localChart = extractTypeChart(source)
-const localMatrix = buildMatrixFromChart(localChart)
+const localMatrix = buildMatrixFromChart(typeChart)
 const remoteMatrix = await fetchTypeRelations()
 const diffs = diffMatrices(localMatrix, remoteMatrix)
 
 const report = {
   generatedAt: new Date().toISOString(),
   source: {
-    local: 'src/App.tsx#typeChart',
+    local: 'src/domain/battle/typeEffectiveness.ts#typeChart',
     remote: 'PokeAPI /type endpoints',
   },
   totals: {

@@ -19,15 +19,15 @@ visit(ast)
 
 test('each of seven real resolver callers passes attacker identity; only Double passes Doubles format', () => {
   assert.equal(calls.length, 7)
+  let doubleCalls = 0
   for (const call of calls) {
     const arg = call.arguments[0]
     assert.ok(ts.isObjectLiteralExpression(arg))
     const keys = arg.properties.map(p => p.name?.getText(ast))
     assert.ok(keys.includes('attackerTypes'), `missing actual attacker types at ${ast.getLineAndCharacterOfPosition(call.pos).line + 1}`)
-    const line = ast.getLineAndCharacterOfPosition(call.pos).line + 1
-    if (line > 4800 && line < 5100) assert.ok(arg.getText(ast).includes("format: 'Doubles'"))
-    else assert.ok(!arg.getText(ast).includes("format: 'Doubles'"))
+    if (arg.getText(ast).includes("format: 'Doubles'")) doubleCalls += 1
   }
+  assert.equal(doubleCalls, 1, 'one actual Double caller and six Singles/Quick/sample callers')
 })
 
 test('airborne, Levitate and Air Balloon do not receive attacker terrain power', () => {

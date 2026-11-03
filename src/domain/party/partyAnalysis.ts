@@ -1,3 +1,4 @@
+import { alwaysOnAbilityImmunity } from '../battle/abilityImmunities.ts'
 // Static, single-type offensive targets and actual-form defensive matchups.
 // The caller supplies the application's canonical chart and resolved move/ability data.
 export const PARTY_TYPES = ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'] as const
@@ -5,16 +6,6 @@ export type PartyType = typeof PARTY_TYPES[number]
 export type AnalysisMove = { name: string; type: string | null; category?: string | null }
 export type AnalysisMember = { key: string; name: string; sprite?: string; types: string[]; ability: string; moves: AnalysisMove[]; slot?: number }
 export type AnalysisChart = Record<string, Partial<Record<string, number>>>
-
-// Match the always-on type immunities implemented by resolveDamageModifiers.
-export function alwaysOnAbilityImmunity(type: string, ability: string): boolean {
-  if (type === 'ground') return ['levitate', 'eelevate', 'earth-eater', '부유'].includes(ability)
-  if (type === 'water') return ['water-absorb', 'storm-drain', 'dry-skin'].includes(ability)
-  if (type === 'fire') return ability === 'flash-fire'
-  if (type === 'electric') return ['volt-absorb', 'lightning-rod', 'motor-drive'].includes(ability)
-  if (type === 'grass') return ability === 'sap-sipper'
-  return false
-}
 
 const CONDITIONAL_TYPE_MOVES = new Set(['웨더볼', 'weatherball', '테라버스트', 'terablast', '심판의뭉치', 'judgment', '멀티어택', 'multiattack', '자연의힘', 'naturepower', '잠재파워', 'hiddenpower', '기술타입변경', '플라잉프레스', 'flyingpress', '웨더볼', 'weather ball', '테크노버스터', 'technoblast', 'revelationdance'])
 const normalizeMove = (value: string) => value.toLowerCase().replace(/[^0-9a-z가-힣]+/g, '')

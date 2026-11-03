@@ -5,6 +5,8 @@ import { createHash } from 'node:crypto'
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
 const source = await fs.readFile(path.join(rootDir, 'src', 'domain/champions/championsItems.ts'), 'utf8')
 const appSource = await fs.readFile(path.join(rootDir, 'src', 'App.tsx'), 'utf8')
+const speedRules = await fs.readFile(path.join(rootDir, 'src', 'domain/battle/statProjection.ts'), 'utf8')
+const damageRules = await fs.readFile(path.join(rootDir, 'src', 'domain/battle/modifierRules.ts'), 'utf8')
 const pokemonData = JSON.parse(await fs.readFile(path.join(rootDir, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json'), 'utf8'))
 const optionsMatch = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
 if (!optionsMatch) throw new Error('Could not find CHAMPIONS_ITEM_OPTIONS')
@@ -55,7 +57,7 @@ for (const item of options) {
 if (ko.get('こだわりスカーフ') !== '구애스카프') failures.push('Choice Scarf Korean label mismatch')
 if (en.get('こだわりスカーフ') !== 'Choice Scarf') failures.push('Choice Scarf English label mismatch')
 if (sprites.get('こだわりスカーフ') !== 'choice-scarf') failures.push('Choice Scarf sprite mismatch')
-if (!appSource.includes("canonicalChampionsItemName(item).trim() === 'こだわりスカーフ'")) {
+if (!speedRules.includes("canonicalChampionsItemName(item).trim() === 'こだわりスカーフ'")) {
   failures.push('Speed calculator does not detect the canonical Choice Scarf item')
 }
 if (!appSource.includes('mySpeedNeeds(sampleRow, sampleCalcConfig, sampleCalcMember.item, scenario.speed)')) {
@@ -70,10 +72,10 @@ if (appSource.includes('member.config.scarf || isChoiceScarfItem(member.item)') 
 if (!appSource.includes('scarf: false,\n    speedStage: clampSpeedStage(config.speedStage)')) {
   failures.push('Saved player builds do not discard the hidden legacy scarf flag')
 }
-if (!appSource.includes("canonicalAttackerItem === 'いのちのたま'")) {
+if (!damageRules.includes("canonicalAttackerItem === 'いのちのたま'")) {
   failures.push('Damage calculator does not apply Life Orb')
 }
-if (!appSource.includes("finalMultiplier *= 1.3\n    notes.push('생명의구슬')")) {
+if (!damageRules.includes("finalMultiplier *= 1.3\n    notes.push('생명의구슬')")) {
   failures.push('Life Orb damage multiplier mismatch')
 }
 if (!appSource.includes("'いのちのたま': { ko: '공격 기술의 대미지 30% 증가.")) {
@@ -87,14 +89,14 @@ for (const excluded of ['とつげきチョッキ', '돌격조끼', 'Assault Ves
 }
 const pinned = new Map(approval.sourceRows.map(row => [row.sourceItemId, row.nameJa]))
 if (approval.sourceRows.length !== 166 || pinned.size !== 166 || approval.approvedOrdinary.some(row => pinned.get(row.sourceItemId) !== row.canonical)) failures.push('pinned source namespace/label mismatch')
-if (!appSource.includes("canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal'")) {
+if (!damageRules.includes("canonicalAttackerItem === 'ノーマルジュエル' && moveType === 'normal'")) {
   failures.push('Damage calculator does not apply Normal Gem')
 }
-if (!appSource.includes("moveType === 'ground' && canonicalDefenderItem === 'ふうせん'")) {
+if (!damageRules.includes("moveType === 'ground' && canonicalDefenderItem === 'ふうせん'")) {
   failures.push('Damage calculator does not apply Air Balloon Ground immunity')
 }
 for (const seed of ['エレキシード', 'サイコシード', 'ミストシード', 'グラスシード']) {
-  if (!appSource.includes(`canonicalDefenderItem === '${seed}'`)) failures.push(`Damage calculator does not apply ${seed}`)
+  if (!damageRules.includes(`canonicalDefenderItem === '${seed}'`)) failures.push(`Damage calculator does not apply ${seed}`)
 }
 
 const megaKeys = pokemonData.rows.map((row) => row.key).filter((key) => key.startsWith('mega-'))
