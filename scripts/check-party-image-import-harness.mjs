@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import Tesseract from 'tesseract.js'
+import { NATURES } from '../src/domain/champions/natures.ts'
 
 const PROJECT_ROOT = path.resolve(new URL('..', import.meta.url).pathname)
 const FIXTURE_DIR = path.join(PROJECT_ROOT, 'fixtures', 'party-image-import')
@@ -114,14 +115,7 @@ const itemIndex = Object.entries(dexDescriptions.items).map(([itemKey, descripti
   ].filter(Boolean).flatMap((entry) => [String(entry), normalizeSearchText(String(entry))]))),
 }))
 
-const NATURES = [
-  ['hardy', '노력'], ['lonely', '외로움'], ['brave', '용감'], ['adamant', '고집'], ['naughty', '개구쟁이'],
-  ['bold', '대담'], ['docile', '온순'], ['relaxed', '무사태평'], ['impish', '장난꾸러기'], ['lax', '촐랑'],
-  ['timid', '겁쟁이'], ['hasty', '성급'], ['serious', '성실'], ['jolly', '명랑'], ['naive', '천진난만'],
-  ['modest', '조심'], ['mild', '의젓'], ['quiet', '냉정'], ['bashful', '수줍음'], ['rash', '덜렁'],
-  ['calm', '차분'], ['gentle', '얌전'], ['sassy', '건방'], ['careful', '신중'], ['quirky', '변덕'],
-]
-const natureIndex = NATURES.map(([id, label]) => ({
+const natureIndex = NATURES.map(({ id, label }) => ({
   id,
   candidates: Array.from(new Set([id, label, normalizeSearchText(id), normalizeSearchText(label)])),
 }))

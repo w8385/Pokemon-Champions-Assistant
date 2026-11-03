@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
@@ -179,13 +180,6 @@ function keyFromMegaFormName(formName, fallbackBaseName) {
   if (!match) return fallbackBaseName ? `mega-${fallbackBaseName}` : null
   const [, baseName, suffix] = match
   return `mega-${baseName}${suffix ? `-${suffix}` : ''}`
-}
-
-function actualStat(base, ev, natureMultiplierValue = 1, hp = false) {
-  const evContribution = Math.max(0, Math.trunc(ev))
-  if (hp) return Math.floor((((2 * base + 31) * 50) / 100) + 60) + evContribution
-  const raw = Math.floor((((2 * base + 31) * 50) / 100) + 5) + evContribution
-  return Math.floor(raw * natureMultiplierValue)
 }
 
 function speedTemplate(base, boosted, scarf) {

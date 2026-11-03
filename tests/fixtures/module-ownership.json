@@ -52,6 +52,7 @@
     "src/domain/champions/formAwareMovePool.ts",
     "src/domain/champions/itemIdentity.ts",
     "src/domain/champions/moveMetadata.ts",
+    "src/domain/champions/natures.ts",
     "src/domain/champions/sharedLearnsets.ts",
     "src/domain/champions/statMechanics.ts",
     "src/domain/party/comparisonPairState.ts",

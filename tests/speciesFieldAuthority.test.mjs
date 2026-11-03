@@ -45,16 +45,22 @@ test('both actual KO label producers consume the same 18-entry input and generat
   assert.deepEqual(sorted(new Set(Object.keys(typeLabels))), sorted(new Set(['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'])))
   assert.equal(new Set(Object.values(typeLabels)).size, 18)
   const ast = ts.createSourceFile('generator.mjs', generatorText, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
-  const functions = ['actualStat', 'speedTemplate', 'buildRow'].map(name => {
+  assert.match(generatorText, /import\s*\{\s*actualStat\s*\}\s*from\s*['"]\.\.\/src\/domain\/champions\/statMechanics\.ts['"]/, 'generator uses canonical stat implementation')
+  assert.ok(!ast.statements.some(node => ts.isFunctionDeclaration(node) && node.name?.text === 'actualStat'), 'generator has no copied formula')
+  const functions = ['speedTemplate', 'buildRow'].map(name => {
     const node = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name)
     assert.ok(node, `generator ${name}`)
     return node.getText(ast)
   }).join('\n')
-  const generatorBuildRow = vm.runInNewContext(`const CHAMPIONS_EFFORT_PER_STAT_CAP = ${buildRules.CHAMPIONS_EFFORT_PER_STAT_CAP};\n${functions}\nbuildRow`, { TYPE_KO_BY_KEY: typeLabels, Math })
+  const { generatorBuildRow, generatorSpeedTemplate } = vm.runInNewContext(`const CHAMPIONS_EFFORT_PER_STAT_CAP = ${buildRules.CHAMPIONS_EFFORT_PER_STAT_CAP};\n${functions}\n({generatorBuildRow: buildRow, generatorSpeedTemplate: speedTemplate})`, { TYPE_KO_BY_KEY: typeLabels, actualStat, Math })
   const fixture = { id: 9, key: 'fixture', canonicalFormSlug: 'base', name_ko: '검사용', name_en: 'Fixture', name_ja: 'テスト', types: Object.keys(typeLabels), abilities: [], abilities_ko: [], stats: { hp: 50, attack: 65, defense: 107, spAttack: 105, spDefense: 107, speed: 86 }, sprite: null, sprite_status: 'fixture' }
   const generated = generatorBuildRow(fixture)
   assert.deepEqual(Array.from(generated.types_ko), Object.values(typeLabels))
   assert.equal(generated.fast, actualStat(86, 32, 1.1))
+  for (const [base, uninvested, neutral, fast, scarfNeutral, scarfFast] of [[100, 120, 152, 167, 228, 250], [111, 131, 163, 179, 244, 268]]) {
+    assert.equal(actualStat(base, 0), uninvested)
+    assert.deepEqual([generatorSpeedTemplate(base, false, false), generatorSpeedTemplate(base, true, false), generatorSpeedTemplate(base, false, true), generatorSpeedTemplate(base, true, true)], [neutral, fast, scarfNeutral, scarfFast])
+  }
 })
 
 test('backup opponent nature membership delegates to the shared 25-nature rule without restricting archived party builds', async () => {

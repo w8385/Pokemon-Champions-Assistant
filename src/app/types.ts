@@ -1,6 +1,7 @@
 import type { EffortValues } from '../domain/samples/myPartyChampionsSamples'
 import type { LinkDraft } from '../domain/samples/creatorSampleLibrary'
 import type { SpeedLineState } from '../features/speedline/speedLineState'
+import type { NatureId as CanonicalNatureId, StatKey as CanonicalStatKey } from '../domain/champions/natures'
 
 export type Row = {
   id: number
@@ -27,14 +28,10 @@ export type Row = {
   sprite?: string
 }
 
-export type StatKey = 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed'
+// Transitional type-only aliases; the nature leaf owns these contracts until stage 3.
+export type StatKey = CanonicalStatKey
 export type EffortStatKey = keyof EffortValues
-export type NatureId =
-  | 'hardy' | 'lonely' | 'brave' | 'adamant' | 'naughty'
-  | 'bold' | 'docile' | 'relaxed' | 'impish' | 'lax'
-  | 'timid' | 'hasty' | 'serious' | 'jolly' | 'naive'
-  | 'modest' | 'mild' | 'quiet' | 'bashful' | 'rash'
-  | 'calm' | 'gentle' | 'sassy' | 'careful' | 'quirky'
+export type NatureId = CanonicalNatureId
 
 export type MemberConfig = {
   nature: NatureId
