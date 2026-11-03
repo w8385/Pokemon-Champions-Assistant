@@ -1,11 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import roster from '../src/pokemon_champions_verified_data.json' with { type: 'json' }
-import { SPEED_ABILITIES, getSpeedAbility, speedAbilitiesFor } from '../src/speedAbilities.ts'
-import { applySpeedModifiers } from '../src/speedModifiers.ts'
-import { buildSpeedComparison, buildSpeedScenario } from '../src/speedLine.ts'
-import { calculateSpeedInvestment } from '../src/speedLineInvestment.ts'
-import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
+import roster from '../src/canonical-data/champions/pokemon_champions_verified_data.json' with { type: 'json' }
+import { SPEED_ABILITIES, getSpeedAbility, speedAbilitiesFor } from '../src/domain/battle/speed/speedAbilities.ts'
+import { applySpeedModifiers } from '../src/domain/battle/speed/speedModifiers.ts'
+import { buildSpeedComparison, buildSpeedScenario } from '../src/domain/battle/speed/speedLine.ts'
+import { calculateSpeedInvestment } from '../src/domain/battle/speed/speedLineInvestment.ts'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
 
 const row = (key, speed, abilities = []) => ({ key, speed, name_ko: key, name_en: key, abilities })
 const swimmer = row('swimmer', 100, ['swift-swim'])

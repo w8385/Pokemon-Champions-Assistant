@@ -10,8 +10,8 @@ Object.assign(globalThis, { window: browser, document: browser.document, localSt
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
 const { QuickDamagePanel, quickSide } = await server.ssrLoadModule('/src/App.tsx')
-const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
-const { loadMoveMetaByName } = await server.ssrLoadModule('/src/dex/data.ts')
+const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
 test.before(async () => { await Promise.all([loadFormLearnset('starmie'), loadFormLearnset('pelipper'), loadFormLearnset('garchomp'), loadMoveMetaByName()]) })
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 

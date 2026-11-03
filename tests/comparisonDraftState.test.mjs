@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { readDraft, writeDraft, forgetDraft, draftStorageKey } from '../src/comparisonDraftState.ts'
+import { readDraft, writeDraft, forgetDraft, draftStorageKey } from '../src/adapters/persistence/comparisonDraftState.ts'
 
 const seed = { key: 'a', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, moves: ['', '', '', ''], speedNatureKnown: false, knownOffense: { attack: false, spAttack: false }, statNatureMultipliers: { defense: 1.1 } }
 const draft = { ...seed, ability: '', evs: { ...seed.evs, defense: 12 }, actual: { speed: '999' }, battle: { burned: true }, speedStage: 6, moves: ['a', '', '', ''] }

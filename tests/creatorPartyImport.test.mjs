@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, groupCreatorSources } from '../src/creatorSampleLibrary.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
+import { catalog, groupCreatorSources } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
 
 const source = groupCreatorSources(catalog).find(s => s.sourceId === '224319761655')
 const abilities = { 'mega-scizor': ['테크니션'], ceruledge: ['깨어진갑옷'], garchomp: ['까칠한피부'], 'mega-floette': ['페어리오라'], 'rotom-wash': ['부유'], 'mega-starmie': ['천하장사'] }

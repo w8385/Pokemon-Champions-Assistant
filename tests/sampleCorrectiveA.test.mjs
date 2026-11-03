@@ -7,9 +7,9 @@ import React, { act } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Window } from 'happy-dom'
 import { createServer } from 'vite'
-import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate } from '../src/sampleDamageMoves.ts'
+import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate } from '../src/domain/battle/sampleDamageMoves.ts'
 
-import { validateBackup } from '../src/backupValidation.ts'
+import { validateBackup } from '../src/adapters/persistence/backupValidation.ts'
 const ts = createRequire(import.meta.url)('typescript')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
@@ -26,7 +26,7 @@ const snapshot = value => JSON.parse(JSON.stringify(value))
 test('actual hydration + actual selection callback keep positional four slots through export/import', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-  const { resolveEligibleMoveInput, loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+  const { resolveEligibleMoveInput, loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
   const callback = app.match(/const selectSampleOpponentMove = \(idx: number, slot: number, move: string\) => \{[\s\S]*?\n  \}/)?.[0]
   assert.ok(callback, 'real App callback found')
   const pool = await loadFormLearnset('starmie')
@@ -42,7 +42,7 @@ test('actual hydration + actual selection callback keep positional four slots th
   const browser = new Window({ url: 'http://localhost/' })
   Object.assign(globalThis, { window: browser, document: browser.document, HTMLElement: browser.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true })
   const { createRoot } = await import('react-dom/client')
-  const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/PokemonCardOverview.tsx')
+  const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
   const host = document.createElement('div'); document.body.append(host)
   const root = createRoot(host)
   const labels = { slot: '번', category: value => value, power: '위력', accuracy: '명중', pp: 'PP', unknown: '미확인' }
@@ -93,7 +93,7 @@ test('symmetric source eligibility and mechanics support keep unknown/unsupporte
 test('mounted actual registered editor renders four inputs and edits a slot', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/PokemonCardOverview.tsx')
+    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
     const labels = { slot: '번', category: value => value, power: '위력', accuracy: '명중', pp: 'PP', unknown: '미확인' }
     const moves = fixedSampleOpponentMoves(['', '파도타기'])
     const html = renderToStaticMarkup(React.createElement('div', null, moves.map((name, index) => React.createElement(RegisteredMoveSlot, { key: index, number: index + 1, name, labels, inputProps: { onChange: event => replaceSampleOpponentMove(moves, index, event.target.value) } }))))

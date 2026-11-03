@@ -12,8 +12,8 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const read = p => JSON.parse(readFileSync(path.join(root,p),'utf8'))
 const sha = bytes => createHash('sha256').update(bytes).digest('hex')
 const script = path.join(root,'scripts/build-champions-move-meta.mjs')
-const source = read('src/dexGameMoveIndex.json')
-const generated = read('src/championsLearnedMoveMeta.json')
+const source = read('src/canonical-data/champions/dexGameMoveIndex.json')
+const generated = read('src/canonical-data/champions/championsLearnedMoveMeta.json')
 
 function guardedRun(args, directory) {
   // A preload blocks both fetch and socket transports; the test must actually spawn the generator.
@@ -23,7 +23,7 @@ function guardedRun(args, directory) {
 }
 
 test('pinned IDs drive generated type while all 731 historical non-type fields and raw rows remain evidence', async () => {
-  const evidence = readFileSync(path.join(root,'src/championsMoveMetaLegacyEvidence.json'))
+  const evidence = readFileSync(path.join(root,'src/canonical-data/champions/championsMoveMetaLegacyEvidence.json'))
   assert.equal(sha(evidence),'183edc049bfaf73369301985b4e03b0b0da188e47e19f87acedb9727cc05ec35')
   const original = JSON.parse(evidence)
   assert.equal(Object.keys(source).length,510)
@@ -49,7 +49,7 @@ test('pinned IDs drive generated type while all 731 historical non-type fields a
   assert.equal(generated['집게덫'].type,'steel')
   const server=await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const [{getMoveMetadata},{getDexGameMoveIdentity},{MOVE_META_BY_NAME}]=await Promise.all([server.ssrLoadModule('/src/moveMetadata.ts'),server.ssrLoadModule('/src/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/dex/data.ts')])
+    const [{getMoveMetadata},{getDexGameMoveIdentity},{MOVE_META_BY_NAME}]=await Promise.all([server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'),server.ssrLoadModule('/src/domain/champions/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/adapters/catalog/data.ts')])
     Object.assign(MOVE_META_BY_NAME,generated) // Match the lazy catalog after it becomes ready.
     for(const [name,record] of Object.entries(source)) {
       const runtime=getMoveMetadata(name)

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { comparisonSides } from '../src/unifiedComparisonAdapter.ts'
+import { comparisonSides } from '../src/domain/party/unifiedComparisonAdapter.ts'
 const evs = { hp: 0, attack: 12, defense: 0, spAttack: 0, spDefense: 0, speed: 14 }
 test('adapter uses selected saved build and registered moves without mutation', () => {
  const party = [{ key:'first', item:'', ability:'', config:{nature:'jolly',speedStage:1}, evs }, { key:'second', item:'', ability:'', config:{nature:'modest',speedStage:0}, evs }]

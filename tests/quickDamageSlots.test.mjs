@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { restoreQuickMoves, replaceQuickMove, quickMoveSuggestions } from '../src/quickDamageState.ts'
+import { restoreQuickMoves, replaceQuickMove, quickMoveSuggestions } from '../src/domain/battle/quickDamageState.ts'
 
 const options = [{ name: '무릎차기' }, { name: '인파이트' }, { name: '칼춤' }]
 test('legacy scalar migrates without erasing an unknown historical move', () => {

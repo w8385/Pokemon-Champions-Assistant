@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildSpeedComparison, buildSpeedLine } from '../src/speedLine.ts'
-import { actualStat } from '../src/statMechanics.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
+import { buildSpeedComparison, buildSpeedLine } from '../src/domain/battle/speed/speedLine.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
 
 const rows = [
   { key: 'a', name_ko: '가', name_en: 'Alpha', speed: 100 },

@@ -19,7 +19,7 @@ test('party, quick, sample, own subtab nature and sample target use the input-ow
 test('shared fields render original values and three labeled buttons', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { PokemonBuildFields } = await server.ssrLoadModule('/src/PokemonBuildFields.tsx')
+    const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
     const html = renderToStaticMarkup(React.createElement(PokemonBuildFields, {
       identity: 'foo', ability: 'unknown original', nature: 'unknown nature', item: 'unknown item',
       abilities: [{ value: 'known', label: 'Known' }], natures: [{ value: 'neutral', label: 'Neutral' }],
@@ -33,30 +33,30 @@ test('shared fields render original values and three labeled buttons', async () 
 })
 
 test('shared popover keyboard navigation focuses options and ignores composition', () => {
-  const source = readFileSync(new URL('../src/PokemonBuildFields.tsx', import.meta.url), 'utf8')
+  const source = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(source, /optionRefs\.current\[next\]\?\.focus\(\)/)
   assert.match(source, /event\.nativeEvent\.isComposing \|\| event\.nativeEvent\.keyCode === 229/)
 })
 
 test('shared popover closes on outside pointer without relying on blur', () => {
-  const source = readFileSync(new URL('../src/PokemonBuildFields.tsx', import.meta.url), 'utf8')
+  const source = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(source, /document\.addEventListener\('pointerdown', onOutside\)/)
 })
 
 test('ability option focus composes highlight and tooltip callbacks', () => {
-  const source = readFileSync(new URL('../src/PokemonBuildFields.tsx', import.meta.url), 'utf8')
+  const source = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(source, /onFocus=\{event => \{ setHighlight\(index\); optionTooltip\?\.onFocus\?\.\(event\) \}\}/)
 })
 
 test('escape restores focus without a background-tab animation frame', () => {
-  const source = readFileSync(new URL('../src/PokemonBuildFields.tsx', import.meta.url), 'utf8')
+  const source = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.doesNotMatch(source, /requestAnimationFrame\(\(\) => trigger\.current\[field\]\?\.focus\(\)\)/)
 })
 
 test('recorded unknown item takes display precedence over required mega item', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { PokemonBuildFields } = await server.ssrLoadModule('/src/PokemonBuildFields.tsx')
+    const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
     const html = renderToStaticMarkup(React.createElement(PokemonBuildFields, {
       identity: 'mega', ability: '', nature: 'jolly', item: 'recorded scarf', fixedItem: 'mandatory stone',
       abilities: [], natures: [], itemOptions: () => [], onAbility: () => {}, onNature: () => {}, onItem: () => {},

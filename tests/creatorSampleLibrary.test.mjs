@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
-import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
+import { catalog, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, canImportCreatorSample, createLinkDraft, sanitizeLinkDrafts, isVerifiedRankerSample } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/domain/champions/effectiveRoster.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
 
 const monoKeys = ['mega-scizor', 'ceruledge', 'garchomp', 'mega-floette', 'rotom-wash', 'mega-starmie']
 const mono = catalog.filter(e => e.provenance.sourceId === '224319761655')

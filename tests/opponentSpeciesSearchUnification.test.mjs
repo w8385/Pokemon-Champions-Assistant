@@ -40,7 +40,7 @@ test.before(async () => {
   ;({ createRoot: root } = await import('react-dom/client'))
   ;({ act } = await import('react'))
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Field = (await server.ssrLoadModule('/src/PokemonSearchField.tsx')).default
+  Field = (await server.ssrLoadModule('/src/shared/search/PokemonSearchField.tsx')).default
 })
 test.after(async () => { await server?.close(); await win.happyDOM.abort() })
 async function render(props) {

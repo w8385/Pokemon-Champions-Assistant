@@ -7,8 +7,8 @@ import { createServer } from 'vite'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url))).rows
-const descriptions = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url))).abilities
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
+const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const nodes = {}
 function visit(node) {
   if (ts.isVariableDeclaration(node) && ['buildDoubleDamageContext', 'doubleDamageContext', 'doubleActionCards', 'doubleCombinedDamageSummary'].includes(node.name.getText(source))) nodes[node.name.getText(source)] = node.initializer
@@ -24,8 +24,8 @@ test('lazy alias refreshes actual memoized Double damage callback and individual
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
     const { classifyAbilityForKey } = await server.ssrLoadModule('/src/App.tsx')
-    const { isCalculableAbility } = await server.ssrLoadModule('/src/abilityIdentity.ts')
-    const { abilityDescriptionFor, loadDexDescriptions } = await server.ssrLoadModule('/src/dex/data.ts')
+    const { isCalculableAbility } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
+    const { abilityDescriptionFor, loadDexDescriptions } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
     const attacker = roster.find(row => row.key === 'garchomp')
     const garchompRow = attacker
     const defender = roster.find(row => row.key === 'maushold')

@@ -6,7 +6,7 @@ import ts from 'typescript'
 import { createServer } from 'vite'
 
 const source = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url))).rows
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 const found = {}
 function visit(node) {
   if (ts.isFunctionDeclaration(node) && ['abilitySearchCandidates', 'filterDexAbilityOptions'].includes(node.name?.text)) found[node.name.text] = node
@@ -19,9 +19,9 @@ assert.ok(found.abilitySearchCandidates && found.filterDexAbilityOptions && foun
 test('Dex ability search memo refreshes a newly loaded shared Japanese alias on unchanged query', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { abilityIndex, abilityAliases } = await server.ssrLoadModule('/src/abilityIdentity.ts')
-    const { abilityDescriptionFor, loadDexDescriptions } = await server.ssrLoadModule('/src/dex/data.ts')
-    const { normalizeSearchText } = await server.ssrLoadModule('/src/pokemonSearch.ts')
+    const { abilityIndex, abilityAliases } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
+    const { abilityDescriptionFor, loadDexDescriptions } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
+    const { normalizeSearchText } = await server.ssrLoadModule('/src/shared/search/pokemonSearch.ts')
     let cached
     const context = vm.createContext({
       rows: roster, abilityIndex, abilityAliases, abilityDescriptionFor, normalizeSearchText,

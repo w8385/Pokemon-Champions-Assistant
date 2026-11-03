@@ -9,7 +9,7 @@ Object.assign(globalThis, { window: browser, document: browser.document, localSt
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
 const App = (await server.ssrLoadModule('/src/App.tsx')).default
-const { LEARNSET_SOURCE } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+const { LEARNSET_SOURCE } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
 async function mount(hash = '#/dex?dexTab=pokemon&sel=pokemon%3Agardevoir') {

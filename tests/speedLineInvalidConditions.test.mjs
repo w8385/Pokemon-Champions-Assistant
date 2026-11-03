@@ -3,10 +3,10 @@ import assert from 'node:assert/strict'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
-import { parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
-import { buildSpeedComparison, buildSpeedScenario } from '../src/speedLine.ts'
-import { calculateSpeedInvestment } from '../src/speedLineInvestment.ts'
-import { getSpeedAbility } from '../src/speedAbilities.ts'
+import { parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
+import { buildSpeedComparison, buildSpeedScenario } from '../src/domain/battle/speed/speedLine.ts'
+import { calculateSpeedInvestment } from '../src/domain/battle/speed/speedLineInvestment.ts'
+import { getSpeedAbility } from '../src/domain/battle/speed/speedAbilities.ts'
 
 const rows = [
   { key: 'qwilfish', name_ko: '침바루', name_en: 'Qwilfish', speed: 85, types: [], abilities: ['swift-swim'] },
@@ -18,7 +18,7 @@ const route = 'slv=3&ref=qwilfish&target=qwilfish&targetItem=normal'
 let server, Panel
 const panelProps = state => ({ rows, state, language: 'en', onChange() {}, translate: x => x, displayName: x => x.name_en })
 const html = state => renderToStaticMarkup(React.createElement(Panel, panelProps(state)))
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => server?.close())
 
 test('invalid reference slug survives route and blocks reference speed, differences and inverse', () => {

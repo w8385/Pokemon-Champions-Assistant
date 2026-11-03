@@ -9,7 +9,7 @@ let server, Panel
 const rows = [{ key: 'reference', name_ko: '기준', name_en: 'Reference', speed: 100, types: [] }, { key: 'mega-other', name_ko: '메가상대', name_en: 'Mega Other', speed: 110, types: [] }]
 const state = { referenceKey: 'reference', referenceEffort: 16, referenceNature: 'neutral', referenceStage: 1, referenceAbility: null, listEffort: 32, listNature: 'boost', query: '', forms: 'all', comparison: 'all', sort: 'desc', rangeMode: 'all', gap: 10, items: 'both', abilityMode: 'conditions', targetKey: null, targetItem: 'normal', targetAbility: null }
 const render = (patch = {}, language = 'ko') => renderToStaticMarkup(React.createElement(Panel, { rows, state: { ...state, ...patch }, language, onChange() {}, translate: x => x, displayName: x => x.name_ko }))
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => server?.close())
 
 test('reference and list controls appear directly in order without calculation disclosure', () => {

@@ -2,9 +2,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
-import { quickMoveSupported, quickMoveSuggestions, restoreQuickMoves } from '../src/quickDamageState.ts'
+import { quickMoveSupported, quickMoveSuggestions, restoreQuickMoves } from '../src/domain/battle/quickDamageState.ts'
 
-const readJson = name => JSON.parse(readFileSync(new URL(`../src/${name}`, import.meta.url), 'utf8'))
+const readJson = name => JSON.parse(readFileSync(new URL(`../src/canonical-data/champions/${name}`, import.meta.url), 'utf8'))
 const pools = readJson('championsMovePools.json')
 const game = readJson('dexGameLearnsets.json')
 const moveIndex = readJson('dexGameMoveIndex.json')
@@ -22,7 +22,7 @@ const sourceLearners = [
 async function withResolver(callback) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+    const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
     const current = Object.fromEntries(await Promise.all(Object.keys(game.forms).map(async key => [key, (await loadFormLearnset(key)).moves])))
     await callback(key => current[key] ?? [])
   } finally { await server.close() }

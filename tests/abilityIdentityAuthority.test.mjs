@@ -5,13 +5,13 @@ import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url)))
-const labels = JSON.parse(readFileSync(new URL('../src/verifiedAbilityLabels.json', import.meta.url))).abilities
-const descriptions = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url))).abilities
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url)))
+const labels = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/verifiedAbilityLabels.json', import.meta.url))).abilities
+const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 
 async function withAuthority(run) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-  try { return await run(await server.ssrLoadModule('/src/abilityIdentity.ts')) }
+  try { return await run(await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')) }
   finally { await server.close() }
 }
 
@@ -78,8 +78,8 @@ test('late description load makes Japanese alias resolvable without converting m
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
     const { classifyAbilityForKey, selectedAbilityDisplayName } = await server.ssrLoadModule('/src/App.tsx')
-    const { loadDexDescriptions, abilityDescriptionFor } = await server.ssrLoadModule('/src/dex/data.ts')
-    const { abilityIndex } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+    const { loadDexDescriptions, abilityDescriptionFor } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
+    const { abilityIndex } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
     const row = roster.rows.find(entry => entry.key === 'mega-alakazam')
     assert.ok(row.abilities.includes('trace'))
     assert.equal(classifyAbilityForKey(row.key, 'trace').status, 'allowed')
@@ -110,7 +110,7 @@ test('App read boundary preserves raw evidence and distinguishes blocked calcula
 test('shared ability field warns without substituting the sole-form label', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { PokemonBuildFields } = await server.ssrLoadModule('/src/PokemonBuildFields.tsx')
+    const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
     const html = renderToStaticMarkup(React.createElement(PokemonBuildFields, {
       identity: 'mega-starmie', ability: 'creator-original', abilityError: 'Unknown ability; choose or clear', nature: '', item: '',
       abilities: [{ value: 'huge-power', label: 'Huge Power' }], natures: [], itemOptions: () => [],

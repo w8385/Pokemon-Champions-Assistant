@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { m6TopTenSamples } from '../src/m6TopTenSamples.ts'
-import { confirmedCreatorEfforts } from '../src/creatorConfirmedEfforts.ts'
+import { m6TopTenSamples } from '../src/domain/samples/m6TopTenSamples.ts'
+import { confirmedCreatorEfforts } from '../src/domain/samples/creatorConfirmedEfforts.ts'
 
 const rank4 = m6TopTenSamples.filter(e => e.rank.includes('최종4위'))
 test('all six explicit effort values enable other-form calculation without a post-Mega ability or import build', () => {

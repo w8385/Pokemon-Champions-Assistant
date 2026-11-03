@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import React, { act } from 'react'
 import { Window } from 'happy-dom'
 import { createServer } from 'vite'
-import { routeGroups } from '../src/navigation.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 
 const browser = new Window({ url: 'http://localhost/#/' })
 Object.assign(globalThis, { window: browser, document: browser.document, localStorage: browser.localStorage, HTMLElement: browser.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true })

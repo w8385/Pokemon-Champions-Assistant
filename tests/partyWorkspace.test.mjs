@@ -7,7 +7,7 @@ let server, work
 const empty = () => Array.from({length:6}, () => ({key:'',ability:'',item:'',picked:false,config:{nature:'hardy',scarf:false,speedStage:0},evs:{hp:0,attack:0,defense:0,spAttack:0,spDefense:0,speed:0},tuning:{magicNumber:0,maxValue:0}}))
 const team = (key, item = '') => empty().map((slot,i) => i === 0 ? {...slot,key,item} : slot)
 const preset = (id, party, moves = []) => ({id,label:id,party,lockedMovesBySlot:[moves,...Array.from({length:5},()=>[])]})
-test.before(async () => { server = await createServer({server:{middlewareMode:true,hmr:false},appType:'custom',optimizeDeps:{noDiscovery:true,include:[]}}); work = await server.ssrLoadModule('/src/partyWorkspace.ts') })
+test.before(async () => { server = await createServer({server:{middlewareMode:true,hmr:false},appType:'custom',optimizeDeps:{noDiscovery:true,include:[]}}); work = await server.ssrLoadModule('/src/domain/party/partyWorkspace.ts') })
 test.after(async () => { await server?.close() })
 test('migration selects matching record, restores divergent working draft once, and never guesses a missing party', () => {
   const a = preset('a',team('a')), b = preset('b',team('b'))
@@ -80,7 +80,7 @@ test('new empty, rename, delete active and last, reset retain editable identity'
   s = work.workspaceReducer(s,{type:'RESET',id:'reset',emptyParty:empty()}); assert.equal(s.savedPartyPresets.length,1)
 })
 test('v1 backup accepts optional active ID and an empty editable record', async () => {
-  const {validateBackup} = await server.ssrLoadModule('/src/backupValidation.ts')
+  const {validateBackup} = await server.ssrLoadModule('/src/adapters/persistence/backupValidation.ts')
   const payload = {version:1,party:empty(),opponents:[],savedPartyPresets:[preset('blank',empty())],activePartyPresetId:'blank'}
   assert.equal(validateBackup(payload).activePartyPresetId,'blank')
   assert.equal(validateBackup({...payload,activePartyPresetId:undefined}).version,1)

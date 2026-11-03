@@ -52,8 +52,8 @@ def generate(source_dir=None):
     labels = {row['LabelName']: row['OriginalText'] for row in raw['rom-txt/kor/wazaname.json']['mSDataSet']}
     available = {mid for mid, entry in waza.items() if entry['available'] == '1'}
     mapped = json.loads((ROOT / 'scripts/dex_game_primary_key_map.json').read_text())
-    roster = {row['key']: row for row in json.loads((ROOT / 'src/pokemon_champions_verified_data.json').read_text())['rows']}
-    extras_source = (ROOT / 'src/effectiveRoster.ts').read_text()
+    roster = {row['key']: row for row in json.loads((ROOT / 'src/canonical-data/champions/pokemon_champions_verified_data.json').read_text())['rows']}
+    extras_source = (ROOT / 'src/domain/champions/effectiveRoster.ts').read_text()
     for block in re.findall(r'\{ id: \d+, key: .*? \},', extras_source):
         def field(name):
             found = re.search(r'\b' + name + r": '([^']+)'", block)
@@ -69,8 +69,8 @@ def generate(source_dir=None):
         raise ValueError('mapped and unresolved keys must exhaust the effective roster')
     # The nine extra roster forms live in effectiveRoster.ts. Their six-stat
     # evidence is pinned in the mapping fixture and checked against source.
-    meta = json.loads((ROOT / 'src/championsLearnedMoveMeta.json').read_text())
-    descriptions = json.loads((ROOT / 'src/dexDescriptions.json').read_text())['moves']
+    meta = json.loads((ROOT / 'src/canonical-data/champions/championsLearnedMoveMeta.json').read_text())
+    descriptions = json.loads((ROOT / 'src/canonical-data/dex/dexDescriptions.json').read_text())['moves']
     by_id = {}
     for name, row in descriptions.items():
         mid = row.get('moveId')
@@ -131,9 +131,9 @@ def generate(source_dir=None):
                    'sha256': FILES},
         'moves': moves, 'forms': forms, 'unresolved': unresolved,
     }
-    target = ROOT / 'src/dexGameLearnsets.json'
+    target = ROOT / 'src/canonical-data/champions/dexGameLearnsets.json'
     target.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':'), sort_keys=True) + '\n')
-    index_target = ROOT / 'src/dexGameMoveIndex.json'
+    index_target = ROOT / 'src/canonical-data/champions/dexGameMoveIndex.json'
     index_target.write_text(json.dumps(move_index, ensure_ascii=False, separators=(',', ':'), sort_keys=True) + '\n')
     print(f'{target}: {len(forms)} mapped forms, {len(unresolved)} ambiguous, {len(moves)} available learned move IDs; {index_target}: {len(move_index)} identities')
 

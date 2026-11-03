@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { registerOpponentSpecies, hasOpponentEntryData } from '../src/singleOpponentRegistration.ts'
+import { registerOpponentSpecies, hasOpponentEntryData } from '../src/domain/party/singleOpponentRegistration.ts'
 
 const blank = () => ({ key: '', ability: '', item: '', revealedMoves: ['', '', '', ''], attackEv: null })
 const slots = () => Array.from({ length: 6 }, blank)

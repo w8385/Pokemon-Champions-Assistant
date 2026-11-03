@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { actualStat } from '../src/statMechanics.ts'
-import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
-import { catalog, groupCreatorSources } from '../src/creatorSampleLibrary.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/domain/champions/effectiveRoster.ts'
+import { catalog, groupCreatorSources } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
 
 const roster = new Map(championsData.rows.map(row => [row.key, row]))
 for (const form of additionalFormSpecs) roster.set(form.key, { ...roster.get(form.key.split('-')[0]), ...form })

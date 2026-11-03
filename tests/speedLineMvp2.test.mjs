@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildSpeedComparison, buildSpeedScenario } from '../src/speedLine.ts'
-import { applyChoiceScarf } from '../src/speedModifiers.ts'
-import { calculateSpeedInvestment } from '../src/speedLineInvestment.ts'
+import { buildSpeedComparison, buildSpeedScenario } from '../src/domain/battle/speed/speedLine.ts'
+import { applyChoiceScarf } from '../src/domain/battle/speed/speedModifiers.ts'
+import { calculateSpeedInvestment } from '../src/domain/battle/speed/speedLineInvestment.ts'
 
 const garchomp = Object.freeze({ key: 'garchomp', name_ko: '한카리아스', name_en: 'Garchomp', speed: 102 })
 const charizard = Object.freeze({ key: 'charizard', name_ko: '리자몽', name_en: 'Charizard', speed: 100 })

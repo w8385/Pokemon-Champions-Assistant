@@ -3,11 +3,11 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { classifyHeldItem, canonicalHeldItem } from '../src/itemIdentity.ts'
+import { classifyHeldItem, canonicalHeldItem } from '../src/domain/champions/itemIdentity.ts'
 import { loadAppDamageEngine } from '../scripts/check-damage-parity.mjs'
 import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
-const metadata = JSON.parse(fs.readFileSync(new URL('../src/championsLearnedMoveMeta.json', import.meta.url)))
-const index = JSON.parse(fs.readFileSync(new URL('../src/dexGameMoveIndex.json', import.meta.url)))
+const metadata = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json', import.meta.url)))
+const index = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json', import.meta.url)))
 const getMoveMetadata = name => index[name] ? { id:index[name].id, meta:metadata[name] } : null
 const text = fs.readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)

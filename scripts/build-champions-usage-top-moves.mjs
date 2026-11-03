@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import championsData from '../src/pokemon_champions_verified_data.json' with { type: 'json' }
+import championsData from '../src/canonical-data/champions/pokemon_champions_verified_data.json' with { type: 'json' }
 import moveMetaReport from '../reports/championsMoveMetaReport.json' with { type: 'json' }
-import championsLearnedMoveMeta from '../src/championsLearnedMoveMeta.json' with { type: 'json' }
+import championsLearnedMoveMeta from '../src/canonical-data/champions/championsLearnedMoveMeta.json' with { type: 'json' }
 import pokeApiMoveDetailsCache from '../reports/pokeapiMoveDetailsCache.json' with { type: 'json' }
 
-const OUTPUT_PATH = path.resolve('src/championsUsageTopMoves.json')
+const OUTPUT_PATH = path.resolve('src/canonical-data/champions/championsUsageTopMoves.json')
 const BASE_URL = 'https://champs.pokedb.tokyo'
 const SINGLE_RULE = 0
 const rows = championsData.rows ?? []
@@ -41,10 +41,10 @@ async function fetchText(url) {
 }
 
 async function loadJaNameByKey() {
-  const filePath = path.resolve('src/jaNames.ts')
+  const filePath = path.resolve('src/shared/display/jaNames.ts')
   const source = await fs.readFile(filePath, 'utf8')
   const match = source.match(/export const jaNameByKey = (\{[\s\S]*\}) as const/)
-  if (!match) throw new Error('Failed to parse src/jaNames.ts')
+  if (!match) throw new Error('Failed to parse src/shared/display/jaNames.ts')
   return Function(`return (${match[1]})`)()
 }
 

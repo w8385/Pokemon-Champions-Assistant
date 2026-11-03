@@ -61,7 +61,7 @@ test('unified queried results retain every kind past previous per-kind and globa
 test('scope pagination resets only when category or committed normalized query changes', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {dexPageScope,dexVisibleCount,DEX_PAGE_SIZE} = await server.ssrLoadModule('/src/dexPagination.ts')
+    const {dexPageScope,dexVisibleCount,DEX_PAGE_SIZE} = await server.ssrLoadModule('/src/features/dex/dexPagination.ts')
     const a = dexPageScope('pokemon','  Pikachu  ')
     assert.equal(a,dexPageScope('pokemon','pikachu'))
     assert.notEqual(a,dexPageScope('move','pikachu'))
@@ -75,7 +75,7 @@ test('scope pagination resets only when category or committed normalized query c
 test('deep-detail return waits for the exact list scope, settled query and loaded cards', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {dexScrollRestoreReady} = await server.ssrLoadModule('/src/dexPagination.ts')
+    const {dexScrollRestoreReady} = await server.ssrLoadModule('/src/features/dex/dexPagination.ts')
     const pending = {scope:'pokemon\u0000mega',count:82,y:6482}
     const view = {section:'dex',selection:null,queryPending:false,scope:pending.scope,visibleCount:82,totalCount:82}
     assert.equal(dexScrollRestoreReady(pending,{...view,queryPending:true}),false)
@@ -99,7 +99,7 @@ test('route restoration defers Dex scroll to a cancellable effect after render, 
 test('actual grid displays count, manual fallback and honest completion without replacing preview links', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {DexBrowseGrid} = await server.ssrLoadModule('/src/DexBrowseGrid.tsx')
+    const {DexBrowseGrid} = await server.ssrLoadModule('/src/features/dex/DexBrowseGrid.tsx')
     const props = {language:'ko',busy:false,onNavigate(){},renderTypeBadge:()=>null,onLoadMore(){},totalCount:60}
     const item = {id:'pokemon:p1',kind:'pokemon',href:'#/dex?dexTab=pokemon&sel=pokemon%3Ap1',label:'피카츄'}
     let html = renderToStaticMarkup(React.createElement(DexBrowseGrid,{...props,items:[item]}))
@@ -125,7 +125,7 @@ test('list stores visible batch beside native history scroll and route keeps ori
 })
 
 test('sentinel consumes one intersection per page, disconnects and has no-observer fallback', () => {
-  const grid = readFileSync(new URL('../src/DexBrowseGrid.tsx',import.meta.url),'utf8')
+  const grid = readFileSync(new URL('../src/features/dex/DexBrowseGrid.tsx',import.meta.url),'utf8')
   const tree = ts.createSourceFile('DexBrowseGrid.tsx',grid,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
   const functionNode = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'DexLoadSentinel')
   assert.ok(functionNode)
@@ -161,7 +161,7 @@ test('sentinel consumes one intersection per page, disconnects and has no-observ
 test('page transition from a new category can advance before its scope effect, without duplicate callbacks', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {dexNextPage,dexPageScope,DEX_PAGE_SIZE} = await server.ssrLoadModule('/src/dexPagination.ts')
+    const {dexNextPage,dexPageScope,DEX_PAGE_SIZE} = await server.ssrLoadModule('/src/features/dex/dexPagination.ts')
     const old = {scope:dexPageScope('pokemon',''),count:72}
     const nextScope = dexPageScope('move','')
     const advanced = dexNextPage(old,nextScope,100,DEX_PAGE_SIZE)

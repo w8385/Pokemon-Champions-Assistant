@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
-import { normalizeSearchText, speciesSearchCandidates, searchPokemon } from '../src/pokemonSearch.ts'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
+import { normalizeSearchText, speciesSearchCandidates, searchPokemon } from '../src/shared/search/pokemonSearch.ts'
 
 const rows = [
   { key: 'charizard', name_ko: '리자몽', name_en: 'Charizard', speed: 100 },

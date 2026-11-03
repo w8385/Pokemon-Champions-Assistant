@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
 
-const data = JSON.parse(readFileSync(new URL('../src/dexGameLearnsets.json', import.meta.url), 'utf8'))
+const data = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json', import.meta.url), 'utf8'))
 const mapping = JSON.parse(readFileSync(new URL('../scripts/dex_game_primary_key_map.json', import.meta.url), 'utf8'))
 const ids = key => data.forms[key].moves
 
@@ -38,7 +38,7 @@ test('pinned source and exhaustive mapped roster preserve exact form identity', 
 test('loader projects all moves including status and four source spelling discrepancies without guessed aliases', async () => {
   const server = await createServer({ server:{ middlewareMode:true }, appType:'custom', logLevel:'silent' })
   try {
-    const {loadDexGameLearnset} = await server.ssrLoadModule('/src/dexGameLearnsets.ts')
+    const {loadDexGameLearnset} = await server.ssrLoadModule('/src/domain/champions/dexGameLearnsets.ts')
     const result = await loadDexGameLearnset('rotom-wash')
     assert.equal(result.status,'ready')
     assert.equal(result.provenance.kind,'game-snapshot')
@@ -59,7 +59,7 @@ test('loader projects all moves including status and four source spelling discre
 test('ambiguous or unknown forms never inherit base moves or masquerade as ready empty', async () => {
   const server = await createServer({ server:{ middlewareMode:true }, appType:'custom', logLevel:'silent' })
   try {
-    const {loadDexGameLearnset} = await server.ssrLoadModule('/src/dexGameLearnsets.ts')
+    const {loadDexGameLearnset} = await server.ssrLoadModule('/src/domain/champions/dexGameLearnsets.ts')
     for (const key of ['mega-meowstic','tauros-paldean']) {
       const result = await loadDexGameLearnset(key)
       assert.equal(result.status,'missing')

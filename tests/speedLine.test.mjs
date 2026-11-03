@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { buildSpeedLine } from '../src/speedLine.ts'
-import { actualStat } from '../src/statMechanics.ts'
-import { routeGroups } from '../src/navigation.ts'
+import { buildSpeedLine } from '../src/domain/battle/speed/speedLine.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 
 const species = [
   { key: 'slow', name_ko: '느림', name_en: 'Slow', speed: 50 },
@@ -33,7 +33,7 @@ test('search matches localized names and keys while mega filter is precise', () 
 })
 
 test('full verified roster is ordered by computed Speed, not base-stat table order', () => {
-  const data = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url), 'utf8'))
+  const data = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url), 'utf8'))
   const sorted = buildSpeedLine(data.rows, { effort: 0, nature: 'lower', query: '', forms: 'all' })
   assert.equal(sorted.length, data.rows.length)
   assert.ok(sorted.length > 300)
@@ -48,7 +48,7 @@ test('independent speed-line route and navigation retain existing menus and shar
   assert.match(app, /routePath === '\/speed-line'/)
   assert.equal(routeGroups.find(group => group.section === 'tools').links.find(link => link.section === 'speedLine').href, '#/speed-line')
   assert.match(app, /<SpeedLinePanel rows=\{rows\} state=\{speedLineState\}/)
-  assert.match(app, /import \{ actualStat \} from '\.\/statMechanics'/)
+  assert.match(app, /import \{ actualStat \} from '\.\/domain\/champions\/statMechanics'/)
   assert.doesNotMatch(app, /function actualStat\(/)
   assert.doesNotMatch(app, /setSampleWorkbenchTab\('rankers'\)/)
   assert.equal(routeGroups.find(group => group.section === 'dex').links[0].href, '#/dex')

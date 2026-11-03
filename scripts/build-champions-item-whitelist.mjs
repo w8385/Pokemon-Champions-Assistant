@@ -9,7 +9,7 @@ if (createHash('sha256').update(approvalBytes).digest('hex') !== '1afd0b574b7b01
   throw new Error('pinned approval fixture changed; independent review required')
 }
 const approval = JSON.parse(approvalBytes)
-const source = await fs.readFile(path.join(root, 'src/championsItems.ts'), 'utf8')
+const source = await fs.readFile(path.join(root, 'src/domain/champions/championsItems.ts'), 'utf8')
 const match = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
 if (!match) throw new Error('missing Champions item registry')
 const options = [...match[1].matchAll(/"([^"]+)"/g)].map(row => row[1])

@@ -3,9 +3,9 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
-const source = await fs.readFile(path.join(rootDir, 'src', 'championsItems.ts'), 'utf8')
+const source = await fs.readFile(path.join(rootDir, 'src', 'domain/champions/championsItems.ts'), 'utf8')
 const appSource = await fs.readFile(path.join(rootDir, 'src', 'App.tsx'), 'utf8')
-const pokemonData = JSON.parse(await fs.readFile(path.join(rootDir, 'src', 'pokemon_champions_verified_data.json'), 'utf8'))
+const pokemonData = JSON.parse(await fs.readFile(path.join(rootDir, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json'), 'utf8'))
 const optionsMatch = source.match(/export const CHAMPIONS_ITEM_OPTIONS = \[([\s\S]*?)\] as const/)
 if (!optionsMatch) throw new Error('Could not find CHAMPIONS_ITEM_OPTIONS')
 const options = [...optionsMatch[1].matchAll(/["']([^"']+)["']/g)].map((entry) => entry[1])

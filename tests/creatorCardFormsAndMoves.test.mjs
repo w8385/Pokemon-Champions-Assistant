@@ -1,13 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { sourceBackedCardAbility } from '../src/creatorCardAbility.ts'
+import { sourceBackedCardAbility } from '../src/domain/samples/creatorCardAbility.ts'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const app = read('../src/App.tsx')
-const card = read('../src/PokemonCardOverview.tsx')
-const catalog = read('../src/creatorSampleLibrary.ts')
-const moveMeta = JSON.parse(read('../src/championsLearnedMoveMeta.json'))
+const card = read('../src/shared/display/PokemonCardOverview.tsx')
+const catalog = read('../src/domain/samples/creatorSampleLibrary.ts')
+const moveMeta = JSON.parse(read('../src/canonical-data/champions/championsLearnedMoveMeta.json'))
 
 test('every transcribed Korean creator move resolves to canonical type, category, power and accuracy', () => {
   const moves = [...catalog.matchAll(/moves: \[([^\]]+)\]/g)].flatMap(([, list]) => [...list.matchAll(/'([^']+)'/g)].map(([, name]) => name))
@@ -44,7 +44,7 @@ test('pre-mega abilities use source choices or matching recorded ability, never 
   assert.match(app, /sourceBackedCardAbility\(\{ megaKey, formKey, rowAbilities: row\?\.abilities_ko/)
   assert.equal(sourceBackedCardAbility({ megaKey: 'mega-scizor', formKey: 'mega-scizor', rowAbilities: ['테크니션'], ability: undefined }), undefined)
   assert.equal(sourceBackedCardAbility({ megaKey: 'mega-scizor', formKey: 'scizor', rowAbilities: ['벌레의알림','테크니션'], ability: '테크니션', preMegaAbilities: ['벌레의알림'] }), '벌레의알림')
-  const roster = JSON.parse(read('../src/pokemon_champions_verified_data.json')).rows
+  const roster = JSON.parse(read('../src/canonical-data/champions/pokemon_champions_verified_data.json')).rows
   for (const [key, ability] of [['mega-floette', '페어리오라'], ['mega-starmie', '천하장사']]) {
     const row = roster.find(row => row.key === key)
     assert.deepEqual(row.abilities_ko, [ability])

@@ -11,10 +11,10 @@ export default defineConfig({
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
             return 'react-vendor'
           }
-          if (id.includes('/src/championsMovePools.json') || id.includes('/src/pokemonMovePools.json')) {
+          if (id.includes('/src/canonical-data/champions/championsMovePools.json') || id.includes('/src/canonical-data/champions/pokemonMovePools.json')) {
             return 'move-pools'
           }
-          if (id.includes('/src/pokemon_champions_verified_data.json') || id.includes('/src/championsMovePoolSources.json')) {
+          if (id.includes('/src/canonical-data/champions/pokemon_champions_verified_data.json') || id.includes('/src/canonical-data/champions/championsMovePoolSources.json')) {
             return 'champions-data'
           }
         },

@@ -2,12 +2,12 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
-const snapshot = JSON.parse(readFileSync(new URL('../src/dexGameLearnsets.json', import.meta.url)))
+const snapshot = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json', import.meta.url)))
 const app = () => readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
 async function provider(fn) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-  try { return await fn(await server.ssrLoadModule('/src/sharedLearnsets.ts')) } finally { await server.close() }
+  try { return await fn(await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')) } finally { await server.close() }
 }
 
 test('all mapped forms return exact canonical IDs and reverse the same source, including sparse metadata', async () => provider(async ({ loadFormLearnset, loadMoveLearners }) => {
@@ -67,7 +67,7 @@ test('all four battle choices and both Dex directions use the canonical provider
 })
 
 test('legacy recorded four move slots remain intact independent of source pool', async () => {
-  const { restoreQuickMoves } = await import('../src/quickDamageState.ts')
+  const { restoreQuickMoves } = await import('../src/domain/battle/quickDamageState.ts')
   const recorded = ['구 기록', '', '아쿠아제트', '볼가득넣기']
   assert.deepEqual(restoreQuickMoves(recorded, '', []), recorded)
   assert.deepEqual(restoreQuickMoves(undefined, '구 기록', []), ['구 기록', '', '', ''])
@@ -83,7 +83,7 @@ test('recorded Low Kick alias shares Mega Lopunny snapshot identity and reverse 
   assert.deepEqual(await loadMoveLearners(original[0]), await loadMoveLearners('안다리걸기'))
   assert.equal(recordedMoveSnapshotState(original[2], pool), 'outside-snapshot')
   assert.equal(moveInPool(original[3], pool.moves), false)
-  const { restoreQuickMoves } = await import('../src/quickDamageState.ts')
+  const { restoreQuickMoves } = await import('../src/domain/battle/quickDamageState.ts')
   assert.deepEqual(restoreQuickMoves(original, '', pool.moves), original)
 }))
 
@@ -92,15 +92,15 @@ test('evidenced aliases resolve to the same source identity in either direction 
   assert.equal(recordedMoveSnapshotState('섀도크루', pool), 'in-snapshot')
   assert.equal(moveInPool('섀도크루', pool.moves), true)
   assert.deepEqual(await loadMoveLearners('섀도크루'), await loadMoveLearners('섀도클로'))
-  const aliases = JSON.parse(readFileSync(new URL('../src/championsMoveMetaNameAliases.json', import.meta.url)))
-  const index = JSON.parse(readFileSync(new URL('../src/dexGameMoveIndex.json', import.meta.url)))
+  const aliases = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaNameAliases.json', import.meta.url)))
+  const index = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json', import.meta.url)))
   for (const [left, right] of Object.entries(aliases)) {
     const canonical = index[left] ? left : index[right] ? right : null
     if (!canonical) continue
     assert.deepEqual(await loadMoveLearners(left), await loadMoveLearners(canonical), left)
     assert.deepEqual(await loadMoveLearners(right), await loadMoveLearners(canonical), right)
   }
-  const { restoreQuickMoves } = await import('../src/quickDamageState.ts')
+  const { restoreQuickMoves } = await import('../src/domain/battle/quickDamageState.ts')
   assert.deepEqual(restoreQuickMoves(['섀도크루', '', '옛 원문', ''], '', pool.moves), ['섀도크루', '', '옛 원문', ''])
 }))
 

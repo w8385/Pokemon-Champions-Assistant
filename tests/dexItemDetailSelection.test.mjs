@@ -3,15 +3,15 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/championsItems.ts'
-import { canonicalHeldItem, classifyHeldItem, requiredMegaStone } from '../src/itemIdentity.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
-import { parseDexSelectionId } from '../src/dex/helpers.ts'
+import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/domain/champions/championsItems.ts'
+import { canonicalHeldItem, classifyHeldItem, requiredMegaStone } from '../src/domain/champions/itemIdentity.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
+import { parseDexSelectionId } from '../src/features/dex/helpers.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const descriptions = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url), 'utf8'))
+const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url), 'utf8'))
 const appAst = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const dataAst = ts.createSourceFile('data.ts', readFileSync(new URL('../src/dex/data.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true)
+const dataAst = ts.createSourceFile('data.ts', readFileSync(new URL('../src/adapters/catalog/data.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true)
 function declaration(ast, name) {
   let found
   function visit(node) {

@@ -6,11 +6,11 @@ import { createServer } from 'vite'
 import { Window } from 'happy-dom'
 import ts from 'typescript'
 import vm from 'node:vm'
-import { localizedChampionsItemLabel } from '../src/championsItems.ts'
-import { canonicalHeldItem } from '../src/itemIdentity.ts'
+import { localizedChampionsItemLabel } from '../src/domain/champions/championsItems.ts'
+import { canonicalHeldItem } from '../src/domain/champions/itemIdentity.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const cardSource = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
+const cardSource = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 test('all editable callers use shared candidate row, including sample damage and both legacy adders', () => {
   assert.match(cardSource, /export function MoveCandidateRow/)
   for (const id of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-move-${member.key}-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${slot}']) {
@@ -31,7 +31,7 @@ test('shared candidate renders type, known and unknown metadata; hover/focus and
   const { act } = await import('react')
   const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
   try {
-    const { RegisteredMoveSlot, MoveCandidateRow } = await vite.ssrLoadModule('/src/PokemonCardOverview.tsx')
+    const { RegisteredMoveSlot, MoveCandidateRow } = await vite.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
     const host = document.createElement('div'); document.body.append(host)
     const picked = [], calls = []
     const options = [{ key: '얼음엄니', label: '얼음엄니' }, { key: '미확인기술', label: '미확인기술' }]
@@ -63,7 +63,7 @@ test('item label uses loaded localized source name only as registry fallback', (
 test('actual lazy source names localize both canonical and raw alias without changing identity', async () => {
   const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
   try {
-    const { loadDexDescriptions, resolveItemInfo } = await vite.ssrLoadModule('/src/dex/data.ts')
+    const { loadDexDescriptions, resolveItemInfo } = await vite.ssrLoadModule('/src/adapters/catalog/data.ts')
     const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
     let func
     function visit(node) { if (ts.isFunctionDeclaration(node) && node.name?.text === 'displayItemLabel') func = node; ts.forEachChild(node, visit) }

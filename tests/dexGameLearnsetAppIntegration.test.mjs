@@ -20,7 +20,7 @@ assert.ok(callback, 'actual mounted Dex pool effect exists')
 async function runEffect(key) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-  const primary = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+  const primary = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
   let state = {}
   const context = {
     mainSection: 'dex', dexSelectedRow: { key }, dexPoolByKey: {},

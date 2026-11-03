@@ -3,8 +3,8 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const root = path.resolve(new URL('..', import.meta.url).pathname)
-const sourcePath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
-const outputPath = path.join(root, 'src', 'championSpriteHashes.json')
+const sourcePath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
+const outputPath = path.join(root, 'src', 'assets/championSpriteHashes.json')
 
 function computeDHash(buffer) {
   const bits = []

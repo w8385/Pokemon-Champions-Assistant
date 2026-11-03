@@ -3,7 +3,7 @@ import path from 'node:path'
 
 const root = process.cwd()
 const appPath = path.join(root, 'src', 'App.tsx')
-const verifiedPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
+const verifiedPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
 const reportPath = path.join(root, 'reports', 'abilityDamageHarness.json')
 
 const appSource = fs.readFileSync(appPath, 'utf8')

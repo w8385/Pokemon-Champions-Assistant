@@ -4,13 +4,13 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
-import { homeRoute, routeGroups, routeIconFor } from '../src/navigation.ts'
+import { homeRoute, routeGroups, routeIconFor } from '../src/app/navigation.ts'
 
 let server, UiIcon, PageHeading
 test.before(async () => {
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  UiIcon = (await server.ssrLoadModule('/src/UiIcon.tsx')).UiIcon
-  PageHeading = (await server.ssrLoadModule('/src/PageHeading.tsx')).PageHeading
+  UiIcon = (await server.ssrLoadModule('/src/shared/display/UiIcon.tsx')).UiIcon
+  PageHeading = (await server.ssrLoadModule('/src/shared/display/PageHeading.tsx')).PageHeading
 })
 test.after(async () => { await server?.close() })
 

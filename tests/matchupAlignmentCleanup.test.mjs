@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const css = readFileSync(new URL('../src/matchupWorkspace.css', import.meta.url), 'utf8')
+const css = readFileSync(new URL('../src/features/single/matchupWorkspace.css', import.meta.url), 'utf8')
 const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
 const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 

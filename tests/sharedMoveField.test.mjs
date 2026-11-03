@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
+const card = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 const sections = [app.slice(app.indexOf('const creatorCard ='), app.indexOf('return (\n    <div className="app-shell"')), app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?')), app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))]
 
 test('one shared field owns the input; all three callers supply tooltip-bound props, not input children', () => {
@@ -36,7 +36,7 @@ test('one shared field owns the input; all three callers supply tooltip-bound pr
 test('ReactDOM renders the same accessible input and metadata for editable and readonly moves', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/PokemonCardOverview.tsx')
+    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
     const labels = { slot: '번', category: v => v, power: '위력', accuracy: '명중', pp: 'PP', unknown: '미확인' }
     const props = { number: 1, name: '얼음엄니', type: 'ice', meta: { category: 'physical', power: 65, accuracy: 95, pp: 15 }, labels }
     for (const inputProps of [{ readOnly: true, 'aria-label': '기술 1', 'data-tooltip': 'ice fang' }, { onChange: () => {}, placeholder: '기술 입력' }]) {
@@ -54,7 +54,7 @@ test('ReactDOM renders the same accessible input and metadata for editable and r
 test('shared move input composes focus and blur tooltips with editor handlers', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/PokemonCardOverview.tsx')
+    const { RegisteredMoveSlot } = await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
     const calls = []
     const slot = RegisteredMoveSlot({ number: 1, name: '얼음엄니', labels: { slot: '번', category: v => v, power: '위력', accuracy: '명중', pp: 'PP', unknown: '미확인' },
       inputProps: { onFocus: () => calls.push('editor-focus'), onBlur: () => calls.push('editor-blur'), onChange: () => calls.push('editor-change') },

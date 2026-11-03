@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { normalizeRoute, routeGroups } from '../src/navigation.ts'
+import { normalizeRoute, routeGroups } from '../src/app/navigation.ts'
 import { readFileSync } from 'node:fs'
 
 test('navigation exposes the exact party-first flat menu order, while doubles remain deep-link only', () => {
@@ -20,7 +20,7 @@ test('quick damage deep link resolves independently', () => {
   assert.deepEqual(normalizeRoute('#/damage'), { section: 'quickDamage', tab: '' })
 })
 test('speed line heading and list label match the direct menu destination', () => {
-  const panel = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
+  const panel = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   assert.match(app, /<PageHeading title=\{lt\(mainSection === 'home'[^]*?mainSection === 'speedLine' \? '스피드라인'/)
   assert.doesNotMatch(panel, /<h2>\{translate\('스피드라인'\)\}<\/h2>/)

@@ -28,7 +28,7 @@ test('mounted shell retains four positional blanks, owner state, selection, read
   const { createRoot } = await import('react-dom/client')
   const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
   try {
-    const { MoveSlotsEditor } = await vite.ssrLoadModule('/src/PokemonCardOverview.tsx')
+    const { MoveSlotsEditor } = await vite.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
     assert.ok(MoveSlotsEditor)
     const host = document.createElement('div'); document.body.append(host)
     const root = createRoot(host), picked = [], tip = [], values = ['Ice Fang', '', '', 'Thunderbolt']

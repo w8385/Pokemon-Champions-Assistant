@@ -57,8 +57,8 @@ test('quick calculation and Sample do not render a redundant workflow shell or s
 let server, Field, Modal
 test.before(async () => {
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Field = (await server.ssrLoadModule('/src/PokemonSearchField.tsx')).default
-  Modal = (await server.ssrLoadModule('/src/EffortTuningModal.tsx')).EffortTuningModal
+  Field = (await server.ssrLoadModule('/src/shared/search/PokemonSearchField.tsx')).default
+  Modal = (await server.ssrLoadModule('/src/shared/display/EffortTuningModal.tsx')).EffortTuningModal
 })
 test.after(async () => { await server?.close() })
 test('reused widgets retain combobox semantics and a dialog with nature, effort budget and gauge', () => {

@@ -2,9 +2,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import baseline from './fixtures/catalogBeforeM6TopTen.json' with { type: 'json' }
-import { catalog, groupCreatorSources, filterCreatorSources, canImportCreatorSample } from '../src/creatorSampleLibrary.ts'
-import { m6TopTenSamples } from '../src/m6TopTenSamples.ts'
-import { supportedSpeciesKeys } from '../src/effectiveRoster.ts'
+import { catalog, groupCreatorSources, filterCreatorSources, canImportCreatorSample } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { m6TopTenSamples } from '../src/domain/samples/m6TopTenSamples.ts'
+import { supportedSpeciesKeys } from '../src/domain/champions/effectiveRoster.ts'
 
 const ranks = [1, 3, 4, 5, 6, 7, 9]
 const newIds = new Set(m6TopTenSamples.map(entry => entry.id))

@@ -8,8 +8,8 @@ Object.assign(globalThis,{window:browser,document:browser.document,localStorage:
 const {createRoot} = await import('react-dom/client')
 const server = await createServer({server:{middlewareMode:true,hmr:false},appType:'custom',optimizeDeps:{noDiscovery:true,include:[]},logLevel:'silent'})
 const App = (await server.ssrLoadModule('/src/App.tsx')).default
-const {loadFormLearnset} = await server.ssrLoadModule('/src/sharedLearnsets.ts')
-const {loadMoveMetaByName} = await server.ssrLoadModule('/src/dex/data.ts')
+const {loadFormLearnset} = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+const {loadMoveMetaByName} = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
 test.after(async()=>{await server.close();await browser.happyDOM.abort()})
 const store='pokemon-champions-assistant-demo:v1'
 const member={key:'grimmsnarl',item:'',ability:'',picked:false,evs:{hp:0,attack:0,defense:0,spAttack:0,spDefense:0,speed:0},config:{nature:'hardy',scarf:false,speedStage:0},tuning:{magicNumber:0,maxValue:0}}

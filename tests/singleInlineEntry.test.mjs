@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { normalizeRoute } from '../src/navigation.ts'
-import { commitComparisonEntry } from '../src/singleInlineEntry.ts'
-import { comparisonSides } from '../src/unifiedComparisonAdapter.ts'
+import { normalizeRoute } from '../src/app/navigation.ts'
+import { commitComparisonEntry } from '../src/domain/party/singleInlineEntry.ts'
+import { comparisonSides } from '../src/domain/party/unifiedComparisonAdapter.ts'
 import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
@@ -61,7 +61,7 @@ test('changing species clears previous species build and unknown assumptions', (
 
 test('actual ability sanitizer preserves explicit blank even for a one-ability species', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-  const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+  const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
   await server.close()
   const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const start = source.indexOf('function sanitizeAbilityForKey(')

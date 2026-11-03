@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs'
 test('ready form pool renders every canonical move with distinct total/display counts and unverified warning', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { DexMovePoolSection } = await server.ssrLoadModule('/src/DexMovePoolSection.tsx')
+    const { DexMovePoolSection } = await server.ssrLoadModule('/src/features/dex/DexMovePoolSection.tsx')
     const moves = [{name:'섀도볼',type:'ghost'}, {name:'도깨비불',type:'fire'}, ...Array.from({length:24}, (_,i)=>({name:`기술${i}`,type:null}))]
     const html = renderToStaticMarkup(React.createElement(DexMovePoolSection, {
       recordKey:'rotom-wash', language:'ko', status:'ready', moves,
@@ -30,7 +30,7 @@ test('ready form pool renders every canonical move with distinct total/display c
 test('pool loading, missing, error and genuine ready-empty remain distinct without fabricated zero counts', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { DexMovePoolSection } = await server.ssrLoadModule('/src/DexMovePoolSection.tsx')
+    const { DexMovePoolSection } = await server.ssrLoadModule('/src/features/dex/DexMovePoolSection.tsx')
     const render = (status, language='ko') => renderToStaticMarkup(React.createElement(DexMovePoolSection, {
       recordKey:'rotom-wash', language, status, moves:[], metaForMove:()=>null,
       displayMoveName:name=>name, renderTypeBadge:()=>null, detailHref:()=>'', onNavigate(){}, onRetry(){},
@@ -51,7 +51,7 @@ test('pool loading, missing, error and genuine ready-empty remain distinct witho
 })
 
 test('pool and browse styles provide unbounded multi-column cards and table-local mobile scrolling', () => {
-  const css = readFileSync(new URL('../src/dexBrowse.css', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../src/features/dex/dexBrowse.css', import.meta.url), 'utf8')
   assert.match(css, /\.dex-browse-grid\.dex-results-list\s*\{[^}]*grid-template-columns:[^}]*repeat\(auto-fill/s)
   assert.match(css, /\.dex-browse-grid\.dex-results-list\s*\{[^}]*max-height:\s*none/s)
   assert.match(css, /@media \(max-width:\s*600px\)\s*\{\s*\.dex-browse-grid\.dex-results-list\s*\{[^}]*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s)
@@ -62,7 +62,7 @@ test('pool and browse styles provide unbounded multi-column cards and table-loca
 test('pinned game provenance distinguishes historical snapshot and ambiguous form from seed warning', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { DexMovePoolSection } = await server.ssrLoadModule('/src/DexMovePoolSection.tsx')
+    const { DexMovePoolSection } = await server.ssrLoadModule('/src/features/dex/DexMovePoolSection.tsx')
     const props = {
       recordKey:'mega-meowstic', language:'ko', status:'missing', moves:[], metaForMove:()=>null,
       displayMoveName:name=>name, renderTypeBadge:()=>null, detailHref:()=>'', onNavigate(){},

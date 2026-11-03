@@ -6,12 +6,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const root = path.resolve(__dirname, '..')
 
-const sampleMovesPath = path.join(root, 'src', 'sampleMoves.ts')
-const championsMovePoolsPath = path.join(root, 'src', 'championsMovePools.json')
-const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
-const moveNameOverridesPath = path.join(root, 'src', 'championsMoveNameOverrides.json')
-const recommendationAuditOverridesPath = path.join(root, 'src', 'championsRecommendationAuditOverrides.json')
-const outputWhitelistPath = path.join(root, 'src', 'championsLearnedMoveWhitelist.json')
+const sampleMovesPath = path.join(root, 'src', 'domain/samples/sampleMoves.ts')
+const championsMovePoolsPath = path.join(root, 'src', 'canonical-data/champions/championsMovePools.json')
+const verifiedDataPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
+const moveNameOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsMoveNameOverrides.json')
+const recommendationAuditOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsRecommendationAuditOverrides.json')
+const outputWhitelistPath = path.join(root, 'src', 'canonical-data/champions/championsLearnedMoveWhitelist.json')
 const outputReportPath = path.join(root, 'reports', 'championsLearnedMoveWhitelistReport.json')
 
 function confidenceLabel(tier, validationCount, sampleCount, isPresent) {
@@ -64,8 +64,8 @@ const whitelist = {
   _meta: {
     generatedAt: new Date().toISOString(),
     purpose: '현재 사이트가 학습/추천하고 있는 종별 가용 기술만 추린 learned whitelist',
-    sourceOfTruth: 'src/sampleMoves.ts',
-    comparedAgainst: 'src/championsMovePools.json',
+    sourceOfTruth: 'src/domain/samples/sampleMoves.ts',
+    comparedAgainst: 'src/canonical-data/champions/championsMovePools.json',
     caveat: '전체 기술풀이 아니라 현재 사이트가 학습한 종/추천기술만 포함한다.',
   },
   pokemon: {},

@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { catalog, groupCreatorSources, individualCreatorSources, canImportCreatorSample, relatedCreatorParties } from '../src/creatorSampleLibrary.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
-import { championsData } from '../src/effectiveRoster.ts'
+import { catalog, groupCreatorSources, individualCreatorSources, canImportCreatorSample, relatedCreatorParties } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
+import { championsData } from '../src/domain/champions/effectiveRoster.ts'
 
 const byId = id => catalog.filter(entry => entry.provenance.sourceId === id)
 const originalCatalog = catalog.filter(entry => !entry.id.startsWith('blog-m6-'))

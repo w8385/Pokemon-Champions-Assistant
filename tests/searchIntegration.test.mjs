@@ -28,13 +28,13 @@ test('sample damage uses the same real species picker; Dex and list filters do n
   assert.doesNotMatch(damage, /<input\b/)
   assert.doesNotMatch(damage, /<div className="autocomplete-menu/)
   assert.match(app, /<SearchCombobox id="dex-unified-search" mode="filter"/)
-  assert.match(readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8'), /<SearchCombobox id="speed-line-list-search" mode="filter"/)
+  assert.match(readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8'), /<SearchCombobox id="speed-line-list-search" mode="filter"/)
 })
 
 test('filter mode renders one searchbox with no duplicate listbox', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { default: SearchCombobox } = await server.ssrLoadModule('/src/SearchCombobox.tsx')
+    const { default: SearchCombobox } = await server.ssrLoadModule('/src/shared/search/SearchCombobox.tsx')
     const props = { id: 'dex-unified-search', mode: 'filter', value: '전기', options: [{ key: '볼트태클', label: '볼트태클' }], onChange() {}, onSelect() {} }
     const html = renderToStaticMarkup(React.createElement(SearchCombobox, props))
     assert.match(html, /role="searchbox"/)
@@ -46,7 +46,7 @@ test('filter mode renders one searchbox with no duplicate listbox', async () => 
 test('all move searches honor legal pool, initials and loaded multilingual labels', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { searchMoves } = await server.ssrLoadModule('/src/moveSearch.ts')
+    const { searchMoves } = await server.ssrLoadModule('/src/shared/search/moveSearch.ts')
     const pool = [{ name: '얼음엄니' }, { name: '볼트태클' }, { name: '불꽃펀치' }]
     const names = move => move.name === '얼음엄니' ? { nameEn: 'Ice Fang', nameJa: 'こおりのキバ' } : undefined
     assert.equal(searchMoves(pool, 'ㅇㅇㅇㄴ', { names, allowLoose: false })[0]?.name, '얼음엄니')

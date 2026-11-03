@@ -3,12 +3,12 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { itemForSpeciesSelection } from '../src/itemIdentity.ts'
-import { championsData } from '../src/effectiveRoster.ts'
+import { itemForSpeciesSelection } from '../src/domain/champions/itemIdentity.ts'
+import { championsData } from '../src/domain/champions/effectiveRoster.ts'
 import { createServer } from 'vite'
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+const { abilityForSpeciesSelection } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
 await server.close()
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

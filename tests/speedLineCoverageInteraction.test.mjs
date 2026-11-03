@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import React, { act } from 'react'
 import { Window } from 'happy-dom'
 import { createServer } from 'vite'
-import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
 
 const rows = [
   { key: 'starmie', speed: 115, name_ko: '스타미', name_en: 'Starmie', types: [] },
@@ -11,7 +11,7 @@ const rows = [
   { key: 'garchomp', speed: 102, name_ko: '한카리아스', name_en: 'Garchomp', types: [] },
 ]
 let server, Panel
- test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLineRangesPanel.tsx')).default })
+ test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLineRangesPanel.tsx')).default })
 test.after(async () => { await server?.close() })
 
 test('number draft suppresses stale result; slider, effort group and cut selection persist through the actual state handler', async () => {

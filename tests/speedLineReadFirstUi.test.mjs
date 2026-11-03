@@ -13,7 +13,7 @@ const rows = [
 const state = { referenceKey: 'reference', referenceEffort: 31, referenceNature: 'boost', referenceStage: 1, listEffort: 32, listNature: 'boost', query: '', forms: 'all', comparison: 'all', sort: 'desc', rangeMode: 'all', gap: 10, items: 'both', targetKey: 'charizard', targetItem: 'scarf' }
 const props = patch => ({ rows, state: { ...state, ...patch }, onChange() {}, language: 'ko', translate: x => x, displayName: x => x.name_ko })
 const render = patch => renderToStaticMarkup(React.createElement(Panel, props(patch)))
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => { await server?.close() })
 
 test('ranked reference shows actual 168, effective 252, +2 against Charizard scarf 250 and inverse 30/31', () => {

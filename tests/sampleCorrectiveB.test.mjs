@@ -5,8 +5,8 @@ import { createRequire } from 'node:module'
 import { calcDamage } from '../src/domain/battle/damageCore.ts'
 import vm from 'node:vm'
 const ts = createRequire(import.meta.url)('typescript')
-const source = readFileSync(new URL('../src/sampleDamageProjection.ts', import.meta.url), 'utf8')
-const quick = readFileSync(new URL('../src/quickDamageState.ts', import.meta.url), 'utf8')
+const source = readFileSync(new URL('../src/domain/battle/sampleDamageProjection.ts', import.meta.url), 'utf8')
+const quick = readFileSync(new URL('../src/domain/battle/quickDamageState.ts', import.meta.url), 'utf8')
 const context = {}
 vm.runInNewContext(ts.transpileModule(`${quick.replace(/^import .*$/gm, '')}\n${source.replace(/^import .*$/gm, '')}\nglobalThis.api = { sampleBattle, sampleMoveKey, sampleMoveStats }`, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText.replace(/^export /gm, ''), context)
 const { sampleBattle, sampleMoveKey, sampleMoveStats } = context.api

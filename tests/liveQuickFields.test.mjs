@@ -12,8 +12,8 @@ const server = await createServer({ server: { middlewareMode: true, hmr: false }
 let Panel, quickSide
 try { ({ QuickDamagePanel: Panel, quickSide } = await server.ssrLoadModule('/src/App.tsx')) } catch (error) { await server.close(); throw error }
 test.after(async () => {
-  const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
-  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/dex/data.ts')
+  const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
   await Promise.all([loadFormLearnset('pelipper'), loadFormLearnset('pincurchin'), loadFormLearnset('starmie'), loadFormLearnset('mega-starmie'), loadMoveMetaByName()])
   await server.close(); await browser.happyDOM.abort()
 })
@@ -78,8 +78,8 @@ test('pair change and opponent reset clear manual provenance on both fields', as
 })
 
 test('selected damage uses the visible automatic field in both battle directions', async () => {
-  const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
-  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/dex/data.ts')
+  const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
   await Promise.all([loadFormLearnset('pelipper'), loadFormLearnset('pincurchin'), loadMoveMetaByName()])
   for (const [key, ability, move, index, auto] of [
     ['pelipper', 'drizzle', '파도타기', 0, 'rain'],

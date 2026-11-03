@@ -2,9 +2,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { catalog, canImportCreatorSample, groupCreatorSources, filterCreatorSources } from '../src/creatorSampleLibrary.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
-import { championsData, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
+import { catalog, canImportCreatorSample, groupCreatorSources, filterCreatorSources } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
+import { championsData, supportedSpeciesKeys } from '../src/domain/champions/effectiveRoster.ts'
 
 const baseline = JSON.parse(readFileSync(new URL('./fixtures/catalogBeforeM6.json', import.meta.url)))
 const statKeys = ['hp','attack','defense','spAttack','spDefense','speed']

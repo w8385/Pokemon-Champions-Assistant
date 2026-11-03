@@ -15,7 +15,7 @@ let Panel
 
 test.before(async () => {
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default
+  Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default
 })
 test.after(async () => { await server?.close() })
 const render = (overrides = {}, properties = {}) => renderToStaticMarkup(React.createElement(Panel, {

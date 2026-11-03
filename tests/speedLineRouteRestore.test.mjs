@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
-import * as restore from '../src/speedLineRouteRestore.ts'
+import { parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
+import * as restore from '../src/features/speedline/speedLineRouteRestore.ts'
 
 const parsed = (query) => parseSpeedLineState(new URLSearchParams(query))
 const canonical = (state) => {

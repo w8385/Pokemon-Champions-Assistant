@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-const route = readFileSync(new URL('../src/navigation.ts', import.meta.url), 'utf8')
+const route = readFileSync(new URL('../src/app/navigation.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const types = readFileSync(new URL('../src/app/types.ts', import.meta.url), 'utf8')
 assert.match(route, /path === '\/damage'/, 'standalone deep link must normalize')

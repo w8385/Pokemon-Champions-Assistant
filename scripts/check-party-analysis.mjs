@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
-import { analyzePartyMatchups, alwaysOnAbilityImmunity } from '../src/partyAnalysis.ts'
+import { analyzePartyMatchups, alwaysOnAbilityImmunity } from '../src/domain/party/partyAnalysis.ts'
 
 // The production chart, not a second copy of matchup data.
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

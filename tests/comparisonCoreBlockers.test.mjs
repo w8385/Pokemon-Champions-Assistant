@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { writeDraft, forgetDraft, readDraft } from '../src/comparisonDraftState.ts'
-import { pairTarget, resetPairAssumptions } from '../src/comparisonPairState.ts'
+import { writeDraft, forgetDraft, readDraft } from '../src/adapters/persistence/comparisonDraftState.ts'
+import { pairTarget, resetPairAssumptions } from '../src/domain/party/comparisonPairState.ts'
 
 const build = (key, ability = '') => ({ key, ability, item: '', nature: 'hardy', evs: { hp: 0, attack: 12, defense: 0, spAttack: 0, spDefense: 0, speed: 11 }, moves: ['move', '', '', ''], battle: { burned: false, attackStage: 0 }, actual: {}, speedStage: 0, speedNatureKnown: false, speedNatureMultiplier: 0.9, statNatureMultipliers: { defense: 1.1 }, speedScarfOverride: null, speedAbilityActive: false, knownOffense: { attack: false, spAttack: false } })
 const assumed = (entry) => ({ ...entry, battle: { burned: true, attackStage: 6 }, actual: { speed: '999' }, speedStage: 6, speedNatureKnown: false, speedNatureMultiplier: 1.1, statNatureMultipliers: { defense: 0.9 }, speedScarfOverride: true, speedAbilityActive: true })

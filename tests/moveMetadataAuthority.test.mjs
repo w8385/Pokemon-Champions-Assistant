@@ -4,20 +4,20 @@ import { readFileSync } from 'node:fs'
 import ts from 'typescript'
 import vm from 'node:vm'
 import { createServer } from 'vite'
-import { presentDoubleActionOrder } from '../src/doubleOrderPresentation.ts'
+import { presentDoubleActionOrder } from '../src/domain/battle/doubleOrderPresentation.ts'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url),'utf8')
 const ast = ts.createSourceFile('App.tsx',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
-const legacy = JSON.parse(readFileSync(new URL('../src/championsLearnedMoveMeta.json',import.meta.url),'utf8'))
-const historicalEvidence = JSON.parse(readFileSync(new URL('../src/championsMoveMetaLegacyEvidence.json',import.meta.url),'utf8'))
-const pinned = JSON.parse(readFileSync(new URL('../src/dexGameMoveIndex.json',import.meta.url),'utf8'))
-const aliases = JSON.parse(readFileSync(new URL('../src/championsMoveMetaNameAliases.json',import.meta.url),'utf8'))
+const legacy = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json',import.meta.url),'utf8'))
+const historicalEvidence = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaLegacyEvidence.json',import.meta.url),'utf8'))
+const pinned = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url),'utf8'))
+const aliases = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaNameAliases.json',import.meta.url),'utf8'))
 function fn(name) { const found=ast.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name); assert.ok(found,name); return found.getText(ast) }
 async function runtime() {
   const server=await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
     const [{getDexGameMove,getDexGameMoveNames,getDexGameMoveIdentity},{getMoveMetadata}, {searchMoves}, {MOVE_META_BY_NAME}] = await Promise.all([
-      server.ssrLoadModule('/src/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/moveMetadata.ts'),server.ssrLoadModule('/src/moveSearch.ts'),server.ssrLoadModule('/src/dex/data.ts')])
+      server.ssrLoadModule('/src/domain/champions/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'),server.ssrLoadModule('/src/shared/search/moveSearch.ts'),server.ssrLoadModule('/src/adapters/catalog/data.ts')])
     Object.assign(MOVE_META_BY_NAME,legacy)
     const context={MOVE_META_BY_NAME,getDexGameMove,getDexGameMoveNames,getDexGameMoveIdentity,getMoveMetadata,
       normalizeSearchText: s=>s.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g,''),

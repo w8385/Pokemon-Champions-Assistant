@@ -6,8 +6,8 @@ import ts from 'typescript'
 import { createServer } from 'vite'
 
 const source = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const rows = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url))).rows
-const descriptions = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url))).abilities
+const rows = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
+const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const maushold = rows.find(row => row.key === 'maushold')
 const garchomp = rows.find(row => row.key === 'garchomp')
 const compile = text => ts.transpileModule(text, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None, jsx: ts.JsxEmit.React } }).outputText
@@ -54,7 +54,7 @@ test('actual opponent selector stores canonical Friend Guard and Double control 
       assert.equal(evaluate(raw, 'maushold', classifyAbilityForKey).available, true, raw)
     }
     assert.equal(evaluate(descriptions['friend-guard'].nameJa, 'maushold', classifyAbilityForKey).available, false, 'lazy Japanese alias not loaded yet')
-    const { loadDexDescriptions } = await server.ssrLoadModule('/src/dex/data.ts')
+    const { loadDexDescriptions } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
     await loadDexDescriptions()
     assert.equal(evaluate(descriptions['friend-guard'].nameJa, 'maushold', classifyAbilityForKey).available, true, 'Japanese alias after lazy load')
     for (const [key, raw] of [['garchomp', 'friend-guard'], ['garchomp', '프렌드가드'], ['maushold', ''], ['maushold', 'creator-original']]) {

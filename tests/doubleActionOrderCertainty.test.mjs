@@ -36,7 +36,7 @@ function textOf(node) {
 async function actualOrder(occupied, speeds, trickRoom = false) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { presentDoubleActionOrder } = await server.ssrLoadModule('/src/doubleOrderPresentation.ts')
+    const { presentDoubleActionOrder } = await server.ssrLoadModule('/src/domain/battle/doubleOrderPresentation.ts')
     const context = vm.createContext({
       doubleSlotMeta: makeMeta(occupied), doubleActionOptionsBySlot: {}, doubleActionMoveBySlot: {},
       doubleSpeedBySlot: speeds, doubleTrickRoom: trickRoom, siteLanguage: 'ko', lt: value => value,

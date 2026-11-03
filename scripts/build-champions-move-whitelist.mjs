@@ -6,15 +6,15 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const root = path.resolve(__dirname, '..')
 
-const baselinePath = path.join(root, 'src', 'pokemonMovePools.json')
-const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
-const moveNameOverridesPath = path.join(root, 'src', 'championsMoveNameOverrides.json')
-const whitelistPath = path.join(root, 'src', 'championsMovePools.json')
-const sourceMetaPath = path.join(root, 'src', 'championsMovePoolSources.json')
+const baselinePath = path.join(root, 'src', 'canonical-data/champions/pokemonMovePools.json')
+const verifiedDataPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
+const moveNameOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsMoveNameOverrides.json')
+const whitelistPath = path.join(root, 'src', 'canonical-data/champions/championsMovePools.json')
+const sourceMetaPath = path.join(root, 'src', 'canonical-data/champions/championsMovePoolSources.json')
 const reportPath = path.join(root, 'reports', 'championsMoveWhitelistCoverage.json')
 const recommendationAuditPath = path.join(root, 'reports', 'championsRecommendationAudit.json')
-const sampleMovesPath = path.join(root, 'src', 'sampleMoves.ts')
-const recommendationAuditOverridesPath = path.join(root, 'src', 'championsRecommendationAuditOverrides.json')
+const sampleMovesPath = path.join(root, 'src', 'domain/samples/sampleMoves.ts')
+const recommendationAuditOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsRecommendationAuditOverrides.json')
 
 const POKEMON_ALIAS_CANDIDATES = {
   'persian-alolan': ['persian-alola'],
@@ -211,7 +211,7 @@ for (const row of verifiedRows) {
       en: row.name_en,
       ja: row.name_ja ?? row.name_en,
     },
-    baselineSource: 'src/pokemonMovePools.json (PokeAPI-derived local embedded move pool)',
+    baselineSource: 'src/canonical-data/champions/pokemonMovePools.json (PokeAPI-derived local embedded move pool)',
     generatedFromKeys: mergedFromKeys,
     fetchedPokemonApiCandidate: fetchCandidate,
     moveCount: moves.length,
@@ -240,9 +240,9 @@ const report = {
   untranslatedMoveLabels: Array.from(untranslatedMoves).sort((a, b) => a.localeCompare(b, 'en')),
   seededKeysSample: [...seededFromBaseline, ...seededFromApiAlias].slice(0, 30),
   policy: {
-    whitelistFile: 'src/championsMovePools.json',
-    sourceMetaFile: 'src/championsMovePoolSources.json',
-    baseline: 'src/pokemonMovePools.json',
+    whitelistFile: 'src/canonical-data/champions/championsMovePools.json',
+    sourceMetaFile: 'src/canonical-data/champions/championsMovePoolSources.json',
+    baseline: 'src/canonical-data/champions/pokemonMovePools.json',
     definitiveWhitelistRule: 'Only moves validated against Champions-specific evidence should be treated as confirmed in future review passes.',
   },
 }
@@ -311,8 +311,8 @@ await fs.writeFile(whitelistPath, `${JSON.stringify(whitelist, null, 2)}\n`)
 await fs.writeFile(sourceMetaPath, `${JSON.stringify({
   _meta: {
     generatedAt: new Date().toISOString(),
-    sourceOfTruth: 'src/championsMovePools.json',
-    seededFrom: 'src/pokemonMovePools.json',
+    sourceOfTruth: 'src/canonical-data/champions/championsMovePools.json',
+    seededFrom: 'src/canonical-data/champions/pokemonMovePools.json',
     purpose: '포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터',
   },
   pokemon: sources,

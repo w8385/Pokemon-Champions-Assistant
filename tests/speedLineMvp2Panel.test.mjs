@@ -4,7 +4,7 @@ import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 let server, Panel
-test.before(async () => { server = await createServer({ server: { middlewareMode:true, hmr:false }, appType:'custom', optimizeDeps:{ noDiscovery:true, include:[] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode:true, hmr:false }, appType:'custom', optimizeDeps:{ noDiscovery:true, include:[] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => { await server?.close() })
 const rows = [{key:'fast', name_ko:'빠름', name_en:'Fast', speed:100, types:[]}, {key:'slow', name_ko:'느림', name_en:'Slow', speed:50, types:[]}]
 const state = {referenceKey:'slow', referenceEffort:0, referenceNature:'neutral', listEffort:0, listNature:'neutral', query:'', forms:'all', comparison:'all', sort:'desc', rangeMode:'all', gap:10, items:'both', targetKey:'fast', targetItem:'scarf'}

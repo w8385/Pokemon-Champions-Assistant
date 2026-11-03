@@ -1,10 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { routeGroups } from '../src/navigation.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
-const speed = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
+const speed = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
 
 test('dex builder action names builder tab explicitly and slot replacement is confirmed', () => {
   const actions = app.slice(app.indexOf("{lt('빠른 이동')}"), app.indexOf('{dexSelectedMove ? <div className="dex-detail-card">'))

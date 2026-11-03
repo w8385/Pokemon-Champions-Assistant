@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildSpeedCoverage, speedCoverageAt } from '../src/speedLineCoverage.ts'
-import { calculateSpeed } from '../src/speedLine.ts'
+import { buildSpeedCoverage, speedCoverageAt } from '../src/domain/battle/speed/speedLineCoverage.ts'
+import { calculateSpeed } from '../src/domain/battle/speed/speedLine.ts'
 
 const rows = [
   { key: 'starmie', name_ko: '스타미', name_en: 'Starmie', speed: 115 },

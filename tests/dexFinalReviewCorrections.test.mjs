@@ -7,7 +7,7 @@ import ts from 'typescript'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
-import { dexSelectionId } from '../src/dex/helpers.ts'
+import { dexSelectionId } from '../src/features/dex/helpers.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
@@ -47,7 +47,7 @@ test('actual pool link opens move category on a fresh native tab with destinatio
 })
 
 test('ID 747 resolves synchronously on a fresh direct URL but unknown identity remains missing', async () => {
-  const api = compile(new URL('../src/dexGameMoveIndex.ts', import.meta.url))
+  const api = compile(new URL('../src/domain/champions/dexGameMoveIndex.ts', import.meta.url))
   const source = api.getDexGameMove('볼가득넣기')
   assert.equal(source.id,747)
   assert.equal(source.sourceKo,'볼가득넣기')
@@ -55,7 +55,7 @@ test('ID 747 resolves synchronously on a fresh direct URL but unknown identity r
   assert.equal(api.getDexGameMove('실제로없는기술'),null)
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   let getMoveMetadata
-  try { ({getMoveMetadata} = await server.ssrLoadModule('/src/moveMetadata.ts'))
+  try { ({getMoveMetadata} = await server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'))
   const projected = getMoveMetadata('볼가득넣기').meta
   assert.equal(projected.category,null)
   assert.equal(projected.power,null)
@@ -81,8 +81,8 @@ test('ID 747 resolves synchronously on a fresh direct URL but unknown identity r
 })
 
 test('all 510 pinned source move types agree in lazy pool and small fresh-route index', () => {
-  const data = JSON.parse(readFileSync(new URL('../src/dexGameLearnsets.json',import.meta.url),'utf8'))
-  const index = JSON.parse(readFileSync(new URL('../src/dexGameMoveIndex.json',import.meta.url),'utf8'))
+  const data = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json',import.meta.url),'utf8'))
+  const index = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url),'utf8'))
   const original = JSON.parse(readFileSync(new URL('./fixtures/champoutMoveTypes.json',import.meta.url),'utf8'))
   const names = ['normal','fighting','flying','poison','ground','rock','bug','ghost','steel','fire','water','grass','electric','psychic','ice','dragon','dark','fairy']
   assert.equal(Object.keys(original).length,510)
@@ -100,7 +100,7 @@ test('all 510 pinned source move types agree in lazy pool and small fresh-route 
 test('rendered game pool badges and type filters use source type over legacy metadata', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {DexMovePoolSection} = await server.ssrLoadModule('/src/DexMovePoolSection.tsx')
+    const {DexMovePoolSection} = await server.ssrLoadModule('/src/features/dex/DexMovePoolSection.tsx')
     const html = renderToStaticMarkup(React.createElement(DexMovePoolSection,{
       recordKey:'stunfisk-galarian', language:'ko', status:'ready',moves:[{name:'집게덫',type:'steel'}],
       provenance:{kind:'game-snapshot',date:'2026-09-09',commit:'50e7233b78c3b81df29563f9695386c28e77fc95'},

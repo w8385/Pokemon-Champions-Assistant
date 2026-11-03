@@ -123,12 +123,12 @@ def first_text(*values: str):
 
 
 def main():
-    champions_data = json.loads((SRC / 'pokemon_champions_verified_data.json').read_text())
+    champions_data = json.loads((SRC / 'canonical-data/champions/pokemon_champions_verified_data.json').read_text())
     rows = champions_data['rows']
-    move_meta = json.loads((SRC / 'championsLearnedMoveMeta.json').read_text())
-    move_aliases = json.loads((SRC / 'championsMoveMetaNameAliases.json').read_text())
-    move_name_overrides = json.loads((SRC / 'championsMoveNameOverrides.json').read_text())
-    item_ts = (SRC / 'championsItems.ts').read_text()
+    move_meta = json.loads((SRC / 'canonical-data/champions/championsLearnedMoveMeta.json').read_text())
+    move_aliases = json.loads((SRC / 'canonical-data/champions/championsMoveMetaNameAliases.json').read_text())
+    move_name_overrides = json.loads((SRC / 'canonical-data/champions/championsMoveNameOverrides.json').read_text())
+    item_ts = (SRC / 'domain/champions/championsItems.ts').read_text()
     # Historical API labels are not evidence of Champions introduction.
     approval = json.loads((ROOT / 'data/champions-item-approval.json').read_text())
     item_names_jp = set(parse_ts_array(item_ts, 'CHAMPIONS_ITEM_OPTIONS'))
@@ -247,8 +247,8 @@ def main():
     historic = read_verified(DATA / 'item-description-historical.json', manifest['historicalSha256'])
     output = json.loads(build(fixture, historic, output))
 
-    (SRC / 'dexDescriptions.json').write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
-    print(f'wrote {SRC / "dexDescriptions.json"}')
+    (SRC / 'canonical-data/dex/dexDescriptions.json').write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
+    print(f'wrote {SRC / "canonical-data/dex/dexDescriptions.json"}')
     print(f'moves: {len(output["moves"])}/{len(move_names_ko)} matched')
     print(f'abilities: {len(output["abilities"])}/{len(ability_slugs)} matched')
     print(f'items: {len(output["items"])}/{len(item_names_jp)} matched')

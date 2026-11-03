@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { quickSpeedState, quickStatNature } from '../src/quickDamageState.ts'
+import { quickSpeedState, quickStatNature } from '../src/domain/battle/quickDamageState.ts'
 
 test('stat tiles and modal checkpoints use the same Speed nature as comparison', () => {
  const side=quickSpeedState({speedNatureKnown:false,speedNatureMultiplier:.9,statNatureMultipliers:{defense:1.1}})

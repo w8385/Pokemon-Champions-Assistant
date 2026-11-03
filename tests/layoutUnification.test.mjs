@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { routeGroups } from '../src/navigation.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 import { appTranslate } from './appTranslations.mjs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
@@ -56,7 +56,7 @@ test('mobile groups use aligned tracks and allow long localized link labels to w
 test('shared page heading is a semantic heading with optional action lane', async () => {
   const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
   try {
-    const { PageHeading } = await server.ssrLoadModule('/src/PageHeading.tsx')
+    const { PageHeading } = await server.ssrLoadModule('/src/shared/display/PageHeading.tsx')
     const markup = renderToStaticMarkup(React.createElement(PageHeading, { title: '계산기', actions: React.createElement('button', null, '바꾸기') }))
     assert.match(markup, /<h2[^>]*>계산기<\/h2>/)
     assert.match(markup, /<button>바꾸기<\/button>/)

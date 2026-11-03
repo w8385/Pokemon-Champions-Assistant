@@ -4,10 +4,10 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
-const verifiedDataPath = path.join(root, 'src', 'pokemon_champions_verified_data.json')
+const verifiedDataPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
 // Pinned game-text exceptions absent from PokeAPI's localized ability names.
 const VERIFIED_CHAMPIONS_ABILITY_KO = Object.fromEntries(
-  Object.entries(JSON.parse(await fs.readFile(path.join(root, 'src', 'verifiedAbilityLabels.json'), 'utf8')).abilities)
+  Object.entries(JSON.parse(await fs.readFile(path.join(root, 'src', 'canonical-data/champions/verifiedAbilityLabels.json'), 'utf8')).abilities)
     .map(([slug, labels]) => [slug, labels.ko]),
 )
 const allPokemonPath = path.resolve(root, '..', 'pokemon-data', 'pkmnchamps_allPokemon.json')
@@ -19,8 +19,8 @@ const CURRENT_REGULATION = {
   endsAt: '2026-12-02T01:59:00.000Z',
   rosterUrl: OFFICIAL_REGULATION_ROSTER_URL,
 }
-const CHAMPIONS_EFFORT_PER_STAT_CAP = JSON.parse(await fs.readFile(path.join(root, 'src', 'effortLimits.json'), 'utf8')).perStat
-const TYPE_KO_BY_KEY = JSON.parse(await fs.readFile(path.join(root, 'src', 'typeKoLabels.json'), 'utf8'))
+const CHAMPIONS_EFFORT_PER_STAT_CAP = JSON.parse(await fs.readFile(path.join(root, 'src', 'canonical-data/champions/effortLimits.json'), 'utf8')).perStat
+const TYPE_KO_BY_KEY = JSON.parse(await fs.readFile(path.join(root, 'src', 'assets/typeKoLabels.json'), 'utf8'))
 const MANUAL_FORMS = [
   {
     key: 'persian-alolan', apiName: 'persian-alola', canonicalFormSlug: 'persian-alolan', source: 'regulation-m-c-form',

@@ -8,8 +8,8 @@ const FIXTURE_DIR = path.join(PROJECT_ROOT, 'fixtures', 'party-image-import')
 const REPORT_DIR = path.join(PROJECT_ROOT, 'reports')
 const REPORT_PATH = path.join(REPORT_DIR, 'partyImageImportHarness.json')
 
-const championsData = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'src', 'pokemon_champions_verified_data.json'), 'utf8'))
-const dexDescriptions = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'src', 'dexDescriptions.json'), 'utf8'))
+const championsData = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json'), 'utf8'))
+const dexDescriptions = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'src', 'canonical-data/dex/dexDescriptions.json'), 'utf8'))
 const rows = Array.isArray(championsData?.rows) ? championsData.rows : []
 
 const FIXTURES = [

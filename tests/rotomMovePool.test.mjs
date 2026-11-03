@@ -3,12 +3,12 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
 
-const pools = JSON.parse(readFileSync(new URL('../src/championsMovePools.json', import.meta.url), 'utf8'))
+const pools = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMovePools.json', import.meta.url), 'utf8'))
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
 async function withResolver(callback) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-  try { await callback(await server.ssrLoadModule('/src/formAwareMovePool.ts')) } finally { await server.close() }
+  try { await callback(await server.ssrLoadModule('/src/domain/champions/formAwareMovePool.ts')) } finally { await server.close() }
 }
 
 test('real embedded resolver gives Wash base moves and only its verified signature', async () => withResolver(({ resolveFormAwareMovePool }) => {
@@ -32,8 +32,8 @@ test('every Rotom form has only its own signature; base form gains none', async 
 test('actual move search resolves abbreviation and full name inside the eligible Wash pool', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { resolveFormAwareMovePool } = await server.ssrLoadModule('/src/formAwareMovePool.ts')
-    const { searchMoves } = await server.ssrLoadModule('/src/moveSearch.ts')
+    const { resolveFormAwareMovePool } = await server.ssrLoadModule('/src/domain/champions/formAwareMovePool.ts')
+    const { searchMoves } = await server.ssrLoadModule('/src/shared/search/moveSearch.ts')
     const wash = resolveFormAwareMovePool('rotom-wash', ['rotom-wash'], pools)
     const heat = resolveFormAwareMovePool('rotom-heat', ['rotom-heat'], pools)
     for (const query of ['볼체', '볼트체인지']) assert.equal(searchMoves(wash, query, { allowLoose: false })[0]?.name, '볼트체인지')

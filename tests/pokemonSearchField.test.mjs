@@ -12,7 +12,7 @@ test.before(async () => {
  ;({ createRoot } = await import('react-dom/client'))
  ;({ act } = await import('react'))
  server = await createServer({ server:{ middlewareMode:true, hmr:false }, appType:'custom', optimizeDeps:{ noDiscovery:true, include:[] } })
- const module = await server.ssrLoadModule('/src/PokemonSearchField.tsx'); Field = module.default; nextSearchHighlight = module.nextSearchHighlight
+ const module = await server.ssrLoadModule('/src/shared/search/PokemonSearchField.tsx'); Field = module.default; nextSearchHighlight = module.nextSearchHighlight
 })
 test.after(async () => { await server?.close(); await window?.happyDOM?.abort?.() })
 async function mounted(overrides = {}) {

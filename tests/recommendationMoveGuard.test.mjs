@@ -20,7 +20,7 @@ const callbacks = ts.transpileModule(declarations.values().toArray().map(declara
 async function fixture(key, initial) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const provider = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+    const provider = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
     const pool = await provider.loadFormLearnset(key)
     const state = { party: { [key]: [...initial] }, sample: [...initial], opponents: [{ key, revealedMoves: [...initial.filter(Boolean)] }], notice: null, draft: null, focus: null }
     const set = field => update => { state[field] = typeof update === 'function' ? update(state[field]) : update }
@@ -102,7 +102,7 @@ test('suggestion chips are unavailable with a visible reason unless exact-form s
 test('pending, missing and failed pools reject recommendations, while an evidenced alias normalizes only on explicit choice', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { resolveEligibleMoveInput, loadFormLearnset, commitRecordedMoveInput } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
+    const { resolveEligibleMoveInput, loadFormLearnset, commitRecordedMoveInput } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
     const pool = await loadFormLearnset('mega-lopunny')
     assert.equal(resolveEligibleMoveInput('속이다', pool), null)
     assert.equal(resolveEligibleMoveInput('로우킥', pool), '안다리걸기')

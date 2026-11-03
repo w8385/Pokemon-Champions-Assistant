@@ -2,8 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const nav = readFileSync(new URL('../src/navigation.ts', import.meta.url), 'utf8')
-const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
+const nav = readFileSync(new URL('../src/app/navigation.ts', import.meta.url), 'utf8')
+const card = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 
 test('library list links canonical source IDs to a separate detail route, without full cards', () => {
   const list = app.split('<div className="creator-library-list">')[1]?.split('{!visibleSources.length')[0]

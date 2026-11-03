@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 import { readFileSync, statSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
-import { requiredMegaStone, classifyHeldItem } from '../src/itemIdentity.ts'
+import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
+import { requiredMegaStone, classifyHeldItem } from '../src/domain/champions/itemIdentity.ts'
 
 const root = new URL('..', import.meta.url)
 const source = JSON.parse(readFileSync(new URL('../data/champions-item-approval.json', import.meta.url)))

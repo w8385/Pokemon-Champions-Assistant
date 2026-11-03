@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
 import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -34,7 +34,7 @@ test('fresh and legacy coverage URLs normalize to individual detail without losi
   assert.deepEqual(parseSpeedLineState(params).state, legacy.state)
 })
 let server, Panel
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => { await server?.close() })
 const render = (patch = {}, warnings = []) => renderToStaticMarkup(React.createElement(Panel, { rows: roster, state: { ...defaultSpeedLineState, ...patch }, onChange() {}, language: 'ko', translate: x => x, displayName: x => x.name_ko, warnings }))
 test('fresh individual mode selects no Scarf; legacy ranges state renders the same detail without mode switch', () => {

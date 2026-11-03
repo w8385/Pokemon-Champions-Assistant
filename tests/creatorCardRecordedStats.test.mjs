@@ -3,14 +3,14 @@ import assert from 'node:assert/strict'
 import vm from 'node:vm'
 import { readFileSync } from 'node:fs'
 import ts from 'typescript'
-import { previousSeasonRankerSamples } from '../src/previousSeasonRankerSamples.ts'
-import { m6TopTenSamples } from '../src/m6TopTenSamples.ts'
-import { confirmedCreatorEfforts } from '../src/creatorConfirmedEfforts.ts'
-import { championsData } from '../src/effectiveRoster.ts'
+import { previousSeasonRankerSamples } from '../src/domain/samples/previousSeasonRankerSamples.ts'
+import { m6TopTenSamples } from '../src/domain/samples/m6TopTenSamples.ts'
+import { confirmedCreatorEfforts } from '../src/domain/samples/creatorConfirmedEfforts.ts'
+import { championsData } from '../src/domain/champions/effectiveRoster.ts'
 
 // Execute the actual caller and stat helper; 999 is a callback sentinel, not a battle stat.
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const overview = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
+const overview = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 const start = app.indexOf('  const creatorCard = (entry: CreatorSample) => {')
 const end = app.indexOf('    // The Mega ability', start)
 assert.ok(start >= 0 && end > start)

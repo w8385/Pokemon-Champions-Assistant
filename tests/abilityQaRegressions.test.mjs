@@ -6,8 +6,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url)))
-const labels = JSON.parse(readFileSync(new URL('../src/verifiedAbilityLabels.json', import.meta.url))).abilities
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url)))
+const labels = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/verifiedAbilityLabels.json', import.meta.url))).abilities
 
 test('party and builder explicitly reselecting the same key retain every manually edited build field', () => {
   const callback = app.slice(app.indexOf('const selectSpecies = ('), app.indexOf('const trackedKeys ='))
@@ -20,7 +20,7 @@ test('party and builder explicitly reselecting the same key retain every manuall
 test('known historic KO ability labels render in EN/JA without rewriting their saved value', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { PokemonBuildFields } = await server.ssrLoadModule('/src/PokemonBuildFields.tsx')
+    const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
     for (const [key, storedKo] of [['mega-eelektross', '천정부지'], ['mega-pyroar', '불꽃의갈기']]) {
       const slug = roster.rows.find(row => row.key === key).abilities[0]
       for (const language of ['en', 'ja']) {

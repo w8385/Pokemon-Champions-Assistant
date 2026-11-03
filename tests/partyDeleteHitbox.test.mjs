@@ -8,7 +8,7 @@ import { createServer } from 'vite'
 let server, Heading
 test.before(async () => {
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Heading = (await server.ssrLoadModule('/src/PokemonCardOverview.tsx')).PokemonCardHeading
+  Heading = (await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')).PokemonCardHeading
 })
 test.after(async () => { await server?.close() })
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import ts from 'typescript'
 import vm from 'node:vm'
-import { parseDexSelectionId } from '../src/dex/helpers.ts'
+import { parseDexSelectionId } from '../src/features/dex/helpers.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)

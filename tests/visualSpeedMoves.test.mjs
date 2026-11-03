@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { compareSpeedVisual } from '../src/speedVisual.ts'
+import { compareSpeedVisual } from '../src/domain/battle/speedVisual.ts'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 

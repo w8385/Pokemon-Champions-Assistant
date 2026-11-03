@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data'
-OUTPUT = ROOT / 'src/dexDescriptions.json'
+OUTPUT = ROOT / 'src/canonical-data/dex/dexDescriptions.json'
 
 
 def read_verified(path, expected):
@@ -31,7 +31,7 @@ def build(fixture, historical, bundle):
         raise ValueError('historical key overlap')
     if sum(r['kind'] == 'ordinary' for r in records) != 38 or sum(r['kind'] == 'mega-stone' for r in records) != 81:
         raise ValueError('ordinary/required stone population changed')
-    if len(re.findall(r'^  "[^"]+",$', (ROOT / 'src/championsItems.ts').read_text().split('] as const', 1)[0], re.M)) != 81:
+    if len(re.findall(r'^  "[^"]+",$', (ROOT / 'src/domain/champions/championsItems.ts').read_text().split('] as const', 1)[0], re.M)) != 81:
         raise ValueError('ordinary registry changed; inspect mappings')
     source_ids = set()
     aliases = {}

@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
-const css = readFileSync(new URL('../src/matchupWorkspace.css', import.meta.url), 'utf8')
+const css = readFileSync(new URL('../src/features/single/matchupWorkspace.css', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').split('function QuickDamagePanel(')[1].split('function LanguageIcon(')[0]
 
 test('paired 390px cards retain two columns, but 320px cards stack for readable move editors', () => {

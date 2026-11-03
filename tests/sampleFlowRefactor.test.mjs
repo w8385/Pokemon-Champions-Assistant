@@ -2,10 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { appTranslate } from './appTranslations.mjs'
-import { routeGroups } from '../src/navigation.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const card = readFileSync(new URL('../src/PokemonCardOverview.tsx', import.meta.url), 'utf8')
+const card = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 
 test('builder reuses shared six-tile grid with editable sample styling', () => {
   assert.match(app, /<PokemonStatGrid\s+stats=\{EFFORT_STAT_OPTIONS\.map\(/)

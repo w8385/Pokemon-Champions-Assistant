@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import { createRequire } from 'node:module'
-import { validateBackup } from '../src/backupValidation.ts'
-import { fixedSampleOpponentMoves } from '../src/sampleDamageMoves.ts'
+import { validateBackup } from '../src/adapters/persistence/backupValidation.ts'
+import { fixedSampleOpponentMoves } from '../src/domain/battle/sampleDamageMoves.ts'
 const ts = createRequire(import.meta.url)('typescript')
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

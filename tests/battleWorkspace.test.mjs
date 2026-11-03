@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import React, { act } from 'react'
 import { createServer } from 'vite'
 import { Window } from 'happy-dom'
-import { routeGroups } from '../src/navigation.ts'
+import { routeGroups } from '../src/app/navigation.ts'
 import { readFileSync } from 'node:fs'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

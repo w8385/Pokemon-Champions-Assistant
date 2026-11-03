@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
-const itemsTsPath = path.join(rootDir, 'src', 'championsItems.ts')
+const itemsTsPath = path.join(rootDir, 'src', 'domain/champions/championsItems.ts')
 const appTsxPath = path.join(rootDir, 'src', 'App.tsx')
 const outputDir = path.join(rootDir, 'public', 'item-sprites')
 const reportPath = path.join(rootDir, 'reports', 'itemSpriteSyncReport.json')

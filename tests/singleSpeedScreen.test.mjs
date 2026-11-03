@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { runInNewContext } from 'node:vm'
-import { getSpeedAbility } from '../src/speedAbilities.ts'
+import { getSpeedAbility } from '../src/domain/battle/speed/speedAbilities.ts'
 
 test('actual opponent ability label resolver uses canonical labels in all languages', () => {
   const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

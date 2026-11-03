@@ -6,10 +6,10 @@ import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { searchPokemon } from '../src/pokemonSearch.ts'
-import { searchMoves } from '../src/moveSearch.ts'
-import { byDisplayName, compareDisplayName } from '../src/displayOrder.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
+import { searchPokemon } from '../src/shared/search/pokemonSearch.ts'
+import { searchMoves } from '../src/shared/search/moveSearch.ts'
+import { byDisplayName, compareDisplayName } from '../src/shared/search/displayOrder.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
 
 const names = entries => entries.map(entry => entry.name ?? entry.name_ko)
 
@@ -53,7 +53,7 @@ test('blank move selections and relevance ties are 가나다; exact and initials
 test('per-form Dex move rows render alphabetically while preserving source pool identity and count', async () => {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
-    const {DexMovePoolSection} = await server.ssrLoadModule('/src/DexMovePoolSection.tsx')
+    const {DexMovePoolSection} = await server.ssrLoadModule('/src/features/dex/DexMovePoolSection.tsx')
     const moves = [{name:'화염볼',type:'fire'},{name:'가드',type:'normal'},{name:'아쿠아제트',type:'water'}]
     const before = names(moves)
     const html = renderToStaticMarkup(React.createElement(DexMovePoolSection, {

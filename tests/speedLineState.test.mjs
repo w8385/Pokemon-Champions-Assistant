@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/speedLineState.ts'
+import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from '../src/features/speedline/speedLineState.ts'
 
 test('missing speed-line fields use defaults, independent of legacy my and opp slot indices', () => {
   const { state, warnings } = parseSpeedLineState(new URLSearchParams('my=0&opp=1&other=x'))

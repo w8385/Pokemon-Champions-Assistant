@@ -4,9 +4,9 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { createServer } from 'vite'
-import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/championsItems.ts'
-import { classifyHeldItem, canonicalHeldItem, isCalculableHeldItem } from '../src/itemIdentity.ts'
-import { byDisplayName, compareDisplayName } from '../src/displayOrder.ts'
+import { CHAMPIONS_ITEM_OPTIONS, CHAMPIONS_ITEM_ALIASES, localizedChampionsItemLabel } from '../src/domain/champions/championsItems.ts'
+import { classifyHeldItem, canonicalHeldItem, isCalculableHeldItem } from '../src/domain/champions/itemIdentity.ts'
+import { byDisplayName, compareDisplayName } from '../src/shared/search/displayOrder.ts'
 
 const ast = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const declarations = new Map()
@@ -96,7 +96,7 @@ function memoExpression(name) {
 test('actual lazy provider and App description memo update same direct ordinary item selection on settled load, retain EN/JA and unknown recovery', async () => {
   const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
   try {
-    const { itemDescriptionFor, moveDescriptionFor, abilityDescriptionFor, loadDexDescriptions } = await vite.ssrLoadModule('/src/dex/data.ts')
+    const { itemDescriptionFor, moveDescriptionFor, abilityDescriptionFor, loadDexDescriptions } = await vite.ssrLoadModule('/src/adapters/catalog/data.ts')
     const selectedKey = CHAMPIONS_ITEM_OPTIONS[0]
     assert.equal(selectedKey, 'あついいわ')
     assert.equal(itemDescriptionFor(selectedKey), null, 'real provider initially unloaded')

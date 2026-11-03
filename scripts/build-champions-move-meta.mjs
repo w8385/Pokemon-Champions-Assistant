@@ -5,17 +5,17 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const input = relative => path.join(root, relative)
-const SOURCE = 'src/dexGameMoveIndex.json'
-const EVIDENCE = 'src/championsMoveMetaLegacyEvidence.json'
+const SOURCE = 'src/canonical-data/champions/dexGameMoveIndex.json'
+const EVIDENCE = 'src/canonical-data/champions/championsMoveMetaLegacyEvidence.json'
 const LEGACY_REPORT = 'reports/championsMoveMetaLegacyReport.json'
-const OVERRIDES = 'src/championsMoveMetaOverrides.json'
-const ALIASES = 'src/championsMoveMetaNameAliases.json'
+const OVERRIDES = 'src/canonical-data/champions/championsMoveMetaOverrides.json'
+const ALIASES = 'src/canonical-data/champions/championsMoveMetaNameAliases.json'
 const EVIDENCE_SHA256 = '183edc049bfaf73369301985b4e03b0b0da188e47e19f87acedb9727cc05ec35'
 const SOURCE_SHA256 = '821c977af77863f53abffd95668e4173d67b42de76d8e1c79c89903d54ec9c3c'
 const LEGACY_REPORT_SHA256 = '406acf626f4184056faa9e3e33ac4c5a2152188ca0fbbc20bad2bbd8dbf5a2b4'
 
 function options(args) {
-  const result = { check: false, output: input('src/championsLearnedMoveMeta.json'), report: input('reports/championsMoveMetaReport.json') }
+  const result = { check: false, output: input('src/canonical-data/champions/championsLearnedMoveMeta.json'), report: input('reports/championsMoveMetaReport.json') }
   for (let index = 0; index < args.length; index++) {
     const arg = args[index]
     if (arg === '--offline') continue // Offline is always the only supported mode.
@@ -111,12 +111,14 @@ async function build() {
   assert(Array.isArray(oldMatches) && oldMatches.length === legacyNames.length,'historical match provenance missing')
   assert(new Set(oldMatches.map(row=>row.moveName)).size === legacyNames.length && oldMatches.every(row=>Object.hasOwn(legacy,row.moveName)), 'historical match names differ from frozen evidence')
   const report = {
+    // Frozen report provenance names the pre-move snapshots; SOURCE/EVIDENCE/
+    // OVERRIDES/ALIASES above are the actual current read paths.
     source: {
-      identityAndType: SOURCE,
-      historicalFieldEvidence: EVIDENCE,
+      identityAndType: 'src/dexGameMoveIndex.json',
+      historicalFieldEvidence: 'src/championsMoveMetaLegacyEvidence.json',
       historicalMatchProvenance: LEGACY_REPORT,
-      manualOverrides: OVERRIDES,
-      aliases: ALIASES,
+      manualOverrides: 'src/championsMoveMetaOverrides.json',
+      aliases: 'src/championsMoveMetaNameAliases.json',
       offline: true,
       sourceSnapshot: 'projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)',
     },

@@ -7,7 +7,7 @@ import { createServer } from 'vite'
 test('four real Dex preview cards render once as native detail links with existing preview classes', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { DexBrowseGrid } = await server.ssrLoadModule('/src/DexBrowseGrid.tsx')
+    const { DexBrowseGrid } = await server.ssrLoadModule('/src/features/dex/DexBrowseGrid.tsx')
     const items = [
       { id:'pokemon:gengar', href:'#/dex/pokemon/gengar', kind:'pokemon', label:'팬텀', secondaryLabel:'Gengar', sprite:'/gengar.png', types:['ghost','poison'] },
       { id:'move:shadow-ball', href:'#/dex/move/shadow-ball', kind:'move', label:'섀도볼', types:['ghost'], metaText:'특수 · 위력 80 · PP 15' },
@@ -25,7 +25,7 @@ test('four real Dex preview cards render once as native detail links with existi
 test('browse links preserve native href and compose item tooltip with parent navigation', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { DexBrowseGrid } = await server.ssrLoadModule('/src/DexBrowseGrid.tsx')
+    const { DexBrowseGrid } = await server.ssrLoadModule('/src/features/dex/DexBrowseGrid.tsx')
     const events = []
     const item = { id:'item:orb', href:'#/dex/item/orb', kind:'item', label:'구슬' }
     const grid = DexBrowseGrid({items:[item], language:'en', busy:false, renderTypeBadge:()=>null,

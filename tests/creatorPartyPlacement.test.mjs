@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
-import { catalog, groupCreatorSources, individualCreatorSources, isVerifiedRankerSample } from '../src/creatorSampleLibrary.ts'
-import { formatSourcePlacement } from '../src/creatorSourcePlacement.ts'
+import { catalog, groupCreatorSources, individualCreatorSources, isVerifiedRankerSample } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { formatSourcePlacement } from '../src/domain/samples/creatorSourcePlacement.ts'
 
 const expected = JSON.parse(readFileSync(new URL('./fixtures/creatorPartyPlacementExpected.json', import.meta.url)))
 const raw = JSON.parse(readFileSync(new URL('./fixtures/creatorPartySourceRaw.json', import.meta.url)))
@@ -79,8 +79,8 @@ test('party strip and both list/detail badges use the same source projection', (
 test('13 source badges render equally for list and direct detail; six stable slots tolerate a missing sprite and long title', async () => {
   const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
   try {
-    const { SourcePlacementBadge } = await server.ssrLoadModule('/src/SourcePlacementBadge.tsx')
-    const { CreatorPartySpriteStrip } = await server.ssrLoadModule('/src/CreatorPartySpriteStrip.tsx')
+    const { SourcePlacementBadge } = await server.ssrLoadModule('/src/features/samples/SourcePlacementBadge.tsx')
+    const { CreatorPartySpriteStrip } = await server.ssrLoadModule('/src/features/party/CreatorPartySpriteStrip.tsx')
     for (const source of groupCreatorSources(catalog).filter(s => s.contentKind === 'party')) {
       for (const language of ['ko','en','ja']) {
         const props = { placement: source.placement, language }

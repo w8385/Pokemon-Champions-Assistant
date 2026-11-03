@@ -1,6 +1,6 @@
-import type { EffortValues } from '../myPartyChampionsSamples'
-import type { LinkDraft } from '../creatorSampleLibrary'
-import type { SpeedLineState } from '../speedLineState'
+import type { EffortValues } from '../domain/samples/myPartyChampionsSamples'
+import type { LinkDraft } from '../domain/samples/creatorSampleLibrary'
+import type { SpeedLineState } from '../features/speedline/speedLineState'
 
 export type Row = {
   id: number
@@ -100,7 +100,7 @@ export type SampleDamageTarget = OpponentState & {
   reverseLightScreen: boolean
   reverseAuroraVeil: boolean
   reverseDefenderFullHp: boolean
-  sampleConditions?: import('../sampleDamageProjection').SampleConditions
+  sampleConditions?: import('../domain/battle/sampleDamageProjection').SampleConditions
 }
 
 export type SavedSample = {

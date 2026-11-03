@@ -2,14 +2,14 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
-import * as registration from '../src/singleOpponentRegistration.ts'
+import * as registration from '../src/domain/party/singleOpponentRegistration.ts'
 
 
 const root = new URL('../', import.meta.url)
-const roster = JSON.parse(readFileSync(new URL('src/pokemon_champions_verified_data.json', root)))
+const roster = JSON.parse(readFileSync(new URL('src/canonical-data/champions/pokemon_champions_verified_data.json', root)))
 const app = readFileSync(new URL('src/App.tsx', root), 'utf8')
 const generator = readFileSync(new URL('scripts/sync-champions-verified-data.mjs', root), 'utf8')
-const verified = JSON.parse(readFileSync(new URL('src/verifiedAbilityLabels.json', root)))
+const verified = JSON.parse(readFileSync(new URL('src/canonical-data/champions/verifiedAbilityLabels.json', root)))
 const row = key => roster.rows.find(entry => entry.key === key)
 
 // Game text IDs TOKUSEI_313 and TOKUSEI_316 at pinned champout 50e7233b78c3b81df29563f9695386c28e77fc95.
@@ -50,7 +50,7 @@ test('verified labels resolve in the shared form authority and actual saved-fiel
   assert.match(app, /dexSelectedAbilityText\?\.detail \|\| dexSelectedAbilityText\?\.summary \|\| lt\('설명 데이터 없음'\)/)
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { abilityIndex, localizedAbilityLabel } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+    const { abilityIndex, localizedAbilityLabel } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
     const { selectedAbilityDisplayName, classifyAbilityForKey } = await server.ssrLoadModule('/src/App.tsx')
     for (const slug of ['eelevate', 'fire-mane']) {
       const owner = roster.rows.find(entry => entry.abilities.includes(slug))

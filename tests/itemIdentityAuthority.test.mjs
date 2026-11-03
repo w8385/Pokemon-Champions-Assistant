@@ -1,10 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { classifyHeldItem, requiredMegaStone, itemForSpeciesSelection, isCalculableHeldItem } from '../src/itemIdentity.ts'
-import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
-import { quickItem } from '../src/quickDamageState.ts'
-import { championsData } from '../src/effectiveRoster.ts'
+import { classifyHeldItem, requiredMegaStone, itemForSpeciesSelection, isCalculableHeldItem } from '../src/domain/champions/itemIdentity.ts'
+import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
+import { quickItem } from '../src/domain/battle/quickDamageState.ts'
+import { championsData } from '../src/domain/champions/effectiveRoster.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
@@ -104,7 +104,7 @@ test('App and Quick consume raw authority at restoration and before calculation'
   assert.match(app, /heldItemError\(myMember\.key, myMember\.item, siteLanguage\)/)
   assert.match(app, /heldItemError\(oppMember\.key, oppMember\.item, siteLanguage\)/)
   assert.match(app, /fixedItem=\{requiredMegaStone\(row\.key\)\}/)
-  const editor = readFileSync(new URL('../src/PokemonBuildFields.tsx', import.meta.url), 'utf8')
+  const editor = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(editor, /onClick=\{\(\) => \{ onItem\(fixedItem\); close\(true\) \}\}/)
   assert.match(editor, /role="alert"/)
 })

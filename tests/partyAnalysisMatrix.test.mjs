@@ -5,7 +5,7 @@ import vm from 'node:vm'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
-import { analyzePartyMatchups } from '../src/partyAnalysis.ts'
+import { analyzePartyMatchups } from '../src/domain/party/partyAnalysis.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const literal = source.match(/const typeChart: Record<[^\n]+ = (\{[\s\S]*?\n\})\n\nconst normalizedTypeChart/)
@@ -44,7 +44,7 @@ test('pure matchup cells preserve actual slots, abilities, dual types and best v
 })
 
 let server, Panel, totalClass
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); const module = await server.ssrLoadModule('/src/PartyAnalysisPanel.tsx'); Panel = module.PartyAnalysisPanel; totalClass = module.partyTotalClass })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); const module = await server.ssrLoadModule('/src/features/party/PartyAnalysisPanel.tsx'); Panel = module.PartyAnalysisPanel; totalClass = module.partyTotalClass })
 test.after(async () => { await server?.close() })
 test('SSR renders two semantic 18-row tables, six fixed slot headings and numeric cells', () => {
   const html = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze(members), language: 'ko', loading: false }))

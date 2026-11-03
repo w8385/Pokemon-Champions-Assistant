@@ -5,7 +5,7 @@ import { createServer } from 'vite'
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 try {
-  const { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, createReadonlyCardStats } = await server.ssrLoadModule('/src/PokemonCardOverview.tsx')
+  const { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, createReadonlyCardStats } = await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')
   const stats = ['hp', 'spAttack', 'attack', 'spDefense', 'defense', 'speed'].map((key, i) => ({ key, label: key, theme: `stat-theme-${key}`, value: i === 0 ? 140 : null, ev: i === 0 ? 19 : null }))
   const render = element => renderToStaticMarkup(element)
   const shared = render(React.createElement(PokemonStatGrid, { stats }))

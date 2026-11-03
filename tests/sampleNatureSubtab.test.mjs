@@ -11,7 +11,7 @@ const browser = new Window({ url: 'http://localhost/#/sample-builder?sampleTab=s
 Object.assign(globalThis, { window: browser, document: browser.document, localStorage: browser.localStorage, HTMLElement: browser.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true })
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
-const { PokemonBuildFields } = await server.ssrLoadModule('/src/PokemonBuildFields.tsx')
+const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
 const labels = { ability: 'Ability', nature: 'Nature', item: 'Item', none: 'None', itemPlaceholder: 'Search' }
@@ -68,8 +68,8 @@ test('real nature portal commits selected value only, preserves owner, labels, f
 
 test('mounted speed/damage tabs commit own nature through App and retain draft fields', async () => {
   const App = (await server.ssrLoadModule('/src/App.tsx')).default
-  const { loadFormLearnset } = await server.ssrLoadModule('/src/sharedLearnsets.ts')
-  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/dex/data.ts')
+  const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+  const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
   const storageKey = 'pokemon-champions-assistant-demo:v1'
   const target = { key: 'corviknight', item: '', ability: '', notes: 'original target', revealedMoves: [], natureBoost: false, scarf: false, speedStage: 0, picked: false, hpEv: 0, defenseEv: 0, spDefenseEv: 0, speedEv: 0, defenseNature: 1, spDefenseNature: 1, opponentMoves: ['바디프레스', '', '', ''], moveName: 'legacy', opponentMoveName: '', attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1, reverseAttackStage: 0, reverseDefenseStage: 0 }
   const draft = { mainSection: 'sample', sampleWorkbenchTab: 'speed', sampleForge: { ...initial, item: '', picked: false, tuning: { magicNumber: 0, maxValue: 0 } }, sampleLockedMoves: ['속임수', '', '바디프레스', ''], sampleSpeedTargets: [target], sampleDamageTargets: [target] }

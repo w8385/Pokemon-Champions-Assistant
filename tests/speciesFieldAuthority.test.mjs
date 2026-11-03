@@ -5,9 +5,9 @@ import path from 'node:path'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { createServer } from 'vite'
-import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/effectiveRoster.ts'
-import { actualStat } from '../src/statMechanics.ts'
-import { applyChoiceScarf } from '../src/speedModifiers.ts'
+import { championsData, additionalFormSpecs, supportedSpeciesKeys } from '../src/domain/champions/effectiveRoster.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { applyChoiceScarf } from '../src/domain/battle/speed/speedModifiers.ts'
 
 const root = path.resolve(new URL('..', import.meta.url).pathname)
 const source = file => fs.readFile(path.join(root, file), 'utf8')
@@ -26,21 +26,21 @@ function assertTypeLabels(row) {
 let server, app, validateBackup, buildRules, typeLabels
 
 test.before(async () => {
-  typeLabels = JSON.parse(await source('src/typeKoLabels.json'))
+  typeLabels = JSON.parse(await source('src/assets/typeKoLabels.json'))
   server = await createServer({ root, server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent', plugins: [{ name: 'test-export-real-app-roster', enforce: 'pre', transform(code, id) {
     if (path.resolve(id) === path.join(root, 'src/App.tsx')) return `${code}\nexport { rows as authorityRows, indexByKey as authorityIndex, megaBaseKey as authorityMegaBaseKey, filterSpeciesOptions as authoritySearch };`
   } }] })
   app = await server.ssrLoadModule('/src/App.tsx')
-  ;({ validateBackup } = await server.ssrLoadModule('/src/backupValidation.ts'))
-  buildRules = await server.ssrLoadModule('/src/buildRules.ts')
+  ;({ validateBackup } = await server.ssrLoadModule('/src/adapters/persistence/backupValidation.ts'))
+  buildRules = await server.ssrLoadModule('/src/domain/champions/buildRules.ts')
 })
 test.after(async () => { await server?.close() })
 
 test('both actual KO label producers consume the same 18-entry input and generator buildRow uses it', async () => {
   const appText = await source('src/App.tsx'), generatorText = await source('scripts/sync-champions-verified-data.mjs')
-  assert.match(appText, /import typeKoLabels from ['"]\.\/typeKoLabels\.json['"]/)
+  assert.match(appText, /import typeKoLabels from ['"]\.\/assets\/typeKoLabels\.json['"]/)
   assert.match(appText, /const TYPE_KO_BY_KEY: Record<string, string> = typeKoLabels/)
-  assert.match(generatorText, /JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'typeKoLabels\.json'\), 'utf8'\)\)/)
+  assert.match(generatorText, /JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'assets\/typeKoLabels\.json'\), 'utf8'\)\)/)
   assert.equal(Object.keys(typeLabels).length, 18)
   assert.deepEqual(sorted(new Set(Object.keys(typeLabels))), sorted(new Set(['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'])))
   assert.equal(new Set(Object.values(typeLabels)).size, 18)
@@ -60,11 +60,11 @@ test('both actual KO label producers consume the same 18-entry input and generat
 test('backup opponent nature membership delegates to the shared 25-nature rule without restricting archived party builds', async () => {
   const expected = 'hardy lonely brave adamant naughty bold docile relaxed impish lax timid hasty serious jolly naive modest mild quiet bashful rash calm gentle sassy careful quirky'.split(' ')
   assert.deepEqual(buildRules.NATURES.map(entry => entry.id), expected)
-  const validationText = await source('src/backupValidation.ts')
+  const validationText = await source('src/adapters/persistence/backupValidation.ts')
   const ast = ts.createSourceFile('backupValidation.ts', validationText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
   const opponent = ast.statements.find(node => ts.isVariableStatement(node) && node.declarationList.declarations.some(entry => entry.name.getText(ast) === 'opponent'))
   assert.ok(opponent)
-  assert.match(validationText, /import\s*\{\s*knownNature\s*\}\s*from\s*['"]\.\/buildRules(?:\.ts)?['"]/, 'the backup uses the shared runtime predicate')
+  assert.match(validationText, /import\s*\{\s*knownNature\s*\}\s*from\s*['"]\.\.\/\.\.\/domain\/champions\/buildRules(?:\.ts)?['"]/, 'the backup uses the shared runtime predicate')
   assert.match(opponent.getText(ast), /\bnature:\s*knownNature\b/, 'opponent membership is the imported rule, not a copied list')
   for (const nature of expected) {
     assert.equal(buildRules.knownNature(nature), true, nature)
@@ -80,16 +80,16 @@ test('backup opponent nature membership delegates to the shared 25-nature rule w
 })
 
 test('runtime effort exports and generator Speed template read one JSON limit input', async () => {
-  const limits = JSON.parse(await source('src/effortLimits.json'))
+  const limits = JSON.parse(await source('src/canonical-data/champions/effortLimits.json'))
   assert.deepEqual(limits, { perStat: 32, total: 66 })
   assert.equal(buildRules.CHAMPIONS_EFFORT_PER_STAT_CAP, limits.perStat)
   assert.equal(buildRules.CHAMPIONS_EFFORT_CAP, limits.total)
-  const runtimeText = await source('src/buildRules.ts')
+  const runtimeText = await source('src/domain/champions/buildRules.ts')
   const generatorText = await source('scripts/sync-champions-verified-data.mjs')
-  assert.match(runtimeText, /import\s+effortLimits\s+from\s+['"]\.\/effortLimits\.json['"]/)
+  assert.match(runtimeText, /import\s+effortLimits\s+from\s+['"]\.\.\/\.\.\/canonical-data\/champions\/effortLimits\.json['"]/)
   assert.match(runtimeText, /CHAMPIONS_EFFORT_PER_STAT_CAP\s*=\s*effortLimits\.perStat/)
   assert.match(runtimeText, /CHAMPIONS_EFFORT_CAP\s*=\s*effortLimits\.total/)
-  assert.match(generatorText, /CHAMPIONS_EFFORT_PER_STAT_CAP\s*=\s*JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'effortLimits\.json'\), 'utf8'\)\)\.perStat/)
+  assert.match(generatorText, /CHAMPIONS_EFFORT_PER_STAT_CAP\s*=\s*JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'canonical-data\/champions\/effortLimits\.json'\), 'utf8'\)\)\.perStat/)
   assert.match(generatorText, /actualStat\(base, CHAMPIONS_EFFORT_PER_STAT_CAP, boosted \? 1\.1 : 1\)/)
   assert.equal(buildRules.validEffort(32), true)
   assert.equal(buildRules.validEffort(33), false)
@@ -149,7 +149,7 @@ test('every rendered type label and 1705 cached Speed values follow the shared l
 })
 
 test('exact-form learnsets remain a 339 mapped + 2 unresolved partition, not a new roster supplier', async () => {
-  const { forms, unresolved } = JSON.parse(await source('src/dexGameLearnsets.json'))
+  const { forms, unresolved } = JSON.parse(await source('src/canonical-data/champions/dexGameLearnsets.json'))
   const mapped = new Set(Object.keys(forms)), unknown = new Set(Object.keys(unresolved))
   assert.equal(mapped.size, 339)
   assert.deepEqual(sorted(unknown), ['mega-meowstic', 'tauros-paldean'])

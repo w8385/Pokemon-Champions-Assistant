@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
-import { catalog, groupCreatorSources } from '../src/creatorSampleLibrary.ts'
-import { prepareCreatorParty } from '../src/creatorPartyImport.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
+import { CHAMPIONS_ITEM_ALIASES, CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
+import { catalog, groupCreatorSources } from '../src/domain/samples/creatorSampleLibrary.ts'
+import { prepareCreatorParty } from '../src/domain/party/creatorPartyImport.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
 
 const rows = [...championsData.rows, ...additionalFormSpecs]
 test('raw screen spelling survives preparation and resolves through the supported item alias', () => {

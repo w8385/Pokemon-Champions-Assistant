@@ -15,13 +15,13 @@ function visit(node) {
 }
 visit(source)
 assert.ok(memo && errorFunction)
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url))).rows
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 
 async function speedFor(ability, { trickRoom = false, tailwind = false } = {}) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { isCalculableAbility } = await server.ssrLoadModule('/src/abilityIdentity.ts')
-    const { isCalculableHeldItem } = await server.ssrLoadModule('/src/itemIdentity.ts')
+    const { isCalculableAbility } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
+    const { isCalculableHeldItem } = await server.ssrLoadModule('/src/domain/champions/itemIdentity.ts')
     const row = roster.find(entry => entry.key === 'mega-starmie')
     const calls = []
     const context = vm.createContext({

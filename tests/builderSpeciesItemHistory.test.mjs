@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
-import { itemForSpeciesSelection, requiredMegaStone } from '../src/itemIdentity.ts'
+import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
+import { itemForSpeciesSelection, requiredMegaStone } from '../src/domain/champions/itemIdentity.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)

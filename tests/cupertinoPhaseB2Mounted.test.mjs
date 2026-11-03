@@ -9,7 +9,7 @@ const browser = new Window({ url: 'http://localhost/' })
 Object.assign(globalThis, { window: browser, document: browser.document, HTMLElement: browser.HTMLElement, Element: browser.Element, IS_REACT_ACT_ENVIRONMENT: true })
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
-const { DamageRangeMeter } = await server.ssrLoadModule('/src/DamageRangeMeter.tsx')
+const { DamageRangeMeter } = await server.ssrLoadModule('/src/shared/display/DamageRangeMeter.tsx')
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 async function mount(element) {
   const host = document.createElement('div'); document.body.append(host)
@@ -47,8 +47,8 @@ test('invalid and unsupported values cannot draw numeric bars', async () => {
 
 test('all eight destinations retain concrete source consumers, not just heading icons', () => {
   const src = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const detail = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
-  const ranges = readFileSync(new URL('../src/SpeedLineRangesPanel.tsx', import.meta.url), 'utf8')
+  const detail = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
+  const ranges = readFileSync(new URL('../src/features/speedline/SpeedLineRangesPanel.tsx', import.meta.url), 'utf8')
   for (const marker of ['home-route-card calm', 'party-preset-card-actions', 'entry-card-clear-button', 'quick-move-preview', 'creator-library-submit-row', 'sample-saved-actions', 'dex-back-link', '샘플 편집기로 보내기']) assert.ok(src.includes(marker), marker)
   for (const marker of ['speed-line-name-action', 'name="speed"', 'speed-line-investment']) assert.ok(detail.includes(marker), marker)
   for (const marker of ['speed-coverage-target-search', 'speed-coverage-target-list', 'name="search"']) assert.ok(ranges.includes(marker), marker)

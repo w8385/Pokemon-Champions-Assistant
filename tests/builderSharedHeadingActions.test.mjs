@@ -24,8 +24,8 @@ const builder = find(tree, node => ts.isJsxElement(node) && attr(node, 'id') && 
 let server, Heading, Field
 test.before(async () => {
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Heading = (await server.ssrLoadModule('/src/PokemonCardOverview.tsx')).PokemonCardHeading
-  Field = (await server.ssrLoadModule('/src/PokemonSearchField.tsx')).default
+  Heading = (await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')).PokemonCardHeading
+  Field = (await server.ssrLoadModule('/src/shared/search/PokemonSearchField.tsx')).default
 })
 test.after(async () => { await server?.close() })
 

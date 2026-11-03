@@ -14,9 +14,9 @@ test.before(async () => {
   ;({ createRoot } = await import('react-dom/client'))
   ;({ act } = await import('react'))
   server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
-  Combobox = (await server.ssrLoadModule('/src/SearchCombobox.tsx')).default
-  Field = (await server.ssrLoadModule('/src/PokemonSearchField.tsx')).default
-  Slot = (await server.ssrLoadModule('/src/PokemonCardOverview.tsx')).RegisteredMoveSlot
+  Combobox = (await server.ssrLoadModule('/src/shared/search/SearchCombobox.tsx')).default
+  Field = (await server.ssrLoadModule('/src/shared/search/PokemonSearchField.tsx')).default
+  Slot = (await server.ssrLoadModule('/src/shared/display/PokemonCardOverview.tsx')).RegisteredMoveSlot
 })
 test.after(async () => { await server?.close(); await window?.happyDOM?.abort?.() })
 async function mount(element) {

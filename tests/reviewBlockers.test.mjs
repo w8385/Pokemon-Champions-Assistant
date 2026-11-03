@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const modal = readFileSync(new URL('../src/EffortTuningModal.tsx', import.meta.url), 'utf8')
+const modal = readFileSync(new URL('../src/shared/display/EffortTuningModal.tsx', import.meta.url), 'utf8')
 const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
 test('party tuning passes existing magic candidate and 11-multiple points to shared modal', () => {
   assert.match(app, /magicCandidate=\{magicCandidate\}/)

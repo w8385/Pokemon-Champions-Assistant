@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { draftStorageKey, readDraft, writeDraft } from '../src/comparisonDraftState.ts'
-import { snapshotDefenderDrafts, removeDefenderDrafts } from '../src/singleOpponentRegistration.ts'
-import { resetPairAssumptions, pairTarget } from '../src/comparisonPairState.ts'
+import { draftStorageKey, readDraft, writeDraft } from '../src/adapters/persistence/comparisonDraftState.ts'
+import { snapshotDefenderDrafts, removeDefenderDrafts } from '../src/adapters/persistence/defenderDrafts.ts'
+import { resetPairAssumptions, pairTarget } from '../src/domain/party/comparisonPairState.ts'
 
 const seed = key => ({ key, ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, moves: ['', '', '', ''], battle: { burned: false, attackStage: 0 }, actual: {}, speedStage: 0, speedNatureKnown: false, speedNatureMultiplier: 1, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false, knownOffense: { attack: false, spAttack: false } })
 const storageFixture = () => {

@@ -16,7 +16,7 @@ const props = (patch = {}, extras = {}) => ({ rows, state: { ...state, ...patch 
 const render = patch => renderToStaticMarkup(React.createElement(Panel, props(patch)))
 const nodes = (tree, found = []) => { if (Array.isArray(tree)) tree.forEach(x => nodes(x, found)); else if (tree?.props) { found.push(tree); nodes(tree.props.children, found) }; return found }
 const capture = (patch = {}, extras = {}) => { let tree; function Capture() { tree = Panel(props(patch, extras)); return tree }; renderToStaticMarkup(React.createElement(Capture)); return nodes(tree) }
-test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/SpeedLinePanel.tsx')).default })
+test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); Panel = (await server.ssrLoadModule('/src/features/speedline/SpeedLinePanel.tsx')).default })
 test.after(async () => server?.close())
 
 test('condition scenarios show item and weather, stable IDs, and combined 501 Speed', () => {

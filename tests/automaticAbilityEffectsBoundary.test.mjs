@@ -6,8 +6,8 @@ import { createServer } from 'vite'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-const roster = JSON.parse(readFileSync(new URL('../src/pokemon_champions_verified_data.json', import.meta.url))).rows
-const descriptions = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url))).abilities
+const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
+const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const row = key => roster.find(entry => entry.key === key)
 function declaration(name, kind, after = -1) {
   let found
@@ -45,7 +45,7 @@ function actualAutoEffect(marker, context) {
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
 try {
-  const { resolveFormAbility, localizedAbilityLabel, isCalculableAbility } = await server.ssrLoadModule('/src/abilityIdentity.ts')
+  const { resolveFormAbility, localizedAbilityLabel, isCalculableAbility } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
   const abilityDescriptionFor = slug => descriptions[slug] ?? null
   const resolveSelectedAbility = actualFunction('resolveSelectedAbility', { resolveFormAbility, localizedAbilityLabel, abilityDescriptionFor, rows: roster })
   const weatherFromAbility = actualFunction('weatherFromAbility', {})

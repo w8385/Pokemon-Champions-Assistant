@@ -96,7 +96,7 @@ npm run check:ability-damage
 npm run check:ui-consistency
 ```
 
-기술 메타 생성은 기본적으로 **오프라인**입니다. `npm run build:champions-move-meta -- --offline --check`는 산출물과 리포트의 바이트 일치를 확인하고 파일을 변경하지 않습니다. `src/dexGameMoveIndex.json`의 고정 ID/기본 타입 510개가 정규 기술의 기준이며, `src/championsMoveMetaLegacyEvidence.json`의 원본 731행은 그 밖의 역사적 필드와 source 밖 222개 원문 행을 보존합니다. `src/championsLearnedMoveMeta.json`은 재생성되는 732행(정규 510 + 역사적 이름 222)입니다. `reports/championsMoveMetaLegacyReport.json`은 이전 PokeAPI 이름 매칭 기록입니다. 과거 PokeAPI cache는 새 생성 시 네트워크 요청이나 기술 수록 판단에 쓰이지 않습니다. 미확인 분류/위력/명중/PP/우선도는 `null`이며, source에 없다고 현재 게임에서 불가함을 뜻하지 않습니다. 이 기준은 2026-09-09 고정 스냅샷이고 현재 게임·규정 동등성은 확인되지 않았습니다.
+기술 메타 생성은 기본적으로 **오프라인**입니다. `npm run build:champions-move-meta -- --offline --check`는 산출물과 리포트의 바이트 일치를 확인하고 파일을 변경하지 않습니다. `src/canonical-data/champions/dexGameMoveIndex.json`의 고정 ID/기본 타입 510개가 정규 기술의 기준이며, `src/canonical-data/champions/championsMoveMetaLegacyEvidence.json`의 원본 731행은 그 밖의 역사적 필드와 source 밖 222개 원문 행을 보존합니다. `src/canonical-data/champions/championsLearnedMoveMeta.json`은 재생성되는 732행(정규 510 + 역사적 이름 222)입니다. `reports/championsMoveMetaLegacyReport.json`은 이전 PokeAPI 이름 매칭 기록입니다. 과거 PokeAPI cache는 새 생성 시 네트워크 요청이나 기술 수록 판단에 쓰이지 않습니다. 미확인 분류/위력/명중/PP/우선도는 `null`이며, source에 없다고 현재 게임에서 불가함을 뜻하지 않습니다. 이 기준은 2026-09-09 고정 스냅샷이고 현재 게임·규정 동등성은 확인되지 않았습니다.
 
 ## 데이터 소스 / 운영 원칙
 
@@ -110,8 +110,8 @@ npm run check:ui-consistency
 
 앱의 가용 기술 검색은 현재 아래 파일들을 중심으로 동작합니다.
 
-- `src/championsMovePools.json`
-- `src/championsMovePoolSources.json`
+- `src/canonical-data/champions/championsMovePools.json`
+- `src/canonical-data/champions/championsMovePoolSources.json`
 - `reports/championsMoveWhitelistCoverage.json`
 
 화이트리스트 생성/갱신:

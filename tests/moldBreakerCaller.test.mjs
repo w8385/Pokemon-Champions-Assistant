@@ -10,10 +10,10 @@ const ast=ts.createSourceFile('App.tsx',source,ts.ScriptTarget.Latest,true,ts.Sc
 let callback
 function visit(n){if(ts.isVariableDeclaration(n)&&n.name.getText(ast)==='buildDoubleDamageContext')callback=n.initializer;ts.forEachChild(n,visit)}visit(ast)
 assert.ok(callback,'real Double callback AST')
-const roster=JSON.parse(fs.readFileSync(new URL('../src/pokemon_champions_verified_data.json',import.meta.url))).rows
-const learned=JSON.parse(fs.readFileSync(new URL('../src/dexGameLearnsets.json',import.meta.url))).forms
-const moves=JSON.parse(fs.readFileSync(new URL('../src/championsLearnedMoveMeta.json',import.meta.url)))
-const index=JSON.parse(fs.readFileSync(new URL('../src/dexGameMoveIndex.json',import.meta.url)))
+const roster=JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json',import.meta.url))).rows
+const learned=JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json',import.meta.url))).forms
+const moves=JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json',import.meta.url)))
+const index=JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url)))
 const row=k=>roster.find(r=>r.key===k)
 const engine=loadAppDamageEngine()
 const stats={hp:160,attack:150,defense:120,spAttack:150,spDefense:120,speed:100} // Isolated numerical harness, not actual in-game build stats.

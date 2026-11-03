@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const speed = readFileSync(new URL('../src/SpeedLinePanel.tsx', import.meta.url), 'utf8')
+const speed = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
 const region = (begin, end) => app.slice(app.indexOf(begin), app.indexOf(end, app.indexOf(begin)))
 const party = region('className="party-preset-board"', 'className="entry-grid manage-entry-grid"')
 const lab = app.slice(app.indexOf('className="sample-builder-action-card"'), app.indexOf('id="sample-saved-card"') + 6000)

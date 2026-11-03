@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
-const sourcePath = path.join(rootDir, 'src', 'championsItems.ts')
+const sourcePath = path.join(rootDir, 'src', 'domain/champions/championsItems.ts')
 const itemListUrl = 'https://pokeapi.co/api/v2/item?limit=2200'
 
 function parseOptions(source) {

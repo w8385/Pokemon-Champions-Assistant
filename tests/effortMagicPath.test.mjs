@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { actualStat } from '../src/statMechanics.ts'
-import { magicEffortCandidate, magicEffortMarkers, namedNatureMagicAvailable } from '../src/effortMagic.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { magicEffortCandidate, magicEffortMarkers, namedNatureMagicAvailable } from '../src/domain/champions/effortMagic.ts'
 
 const evs = (attack = 0, defense = 0) => ({ hp: 0, attack, defense, spAttack: 0, spDefense: 0, speed: 0 })
 const actual = effort => actualStat(100, effort, 1.1)

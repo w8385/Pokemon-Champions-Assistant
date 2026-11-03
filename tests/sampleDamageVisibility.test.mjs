@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import { createRequire } from 'node:module'
-import { classifyHeldItem } from '../src/itemIdentity.ts'
+import { classifyHeldItem } from '../src/domain/champions/itemIdentity.ts'
 import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
 const require = createRequire(import.meta.url)
 const ts = require('typescript')

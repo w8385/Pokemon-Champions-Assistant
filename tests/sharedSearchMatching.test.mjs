@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { searchPokemon } from '../src/pokemonSearch.ts'
-import { quickMoveSuggestions } from '../src/quickDamageState.ts'
-import { searchMoves } from '../src/moveSearch.ts'
+import { searchPokemon } from '../src/shared/search/pokemonSearch.ts'
+import { quickMoveSuggestions } from '../src/domain/battle/quickDamageState.ts'
+import { searchMoves } from '../src/shared/search/moveSearch.ts'
 
 const roster = [
   { key: 'mega-garchomp', name_ko: '메가한카리아스', name_en: 'Mega Garchomp', speed: 92 },

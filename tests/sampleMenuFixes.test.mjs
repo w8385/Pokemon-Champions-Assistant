@@ -2,8 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { appTranslate } from './appTranslations.mjs'
-import { searchPokemon } from '../src/pokemonSearch.ts'
-import * as speciesModule from '../src/pokemonSearch.ts'
+import { searchPokemon } from '../src/shared/search/pokemonSearch.ts'
+import * as speciesModule from '../src/shared/search/pokemonSearch.ts'
 const prioritizeExactSpecies = (...args) => speciesModule.prioritizeExactSpecies(...args)
 
 const rows = [

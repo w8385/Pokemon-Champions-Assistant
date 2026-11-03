@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { comparisonSides } from '../src/unifiedComparisonAdapter.ts'
-import { effectiveComparisonSpeed } from '../src/unifiedComparisonSpeed.ts'
-import { getSpeedAbility, speedActivationAllowed } from '../src/speedAbilities.ts'
+import { comparisonSides } from '../src/domain/party/unifiedComparisonAdapter.ts'
+import { effectiveComparisonSpeed } from '../src/domain/battle/unifiedComparisonSpeed.ts'
+import { getSpeedAbility, speedActivationAllowed } from '../src/domain/battle/speed/speedAbilities.ts'
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/unifiedEntryFixture.json', import.meta.url)))
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 test('saved localized Libero is canonical for selection and damage, source stays Korean', () => {

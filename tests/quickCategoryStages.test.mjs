@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { quickStagePair, quickBattleStages } from '../src/quickDamageState.ts'
+import { quickStagePair, quickBattleStages } from '../src/domain/battle/quickDamageState.ts'
 
 test('physical attack rank never modifies special attack', () => {
   const source = { attackStage: 2, spAttackStage: 0, defenseStage: 0, spDefenseStage: 0 }

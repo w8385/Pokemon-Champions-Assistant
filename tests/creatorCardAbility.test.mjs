@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { sourceBackedCardAbility } from '../src/creatorCardAbility.ts'
+import { sourceBackedCardAbility } from '../src/domain/samples/creatorCardAbility.ts'
 
 test('unknown Mega ability stays unknown despite its sole canonical option', () => {
   assert.equal(sourceBackedCardAbility({ megaKey:'mega-lucario-z', formKey:'mega-lucario-z', rowAbilities:['파동의방호'], ability:undefined }), undefined)

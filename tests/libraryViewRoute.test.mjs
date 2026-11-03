@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { parseLibraryContext, libraryListHref, libraryDetailHref, writeLibraryContext } from '../src/libraryViewRoute.ts'
-import { catalog, filterCreatorSources, groupCreatorSources, individualCreatorSources, filterCreatorSamples } from '../src/creatorSampleLibrary.ts'
+import { parseLibraryContext, libraryListHref, libraryDetailHref, writeLibraryContext } from '../src/app/libraryViewRoute.ts'
+import { catalog, filterCreatorSources, groupCreatorSources, individualCreatorSources, filterCreatorSamples } from '../src/domain/samples/creatorSampleLibrary.ts'
 
 test('library view URL round trips region, format, query and kind without touching Dex params', () => {
   const context = { language: 'ja', format: 'singles', query: 'ピカ', kind: 'pokemon' }

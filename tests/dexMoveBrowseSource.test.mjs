@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { createServer } from 'vite'
-import { byDisplayName } from '../src/displayOrder.ts'
+import { byDisplayName } from '../src/shared/search/displayOrder.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
@@ -13,15 +13,15 @@ function actualFunction(name) {
   assert.ok(node, `actual App function ${name}`)
   return node.getText(source)
 }
-const legacy = JSON.parse(readFileSync(new URL('../src/championsLearnedMoveMeta.json', import.meta.url), 'utf8'))
-const historicalEvidence = JSON.parse(readFileSync(new URL('../src/championsMoveMetaLegacyEvidence.json', import.meta.url), 'utf8'))
+const legacy = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json', import.meta.url), 'utf8'))
+const historicalEvidence = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaLegacyEvidence.json', import.meta.url), 'utf8'))
 
 // Execute App's actual shared filter against its real source index, metadata and matcher.
 async function browse() {
   const server = await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {
     const [{searchMoves},{getDexGameMove,getDexGameMoveNames},{getMoveMetadata},{MOVE_META_BY_NAME}] = await Promise.all([
-      server.ssrLoadModule('/src/moveSearch.ts'), server.ssrLoadModule('/src/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/moveMetadata.ts'),server.ssrLoadModule('/src/dex/data.ts'),
+      server.ssrLoadModule('/src/shared/search/moveSearch.ts'), server.ssrLoadModule('/src/domain/champions/dexGameMoveIndex.ts'),server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'),server.ssrLoadModule('/src/adapters/catalog/data.ts'),
     ])
     Object.assign(MOVE_META_BY_NAME,legacy)
     const context = {
@@ -64,7 +64,7 @@ test('ID 747 is in actual blank and unified search results with unknown non-type
 
 test('historical legacy-only Dex move stays searchable', async () => {
   const filter = await browse()
-  const source = JSON.parse(readFileSync(new URL('../src/dexGameMoveIndex.json',import.meta.url),'utf8'))
+  const source = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url),'utf8'))
   const historical = Object.keys(legacy).find(name=>!Object.hasOwn(source,name))
   assert.ok(historical)
   const option = filter(historical,{allowLoose:false}).find(entry=>entry.name===historical)

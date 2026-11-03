@@ -8,14 +8,14 @@ import { createHash } from 'node:crypto'
 import { createServer } from 'vite'
 import vm from 'node:vm'
 import ts from 'typescript'
-import { requiredMegaStone } from '../src/itemIdentity.ts'
-import { championsData, additionalFormSpecs } from '../src/effectiveRoster.ts'
-import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
+import { requiredMegaStone } from '../src/domain/champions/itemIdentity.ts'
+import { championsData, additionalFormSpecs } from '../src/domain/champions/effectiveRoster.ts'
+import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
 
 const root = new URL('..', import.meta.url).pathname
 const fixture = JSON.parse(readFileSync(new URL('../data/item-description-primary.json', import.meta.url)))
 const historic = JSON.parse(readFileSync(new URL('../data/item-description-historical.json', import.meta.url)))
-const output = JSON.parse(readFileSync(new URL('../src/dexDescriptions.json', import.meta.url)))
+const output = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url)))
 const keys = new Set([...CHAMPIONS_ITEM_OPTIONS, ...[...championsData.rows, ...additionalFormSpecs].map(row => requiredMegaStone(row.key)).filter(Boolean)])
 const run = (...args) => spawnSync('python3', ['scripts/build_item_descriptions.py', ...args], { cwd: root, encoding: 'utf8' })
 
@@ -43,7 +43,7 @@ test('generator is byte-stable; check does not write and rejects stale/mutated i
   const dir = mkdtempSync(join(tmpdir(), 'item-desc-'))
   try {
     const outfile = join(dir, 'bundle.json')
-    const input = readFileSync(new URL('../src/dexDescriptions.json', import.meta.url))
+    const input = readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))
     writeFileSync(outfile, input)
     const first = run('--output', outfile)
     assert.equal(first.status, 0, first.stderr)
@@ -103,7 +103,7 @@ test('actual Dex item option producer browses all required stones and searches l
 test('live lazy accessor reaches every canonical key and evidenced alias', async () => {
   const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
   try {
-    const { loadDexDescriptions, resolveItemInfo, itemDescriptionFor } = await server.ssrLoadModule('/src/dex/data.ts')
+    const { loadDexDescriptions, resolveItemInfo, itemDescriptionFor } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
     await loadDexDescriptions()
     for (const key of keys) assert.equal(itemDescriptionFor(key) ? resolveItemInfo(key)?.key : key, key)
     assert.equal(resolveItemInfo('후디나이트')?.key, '후딘나이트')

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { effectiveComparisonSpeed } from '../src/unifiedComparisonSpeed.ts'
+import { effectiveComparisonSpeed } from '../src/domain/battle/unifiedComparisonSpeed.ts'
 const row={key:'normal',speed:100,abilities:[]}
 test('actual effort and nature (not hypothetical 32 fast) drive comparison',()=>{
  const a=effectiveComparisonSpeed(row,0,1,0,false)

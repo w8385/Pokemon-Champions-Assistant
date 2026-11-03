@@ -4,13 +4,13 @@ import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
 import ts from 'typescript'
 
-const data = JSON.parse(readFileSync(new URL('../src/dexGameLearnsets.json', import.meta.url), 'utf8'))
+const data = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json', import.meta.url), 'utf8'))
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 
 async function withLoader(check) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
-  try { await check(await server.ssrLoadModule('/src/dexGameLearnsets.ts')) }
+  try { await check(await server.ssrLoadModule('/src/domain/champions/dexGameLearnsets.ts')) }
   finally { await server.close() }
 }
 

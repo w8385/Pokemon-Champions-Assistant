@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readQuickSaved, quickItem, quickMoveSupported } from '../src/quickDamageState.ts'
-import { CHAMPIONS_ITEM_OPTIONS } from '../src/championsItems.ts'
+import { readQuickSaved, quickItem, quickMoveSupported } from '../src/domain/battle/quickDamageState.ts'
+import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
 
 test('restored null, arrays and primitives are empty records', () => {
   for (const raw of ['null', '[]', '42', '"text"', '{broken']) assert.deepEqual(readQuickSaved(raw), {})

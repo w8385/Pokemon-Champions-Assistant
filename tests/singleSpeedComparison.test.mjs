@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { compareSingleSpeed } from '../src/singleSpeedComparison.ts'
-import { actualStat } from '../src/statMechanics.ts'
-import { applySpeedModifiers } from '../src/speedModifiers.ts'
+import { compareSingleSpeed } from '../src/domain/battle/singleSpeedComparison.ts'
+import { actualStat } from '../src/domain/champions/statMechanics.ts'
+import { applySpeedModifiers } from '../src/domain/battle/speed/speedModifiers.ts'
 
 const row = (key, speed) => ({ key, speed })
 const own = (speed, effort = 0, nature = 1, stage = 0, scarf = false) => ({ row: row('mine', speed), effort, nature, stage, scarf })
