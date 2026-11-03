@@ -144,7 +144,3 @@ export async function runGuardedOcrImport<File, Entry>(options: {
   options.apply(imported)
   return 'applied'
 }
-
-export function persistWorkspace(storage: Pick<Storage, 'setItem'> | (() => Pick<Storage, 'setItem'>), key: string, payload: object): boolean {
-  try { (typeof storage === 'function' ? storage() : storage).setItem(key,JSON.stringify(payload)); return true } catch { return false }
-}

@@ -3,11 +3,11 @@ import assert from 'node:assert/strict'
 import { createServer } from 'vite'
 import { readFileSync } from 'node:fs'
 
-let server, work
+let server, work, io
 const empty = () => Array.from({length:6}, () => ({key:'',ability:'',item:'',picked:false,config:{nature:'hardy',scarf:false,speedStage:0},evs:{hp:0,attack:0,defense:0,spAttack:0,spDefense:0,speed:0},tuning:{magicNumber:0,maxValue:0}}))
 const team = (key, item = '') => empty().map((slot,i) => i === 0 ? {...slot,key,item} : slot)
 const preset = (id, party, moves = []) => ({id,label:id,party,lockedMovesBySlot:[moves,...Array.from({length:5},()=>[])]})
-test.before(async () => { server = await createServer({server:{middlewareMode:true,hmr:false},appType:'custom',optimizeDeps:{noDiscovery:true,include:[]}}); work = await server.ssrLoadModule('/src/domain/party/partyWorkspace.ts') })
+test.before(async () => { server = await createServer({server:{middlewareMode:true,hmr:false},appType:'custom',optimizeDeps:{noDiscovery:true,include:[]}}); work = await server.ssrLoadModule('/src/domain/party/partyWorkspace.ts'); io = await server.ssrLoadModule('/src/adapters/persistence/appV1.ts') })
 test.after(async () => { await server?.close() })
 test('migration selects matching record, restores divergent working draft once, and never guesses a missing party', () => {
   const a = preset('a',team('a')), b = preset('b',team('b'))
@@ -112,9 +112,9 @@ test('storage exception keeps memory and retry writes latest selected record', (
   const a = preset('a',team('a'))
   let state = work.initializeWorkspace({party:a.party,savedPartyPresets:[a]},empty())
   state = work.workspaceReducer(state,{type:'EDIT_PARTY',update:p=>p.map((m,i)=>i ? m : {...m,item:'latest'})})
-  assert.equal(work.persistWorkspace({setItem(){throw Error('quota')}},'key',state),false)
+  assert.equal(io.persistWorkspace({setItem(){throw Error('quota')}},'key',state),false)
   let raw = ''
-  assert.equal(work.persistWorkspace({setItem(_key,value){raw=value}},'key',state),true)
+  assert.equal(io.persistWorkspace({setItem(_key,value){raw=value}},'key',state),true)
   assert.equal(JSON.parse(raw).savedPartyPresets[0].party[0].item,'latest')
 })
 test('late OCR recognition after A to B switch aborts without touching either record or UI draft', async () => {
@@ -153,9 +153,9 @@ test('OCR recognition applies normally only to the captured record', async () =>
 })
 test('storage getter exception is caught and retry succeeds with latest state', () => {
   const state = work.initializeWorkspace({party:team('a')},empty())
-  assert.equal(work.persistWorkspace(()=>{throw Error('storage denied')},'key',state),false)
+  assert.equal(io.persistWorkspace(()=>{throw Error('storage denied')},'key',state),false)
   let raw = ''
-  assert.equal(work.persistWorkspace(()=>({setItem(_key,value){raw=value}}),'key',state),true)
+  assert.equal(io.persistWorkspace(()=>({setItem(_key,value){raw=value}}),'key',state),true)
   assert.equal(JSON.parse(raw).activePartyPresetId,state.activePartyPresetId)
 })
 

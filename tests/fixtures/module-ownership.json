@@ -4,6 +4,7 @@
     "src/adapters/catalog/data.ts",
     "src/adapters/catalog/movePresentation.ts",
     "src/adapters/catalog/roster.ts",
+    "src/adapters/persistence/appV1.ts",
     "src/adapters/persistence/backupValidation.ts",
     "src/adapters/persistence/comparisonDraftState.ts",
     "src/adapters/persistence/defenderDrafts.ts",

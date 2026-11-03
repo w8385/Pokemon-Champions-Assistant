@@ -79,7 +79,8 @@ import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './domain
 import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from './features/speedline/speedLineState'
 import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './features/speedline/speedLineRouteRestore'
 import { validateBackup } from './adapters/persistence/backupValidation'
-import { initializeWorkspace, workspaceReducer, persistWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './domain/party/partyWorkspace'
+import { STORAGE_KEY, loadPersistedState, persistWorkspace } from './adapters/persistence/appV1'
+import { initializeWorkspace, workspaceReducer, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './domain/party/partyWorkspace'
 import { additionalFormSpecs, championsData } from './domain/champions/effectiveRoster'
 import verifiedAbilityLabels from './canonical-data/champions/verifiedAbilityLabels.json'
 import typeKoLabels from './assets/typeKoLabels.json'
@@ -169,7 +170,6 @@ function sanitizeLockedMoveSlots(input: unknown, slotCount: number): string[][] 
   })
 }
 
-const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
 const MAX_OPPONENTS = 6
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
@@ -1055,19 +1055,6 @@ function sanitizeSelectedIndex(value: unknown, listLength: number) {
   const num = Number(value)
   if (!Number.isInteger(num) || num < 0 || num >= listLength) return 0
   return num
-}
-
-function loadPersistedState(): { value: PersistedState | null; error: boolean } {
-  if (typeof window === 'undefined') return { value: null, error: false }
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { value: null, error: false }
-    const parsed: unknown = JSON.parse(raw)
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid persisted state')
-    return { value: parsed as PersistedState, error: false }
-  } catch {
-    return { value: null, error: true }
-  }
 }
 
 function parseViewStateFromUrl(): ViewState | null {
