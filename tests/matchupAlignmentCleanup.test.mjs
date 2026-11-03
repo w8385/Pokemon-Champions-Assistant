@@ -7,7 +7,8 @@ const css = readFileSync(new URL('../src/features/single/matchupWorkspace.css', 
 const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
 const view = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
-const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
+const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
+const selectors = single.slice(single.indexOf('entrySelectors={(opponentSearch, reset) =>'), single.indexOf('</div>} />', single.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 
 test('one shared top toolbar owns existing opponent search and scoped reset before paired selectors', () => {
   assert.match(view, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)

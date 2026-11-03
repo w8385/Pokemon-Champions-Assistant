@@ -167,7 +167,7 @@ test('own-party management has no pick toggle while opponent picks retain their 
   const partyManagement = app.split("{(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ?")[1]?.split("{mainSection === 'single' && activeTab === 'pick'")[0]
   assert.ok(partyManagement, 'party management route renders')
   assert.doesNotMatch(partyManagement, /setParty\(\(prev\) => togglePicked\(prev, idx\)\)/)
-  assert.match(app, /onClick=\{\(\) => toggleOpponentPicked\(selectedOpp\)\}/)
+  assert.match(readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8'), /onClick=\{\(\) => toggleOpponentPicked\(selectedOpp\)\}/)
   const owner = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
   assert.match(owner, /if \(!entry\?\.key \|\| \(!entry\.picked && prev\.filter\(member => member\.picked\)\.length >= 3\)\) return prev/)
 })

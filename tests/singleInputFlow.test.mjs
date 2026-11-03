@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 const owner_3 = readFileSync(new URL('../src/features/damage/quickModel.ts', import.meta.url), 'utf8')
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const controls = readFileSync(new URL('../src/features/damage/QuickConditions.tsx', import.meta.url), 'utf8')
@@ -13,7 +14,7 @@ const calculator = readFileSync(new URL('../src/features/damage/calculateQuickDa
 test('Single exposes party slot identity, not an inner own-species search; Quick retains both free searches', () => {
   assert.match(card, /comparisonMode \? null : searchField/)
   assert.match(hook, /if \(comparisonMode && side === 'attacker'\) return/)
-  assert.match(app, /const row = indexByKey\.get\(member\.key\); return <button/)
+  assert.match(single, /const row = indexByKey\.get\(member\.key\); return <button/)
   assert.doesNotMatch(app, /singleDraftIdentity\.attacker \|\| member\.key/)
   assert.match(owner_3, /side === 'attacker' && saved\.dirty\.has\('key'\)/)
 })
@@ -25,7 +26,7 @@ test('Quick selected attacker moves keyboard focus to the existing defender sear
 })
 
 test('Single has explicit opponent reset and commits species to registered slots', () => {
-  assert.match(app, /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
+  assert.match(single, /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
   assert.match(panel, /onResetOpponents\?\.\(defenderSearch\)[^\n]*?title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}><UiIcon name="trash"[^>]*\/>\{lt\('상대 초기화'\)\}/)
   assert.match(hook, /onOpponentSpecies\?\.\(key\)/)
   assert.match(hook, /opponentResetRevision/)

@@ -7,6 +7,7 @@ import { getSpeedAbility, speedActivationAllowed } from '../src/domain/battle/sp
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/unifiedEntryFixture.json', import.meta.url)))
 const quickModel = readFileSync(new URL('../src/features/damage/quickModel.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
 const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
 const partyView = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8'), member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8'), board = readFileSync(new URL('../src/features/party/PartyPresetBoard.tsx', import.meta.url), 'utf8'), editorOwner = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8')
 test('saved localized Libero is canonical for selection and damage, source stays Korean', () => {
@@ -35,10 +36,11 @@ test('comparison speed assumptions and nature travel with side, not role',()=>{
  assert.doesNotMatch(app,/const \[abilityActive, setAbilityActive\]/)
 })
 test('default single party starts with pair, not wizard; quick remains independent',()=>{
- assert.match(app,/mainSection === 'single'[^]*?unified-single-pair/)
+ assert.match(app,/mainSection === 'single' \? <SingleEntryComparison/)
+  assert.match(single, /unified-single-pair/)
  assert.match(app, /<PageHeading title=\{lt\(mainSection === 'home'[^]*?'대면'[^]*?'계산기'/)
- assert.match(app,/mainSection === 'single'[^]*?QuickDamagePanel/)
- assert.match(app,/빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요/)
+ assert.match(single, /<QuickDamagePanel language=/)
+ assert.match(single,/빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요/)
  assert.match(app,/group\.links\.map\(link => <a key=\{link\.href\} className="home-route-card calm" href=\{link\.href\}>/)
 })
 test('party route owns the original editor and real callbacks, not a copied comparison panel',()=>{
@@ -56,9 +58,9 @@ test('party route owns the original editor and real callbacks, not a copied comp
  assert.doesNotMatch(app.slice(app.indexOf('mainSection === \'home\' ? ('),app.indexOf('mainSection !== \'home\' && mainSection')), /setMainSection\('double'\)/)
 })
 test('empty Singles comparison sends party registration to party management and retains explicit build apply',()=>{
- const start=app.indexOf('className="unified-single-pair"')
- const end=app.indexOf("{(mainSection === 'party' ||",start)
- const pair=app.slice(start,end)
+ const start=single.indexOf('className="unified-single-pair"')
+ assert.ok(start >= 0)
+ const pair=single.slice(start)
  assert.match(pair,/빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요/)
  assert.match(pair,/onSaveEntry=/)
  assert.doesNotMatch(pair,/href="#\/single\?tab=pick"|href="#\/party"/)

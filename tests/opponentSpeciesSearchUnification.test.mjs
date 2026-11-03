@@ -8,15 +8,17 @@ import { Window } from 'happy-dom'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const tree = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const pickTree = ts.createSourceFile('OpponentsPickView.tsx', readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const fieldNodes = []
-function visit(node) {
-  if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && node.tagName.getText(tree) === 'PokemonSearchField') {
-    const id = node.attributes.properties.find(attr => attr.name?.getText(tree) === 'id')
-    fieldNodes.push({ id: id?.initializer?.getText(tree), text: node.getText(tree) })
+function visit(node, ast = tree) {
+  if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && node.tagName.getText(ast) === 'PokemonSearchField') {
+    const id = node.attributes.properties.find(attr => attr.name?.getText(ast) === 'id')
+    fieldNodes.push({ id: id?.initializer?.getText(ast), text: node.getText(ast) })
   }
-  ts.forEachChild(node, visit)
+  ts.forEachChild(node, child => visit(child, ast))
 }
 visit(tree)
+visit(pickTree, pickTree)
 
 test('legacy strip, quick-entry and selected-slot editor use real shared input with distinct IDs and owner callbacks', () => {
   const matching = fieldNodes.filter(node => /opponent-(?:strip-quick|entry-quick|detail-species)/.test(node.id ?? ''))
@@ -30,7 +32,7 @@ test('legacy strip, quick-entry and selected-slot editor use real shared input w
   }
   assert.match(matching.find(node => node.id.includes('strip-quick')).text, /commitOpponentQuickSearch/)
   assert.match(matching.find(node => node.id.includes('entry-quick')).text, /commitOpponentQuickSearch/)
-  assert.match(matching.find(node => node.id.includes('detail-species')).text, /selectSpecies\('opponent'/)
+  assert.match(matching.find(node => node.id.includes('detail-species')).text, /selectOpponentSpecies\(selectedOpp/)
 })
 
 let server, Field, root, host, act

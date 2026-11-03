@@ -35,7 +35,7 @@ test('explicit new Mega form selection resolves one canonical ability, not a bas
 
 test('actual Single registration and both Quick search callbacks use the form-specific selection only at explicit commit', () => {
   assert.match(quickHook, /const next = \{ \.\.\.quickBlank\(\), key, ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: megaStoneForKey\(key\)/)
-  assert.match(app, /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
+  assert.match(readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8'), /onOpponentSpecies=\{registerSingleOpponentSpecies\}/)
   assert.match(opponentOwner, /registerOpponentSpecies\(opponents, current, key, \(\) => \(\{ \.\.\.blankOpponent\(\), ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: normalizeItemForKey\(key, ''\) \}\)\)/)
   const input = [{ key: 'charizard', ability: '', item: '', revealedMoves: ['파괴광선'] }, { key: '', ability: '', item: '', revealedMoves: [] }]
   const blank = () => ({ key: '', ability: '', item: 'starmienite', revealedMoves: [] })

@@ -51,8 +51,8 @@ test('project disclosure label is localized like the existing project links', ()
 })
 
 test('single matchup does not announce a removed selection-estimate flow', () => {
-  const start = source.indexOf("mainSection === 'single' ? <div")
-  const matchup = source.slice(start, source.indexOf("mainSection === 'party' ||", start))
+  const matchup = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
+  assert.match(source, /mainSection === 'single' \? <SingleEntryComparison/)
   assert.doesNotMatch(matchup, /선출 추정 없이/)
   assert.match(matchup, /comparisonSlots=\{\[selectedMy, selectedOpp\]\} comparisonMode/)
   assert.match(matchup, /onDraftIdentity=/)

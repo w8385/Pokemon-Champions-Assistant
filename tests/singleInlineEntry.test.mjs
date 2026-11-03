@@ -97,9 +97,9 @@ test('source knownness distinguishes absent offense from explicitly recorded zer
 test('own species-only save preserves existing shared-species move catalog', () => {
   const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   assert.doesNotMatch(source, /if \(dirty\.has\('key'\)\) dirty\.add\('moves'\)/)
-  assert.match(source, /if \(dirty\.has\('moves'\)\) setConfirmedMovesByKey/)
+  assert.match(readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8'), /if \(dirty\.has\('moves'\)\) onSaveMoves/)
   assert.doesNotMatch(source, /<QuickDamagePanel key=\{/)
-  assert.match(source, /comparisonSlots=\{\[selectedMy, selectedOpp\]\}/)
+  assert.match(readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8'), /comparisonSlots=\{\[selectedMy, selectedOpp\]\}/)
   assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8'), /if \(key === \(side === 'attacker' \? attacker\.key : defender\.key\)\) \{/)
   const oldCatalog = { cinderace: ['무릎차기', '화염볼', '', ''] }
   const own = { key: 'garchomp', item: '', ability: '', config: { nature: 'hardy', speedStage: 0, scarf: false }, evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 } }

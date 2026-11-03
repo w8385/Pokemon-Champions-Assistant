@@ -123,7 +123,7 @@ test('shared results precede cards, with moves below stats and one opponent sear
   assert.ok(view.indexOf('className="quick-comparison-results"') < view.indexOf('className="quick-sides"'))
   assert.match(card, /\{statCard\(side, entry, row\)\}[^]*?<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)
-  assert.match(app, /entrySelectors=\{\(opponentSearch, reset\) =>[^]*?className="selected-opponent-search">\{opponentSearch\}/)
+  assert.match(readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8'), /entrySelectors=\{\(opponentSearch, reset\) =>[^]*?className="selected-opponent-search">\{opponentSearch\}/)
   assert.doesNotMatch(quick, /single-entry-commit/)
   assert.match(quick, /comparisonMode \?[^]*?비교 초안/)
 })

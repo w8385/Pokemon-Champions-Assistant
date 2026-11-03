@@ -9,7 +9,8 @@ const speed = readFileSync(new URL('../src/features/damage/QuickSpeedPresentatio
 const conditions = readFileSync(new URL('../src/features/damage/QuickConditions.tsx', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const quickProps = readFileSync(new URL('../src/features/damage/QuickDamagePanel.tsx', import.meta.url), 'utf8')
-const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
+const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
+const selectors = single.slice(single.indexOf('entrySelectors={(opponentSearch, reset) =>'), single.indexOf('</div>} />', single.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 
 test('single pair has no saved-record editing detour', () => {
   assert.doesNotMatch(selectors, /href="#\/single\?tab=pick"|href="#\/party"/)

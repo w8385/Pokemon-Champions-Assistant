@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 
 const source = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const owner = ts.createSourceFile('useOpponentEntries.ts', readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+const pick = ts.createSourceFile('OpponentsPickView.tsx', readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const rows = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const maushold = rows.find(row => row.key === 'maushold')
@@ -20,11 +21,15 @@ function visit(node) {
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleBoardStateCards') cardsMemo = node.initializer
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleFriendGuardAvailableOpp') availabilityMemo = node.initializer
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'FRIEND_GUARD_NAMES') legacyNames = node.initializer
-  if (ts.isJsxElement(node) && node.openingElement.tagName.getText(source) === 'select' && node.getText(source).includes('opp-ability-option-')) select = node.openingElement
   if (ts.isConditionalExpression(node) && node.getText(source).includes('doubleFriendGuardAvailableOpp ? <label')) checkbox = node
   ts.forEachChild(node, visit)
 }
 visit(source)
+function visitPick(node) {
+  if (ts.isJsxElement(node) && node.openingElement.tagName.getText(pick) === 'select' && node.getText(pick).includes('opp-ability-option-')) select = node.openingElement
+  ts.forEachChild(node, visitPick)
+}
+visitPick(pick)
 assert.ok(cardsMemo && availabilityMemo && select && checkbox && setOpponentField)
 
 function evaluate(raw, key, classifyAbilityForKey) {
@@ -40,7 +45,7 @@ function evaluate(raw, key, classifyAbilityForKey) {
   })
   vm.runInContext(compile(`const doubleBoardStateCards = ${cardsMemo.getText(source)}; ${legacyNames ? `const FRIEND_GUARD_NAMES = ${legacyNames.getText(source)};` : ''} const doubleFriendGuardAvailableOpp = ${availabilityMemo.getText(source)}; globalThis.available = doubleFriendGuardAvailableOpp; globalThis.cards = doubleBoardStateCards;`), context)
   context.doubleFriendGuardAvailableOpp = context.available
-  vm.runInContext(compile(`const ${setOpponentField.getText(owner)}; globalThis.control = ${checkbox.getText(source)}; globalThis.change = ${select.attributes.properties.find(attr => attr.name?.text === 'onChange').initializer.expression.getText(source)}`), context)
+  vm.runInContext(compile(`const ${setOpponentField.getText(owner)}; globalThis.control = ${checkbox.getText(source)}; globalThis.change = ${select.attributes.properties.find(attr => attr.name?.text === 'onChange').initializer.expression.getText(pick)}`), context)
   return context
 }
 

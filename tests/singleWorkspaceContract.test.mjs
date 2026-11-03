@@ -10,7 +10,8 @@ const conditions = readFileSync(new URL('../src/features/damage/QuickConditions.
 const quick = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
 const quickProps = readFileSync(new URL('../src/features/damage/QuickDamagePanel.tsx', import.meta.url), 'utf8')
-const single = app.slice(app.indexOf("mainSection === 'single' ? <div"), app.indexOf("(mainSection === 'party'", app.indexOf("mainSection === 'single' ? <div")))
+const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
+assert.match(app, /mainSection === 'single' \? <SingleEntryComparison/)
 
 test('entry selectors render inside the actual comparison panel and disable independent identity search/swap', () => {
   assert.match(quickProps, /entrySelectors\?: \(opponentSearch: React\.ReactNode, reset: React\.ReactNode\) => React\.ReactNode/)

@@ -48,7 +48,7 @@ test('opponent item input rejects newly typed unknown without mutating restored 
   const owner = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
   const commit = owner.slice(owner.indexOf('const commitOpponentItemInput ='), owner.indexOf('const commitOpponentAbilityInput ='))
   assert.match(app, /useOpponentEntries\(/)
-  assert.match(app, /commitOpponentItemInput\(selectedOpp/)
+  assert.match(readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8'), /commitOpponentItemInput\(selectedOpp/)
   assert.match(commit, /draft === displayItemLabel\(member\.item, siteLanguage\)/)
   assert.match(commit, /classifyHeldItem\(member\.key, draft\)/)
   assert.match(commit, /if \(!\['none', 'allowed', 'required-stone'\]\.includes\(identity\.status\)\)/)

@@ -10,6 +10,7 @@ import { localizedChampionsItemLabel } from '../src/domain/champions/championsIt
 import { canonicalHeldItem } from '../src/domain/champions/itemIdentity.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const pick = readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8')
 const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const itemPresentation = readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8')
@@ -22,8 +23,8 @@ test('all editable callers use shared candidate row, including sample damage and
     assert.ok(index > 0, `missing ${id}`)
     assert.match(owner.slice(index, index + 1400), /MoveCandidateRow/)
   }
-  for (const id of ['opp-entry-move-${selectedOpp}', 'calc-opp-move-${selectedOpp}']) {
-    assert.match(source, new RegExp('<SearchCombobox id={`'+id.replace(/[${}]/g, m => '\\'+m)+'`'))
+  for (const [id, owner] of [['opp-entry-move-${selectedOpp}', pick], ['calc-opp-move-${selectedOpp}', source]]) {
+    assert.match(owner, new RegExp('<SearchCombobox id={`'+id.replace(/[${}]/g, m => '\\'+m)+'`'))
   }
   assert.doesNotMatch(source, /moveAutocompleteMenuHighlight\(`(?:opp-entry-move|calc-opp-move)/)
 })

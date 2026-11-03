@@ -15,7 +15,7 @@ const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageSta
 const owner = readFileSync(new URL('../src/features/single/useOpponentEntries.ts', import.meta.url), 'utf8')
 const resetStart = owner.indexOf('  const resetSingleOpponentEntry = ')
 const resetEnd = owner.indexOf('  const clearOpponentSlot = ', resetStart)
-assert.ok(resetStart >= 0 && resetEnd > resetStart && source.includes('onResetOpponents={resetSingleOpponentEntry}'))
+assert.ok(resetStart >= 0 && resetEnd > resetStart && readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8').includes('onResetOpponents={resetSingleOpponentEntry}'))
 const reset = owner.slice(resetStart, resetEnd)
 const revisionStart = quickHook.indexOf('  React.useEffect(() => {\n    if (!comparisonMode || !initialSides || !opponentResetRevision')
 const revision = quickHook.slice(revisionStart, quickHook.indexOf('  const opener = ', revisionStart))
