@@ -27,6 +27,7 @@ import { defaultEvs, type EffortValues } from './domain/samples/myPartyChampions
 import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples, filterCreatorSources, groupCreatorSources, individualCreatorSources, relatedCreatorParties, sanitizeLinkDrafts, type CreatorSample, type LibraryFormat, type LibraryLanguage, type LinkDraft } from './domain/samples/creatorSampleLibrary'
 import { SourcePlacementBadge } from './features/samples/SourcePlacementBadge'
 import { CreatorPartySpriteStrip } from './features/party/CreatorPartySpriteStrip'
+import { usePartyWorkspace } from './features/party/usePartyWorkspace'
 import { prepareCreatorParty } from './domain/party/creatorPartyImport'
 import { homeRoute, normalizeRoute, routeGroups, routeIconFor } from './app/navigation'
 import { PageHeading } from './shared/display/PageHeading'
@@ -80,7 +81,7 @@ import { defaultSpeedLineState, parseSpeedLineState, writeSpeedLineState } from 
 import { mergeSpeedLineRoute, speedLineRouteAfterEdit } from './features/speedline/speedLineRouteRestore'
 import { validateBackup } from './adapters/persistence/backupValidation'
 import { STORAGE_KEY, loadPersistedState, persistWorkspace } from './adapters/persistence/appV1'
-import { initializeWorkspace, workspaceReducer, uniquePartyId, fourMoves, runGuardedOcrImport, type PartyWorkspaceAction } from './domain/party/partyWorkspace'
+import { initializeWorkspace, uniquePartyId, fourMoves, runGuardedOcrImport } from './domain/party/partyWorkspace'
 import { additionalFormSpecs, championsData } from './domain/champions/effectiveRoster'
 import verifiedAbilityLabels from './canonical-data/champions/verifiedAbilityLabels.json'
 import typeKoLabels from './assets/typeKoLabels.json'
@@ -2142,24 +2143,13 @@ export default function App() {
     savedPartyPresets: sanitizeSavedPartyPresets(persisted?.savedPartyPresets),
     activePartyPresetId: persisted?.activePartyPresetId,
   }, sanitizeParty(undefined)), [persisted])
-  const [workspace, setWorkspace] = React.useState(initialWorkspace)
-  const workspaceRef = React.useRef(workspace)
-  const workspaceSelectionRevision = React.useRef(0)
-  const dispatchWorkspace = (action: PartyWorkspaceAction) => {
-    const next = workspaceReducer(workspaceRef.current, action)
-    if (action.type === 'IMPORT' || next.activePartyPresetId !== workspaceRef.current.activePartyPresetId) workspaceSelectionRevision.current++
-    workspaceRef.current = next
-    setWorkspace(next)
-  }
+  const { workspace, setParty, setConfirmedMovesByKey,
+    selectPreset, createPreset, renamePreset, addPreset, deletePreset, resetWorkspace, importWorkspace,
+    captureSelection, applyImportedBuild } =
+    usePartyWorkspace(initialWorkspace, () => {
+      if (persistenceStatus !== 'failed' && persistenceStatus !== 'read-failed') setPersistenceStatus('saving')
+    })
   const { party, confirmedMovesByKey, savedPartyPresets, activePartyPresetId } = workspace
-  const setParty = (update: PartyMember[] | ((previous: PartyMember[]) => PartyMember[])) => {
-    if (persistenceStatus !== 'failed' && persistenceStatus !== 'read-failed') setPersistenceStatus('saving')
-    dispatchWorkspace({ type: 'EDIT_PARTY', update })
-  }
-  const setConfirmedMovesByKey = (update: Record<string, string[]> | ((previous: Record<string, string[]>) => Record<string, string[]>)) => {
-    if (persistenceStatus !== 'failed' && persistenceStatus !== 'read-failed') setPersistenceStatus('saving')
-    dispatchWorkspace({ type: 'EDIT_MOVES', update })
-  }
 
   const [persistenceStatus, setPersistenceStatus] = React.useState<'saving' | 'saved' | 'failed' | 'read-failed'>(() => persistedRead.error ? 'read-failed' : 'saving')
   const [allowRecoveryWrite, setAllowRecoveryWrite] = React.useState(!persistedRead.error)
@@ -4743,9 +4733,8 @@ export default function App() {
   }
 
   const applyPartyPreset = (presetId: string) => {
-    const record = savedPartyPresets.find(entry => entry.id === presetId)
-    if (!record || presetId === activePartyPresetId) return
-    dispatchWorkspace({ type: 'SELECT', id: presetId })
+    const record = selectPreset(presetId)
+    if (!record) return
     setPartySearch(record.party.map(member => searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts(record.party.map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setSelectedMy(0)
@@ -4764,7 +4753,7 @@ export default function App() {
       party: prepared.party,
       lockedMovesBySlot: prepared.lockedMovesBySlot,
     }
-    dispatchWorkspace({ type: 'ADD', preset })
+    addPreset(preset)
     setCreatorPartyImportError('')
     setMainSection('party')
     setActiveTab('party')
@@ -4772,7 +4761,7 @@ export default function App() {
 
   const createNewParty = () => {
     const id = `party-${crypto.randomUUID()}`
-    dispatchWorkspace({ type: 'CREATE', id, label: partyPresetLabelDraft.trim() || lt('새 파티'), emptyParty: cloneEmptyParty() })
+    createPreset(id, partyPresetLabelDraft.trim() || lt('새 파티'), cloneEmptyParty())
     setPartyPresetLabelDraft('')
     setPartySearch(emptyParty.map(() => ''))
     setPartyItemDrafts(emptyParty.map(() => ''))
@@ -4783,7 +4772,7 @@ export default function App() {
   const renamePartyPreset = (preset: SavedPartyPreset) => {
     if (typeof window === 'undefined') return
     const nextLabel = window.prompt(lt('파티 이름'), preset.label)?.trim()
-    if (nextLabel) dispatchWorkspace({ type: 'RENAME', id: preset.id, label: nextLabel })
+    if (nextLabel) renamePreset(preset.id, nextLabel)
   }
 
   const saveCurrentSample = () => {
@@ -5006,7 +4995,7 @@ export default function App() {
       : siteLanguage === 'ja' ? '保存パーティ・相手・サンプル・保存リンクを初期化します。独立した計算機のデータは保持されます。続行しますか？'
         : 'Reset saved parties, opponents, samples and saved links? Standalone calculator data will be kept.'
     if (!window.confirm(warning)) return false
-    dispatchWorkspace({ type: 'RESET', id: `party-${crypto.randomUUID()}`, emptyParty: cloneEmptyParty() })
+    resetWorkspace(`party-${crypto.randomUUID()}`, cloneEmptyParty())
     setPartyItemDrafts(emptyParty.map(() => ''))
     setOpponents(emptyOpponents.map((entry) => ({ ...entry, revealedMoves: [...entry.revealedMoves] })))
     setPartySearch(emptyParty.map(() => ''))
@@ -5179,10 +5168,10 @@ export default function App() {
       const nextSelectedMy = sanitizeSelectedIndex(parsed.selectedMy, nextParty.length)
       const nextSelectedOpp = sanitizeSelectedIndex(parsed.selectedOpp, nextOpponents.length)
 
-      dispatchWorkspace({ type: 'IMPORT', workspace: initializeWorkspace({
+      importWorkspace(initializeWorkspace({
         ...(Array.isArray(parsed.party) ? { party: nextParty } : {}),
         ...(parsed.confirmedMovesByKey !== undefined ? { confirmedMovesByKey: nextConfirmedMovesByKey } : {}), savedPartyPresets: nextSavedPartyPresets, activePartyPresetId: parsed.activePartyPresetId,
-      }, sanitizeParty(undefined)) })
+      }, sanitizeParty(undefined)))
       setPartyItemDrafts(nextPartyItemDrafts)
       setOpponents(nextOpponents)
       setOpponentItemDrafts(nextOpponentItemDrafts)
@@ -5247,12 +5236,12 @@ export default function App() {
 
   const applyOcrImportedParty = (imported: OcrImportedPartyMember[], targetId: string) => {
     const nextParty = cloneEmptyParty()
-    const nextConfirmedMovesByKey = { ...workspaceRef.current.confirmedMovesByKey }
+    const importedMovesByKey: Record<string, string[]> = {}
     imported.slice(0, nextParty.length).forEach((entry, idx) => {
       nextParty[idx] = clonePartyMember(entry.member)
-      nextConfirmedMovesByKey[entry.member.key] = entry.lockedMoves
+      importedMovesByKey[entry.member.key] = entry.lockedMoves
     })
-    dispatchWorkspace({ type: 'EDIT_BUILD', targetId, party: nextParty, moves: nextConfirmedMovesByKey })
+    applyImportedBuild(targetId, nextParty, importedMovesByKey)
     setPartySearch(nextParty.map((member) => searchDisplayLabel(member.key, siteLanguage)))
     setPartyItemDrafts(nextParty.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setSelectedMy(firstFilledIndex(nextParty, 0))
@@ -5261,8 +5250,7 @@ export default function App() {
   const importPartyFromImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? [])
     if (!files.length || partyImageImportBusy) return
-    const targetId = workspaceRef.current.activePartyPresetId
-    const selectionRevision = workspaceSelectionRevision.current
+    const { targetId, isCurrent } = captureSelection()
     try {
       setPartyImageImportBusy(true)
       setPartyImageImportStatus(lt('OCR 준비 중...'))
@@ -5285,9 +5273,7 @@ export default function App() {
           return recognize(file, file.name)
         },
         parse: parseOcrImportedPartyDocuments,
-        isCurrent: () => workspaceSelectionRevision.current === selectionRevision
-          && workspaceRef.current.activePartyPresetId === targetId
-          && workspaceRef.current.savedPartyPresets.some(record => record.id === targetId),
+        isCurrent,
         confirm: (imported) => {
           const summary = imported.slice(0, 6).map((entry) => {
             const nature = natureChipLabel(entry.member.config.nature, siteLanguage)
@@ -6137,7 +6123,7 @@ export default function App() {
                     onChange={event => {
                       const nextName = event.target.value
                       setPartyNameDraft(nextName)
-                      if (nextName.trim()) dispatchWorkspace({ type: 'RENAME', id: activePartyPresetId, label: nextName })
+                      if (nextName.trim()) renamePreset(activePartyPresetId, nextName)
                     }}
                     onBlur={() => { if (!partyNameDraft.trim()) setPartyNameDraft(activePartyLabel) }} />
                 </label>
@@ -6168,9 +6154,8 @@ export default function App() {
                       <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 이름 변경')}`} onClick={() => renamePartyPreset(preset)}><UiIcon name="edit" size={17} />{lt('이름 변경')}</button>
                       <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 삭제')}`} onClick={() => {
                         if (!window.confirm(`${preset.label}: ${lt('저장 파티 삭제')}?`)) return
-                        dispatchWorkspace({ type: 'DELETE', id: preset.id, emptyParty: cloneEmptyParty(), replacementId: `party-${crypto.randomUUID()}` })
+                        const next = deletePreset(preset.id, cloneEmptyParty(), `party-${crypto.randomUUID()}`)
                         if (preset.id === activePartyPresetId) {
-                          const next = savedPartyPresets.find(record => record.id !== preset.id)
                           setPartySearch((next?.party ?? emptyParty).map(member => searchDisplayLabel(member.key, siteLanguage)))
                           setPartyItemDrafts((next?.party ?? emptyParty).map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
                         }

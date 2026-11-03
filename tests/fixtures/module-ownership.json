@@ -106,6 +106,7 @@
     "src/features/party/CreatorPartySpriteStrip.tsx",
     "src/features/party/PartyAnalysisPanel.tsx",
     "src/features/party/myPartyPresets.ts",
+    "src/features/party/usePartyWorkspace.ts",
     "src/features/samples/SourcePlacementBadge.tsx",
     "src/features/single/matchupWorkspace.css",
     "src/features/speedline/SpeedLinePanel.tsx",

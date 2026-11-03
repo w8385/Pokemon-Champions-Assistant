@@ -147,7 +147,10 @@ test('import validates before its first state write', () => {
   const importBody = app.split('  const importState = async ')[1]?.split('  const applyOcrImportedParty')[0]
   assert.ok(importBody)
   assert.match(importBody, /validateBackup\(JSON\.parse\(text\)\)/)
-  assert.ok(importBody.indexOf('validateBackup(JSON.parse(text))') < importBody.indexOf("dispatchWorkspace({ type: 'IMPORT'"))
+  assert.match(app, /import \{ usePartyWorkspace \} from '\.\/features\/party\/usePartyWorkspace'/)
+  const owner = readFileSync(new URL('../src/features/party/usePartyWorkspace.ts', import.meta.url), 'utf8')
+  assert.match(owner, /const importWorkspace = \(next: PartyWorkspace\) => dispatchWorkspace\(\{ type: 'IMPORT', workspace: next \}\)/)
+  assert.ok(importBody.indexOf('validateBackup(JSON.parse(text))') < importBody.indexOf('importWorkspace(initializeWorkspace('))
   const firstSetter = importBody.search(/\bset[A-Z]\w*\(/)
   for (const preparation of ['sanitizeParty(parsed.party)', 'sanitizeOpponents(parsed.opponents)', 'sanitizeSavedSamples(parsed.savedSamples)', 'sanitizeSavedPartyPresets(parsed.savedPartyPresets)', 'sanitizeSampleDamageTargets(parsed.sampleDamageTargets)']) {
     assert.ok(importBody.indexOf(preparation) >= 0 && importBody.indexOf(preparation) < firstSetter, `${preparation} must precede every setter`)
