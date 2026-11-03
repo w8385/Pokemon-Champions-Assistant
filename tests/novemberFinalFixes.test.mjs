@@ -10,6 +10,7 @@ import { byDisplayName, compareDisplayName } from '../src/shared/search/displayO
 
 const ast = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const itemAst = ts.createSourceFile('itemPresentation.ts', readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+const entryAst = ts.createSourceFile('entryHelpers.tsx', readFileSync(new URL('../src/shared/display/entryHelpers.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const declarations = new Map()
 let input
 function visit(node) {
@@ -20,6 +21,10 @@ function visit(node) {
 visit(ast)
 function itemVisit(node) { if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ts.isIdentifier(node.name)) declarations.set(node.name.text, { getText: () => node.getText(itemAst).replace(/^export /, '') }); ts.forEachChild(node, itemVisit) }
 itemVisit(itemAst)
+function entryVisit(node) { if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ts.isIdentifier(node.name)) declarations.set(node.name.text, { getText: () => node.getText(entryAst).replace(/^export /, '') })
+  ts.forEachChild(node, entryVisit) }
+entryVisit(entryAst)
+assert.match(readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), /from '\.\/shared\/display\/entryHelpers'/)
 assert.ok(input, 'actual opponent item input JSX')
 const attr = name => input.attributes.properties.find(p => ts.isJsxAttribute(p) && p.name.text === name)?.initializer?.expression
 const transpile = text => ts.transpileModule(text, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText

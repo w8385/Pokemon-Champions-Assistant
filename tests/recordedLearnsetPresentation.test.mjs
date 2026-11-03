@@ -5,6 +5,7 @@ import vm from 'node:vm'
 import ts from 'typescript'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const presentation = readFileSync(new URL('../src/features/damage/quickPresentation.ts', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('quickPresentation.ts', presentation, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 let helper
@@ -25,7 +26,7 @@ test('saved four slots keep raw strings and show outside/unknown provenance in t
     assert.equal(context.label('known', { status: 'ready-verified', moves: [{ name: 'known' }] }, language), null)
   }
   assert.match(readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8'), /recordedLearnsetText\(name, pools\[entry\.key\], language\)/)
-  assert.match(source, /recordedLearnsetText\(move, memberMovePool, siteLanguage\)/)
+  assert.match(member, /recordedLearnsetText\(move, memberMovePool, siteLanguage\)/)
   assert.match(source, /recordedLearnsetText\(move, sampleMovePool, siteLanguage\)/)
   assert.match(presentation, /recordedLearnsetText/)
   assert.match(presentation, /recordedLearnsetText/)

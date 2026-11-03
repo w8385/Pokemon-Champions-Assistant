@@ -7,13 +7,14 @@ import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
-const sections = [app.slice(app.indexOf('const creatorCard ='), app.indexOf('return (\n    <div className="app-shell"')), app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?')), app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))]
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+const sections = [app.slice(app.indexOf('const creatorCard ='), app.indexOf('return (\n    <div className="app-shell"')), member.slice(member.indexOf('slots={registeredMoves.slice(0, 4).map('), member.indexOf('memberTopSuggestedMoves.length ?')), app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))]
 
 test('one shared field owns the input; all three callers supply tooltip-bound props, not input children', () => {
   assert.match(card, /export function RegisteredMoveSlot/)
   assert.match(card, /<input\b[^>]*\{\.\.\.inputProps\}/s)
   assert.doesNotMatch(card, /children \?\? <strong/)
-  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
+  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length + (member.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
   const opponent = app.slice(app.indexOf('ownerId={`sample-opponent-'), app.indexOf('sample-opponent-offense-grid', app.indexOf('ownerId={`sample-opponent-')))
   assert.match(app, /<MoveSlotsEditor[^]*?ownerId=\{`sample-opponent-/)
   assert.match(opponent, /inputProps: \{/)

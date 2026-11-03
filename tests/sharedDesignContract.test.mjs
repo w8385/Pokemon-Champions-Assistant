@@ -7,8 +7,10 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
-const partyStart = source.indexOf('const partySpeciesOptions = filterSpeciesOptions(')
-const party = source.slice(partyStart, source.indexOf('{row ? <><PokemonBuildFields', partyStart))
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8'), board = readFileSync(new URL('../src/features/party/PartyPresetBoard.tsx', import.meta.url), 'utf8'), editorOwner = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8')
+const partyStart = member.indexOf('const partySpeciesOptions = filterSpeciesOptions(')
+const party = member.slice(partyStart, member.indexOf('{row ? <><PokemonBuildFields', partyStart))
+assert.match(source, /<PartyView\b/); assert.match(member, /selectPartySpecies\(idx, key\)/); assert.match(editorOwner, /const selectPartySpecies = /)
 const builderStart = source.indexOf('id="sample-builder-section"')
 const builder = source.slice(builderStart, source.indexOf('<PokemonBuildFields key={`sample-', builderStart))
 const modalStart = source.indexOf("{sampleTuningModalOpen && mainSection === 'sample'")
@@ -16,7 +18,7 @@ const modal = source.slice(modalStart, source.indexOf('<main className="grid pag
 
 test('Party and Builder mount the input-owning shared species picker and keep their select callbacks', () => {
   assert.match(party, /<PokemonSearchField\s+id=\{`party-species-\$\{idx\}`\}/)
-  assert.match(party, /onSelect=\{key => selectSpecies\('party', idx, key\)\}/)
+  assert.match(party, /onSelect=\{key => selectPartySpecies\(idx, key\)\}/)
   assert.match(builder, /<PokemonSearchField\s+id="sample-species-0"/)
   assert.match(builder, /onSelect=\{key => selectSpecies\('sample', 0, key\)\}/)
   assert.doesNotMatch(party, /<input\b|<div className="autocomplete-menu/)
@@ -36,7 +38,7 @@ test('Research Lab mounts real effort modal in its editing screen on matching sp
 })
 
 test('selected preset owns a live editable name; copy/overwrite controls are absent', () => {
-  const preset = source.slice(source.indexOf('<div className="party-preset-controls">'), source.indexOf('party-preset-grid', source.indexOf('<div className="party-preset-controls">')))
+  const preset = board.slice(board.indexOf('<div className="party-preset-controls">'), board.indexOf('party-preset-grid', board.indexOf('<div className="party-preset-controls">')))
   assert.match(preset, /createNewParty/)
   assert.doesNotMatch(preset, /overwriteActivePartyPreset|saveNewPartyPreset/)
 })

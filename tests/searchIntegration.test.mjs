@@ -7,9 +7,11 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const quick = quickView.slice(quickView.indexOf('const sideCard ='), quickView.indexOf('const statCard ='))
-const party = app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?'))
+assert.match(app, /<PartyView\b/)
+const party = member.slice(member.indexOf('slots={registeredMoves.slice(0, 4).map('), member.indexOf('memberTopSuggestedMoves.length ?'))
 const builder = app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))
 const damage = app.slice(app.indexOf('sampleDamageCalcs[0]?.row ?'), app.indexOf('sample-overview-stack sample-workbench-section sample-compare-targets-section', app.indexOf('sampleDamageCalcs[0]?.row ?')))
 

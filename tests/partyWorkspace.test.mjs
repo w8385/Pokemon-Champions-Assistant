@@ -31,10 +31,12 @@ test('App initializes party-facing drafts and selection from the restored active
   assert.equal(recovered.party[0].item,'new-item')
   assert.deepEqual(recovered.confirmedMovesByKey.corviknight,['Brave Bird','','',''])
   const app = readFileSync(new URL('../src/App.tsx',import.meta.url),'utf8')
+  const editor = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8')
+  assert.match(app, /usePartyEditor\(/)
   for (const field of ['partySearch','partyItemDrafts']) {
-    const initialization = app.match(new RegExp(`const \\[${field},[^\\n]+`))?.[0]
+    const initialization = editor.match(new RegExp(`const \\[${field},[^\\n]+`))?.[0]
     assert.ok(initialization, `${field} initializer exists`)
-    assert.match(initialization,/initialWorkspace\.party\.map\(/, `${field} must use the restored record, not the starter party`)
+    assert.match(initialization,/initialParty\.map\(/, `${field} must use the restored record, not the starter party`)
   }
   assert.match(app,/const \[selectedMy, setSelectedMy\][^\n]*initialWorkspace\.party\.length/)
   assert.match(app,/const initialDoubleParty[^\n]*initialWorkspace\.party/)
@@ -111,7 +113,8 @@ test('App routes OCR and selected record mutations through atomic workspace acti
   assert.match(imageFlow,/result === 'stale'[\s\S]*?setPartyImageImportStatus\(lt\('파티 선택이 변경되어 사진을 반영하지 않았습니다\. 다시 시도해 주세요\.'\)\)/)
   assert.match(app,/activePartyPresetId,\s*sampleWorkbenchTab/)
   assert.match(app,/persistWorkspace\(\(\) => window.localStorage, STORAGE_KEY, payload\)/)
-  assert.match(app,/persistenceStatus === 'failed'/)
+  assert.match(readFileSync(new URL('../src/features/party/PartyPresetBoard.tsx', import.meta.url), 'utf8'), /persistenceStatus === 'failed'/)
+  assert.match(app, /<PartyView\b/)
 })
 test('storage exception keeps memory and retry writes latest selected record', () => {
   const a = preset('a',team('a'))

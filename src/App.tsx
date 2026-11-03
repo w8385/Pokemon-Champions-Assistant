@@ -28,9 +28,12 @@ import { catalog, canImportCreatorSample, createLinkDraft, filterCreatorSamples,
 import { SourcePlacementBadge } from './features/samples/SourcePlacementBadge'
 import { CreatorPartySpriteStrip } from './features/party/CreatorPartySpriteStrip'
 import { usePartyWorkspace } from './features/party/usePartyWorkspace'
+import { usePartyEditor } from './features/party/usePartyEditor'
+import { PartyView } from './features/party/PartyView'
 import { prepareCreatorParty } from './domain/party/creatorPartyImport'
 import { homeRoute, normalizeRoute, routeGroups, routeIconFor } from './app/navigation'
 import { PageHeading } from './shared/display/PageHeading'
+import { emptySlotLabel, savedSampleCountLabel, natureChipLabel, resolveItemInput, partyStatValue, displayAbilities, sameMoveField, SmallTypeBadgeImage } from './shared/display/entryHelpers'
 import { UiIcon } from './shared/display/UiIcon'
 import { DamageRangeMeter } from './shared/display/DamageRangeMeter'
 import { libraryDetailHref, libraryListHref, parseLibraryContext, writeLibraryContext, type LibraryViewContext } from './app/libraryViewRoute'
@@ -124,9 +127,6 @@ type OpponentOffenseState = {
 }
 type DamageMoveSelection = { key: string; move: string }
 
-function emptySlotLabel(index: number, language: SiteLanguage) {
-  return `${translateText(language, '빈 슬롯')} ${index + 1}`
-}
 
 function slotNumberLabel(index: number, language: SiteLanguage) {
   return language === 'en' ? `Slot ${index + 1}` : language === 'ja' ? `${index + 1}番` : `${index + 1}번`
@@ -144,9 +144,6 @@ function searchSlotPlaceholder(index: number, language: SiteLanguage) {
   return language === 'en' ? `Search slot ${index + 1} and press Enter` : language === 'ja' ? `${index + 1}番スロットを検索してEnter` : `${index + 1}번 슬롯 검색 후 엔터`
 }
 
-function savedSampleCountLabel(count: number, language: SiteLanguage) {
-  return language === 'en' ? String(count) : language === 'ja' ? `${count}件` : `${count}개`
-}
 
 function clonePartyMember(member: PartyMember): PartyMember {
   return {
@@ -825,9 +822,6 @@ async function fetchPokemonMovePool(key: string) {
   return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
-function natureChipLabel(natureId: NatureId, language: SiteLanguage = 'ko') {
-  return translateText(language, natureById.get(natureId)?.label ?? natureId)
-}
 
 function sanitizeMemberConfig(input: unknown, key = ''): MemberConfig {
   const config = input && typeof input === 'object' ? (input as Partial<MemberConfig>) : {}
@@ -1303,22 +1297,6 @@ function mySpeedNeeds(row: Row, config: MemberConfig, item: string, targetSpeed:
   return { tieEffort, passEffort }
 }
 
-function partyStatValue(row: Row, member: PartyMember, field: keyof EffortValues) {
-  switch (field) {
-    case 'hp':
-      return actualStat(row.hp, member.evs.hp, 1, true)
-    case 'attack':
-      return actualStat(row.attack, member.evs.attack, natureMultiplier(member.config.nature, 'attack'))
-    case 'defense':
-      return actualStat(row.defense, member.evs.defense, natureMultiplier(member.config.nature, 'defense'))
-    case 'spAttack':
-      return actualStat(row.spAttack, member.evs.spAttack, natureMultiplier(member.config.nature, 'spAttack'))
-    case 'spDefense':
-      return actualStat(row.spDefense, member.evs.spDefense, natureMultiplier(member.config.nature, 'spDefense'))
-    case 'speed':
-      return actualStat(row.speed, member.evs.speed, natureMultiplier(member.config.nature, 'speed'))
-  }
-}
 
 function opponentEffortValues(entry: Pick<OpponentState, 'hpEv' | 'defenseEv' | 'spDefenseEv' | 'speedEv'>): EffortValues {
   return {
@@ -1509,10 +1487,6 @@ function filterDexItemOptions(query: string, language: SiteLanguage) {
   }, item => item, language)
 }
 
-function resolveItemInput(key: string, raw: string, _language: SiteLanguage = 'ko') {
-  const identity = classifyHeldItem(key, raw)
-  return identity.status === 'allowed' || identity.status === 'required-stone' ? identity.canonical! : raw
-}
 
 function filterAbilityOptions(options: string[], query: string) {
   const normalized = query.trim().toLowerCase()
@@ -2048,9 +2022,6 @@ function displayTypes(row: Row, language: SiteLanguage) {
   return row.types_ko
 }
 
-function displayAbilities(row: Row, language: SiteLanguage) {
-  return row.abilities.map(slug => localizedAbilityLabel(row, slug, language, abilityDescriptionFor))
-}
 
 function abilitiesForKey(key: string, language: SiteLanguage) {
   const row = indexByKey.get(key)
@@ -2068,9 +2039,6 @@ function defaultAbilityForKey(key: string) {
   return abilityForSpeciesSelection(indexByKey.get(key), '', key, '')
 }
 
-function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample' | 'opponent') {
-  return a?.key === key && a?.slotIdx === slotIdx && a?.scope === scope
-}
 
 function sameItemField(a: ItemFieldTarget, scope: 'party' | 'sample' | 'opponent', idx: number) {
   return a?.scope === scope && a?.idx === idx
@@ -2111,10 +2079,6 @@ function TypeBadgeImage({ type }: { type: string }) {
   return <img src={getTypeBadgeSrc(type)} alt={label} className="type-badge-image" title={label} />
 }
 
-function SmallTypeBadgeImage({ type }: { type: string }) {
-  const label = getTypeBadgeLabel(type)
-  return <img src={getTypeBadgeSrc(type)} alt={label} className="move-autocomplete-type-icon" title={label} />
-}
 
 
 function PartyContextBar({ language, label, activeId, records, selectedMy, selectedOpp, mode, onSelect }: {
@@ -2278,7 +2242,6 @@ export default function App() {
   const [moveFilter, setMoveFilter] = React.useState<MoveFilter>('all')
   const [sampleMoveFilter, setSampleMoveFilter] = React.useState<MoveFilter>('core')
   const [moveSearch, setMoveSearch] = React.useState('')
-  const [partySearch, setPartySearch] = React.useState<string[]>(() => initialWorkspace.party.map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentSearch, setOpponentSearch] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => searchDisplayLabel(member.key, 'ko')))
   const [opponentItemDrafts, setOpponentItemDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [opponentAbilityDrafts, setOpponentAbilityDrafts] = React.useState<string[]>(() => sanitizeOpponents(persisted?.opponents).map((member) => member.ability ?? ''))
@@ -2295,6 +2258,21 @@ export default function App() {
   const [settingsMenuOpen, setSettingsMenuOpen] = React.useState(false)
   const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
   const partyTuningOpener = React.useRef<HTMLElement | null>(null)
+  const partyEditor = usePartyEditor({
+    initialParty: initialWorkspace.party, emptyParty, workspace, setParty, selectPreset, createPreset, renamePreset, deletePreset,
+    language: siteLanguage, defaultNatureForKey, onSelectMy: setSelectedMy, onCloseTuning: () => setTuningModalIndex(null),
+    onPresetSelectControls: () => {
+      setActiveItemField(prev => prev?.scope === 'party' ? null : prev)
+      setActiveMoveField(prev => prev?.scope === 'party' ? null : prev)
+    },
+    onClearSlotControls: (idx, key) => {
+      setActiveItemField(prev => sameItemField(prev, 'party', idx) ? null : prev)
+      setActiveMoveField(prev => prev?.scope === 'party' && prev.key === key ? null : prev)
+      if (tuningModalIndex === idx) setTuningModalIndex(null)
+      if (selectedMy === idx) setSelectedMy(0)
+    },
+  })
+  const { partySearch, setPartySearch, partyItemDrafts, setPartyItemDrafts, partyPresetLabelDraft, setPartyPresetLabelDraft, partyNameDraft, setPartyNameDraft, activePartyLabel, applyPartyPreset, createNewParty, renamePartyPreset, resetPartyForFreshEntry, clearPartySlot, selectPartySpecies } = partyEditor
   const [sampleForge, setSampleForge] = React.useState<PartyMember>(() => persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge())
   const [sampleLockedMoves, setSampleLockedMoves] = React.useState<string[]>(() => persisted?.sampleLockedMoves ? sanitizeMoveSlotList(persisted.sampleLockedMoves) : sanitizeConfirmedMovesByKey(persisted?.confirmedMovesByKey)[(persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] ?? defaultSampleForge() : defaultSampleForge()).key] ?? [])
   const [sampleSearch, setSampleSearch] = React.useState(() => searchDisplayLabel((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, 'ko'))
@@ -2317,10 +2295,6 @@ export default function App() {
   const [savedSamples, setSavedSamples] = React.useState<SavedSample[]>(() => sanitizeSavedSamples(persisted?.savedSamples))
   const [partyImageImportBusy, setPartyImageImportBusy] = React.useState(false)
   const [partyImageImportStatus, setPartyImageImportStatus] = React.useState('')
-  const [partyPresetLabelDraft, setPartyPresetLabelDraft] = React.useState('')
-  const activePartyLabel = savedPartyPresets.find(record => record.id === activePartyPresetId)?.label ?? ''
-  const [partyNameDraft, setPartyNameDraft] = React.useState(activePartyLabel)
-  React.useEffect(() => { setPartyNameDraft(activePartyLabel) }, [activePartyPresetId, activePartyLabel])
   const [creatorPartyImportError, setCreatorPartyImportError] = React.useState('')
   const [sampleWorkbenchTab, setSampleWorkbenchTab] = React.useState<SampleWorkbenchTab>(() => viewState?.sampleWorkbenchTab ?? ((persisted?.sampleWorkbenchTab as string) === 'rankers' ? 'library' : ['builder','speed','damage','library'].includes(persisted?.sampleWorkbenchTab ?? '') ? persisted!.sampleWorkbenchTab! : 'builder'))
   const [librarySourceId, setLibrarySourceId] = React.useState<string | null>(() => viewState?.librarySourceId ?? null)
@@ -2360,7 +2334,6 @@ export default function App() {
   }, [mainSection, sampleWorkbenchTab === 'library', sampleForge.key])
   const [sampleLabelDraft, setSampleLabelDraft] = React.useState('')
   const [opponentQuickSearch, setOpponentQuickSearch] = React.useState('')
-  const [partyItemDrafts, setPartyItemDrafts] = React.useState<string[]>(() => initialWorkspace.party.map((member) => displayItemLabel(visibleChampionsItem(member.key, member.item), 'ko')))
   const [sampleItemDraft, setSampleItemDraft] = React.useState(() => displayItemLabel(visibleChampionsItem((persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).key, (persisted?.sampleForge ? sanitizeParty([persisted.sampleForge])[0] : defaultSampleForge()).item), 'ko'))
   const [dexMoveLearnerResult, setDexMoveLearnerResult] = React.useState<{ name: string; status: 'loading' | 'ready' | 'missing' | 'error'; keys: string[] } | null>(null)
   const [movePoolByKey, setMovePoolByKey] = React.useState<Record<string, SharedPoolState>>({})
@@ -3158,9 +3131,7 @@ export default function App() {
     const safeSelectedOpp = sanitizeSelectedIndex(selectedOpp, opponents.length)
     if (safeSelectedMy !== selectedMy) setSelectedMy(safeSelectedMy)
     if (safeSelectedOpp !== selectedOpp) setSelectedOpp(safeSelectedOpp)
-    setPartySearch((prev) => party.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
     setOpponentSearch((prev) => opponents.map((member, idx) => prev[idx] ?? searchDisplayLabel(member.key, siteLanguage)))
-    setPartyItemDrafts((prev) => party.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setOpponentItemDrafts((prev) => opponents.map((member, idx) => prev[idx] ?? displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
     setOpponentAbilityDrafts((prev) => opponents.map((member, idx) => prev[idx] ?? member.ability ?? ''))
   }, [party, opponents, selectedMy, selectedOpp, siteLanguage])
@@ -3475,26 +3446,6 @@ export default function App() {
   const mySpeed = partySpeedValue(myRow, myMember)
   const mySpeedAbilityLine = myRow ? mySpeedAbilityMarker(myRow, myMember, siteLanguage, calcWeather, calcTerrain) : null
   const oppSpeed = oppRow ? opponentSpeedValue(oppRow, oppMember) : null
-  const partyAnalysisLoading = Object.keys(MOVE_META_BY_NAME).length === 0
-  const partyAnalysis = React.useMemo(() => {
-    const unknownKeys: string[] = []
-    const members = party.flatMap((member, slot) => {
-      if (!member.key) return []
-      const row = indexByKey.get(member.key)
-      if (!row) { unknownKeys.push(member.key); return [] }
-      const selectedAbility = member.ability ? resolveSelectedAbility(row, member.ability, siteLanguage) : null
-      if (member.ability && !selectedAbility) unknownKeys.push(`${member.key} · 특성 원본: ${member.ability}`)
-      const ability = selectedAbility?.slug ?? ''
-      const moves = (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4).map(name => {
-        const base = lookupMoveMeta(name)
-        const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability)
-        return { name, type: adjusted?.type ?? null, category: adjusted?.category ?? null }
-      })
-      return [{ key: member.key, name: displayName(row, siteLanguage), sprite: row.sprite, types: row.types, ability, moves, slot }]
-    })
-    return analyzePartyMatchups(members, normalizedTypeChart, { unknownKeys, offensiveEffectiveness: (type, target, ability) => abilityAdjustedTypeEffectiveness(type, [target], '', ability) })
-  }, [party, confirmedMovesByKey, asyncDataVersion, siteLanguage])
-
   const pickedOpponents = opponents.filter((member) => member.picked)
   // Assumptions belong to this screen only; an opponent slot/form switch starts fresh.
   const singleSpeedIdentity = `${selectedOpp}:${oppMember.key}:${oppRow?.key ?? ''}`
@@ -3908,29 +3859,7 @@ export default function App() {
   }
   const selectSpecies = (side: 'party' | 'opponent' | 'sample', idx: number, key: string) => {
     if (side === 'party') {
-      const member = party[idx]
-      if (!member) return
-      if (key === member.key) {
-        setPartySearch(prev => prev.map((value, slot) => slot === idx ? searchDisplayLabel(key, siteLanguage) : value))
-        return
-      }
-      const next = [...party]
-      next[idx] = { ...member, key, ability: defaultAbilityForKey(key), item: normalizeItemForKey(key, member.item), config: { ...member.config, nature: defaultNatureForKey(key) } }
-      setParty(next)
-      setPartyItemDrafts((prev) => {
-        const nextDrafts = [...prev]
-        nextDrafts[idx] = displayItemLabel(visibleChampionsItem(key, next[idx].item), siteLanguage)
-        return nextDrafts
-      })
-      const nextSearch = [...partySearch]
-      nextSearch[idx] = searchDisplayLabel(key, siteLanguage)
-      setPartySearch(nextSearch)
-      const nextEmptyIdx = next.findIndex((entry, entryIdx) => entryIdx > idx && !entry.key)
-      if (nextEmptyIdx >= 0) {
-        window.setTimeout(() => {
-          document.getElementById(`party-species-${nextEmptyIdx}`)?.focus()
-        }, 0)
-      }
+      selectPartySpecies(idx, key)
     } else if (side === 'opponent') {
       const member = opponents[idx]
       if (!member) return
@@ -4732,17 +4661,6 @@ export default function App() {
     setActiveTab('party')
   }
 
-  const applyPartyPreset = (presetId: string) => {
-    const record = selectPreset(presetId)
-    if (!record) return
-    setPartySearch(record.party.map(member => searchDisplayLabel(member.key, siteLanguage)))
-    setPartyItemDrafts(record.party.map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
-    setSelectedMy(0)
-    setActiveItemField(prev => prev?.scope === 'party' ? null : prev)
-    setActiveMoveField(prev => prev?.scope === 'party' ? null : prev)
-    setTuningModalIndex(null)
-  }
-
   const importCreatorParty = (source: ReturnType<typeof groupCreatorSources>[number]) => {
     // Validate every slot and resolve form-specific abilities before touching state.
     const prepared = prepareCreatorParty(source, key => indexByKey.get(key)?.abilities_ko ?? null)
@@ -4757,22 +4675,6 @@ export default function App() {
     setCreatorPartyImportError('')
     setMainSection('party')
     setActiveTab('party')
-  }
-
-  const createNewParty = () => {
-    const id = `party-${crypto.randomUUID()}`
-    createPreset(id, partyPresetLabelDraft.trim() || lt('새 파티'), cloneEmptyParty())
-    setPartyPresetLabelDraft('')
-    setPartySearch(emptyParty.map(() => ''))
-    setPartyItemDrafts(emptyParty.map(() => ''))
-    setSelectedMy(0)
-    setTuningModalIndex(null)
-  }
-
-  const renamePartyPreset = (preset: SavedPartyPreset) => {
-    if (typeof window === 'undefined') return
-    const nextLabel = window.prompt(lt('파티 이름'), preset.label)?.trim()
-    if (nextLabel) renamePreset(preset.id, nextLabel)
   }
 
   const saveCurrentSample = () => {
@@ -4957,26 +4859,6 @@ export default function App() {
     setOpponentResetRevision(prev => prev + 1)
     window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
     return true
-  }
-
-  const resetPartyForFreshEntry = () => {
-    const label = savedPartyPresets.find(record => record.id === activePartyPresetId)?.label ?? lt('새 파티')
-    if (!window.confirm(`${label}: ${lt('현재 파티 비우기')} (6)`)) return
-    setParty(cloneEmptyParty())
-    setPartySearch(emptyParty.map(() => ''))
-    setPartyItemDrafts(emptyParty.map(() => ''))
-    setSelectedMy(0)
-    setTuningModalIndex(null)
-  }
-
-  const clearPartySlot = (idx: number) => {
-    setParty((prev) => prev.map((member, memberIdx) => memberIdx === idx ? { ...emptyParty[idx], evs: { ...emptyParty[idx].evs }, config: { ...emptyParty[idx].config }, tuning: { ...emptyParty[idx].tuning } } : member))
-    setPartySearch((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
-    setPartyItemDrafts((prev) => prev.map((value, valueIdx) => valueIdx === idx ? '' : value))
-    setActiveItemField((prev) => sameItemField(prev, 'party', idx) ? null : prev)
-    setActiveMoveField((prev) => prev?.scope === 'party' && prev.key === party[idx]?.key ? null : prev)
-    if (tuningModalIndex === idx) setTuningModalIndex(null)
-    if (selectedMy === idx) setSelectedMy(0)
   }
 
   const clearOpponentSlot = (idx: number) => {
@@ -6098,166 +5980,15 @@ export default function App() {
             <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setSingleDraftIdentity(prev => ({ ...prev, attacker: '' })); setSelectedMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key ? <small>{lt('빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong></div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setSingleDraftIdentity(prev => ({ ...prev, defender: '' })); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, siteLanguage) : lt('빈 슬롯')}</span></button> })}</div></div></div>
           </div>} />
         </div> : null}
-        {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <section className="panel wide">
-          <div className="party-columns party-manage-columns">
-            <div className="section-head row-between party-actions-heading">
-              <div className="inline-controls compact-actions">
-                <button type="button" className="action-button" onClick={() => partyImageInputRef.current?.click()} disabled={partyImageImportBusy}><UiIcon name="upload" size={17} />{partyImageImportBusy ? lt('OCR 추출 중...') : lt('이미지에서 파티 가져오기')}</button>
-                <button type="button" className="action-button danger" onClick={resetPartyForFreshEntry}><UiIcon name="trash" size={17} />{lt('현재 파티 비우기')}</button>
-              </div>
-            </div>
-            <div className="party-preset-board">
-              <div className="party-preset-board-head row-between">
-                <strong>{lt('저장한 파티')}</strong>
-                <span className="muted-inline">{savedSampleCountLabel(savedPartyPresets.length, siteLanguage)}</span>
-              </div>
-              <div className="party-preset-controls">
-                <input
-                  value={partyPresetLabelDraft}
-                  onChange={(e) => setPartyPresetLabelDraft(e.target.value)}
-                  placeholder={lt('파티 이름')}
-                />
-                <button type="button" className="pick-chip" onClick={createNewParty}><UiIcon name="plus" size={17} />{lt('새 파티')}</button>
-                <label className="party-active-name">{lt('선택 파티 이름')}
-                  <input aria-label={lt('선택 파티 이름')} value={partyNameDraft}
-                    onChange={event => {
-                      const nextName = event.target.value
-                      setPartyNameDraft(nextName)
-                      if (nextName.trim()) renamePreset(activePartyPresetId, nextName)
-                    }}
-                    onBlur={() => { if (!partyNameDraft.trim()) setPartyNameDraft(activePartyLabel) }} />
-                </label>
-              </div>
-              <div role="status" aria-live="polite" className={persistenceStatus === 'failed' || persistenceStatus === 'read-failed' ? 'party-persistence-error' : 'muted-inline'}>
-                {persistenceStatus === 'read-failed' ? lt('저장 데이터 읽기 실패 · 원본 보호 중') : persistenceStatus === 'failed' ? lt('저장 실패 · 변경은 현재 화면에만 유지') : persistenceStatus === 'saving' ? lt('저장 중') : lt('자동 저장됨')}
-                {persistenceStatus === 'failed' ? <button type="button" className="pick-chip" onClick={() => { setPersistenceStatus('saving'); setRetryPersistence(value => value + 1) }}>{lt('저장 재시도')}</button> : null}
-                {persistenceStatus === 'read-failed' ? <button type="button" className="pick-chip" onClick={() => {
-                  if (window.confirm(lt('원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?'))) { setPersistenceStatus('saving'); setAllowRecoveryWrite(true) }
-                }}>{lt('원본 덮어쓰기 확인')}</button> : null}
-              </div>
-              {partyImageImportStatus ? <span className="muted-inline">{partyImageImportStatus}</span> : null}
-              <div className="party-preset-grid">
-                {savedPartyPresets.length ? savedPartyPresets.map((preset) => {
-                  const leadMembers = preset.party.filter((member) => member.key).slice(0, 6)
-                  return <div key={preset.id} className={`party-preset-card ${activePartyPresetId === preset.id ? 'active' : ''}`}>
-                    <button type="button" aria-pressed={activePartyPresetId === preset.id} className="party-preset-card-main" onClick={() => applyPartyPreset(preset.id)}>
-                      <div className="party-preset-sprite-row">
-                        {leadMembers.length ? leadMembers.map((member, idx) => {
-                          const row = indexByKey.get(member.key) ?? rows[0]
-                          return row?.sprite ? <img key={`${preset.id}-${member.key}-${idx}`} src={row.sprite} alt={displayName(row, siteLanguage)} className="party-preset-sprite" /> : null
-                        }) : <span className="muted-inline">—</span>}
-                      </div>
-                      <strong>{preset.label}</strong>
-                      <span className="muted-inline">{leadMembers.length}/6</span>
-                    </button>
-                    <div className="party-preset-card-actions">
-                      <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 이름 변경')}`} onClick={() => renamePartyPreset(preset)}><UiIcon name="edit" size={17} />{lt('이름 변경')}</button>
-                      <button type="button" className="pick-chip" aria-label={`${preset.label}: ${lt('저장 파티 삭제')}`} onClick={() => {
-                        if (!window.confirm(`${preset.label}: ${lt('저장 파티 삭제')}?`)) return
-                        const next = deletePreset(preset.id, cloneEmptyParty(), `party-${crypto.randomUUID()}`)
-                        if (preset.id === activePartyPresetId) {
-                          setPartySearch((next?.party ?? emptyParty).map(member => searchDisplayLabel(member.key, siteLanguage)))
-                          setPartyItemDrafts((next?.party ?? emptyParty).map(member => displayItemLabel(visibleChampionsItem(member.key, member.item), siteLanguage)))
-                        }
-                      }}><UiIcon name="trash" size={17} />{lt('삭제')}</button>
-                    </div>
-                  </div>
-                }) : <p className="muted">{lt('아직 저장한 파티가 없습니다.')}</p>}
-              </div>
-            </div>
-            <div className="entry-grid manage-entry-grid">
-              {party.map((member, idx) => {
-                const row = member.key ? (indexByKey.get(member.key) ?? rows[0]) : null
-                const fixedMegaStone = megaStoneForKey(member.key)
-                const abilityOptions = row ? displayAbilities(row, siteLanguage) : []
-                const memberMoveSet = sampleMoves.find((entry) => entry.key === member.key)
-                const memberMovePool = movePoolByKey[member.key]
-                const memberMoveOptions = choicesForPool(memberMovePool)
-                const memberTopSuggestedMoves = usageTopMovesForKey(member.key)
-                const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
-                const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
-                const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
-                while (registeredMoves.length < 4) registeredMoves.push('')
-                return (
-                  <div key={`${member.key}-${idx}`} id={`party-slot-${idx}`} className={`card entry-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
-                    <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
-                      actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}><UiIcon name="trash" size={17} /><span className="visually-hidden">{idx + 1} · {lt('슬롯 비우기')}</span></button> : null} name={
-                            <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"
-                              inputClassName="party-inline-species-input" value={partySearch[idx] ?? ''}
-                              placeholder={row ? lt('포켓몬 검색') : emptySlotLabel(idx, siteLanguage)}
-                              onChange={value => setPartySearch(prev => prev.map((text, slot) => slot === idx ? value : text))}
-                              onSelect={key => selectSpecies('party', idx, key)}
-                              options={partySpeciesOptions.map(option => ({ key: option.key, label: searchDisplayLabel(option.key, siteLanguage), sprite: indexByKey.get(option.key)?.sprite }))} />
-                    } />
-                    {row ? <><PokemonBuildFields key={`${idx}-${member.key}`} identity={`${idx}-${member.key}`}
-                      ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} abilityError={heldAbilityError(member.key, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
-                      abilities={abilityOptions.map(value => ({ value, label: value }))}
-                      natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
-                      itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(member.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
-                      onAbility={ability => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, ability } : entry))}
-                      onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature: nature as NatureId } } : entry))}
-                      onItem={item => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, item: item ? resolveItemInput(entry.key, item, siteLanguage) : '' } : entry))}
-                      labels={{ ability: lt('특성'), nature: lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
-                      itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(member.key, value)} fixedItem={fixedMegaStone}
-                      itemError={heldItemError(member.key, member.item, siteLanguage)} repairLabel={siteLanguage === 'ko' ? `${fixedMegaStone} 장착` : siteLanguage === 'ja' ? `${fixedMegaStone} を装備` : `Equip ${fixedMegaStone}`}
-                      abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, row) : null)}
-                      itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
-                    />{memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}</> : null}
-                    {row ? <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))} onTune={() => { partyTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setTuningModalIndex(idx) }} /> : null}
-                    {row ? <MoveSlotsEditor className="inline-move-card" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
-                      toolbar={<>
-                        {member.key ? learnsetStatusText(memberMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null : null}
-                        {memberMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
-                      </>}
-                      slots={registeredMoves.slice(0, 4).map((move, moveIdx) => {
-                          const moveType = findMoveType(move)
-                          return { id: `${moveIdx}`, name: sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, type: moveType, meta: resolveMoveMeta(move, memberMoveOptions, movePoolByKey), className: moveTypeThemeClass(moveType),
-                            tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
-                            search: { id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                              onSelect: option => { selectMoveOption(member.key, moveIdx, option.key); setActiveMoveField(null) },
-                              optionClassName: option => moveTypeThemeClass(memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
-                              renderOption: option => <MoveCandidateRow name={option.label} type={memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
-                              optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
-                            inputProps: {
-                              placeholder: memberMovePool?.status === 'loading' ? lt('기술풀 불러오는 중…') : memberMoveOptions.length ? lt('사용 가능 기술 검색') : lt('기술 입력'),
-                              onFocus: () => {
-                                setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
-                                setMoveInputDraft(move)
-                                setMoveCommitNotice(null)
-                              },
-                              onBlur: (e) => {
-                                if (sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null) commitEditorMove(e.target.value, move, memberMovePool, member.key, moveIdx, 'party')
-                                setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev)
-                              },
-
-                              onChange: (e) => {
-                                setMoveInputDraft(e.target.value)
-                                setActiveMoveField({ key: member.key, slotIdx: moveIdx, scope: 'party' })
-                              },
-                            }, children: <>{recordedLearnsetText(move, memberMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, memberMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, member.key, moveIdx, 'party') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</> }
-                        })}
-                      belowGrid={memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
-                        <div className="row-between sample-track-head compact-gap">
-                          <strong>{lt('사용률 상위 기술')}</strong>
-                          <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
-                        </div>
-                        <div className="move-chip-wrap">
-                          {memberTopSuggestedMoves.map((move) => {
-                            const locked = registeredMoves.includes(move)
-                            const eligible = Boolean(resolveEligibleMoveInput(move, memberMovePool))
-                            const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
-                            const moveType = findMoveType(move)
-                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(member.key, move)} disabled={!eligible} title={!eligible ? reason : undefined} aria-label={!eligible ? `${move} — ${reason}` : move} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{moveType ? <SmallTypeBadgeImage type={moveType} /> : null}<span>{move}</span></button>
-                          })}
-                        </div>
-                      </div> : null} /> : null}
-                  </div>
-                )
-              })}
-            </div>
-            <PartyAnalysisPanel analysis={partyAnalysis} language={siteLanguage} loading={partyAnalysisLoading} />
-          </div>
-        </section> : null}
+        {(mainSection === 'party' || (mainSection === 'double' && activeTab === 'party')) ? <PartyView workspace={workspace} editor={partyEditor} siteLanguage={siteLanguage} mainSection={mainSection} asyncDataVersion={asyncDataVersion}
+          movePoolByKey={movePoolByKey} moveSlotLabels={moveSlotLabels}
+          moves={{ activeMoveField, moveInputDraft, moveCommitNotice, setActiveMoveField, setMoveInputDraft, setMoveCommitNotice, selectMoveOption, commitEditorMove, applyMoveToSlot }}
+          tooltip={{ bindTooltip, abilityTooltipData, itemTooltipData, moveTooltipData }}
+          persistenceStatus={persistenceStatus} partyImageImportBusy={partyImageImportBusy} partyImageImportStatus={partyImageImportStatus}
+          onOpenImageImport={() => partyImageInputRef.current?.click()}
+          onRetrySave={() => { setPersistenceStatus('saving'); setRetryPersistence(value => value + 1) }}
+          onApproveOverwrite={() => { if (window.confirm(lt('원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?'))) { setPersistenceStatus('saving'); setAllowRecoveryWrite(true) } }}
+          onTune={idx => { partyTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setTuningModalIndex(idx) }} setParty={setParty} /> : null}
 
         {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || (mainSection === 'double' && activeTab === 'pick')) ? <>
         <section className="panel wide">

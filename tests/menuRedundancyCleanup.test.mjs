@@ -6,15 +6,17 @@ const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const quickView = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
 const speed = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
+const board = readFileSync(new URL('../src/features/party/PartyPresetBoard.tsx', import.meta.url), 'utf8'), editorOwner = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8'), partyView = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8')
 const region = (begin, end) => app.slice(app.indexOf(begin), app.indexOf(end, app.indexOf(begin)))
-const party = region('className="party-preset-board"', 'className="entry-grid manage-entry-grid"')
+assert.match(app, /<PartyView\b/)
+const party = board
 const lab = app.slice(app.indexOf('className="sample-builder-action-card"'), app.indexOf('id="sample-saved-card"') + 6000)
 
 test('saved party card selects directly, while distinct actions remain separate', () => {
   assert.match(party, /<button type="button" aria-pressed=\{activePartyPresetId === preset.id\} className="party-preset-card-main" onClick=\{\(\) => applyPartyPreset\(preset.id\)\}>/)
   assert.doesNotMatch(party, /confirmAndApplyPartyPreset|파티 불러오기|저장 파티 덮어쓰기|lt\('파티 저장'\)/)
-  for (const text of ['새 파티', '저장 파티 이름 변경', '저장 파티 삭제', '현재 파티 비우기', '이미지에서 파티 가져오기']) assert.ok(app.includes(`lt('${text}')`), text)
-  for (const handler of ['createNewParty', 'renamePartyPreset', 'resetPartyForFreshEntry']) assert.ok(party.includes(handler) || app.includes(`onClick={${handler}}`), handler)
+  for (const text of ['새 파티', '저장 파티 이름 변경', '저장 파티 삭제', '현재 파티 비우기', '이미지에서 파티 가져오기']) assert.ok((app + board + editorOwner).includes(`lt('${text}')`), text)
+  for (const handler of ['createNewParty', 'renamePartyPreset', 'resetPartyForFreshEntry']) assert.ok(party.includes(handler) || editorOwner.includes(`const ${handler}`), handler)
 })
 
 test('builder removes only secondary build echoes and keeps tuning, calculation and saved-card identity', () => {

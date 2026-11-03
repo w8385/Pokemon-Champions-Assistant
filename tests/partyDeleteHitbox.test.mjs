@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
+import ts from 'typescript'
 
 let server, Heading
 test.before(async () => {
@@ -33,7 +34,30 @@ test('clear control has a visible 44px target without absolute positioning or hi
   assert.match(css, /\.entry-card-actions\s*\{[^}]*flex-shrink:\s*0/)
   assert.doesNotMatch(css, /\.entry-card-clear-button::(?:before|after)/)
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const start = app.indexOf('const partySpeciesOptions = filterSpeciesOptions(')
-  const party = app.slice(start, app.indexOf('{row ? <><PokemonBuildFields', start))
-  assert.match(party, /actions=\{row \? <button[^]*?onClick=\{\(\) => clearPartySlot\(idx\)\}/)
+  assert.match(app, /<PartyView\b/)
+  const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+  const headingActions = source => {
+    const ast = ts.createSourceFile('PartyMemberCard.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+    assert.equal(ast.parseDiagnostics.length, 0, 'PartyMemberCard TSX must parse')
+    const headings = []
+    const visit = node => {
+      if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && node.tagName.getText(ast) === 'PokemonCardHeading') {
+        headings.push(node)
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(ast)
+    assert.equal(headings.length, 1, 'exactly one PokemonCardHeading must own the clear button')
+    const actions = headings[0].attributes.properties.filter(attribute => ts.isJsxAttribute(attribute) && attribute.name.text === 'actions')
+    assert.equal(actions.length, 1, 'heading must have exactly one actions attribute')
+    return actions[0].getText(ast)
+  }
+  const actions = headingActions(member)
+  assert.match(actions, /actions=\{row \? <button[^]*?onClick=\{\(\) => clearPartySlot\(idx\)\}/)
+  const withoutActions = member.replace(/\s+actions=\{row \? <button[^]*?<\/button> : null\}/, '')
+  assert.notEqual(withoutActions, member, 'mutation must remove the heading actions')
+  assert.throws(() => headingActions(withoutActions), /exactly one actions attribute/)
+  const withoutHeadingEnd = member.replace(/\}\s*\/>\s*(?=\{row \? <><PokemonBuildFields)/, '')
+  assert.notEqual(withoutHeadingEnd, member, 'mutation must remove the heading close boundary')
+  assert.throws(() => headingActions(withoutHeadingEnd), /PartyMemberCard TSX must parse/)
 })

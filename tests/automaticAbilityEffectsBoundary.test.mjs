@@ -7,6 +7,8 @@ import { weatherFromAbility, terrainFromAbility, deriveAutoWeatherFromAbilities,
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const partyViewSource = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8')
+const partyViewAst = ts.createSourceFile('PartyView.tsx', partyViewSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const abilitySource = readFileSync(new URL('../src/shared/display/abilityPresentation.ts', import.meta.url), 'utf8')
 const abilityAst = ts.createSourceFile('abilityPresentation.ts', abilitySource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
@@ -85,7 +87,15 @@ try {
     assert.deepEqual(actualVariable('sampleDamageDefenderAbilitySlugs', { sampleDamageTargets, indexByKey, siteLanguage, resolveSelectedAbility }), [''])
     const selectedAbility = resolve(wrong.key, 'disguise')
     assert.equal(selectedAbility, null)
-    assert.equal(actualVariable('ability', { selectedAbility, member: target }), '')
+    assert.match(source, /import \{ PartyView \} from '\.\/features\/party\/PartyView'/)
+    let actualPartyAbility
+    function findPartyAbility(node) {
+      if (ts.isVariableDeclaration(node) && node.name.getText(partyViewAst) === 'ability' && node.initializer?.getText(partyViewAst).includes('selectedAbility')) actualPartyAbility = node
+      ts.forEachChild(node, findPartyAbility)
+    }
+    findPartyAbility(partyViewAst)
+    assert.ok(actualPartyAbility, 'real PartyView ability projection')
+    assert.equal(evaluate(`return ${actualPartyAbility.initializer.getText(partyViewAst)}`, { selectedAbility }), '')
   })
   test('only verified form aliases drive effects, blanks remain neutral, and explicit repair restores effects', () => {
     const pelipper = row('pelipper')

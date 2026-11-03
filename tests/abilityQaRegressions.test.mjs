@@ -7,14 +7,19 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+const editor = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8')
 const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url)))
 const labels = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/verifiedAbilityLabels.json', import.meta.url))).abilities
 
 test('party and builder explicitly reselecting the same key retain every manually edited build field', () => {
   const callback = app.slice(app.indexOf('const selectSpecies = ('), app.indexOf('const trackedKeys ='))
-  assert.match(callback, /if \(key === member\.key\) \{\s*setPartySearch\([\s\S]*?return\s*\}/)
+  assert.match(app, /selectPartySpecies\(idx, key\)/)
+  assert.match(member, /onSelect=\{key => selectPartySpecies\(idx, key\)\}/)
+  assert.match(editor, /const selectPartySpecies = /)
+  assert.match(editor, /if \(key === member\.key\) \{\s*setPartySearch\([\s\S]*?return\s*\}/)
   assert.match(callback, /if \(key === sampleForge\.key\) \{\s*setSampleSearch\([\s\S]*?return\s*\}/)
-  assert.match(callback, /ability: defaultAbilityForKey\(key\)/)
+  assert.match(editor, /ability: abilityForSpeciesSelection\(indexByKey\.get\(key\), '', key, ''\)/)
   assert.match(callback, /setSampleForge\(\(prev\) => \(\{ \.\.\.prev, key, ability: defaultAbilityForKey\(key\)/)
 })
 
@@ -49,9 +54,9 @@ test('known historic KO ability labels render in EN/JA without rewriting their s
 test('party and builder use the same verified ability resolver for chips, retaining original storage', () => {
   assert.match(owner_10, /function selectedAbilityDisplayName\(row: Row, storedAbility: string, language: SiteLanguage\)/)
   assert.match(owner_10, /resolveSelectedAbility\(row, storedAbility, language\)/)
-  assert.match(app, /abilityLabel=\{selectedAbilityDisplayName\(row, member\.ability, siteLanguage\)\}/)
+  assert.match(member, /abilityLabel=\{selectedAbilityDisplayName\(row, member\.ability, siteLanguage\)\}/)
   assert.match(app, /abilityLabel=\{selectedAbilityDisplayName\(sampleRow, sampleForge\.ability, siteLanguage\)\}/)
-  assert.match(app, /ability=\{member\.ability\}/)
+  assert.match(member, /ability=\{member\.ability\}/)
   assert.match(app, /ability=\{sampleForge\.ability\}/)
 })
 

@@ -7,9 +7,10 @@ import { createServer } from 'vite'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 test('every editable owner and library mount the actual four-slot shell, not separate grids', () => {
   for (const marker of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-move-${member.key}-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${slot}', 'creator-library-moves']) {
-    const owner = marker.startsWith('quick-') ? readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8') : app
+    const owner = marker.startsWith('quick-') ? readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8') : marker.startsWith('party-') ? member : app
     const region = owner.slice(Math.max(0, owner.indexOf(marker) - 4500), owner.indexOf(marker) + 4500)
     assert.ok(region.includes('<MoveSlotsEditor'), marker)
   }

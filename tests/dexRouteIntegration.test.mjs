@@ -17,6 +17,7 @@ function declarations(name) {
 const dexStart = source.indexOf("{mainSection === 'dex' ? <>")
 const dexEnd = source.indexOf("{(mainSection === 'single'", dexStart)
 const dex = source.slice(dexStart, dexEnd)
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 
 test('unselected Dex renders the actual one grid instead of old duplicate result buttons', () => {
   assert.match(dex, /<DexBrowseGrid\b/)
@@ -31,7 +32,7 @@ test('selected Dex renders original four detail panels with back and full form-a
   assert.match(dex, /href=\{dexListHref\}/)
   assert.match(source, /loadFormLearnset\(key\)\.then\(result/)
   // Battle and Dex now share exact-form eligibility from the pinned source.
-  assert.match(source, /choicesForPool\(memberMovePool\)/)
+  assert.match(member, /choicesForPool\(memberMovePool\)/)
   assert.match(dex, /provenance=\{dexSelectedPool\?\.provenance\}/)
 })
 test('explicit selection resolves independently of current search results and no automatic first selection', () => {

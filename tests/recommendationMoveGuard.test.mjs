@@ -6,6 +6,7 @@ import ts from 'typescript'
 import { createServer } from 'vite'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const memberSource = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const names = ['applyMoveToSlot', 'selectMoveOption', 'commitEditorMove', 'selectSampleMoveOption', 'applySampleCandidateMove', 'addOpponentRevealedMove']
 const declarations = new Map()
@@ -86,7 +87,8 @@ test('opponent usage and picker callback cannot add unverified move while retain
 })
 
 test('suggestion chips are unavailable with a visible reason unless exact-form source authorizes move', () => {
-  const party = source.slice(source.indexOf('memberTopSuggestedMoves.map((move)'), source.indexOf('</div> : null}', source.indexOf('memberTopSuggestedMoves.map((move)')))
+  assert.match(source, /<PartyView\b/)
+  const party = memberSource.slice(memberSource.indexOf('memberTopSuggestedMoves.map((move)'), memberSource.indexOf('</div> : null}', memberSource.indexOf('memberTopSuggestedMoves.map((move)')))
   const builder = source.slice(source.indexOf('sampleVisibleMoveBuckets.map((bucket)'), source.indexOf('</div> : sampleMovePool', source.indexOf('sampleVisibleMoveBuckets.map((bucket)')))
   const oppEntry = source.slice(source.indexOf('oppTopSuggestedMoves.map((move)'), source.indexOf('</details> : null}', source.indexOf('oppTopSuggestedMoves.map((move)')))
   const oppDamage = source.slice(source.lastIndexOf('oppTopSuggestedMoves.map((move)'), source.indexOf('</details> : null}', source.lastIndexOf('oppTopSuggestedMoves.map((move)')))

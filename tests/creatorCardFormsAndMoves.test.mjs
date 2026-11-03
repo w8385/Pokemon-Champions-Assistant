@@ -6,6 +6,8 @@ import { sourceBackedCardAbility } from '../src/domain/samples/creatorCardAbilit
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const app = read('../src/App.tsx')
 const card = read('../src/shared/display/PokemonCardOverview.tsx')
+const member = read('../src/features/party/PartyMemberCard.tsx')
+const helpers = read('../src/shared/display/entryHelpers.tsx')
 const catalog = read('../src/domain/samples/creatorSampleLibrary.ts')
 const moveMeta = JSON.parse(read('../src/canonical-data/champions/championsLearnedMoveMeta.json'))
 
@@ -26,14 +28,15 @@ test('creator and party render the SAME registered move component and read-only 
   assert.match(card, /getTypeBadgeSrc\(type\)/)
   assert.match(card, /meta\?\.category/)
   assert.match(card, /meta\?\.accuracy/)
-  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
+  assert.ok((app.match(/<MoveSlotsEditor/g) ?? []).length + (member.match(/<MoveSlotsEditor/g) ?? []).length >= 4)
   assert.doesNotMatch(app, /build\.moves\.map\(move => <span key=\{move\}>\{move\}<\/span>\)/)
 })
 
 test('source-recorded stats are displayed only on the matching form, with other form calculated from its base row', () => {
   assert.match(card, /actualStatsForm\s*===\s*formKey/)
   assert.match(app, /megaKey \? megaBaseKey\(megaKey\)/)
-  assert.match(app, /partyStatValue\(row, member, statKey\)/)
+  assert.match(helpers, /partyStatValue\(row: Row, member: PartyMember, field: keyof EffortValues\)/)
+  assert.match(member, /partyStatValue\(row, member, stat\.key\)/)
   assert.match(app, /createReadonlyCardStats\([^;]*formKey/s)
   assert.match(app, /setCreatorMegaSelection/)
 })

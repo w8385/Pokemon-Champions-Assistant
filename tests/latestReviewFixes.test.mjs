@@ -7,6 +7,7 @@ import { getSpeedAbility, speedActivationAllowed } from '../src/domain/battle/sp
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/unifiedEntryFixture.json', import.meta.url)))
 const quickModel = readFileSync(new URL('../src/features/damage/quickModel.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const partyView = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8'), member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8'), board = readFileSync(new URL('../src/features/party/PartyPresetBoard.tsx', import.meta.url), 'utf8'), editorOwner = readFileSync(new URL('../src/features/party/usePartyEditor.ts', import.meta.url), 'utf8')
 test('saved localized Libero is canonical for selection and damage, source stays Korean', () => {
  const source=structuredClone(fixture.party[0]); const [own]=comparisonSides([source], [],0,0,{},(key,raw)=>raw==='리베로'?'libero':raw)
  assert.equal(own.ability,'libero'); assert.equal(source.ability,'리베로')
@@ -40,12 +41,15 @@ test('default single party starts with pair, not wizard; quick remains independe
  assert.match(app,/group\.links\.map\(link => <a key=\{link\.href\} className="home-route-card calm" href=\{link\.href\}>/)
 })
 test('party route owns the original editor and real callbacks, not a copied comparison panel',()=>{
- const editor=app.slice(app.indexOf('className="party-columns party-manage-columns"'),app.indexOf('className="entry-grid manage-entry-grid"')+100)
+ assert.match(app, /<PartyView\b/)
+ const editor=partyView
  assert.match(app,/mainSection === 'party' \|\| \(mainSection === 'double' && activeTab === 'party'\)/)
  assert.match(editor,/createNewParty/)
- assert.match(editor,/onClick=\{\(\) => applyPartyPreset\(preset.id\)\}/)
- assert.match(app,/mainSection === 'party'[^]*?setConfirmedMoveSlot[^]*?<MoveSlotsEditor/)
- assert.match(app,/mainSection === 'party'[^]*?partyStatValue/)
+ assert.match(board,/onClick=\{\(\) => applyPartyPreset\(preset.id\)\}/)
+ assert.match(app,/setConfirmedMoveSlot/)
+ assert.match(partyView,/selectMoveOption: editor\.selectMoveOption|selectMoveOption: \(key: string/)
+ assert.match(member,/<MoveSlotsEditor/)
+ assert.match(member,/partyStatValue\(row, member, stat\.key\)/)
  assert.match(app,/viewState\.mainSection === 'party' \? '\/party'/)
  assert.match(app,/routePath === '\/party'/)
  assert.doesNotMatch(app.slice(app.indexOf('mainSection === \'home\' ? ('),app.indexOf('mainSection !== \'home\' && mainSection')), /setMainSection\('double'\)/)

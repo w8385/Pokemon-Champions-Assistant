@@ -6,6 +6,7 @@ const snapshot = JSON.parse(readFileSync(new URL('../src/canonical-data/champion
 const quickCalc = () => readFileSync(new URL('../src/features/damage/prepareQuickDamageInput.ts', import.meta.url), 'utf8')
 const quickView = () => readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const app = () => readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = () => readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 
 async function provider(fn) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
@@ -61,7 +62,9 @@ test('all four battle choices and both Dex directions use the canonical provider
   assert.match(source, /loadFormLearnset\(key\)\.then/)
   assert.doesNotMatch(source, /embeddedMovePoolForKey\(key\)/)
   assert.doesNotMatch(source, /(?:my|opp|sample|member)MovePool\?\.moves\?\.length\s*\?[^\n]+moveOptionsForEntry/)
-  assert.match(source, /choicesForPool\(memberMovePool\)/)
+  assert.doesNotMatch(member(), /memberMovePool\?\.moves\?\.length\s*\?[^\n]+moveOptionsForEntry/)
+  assert.match(source, /<PartyView\b/)
+  assert.match(member(), /choicesForPool\(memberMovePool\)/)
   assert.match(source, /choicesForPool\(sampleMovePool\)/)
   assert.match(source, /choicesForPool\(myMovePool\)/)
   assert.match(source, /choicesForPool\(oppMovePool\)/)
@@ -127,8 +130,10 @@ test('new editor text requires exact form evidence while unchanged raw history a
 test('Party and Builder edit drafts are not persisted until validated at commit', () => {
   const source = app()
   assert.match(source, /commitRecordedMoveInput\(raw, previous, pool\)/)
-  assert.match(source, /commitEditorMove\(e\.target\.value, move, memberMovePool/)
+  assert.match(member(), /commitEditorMove\(e\.target\.value, move, memberMovePool/)
   assert.match(source, /commitEditorMove\(e\.target\.value, move, sampleMovePool/)
   assert.doesNotMatch(source, /setConfirmedMoveSlot\(member\.key, moveIdx, e\.target\.value\)/)
+  assert.doesNotMatch(member(), /setConfirmedMoveSlot\(member\.key, moveIdx, e\.target\.value\)/)
   assert.doesNotMatch(source, /current\[moveIdx\] = e\.target\.value/)
+  assert.doesNotMatch(member(), /current\[moveIdx\] = e\.target\.value/)
 })

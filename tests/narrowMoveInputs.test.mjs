@@ -5,6 +5,7 @@ import postcss from 'postcss'
 
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8'), view = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8')
 const root = postcss.parse(css)
 
 function columnsAt(selector, width) {
@@ -24,10 +25,11 @@ const twoColumns = 'repeat(2, minmax(0, 1fr))'
 const oneColumn = 'minmax(0, 1fr)'
 
 test('party registered moves use the shared 600px policy', () => {
-  const party = app.split('className="entry-grid manage-entry-grid"')[1].split('ownerId={`party-${idx}-${member.key}`}')[0]
+  assert.match(view, /<PartyMemberCard\b/)
+  const party = member.split('ownerId={`party-${idx}-${member.key}`}')[0]
   assert.match(party, /id=\{`party-slot-\$\{idx\}`\} className=\{`card entry-card /)
-  assert.match(app, /<MoveSlotsEditor className="inline-move-card"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
-  assert.match(app, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
+  assert.match(member, /<MoveSlotsEditor className="inline-move-card"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
+  assert.match(member, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
   for (const width of [320, 390, 600, 601, 1280]) assert.equal(columnsAt('.move-slots-editor-grid', width)?.value, width <= 600 ? oneColumn : twoColumns)
 })
 

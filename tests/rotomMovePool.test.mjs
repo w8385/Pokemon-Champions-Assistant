@@ -6,6 +6,7 @@ import { createServer } from 'vite'
 
 const pools = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMovePools.json', import.meta.url), 'utf8'))
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 
 async function withResolver(callback) {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
@@ -49,9 +50,9 @@ test('resolver does not broaden unrelated forms or invent moves for unknown keys
 }))
 
 test('battle callers select from shared source and distinguish missing from loading and failure', () => {
-  assert.match(app, /choicesForPool\(memberMovePool\)/)
+  assert.match(member, /choicesForPool\(memberMovePool\)/)
   assert.match(app, /choicesForPool\(sampleMovePool\)/)
-  assert.match(app, /status === 'loading' \? lt\('기술풀 불러오는 중…'\)/)
+  assert.match(member, /status === 'loading' \? lt\('기술풀 불러오는 중…'\)/)
   assert.match(owner_0, /status === 'load-error' \? lt\('기술풀을 불러오지 못했습니다.'\)/)
   assert.match(owner_0, /status === 'missing' \? lt\('기술풀 미확인'\)/)
 })
