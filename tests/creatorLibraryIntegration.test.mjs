@@ -2,9 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
 
 test('library has navigable sample tab and route without replacing builder', () => {
-  assert.match(app, /sampleTabParam === 'library'/)
+  assert.match(route, /sampleTabParam === 'library'/)
   assert.match(app, /sampleWorkbenchTab === 'library' \? <div className="creator-library">/)
   assert.match(app, /id="sample-builder-section"/)
   assert.match(app, /sample-workbench-tab-\$\{value\}/)
@@ -15,7 +16,7 @@ test('link entry is explicitly partial and import is gated', () => {
   assert.match(app, /setSampleForge\(.*entry\.build/s)
 })
 test('ranker legacy links normalize but no ranker menu remains', () => {
-  assert.match(app, /sampleTabParam === 'rankers'/)
+  assert.match(route, /sampleTabParam === 'rankers'/)
   assert.doesNotMatch(app, /\['rankers', lt\('랭커 샘플'\)\]/)
   assert.match(app, /routeGroups\.map\(group => <div key=\{group\.section\} className="header-route-group"/)
   assert.match(app, /href=\{link\.href\}/)

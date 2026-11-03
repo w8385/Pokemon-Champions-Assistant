@@ -25,10 +25,10 @@ test('builder exact Mega query selects Mega while partial options preserve keybo
   assert.deepEqual(partial.map(row => row.key), searchPokemon(rows, '한카').map(row => row.key))
 })
 test('detail route uses normalized tab before persisted fallback', () => {
-  const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  assert.match(app, /sampleWorkbenchTab: (?:normalizedRoute\.section|resolvedMainSection) === 'sample' \? normalizedRoute\.tab as SampleWorkbenchTab/)
-  assert.match(app, /librarySourceId, libraryLanguage: libraryContext\.language/)
-  assert.match(app, /dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue/)
+  const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
+  assert.match(route, /sampleWorkbenchTab: (?:normalizedRoute\.section|resolvedMainSection) === 'sample' \? normalizedRoute\.tab as SampleWorkbenchTab/)
+  assert.match(route, /librarySourceId, libraryLanguage: libraryContext\.language/)
+  assert.match(route, /dexSearchMode, dexSearch, dexUnifiedSearch, dexSelectedValue/)
 })
 test('detail strings exist in both language dictionaries and source data remains untouched', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')

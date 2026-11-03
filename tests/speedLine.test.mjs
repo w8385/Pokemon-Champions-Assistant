@@ -43,9 +43,10 @@ test('full verified roster is ordered by computed Speed, not base-stat table ord
 
 test('independent speed-line route and navigation retain existing menus and shared calculator', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+  const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
   const types = readFileSync(new URL('../src/app/types.ts', import.meta.url), 'utf8')
   assert.match(types, /'speedLine'/)
-  assert.match(app, /routePath === '\/speed-line'/)
+  assert.match(route, /routePath === '\/speed-line'/)
   assert.equal(routeGroups.find(group => group.section === 'tools').links.find(link => link.section === 'speedLine').href, '#/speed-line')
   assert.match(app, /<SpeedLinePanel rows=\{rows\} state=\{speedLineState\}/)
   assert.match(app, /import \{ actualStat \} from '\.\/domain\/champions\/statMechanics'/)

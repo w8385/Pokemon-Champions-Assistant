@@ -6,14 +6,17 @@ import ts from 'typescript'
 import { dexSelectionId } from '../src/features/dex/helpers.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const routeSource = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const routeAst = ts.createSourceFile('routeState.ts', routeSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const declarations = new Map()
 function visit(node) {
-  if (node.name && (ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && ['syncViewStateToUrl', 'pushDexDetailHistory', 'openDexPokemonDetail', 'openDexMoveDetail', 'restoreRoute'].includes(node.name.getText(ast))) declarations.set(node.name.getText(ast), node)
+  if (node.name && (ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && ['syncViewStateToUrl', 'pushDexDetailHistory', 'openDexPokemonDetail', 'openDexMoveDetail', 'restoreRoute'].includes(node.name.getText(node.getSourceFile()))) declarations.set(node.name.getText(node.getSourceFile()), node)
   ts.forEachChild(node, visit)
 }
 visit(ast)
-const code = ts.transpileModule([...declarations.values()].map(node => node.getText(ast)).join('\n') + '\nglobalThis.openPokemon = openDexPokemonDetail; globalThis.openMove = openDexMoveDetail; globalThis.sync = syncViewStateToUrl; globalThis.restore = restoreRoute;', { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
+visit(routeAst)
+const code = ts.transpileModule([...declarations.values()].map(node => node.getText(node.getSourceFile()).replace(/^export /, '')).join('\n') + '\nglobalThis.openPokemon = openDexPokemonDetail; globalThis.openMove = openDexMoveDetail; globalThis.sync = syncViewStateToUrl; globalThis.restore = restoreRoute;', { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
 
 function harness() {
   let current = 0

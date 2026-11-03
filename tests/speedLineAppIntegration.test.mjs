@@ -3,14 +3,15 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const owner_15 = readFileSync(new URL('../src/shared/search/speciesOptions.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
 test('sample speed uses the input-owning shared picker and App delegates species search and scarf modifier', () => {
   assert.match(app, /<PokemonSearchField[^>]*id="sample-speed-add"/)
   assert.match(owner_15, /searchPokemon\(rows, query/)
   assert.match(app, /applyChoiceScarf\(value\)/)
 })
 test('speed-line view uses one controlled state with URL parser/writer and no storage', () => {
-  assert.match(app, /parseSpeedLineState\(routeUrl.searchParams\)/)
-  assert.match(app, /writeSpeedLineState\(params, viewState.speedLineState\)/)
+  assert.match(route, /parseSpeedLineState\(routeUrl.searchParams\)/)
+  assert.match(route, /writeSpeedLineState\(params, viewState.speedLineState\)/)
   assert.match(app, /<SpeedLinePanel[^>]*state=\{speedLineState\}/)
   assert.match(app, /setSpeedLineState\(route.speedLineState\)/)
   assert.doesNotMatch(app, /setSpeedLineEffort|setSpeedLineQuery|setSpeedLineNature|setSpeedLineForms/)

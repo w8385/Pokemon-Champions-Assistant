@@ -11,6 +11,7 @@
     "src/adapters/persistence/quickDamage.ts",
     "src/app/libraryViewRoute.ts",
     "src/app/navigation.ts",
+    "src/app/routeState.ts",
     "src/app/types.ts",
     "src/assets/championSpriteHashes.json",
     "src/assets/typeKoLabels.json",

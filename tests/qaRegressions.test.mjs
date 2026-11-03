@@ -8,6 +8,7 @@ import { fixedSampleOpponentMoves } from '../src/domain/battle/sampleDamageMoves
 const ts = createRequire(import.meta.url)('typescript')
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
 
 test('backup rejects unsupported version and malformed top-level shape', () => {
   for (const input of [null, [], {}, { version: 999, party: [], opponents: [] }, { version: 1, party: {}, opponents: [] }, { version: 1, party: [], opponents: 'bad' }, { version: 1, party: [null], opponents: [] }, { version: 1, party: [], opponents: [], savedSamples: {} }, { version: 1, party: [], opponents: [], sampleForge: [] }, { version: 1, party: [], opponents: [], mainSection: 'garbage' }, { version: 1, party: [], opponents: [], savedSamples: [null] }]) {
@@ -158,7 +159,7 @@ test('import validates before its first state write', () => {
 })
 
 test('double speed deep link resolves to planner power before rendering', () => {
-  assert.match(app, /mainSection === 'double' && activeTabParam === 'speed' \? 'power'/)
+  assert.match(route, /mainSection === 'double' && activeTabParam === 'speed' \? 'power'/)
   assert.match(app, /\(viewState\?\.mainSection \?\? persisted\?\.mainSection\) === 'double' && resolvedTab === 'speed' \? 'power'/)
 })
 
