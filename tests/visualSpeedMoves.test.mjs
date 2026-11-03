@@ -3,6 +3,9 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { compareSpeedVisual } from '../src/domain/battle/speedVisual.ts'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const panel = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const quickView = readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx', import.meta.url), 'utf8')
+const quickState = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 
 test('paired bars share a zero-based maximum and signed delta', () => {
@@ -16,18 +19,17 @@ test('ties are equal-length and invalid speeds have neither bars nor verdict', (
   }
 })
 test('shared panel renders numeric lanes from existing speed results with accessible labels', () => {
-  assert.match(app, /compareSpeedVisual\(mySpeedResult\?\.value, oppSpeedResult\?\.value\)/)
-  assert.match(app, /className="quick-speed-track"/)
-  assert.match(app, /role="img"[^>]*aria-label=/)
-  assert.match(app, /speedVisual\.valid/)
+  assert.match(quickState, /compareSpeedVisual\(mySpeedResult\?\.value, oppSpeedResult\?\.value\)/)
+  assert.match(quickView, /className="quick-speed-track"/)
+  assert.match(quickView, /role="img"[^>]*aria-label=/)
+  assert.match(quickView, /speedVisual\.valid/)
 })
 test('each shared speed lane can edit its own Speed stage', () => {
-  const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
-  assert.match(panel, /<select value=\{entry\.speedStage\} onChange=\{event => setSide\(side, prev => \(\{ \.\.\.prev, speedStage: Number\(event\.target\.value\) \}\)\)\}/)
+  assert.match(quickView, /<select value=\{entry\.speedStage\} onChange=\{event => setSide\(side, prev => \(\{ \.\.\.prev, speedStage: Number\(event\.target\.value\) \}\)\)\}/)
 })
 test('four shared registered slots use a 2x2 grid and vertical preview without left-border shift', () => {
-  assert.match(app, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
-  assert.match(app, /slots=\{Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
+  assert.match(panel, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
+  assert.match(panel, /slots=\{Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
   assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
   assert.match(css, /\.move-slots-editor-cell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
   assert.doesNotMatch(css, /\.quick-move-row\.selected\s*\{[^}]*border-inline-start/)

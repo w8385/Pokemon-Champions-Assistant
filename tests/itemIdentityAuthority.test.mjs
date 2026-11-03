@@ -1,6 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+const owner_5 = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
+const owner_0 = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 import { classifyHeldItem, requiredMegaStone, itemForSpeciesSelection, isCalculableHeldItem } from '../src/domain/champions/itemIdentity.ts'
 import { CHAMPIONS_ITEM_OPTIONS } from '../src/domain/champions/championsItems.ts'
 import { quickItem } from '../src/domain/battle/quickDamageState.ts'
@@ -69,7 +71,9 @@ test('every live App damage caller blocks bad raw before modifiers or calcDamage
   const singleGuard = app.slice(app.indexOf('const singleItemError ='), app.indexOf('const speedAxisMin ='))
   assert.match(singleGuard, /heldItemError\(myMember\.key, myMember\.item, siteLanguage\)/)
   assert.match(singleGuard, /heldItemError\(oppMember\.key, oppMember\.item, siteLanguage\)/)
-  const itemGuard = app.slice(app.indexOf('function heldItemError('), app.indexOf('function ', app.indexOf('function heldItemError(') + 1))
+  const itemSource = readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8')
+  assert.match(app, /import \{[^}]*heldItemError[^}]*\} from ['"]\.\/shared\/display\/itemPresentation/)
+  const itemGuard = itemSource.slice(itemSource.indexOf('export function heldItemError('), itemSource.indexOf('export function itemSpriteSrc('))
   assert.match(itemGuard, /classifyHeldItem\(key, item\)/)
   for (const [key, raw] of [['mega-gyarados', 'こだわりスカーフ'], ['mega-gyarados', ''], ['garchomp', 'unrecognized-original']]) {
     assert.equal(isCalculableHeldItem(key, raw), false)
@@ -99,11 +103,11 @@ test('single and Builder speed outcomes do not report numbers for bad restored i
 
 test('App and Quick consume raw authority at restoration and before calculation', () => {
   assert.match(app, /item: typeof raw\.item === 'string' \? raw\.item : ''/)
-  assert.match(app, /classifyHeldItem\(source\.key, source\.item\)/)
-  assert.match(app, /classifyHeldItem\(target\.key, target\.item\)/)
+  assert.match(owner_5, /classifyHeldItem\(source\.key, source\.item\)/)
+  assert.match(owner_5, /classifyHeldItem\(target\.key, target\.item\)/)
   assert.match(app, /heldItemError\(myMember\.key, myMember\.item, siteLanguage\)/)
   assert.match(app, /heldItemError\(oppMember\.key, oppMember\.item, siteLanguage\)/)
-  assert.match(app, /fixedItem=\{requiredMegaStone\(row\.key\)\}/)
+  assert.match(owner_0, /fixedItem=\{requiredMegaStone\(row\.key\)\}/)
   const editor = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(editor, /onClick=\{\(\) => \{ onItem\(fixedItem\); close\(true\) \}\}/)
   assert.match(editor, /role="alert"/)

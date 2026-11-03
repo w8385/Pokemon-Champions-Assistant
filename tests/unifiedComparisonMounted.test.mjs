@@ -3,11 +3,11 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url),'utf8')
 test('single and quick mount the same comparison panel, with independent persistence', () => {
- assert.match(app, /function QuickDamagePanel\(\{[^\n]*initialSides[^\n]*comparisonMode/)
+ assert.match(readFileSync(new URL('../src/features/damage/QuickDamagePanel.tsx', import.meta.url),'utf8'), /initialSides\?:[^\n]*comparisonMode\?:/)
  assert.match(app, /mainSection === 'quickDamage' \? <QuickDamagePanel/)
  assert.match(app, /mainSection === 'single' \? <div className="unified-single-pair">[^]*?<QuickDamagePanel language=/)
  assert.match(app, /comparisonSlots=\{\[selectedMy, selectedOpp\]\}/)
  assert.doesNotMatch(app, /<QuickDamagePanel key=\{/)
- assert.match(app, /previousSeeds\.current\[index\] === fingerprint/)
- assert.match(app, /if \(!comparisonMode\) localStorage\.setItem\(QUICK_KEY/)
+ assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url),'utf8'), /previousSeeds\.current\[index\] === fingerprint/)
+ assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url),'utf8'), /if \(!comparisonMode\) writeQuickStandalone\(localStorage/)
 })

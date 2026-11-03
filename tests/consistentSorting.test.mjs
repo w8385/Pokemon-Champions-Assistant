@@ -70,10 +70,12 @@ test('per-form Dex move rows render alphabetically while preserving source pool 
 test('item and ability option defaults sort visible labels without changing search score or sources', () => {
   const app = readFileSync(new URL('../src/App.tsx',import.meta.url),'utf8')
   const source = ts.createSourceFile('App.tsx',app,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
+  const itemAst = ts.createSourceFile('itemPresentation.ts', readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
   const func = name => {
-    const node = source.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name)
+    const owner = ['displayItemLabel', 'filterItemOptions'].includes(name) ? itemAst : source
+    const node = owner.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name)
     assert.ok(node,name)
-    return node.getText(source)
+    return node.getText(owner).replace(/^export /, '')
   }
   const items = ['화염구슬','가벼운돌','기합의띠']
   const abilities = ['화염몸','가속','기합']

@@ -39,7 +39,7 @@ test.after(async () => { await server?.close() })
 test('both actual KO label producers consume the same 18-entry input and generator buildRow uses it', async () => {
   const appText = await source('src/App.tsx'), generatorText = await source('scripts/sync-champions-verified-data.mjs')
   assert.match(appText, /import typeKoLabels from ['"]\.\/assets\/typeKoLabels\.json['"]/)
-  assert.match(appText, /const TYPE_KO_BY_KEY: Record<string, string> = typeKoLabels/)
+  assert.match(await source('src/shared/display/formatters.ts'), /const TYPE_KO_BY_KEY: Record<string, string> = typeKoLabels/)
   assert.match(generatorText, /JSON\.parse\(await fs\.readFile\(path\.join\(root, 'src', 'assets\/typeKoLabels\.json'\), 'utf8'\)\)/)
   assert.equal(Object.keys(typeLabels).length, 18)
   assert.deepEqual(sorted(new Set(Object.keys(typeLabels))), sorted(new Set(['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'])))

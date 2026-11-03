@@ -1,6 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+const owner_0 = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const calculator = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
+const owner_5 = readFileSync(new URL('../src/features/damage/prepareQuickDamageInput.ts', import.meta.url), 'utf8')
 import { createServer } from 'vite'
 import { quickMoveSupported } from '../src/domain/battle/quickDamageState.ts'
 
@@ -46,14 +49,14 @@ test('the actual move search finds full name and 아젯 only inside the selected
     assert.equal(search(mega, query, { allowLoose: false })[0]?.name, '아쿠아제트', query)
     assert.deepEqual(search(resolve('rotom', ['rotom'], pools), query, { allowLoose: false }), [], query)
   }
-  assert.match(app, /filterMoveOptions\(draft, pool\)/)
+  assert.match(owner_0, /filterMoveOptions\(draft, pool\)/)
 }))
 
 test('selected Aqua Jet crosses the real calculation eligibility gate with water physical 40 and priority +1', () => {
   const meta = metaByName['아쿠아제트']
   assert.deepEqual({ type: meta.type, category: meta.category, power: meta.power, priority: meta.priority }, { type: 'water', category: 'physical', power: 40, priority: 1 })
   assert.equal(quickMoveSupported('아쿠아제트', meta), true)
-  assert.match(app, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
-  assert.match(app, /quickMoveSupported\(name, base, Boolean\(CONDITIONAL_MOVE_POWER_RULES\[name\]\)\)/)
-  assert.match(app, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats, meta\.power/)
+  assert.match(owner_5, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
+  assert.match(calculator, /quickMoveSupported\(name, base, Boolean\(CONDITIONAL_MOVE_POWER_RULES\[name\]\)\)/)
+  assert.match(calculator, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats, meta\.power/)
 })

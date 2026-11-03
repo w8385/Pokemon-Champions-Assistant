@@ -66,13 +66,14 @@ test('saved seed build updates keep pair target and opposite draft; changed targ
 
 test('paired editor consumes target reconciliation and failed-write status', () => {
   const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const quick = source.slice(source.indexOf('function QuickDamagePanel('), source.indexOf('function LanguageIcon('))
+  const quick = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
+  const quickView = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
   assert.match(quick, /previousTargets\.current\[index\]/)
   assert.match(quick, /if \(pairChanged\) \{[^]*?setModalSide\(null\)[^]*?resetPairAssumptions\(prev, initialSides\[0\], dirty\.attacker\)[^]*?resetPairAssumptions\(prev, initialSides\[1\], dirty\.defender\)/)
   assert.match(quick, /const next = pairChanged \? resetPairAssumptions\(restored\.side/)
   assert.match(quick, /setDraftStorageFailed\(!\(ownKept && otherKept\)\)/)
-  assert.match(quick, /draftStorageFailed \? language === 'en' \? 'Comparison draft · automatic storage failed/)
-  assert.match(quick, /if \(!forgetDraft\(localStorage, side, slot\)\) setDraftStorageFailed\(true\)/)
+  assert.match(quickView, /draftStorageFailed \? language === 'en' \? 'Comparison draft · automatic storage failed/)
+  assert.match(quickView, /if \(!forgetDraft\(localStorage, side, slot\)\) setDraftStorageFailed\(true\)/)
 })
 
 test('draft quota/security failures return false, do not throw, and preserve live build', () => {

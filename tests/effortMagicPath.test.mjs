@@ -30,7 +30,7 @@ test('Quick may identify a named-nature magic target only with complete nature a
 })
 test('Quick shared modal supplies magic projection, while double bulk uses only active boosted rows', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const quick = app.slice(app.indexOf('export function QuickDamagePanel'), app.indexOf('function PartyContextBar'))
+  const quick = readFileSync(new URL('../src/features/damage/QuickEffortModal.tsx', import.meta.url), 'utf8')
   assert.match(quick, /magicCandidate=\{[^}]*\}/)
   assert.match(quick, /magicPoints=\{[^}]*\}/)
   assert.match(app, /double-opponent-effort-cell-[^]*?magicPoints\.includes\(point\)/)

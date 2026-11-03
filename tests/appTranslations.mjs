@@ -5,8 +5,8 @@ import ts from 'typescript'
 
 /** Evaluate the real translation function and its bounded AST dictionary, not incidental `en:` text. */
 export function appTranslate() {
-  const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const source = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
+  const ast = ts.createSourceFile('translation.ts', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
   let dictionary, translator
   function visit(node) {
     if (ts.isVariableDeclaration(node) && node.name.getText(ast) === 'UI_TRANSLATIONS') dictionary = node
@@ -16,7 +16,7 @@ export function appTranslate() {
   visit(ast)
   assert.ok(dictionary && translator)
   const context = {}
-  const code = `const ${dictionary.getText(ast)}; ${translator.getText(ast)}; globalThis.translate = translateText`
+  const code = `const ${dictionary.getText(ast)}; ${translator.getText(ast).replace(/^export /, '')}; globalThis.translate = translateText`
   vm.runInNewContext(ts.transpileModule(code, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context)
   return context.translate
 }

@@ -4,11 +4,13 @@ import { readFileSync } from 'node:fs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/features/single/matchupWorkspace.css', import.meta.url), 'utf8')
-const panel = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
+const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
+const view = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
+const panel = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const selectors = app.slice(app.indexOf('entrySelectors={(opponentSearch, reset) =>'), app.indexOf('</div>} />', app.indexOf('entrySelectors={(opponentSearch, reset) =>')))
 
 test('one shared top toolbar owns existing opponent search and scoped reset before paired selectors', () => {
-  assert.match(panel, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)
+  assert.match(view, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)
   assert.match(selectors, /className="single-entry-toolbar"[^]*?className="selected-opponent-search">\{opponentSearch\}<\/div>[^]*?\{reset\}[^]*?className="unified-pair-pickers"/)
   assert.equal((selectors.match(/\{opponentSearch\}/g) ?? []).length, 1)
   assert.doesNotMatch(selectors.slice(selectors.indexOf('className="unified-pair-pickers"')), /\{reset\}|\{opponentSearch\}/)
@@ -19,9 +21,9 @@ test('one shared top toolbar owns existing opponent search and scoped reset befo
 })
 
 test('short visible reset keeps full destructive scope in accessible title and existing handler', () => {
-  assert.match(panel, /onResetOpponents\?\.\(defenderSearch\)/)
-  assert.match(panel, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}[^>]*><UiIcon name="trash"[^>]*\/>\{lt\('상대 초기화'\)\}/)
-  for (const label of ["'상대 초기화': 'Reset opponent'", "'상대 초기화': '相手を初期化'"]) assert.ok(app.includes(label), label)
+  assert.match(view, /onResetOpponents\?\.\(defenderSearch\)/)
+  assert.match(view, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}[^>]*><UiIcon name="trash"[^>]*\/>\{lt\('상대 초기화'\)\}/)
+  for (const label of ["'상대 초기화': 'Reset opponent'", "'상대 초기화': '相手を初期化'"]) assert.ok(translations.includes(label), label)
   assert.match(css, /\.single-entry-toolbar \.action-button\s*\{[^}]*min-height:\s*44px/)
   assert.match(css, /\.single-entry-toolbar input\s*\{[^}]*min-height:\s*40px/)
 })

@@ -47,9 +47,11 @@ test('invalid and unsupported values cannot draw numeric bars', async () => {
 
 test('all eight destinations retain concrete source consumers, not just heading icons', () => {
   const src = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+  const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+  const quickResult = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
   const detail = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
   const ranges = readFileSync(new URL('../src/features/speedline/SpeedLineRangesPanel.tsx', import.meta.url), 'utf8')
-  for (const marker of ['home-route-card calm', 'party-preset-card-actions', 'entry-card-clear-button', 'quick-move-preview', 'creator-library-submit-row', 'sample-saved-actions', 'dex-back-link', '샘플 편집기로 보내기']) assert.ok(src.includes(marker), marker)
+  for (const marker of ['home-route-card calm', 'party-preset-card-actions', 'entry-card-clear-button', 'quick-move-preview', 'creator-library-submit-row', 'sample-saved-actions', 'dex-back-link', '샘플 편집기로 보내기']) assert.ok((marker === 'quick-move-preview' ? quickView : src).includes(marker), marker)
   for (const marker of ['speed-line-name-action', 'name="speed"', 'speed-line-investment']) assert.ok(detail.includes(marker), marker)
   for (const marker of ['speed-coverage-target-search', 'speed-coverage-target-list', 'name="search"']) assert.ok(ranges.includes(marker), marker)
   const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
@@ -63,11 +65,13 @@ test('all eight destinations retain concrete source consumers, not just heading 
 
 test('actual Quick and sample bilateral consumers share the visual without replacing action handlers', () => {
   const src = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  assert.match(src, /quick-move-preview[\s\S]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
-  assert.match(src, /className=\{`quick-result[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
+  const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+  const quickResult = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
+  assert.match(quickView, /quick-move-preview[\s\S]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
+  assert.match(quickResult, /className=\{`quick-result[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
   assert.match(src, /entry\.forwardMoves\.find[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
   assert.match(src, /entry\.reverseMoves\.find[\s\S]*?<DamageRangeMeter[^>]*damage=\{result\.damage\}/)
-  assert.match(src, /onClick=\{\(\) => setSelected\(\{ side, index \}\)\}/)
+  assert.match(quickView, /onClick=\{\(\) => setSelected\(\{ side, index \}\)\}/)
   assert.match(src, /onClick=\{\(\) => renamePartyPreset\(preset\)\}/)
   assert.match(src, /if \(!window\.confirm\(`\$\{preset\.label\}: \$\{lt\('저장 파티 삭제'\)\}\?`\)\) return/)
   assert.match(src, /onClick=\{\(\) => confirmPartySlotReplacement\(entry\.member, selectedMy, entry\.lockedMoves\)\}/)

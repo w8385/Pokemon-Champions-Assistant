@@ -7,16 +7,18 @@ import { dexSelectionId } from '../src/features/dex/helpers.ts'
 import { libraryDetailHref, libraryListHref, parseLibraryContext } from '../src/app/libraryViewRoute.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const dictionarySource = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
+const dictionaryAst = ts.createSourceFile('translation.ts', dictionarySource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 function extract(name) {
   let match
   function visit(node) {
-    if ((ts.isVariableDeclaration(node) || ts.isFunctionDeclaration(node)) && node.name?.getText(ast) === name) match = node
+    if ((ts.isVariableDeclaration(node) || ts.isFunctionDeclaration(node)) && node.name?.getText(name === 'UI_TRANSLATIONS' || name === 'translateText' ? dictionaryAst : ast) === name) match = node
     if (!match) ts.forEachChild(node, visit)
   }
-  visit(ast)
+  visit(name === 'UI_TRANSLATIONS' || name === 'translateText' ? dictionaryAst : ast)
   assert.ok(match, `${name} must exist`)
-  return match.getText(ast)
+  return match.getText(name === 'UI_TRANSLATIONS' || name === 'translateText' ? dictionaryAst : ast).replace(/^export /, '')
 }
 function runtime(expression, context) {
   return vm.runInNewContext(ts.transpileModule(expression, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context)

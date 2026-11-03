@@ -3,7 +3,10 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const modal = readFileSync(new URL('../src/shared/display/EffortTuningModal.tsx', import.meta.url), 'utf8')
-const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('export default function App('))
+const view = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
+const quick = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const quickCalc = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
+const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 test('party tuning passes existing magic candidate and 11-multiple points to shared modal', () => {
   assert.match(app, /magicCandidate=\{magicCandidate\}/)
   assert.match(app, /magicPoints=\{key => magicEffortPoints\(tuningRow, tuningMember, key\)\}/)
@@ -12,12 +15,12 @@ test('party tuning passes existing magic candidate and 11-multiple points to sha
   assert.match(modal, /targetEffort !== null \? <span className="magic-inline"/)
 })
 test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {
-  assert.match(quick, /quickStagePair\(source\.battle, target\.battle/)
-  assert.match(quick, /attackStage, defenseStage, defenderTypes/)
-  assert.match(quick, /source\.battle\.lowHp/)
-  assert.match(quick, /target\.battle\.fullHp/)
-  assert.match(quick, /target\.battle\.reflect/)
-  assert.match(quick, /setAttacker\(defender\); setDefender\(attacker\)/)
+  assert.match(quickCalc, /quickStagePair\(source\.battle, target\.battle/)
+  assert.match(quickCalc, /attackStage, defenseStage, defenderTypes/)
+  assert.match(quickCalc, /source\.battle\.lowHp/)
+  assert.match(quickCalc, /target\.battle\.fullHp/)
+  assert.match(quickCalc, /target\.battle\.reflect/)
+  assert.match(view, /setAttacker\(defender\); setDefender\(attacker\)/)
   assert.doesNotMatch(quick, /burned: conditions\.burned/)
 })
 test('builder Enter chooses from the same ranked visible results', () => {

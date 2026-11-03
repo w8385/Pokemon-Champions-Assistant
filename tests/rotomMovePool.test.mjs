@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+const owner_0 = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 import { createServer } from 'vite'
 
 const pools = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMovePools.json', import.meta.url), 'utf8'))
@@ -51,6 +52,6 @@ test('battle callers select from shared source and distinguish missing from load
   assert.match(app, /choicesForPool\(memberMovePool\)/)
   assert.match(app, /choicesForPool\(sampleMovePool\)/)
   assert.match(app, /status === 'loading' \? lt\('기술풀 불러오는 중…'\)/)
-  assert.match(app, /status === 'load-error' \? lt\('기술풀을 불러오지 못했습니다.'\)/)
-  assert.match(app, /status === 'missing' \? lt\('기술풀 미확인'\)/)
+  assert.match(owner_0, /status === 'load-error' \? lt\('기술풀을 불러오지 못했습니다.'\)/)
+  assert.match(owner_0, /status === 'missing' \? lt\('기술풀 미확인'\)/)
 })

@@ -11,9 +11,10 @@ const storageFixture = () => {
   return { data, storage: { getItem: key => data.get(key) ?? null, setItem: (key, value) => { data.set(key, value) }, removeItem: key => { data.delete(key) } } }
 }
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const reset = source.slice(source.indexOf('  const resetSingleOpponentEntry = '), source.indexOf('  const resetPartyForFreshEntry = '))
-const revisionStart = source.indexOf('  React.useEffect(() => {\n    if (!comparisonMode || !initialSides || !opponentResetRevision)')
-const revision = source.slice(revisionStart, source.indexOf('  const opener = ', revisionStart))
+const revisionStart = quickHook.indexOf('  React.useEffect(() => {\n    if (!comparisonMode || !initialSides || !opponentResetRevision')
+const revision = quickHook.slice(revisionStart, quickHook.indexOf('  const opener = ', revisionStart))
 
 test('failed storage read is reported before confirming or mutating master', () => {
   const broken = { getItem() { throw new DOMException('secret', 'SecurityError') }, removeItem() { throw Error('must not remove') }, setItem() { throw Error('must not restore') } }

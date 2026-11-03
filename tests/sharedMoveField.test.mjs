@@ -17,7 +17,7 @@ test('one shared field owns the input; all three callers supply tooltip-bound pr
   const opponent = app.slice(app.indexOf('ownerId={`sample-opponent-'), app.indexOf('sample-opponent-offense-grid', app.indexOf('ownerId={`sample-opponent-')))
   assert.match(app, /<MoveSlotsEditor[^]*?ownerId=\{`sample-opponent-/)
   assert.match(opponent, /inputProps: \{/)
-  const quick = app.slice(app.indexOf('function QuickDamagePanel('), app.indexOf('function LanguageIcon('))
+  const quick = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
   assert.match(quick, /<MoveSlotsEditor[^]*inputProps: \{/)
   assert.match(quick, /tooltipProps: tooltipForMove\(name\)/)
   assert.match(app, /tooltipForMove=\{name => bindTooltip\(name \? moveTooltipData\(name, siteLanguage\) : null\)\}/)

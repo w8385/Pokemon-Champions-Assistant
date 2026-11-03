@@ -10,11 +10,12 @@ import { normalizeSearchText } from '../src/domain/battle/moveKey.ts'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url),'utf8')
 const ast = ts.createSourceFile('App.tsx',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
+const moveAst = ts.createSourceFile('movePresentation.ts', readFileSync(new URL('../src/adapters/catalog/movePresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const legacy = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json',import.meta.url),'utf8'))
 const historicalEvidence = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaLegacyEvidence.json',import.meta.url),'utf8'))
 const pinned = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url),'utf8'))
 const aliases = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaNameAliases.json',import.meta.url),'utf8'))
-function fn(name) { const found=ast.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name); assert.ok(found,name); return found.getText(ast) }
+function fn(name) { const owner = ['findMatchingMoveOption','lookupMoveMeta','resolveMoveType','resolveMoveMeta'].includes(name) ? moveAst : ast; const found=owner.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name); assert.ok(found,name); return found.getText(owner).replace(/^export /, '') }
 async function runtime() {
   const server=await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
   try {

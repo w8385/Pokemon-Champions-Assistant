@@ -10,7 +10,7 @@ Object.assign(globalThis, { window: browser, document: browser.document, localSt
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
 let Panel, quickSide
-try { ({ QuickDamagePanel: Panel, quickSide } = await server.ssrLoadModule('/src/App.tsx')) } catch (error) { await server.close(); throw error }
+try { ({ QuickDamagePanel: Panel, quickSide } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts"].map(path => server.ssrLoadModule(path)))))()) } catch (error) { await server.close(); throw error }
 test.after(async () => {
   const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
   const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')

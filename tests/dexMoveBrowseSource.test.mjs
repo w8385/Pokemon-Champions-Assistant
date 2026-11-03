@@ -8,10 +8,12 @@ import { byDisplayName } from '../src/shared/search/displayOrder.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const formatters = ts.createSourceFile('formatters.ts', readFileSync(new URL('../src/shared/display/formatters.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 function actualFunction(name) {
-  const node = source.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name)
+  const owner = name === 'displayMoveCategoryName' ? formatters : source
+  const node = owner.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name)
   assert.ok(node, `actual App function ${name}`)
-  return node.getText(source)
+  return node.getText(owner).replace(/^export /, '')
 }
 const legacy = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json', import.meta.url), 'utf8'))
 const historicalEvidence = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaLegacyEvidence.json', import.meta.url), 'utf8'))

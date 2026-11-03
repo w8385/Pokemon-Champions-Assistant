@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 
-const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const app = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const start = app.lastIndexOf('  const poolMounted =', app.indexOf('for (const key of new Set([attacker.key, defender.key]))'))
 const end = app.indexOf('}, [attacker.key, defender.key])', start) + '}, [attacker.key, defender.key])'.length
 assert.ok(start > 0 && end > start)

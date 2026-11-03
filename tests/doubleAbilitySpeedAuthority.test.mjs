@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const abilitySource = ts.createSourceFile('abilityPresentation.ts', readFileSync(new URL('../src/shared/display/abilityPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 let memo, errorFunction
 function visit(node) {
   if (ts.isVariableDeclaration(node) && node.name.getText(source) === 'doubleSpeedOrder') memo = node.initializer
@@ -14,6 +15,7 @@ function visit(node) {
   ts.forEachChild(node, visit)
 }
 visit(source)
+errorFunction = abilitySource.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'heldAbilityError')
 assert.ok(memo && errorFunction)
 const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 
@@ -32,7 +34,7 @@ async function speedFor(ability, { trickRoom = false, tailwind = false } = {}) {
       isCalculableAbility, isCalculableHeldItem, indexByKey: new Map(roster.map(row => [row.key, row])), rows: roster,
       abilityDescriptionFor: () => null,
     })
-    const code = `${errorFunction.getText(source)}\nconst run = ${memo.arguments[0].getText(source)}; globalThis.result = run();`
+    const code = `${errorFunction.getText(abilitySource).replace(/^export /, '')}\nconst run = ${memo.arguments[0].getText(source)}; globalThis.result = run();`
     vm.runInContext(ts.transpileModule(code, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText, context)
     return { result: context.result.find(entry => entry.slot === 'myLeft'), calls }
   } finally { await server.close() }

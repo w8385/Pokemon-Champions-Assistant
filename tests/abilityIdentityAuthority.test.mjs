@@ -77,7 +77,7 @@ test('colliding localized aliases have no global authority and resolve only on a
 test('late description load makes Japanese alias resolvable without converting missing metadata into an invalid slug', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { classifyAbilityForKey, selectedAbilityDisplayName } = await server.ssrLoadModule('/src/App.tsx')
+    const { classifyAbilityForKey, selectedAbilityDisplayName } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/shared/display/abilityPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
     const { loadDexDescriptions, abilityDescriptionFor } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
     const { abilityIndex } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
     const row = roster.rows.find(entry => entry.key === 'mega-alakazam')
@@ -97,7 +97,7 @@ test('late description load makes Japanese alias resolvable without converting m
 test('App read boundary preserves raw evidence and distinguishes blocked calculations from explicit blank', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { classifyAbilityForKey, selectedAbilityDisplayName } = await server.ssrLoadModule('/src/App.tsx')
+    const { classifyAbilityForKey, selectedAbilityDisplayName } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/shared/display/abilityPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
     const row = roster.rows.find(entry => entry.key === 'mega-starmie')
     assert.equal(classifyAbilityForKey(row.key, 'creator-original').raw, 'creator-original')
     assert.equal(classifyAbilityForKey(row.key, 'creator-original').status, 'unknown')
@@ -127,7 +127,7 @@ test('shared ability field warns without substituting the sole-form label', asyn
 test('actual Party and Quick hydration retain unknown and explicit blank', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { sanitizeParty, quickSide } = await server.ssrLoadModule('/src/App.tsx')
+    const { sanitizeParty, quickSide } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/quickModel.ts"].map(path => server.ssrLoadModule(path)))))()
     for (const raw of ['creator-original', '']) {
       const saved = { key: 'mega-starmie', ability: raw, item: '' }
       assert.equal(sanitizeParty(JSON.parse(JSON.stringify([saved])))[0].ability, raw)
@@ -141,7 +141,7 @@ test('actual Quick entry shows invalid ability and an explicit repair path', asy
   const before = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } })
   try {
-    const { QuickDamagePanel, quickSide } = await server.ssrLoadModule('/src/App.tsx')
+    const { QuickDamagePanel, quickSide } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts"].map(path => server.ssrLoadModule(path)))))()
     const defender = quickSide({ key: 'starmie', ability: '', item: '' })
     const invalid = quickSide({ key: 'mega-starmie', ability: 'creator-original', item: '' })
     const html = renderToStaticMarkup(React.createElement(QuickDamagePanel, { language: 'en', tooltipForMove: () => ({}), initialSides: [invalid, defender] }))

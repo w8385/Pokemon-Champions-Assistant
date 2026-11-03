@@ -51,7 +51,7 @@ test('conditional opponent ability control explicitly feeds selected verdict and
 })
 
 test('every single speed screen string has English and Japanese parity', () => {
-  const maps = app.slice(app.indexOf('const UI_TRANSLATIONS:'), app.indexOf('\nfunction translateText('))
+  const maps = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
   const en = maps.slice(maps.indexOf('  en: {'), maps.indexOf('  ja: {'))
   const ja = maps.slice(maps.indexOf('  ja: {'))
   const labels = [...speedScreen.matchAll(/lt\('([^']+)'\)/g)].map(match => match[1])

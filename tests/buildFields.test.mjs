@@ -5,11 +5,12 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 
+const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 test('party, quick, sample, own subtab nature and sample target use the input-owning shared editor', () => {
-  assert.equal((app.match(/<PokemonBuildFields\b/g) ?? []).length, 5)
+  assert.equal((app.match(/<PokemonBuildFields\b/g) ?? []).length + (quickView.match(/<PokemonBuildFields\b/g) ?? []).length, 5)
   const party = app.slice(app.indexOf('className="entry-grid manage-entry-grid"'), app.indexOf('className="move-card inline-move-card"'))
-  const quick = app.slice(app.indexOf('const sideCard ='), app.indexOf('const toggle ='))
+  const quick = quickView.slice(quickView.indexOf('const sideCard ='), quickView.indexOf('const toggle ='))
   const sample = app.slice(app.indexOf('className="sample-meta-grid"') - 200, app.indexOf('id="sample-moves-card"'))
   for (const section of [party, quick, sample]) assert.match(section, /<PokemonBuildFields\b/)
   assert.doesNotMatch(party, /party-meta-chip-button/)

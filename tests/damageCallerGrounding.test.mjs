@@ -8,24 +8,27 @@ import { loadAppDamageEngine } from '../scripts/check-damage-parity.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const source = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8')
+const quickSource = fs.readFileSync(path.join(root, 'src/features/damage/calculateQuickDamage.ts'), 'utf8')
 const ts = createRequire(import.meta.url)(path.join(root, 'node_modules/typescript'))
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const quickAst = ts.createSourceFile('calculateQuickDamage.ts', quickSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const calls = []
-function visit(node) {
-  if (ts.isCallExpression(node) && node.expression.getText(ast) === 'resolveDamageModifiers') calls.push(node)
-  ts.forEachChild(node, visit)
+function visit(node, owner) {
+  if (ts.isCallExpression(node) && node.expression.getText(owner) === 'resolveDamageModifiers') calls.push({ call: node, owner })
+  ts.forEachChild(node, child => visit(child, owner))
 }
-visit(ast)
+visit(ast, ast)
+visit(quickAst, quickAst)
 
 test('each of seven real resolver callers passes attacker identity; only Double passes Doubles format', () => {
   assert.equal(calls.length, 7)
   let doubleCalls = 0
-  for (const call of calls) {
+  for (const { call, owner } of calls) {
     const arg = call.arguments[0]
     assert.ok(ts.isObjectLiteralExpression(arg))
-    const keys = arg.properties.map(p => p.name?.getText(ast))
-    assert.ok(keys.includes('attackerTypes'), `missing actual attacker types at ${ast.getLineAndCharacterOfPosition(call.pos).line + 1}`)
-    if (arg.getText(ast).includes("format: 'Doubles'")) doubleCalls += 1
+    const keys = arg.properties.map(p => p.name?.getText(owner))
+    assert.ok(keys.includes('attackerTypes'), `missing actual attacker types at ${owner.fileName}:${owner.getLineAndCharacterOfPosition(call.pos).line + 1}`)
+    if (arg.getText(owner).includes("format: 'Doubles'")) doubleCalls += 1
   }
   assert.equal(doubleCalls, 1, 'one actual Double caller and six Singles/Quick/sample callers')
 })

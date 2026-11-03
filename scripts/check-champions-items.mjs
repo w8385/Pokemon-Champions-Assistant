@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto'
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname)
 const source = await fs.readFile(path.join(rootDir, 'src', 'domain/champions/championsItems.ts'), 'utf8')
 const appSource = await fs.readFile(path.join(rootDir, 'src', 'App.tsx'), 'utf8')
+const itemPresentation = await fs.readFile(path.join(rootDir, 'src', 'shared/display/itemPresentation.ts'), 'utf8')
 const speedRules = await fs.readFile(path.join(rootDir, 'src', 'domain/battle/statProjection.ts'), 'utf8')
 const damageRules = await fs.readFile(path.join(rootDir, 'src', 'domain/battle/modifierRules.ts'), 'utf8')
 const pokemonData = JSON.parse(await fs.readFile(path.join(rootDir, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json'), 'utf8'))
@@ -26,7 +27,8 @@ const en = parseRecord('CHAMPIONS_ITEM_LABEL_EN')
 const sprites = parseRecord('CHAMPIONS_ITEM_SPRITE_MAP')
 const failures = []
 
-const megaMapMatch = appSource.match(/const MEGA_STONE_SPRITE_BY_KEY[^=]*= \{([\s\S]*?)\n\}/)
+if (!appSource.includes("from './shared/display/itemPresentation.ts'")) throw new Error('App does not import the real item presentation owner')
+const megaMapMatch = itemPresentation.match(/const MEGA_STONE_SPRITE_BY_KEY[^=]*= \{([\s\S]*?)\n\}/)
 if (!megaMapMatch) throw new Error('Could not find MEGA_STONE_SPRITE_BY_KEY')
 const megaSprites = new Map([...megaMapMatch[1].matchAll(/["']([^"']+)["']:\s*["']([^"']+)["']/g)].map((entry) => [entry[1], entry[2]]))
 

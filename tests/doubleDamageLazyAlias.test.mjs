@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 
 const text = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const source = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const abilitySource = ts.createSourceFile('abilityPresentation.ts', readFileSync(new URL('../src/shared/display/abilityPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const nodes = {}
@@ -16,6 +17,7 @@ function visit(node) {
   ts.forEachChild(node, visit)
 }
 visit(source)
+nodes.heldAbilityError = abilitySource.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'heldAbilityError')
 for (const name of ['buildDoubleDamageContext', 'doubleDamageContext', 'doubleActionCards', 'doubleCombinedDamageSummary', 'heldAbilityError']) assert.ok(nodes[name])
 const compile = code => ts.transpileModule(code, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText
 const SLOT = ['myLeft', 'myRight', 'oppLeft', 'oppRight']
@@ -65,7 +67,7 @@ test('lazy alias refreshes actual memoized Double damage callback and individual
       doubleSlotDisplayName: slot => slot, doubleActionFocusSlot: 'myLeft',
       resolveDamageVerdictTone: () => 'neutral',
     })
-    vm.runInContext(compile(nodes.heldAbilityError.getText(source)), context)
+    vm.runInContext(compile(nodes.heldAbilityError.getText(abilitySource).replace(/^export /, '')), context)
     const declarations = ['buildDoubleDamageContext', 'doubleDamageContext', 'doubleActionCards', 'doubleCombinedDamageSummary'].map(name => `const ${name} = ${nodes[name].getText(source)}; globalThis.${name} = ${name};`).join('\n')
     function render(version) {
       context.asyncDataVersion = version

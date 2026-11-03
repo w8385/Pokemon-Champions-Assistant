@@ -5,6 +5,7 @@ import { comparisonSides } from '../src/domain/party/unifiedComparisonAdapter.ts
 import { effectiveComparisonSpeed } from '../src/domain/battle/unifiedComparisonSpeed.ts'
 import { getSpeedAbility, speedActivationAllowed } from '../src/domain/battle/speed/speedAbilities.ts'
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/unifiedEntryFixture.json', import.meta.url)))
+const quickModel = readFileSync(new URL('../src/features/damage/quickModel.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 test('saved localized Libero is canonical for selection and damage, source stays Korean', () => {
  const source=structuredClone(fixture.party[0]); const [own]=comparisonSides([source], [],0,0,{},(key,raw)=>raw==='리베로'?'libero':raw)
@@ -27,7 +28,7 @@ test('unburden held scarf is rejected before comparing speed',()=>{
  assert.equal(effectiveComparisonSpeed({key:'normal',speed:100},0,1,0,true,2,'unburden').value,null)
 })
 test('comparison speed assumptions and nature travel with side, not role',()=>{
- assert.match(app,/speedScarfOverride/); assert.match(app,/speedAbilityActive/)
+ assert.match(quickModel,/speedScarfOverride/); assert.match(quickModel,/speedAbilityActive/)
  assert.doesNotMatch(app,/const \[opponentScarf, setOpponentScarf\]/)
  assert.doesNotMatch(app,/const \[abilityActive, setAbilityActive\]/)
 })

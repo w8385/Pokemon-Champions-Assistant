@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
 const styles = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const nav = source.slice(source.indexOf('<nav id="primary-navigation"'), source.indexOf('</nav>', source.indexOf('<nav id="primary-navigation"')))
 test('all header destinations are direct native anchors without opening a group or toggle', () => {
@@ -14,8 +15,8 @@ test('all header destinations are direct native anchors without opening a group 
 })
 
 test('library destination has explicit English and Japanese translations', () => {
-  assert.match(source, /'샘플 라이브러리': 'Sample Library'/)
-  assert.match(source, /'샘플 라이브러리': 'サンプルライブラリ'/)
+  assert.match(translations, /'샘플 라이브러리': 'Sample Library'/)
+  assert.match(translations, /'샘플 라이브러리': 'サンプルライブラリ'/)
 })
 
 test('header keeps an accessible name and working utilities without a duplicated visible page title or description', () => {
@@ -45,8 +46,8 @@ test('project information has no closed-disclosure hiding rules', () => {
 })
 
 test('project disclosure label is localized like the existing project links', () => {
-  assert.match(source, /'프로젝트 정보': 'Project Information'/)
-  assert.match(source, /'프로젝트 정보': 'プロジェクト情報'/)
+  assert.match(translations, /'프로젝트 정보': 'Project Information'/)
+  assert.match(translations, /'프로젝트 정보': 'プロジェクト情報'/)
 })
 
 test('single matchup does not announce a removed selection-estimate flow', () => {

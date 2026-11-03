@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const quickView = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
+const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
 const speed = readFileSync(new URL('../src/features/speedline/SpeedLinePanel.tsx', import.meta.url), 'utf8')
 const region = (begin, end) => app.slice(app.indexOf(begin), app.indexOf(end, app.indexOf(begin)))
 const party = region('className="party-preset-board"', 'className="entry-grid manage-entry-grid"')
@@ -39,16 +41,16 @@ test('speed investment retains target and numbers but not duplicated effort/natu
 
 test('distinct import and export destinations have scoped Korean keys and EN/JA translations', () => {
   for (const label of ['전체 데이터 내보내기', '전체 데이터 불러오기', '저장 파티에 추가', '샘플 편집기에 가져오기', '출처 링크 저장', '저장 링크 삭제', '샘플 편집기로 보내기', '파티 슬롯 선택', '선택 슬롯에 넣기', '공격측·방어측 바꾸기']) {
-    assert.ok(app.includes(`lt('${label}')`), label)
-    const translations = app.slice(app.indexOf('const UI_TRANSLATIONS:'), app.indexOf('function translateText('))
-    assert.equal((translations.match(new RegExp(`'${label}':`, 'g')) ?? []).length, 2, label)
+    assert.ok((label === '공격측·방어측 바꾸기' ? quickView : app).includes(`lt('${label}')`), label)
+    const translationsSource = translations
+    assert.equal((translationsSource.match(new RegExp(`'${label}':`, 'g')) ?? []).length, 2, label)
   }
   assert.match(app, /onClick=\{\(\) => \{ exportState\(\); setSettingsMenuOpen\(false\) \}\}>\s*<strong><UiIcon name=\"download\"[^>]*\/>\{lt\('전체 데이터 내보내기'\)\}/)
   assert.match(app, /onClick=\{\(\) => importCreatorParty\(librarySource\)\}><UiIcon name=\"plus\"[^>]*\/>\{lt\('저장 파티에 추가'\)\}/)
 })
 
 test('entry actions identify which master record is changed, not temporary assumptions', () => {
-  const quick = region('function QuickDamagePanel(', 'function LanguageIcon(')
+  const quick = quickView
   assert.match(quick, /side === 'attacker' \? '내 파티 기록에 반영' : '상대 엔트리 기록에 반영'/)
   assert.match(quick, /title=\{lt\('상대 엔트리·비교 초안 초기화'\)\}><UiIcon name="trash"[^>]*\/>\{lt\('상대 초기화'\)\}/)
   assert.match(quick, /onSaveEntry\?\.\(side, entry, dirty\[side\]\)/)

@@ -9,6 +9,7 @@ import { classifyHeldItem, canonicalHeldItem, isCalculableHeldItem } from '../sr
 import { byDisplayName, compareDisplayName } from '../src/shared/search/displayOrder.ts'
 
 const ast = ts.createSourceFile('App.tsx', readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const itemAst = ts.createSourceFile('itemPresentation.ts', readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const declarations = new Map()
 let input
 function visit(node) {
@@ -17,6 +18,8 @@ function visit(node) {
   ts.forEachChild(node, visit)
 }
 visit(ast)
+function itemVisit(node) { if ((ts.isFunctionDeclaration(node) || ts.isVariableDeclaration(node)) && node.name && ts.isIdentifier(node.name)) declarations.set(node.name.text, { getText: () => node.getText(itemAst).replace(/^export /, '') }); ts.forEachChild(node, itemVisit) }
+itemVisit(itemAst)
 assert.ok(input, 'actual opponent item input JSX')
 const attr = name => input.attributes.properties.find(p => ts.isJsxAttribute(p) && p.name.text === name)?.initializer?.expression
 const transpile = text => ts.transpileModule(text, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText

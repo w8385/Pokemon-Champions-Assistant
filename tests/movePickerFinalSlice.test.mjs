@@ -10,13 +10,16 @@ import { localizedChampionsItemLabel } from '../src/domain/champions/championsIt
 import { canonicalHeldItem } from '../src/domain/champions/itemIdentity.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const itemPresentation = readFileSync(new URL('../src/shared/display/itemPresentation.ts', import.meta.url), 'utf8')
 const cardSource = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 test('all editable callers use shared candidate row, including sample damage and both legacy adders', () => {
   assert.match(cardSource, /export function MoveCandidateRow/)
   for (const id of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-move-${member.key}-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${slot}']) {
-    const index = source.indexOf('id: `'+id+'`')
+    const owner = id.startsWith('quick-') ? quickView : source
+    const index = owner.indexOf('id: `'+id+'`')
     assert.ok(index > 0, `missing ${id}`)
-    assert.match(source.slice(index, index + 1400), /MoveCandidateRow/)
+    assert.match(owner.slice(index, index + 1400), /MoveCandidateRow/)
   }
   for (const id of ['opp-entry-move-${selectedOpp}', 'calc-opp-move-${selectedOpp}']) {
     assert.match(source, new RegExp('<SearchCombobox id={`'+id.replace(/[${}]/g, m => '\\'+m)+'`'))
@@ -56,7 +59,7 @@ test('shared candidate renders type, known and unknown metadata; hover/focus and
 })
 
 test('item label uses loaded localized source name only as registry fallback', () => {
-  assert.match(source, /function displayItemLabel\([^]*?resolveItemInfo\(/)
+  assert.match(itemPresentation, /export function displayItemLabel\([^]*?resolveItemInfo\(/)
   assert.match(source, /asyncDataVersion, deferredDexSearch, siteLanguage/)
 })
 
@@ -64,13 +67,13 @@ test('actual lazy source names localize both canonical and raw alias without cha
   const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } })
   try {
     const { loadDexDescriptions, resolveItemInfo } = await vite.ssrLoadModule('/src/adapters/catalog/data.ts')
-    const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+    const ast = ts.createSourceFile('itemPresentation.ts', itemPresentation, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
     let func
     function visit(node) { if (ts.isFunctionDeclaration(node) && node.name?.text === 'displayItemLabel') func = node; ts.forEachChild(node, visit) }
     visit(ast)
     assert.ok(func)
     const context = vm.createContext({ localizedChampionsItemLabel, canonicalChampionsItemName: canonicalHeldItem, resolveItemInfo, translateText: (_language, raw) => raw })
-    vm.runInContext(ts.transpileModule(`${func.getText(ast)};globalThis.label=displayItemLabel`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context)
+    vm.runInContext(ts.transpileModule(`${func.getText(ast).replace(/^export /, '')};globalThis.label=displayItemLabel`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText, context)
     await loadDexDescriptions()
     for (const raw of ['후딘나이트', '후디나이트']) {
       assert.equal(resolveItemInfo(raw)?.key, '후딘나이트')

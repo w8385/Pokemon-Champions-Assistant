@@ -7,6 +7,7 @@ import * as registration from '../src/domain/party/singleOpponentRegistration.ts
 
 const root = new URL('../', import.meta.url)
 const roster = JSON.parse(readFileSync(new URL('src/canonical-data/champions/pokemon_champions_verified_data.json', root)))
+const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const app = readFileSync(new URL('src/App.tsx', root), 'utf8')
 const generator = readFileSync(new URL('scripts/sync-champions-verified-data.mjs', root), 'utf8')
 const verified = JSON.parse(readFileSync(new URL('src/canonical-data/champions/verifiedAbilityLabels.json', root)))
@@ -31,7 +32,7 @@ test('explicit new Mega form selection resolves one canonical ability, not a bas
 })
 
 test('actual Single registration and both Quick search callbacks use the form-specific selection only at explicit commit', () => {
-  assert.match(app, /const next = \{ \.\.\.quickBlank\(\), key, ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: megaStoneForKey\(key\)/)
+  assert.match(quickHook, /const next = \{ \.\.\.quickBlank\(\), key, ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: megaStoneForKey\(key\)/)
   assert.match(app, /registerOpponentSpecies\(opponents, current, key, \(\) => \(\{ \.\.\.blankOpponent\(\), ability: soleAbilityForSelectedSpecies\(indexByKey\.get\(key\)\), item: normalizeItemForKey\(key, ''\) \}\)\)/)
   const input = [{ key: 'charizard', ability: '', item: '', revealedMoves: ['파괴광선'] }, { key: '', ability: '', item: '', revealedMoves: [] }]
   const blank = () => ({ key: '', ability: '', item: 'starmienite', revealedMoves: [] })
@@ -51,7 +52,7 @@ test('verified labels resolve in the shared form authority and actual saved-fiel
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
     const { abilityIndex, localizedAbilityLabel } = await server.ssrLoadModule('/src/domain/champions/abilityIdentity.ts')
-    const { selectedAbilityDisplayName, classifyAbilityForKey } = await server.ssrLoadModule('/src/App.tsx')
+    const { selectedAbilityDisplayName, classifyAbilityForKey } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/shared/display/abilityPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
     for (const slug of ['eelevate', 'fire-mane']) {
       const owner = roster.rows.find(entry => entry.abilities.includes(slug))
       assert.ok(owner, slug)

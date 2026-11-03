@@ -7,6 +7,7 @@ import { routeGroups } from '../src/app/navigation.ts'
 import { readFileSync } from 'node:fs'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const quickView = readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const key = 'pokemon-champions-assistant-demo:v1'
 let server, App, createRoot
@@ -100,7 +101,7 @@ test('slot focus scrolls the editing input into view instead of centering a tall
 })
 
 test('shared speed renderer distinguishes base stat badge from effective comparison', () => {
-  assert.match(source, /className="quick-speed-base-badge"/)
-  assert.match(source, /\{lt\('스피드 종족값'\)\} \{row\.speed\}/)
+  assert.match(quickView, /className="quick-speed-base-badge"/)
+  assert.match(quickView, /\{lt\('스피드 종족값'\)\} \{row\.speed\}/)
   assert.match(css, /\.quick-speed-base-badge\s*\{/)
 })

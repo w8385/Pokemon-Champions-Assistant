@@ -7,6 +7,8 @@ import { weatherFromAbility, terrainFromAbility, deriveAutoWeatherFromAbilities,
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const abilitySource = readFileSync(new URL('../src/shared/display/abilityPresentation.ts', import.meta.url), 'utf8')
+const abilityAst = ts.createSourceFile('abilityPresentation.ts', abilitySource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const roster = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/pokemon_champions_verified_data.json', import.meta.url))).rows
 const descriptions = JSON.parse(readFileSync(new URL('../src/canonical-data/dex/dexDescriptions.json', import.meta.url))).abilities
 const row = key => roster.find(entry => entry.key === key)
@@ -28,7 +30,8 @@ function evaluate(code, context) {
   return Function(...Object.keys(context), js)(...Object.values(context))
 }
 function actualFunction(name, context) {
-  return evaluate(`${declaration(name, 'function').getText(ast)}; return ${name}`, context)
+  if (name === 'resolveSelectedAbility' || name === 'heldAbilityError') { const node = abilityAst.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name); assert.ok(node, name); return evaluate(`${node.getText(abilityAst).replace(/^export /, '')}; return ${name}`, context) }
+   return evaluate(`${declaration(name, 'function').getText(ast)}; return ${name}`, context)
 }
 function actualVariable(name, context, after = -1) {
   return evaluate(`return ${declaration(name, 'variable', after).initializer.getText(ast)}`, context)

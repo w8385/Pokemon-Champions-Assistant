@@ -1,3 +1,15 @@
+import { filterSpeciesOptions } from './shared/search/speciesOptions'
+import { QuickDamagePanel } from './features/damage/QuickDamagePanel'
+import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './features/damage/quickPresentation.ts'
+import { QuickBattle, QuickSide, QuickConditions, quickBlankBattle, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat } from './features/damage/quickModel.ts'
+import { sanitizeEvs, applyChampionsEffort, clampEv, totalEffortPoints, remainingEffortPoints } from './domain/champions/effortProjection'
+import { natureById, boostedStatForNature } from './shared/display/naturePresentation'
+import { heldAbilityError, resolveSelectedAbility, abilityDisplayName, selectedAbilityDisplayName } from './shared/display/abilityPresentation.ts'
+import { lookupMoveMeta, findMatchingMoveOption, resolveMoveType, resolveMoveMeta, filterMoveOptions } from './adapters/catalog/movePresentation.ts'
+import { MEGA_STONE_SPRITE_BY_KEY, canonicalChampionsItemName, megaStoneForKey, isAllowedChampionsItem, heldItemError, itemSpriteSrc, matchesLooseQuery, displayItemLabel, filterItemOptions, itemAutocompleteSecondaryLabel, itemAutocompletePrimaryLabel } from './shared/display/itemPresentation.ts'
+import { TYPE_KO_BY_KEY, statLabel, statThemeClass, moveTypeThemeClass, natureLabel, displayMoveCategoryName, displayName, searchDisplayLabel } from './shared/display/formatters.ts'
+import { speedTemplate, makeFormRow, baseRows, baseIndexByKey, extraFormRows, rows, indexByKey, speciesOptions } from './adapters/catalog/roster.ts'
+import { UI_TRANSLATIONS, translateText } from './shared/display/translation.ts'
 import { typeChart, normalizedTypeChart, typeEffectiveness, effectiveDefenderAbility, abilityAdjustedTypeEffectiveness } from './domain/battle/typeEffectiveness.ts'
 import { battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded, resolveDamageModifiers } from './domain/battle/modifierRules.ts'
 import { opponentSpeedValue, partySpeedValue, buildPartyBattleStats, buildOpponentBattleStats, attackingFormRow, isChoiceScarfItem } from './domain/battle/statProjection.ts'
@@ -77,8 +89,6 @@ import { DAMAGE_MOD_SCALE, calcDamage, chainMods, engineMovePower, type BattleSt
 import type { AutocompleteHighlight, CalcMode, ConditionalPowerValue, CropRect, DamageTerrain, DamageWeather, DexDescriptionBundle, DexResultItem, DexSearchMode, DoubleBoardSlot, EffortStatKey, HoverTooltipCard, ImportExportPayload, ItemFieldTarget, MainSection, MainTab, MemberConfig, MoveCategory, MoveFieldTarget, MoveFilter, MoveMeta, MoveOption, NatureId, OcrImportedPartyMember, OcrStatKey, OpponentBulkPreset, OpponentOffensePreset, OpponentState, PartyMember, PartyTuning, PersistedState, RivalryMode, Row, SampleDamageTarget, SampleSpeedTarget, SampleWorkbenchTab, SavedPartyPreset, SavedSample, SiteLanguage, StatKey, ViewState } from './app/types'
 import { dexSelectionId, localizedDexText, parseDexSelectionId } from './features/dex/helpers'
 import { abilityDescriptionFor, getDexDescriptionsSync, itemDescriptionFor, loadDexDescriptions, loadMoveMetaByName, loadSpriteHashIndex, loadUsageTopMovesByKey, MOVE_META_BY_NAME, moveDescriptionFor, resolveItemInfo, usageTopMovesForKey } from './adapters/catalog/data'
-
-const TYPE_KO_BY_KEY: Record<string, string> = typeKoLabels
 type OpponentBulkConfig = {
   hpEv: number
   defenseEv: number
@@ -110,146 +120,7 @@ type OpponentOffenseState = {
   attackNature: number
   spAttackNature: number
 }
-type MovePoolState = { status: 'idle' | 'loading' | 'ready' | 'error' | FormLearnset['status']; moves: MoveOption[] }
-type SharedPoolState = FormLearnset | { status: 'loading' | 'load-error'; moves: MoveOption[]; moveIds: number[]; provenance: typeof LEARNSET_SOURCE }
-function learnsetStatusText(pool: SharedPoolState | undefined, language: SiteLanguage) {
-  const messages = {
-    ko: { loading: '폼별 기술 스냅샷 로딩 중', ready: '', missing: '폼별 기술 출처 미확인 · 기존 기록 유지', error: '폼별 기술 로딩 실패 · 기존 기록 유지', legacy: '폼별 기술 출처 미검증' },
-    en: { loading: 'Loading form learnset', ready: '', missing: 'Form learnset unknown · records retained', error: 'Learnset load failed · records retained', legacy: 'Form learnset unverified' },
-    ja: { loading: 'フォルム別わざを読込中', ready: '', missing: 'フォルム別わざ未確認 · 記録は保持', error: 'わざの読込失敗 · 記録は保持', legacy: 'フォルム別わざ未検証' },
-  }[language]
-  switch (pool?.status) {
-    case 'ready-verified': return messages.ready
-    case 'legacy-unverified': return messages.legacy
-    case 'missing': return messages.missing
-    case 'load-error': return messages.error
-    default: return messages.loading
-  }
-}
-function recordedLearnsetText(name: string, pool: SharedPoolState | undefined, language: SiteLanguage): string | null {
-  if (!name) return null
-  const state = recordedMoveSnapshotState(name, pool)
-  if (state === 'in-snapshot' || state === 'pending') return null
-  const labels = {
-    ko: { outside: '기존 기록 · 2026-09-09 스냅샷 밖 (현행 적격성 미확인)', unverified: '기존 기록 · 폼별 습득 여부 미확인' },
-    en: { outside: 'Saved move · outside 2026-09-09 snapshot (current eligibility unknown)', unverified: 'Saved move · exact-form eligibility unknown' },
-    ja: { outside: '保存済み · 2026-09-09 スナップショット外 (現行の適格性未確認)', unverified: '保存済み · フォルム別の習得未確認' },
-  }[language]
-  return state === 'outside-snapshot' ? labels.outside : labels.unverified
-}
 type DamageMoveSelection = { key: string; move: string }
-const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
-  en: {
-    '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': 'Build verification covers build information only, not official verification of rankings or results.',
-    '파티 저장': 'Save party', '파티 불러오기': 'Load party', '저장 파티 덮어쓰기': 'Overwrite saved party', '저장 파티 이름 변경': 'Rename saved party', '저장 파티 삭제': 'Delete saved party', '현재 파티 비우기': 'Clear current party', '이미지에서 파티 가져오기': 'Import party from image',
-    '새 파티': 'New party', '선택 파티 이름': 'Selected party name', '저장 중': 'Saving…', '자동 저장됨': 'Autosaved', '저장 실패 · 변경은 현재 화면에만 유지': 'Save failed · changes are kept only on this screen', '저장 데이터 읽기 실패 · 원본 보호 중': 'Could not read saved data · original is protected', '저장 재시도': 'Retry save', '원본 덮어쓰기 확인': 'Confirm overwrite of original', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': 'Overwrite the original stored data with this screen?', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'Party selection changed; image was not applied. Please try again.',
-    '샘플 저장': 'Save sample', '샘플 불러오기': 'Load sample', '저장 샘플 삭제': 'Delete saved sample', '샘플 편집기에 가져오기': 'Import to sample editor', '저장 파티에 추가': 'Add to saved parties', '출처 링크 저장': 'Save source link', '저장 링크 삭제': 'Delete saved link',
-    '전체 데이터 내보내기': 'Export all data', '전체 데이터 불러오기': 'Import all data', '샘플 편집기로 보내기': 'Send to sample editor', '파티 슬롯 선택': 'Choose party slot', '선택 슬롯에 넣기': 'Put in selected slot', '공격측·방어측 바꾸기': 'Swap attacker and defender', '상대 엔트리·비교 초안 초기화': 'Reset opponent entry and comparison draft', '상대 초기화': 'Reset opponent',
-    '내 속도 조정': 'Adjust my Speed', '상대 속도 조정': 'Adjust opponent Speed', '속도 보정 기준': 'Speed calculation basis', '양쪽 상태·랭크·장막 없음': 'No status, stages or screens on either side',
-    '대면 가정 · 저장 기록 미변경': 'Matchup assumption · saved records unchanged', '가정의 출처와 한계': 'Assumptions and limits', '계산 한계': 'Calculation limits', '계산 조건': 'Calculation conditions', '계산 조건 바꾸기': 'Adjust calculation conditions', '상태·랭크·장막 없음': 'No status, stages or screens', '기술 등록 →': 'Register a move →', '기술을 등록하거나 선택하세요.': 'Register or select a move.', '양쪽 포켓몬을 선택하세요.': 'Choose both Pokémon.', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'This move is unsupported under current conditions or is a status move.', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in My Party.', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': 'Empty slot: register a Pokémon in Opponent Entry.',
-    '대면비교': 'Matchup Comparison', '비교 불가': 'Cannot compare', '원본 특성 미확인': 'Unresolved source ability', '종·폼 검색': 'Search species or form', '엔트리 저장': 'Save entry', '변경 취소': 'Cancel changes', '저장 전 변경 · 대면 가정은 저장되지 않음': 'Unsaved entry changes · battle assumptions are temporary', '저장된 엔트리 · 전투 가정은 임시': 'Saved entry · battle assumptions are temporary', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': 'Same-species slots share moves. Move edits affect all of them.', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': 'Opponent full nature and offense effort unknown; recorded Def/Sp. Def modifiers apply. Modal edits affect only this matchup.', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': 'Full nature is a matchup assumption, not the saved entry; offense effort unknown and assumed zero.', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'Entry-backed · changes to assumptions do not edit saved entries', '속도 성격 가정': 'Speed nature assumption', '스카프 시나리오': 'Scarf scenario', '(전제 조건 미충족 · 미적용)': '(Prerequisite unmet · not applied)', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'Unburden requires no currently held item.',
-    '샘플 라이브러리': 'Sample Library', '프로젝트 정보': 'Project Information', '대면': 'Matchup', '계산기': 'Calculator', '스피드라인': 'Speed Line', '샘플 연구소': 'Sample Lab', '샘플': 'Samples', '링크 지역': 'Link region', '배틀': 'Battle', '분석 도구': 'Analysis Tools', '사용 중인 파티': 'Active Party', '이 파티로 대면 보기': 'View matchup with this party', '선택 내 슬롯 파티 편집': 'Edit selected party slot', '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.': 'Adjust Speed effort to compare when you overtake opposing benchmarks.',
-    '선택 기술 상세': 'Selected move details', '속도 가정 조정': 'Adjust Speed assumptions',
-    '연속기는 기절 확률 계산 제외': 'KO probability is not calculated for multihit moves', '간단 대미지': 'Quick Damage', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': 'Pick attacker and defender to compare move damage immediately.', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'Independent calculation; your party and opponent entry stay unchanged.', '공수 교체': 'Swap sides', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Level 50 · IV 31 · neutral nature · Champions effort 0/32 · no item or ability. Entered actual stats override calculated stats.', '포켓몬을 선택하세요.': 'Choose a Pokémon.', '특성 없음': 'No ability', '노력 포인트': 'Effort points', '사용 가능 공격 기술': 'Available damaging moves', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': 'No verified damaging moves available. No invented moves are shown.', '대미지 결과': 'Damage result', '1타 확률': 'OHKO chance', '16개 난수 피해': '16 damage rolls', '실수치는 1~999의 정수로 입력하세요.': 'Enter actual stats as integers from 1 to 999.', '공격측·방어측과 기술을 선택하세요.': 'Choose an attacker, defender and move.', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': 'Unselected activation conditions, variable power, recovery and accuracy are not calculated. Multihit rolls sum the same roll per hit in the existing engine.',
-    '스피드 종족값': 'Base Speed', '성격 보정': 'Nature modifier', '스피드 랭크': 'Speed stage', '스카프 가정': 'Scarf assumption', '내 스카프 가정': 'My Scarf assumption', '최종 스피드': 'Effective Speed', '화면 가정 · 파티 도구 변경 없음': 'Screen assumption · party item unchanged', '파티 도구 기준': 'Based on party item', '상대 가정 · 엔트리 변경 없음': 'Opponent assumption · entry unchanged',
-    '가정': 'Assumed', '내 스피드': 'My Speed', '내 특성 발동은 이 비교에 미적용': 'My ability activation is not included in this comparison', '내가 느림': 'I am slower', '내가 빠름': 'I am faster', '동속 최소 스피드 노력': 'Minimum effort to tie', '동속은 추월이 아닙니다.': 'A tie is not a strict pass.', '미발동': 'Inactive', '발동 가정': 'Assume active', '보정 없음': 'No nature modifier', '상대 가정 스피드': 'Assumed opponent Speed', '상대 도구 가정': 'Opponent item assumption', '상대 성격 가정': 'Opponent nature assumption', '상대 스피드 랭크': 'Opponent Speed stage', '상대 특성 발동 가정': 'Opponent ability activation assumption', '스피드 노력': 'Speed effort', '스피드 비교 그래프 자세히 보기': 'Show speed comparison graph', '엄격히 추월할 최소 스피드 노력': 'Minimum effort to strictly pass', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': 'Neutral = no Speed nature boost · Fast = Speed nature +10% · both assume 32/32 Champions Speed effort. Opponent records are unchanged.', '현재 성격·도구로 추월 불가': 'Cannot pass with current nature and item', '현재 스피드': 'Current Speed', '현재 투자로 이미 추월': 'Already passing with current effort', '현재보다 추가': 'Additional from current', '비가 내릴 때': 'During rain', '모래바람일 때': 'During sandstorm', '쾌청일 때': 'During sun', '눈이 내릴 때': 'During snow', '일렉트릭필드일 때': 'During Electric Terrain', '도구를 소비하거나 잃은 뒤': 'After losing or consuming the held item', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'My Mega form requires a Mega Stone and cannot hold Scarf.', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': 'The opponent Mega form requires a Mega Stone and cannot hold Scarf.', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'Unburden activates after losing the item and cannot combine with a held Scarf.', '이 폼에 없는 특성은 발동할 수 없습니다.': 'This form cannot activate an ability it does not have.',
-    '링크 형식': 'Link format', '실수치 미기록': 'Actual stats not recorded', '목록으로': 'Back to list', '계산 실수치 · 원본 실수치 미기록': 'Calculated stats · actual stats not recorded in source', '원본 이미지에 기록된 실수치': 'Actual stats recorded in source image', '원본 도구 표기': 'Source item value', '원본 특성 표기': 'Source ability value',
-    '파티 소개': 'Party introductions', '개별 포켓몬 샘플': 'Individual Pokémon samples', '확인 대기': 'Pending classification', '전체 파티 구성 미확인': 'Full party details unconfirmed', '구성 일부 확인': 'Members with partial details', '분류·구성 확인 대기': 'Classification and build pending',
-    '형식 미확인: 원본에 싱글/더블 표기 없음': 'Format unknown: source does not specify singles or doubles', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': 'Only confirmed fields are shown. Incomplete builds cannot be imported.', '구성 근거 이미지': 'Build evidence image', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': 'No confirmed builds match. Video sources below await build review.', '구성 확인 대기 · 영상 자료': 'Videos awaiting build review', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': 'Only video titles are confirmed; these cannot be used or imported as builds.',
-    '실능 스피드라인': 'Actual Speed Line', '빠른 순 → 느린 순': 'Fastest → Slowest', '검색 · 이름/폼': 'Search Pokémon or form', '메가폼 포함': 'All forms', '메가폼 제외': 'Exclude Mega', '메가폼만': 'Mega only', '성격 보정 +10%': 'Speed +10%', '성격 보정 없음': 'Neutral nature', '성격 보정 -10%': 'Speed −10%', '챔피언스 노력 포인트': 'Champions Speed effort points', '검색 결과 없음': 'No matching Pokémon', '실능 스피드라인 안내': 'Level 50 · IV 31 · Champions effort 0–32 added before nature · no item, ability, stages, or field effects. Speed ties share a value; listed by key.', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': 'Browse verified Pokémon and forms sorted by actual Speed.', '포켓몬 수': 'Pokémon shown', '기본 스피드': 'Base Speed',
-    '랭커 샘플': 'Ranker samples', '순위 근거가 확인된 자료만 모읍니다.': 'Only samples with verified ranking evidence appear here.', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': 'No ranker samples with verified ranking evidence yet. A ranking claim in a video title is not enough.',
-    '크리에이터 샘플 라이브러리': 'Creator sample library', '자료 확인': 'Browse sources', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': 'Browse verified builds or save source links.', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': 'Only source-verified builds can be imported. Saved links are not verified or automatically collected.', '원본에서 확인된 구성만 빌더로 가져옵니다.': 'Only source-confirmed builds can be imported.', '내 출처 링크': 'My source links', '제목·제작자·포켓몬 이름 검색': 'Search title, creator, or Pokémon name', '구성 미완성 · 불러올 수 없음': 'Incomplete build · cannot load', '형식 미확인': 'Format unknown', '지역': 'Region', '배틀 형식': 'Battle format', '포켓몬 / 텍스트 검색': 'Pokémon / text search', '검증 완료': 'Verified', '부분 확인': 'Partial', '제작자 미확인': 'Creator unconfirmed', '원본 출처': 'Original source', '빌더로 가져오기': 'Import to builder', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': 'No verified creator builds match. Usage presets are not source-verified creator builds.', '출처 링크 보관': 'Save a source link', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'Saved only in this browser as partial. Creator, rank and build are not inferred.', '출처 URL': 'Source URL', '링크 추가': 'Save link', 'http 또는 https 주소를 입력하세요.': 'Enter an HTTP or HTTPS URL.', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': 'To suggest a public entry, send its source and build evidence using the project feedback form.', '제보 폼 열기': 'Open feedback form', '부분 확인 · 개인 링크': 'Partial · personal link',
-    '체력': 'HP', '공격': 'Attack', '방어': 'Defense', '특공': 'Sp. Atk', '특방': 'Sp. Def', '스피드': 'Speed', '특수공격': 'Sp. Atk', '특수방어': 'Sp. Def',
-    '내 파티 관리': 'My Party', '싱글 배틀 준비': 'Singles battle prep', '상대 엔트리': 'Opponent Entry', '스피드 계산': 'Speed Calc', '대미지 계산': 'Damage Calc',
-    '싱글배틀 메뉴': 'Singles Menu', '포켓몬 샘플 깎기': 'Sample Builder', '포켓몬 하나 집중 조정': 'Tune one Pokémon',
-    '홈': 'Home', '정식 배포 준비': 'Release Prep', '모드 선택': 'Choose Mode', '홈페이지에서 시작할 메뉴를 고르세요.': 'Choose where to start from the homepage.', '싱글배틀': 'Singles Battle', '샘플 빌더': 'Sample Builder', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': 'Manage your party and calculate speed and damage based on opponent entries.', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': 'Adjust one Pokémon’s nature, effort values, and moves, then save it as a sample.', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': 'Build and save a single Pokémon sample with its full setup.', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'Organize party, picks, speed, and damage for Pokémon Champions battles in one place.', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'Quickly check doubles turn order and expected damage.', '들어가기': 'Open', '현재 화면': 'Current View', '확정 기술 수': 'Locked Moves', '저장 샘플 수': 'Saved Samples', '샘플 개요': 'Sample Overview', '구성': 'Sections', '기본 정보': 'Basics', '기술 구성': 'Moves', '저장/적용': 'Save/Apply', '노력치 합': 'Total EVs', '파티 슬롯': 'Party Slot', '설정': 'Settings', '데이터 관리': 'Manage Data', '기준 빌드': 'Current Build', '샘플 빌드 기준으로 자동 반영': 'Auto-applies from the current sample build', '현재 기술 기준': 'Based on current move', '공격 EV': 'Attack EV', '특공 EV': 'Sp. Atk EV', '언어': 'Language', '프로젝트 링크': 'Project Links', 'GitHub 저장소': 'GitHub Repository', '연락 이메일': 'Contact Email', '기능제안/버그제보': 'Feature Requests / Bug Reports', '폼으로 제보하기': 'Open Form', '저작권 및 안내': 'Copyright & Notice', '참고 데이터베이스': 'Referenced Databases', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Rights to Pokémon-related names and images belong to their respective owners. This project is an unofficial fan-made tool.', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'Pokémon and related names belong to their respective rights holders. This project is an unofficial fan-made tool.',
-    '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'Party save, speed checks, opponent item notes, quick damage calc, and single sample building.',
-    '더블배틀': 'Doubles Battle', '더블배틀 메뉴': 'Doubles Menu', '더블 계산 작업 보드': 'Doubles Planning Board', '더블 배틀 플래너': 'Doubles Battle Planner', '턴 플랜': 'Turn Plan', '속도/전장': 'Speed / Field', '아군 순풍': 'My Tailwind', '상대 순풍': 'Opponent Tailwind', '트릭룸': 'Trick Room', '트릭룸 순서': 'Trick Room Order', '기본 순서': 'Normal Order', '상대 프렌드가드': 'Opponent Friend Guard', '상대별 총 기대 대미지': 'Expected Damage by Target', '상대 대상': 'Opponent Target', '보조/자기 대상': 'Ally / Self Target', '4마리 행동순': '4-Pokémon Turn Order', '전체 순위 미확인': 'Overall rank unknown', '전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.': 'Overall action order unknown · A participating Pokémon has unknown Speed; showing board-slot order.', '광역기 감쇠가 자동 적용됩니다.': 'Spread move reduction applies automatically.', '우선도': 'Priority', '순위': 'Rank', '계산 대기': 'Waiting for calc', '방어로 막힘': 'Blocked by Protect', '와이드가드로 차단됨': 'Blocked by Wide Guard', '내 좌측': 'My Left', '내 우측': 'My Right', '상대 좌측': 'Opp Left', '상대 우측': 'Opp Right', '사용률 상위 기술': 'Top Usage Moves',
-    '상태 내보내기': 'Export State', '상태 불러오기': 'Import State', '전체 초기화': 'Reset All', '노력치 보정': 'Effort Adjustment', '닫기': 'Close', '성격': 'Nature', '백업 저장': 'Save Backup', '백업 불러오기': 'Load Backup', '전체 데이터 초기화': 'Reset All Data', '현재 작업 상태를 JSON으로 저장': 'Save current workspace as JSON', '저장한 JSON 상태 파일을 불러오기': 'Load a saved JSON state file', '파티·상대·샘플을 전부 초기화': 'Reset party, opponent, and samples',
-    '최소': 'Min', '최대': 'Max', '무보정': 'Neutral', '목표': 'Target', '11배수 달성': '11x reached',
-    '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': 'A dedicated screen for tuning one Pokémon fast with nature, stat points, and sample moves.',
-    '파티 한눈 요약': 'Party Overview', '내 파티': 'My Party', '상대 파티': 'Opponent Party',
-    '포켓몬별 기술배치 / 노력치보정': 'Per-Pokémon move setup / effort tuning', '내 파티 초기화': 'Reset My Party', '포켓몬을 검색해서 추가하세요.': 'Search a Pokémon to add it.',
-    '특성': 'Ability', '미선택': 'Unselected', '특성 검색': 'Search ability', '도구': 'Item', '메가스톤 고정': 'Mega Stone locked', '사용 가능 도구 선택': 'Choose allowed item', '사용 가능 특성 선택': 'Choose listed ability', '포켓몬 먼저 선택': 'Choose Pokémon first',
-    '종 선택': 'Species', '포켓몬 선택': 'Choose Pokémon', '포켓몬 검색': 'Search Pokémon', '기술 배치': 'Move Set', '기술 슬롯': 'Move Slots', '기술풀 불러오는 중…': 'Loading move pool…', '기술풀을 불러오지 못했습니다.': 'Could not load move pool.', '사용 가능한 기술 없음': 'No available moves', '사용 가능 기술 검색': 'Search legal moves', '기술 입력': 'Enter move',
-    '시드': 'Seeded', '검증중': 'Verifying',
-    '기술 데이터가 없는 포켓몬만 직접 입력합니다.': 'Only Pokémon without move data need manual input.',
-    '상대 엔트리 초기화': 'Reset Opponent Entry', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': 'Fill slots in order by repeating `search → Enter` in one box.',
-    '상대 엔트리 빠른 입력': 'Quick Opponent Entry', '현재 입력 슬롯': 'Current Slot', '추정 체크됨': 'Picked', '미체크': 'Unchecked', '도구 없음': 'No item', '포켓몬 미입력': 'No Pokémon', '특성 미기입': 'No ability', '도구 미기입': 'No item', '선출 추정': 'Picked guess', '상세 패널에서 공개 정보를 바로 갱신합니다.': 'Update revealed info directly in the detail panel.',
-    '공개 기술': 'Revealed moves', '메모': 'Notes', '최속 가정': 'Max Speed', '스카프': 'Scarf', '랭크': 'Stage', '선출 추정 해제': 'Unmark picked', '선출 추정 체크': 'Mark picked',
-    '상대 엔트리 메모': 'Opponent Notes', '단일 샘플 빌더': 'Single Sample Builder', '포켓몬 샘플 빌더': 'Pokémon Sample Builder', '도감': 'Dex', '통합검색': 'Unified Search', '도구 미선택': 'No item selected', '실수치 스피드': 'Actual Speed',
-    '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'Quickly search Pokémon, moves, abilities, and items.', '포켓몬': 'Pokémon', '기술': 'Moves', '검색 결과': 'Results', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': 'Select a result to view details instantly.', '포켓몬 / 기술 / 특성 / 도구 검색': 'Search Pokémon / moves / abilities / items', '기술 검색': 'Search moves', '도구 검색': 'Search items', '타입': 'Type', '분류': 'Category', '명중': 'Accuracy', '변화': 'Status', '해당 특성 포켓몬': 'Pokémon with this ability', '배우는 포켓몬': 'Pokémon that learn this move', '합계': 'Total', '효과': 'Effect',
-    '선택 슬롯 비우기': 'Clear selected slot',
-    '간단 설명': 'Summary', '상세 설명': 'Details', '설명': 'Description', '이름': 'Name', '설명 데이터 없음': 'No description available yet.',
-    '비교 상대 선택': 'Choose opponent', '비교 상대 교체': 'Change opponent', '비교 상대': 'Opponent', '1:1 비교': '1:1 comparison', '가장 경계할 상대 한 마리를 선택합니다.': 'Choose the one opponent you need to prepare for.', '결정력': 'Power index', '기본 결정력': 'Baseline power index', '상대 적용 결정력': 'Target-adjusted power index', '적용 위력': 'Effective power', '물리 내구력': 'Physical bulk', '특수 내구력': 'Special bulk', '상대 영향 제외': 'Excludes target', '기본 조건': 'Baseline', '계산 기준': 'Formula', '상대 의존': 'Target-dependent', '상시 보정': 'Always-on modifiers',
-    '샘플 기술': 'Sample Moves', '샘플 빌드': 'Sample Build', '샘플 스피드': 'Sample Speed', '샘플 대미지 계산': 'Sample Damage', '비교 대상 없음': 'No comparison targets', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'Register at least one sample move to compare here right away.', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': 'Add a comparison Pokémon from the search field above to show results here.', '샘플 기술로 이동': 'Go to Sample Moves', '세부 내구 조절': 'Detailed bulk tuning', '선출 추정된 상대를 비교 대상으로 사용': 'Use picked opponents as comparison targets', '내 파티 관리처럼 직접 기술을 등록': 'Register moves directly like party management', '공격 비교': 'Offense Comparison', '내구 비교': 'Bulk Comparison', '상대 첫 공개 기술 기준': 'Uses each target\'s first revealed move', '샘플 현재 속도선': 'Sample speed line', '스피드 조건': 'Speed Conditions', '기본': 'Base', '특성 발동': 'Ability Triggered', '특성+스카프': 'Ability + Scarf', '스피드 EV': 'Speed EV', '속도 구간': 'Speed Range', '실시간 조정': 'Live tuning', '코어 1번 체크': 'Check Core #1', '샘플 이름': 'Sample Name', '현재 샘플 저장': 'Save Current Sample', '파티 슬롯에 적용': 'Apply to Party Slot', '확정': 'Confirmed', '확정 기술': 'Locked Moves', '코어': 'Core', '선택': 'Options', '유틸': 'Utility', '실전 후보': 'Practical Candidates', '코어 라인': 'Core Line', '세부 편집': 'Detail Edit', '샘플 메모': 'Sample Notes', '전체': 'All', '미확정': 'Open', '확정만': 'Locked only', '아직 없음': 'None yet', '매직넘버': 'Magic number', '최대치': 'Max value', '미지정': 'Unset', '저장한 샘플': 'Saved Samples', '저장한 파티': 'Saved Parties', '새 파티 저장': 'Save as New Party', '현재 파티 덮어쓰기': 'Overwrite Current Party', '파티 적용': 'Apply Party', '이름 변경': 'Rename', '파티 이름': 'Party Name', '아직 저장한 파티가 없습니다.': 'No saved parties yet.', '불러오기': 'Load', '삭제': 'Delete', '슬롯 비우기': 'Clear slot', '아직 저장한 샘플이 없습니다.': 'No saved samples yet.',
-    '엔트리': 'Entry', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': 'Designed for fast one-by-one slot entry after reset.',
-    '간단 대미지 계산': 'Quick Damage Calc', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': 'The calculator mirrors the same slot and revealed info from opponent entry.', '내 기술': 'My Move', '등록 기술 없음': 'No registered moves', '수동 위력': 'Manual Power', '수동 분류': 'Manual Category', '자동 타입': 'Auto Type', '자동 위력': 'Auto Power', '자동 분류': 'Auto Category', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes power based on target weight, so enter power manually', '상대 무게에 따라 위력이 자동 반영됨': 'Power updates automatically from the target weight', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': 'This move changes total power based on hit count, so enter power manually', '연속타 누적 위력 기술이라 직접 입력이 필요함': 'This move has escalating multi-hit power, so enter power manually', '특정 조건에 따라 위력이 자동 반영됨': 'Power updates automatically from the selected condition', '위력 조건': 'Power condition', '타입변환 자속': 'Type-change STAB', '공격측 HP 1/3 이하': 'Attacker HP at or below 1/3', '상대 독/맹독': 'Target is poisoned', '상대 HP 100%': 'Target at full HP', '상대보다 늦게 행동': 'Move after target', '기절한 아군 수': 'Number of fainted allies', '라이벌리 성별 관계': 'Rivalry gender relation', '같은 성별': 'Same gender', '다른 성별': 'Different gender', '부자유친 발동': 'Parental Bond active', '상대 상태이상': 'Target is statused', '일렉트릭 차지됨': 'Electromorphosis charged', '공수전환': 'Swap offense/defense', '공격측': 'Attacker', '방어측': 'Defender', '상대 기술 추가': 'Add opponent move', '추가': 'Add', '비교 포켓몬 추가': 'Add comparison Pokémon', '비교 포켓몬': 'Comparison Pokémon', '공격측 화력 랭크': 'Attacker offense stage', '방어측 내구 랭크': 'Defender bulk stage', '방어측은 내 파티 실수치를 사용함': 'Defender uses exact party battle stats', '내 쓰러진 포켓몬 수': 'Number of my fainted Pokémon', '내 능력 상승 랭크 합': 'Total of my positive stat stages', '내가 상태이상임': 'I am statused', '상대가 상태이상임': 'Target is statused', '이번 턴 먼저 맞음': 'Moved after taking a hit this turn', '타수': 'Hits', '총위력': 'Total Power', '급소': 'Critical Hit', '변화기는 대미지 계산 대상이 아님': 'Status moves do not deal direct damage', '내 화력 랭크': 'My Offensive Stage', '상대 내구 랭크': 'Opponent Defensive Stage', '상대 기본 내구 가정': 'Opponent bulk assumption', '상대 내구 프리셋': 'Opponent bulk preset', '상대 화력 프리셋': 'Opponent offense preset', '직접 조절': 'Custom', '상대 HP': 'Opponent HP', '상대 물방': 'Opponent Def', '상대 특방': 'Opponent SpD', '상대 공격': 'Opponent Attack', '상대 특수공격': 'Opponent Sp. Atk', '+방어 성격': '+Defense nature', '+특방 성격': '+Sp. Def nature', '+공격 성격': '+Attack nature', '+특수공격 성격': '+Sp. Atk nature', '화력 조건': 'Offense conditions', '전장 조건': 'Field conditions', '상대 내구': 'Opponent bulk', '화상': 'Burn', '날씨': 'Weather', '필드': 'Terrain', '리플렉터': 'Reflect', '빛의장막': 'Light Screen', '오로라베일': 'Aurora Veil', '프렌드가드': 'Friend Guard', '쾌청': 'Sun', '비': 'Rain', '모래바람': 'Sand', '싸라기눈': 'Snow', '일렉트릭필드': 'Electric Terrain', '그래스필드': 'Grassy Terrain', '사이코필드': 'Psychic Terrain', '미스트필드': 'Misty Terrain', '실속도 기준': 'Effective Speed', '내 스피드 랭크': 'My Speed Stage', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'Quickly look up base stats, types, abilities, and top moves.', '검색 결과가 없습니다.': 'No Pokémon found.', '상위 채용 기술': 'Top usage moves', '종족값': 'Base stats', '빠른 이동': 'Quick actions', '샘플 빌더로 열기': 'Open in sample builder', '싱글 파티에 넣기': 'Add to single party',
-    '내 파티 추월컷': 'My Team Speed Cutoffs', '상대 기준': 'Opponent Target', '기준 속도': 'Target Speed', '추월컷': 'Pass', '동속컷': 'Tie', '이미 추월': 'Already ahead', '불가': 'No line', '실전 상태': 'Battle State', '내가 앞섬': 'Ahead', '상대가 앞섬': 'Behind', '동속': 'Tie', '일반': 'Base', '메가': 'Mega', '내 포켓몬': 'My Pokémon', '상대 포켓몬': 'Opponent Pokémon', '기준선': 'Baseline',
-    '준속': 'Neutral', '최속': 'Fast', '상한': 'Upper', '하한': 'Lower', '준속 스카프': 'Neutral Scarf', '최속 스카프': 'Fast Scarf', '선택한 상대 없음': 'No opponent selected', '스피드 비교 그래프': 'Speed Comparison Graph',
-    '위력': 'Power', '공격분류': 'Category', '물리': 'Physical', '특수': 'Special', '없음': 'None', '무효': 'No effect', '상성': 'Effectiveness', '확정 1타 가능성 있음': 'Possible OHKO', '유리한 2타권': 'Favorable 2HKO', '즉시 마무리 어려움': 'Hard to finish immediately', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': 'Fill an opponent target first.',
-    '빈 슬롯': 'Empty Slot', '현재': 'Current', '추가 가능': 'Available', '파티 관리': 'Party', '언어 선택': 'Choose language', '한국어': 'Korean', '영어': 'English', '일본어': 'Japanese', '추월컷 계산': 'Speed cutoff calc', '현재 속도': 'Current Speed', '체력 EV': 'HP EV', '방어 EV': 'Defense EV', '특수방어 EV': 'Sp. Def EV', '+방어': '+Defense', '+특수방어': '+Sp. Def', '특방+': 'Sp. Def+', '방어+': 'Defense+', '실대미지': 'Damage', '체력비율': 'HP Percent', '확정 N타': 'KO Count', '계산 상태': 'Result', '자속': 'STAB', '상대 체력': 'Opponent HP', '상대 방어': 'Opponent Defense', '상대 특수방어': 'Opponent Sp. Def', '+특수방어 성격': '+Sp. Def nature', '판정': 'Verdict', '대미지': 'Damage', '비율': 'Percent', '접기': 'Collapse', '펼치기': 'Expand', '세부 조건': 'Detailed conditions', '대미지 계산 불가': 'Damage calc unavailable', '샘플 이름 예시': 'e.g. Jolly Scarf draft', '상대 메모 예시': 'e.g. likely physical set', '엔트리 메모 예시': 'e.g. Dragapult may be Scarf / Rotom revealed Volt Switch / Mimikyu looks like late-game cleaner', '포켓몬 챔피언스 배틀 도우미': 'Pokémon Champions Battle Assistant', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'A Pokémon Champions battle tool for party management, opponent entry, speed checks, and damage calculations in one place.', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'Pokémon Champions Battle Assistant preview image', '불러오기 실패: JSON 형식을 확인하세요.': 'Import failed: please check the JSON format.', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': 'Start from the task you need now instead of dumping every feature at once.', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'This home screen is a routing layer. Pick battle prep, sample tuning, or dex lookup and jump straight in.', '사용 흐름': 'Workflow', '바로 시작': 'Start here', '싱글/더블 배틀 준비': 'Battle prep', '샘플 조정 / 자료 확인': 'Build & reference', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'Keep party, picks, speed, and damage in one flow.', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': 'Tune one Pokémon or look up key dex information quickly.', '싱글 배틀 운영': 'Singles workflow', '더블 배틀 운영': 'Doubles workflow', '샘플 조정': 'Sample tuning', '도감 확인': 'Dex lookup', '추천 시작점': 'Recommended start', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'Only the common workflows sit up front. Detailed controls stay inside each tool.', '현재 흐름': 'Current workflow', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'Start with your party, record revealed opponent info, then move into the calculators.', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'For doubles, set party and opponent info first, then move into the planner.', '내 포켓몬과 기술 기준을 정리합니다.': 'Set your Pokémon and move baseline first.', '상대 공개 정보와 가정을 정리합니다.': 'Record revealed opponent info and assumptions.', '추월컷과 속도선을 확인합니다.': 'Check cutoffs and speed lines.', '기술 대미지와 조건을 맞춥니다.': 'Check move damage and conditions.', '더블 기준 화력과 행동순을 정리합니다.': 'Review doubles damage and action flow.', '이 화면에서 하는 일': 'What this screen does', '입력 순서': 'Input order', '현재 기준 정보': 'Current context', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': 'The calculator is more stable once party and opponent entry are set first.', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': 'Use the flow: pick your move → confirm the target baseline → adjust battle conditions.', '선택된 기술': 'Selected move',
-    '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
-  },
-  ja: {
-    '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': '構成の確認は育成情報のみが対象で、順位・成績の公式な検証ではありません。',
-    '파티 저장': 'パーティを保存', '파티 불러오기': 'パーティを読み込む', '저장 파티 덮어쓰기': '保存パーティを上書き', '저장 파티 이름 변경': '保存パーティの名前を変更', '저장 파티 삭제': '保存パーティを削除', '현재 파티 비우기': '現在のパーティを空にする', '이미지에서 파티 가져오기': '画像からパーティを取り込む',
-    '새 파티': '新しいパーティ', '선택 파티 이름': '選択中のパーティ名', '저장 중': '保存中…', '자동 저장됨': '自動保存済み', '저장 실패 · 변경은 현재 화면에만 유지': '保存失敗 · 変更はこの画面にのみ保持', '저장 데이터 읽기 실패 · 원본 보호 중': '保存データの読み込み失敗 · 元データを保護中', '저장 재시도': '保存を再試行', '원본 덮어쓰기 확인': '元データの上書きを確認', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': '元の保存データを現在の画面で上書きしますか？', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'パーティの選択が変わったため、画像は反映されませんでした。もう一度お試しください。',
-    '샘플 저장': 'サンプルを保存', '샘플 불러오기': 'サンプルを読み込む', '저장 샘플 삭제': '保存サンプルを削除', '샘플 편집기에 가져오기': 'サンプル編集画面に取り込む', '저장 파티에 추가': '保存パーティに追加', '출처 링크 저장': '出典リンクを保存', '저장 링크 삭제': '保存リンクを削除',
-    '전체 데이터 내보내기': '全データを書き出す', '전체 데이터 불러오기': '全データを読み込む', '샘플 편집기로 보내기': 'サンプル編集画面へ送る', '파티 슬롯 선택': 'パーティのスロットを選択', '선택 슬롯에 넣기': '選択したスロットに入れる', '공격측·방어측 바꾸기': '攻撃側と防御側を入れ替える', '상대 엔트리·비교 초안 초기화': '相手エントリーと比較下書きを初期化', '상대 초기화': '相手を初期化',
-    '내 속도 조정': '自分の素早さを調整', '상대 속도 조정': '相手の素早さを調整', '속도 보정 기준': '素早さの計算根拠', '양쪽 상태·랭크·장막 없음': '両側とも状態・ランク・壁なし',
-    '대면 가정 · 저장 기록 미변경': '対面上の想定・保存記録は変更なし', '가정의 출처와 한계': '想定の根拠と限界', '계산 한계': '計算の限界', '계산 조건': '計算条件', '계산 조건 바꾸기': '計算条件を変更', '상태·랭크·장막 없음': '状態・ランク・壁なし', '기술 등록 →': '技を登録 →', '기술을 등록하거나 선택하세요.': '技を登録または選択してください。', '양쪽 포켓몬을 선택하세요.': '両方のポケモンを選択してください。', '이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.': 'この技は現在の条件では非対応か変化技です。', '빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.': '空き枠：自分のパーティでポケモンを登録してください。', '빈 슬롯: 상대 엔트리 편집에서 포켓몬을 등록하세요.': '空き枠：相手エントリーでポケモンを登録してください。',
-    '대면비교': '対面比較', '비교 불가': '比較不可', '원본 특성 미확인': '原典の特性未解決', '종·폼 검색': '種族・フォルムを検索', '엔트리 저장': 'エントリーを保存', '변경 취소': '変更を取り消す', '저장 전 변경 · 대면 가정은 저장되지 않음': '未保存の変更・対面上の想定は保存されません', '저장된 엔트리 · 전투 가정은 임시': '保存済みエントリー・戦闘上の想定は一時的', '같은 종 슬롯과 기술을 공유합니다. 기술 변경은 모두에게 적용됩니다.': '同じ種族のスロットは技を共有します。技の変更はすべてに適用されます。', '상대 성격 전체·공격 노력은 미확인: 기록된 방어·특방 보정 적용. 모달 변경은 이 대면에서만 적용됩니다.': '相手の性格全体と攻撃努力は不明。記録された防御・特防補正を適用し、モーダルの変更はこの対面のみに反映します。', '상대 전체 성격은 대면 가정이며 저장된 엔트리와 다릅니다. 공격 노력은 미확인·0 노력 가정.': '性格全体は対面上の想定で、保存済みエントリーとは異なります。攻撃努力は不明で0と想定します。', '엔트리 기반 · 가정 변경은 저장된 엔트리에 미반영': 'エントリーに基づく・想定の変更は保存済みエントリーに反映されません', '속도 성격 가정': '素早さ性格の想定', '스카프 시나리오': 'スカーフ想定', '(전제 조건 미충족 · 미적용)': '（発動条件を満たさず・適用なし）', '곡예 발동에는 현재 지닌 도구가 없어야 합니다.': 'かるわざ発動には現在持ち物がない必要があります。',
-    '샘플 라이브러리': 'サンプルライブラリ', '프로젝트 정보': 'プロジェクト情報', '대면': '対面', '계산기': '計算機', '스피드라인': '素早さライン', '샘플 연구소': 'サンプル研究所', '샘플': 'サンプル', '링크 지역': 'リンクの地域', '노력치를 조정하며 상대 스피드 추월컷을 비교합니다.': '素早さの努力値を調整し、相手を抜けるラインを比較します。',
-    '선택 기술 상세': '選択した技の詳細', '속도 가정 조정': '素早さの計算条件',
-    '연속기는 기절 확률 계산 제외': '連続技のひんし確率は計算対象外', '간단 대미지': '簡易ダメージ', '공격측과 방어측을 바로 선택해 기술 대미지를 비교합니다.': '攻撃側と防御側を選んで技のダメージをすぐ比較します。', '파티와 상대 엔트리를 변경하지 않는 독립 계산입니다.': 'パーティと相手エントリーを変更しない独立した計算です。', '공수 교체': '攻守を交換', '레벨 50 · 개체값 31 · 성격 무보정 · 챔피언스 노력 0/32 · 도구/특성 없음. 실수치 입력은 해당 능력의 계산값을 덮어씁니다.': 'Lv.50・個体値31・性格補正なし・チャンピオンズ努力0/32・持ち物と特性なし。実数値入力は計算値を上書きします。', '포켓몬을 선택하세요.': 'ポケモンを選択してください。', '특성 없음': '特性なし', '노력 포인트': '努力ポイント', '사용 가능 공격 기술': '使用可能な攻撃技', '확인된 공격 기술 데이터가 없습니다. 추측 기술은 표시하지 않습니다.': '確認済みの攻撃技データがありません。推測技は表示しません。', '대미지 결과': 'ダメージ結果', '1타 확률': '一撃確率', '16개 난수 피해': '16個の乱数ダメージ', '실수치는 1~999의 정수로 입력하세요.': '実数値には1～999の整数を入力してください。', '공격측·방어측과 기술을 선택하세요.': '攻撃側・防御側と技を選んでください。', '선택하지 않은 발동 조건·변동 위력·회복·명중률은 계산하지 않습니다. 연속기 난수는 기존 엔진의 동일 난수 합산입니다.': '選択していない発動条件・変動威力・回復・命中率は計算しません。連続技の乱数は既存エンジンで同じ乱数を各ヒットに使用します。',
-    '스피드 종족값': '素早さ種族値', '성격 보정': '性格補正', '스피드 랭크': '素早さランク', '스카프 가정': 'スカーフ想定', '내 스카프 가정': '自分のスカーフ想定', '최종 스피드': '最終素早さ', '화면 가정 · 파티 도구 변경 없음': '画面上の想定・パーティの持ち物は変更しません', '파티 도구 기준': 'パーティの持ち物に基づく', '상대 가정 · 엔트리 변경 없음': '相手の想定・エントリーは変更しません',
-    '가정': '想定', '내 스피드': '自分の素早さ', '내 특성 발동은 이 비교에 미적용': '自分の特性発動はこの比較に含めません', '내가 느림': '自分が遅い', '내가 빠름': '自分が速い', '동속 최소 스피드 노력': '同速に必要な最小努力', '동속은 추월이 아닙니다.': '同速は追い抜きではありません。', '미발동': '未発動', '발동 가정': '発動を想定', '보정 없음': '性格補正なし', '상대 가정 스피드': '相手の想定素早さ', '상대 도구 가정': '相手の持ち物想定', '상대 성격 가정': '相手の性格想定', '상대 스피드 랭크': '相手の素早さランク', '상대 특성 발동 가정': '相手の特性発動想定', '스피드 노력': '素早さ努力', '스피드 비교 그래프 자세히 보기': '素早さ比較グラフを表示', '엄격히 추월할 최소 스피드 노력': '追い抜くための最小努力', '준속 = 스피드 성격 보정 없음 · 최속 = 스피드 성격 +10% · 둘 다 챔피언스 스피드 노력 32/32 가정. 실제 상대 도구·노력은 변경하지 않습니다.': '準速＝素早さ性格補正なし・最速＝素早さ性格＋10％。どちらもチャンピオンズ素早さ努力32/32を想定。相手の記録は変更しません。', '현재 성격·도구로 추월 불가': '現在の性格・持ち物では抜けません', '현재 스피드': '現在の素早さ', '현재 투자로 이미 추월': '現在の努力で追い抜いています', '현재보다 추가': '現在から追加', '비가 내릴 때': '雨のとき', '모래바람일 때': '砂嵐のとき', '쾌청일 때': '晴れのとき', '눈이 내릴 때': '雪のとき', '일렉트릭필드일 때': 'エレキフィールドのとき', '도구를 소비하거나 잃은 뒤': '持ち物を消費・喪失した後', '내 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '自分のメガフォルムはメガストーンが必要なためスカーフを持てません。', '상대 메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.': '相手のメガフォルムはメガストーンが必要なためスカーフを持てません。', '곡예는 도구를 잃은 뒤 발동하므로 스카프를 지닌 상태와 함께 적용할 수 없습니다.': 'かるわざは持ち物を失った後に発動するため、スカーフを持った状態と併用できません。', '이 폼에 없는 특성은 발동할 수 없습니다.': 'このフォルムにない特性は発動できません。',
-    '링크 형식': 'リンクの形式', '실수치 미기록': '実数値の記録なし', '목록으로': '一覧へ戻る', '계산 실수치 · 원본 실수치 미기록': '計算した実数値・原典に実数値の記録なし', '원본 이미지에 기록된 실수치': '原典の画像に記録された実数値', '원본 도구 표기': '原典の持ち物表記', '원본 특성 표기': '原典の特性表記',
-    '파티 소개': 'パーティ紹介', '개별 포켓몬 샘플': '個別ポケモンサンプル', '확인 대기': '分類待ち', '전체 파티 구성 미확인': 'パーティ全体の構成は未確認', '구성 일부 확인': '一部構成を確認したメンバー', '분류·구성 확인 대기': '分類・構成の確認待ち',
-    '형식 미확인: 원본에 싱글/더블 표기 없음': '形式未確認：原典にシングル・ダブルの記載なし', '확인된 항목만 표시합니다. 미확인 항목은 빌더로 가져올 수 없습니다.': '確認済みの項目のみ表示します。未完成の構成は取り込めません。', '구성 근거 이미지': '構成の根拠画像', '이 조건에 확인된 샘플 구성이 없습니다. 아래 영상 자료는 구성 확인 대기 중입니다.': '該当する確認済み構成はありません。下の動画は構成確認待ちです。', '구성 확인 대기 · 영상 자료': '構成確認待ちの動画', '영상 제목만 확인한 자료입니다. 아직 샘플로 쓰거나 가져올 수 없습니다.': '動画のタイトルのみ確認済みです。構成として利用・取込はできません。',
-    '실능 스피드라인': '実数値素早さライン', '빠른 순 → 느린 순': '速い順 → 遅い順', '검색 · 이름/폼': 'ポケモン・フォルム検索', '메가폼 포함': '全フォルム', '메가폼 제외': 'メガを除外', '메가폼만': 'メガのみ', '성격 보정 +10%': '素早さ+10%', '성격 보정 없음': '性格補正なし', '성격 보정 -10%': '素早さ−10%', '챔피언스 노력 포인트': 'チャンピオンズ素早さ努力ポイント', '검색 결과 없음': '該当ポケモンなし', '실능 스피드라인 안내': 'Lv.50・個体値31・チャンピオンズ努力ポイント0～32を性格補正前に加算。道具・特性・ランク・場の効果なし。同速はキー順。', '확인된 포켓몬·폼 전체를 실수치 스피드 기준으로 조회합니다.': '確認済みポケモンとフォルムを実数値素早さ順に表示。', '포켓몬 수': '表示数', '기본 스피드': '種族値素早さ',
-    '랭커 샘플': '上位ランカーのサンプル', '순위 근거가 확인된 자료만 모읍니다.': '順位の根拠を確認できた資料だけ表示します。', '순위 근거가 확인된 랭커 샘플이 아직 없습니다. 영상 제목의 순위 표현만으로는 등록하지 않습니다.': '順位の根拠を確認できたサンプルはまだありません。動画タイトルの主張だけでは掲載しません。',
-    '크리에이터 샘플 라이브러리': 'クリエイターサンプルライブラリ', '자료 확인': '資料を見る', '검증된 빌드를 찾거나 원본 링크를 저장합니다.': '検証済みの構成を探すか、元リンクを保存します。', '원본에서 확인된 구성만 빌더로 가져옵니다. 링크 보관은 검증이나 자동 수집이 아닙니다.': '原典で確認できた構成だけ取り込めます。リンク保存は検証・自動収集ではありません。', '원본에서 확인된 구성만 빌더로 가져옵니다.': '原典で確認できた構成だけ取り込めます。', '내 출처 링크': '自分の出典リンク', '제목·제작자·포켓몬 이름 검색': 'タイトル・投稿者・ポケモン名で検索', '구성 미완성 · 불러올 수 없음': '構成未完成・取り込み不可', '형식 미확인': '形式未確認', '지역': '地域', '배틀 형식': '対戦形式', '포켓몬 / 텍스트 검색': 'ポケモン / テキスト検索', '검증 완료': '検証済み', '부분 확인': '一部確認', '제작자 미확인': '投稿者未確認', '원본 출처': '元の出典', '빌더로 가져오기': 'ビルダーに取り込む', '이 조건에 검증된 크리에이터 빌드가 없습니다. 사용률 프리셋은 출처가 확인된 크리에이터 빌드가 아닙니다.': '該当する検証済み構成はありません。採用率プリセットは出典確認済みの投稿者構成ではありません。', '출처 링크 보관': '出典リンクを保存', '이 브라우저에만 부분 확인으로 저장됩니다. 제작자·순위·구성은 자동 판정하지 않습니다.': 'このブラウザだけに一部確認として保存します。投稿者・順位・構成は自動判定しません。', '출처 URL': '出典URL', '링크 추가': 'リンクを追加', 'http 또는 https 주소를 입력하세요.': 'HTTPかHTTPSのURLを入力してください。', '공개 목록에 반영하려면 원본 링크와 구성 근거를 프로젝트 제보 폼으로 보내 주세요.': '公開リストへの提案は原典と構成の根拠をフォームから送ってください。', '제보 폼 열기': 'フォームを開く', '부분 확인 · 개인 링크': '一部確認 · 個人リンク',
-    '체력': 'HP', '공격': '攻撃', '방어': '防御', '특공': '特攻', '특방': '特防', '스피드': '素早さ', '특수공격': '特攻', '특수방어': '特防',
-    '내 파티 관리': '自分のパーティ', '싱글 배틀 준비': 'シングルバトル準備', '상대 엔트리': '相手エントリー', '스피드 계산': '素早さ計算', '대미지 계산': '火力計算',
-    '싱글배틀 메뉴': 'シングルバトルメニュー', '포켓몬 샘플 깎기': 'ポケモンサンプル調整', '포켓몬 하나 집중 조정': '1匹を集中調整',
-    '홈': 'ホーム', '정식 배포 준비': '正式リリース準備', '모드 선택': 'モード選択', '홈페이지에서 시작할 메뉴를 고르세요.': 'ホームから始めるメニューを選んでください。', '싱글배틀': 'シングルバトル', '샘플 빌더': 'サンプルビルダー', '내 파티를 관리하고 상대 엔트리에 따라 스피드와 대미지를 계산할 수 있습니다.': '自分のパーティを管理し、相手エントリーに応じて素早さと火力を計算できます。', '포켓몬 하나를 기준으로 성격, 노력치, 기술을 조정하고 샘플로 저장할 수 있습니다.': '1匹を基準に性格・努力値・技を調整し、サンプルとして保存できます。', '단일 포켓몬 샘플을 저장 가능한 작업 단위로 정리합니다.': '単体ポケモンサンプルを構成ごと保存できる形で整理します。', '포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.': 'ポケモンチャンピオンズのバトル向けに、パーティ・選出・素早さ・火力をまとめて整理できます。', '더블배틀의 행동순과 기대 대미지를 빠르게 확인할 수 있습니다.': 'ダブルバトルの行動順と想定ダメージをすばやく確認できます。', '들어가기': '開く', '현재 화면': '現在の画面', '확정 기술 수': '確定技数', '저장 샘플 수': '保存サンプル数', '샘플 개요': 'サンプル概要', '구성': '構成', '기본 정보': '基本情報', '기술 구성': '技構成', '저장/적용': '保存/適用', '노력치 합': '努力値合計', '파티 슬롯': 'パーティスロット', '설정': '設定', '데이터 관리': 'データ管理', '기준 빌드': '基準ビルド', '샘플 빌드 기준으로 자동 반영': '現在のサンプル構成を自動反映', '현재 기술 기준': '現在の技基準', '공격 EV': '攻撃EV', '특공 EV': '特攻EV', '언어': '言語', '프로젝트 링크': 'プロジェクトリンク', 'GitHub 저장소': 'GitHub リポジトリ', '연락 이메일': '連絡先メール', '기능제안/버그제보': '機能提案 / バグ報告', '폼으로 제보하기': 'フォームを開く', '저작권 및 안내': '著作権と案内', '참고 데이터베이스': '参照データベース', '포켓몬 관련 명칭과 이미지에 대한 권리는 각 권리자에게 있으며, 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモン関連の名称と画像の権利は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。', '포켓몬 및 관련 명칭은 각 권리자에게 귀속됩니다. 이 프로젝트는 비공식 팬메이드 도구입니다.': 'ポケモンおよび関連名称は各権利者に帰属します。このプロジェクトは非公式のファンメイドツールです。',
-    '파티 저장, 스피드 비교, 상대 도구 기록, 간단 대미지 계산, 단일 샘플 깎기까지.': 'パーティ保存、素早さ比較、相手持ち物記録、簡易ダメ計、単体サンプル調整まで対応。',
-    '더블배틀': 'ダブルバトル', '더블배틀 메뉴': 'ダブルバトルメニュー', '더블 계산 작업 보드': 'ダブル計算作業ボード', '더블 배틀 플래너': 'ダブルバトルプランナー', '턴 플랜': 'ターンプラン', '속도/전장': '素早さ / 盤面', '아군 순풍': '味方おいかぜ', '상대 순풍': '相手おいかぜ', '트릭룸': 'トリックルーム', '트릭룸 순서': 'トリル順', '기본 순서': '通常順', '상대 프렌드가드': '相手フレンドガード', '상대별 총 기대 대미지': '相手ごとの想定総ダメージ', '상대 대상': '相手対象', '보조/자기 대상': '味方 / 自分対象', '4마리 행동순': '4匹の行動順', '전체 순위 미확인': '全体順位は未確認', '전체 행동순 미확인 · 속도 미확인 포켓몬이 있어 슬롯 순서로 표시합니다.': '全体の行動順は未確認 · 素早さが不明なポケモンがいるため、スロット順で表示します。', '광역기 감쇠가 자동 적용됩니다.': '全体技の補正を自動適用します。', '우선도': '優先度', '순위': '順位', '계산 대기': '計算待ち', '방어로 막힘': 'まもるで防がれた', '와이드가드로 차단됨': 'ワイドガードで防がれた', '내 좌측': '自分左', '내 우측': '自分右', '상대 좌측': '相手左', '상대 우측': '相手右', '사용률 상위 기술': '使用率上位の技',
-    '상태 내보내기': '状態を書き出し', '상태 불러오기': '状態を読み込み', '전체 초기화': '全体リセット', '노력치 보정': '努力値補正', '닫기': '閉じる', '성격': '性格', '백업 저장': 'バックアップ保存', '백업 불러오기': 'バックアップ読込', '전체 데이터 초기화': '全データ初期化', '현재 작업 상태를 JSON으로 저장': '現在の作業状態をJSONで保存', '저장한 JSON 상태 파일을 불러오기': '保存したJSON状態ファイルを読み込む', '파티·상대·샘플을 전부 초기화': 'パーティ・相手・サンプルをすべて初期化',
-    '최소': '最小', '최대': '最大', '무보정': '補正なし', '목표': '目標', '11배수 달성': '11倍数達成',
-    '포켓몬 하나만 잡고 성격/능력 포인트/샘플 기술을 빠르게 깎는 전용 화면입니다.': '1匹だけを対象に、性格・能力ポイント・サンプル技を素早く調整する専用画面です。',
-    '파티 한눈 요약': 'パーティ一覧', '내 파티': '自分のパーティ', '상대 파티': '相手パーティ',
-    '포켓몬별 기술배치 / 노력치보정': 'ポケモンごとの技構成 / 努力値調整', '내 파티 초기화': '自分のパーティを初期化', '포켓몬을 검색해서 추가하세요.': 'ポケモンを検索して追加してください。',
-    '특성': '特性', '미선택': '未選択', '특성 검색': '特性検索', '도구': '持ち物', '메가스톤 고정': 'メガストーン固定', '사용 가능 도구 선택': '使用可能な持ち物を選択', '사용 가능 특성 선택': '使用可能な特性を選択', '포켓몬 먼저 선택': '先にポケモンを選択',
-    '종 선택': 'ポケモン', '포켓몬 선택': 'ポケモン選択', '포켓몬 검색': 'ポケモン検索', '기술 배치': '技構成', '기술 슬롯': '技スロット', '기술풀 불러오는 중…': '技プール読み込み中…', '기술풀을 불러오지 못했습니다.': '技プールを読み込めませんでした。', '사용 가능한 기술 없음': '使用可能な技がありません', '사용 가능 기술 검색': '使用可能な技を検索', '기술 입력': '技入力',
-    '시드': 'シード', '검증중': '検証中',
-    '기술 데이터가 없는 포켓몬만 직접 입력합니다.': '技データのないポケモンだけ手入力します。',
-    '상대 엔트리 초기화': '相手エントリー初期化', '검색창 하나에서 `검색 → 엔터` 반복으로 순서대로 채웁니다.': '1つの検索欄で `検索 → Enter` を繰り返して順番に埋めます。',
-    '상대 엔트리 빠른 입력': '相手エントリー高速入力', '현재 입력 슬롯': '現在の入力スロット', '추정 체크됨': '選出想定', '미체크': '未チェック', '도구 없음': '持ち物なし', '포켓몬 미입력': 'ポケモン未入力', '특성 미기입': '特性未入力', '도구 미기입': '持ち物未入力', '선출 추정': '選出想定', '상세 패널에서 공개 정보를 바로 갱신합니다.': '詳細パネルで公開情報をすぐ更新できます。',
-    '공개 기술': '公開技', '메모': 'メモ', '최속 가정': '最速想定', '스카프': 'スカーフ', '랭크': 'ランク', '선출 추정 해제': '選出想定を解除', '선출 추정 체크': '選出想定をチェック',
-    '상대 엔트리 메모': '相手エントリーメモ', '단일 샘플 빌더': '単体サンプルビルダー', '포켓몬 샘플 빌더': 'ポケモンサンプルビルダー', '도감': '図鑑', '통합검색': '統合検索', '도구 미선택': '持ち物未選択', '실수치 스피드': '実数値素早さ',
-    '포켓몬/기술/특성/도구를 검색해서 핵심 정보를 빠르게 확인합니다.': 'ポケモン・技・特性・持ち物をすばやく検索できます。', '포켓몬': 'ポケモン', '기술': '技', '검색 결과': '検索結果', '검색 결과를 선택하면 상세 정보를 바로 확인할 수 있습니다.': '検索結果を選ぶと詳細をすぐ確認できます。', '포켓몬 / 기술 / 특성 / 도구 검색': 'ポケモン / 技 / 特性 / 持ち物を検索', '기술 검색': '技検索', '도구 검색': '持ち物検索', '타입': 'タイプ', '분류': '分類', '명중': '命中', '변화': '変化', '해당 특성 포켓몬': 'この特性のポケモン', '배우는 포켓몬': 'この技を覚えるポケモン', '합계': '合計', '효과': '効果',
-    '선택 슬롯 비우기': '選択スロットを空にする',
-    '간단 설명': '要約', '상세 설명': '詳細説明', '설명': '説明', '이름': '名前', '설명 데이터 없음': '説明データはまだありません。',
-    '비교 상대 선택': '比較相手を選択', '비교 상대 교체': '比較相手を変更', '비교 상대': '比較相手', '1:1 비교': '1対1比較', '가장 경계할 상대 한 마리를 선택합니다.': '最も警戒する相手を1匹選択します。', '결정력': '火力指数', '기본 결정력': '基本火力指数', '상대 적용 결정력': '相手適用火力指数', '적용 위력': '適用威力', '물리 내구력': '物理耐久', '특수 내구력': '特殊耐久', '상대 영향 제외': '相手補正を除外', '기본 조건': '基本条件', '계산 기준': '計算式', '상대 의존': '相手依存', '상시 보정': '常時補正',
-    '샘플 기술': 'サンプル技', '샘플 빌드': 'サンプルビルド', '샘플 스피드': 'サンプル素早さ', '샘플 대미지 계산': 'サンプル火力', '비교 대상 없음': '比較対象なし', '샘플 기술에서 1개 이상 등록하면 여기서 바로 비교할 수 있습니다.': 'サンプル技を1つ以上登録すると、ここですぐ比較できます。', '위 검색창에서 비교 포켓몬을 추가하면 결과가 여기에 표시됩니다.': '上の検索欄から比較ポケモンを追加すると、結果がここに表示されます。', '샘플 기술로 이동': 'サンプル技へ移動', '세부 내구 조절': '耐久の詳細調整', '선출 추정된 상대를 비교 대상으로 사용': '選出想定の相手を比較対象として使用', '내 파티 관리처럼 직접 기술을 등록': 'パーティ管理のように直接技を登録', '공격 비교': '火力比較', '내구 비교': '耐久比較', '상대 첫 공개 기술 기준': '各相手の最初の公開技を使用', '샘플 현재 속도선': 'サンプル速度ライン', '스피드 조건': '素早さ条件', '기본': '基本', '특성 발동': '特性発動', '특성+스카프': '特性+スカーフ', '스피드 EV': '素早さ努力値', '속도 구간': '速度帯', '실시간 조정': 'リアルタイム調整', '코어 1번 체크': 'コア1をチェック', '샘플 이름': 'サンプル名', '현재 샘플 저장': '現在のサンプルを保存', '파티 슬롯에 적용': 'パーティスロットに適用', '확정': '確定', '확정 기술': '確定技', '코어': 'コア', '선택': '候補', '유틸': '補助', '실전 후보': '実戦候補', '코어 라인': 'コアライン', '세부 편집': '詳細編集', '샘플 메모': 'サンプルメモ', '전체': '全部', '미확정': '未確定', '확정만': '確定のみ', '아직 없음': 'まだなし', '매직넘버': 'マジックナンバー', '최대치': '最大値', '미지정': '未指定', '저장한 샘플': '保存したサンプル', '저장한 파티': '保存したパーティ', '새 파티 저장': '新しいパーティとして保存', '현재 파티 덮어쓰기': '現在のパーティで上書き', '파티 적용': 'パーティ適用', '이름 변경': '名前変更', '파티 이름': 'パーティ名', '아직 저장한 파티가 없습니다.': '保存したパーティがまだありません。', '불러오기': '読み込み', '삭제': '削除', '슬롯 비우기': 'スロットを空にする', '아직 저장한 샘플이 없습니다.': '保存したサンプルがまだありません。',
-    '엔트리': 'エントリー', '초기화 후 슬롯별 검색창에 한 마리씩 빠르게 채우는 흐름으로 정리했습니다.': '初期化後、スロットごとの検索で1匹ずつ素早く埋める流れに整理しました。',
-    '간단 대미지 계산': '簡易ダメージ計算', '상대 엔트리에서 고른 포켓몬의 도구/특성/공개 기술 메모와 같은 슬롯을 계산기가 그대로 따라갑니다.': '相手エントリーで選んだポケモンの持ち物・特性・公開技メモと同じスロットを計算機がそのまま追従します。', '내 기술': '自分の技', '등록 기술 없음': '登録技なし', '수동 위력': '手動威力', '수동 분류': '手動分類', '자동 타입': '自動タイプ', '자동 위력': '自動威力', '자동 분류': '自動分類', '상대 무게에 따라 위력이 바뀌는 기술이라 직접 입력이 필요함': '相手の重さで威力が変わる技のため手動入力が必要', '상대 무게에 따라 위력이 자동 반영됨': '相手の重さに応じて威力を自動反映', '명중 횟수에 따라 총위력이 바뀌는 기술이라 직접 입력이 필요함': '命中回数で合計威力が変わる技のため手動入力が必要', '연속타 누적 위력 기술이라 직접 입력이 필요함': '連続技の累積威力が変わるため手動入力が必要', '특정 조건에 따라 위력이 자동 반영됨': '選択した条件に応じて威力を自動反映', '위력 조건': '威力条件', '타입변환 자속': 'タイプ変化STAB', '공격측 HP 1/3 이하': '攻撃側HP 1/3以下', '상대 독/맹독': '相手がどく/もうどく', '상대 HP 100%': '相手HP満タン', '상대보다 늦게 행동': '相手より後に行動', '기절한 아군 수': 'ひんしの味方数', '라이벌리 성별 관계': 'とうそうしん性別関係', '같은 성별': '同性', '다른 성별': '異性', '부자유친 발동': 'おやこあい発動', '상대 상태이상': '相手が状態異常', '일렉트릭 차지됨': 'エレクトロモーフォーシス発動', '공수전환': '攻守切替', '공격측': '攻撃側', '방어측': '防御側', '상대 기술 추가': '相手技追加', '추가': '追加', '비교 포켓몬 추가': '比較ポケモン追加', '비교 포켓몬': '比較ポケモン', '공격측 화력 랭크': '攻撃側火力ランク', '방어측 내구 랭크': '防御側耐久ランク', '방어측은 내 파티 실수치를 사용함': '防御側は自分のパーティ実数値を使用', '내 쓰러진 포켓몬 수': '自分のひんしポケモン数', '내 능력 상승 랭크 합': '自分の能力上昇ランク合計', '내가 상태이상임': '自分が状態異常', '상대가 상태이상임': '相手が状態異常', '이번 턴 먼저 맞음': 'このターン先に攻撃を受けた', '타수': 'ヒット数', '총위력': '合計威力', '급소': '急所', '변화기는 대미지 계산 대상이 아님': '変化技はダメージ計算対象外', '내 화력 랭크': '自分の火力ランク', '상대 내구 랭크': '相手の耐久ランク', '상대 기본 내구 가정': '相手基本耐久想定', '상대 내구 프리셋': '相手耐久プリセット', '상대 화력 프리셋': '相手火力プリセット', '직접 조절': '手動調整', '상대 HP': '相手HP', '상대 물방': '相手防御', '상대 특방': '相手特防', '상대 공격': '相手攻撃', '상대 특수공격': '相手特攻', '+방어 성격': '+防御性格', '+특방 성격': '+特防性格', '+공격 성격': '+攻撃性格', '+특수공격 성격': '+特攻性格', '화력 조건': '火力条件', '전장 조건': '場条件', '상대 내구': '相手耐久', '화상': 'やけど', '날씨': '天気', '필드': 'フィールド', '리플렉터': 'リフレクター', '빛의장막': 'ひかりのかべ', '오로라베일': 'オーロラベール', '프렌드가드': 'フレンドガード', '쾌청': 'にほんばれ', '비': 'あめ', '모래바람': 'すなあらし', '싸라기눈': 'ゆき', '일렉트릭필드': 'エレキフィールド', '그래스필드': 'グラスフィールド', '사이코필드': 'サイコフィールド', '미스트필드': 'ミストフィールド', '실속도 기준': '実数値基準', '내 스피드 랭크': '自分の素早さランク', '포켓몬을 검색해서 종족값, 타입, 특성, 상위 기술을 빠르게 확인합니다.': 'ポケモンを検索して種族値・タイプ・特性・採用技をすばやく確認します。', '검색 결과가 없습니다.': '検索結果がありません。', '상위 채용 기술': '採用技', '종족값': '種族値', '빠른 이동': 'クイック移動', '샘플 빌더로 열기': 'サンプルビルダーで開く', '싱글 파티에 넣기': 'シングルパーティに入れる',
-    '내 파티 추월컷': '自分の抜きライン', '상대 기준': '相手基準', '기준 속도': '基準素早さ', '추월컷': '抜き', '동속컷': '同速', '이미 추월': 'すでに上', '불가': '不可', '실전 상태': '対面状態', '내가 앞섬': '上', '상대가 앞섬': '下', '동속': '同速', '일반': '通常', '메가': 'メガ', '내 포켓몬': '自分のポケモン', '상대 포켓몬': '相手ポケモン', '기준선': '基準線',
-    '준속': '準速', '최속': '最速', '상한': '上限', '하한': '下限', '준속 스카프': '準速スカーフ', '최속 스카프': '最速スカーフ', '선택한 상대 없음': '相手未選択', '스피드 비교 그래프': '素早さ比較グラフ',
-    '위력': '威力', '공격분류': '攻撃分類', '물리': '物理', '특수': '特殊', '없음': 'なし', '무효': '無効', '상성': '相性', '확정 1타 가능성 있음': '一撃圏の可能性あり', '유리한 2타권': '有利な2発圏内', '즉시 마무리 어려움': '即処理は難しい', '상대 엔트리에서 계산 대상 포켓몬을 먼저 채워 주세요.': '先に相手エントリーへ計算対象のポケモンを入れてください。',
-    '빈 슬롯': '空きスロット', '현재': '現在', '추가 가능': '追加可能', '파티 관리': 'パーティ管理', '언어 선택': '言語選択', '한국어': '韓国語', '영어': '英語', '일본어': '日本語', '추월컷 계산': '抜きライン計算', '현재 속도': '現在の素早さ', '체력 EV': 'HP努力値', '방어 EV': '防御努力値', '특수방어 EV': '特防努力値', '+방어': '+防御', '+특수방어': '+特防', '특방+': '特防+', '방어+': '防御+', '실대미지': '実ダメージ', '체력비율': 'HP割合', '확정 N타': '確定N発', '계산 상태': '計算状態', '자속': '一致', '상대 체력': '相手HP', '상대 방어': '相手防御', '상대 특수방어': '相手特防', '+특수방어 성격': '+特防性格', '판정': '判定', '대미지': 'ダメージ', '비율': '割合', '접기': '折りたたむ', '펼치기': '展開', '세부 조건': '詳細条件', '대미지 계산 불가': 'ダメージ計算不可', '샘플 이름 예시': '例: ようきスカーフ案', '상대 메모 예시': '例: 物理型の可能性高め', '엔트리 메모 예시': '例: ドラパルトはスカーフかも / ロトムはボルチェン公開 / ミミッキュは終盤スイーパー寄り', '포켓몬 챔피언스 배틀 도우미': 'ポケモンチャンピオンズ バトルアシスタント', '파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구': 'パーティ管理・相手エントリー・素早さ計算・ダメージ計算を1か所でまとめられるポケモンチャンピオンズのバトルツール。', '포켓몬 챔피언스 배틀 도우미 대표 이미지': 'ポケモンチャンピオンズ バトルアシスタントのプレビュー画像', '불러오기 실패: JSON 형식을 확인하세요.': '読み込みに失敗しました。JSON形式を確認してください。', '한 번에 모든 기능을 밀어넣지 않고, 지금 필요한 작업부터 시작합니다.': '一度にすべての機能を押しつけず、今必要な作業から始める。', '이 홈은 길찾기 화면입니다. 배틀 준비, 샘플 조정, 도감 확인 중 하나만 고르면 바로 들어갑니다.': 'このホームは案内板だ。バトル準備、サンプル調整、図鑑確認のどれか一つを選べばすぐ入れる。', '사용 흐름': '使用フロー', '바로 시작': 'ここから開始', '싱글/더블 배틀 준비': 'バトル準備', '샘플 조정 / 자료 확인': '調整 / 参照', '파티, 선출, 속도, 대미지 계산을 한 흐름으로 정리합니다.': 'パーティ、選出、素早さ、ダメージ計算を一つの流れで整理する。', '포켓몬 한 마리를 조정하거나 도감 정보를 빠르게 확인합니다.': '1匹を調整したり、図鑑情報をすばやく確認したりする。', '싱글 배틀 운영': 'シングル運用', '더블 배틀 운영': 'ダブル運用', '샘플 조정': 'サンプル調整', '도감 확인': '図鑑確認', '추천 시작점': 'おすすめの入口', '자주 쓰는 흐름만 앞에 두고, 세부 기능은 들어간 뒤에 보여 줍니다.': 'よく使う流れだけ前に出し、細かい機能は中に入ってから見せる。', '현재 흐름': '現在のフロー', '파티부터 채우고, 상대 공개 정보를 적은 뒤 계산 단계로 넘어갑니다.': 'まず自分のパーティを埋め、相手の公開情報を書いてから計算に進む。', '더블은 파티와 상대 정리 후 플래너에서 턴 흐름을 봅니다.': 'ダブルはパーティと相手情報を整えたあと、プランナーでターンの流れを見る。', '내 포켓몬과 기술 기준을 정리합니다.': '自分のポケモンと技の基準を整える。', '상대 공개 정보와 가정을 정리합니다.': '相手の公開情報と想定を整理する。', '추월컷과 속도선을 확인합니다.': '抜きラインと素早さ帯を確認する。', '기술 대미지와 조건을 맞춥니다.': '技ダメージと条件を合わせる。', '더블 기준 화력과 행동순을 정리합니다.': 'ダブル基準の火力と行動順を整理する。', '이 화면에서 하는 일': 'この画面でやること', '입력 순서': '入力順', '현재 기준 정보': '現在の基準情報', '내 파티/상대 엔트리를 먼저 맞추면 계산이 덜 흔들립니다.': '自分のパーティと相手エントリーを先に整えると計算がぶれにくい。', '내 기술 선택 → 상대 기준 확인 → 화력 조건 조정 순서로 보면 됩니다.': '自分の技選択 → 相手基準確認 → 火力条件調整の順で見ればいい。', '선택된 기술': '選択中の技',
-    '배틀': 'バトル', '분석 도구': '分析ツール', '사용 중인 파티': '使用中のパーティ', '이 파티로 대면 보기': 'このパーティで対面を見る', '선택 내 슬롯 파티 편집': '選択中の自分の枠を編集',
-    '노력': 'がんばりや', '외로움': 'さみしがり', '용감': 'ゆうかん', '고집': 'いじっぱり', '개구쟁이': 'やんちゃ', '대담': 'ずぶとい', '온순': 'すなお', '무사태평': 'のんき', '장난꾸러기': 'わんぱく', '촐랑': 'のうてんき', '겁쟁이': 'おくびょう', '성급': 'せっかち', '성실': 'まじめ', '명랑': 'ようき', '천진난만': 'むじゃき', '조심': 'ひかえめ', '의젓': 'おっとり', '냉정': 'れいせい', '수줍음': 'てれや', '덜렁': 'うっかりや', '차분': 'おだやか', '얌전': 'おとなしい', '건방': 'なまいき', '신중': 'しんちょう', '변덕': 'きまぐれ',
-  },
-}
-
-function translateText(language: SiteLanguage, text: string) {
-  if (language === 'ko') return text
-  return UI_TRANSLATIONS[language][text] ?? text
-}
 
 function emptySlotLabel(index: number, language: SiteLanguage) {
   return `${translateText(language, '빈 슬롯')} ${index + 1}`
@@ -302,90 +173,6 @@ const STORAGE_KEY = 'pokemon-champions-assistant-demo:v1'
 const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
 const MAX_OPPONENTS = 6
 const EFFORT_CHECKPOINTS = [11, 22, 32] as const
-const MEGA_STONE_SPRITE_BY_KEY: Partial<Record<string, string>> = {
-  'mega-abomasnow': 'abomasite',
-  'mega-absol': 'absolite',
-  'mega-absol-z': 'absolitez',
-  'mega-aerodactyl': 'aerodactylite',
-  'mega-aggron': 'aggronite',
-  'mega-alakazam': 'alakazite',
-  'mega-altaria': 'altarianite',
-  'mega-ampharos': 'ampharosite',
-  'mega-audino': 'audinite',
-  'mega-banette': 'banettite',
-  'mega-beedrill': 'beedrillite',
-  'mega-blastoise': 'blastoisinite',
-  'mega-camerupt': 'cameruptite',
-  'mega-charizard-x': 'charizardite-x',
-  'mega-charizard-y': 'charizardite-y',
-  'mega-gallade': 'galladite',
-  'mega-garchomp': 'garchompite',
-  'mega-garchomp-z': 'garchompitez',
-  'mega-gardevoir': 'gardevoirite',
-  'mega-gengar': 'gengarite',
-  'mega-glalie': 'glalitite',
-  'mega-gyarados': 'gyaradosite',
-  'mega-heracross': 'heracronite',
-  'mega-houndoom': 'houndoominite',
-  'mega-kangaskhan': 'kangaskhanite',
-  'mega-lopunny': 'lopunnite',
-  'mega-lucario': 'lucarionite',
-  'mega-lucario-z': 'lucarionitez',
-  'mega-golisopod': 'golisopite',
-  'mega-baxcalibur': 'baxcalibrite',
-  'mega-manectric': 'manectite',
-  'mega-medicham': 'medichamite',
-  'mega-floette': 'item-sprites/floettite.png',
-  // PokéAPI has metadata but no sprite payload for the new Z-A Mega Stones yet.
-  'mega-greninja': 'https://www.serebii.net/itemdex/sprites/za/greninjite.png',
-  'mega-delphox': 'https://www.serebii.net/itemdex/sprites/za/delphoxite.png',
-  'mega-meowstic': 'https://www.serebii.net/itemdex/sprites/za/meowsticite.png',
-  'mega-starmie': 'https://www.serebii.net/itemdex/sprites/za/starminite.png',
-  'mega-froslass': 'https://www.serebii.net/itemdex/sprites/za/froslassite.png',
-  'mega-hawlucha': 'https://www.serebii.net/itemdex/sprites/za/hawluchanite.png',
-  'mega-skarmory': 'https://www.serebii.net/itemdex/sprites/za/skarmorite.png',
-  'mega-excadrill': 'https://www.serebii.net/itemdex/sprites/za/excadrite.png',
-  'mega-glimmora': 'https://www.serebii.net/itemdex/sprites/za/glimmoranite.png',
-  'mega-dragonite': 'https://www.serebii.net/itemdex/sprites/za/dragoninite.png',
-  'mega-chandelure': 'https://www.serebii.net/itemdex/sprites/za/chandelurite.png',
-  'mega-meganium': 'https://www.serebii.net/itemdex/sprites/za/meganiumite.png',
-  'mega-feraligatr': 'https://www.serebii.net/itemdex/sprites/za/feraligite.png',
-  'mega-emboar': 'https://www.serebii.net/itemdex/sprites/za/emboarite.png',
-  'mega-scovillain': 'https://www.serebii.net/itemdex/sprites/za/scovillainite.png',
-  'mega-clefable': 'https://www.serebii.net/itemdex/sprites/za/clefablite.png',
-  'mega-victreebel': 'https://www.serebii.net/itemdex/sprites/za/victreebelite.png',
-  'mega-chimecho': 'https://www.serebii.net/itemdex/sprites/za/chimechite.png',
-  'mega-golurk': 'https://www.serebii.net/itemdex/sprites/za/golurkite.png',
-  'mega-chesnaught': 'https://www.serebii.net/itemdex/sprites/za/chesnaughtite.png',
-  'mega-drampa': 'https://www.serebii.net/itemdex/sprites/za/drampanite.png',
-  'mega-crabominable': 'https://www.serebii.net/itemdex/sprites/za/crabominite.png',
-  'mega-staraptor': 'https://www.serebii.net/itemdex/sprites/za/staraptite.png',
-  'mega-metagross': 'metagrossite',
-  'mega-scolipede': 'https://www.serebii.net/itemdex/sprites/za/scolipite.png',
-  'mega-scrafty': 'https://www.serebii.net/itemdex/sprites/za/scraftinite.png',
-  'mega-eelektross': 'https://www.serebii.net/itemdex/sprites/za/eelektrossite.png',
-  'mega-pyroar': 'https://www.serebii.net/itemdex/sprites/za/pyroarite.png',
-  'mega-malamar': 'https://www.serebii.net/itemdex/sprites/za/malamarite.png',
-  'mega-barbaracle': 'https://www.serebii.net/itemdex/sprites/za/barbaracite.png',
-  'mega-dragalge': 'https://www.serebii.net/itemdex/sprites/za/dragalgite.png',
-  'mega-falinks': 'https://www.serebii.net/itemdex/sprites/za/falinksite.png',
-  'mega-raichu-x': 'https://www.serebii.net/itemdex/sprites/za/raichunitex.png',
-  'mega-raichu-y': 'https://www.serebii.net/itemdex/sprites/za/raichunitey.png',
-  'mega-sceptile': 'sceptilite',
-  'mega-blaziken': 'blazikenite',
-  'mega-swampert': 'swampertite',
-  'mega-mawile': 'mawilite',
-  'mega-salamence': 'salamencite',
-  'mega-pidgeot': 'pidgeotite',
-  'mega-pinsir': 'pinsirite',
-  'mega-sableye': 'sablenite',
-  'mega-scizor': 'scizorite',
-  'mega-sharpedo': 'sharpedonite',
-  'mega-slowbro': 'slowbronite',
-  'mega-steelix': 'steelixite',
-  'mega-tyranitar': 'tyranitarite',
-  'mega-venusaur': 'venusaurite',
-}
 
 const OPPONENT_BULK_PRESETS: Record<Exclude<OpponentBulkPreset, 'custom'>, OpponentBulkConfig> = {
   'neutral-0': { hpEv: 0, defenseEv: 0, spDefenseEv: 0, defenseNature: 1, spDefenseNature: 1, label: '무보정 0EV' },
@@ -504,95 +291,12 @@ function opponentOffenseLabel(state: OpponentOffenseState, preset: OpponentOffen
   ].filter(Boolean)
   return `공격 ${state.attackEv} · 특수공격 ${state.spAttackEv}${natureBits.length ? ` · ${natureBits.join(' / ')}` : ''}`
 }
-
-function speedTemplate(base: number, boosted: boolean, scarf: boolean) {
-  let value = actualStat(base, CHAMPIONS_EFFORT_PER_STAT_CAP, boosted ? 1.1 : 1)
-  if (scarf) value = applyChoiceScarf(value)
-  return value
-}
-
-function makeFormRow(base: Row, form: {
-  id: number
-  key: string
-  name_ko: string
-  name_en: string
-  name_ja: string
-  types: string[]
-  hp: number
-  attack: number
-  defense: number
-  spAttack: number
-  spDefense: number
-  speed: number
-  spriteId: number
-}) {
-  return {
-    ...base,
-    id: form.id,
-    key: form.key,
-    name_ko: form.name_ko,
-    name_en: form.name_en,
-    name_ja: form.name_ja,
-    types: form.types,
-    types_ko: form.types.map((type) => TYPE_KO_BY_KEY[type] ?? type),
-    hp: form.hp,
-    attack: form.attack,
-    defense: form.defense,
-    spAttack: form.spAttack,
-    spDefense: form.spDefense,
-    speed: form.speed,
-    fast: speedTemplate(form.speed, true, false),
-    neutral: speedTemplate(form.speed, false, false),
-    uninvested: actualStat(form.speed, 0, 1),
-    scarf_fast: speedTemplate(form.speed, true, true),
-    scarf_neutral: speedTemplate(form.speed, false, true),
-    sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${form.spriteId}.png`,
-  } satisfies Row
-}
-
-const baseRows = ((championsData.rows as Row[]) ?? []).filter((row): row is Row => typeof row?.key === 'string' && !!row.key)
-const baseIndexByKey = new Map(baseRows.map((row) => [row.key, row]))
-const extraFormRows: Row[] = additionalFormSpecs.map(form => makeFormRow(baseIndexByKey.get(form.key.split('-')[0])!, form))
-
-const rows = [...baseRows, ...extraFormRows]
-const indexByKey = new Map(rows.map((row) => [row.key, row]))
-const speciesOptions = rows.map((row) => ({
-  key: row.key,
-  label: `${row.name_ko} (${row.name_en})`,
-}))
 const starterKeys = ['mega-lopunny', 'mega-delphox', 'garchomp', 'toxapex', 'corviknight', 'kingambit']
-// Legacy caller names delegate to the single raw-item authority; only explicit form selection equips a stone.
-const canonicalChampionsItemName = canonicalHeldItem
-const megaStoneForKey = requiredMegaStone
 function normalizeItemForKey(key: string, item: string) {
   return itemForSpeciesSelection(key, item)
 }
-function isAllowedChampionsItem(key: string, item: string) {
-  return isCalculableHeldItem(key, item)
-}
 function visibleChampionsItem(_key: string, item: string) {
   return item
-}
-function heldItemError(key: string, item: string, language: SiteLanguage): string | null {
-  const { status, requiredStone } = classifyHeldItem(key, item)
-  if (status === 'none' || status === 'allowed' || status === 'required-stone') return null
-  if (requiredStone) return language === 'en' ? `Item mismatch: requires ${requiredStone}. Open Item to repair.` : language === 'ja' ? `道具不一致: ${requiredStone} が必要です。道具から修正してください。` : `도구 불일치: ${requiredStone} 필요 · 도구에서 수정하세요.`
-  return language === 'en' ? 'Unrecognized or incompatible held item. Open Item to repair.' : language === 'ja' ? '未確認または不適合な道具です。道具から修正してください。' : '확인되지 않았거나 부적합한 도구 · 도구에서 수정하세요.'
-}
-
-function itemSpriteSrc(key: string, item: string) {
-  const localSpriteSrc = (ref: string) => {
-    const cleaned = ref.split('?')[0]?.split('#')[0] ?? ref
-    const filename = cleaned.split('/').pop() || cleaned
-    return `${import.meta.env.BASE_URL}item-sprites/${filename.endsWith('.png') ? filename : `${filename}.png`}`
-  }
-  const normalized = canonicalChampionsItemName(item).trim()
-  const megaSlug = classifyHeldItem(key, item).status === 'required-stone' ? MEGA_STONE_SPRITE_BY_KEY[key] : null
-  if (megaSlug) return localSpriteSrc(megaSlug)
-  const spriteSlug = CHAMPIONS_ITEM_SPRITE_MAP[normalized as ChampionsItem]
-  if (spriteSlug) return localSpriteSrc(spriteSlug)
-  if (megaStoneForKey(key)) return `${import.meta.env.BASE_URL}item-generic.svg`
-  return `${import.meta.env.BASE_URL}item-generic.svg`
 }
 
 const DEFAULT_NATURE_BY_KEY: Partial<Record<string, NatureId>> = {
@@ -742,8 +446,6 @@ function clampBattleStage(value: unknown) {
   return Math.max(-6, Math.min(6, Math.trunc(num)))
 }
 
-const natureById = new Map(NATURES.map(nature => [nature.id, nature]))
-
 function legacyNatureFromBoostStat(stat?: unknown): NatureId {
   switch (stat) {
     case 'attack': return 'adamant'
@@ -752,51 +454,6 @@ function legacyNatureFromBoostStat(stat?: unknown): NatureId {
     case 'spDefense': return 'careful'
     case 'speed': return 'jolly'
     default: return 'hardy'
-  }
-}
-
-function statLabel(stat: StatKey, language: SiteLanguage = 'ko') {
-  switch (stat) {
-    case 'attack': return translateText(language, '공격')
-    case 'defense': return translateText(language, '방어')
-    case 'spAttack': return translateText(language, '특수공격')
-    case 'spDefense': return translateText(language, '특수방어')
-    case 'speed': return translateText(language, '스피드')
-  }
-}
-
-function statThemeClass(stat: EffortStatKey) {
-  switch (stat) {
-    case 'hp': return 'stat-theme-hp'
-    case 'attack': return 'stat-theme-attack'
-    case 'defense': return 'stat-theme-defense'
-    case 'spAttack': return 'stat-theme-sp-attack'
-    case 'spDefense': return 'stat-theme-sp-defense'
-    case 'speed': return 'stat-theme-speed'
-  }
-}
-
-function moveTypeThemeClass(type: string | null | undefined) {
-  switch (type) {
-    case 'normal': return 'move-type-normal'
-    case 'fire': return 'move-type-fire'
-    case 'water': return 'move-type-water'
-    case 'electric': return 'move-type-electric'
-    case 'grass': return 'move-type-grass'
-    case 'ice': return 'move-type-ice'
-    case 'fighting': return 'move-type-fighting'
-    case 'poison': return 'move-type-poison'
-    case 'ground': return 'move-type-ground'
-    case 'flying': return 'move-type-flying'
-    case 'psychic': return 'move-type-psychic'
-    case 'bug': return 'move-type-bug'
-    case 'rock': return 'move-type-rock'
-    case 'ghost': return 'move-type-ghost'
-    case 'dragon': return 'move-type-dragon'
-    case 'dark': return 'move-type-dark'
-    case 'steel': return 'move-type-steel'
-    case 'fairy': return 'move-type-fairy'
-    default: return 'move-type-unknown'
   }
 }
 
@@ -1030,57 +687,6 @@ const ITEM_EFFECT_SUMMARIES: Record<string, Record<SiteLanguage, string>> = {
   'グラスシード': { ko: '그래스필드에서 방어가 1단계 상승하고 소모됨.', en: 'Raises Defense by 1 stage in Grassy Terrain, then is consumed.', ja: 'グラスフィールドで 防御が1段階上がり消費される。' },
 }
 
-function lookupMoveMeta(name: string) {
-  if (!name) return null
-  return getMoveMetadata(name)?.meta ?? null
-}
-
-function findMatchingMoveOption(name: string, options: MoveOption[]) {
-  if (!name || !options.length) return null
-  const candidates = moveNameCandidates(name)
-  return options.find((option) => candidates.includes(option.name) || candidates.includes(normalizeSearchText(option.name))) ?? null
-}
-
-function resolveMoveType(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>) {
-  const source = getMoveMetadata(name)
-  if (source?.id) return source.meta.type
-  const direct = findMatchingMoveOption(name, preferredOptions)
-  if (direct?.type) return direct.type
-  for (const candidate of moveNameCandidates(name)) {
-    const meta = lookupMoveMeta(candidate)
-    if (meta?.type) return meta.type
-  }
-  for (const pool of Object.values(movePools)) {
-    const matched = findMatchingMoveOption(name, pool.moves)
-    if (matched?.type) return matched.type
-  }
-  return null
-}
-
-function resolveMoveMeta(name: string, preferredOptions: MoveOption[], movePools: Record<string, MovePoolState>): MoveMeta | null {
-  if (!name) return null
-  const source = getMoveMetadata(name)
-  if (source?.id) return source.meta
-  const candidates = moveNameCandidates(name)
-  for (const candidate of candidates) {
-    const meta = lookupMoveMeta(candidate)
-    if (meta) return meta
-  }
-  const direct = findMatchingMoveOption(name, preferredOptions)
-  if (direct) {
-    const directMeta = lookupMoveMeta(direct.name)
-    if (directMeta) return directMeta
-  }
-  for (const pool of Object.values(movePools)) {
-    const matched = findMatchingMoveOption(name, pool.moves)
-    if (!matched) continue
-    const matchedMeta = lookupMoveMeta(matched.name)
-    if (matchedMeta) return matchedMeta
-  }
-  const resolvedType = resolveMoveType(name, preferredOptions, movePools)
-  return resolvedType ? { type: resolvedType, category: null, power: null } : null
-}
-
 const moveMetaCache = new Map<string, Promise<MoveOption>>()
 
 
@@ -1218,20 +824,8 @@ async function fetchPokemonMovePool(key: string) {
   return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
 }
 
-function natureLabel(natureId: NatureId, language: SiteLanguage = 'ko') {
-  const nature = natureById.get(natureId)
-  if (!nature) return natureId
-  const localized = translateText(language, nature.label)
-  if (!nature.up || !nature.down) return `${localized} (${translateText(language, '무보정')})`
-  return `${localized} (${statLabel(nature.up, language)}↑ ${statLabel(nature.down, language)}↓)`
-}
-
 function natureChipLabel(natureId: NatureId, language: SiteLanguage = 'ko') {
   return translateText(language, natureById.get(natureId)?.label ?? natureId)
-}
-
-function boostedStatForNature(natureId: NatureId): StatKey | null {
-  return natureById.get(natureId)?.up ?? null
 }
 
 function sanitizeMemberConfig(input: unknown, key = ''): MemberConfig {
@@ -1257,10 +851,6 @@ function sanitizeAbilityForKey(_key: string, ability: unknown, _fallbackToDefaul
   // A read boundary never substitutes a form's ability for original evidence.
   return typeof ability === 'string' ? ability : ''
 }
-function heldAbilityError(key: string, ability: string, language: SiteLanguage): string | null {
-  if (!key || isCalculableAbility(indexByKey.get(key), ability, abilityDescriptionFor, rows)) return null
-  return language === 'en' ? 'Unrecognized or unavailable ability. Open Ability to select one or explicitly clear it.' : language === 'ja' ? '未確認またはこのフォルムで使えない特性です。特性から選び直すか明示的に空にしてください。' : '미확인 또는 폼에 없는 특성 · 특성을 선택하거나 명시적으로 비우세요.'
-}
 
 function sanitizePartyTuning(input: unknown): PartyTuning {
   const tuning = input && typeof input === 'object' ? (input as Partial<PartyTuning>) : {}
@@ -1270,46 +860,10 @@ function sanitizePartyTuning(input: unknown): PartyTuning {
   }
 }
 
-function clampEv(value: unknown, max = CHAMPIONS_EFFORT_PER_STAT_CAP) {
-  const num = Number(value)
-  if (!Number.isFinite(num)) return 0
-  return Math.max(0, Math.min(max, Math.trunc(num)))
-}
-
 function clampNonNegativeInt(value: unknown, max = 999) {
   const num = Number(value)
   if (!Number.isFinite(num)) return 0
   return Math.max(0, Math.min(max, Math.trunc(num)))
-}
-
-function totalEffortPoints(evs: EffortValues) {
-  return evs.hp + evs.attack + evs.defense + evs.spAttack + evs.spDefense + evs.speed
-}
-
-function remainingEffortPoints(evs: EffortValues, field?: EffortStatKey) {
-  if (!field) return CHAMPIONS_EFFORT_CAP - totalEffortPoints(evs)
-  return CHAMPIONS_EFFORT_CAP - (totalEffortPoints(evs) - evs[field])
-}
-
-function applyChampionsEffort(evs: EffortValues, field: keyof EffortValues, nextValue: unknown) {
-  const clamped = clampEv(nextValue, CHAMPIONS_EFFORT_PER_STAT_CAP)
-  const remainder = remainingEffortPoints(evs, field)
-  return {
-    ...evs,
-    [field]: Math.max(0, Math.min(clamped, remainder)),
-  }
-}
-
-function sanitizeEvs(input: unknown): EffortValues {
-  const evs = input && typeof input === 'object' ? (input as Partial<EffortValues>) : {}
-  return {
-    hp: clampEv(evs.hp, CHAMPIONS_EFFORT_PER_STAT_CAP),
-    attack: clampEv(evs.attack, CHAMPIONS_EFFORT_PER_STAT_CAP),
-    defense: clampEv(evs.defense, CHAMPIONS_EFFORT_PER_STAT_CAP),
-    spAttack: clampEv(evs.spAttack, CHAMPIONS_EFFORT_PER_STAT_CAP),
-    spDefense: clampEv(evs.spDefense, CHAMPIONS_EFFORT_PER_STAT_CAP),
-    speed: clampEv(evs.speed, CHAMPIONS_EFFORT_PER_STAT_CAP),
-  }
 }
 
 export function sanitizeParty(input: unknown): PartyMember[] {
@@ -1709,12 +1263,6 @@ const MY_SPEED_ABILITY_MARKERS: Record<string, { type: 'stage' | 'multiplier', v
   'unburden': { type: 'multiplier', value: 2 },
 }
 
-function resolveSelectedAbility(row: Row, selectedAbility: string, language: SiteLanguage) {
-  void language
-  const resolved = resolveFormAbility(row, selectedAbility, abilityDescriptionFor, rows)
-  return resolved.status === 'allowed' ? { slug: resolved.slug!, label: localizedAbilityLabel(row, resolved.slug!, 'ko', abilityDescriptionFor) } : null
-}
-
 function isSpeedAbilityConditionActive(slug: string, weather: DamageWeather, terrain: DamageTerrain) {
   if (slug === 'swift-swim') return weather === 'rain'
   if (slug === 'sand-rush') return weather === 'sand'
@@ -1955,54 +1503,7 @@ function battleIndexTooltipData(kind: 'power' | 'physical-bulk' | 'special-bulk'
   }
 }
 
-function matchesLooseQuery(source: string, query: string) {
-  if (!query) return true
-  if (source.includes(query)) return true
-  let cursor = 0
-  for (const char of source) {
-    if (char === query[cursor]) cursor += 1
-    if (cursor >= query.length) return true
-  }
-  return false
-}
-
 const SPECIES_SEARCH_INDEX = rows.map((row) => ({ row, candidates: speciesSearchCandidates(row) }))
-
-function filterSpeciesOptions(query: string, options?: { includeMega?: boolean; allowLoose?: boolean }) {
-  return searchPokemon(rows, query, options).map(row => ({ key: row.key, label: `${row.name_ko} (${row.name_en})` }))
-}
-
-function displayItemLabel(item: string, language: SiteLanguage) {
-  const localized = localizedChampionsItemLabel(item, language)
-  if (localized !== item) return localized
-  const source = resolveItemInfo(canonicalChampionsItemName(item))?.entry ?? resolveItemInfo(item)?.entry
-  const sourceName = language === 'ko' ? source?.nameKo : language === 'en' ? source?.nameEn : source?.nameJa
-  return sourceName || translateText(language, item)
-}
-
-function filterItemOptions(query: string, language: SiteLanguage = 'ko', options?: { fallbackToAll?: boolean; allowLoose?: boolean }) {
-  const normalized = query.trim().toLowerCase()
-  const fallbackToAll = options?.fallbackToAll ?? true
-  const allowLoose = options?.allowLoose ?? true
-  if (!normalized) return byDisplayName(CHAMPIONS_ITEM_OPTIONS, item => displayItemLabel(item, language), item => item, language)
-  const matched = [...CHAMPIONS_ITEM_OPTIONS]
-    .map((item) => {
-      const aliases = CHAMPIONS_ITEM_ALIASES[item] ?? []
-      const candidates = [item, displayItemLabel(item, 'en'), displayItemLabel(item, 'ja'), ...aliases].map((entry) => entry.toLowerCase())
-      const score = candidates.reduce((best, candidate) => {
-        if (candidate === normalized) return Math.min(best, 0)
-        if (candidate.startsWith(normalized)) return Math.min(best, 1)
-        if (candidate.includes(normalized)) return Math.min(best, 2)
-        if (allowLoose && matchesLooseQuery(candidate, normalized)) return Math.min(best, 3)
-        return best
-      }, Number.POSITIVE_INFINITY)
-      return Number.isFinite(score) ? { item, score } : null
-    })
-    .filter((entry): entry is { item: ChampionsItem; score: number } => Boolean(entry))
-    .sort((a, b) => a.score - b.score || compareDisplayName(a.item, b.item, item => displayItemLabel(item, language), item => item, language))
-    .map((entry) => entry.item)
-  return matched.length ? matched : (fallbackToAll ? byDisplayName(CHAMPIONS_ITEM_OPTIONS, item => displayItemLabel(item, language), item => item, language) : [])
-}
 
 function filterDexItemOptions(query: string, language: SiteLanguage) {
   const stones = [...new Set(rows.map(row => requiredMegaStone(row.key)).filter((item): item is string => Boolean(item)))]
@@ -2074,22 +1575,11 @@ function resolveNatureInput(raw: string, language: SiteLanguage = 'ko') {
   return filterNatureOptions(raw, language)[0]?.id ?? 'hardy'
 }
 
-function filterMoveOptions(query: string, options: MoveOption[]) {
-  return searchMoves(options, query, { names: option => moveDescriptionFor(option.name) ?? undefined })
-}
-
 function displayTypeName(type: string | null | undefined, language: SiteLanguage) {
   if (!type) return translateText(language, '없음')
   if (language === 'en') return titleCaseSlug(type)
   if (language === 'ja') return getJaTypes([type])[0] ?? titleCaseSlug(type)
   return TYPE_KO_BY_KEY[type] ?? type
-}
-
-function displayMoveCategoryName(category: MoveCategory | null | undefined, language: SiteLanguage) {
-  if (category === 'physical') return translateText(language, '물리')
-  if (category === 'special') return translateText(language, '특수')
-  if (category === 'status') return translateText(language, '변화')
-  return translateText(language, '없음')
 }
 
 function itemEffectSummaryFor(rawItem: string, language: SiteLanguage) {
@@ -2144,17 +1634,6 @@ function filterDexMoveOptions(query: string, options?: { allowLoose?: boolean })
   if (!query.trim()) return byDisplayName(index.map(({ candidates: _candidates, ...entry }) => entry), entry => entry.name, entry => entry.key)
   const ranked = searchMoves(index, query, { allowLoose, names: entry => ({ ...moveDescriptionFor(entry.name), aliases: entry.candidates }) })
   return ranked.map(({ candidates: _candidates, ...entry }) => entry)
-}
-
-function abilityDisplayName(abilityKey: string, abilityKo: string, language: SiteLanguage) {
-  const row = rows.find(entry => entry.abilities.includes(abilityKey))
-  return row ? localizedAbilityLabel(row, abilityKey, language, abilityDescriptionFor) : abilityKo
-}
-
-export function selectedAbilityDisplayName(row: Row, storedAbility: string, language: SiteLanguage) {
-  if (!storedAbility) return undefined
-  const selected = resolveSelectedAbility(row, storedAbility, language)
-  return selected ? abilityDisplayName(selected.slug, selected.label, language) : undefined
 }
 
 function abilitySearchCandidates(abilityKey: string, abilityKo: string) {
@@ -2575,12 +2054,6 @@ async function inferImportedPartyFromSpriteGuidedImage(file: File, recognize: (i
   return imported
 }
 
-function displayName(row: Row, language: SiteLanguage) {
-  if (language === 'en') return row.name_en
-  if (language === 'ja') return row.name_ja || getJaName(row.key, row.name_ko, row.name_en)
-  return row.name_ko
-}
-
 function displayTypes(row: Row, language: SiteLanguage) {
   if (language === 'en') return row.types
   if (language === 'ja') return getJaTypes(row.types)
@@ -2605,12 +2078,6 @@ function itemOptionsForKey(key: string) {
 
 function defaultAbilityForKey(key: string) {
   return abilityForSpeciesSelection(indexByKey.get(key), '', key, '')
-}
-
-function searchDisplayLabel(key: string, language: SiteLanguage) {
-  const row = indexByKey.get(key)
-  if (!row) return key
-  return displayName(row, language)
 }
 
 function sameMoveField(a: MoveFieldTarget, key: string, slotIdx: number, scope: 'party' | 'sample' | 'opponent') {
@@ -2661,441 +2128,6 @@ function SmallTypeBadgeImage({ type }: { type: string }) {
   return <img src={getTypeBadgeSrc(type)} alt={label} className="move-autocomplete-type-icon" title={label} />
 }
 
-function itemAutocompleteSecondaryLabel(item: string, language: SiteLanguage) {
-  if (language === 'ko') return ''
-  return item
-}
-
-function itemAutocompletePrimaryLabel(item: string, language: SiteLanguage) {
-  const localized = displayItemLabel(item, language)
-  return localized && localized.trim() ? localized : item
-}
-
-type QuickBattle = ComparisonSeed['battle']
-type QuickSide = ComparisonSeed & { actual: Partial<Record<EffortStatKey, string>> }
-type QuickConditions = { weather: DamageWeather; terrain: DamageTerrain; critical: boolean; typeChangeStab: boolean; hits: number }
-const QUICK_KEY = 'pokemon-champions-quick-damage:v1'
-const quickBlankBattle = (): QuickBattle => ({ attackStage: 0, spAttackStage: 0, defenseStage: 0, spDefenseStage: 0, burned: false, lowHp: false, poisoned: false, fullHp: false, reflect: false, lightScreen: false, auroraVeil: false, friendGuard: false })
-const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {}, moves: ['', '', '', ''], battle: quickBlankBattle(), speedStage: 0, speedNatureKnown: true, speedNatureMultiplier: 1, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false })
-const quickDefaultConditions = (): QuickConditions => ({ weather: 'none', terrain: 'none', critical: false, typeChangeStab: true, hits: 2 })
-export function quickSide(input: unknown, legacy: Record<string, unknown> = {}, originalAttacker = false): QuickSide {
-  const value = input && typeof input === 'object' && !Array.isArray(input) ? input as Partial<QuickSide> : {}
-  const key = typeof value.key === 'string' && indexByKey.has(value.key) ? value.key : ''
-  const item = quickItem(value.item, megaStoneForKey(key), CHAMPIONS_ITEM_OPTIONS)
-  const own = value.battle && typeof value.battle === 'object' && !Array.isArray(value.battle) ? value.battle : null
-  const source = own ?? { attackStage: originalAttacker ? legacy.attackStage : 0, defenseStage: originalAttacker ? 0 : legacy.defenseStage, burned: originalAttacker ? legacy.burned : false, lowHp: originalAttacker ? legacy.lowHp : false, poisoned: originalAttacker ? false : legacy.targetPoisoned, fullHp: originalAttacker ? false : legacy.defenderFullHp, reflect: originalAttacker ? false : legacy.reflect, lightScreen: originalAttacker ? false : legacy.lightScreen, auroraVeil: originalAttacker ? false : legacy.auroraVeil, friendGuard: originalAttacker ? false : legacy.friendGuard }
-  const battle = { ...quickBattleStages(source as Partial<QuickBattle>, legacy, originalAttacker), ...Object.fromEntries((['burned','lowHp','poisoned','fullHp','reflect','lightScreen','auroraVeil','friendGuard'] as const).map(flag => [flag, source[flag] === true])) } as QuickBattle
-  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
-}
-function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
-  const saved = readDraft(localStorage, side, slot, seed)
-  if (!saved) return { side: seed as QuickSide, dirty: new Set<string>() }
-  if (side === 'attacker' && saved.dirty.has('key')) return { side: seed as QuickSide, dirty: new Set<string>() }
-  const next = saved.side
-  if (next.key && !indexByKey.has(next.key)) return { side: seed as QuickSide, dirty: new Set<string>() }
-  // A historical draft's invalid ability remains visible and repairable; calculation is gated below.
-  if (!knownNature(next.nature)) return { side: seed as QuickSide, dirty: new Set<string>() }
-  // A restored item is evidence, not an edit request. Invalid drafts remain repairable.
-  const speciesChanged = saved.dirty.has('key') && next.key !== seed.key
-  return { dirty: saved.dirty, side: { ...next, actual: {}, battle: quickBlankBattle(), speedStage: speciesChanged ? 0 : seed.speedStage,
-    speedNatureKnown: saved.dirty.has('nature') || speciesChanged ? true : seed.speedNatureKnown,
-    speedNatureMultiplier: speciesChanged ? 1 : seed.speedNatureMultiplier,
-    statNatureMultipliers: saved.dirty.has('nature') || speciesChanged ? {} : seed.statNatureMultipliers,
-    speedScarfOverride: speciesChanged ? null : seed.speedScarfOverride,
-    speedAbilityActive: false, knownOffense: speciesChanged ? { attack: false, spAttack: false } : seed.knownOffense } as QuickSide }
-}
-function quickMagicProjection(side: QuickSide, row: Row) {
-  const boosted = boostedStatForNature(side.nature)
-  const magic = boosted && namedNatureMagicAvailable(boosted, side) ? boosted : null
-  const actualAt = (stat: EffortStatKey, effort: number) => actualStat(row[stat], effort, stat === 'hp' ? 1 : natureMultiplier(side.nature, stat), stat === 'hp')
-  return {
-    candidate: magic ? magicEffortCandidate(magic, side.evs, effort => actualAt(magic, effort)) : null,
-    points: (stat: EffortStatKey) => magic ? magicEffortMarkers(magic, stat, effort => actualAt(stat, effort)) : [],
-  }
-}
-
-function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {
-  const override = side.actual[key]
-  if (override !== undefined) return /^\d+$/.test(override) && Number(override) >= 1 && Number(override) <= 999 ? Number(override) : null
-  return actualStat(row[key], side.evs[key], quickStatNature(side, key, key === 'hp' ? 1 : natureMultiplier(side.nature, key)), key === 'hp')
-}
-
-// A multi-hit total does not supply the per-hit KO distribution needed for a 1-hit verdict.
-function quickKoVerdict(result: { damage: { min: number; max: number }; targetHp: number; hits: number; effectiveness: number } | null): 'certain' | 'possible' | null {
-  if (!result || result.hits !== 1 || result.effectiveness <= 0 || !Number.isFinite(result.targetHp) || result.targetHp <= 0 || !Number.isFinite(result.damage.min) || !Number.isFinite(result.damage.max) || result.damage.min <= 0 || result.damage.max < result.damage.min) return null
-  return result.damage.min >= result.targetHp ? 'certain' : result.damage.max >= result.targetHp ? 'possible' : null
-}
-
-const quickKoLabels = {
-  ko: { certain: '확정 1타', possible: '난수 1타' },
-  en: { certain: 'Guaranteed OHKO', possible: 'Possible OHKO' },
-  ja: { certain: '確定1発', possible: '乱数1発' },
-} as const
-
-const conciseSpeedLabels = {
-  ko: { nature: '성격 보정', scarf: '구애스카프', off: '미적용', on: '적용', partyNote: '파티 도구 변경 없음', entryNote: '엔트리 변경 없음', opponentSpeed: '상대 스피드', item: '상대 도구', ability: '상대 특성 발동', active: '발동', battle: '전투 조건', lab: '비교용 설정 · 원본 빌드 아님' },
-  en: { nature: 'Nature modifier', scarf: 'Choice Scarf', off: 'Off', on: 'On', partyNote: 'Party item unchanged', entryNote: 'Entry unchanged', opponentSpeed: 'Opponent Speed', item: 'Opponent item', ability: 'Opponent ability activation', active: 'Active', battle: 'Battle conditions', lab: 'Comparison settings · not the original build' },
-  ja: { nature: '性格補正', scarf: 'こだわりスカーフ', off: '未適用', on: '適用', partyNote: 'パーティの持ち物は変更なし', entryNote: 'エントリーは変更なし', opponentSpeed: '相手の素早さ', item: '相手の持ち物', ability: '相手の特性発動', active: '発動', battle: '戦闘条件', lab: '比較用設定 · 元のビルドではありません' },
-} as const
-
-export function QuickDamagePanel({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: { language: SiteLanguage; tooltipForMove: (name: string) => Pick<React.HTMLAttributes<HTMLElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; initialSides?: [ComparisonSeed, ComparisonSeed]; comparisonSlots?: [number, number]; comparisonMode?: boolean; entrySelectors?: (opponentSearch: React.ReactNode, reset: React.ReactNode) => React.ReactNode; onSaveEntry?: (side: 'attacker' | 'defender', draft: QuickSide, dirty: ReadonlySet<string>) => void; onDraftIdentity?: (side: 'attacker' | 'defender', key: string) => void; onOpponentSpecies?: (key: string) => void; onResetOpponents?: (search: string) => boolean; opponentResetRevision?: number; movesForSpecies?: (key: string) => string[]; sharedMoveSpecies?: (key: string) => boolean }) {
-  const lt = (text: string) => translateText(language, text)
-
-  const [saved] = React.useState(() => readQuickSaved(localStorage.getItem(QUICK_KEY)))
-  const [attacker, setAttacker] = React.useState(() => {
-    const seed = initialSides?.[0]
-    const side = seed ? restoredComparisonSide(seed, 'attacker', comparisonSlots?.[0] ?? 0).side : quickSide(saved.attacker, saved.conditions as Record<string, unknown> ?? {}, true)
-    if (!comparisonMode && typeof saved.move === 'string' && !(saved.attacker && typeof saved.attacker === 'object' && 'moves' in saved.attacker)) side.moves[0] = saved.move
-    return side
-  })
-  const [defender, setDefender] = React.useState(() => initialSides?.[1] ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).side : quickSide(saved.defender, saved.conditions as Record<string, unknown> ?? {}))
-  const [configuredConditions, setConditions] = React.useState<QuickConditions>(() => {
-    const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
-    const defaults = quickDefaultConditions()
-    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: [1,2,3,4,5].includes(Number(input.hits)) ? Number(input.hits) : 2, critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false }
-  })
-  // The two cards own the field projection; persisted/manual conditions remain separate.
-  const [manualFields, setManualFields] = React.useState(() => {
-    const previous = !comparisonMode && saved.manualFields && typeof saved.manualFields === 'object' ? saved.manualFields as Record<string, unknown> : null
-    return { weather: previous ? previous.weather === true : configuredConditions.weather !== 'none', terrain: previous ? previous.terrain === true : configuredConditions.terrain !== 'none' }
-  })
-  const ownAbility = resolveFormAbility(indexByKey.get(attacker.key), attacker.ability, abilityDescriptionFor, rows).slug ?? ''
-  const opposingAbility = resolveFormAbility(indexByKey.get(defender.key), defender.ability, abilityDescriptionFor, rows).slug ?? ''
-  const conditions: QuickConditions = { ...configuredConditions,
-    weather: manualFields.weather ? configuredConditions.weather : deriveAutoWeatherFromAbilities(ownAbility, opposingAbility),
-    terrain: manualFields.terrain ? configuredConditions.terrain : deriveAutoTerrainFromAbilities(ownAbility, opposingAbility) }
-  const [attackerSearch, setAttackerSearch] = React.useState('')
-  const [defenderSearch, setDefenderSearch] = React.useState('')
-  const [pools, setPools] = React.useState<Record<string, SharedPoolState>>({})
-  const [activeSlot, setActiveSlot] = React.useState<{ side: 'attacker' | 'defender'; index: number } | null>(null)
-  const [drafts, setDrafts] = React.useState<Record<string, string>>({})
-  const [selected, setSelected] = React.useState<{ side: 'attacker' | 'defender'; index: number }>(() => {
-    const own = initialSides?.[0].moves.findIndex(Boolean) ?? -1
-    const opp = initialSides?.[1].moves.findIndex(Boolean) ?? -1
-    return own >= 0 ? { side: 'attacker', index: own } : opp >= 0 ? { side: 'defender', index: opp } : { side: 'attacker', index: 0 }
-  })
-  const [modalSide, setModalSide] = React.useState<'attacker' | 'defender' | null>(null)
-  const [modalKey, setModalKey] = React.useState('')
-  const [dirty, setDirty] = React.useState<Record<'attacker' | 'defender', ReadonlySet<string>>>(() => ({ attacker: initialSides ? restoredComparisonSide(initialSides[0], 'attacker', comparisonSlots?.[0] ?? 0).dirty : new Set(), defender: initialSides ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).dirty : new Set() }))
-  const [draftStorageFailed, setDraftStorageFailed] = React.useState(false)
-  const markDirty = (side: 'attacker' | 'defender', field: string) => setDirty(prev => ({ ...prev, [side]: new Set([...prev[side], field]) }))
-  // A saved seed or slot change belongs to one card; never remount both cards.
-  const seedFingerprint = initialSides?.map((seed, index) => `${comparisonSlots?.[index] ?? 0}:${JSON.stringify(seed)}`) as [string, string] | undefined
-  const seed0 = seedFingerprint?.[0], seed1 = seedFingerprint?.[1]
-  const previousSeeds = React.useRef<[string | undefined, string | undefined]>([seed0, seed1])
-  const previousTargets = React.useRef<[string, string]>([pairTarget(comparisonSlots?.[0] ?? 0, attacker), pairTarget(comparisonSlots?.[1] ?? 0, defender)])
-  const skipDraftWrite = React.useRef(false)
-  const clearSideUI = (side: 'attacker' | 'defender') => {
-    setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => !key.startsWith(`${side}-`))))
-    setActiveSlot(prev => prev?.side === side ? null : prev)
-    setModalSide(prev => prev === side ? null : prev)
-  }
-  React.useEffect(() => {
-    if (!comparisonMode || !initialSides) return
-    const changed = (['attacker', 'defender'] as const).map((side, index) => previousSeeds.current[index] === (index === 0 ? seed0 : seed1) ? null : restoredComparisonSide(initialSides[index], side, comparisonSlots?.[index] ?? 0))
-    const targets = (['attacker', 'defender'] as const).map((side, index) => pairTarget(comparisonSlots?.[index] ?? 0, changed[index]?.side ?? (side === 'attacker' ? attacker : defender))) as [string, string]
-    const pairChanged = targets.some((target, index) => target !== previousTargets.current[index])
-    if (pairChanged) {
-      setConditions(quickDefaultConditions())
-      setManualFields({ weather: false, terrain: false })
-      setModalSide(null)
-      setAttacker(prev => resetPairAssumptions(prev, initialSides[0], dirty.attacker))
-      setDefender(prev => resetPairAssumptions(prev, initialSides[1], dirty.defender))
-    }
-    previousTargets.current = targets
-    for (const [index, side] of (['attacker', 'defender'] as const).entries()) {
-      const fingerprint = index === 0 ? seed0 : seed1
-      if (previousSeeds.current[index] === fingerprint) continue
-      skipDraftWrite.current = true
-      previousSeeds.current[index] = fingerprint
-      const restored = changed[index]!
-      const next = pairChanged ? resetPairAssumptions(restored.side as QuickSide, initialSides[index], restored.dirty) : restored.side
-      if (side === 'attacker') setAttacker(next as QuickSide); else setDefender(next as QuickSide)
-      setDirty(prev => ({ ...prev, [side]: restored.dirty }))
-      onDraftIdentity?.(side, restored.dirty.has('key') ? next.key : '')
-      if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')
-      clearSideUI(side)
-      setSelected(prev => prev.side === side ? { side, index: Math.max(0, initialSides[index].moves.findIndex(Boolean)) } : prev)
-    }
-  }, [comparisonMode, seed0, seed1])
-  React.useEffect(() => {
-    if (!comparisonMode || !initialSides) return
-    for (const [index, side] of (['attacker', 'defender'] as const).entries()) {
-      const restored = restoredComparisonSide(initialSides[index], side, comparisonSlots?.[index] ?? 0)
-      if (restored.dirty.has('key')) onDraftIdentity?.(side, restored.side.key)
-    }
-  }, [])
-
-  React.useEffect(() => {
-    if (!comparisonMode || !initialSides || !opponentResetRevision) return
-    skipDraftWrite.current = true
-    setAttacker(prev => resetPairAssumptions(prev, initialSides[0], dirty.attacker))
-    setDefender(resetPairAssumptions(initialSides[1] as QuickSide, initialSides[1], new Set()))
-    setDirty(prev => ({ ...prev, defender: new Set() }))
-    setDefenderSearch('')
-    setModalSide(null)
-    clearSideUI('defender')
-    setConditions(quickDefaultConditions())
-    setManualFields({ weather: false, terrain: false })
-    previousTargets.current = [pairTarget(comparisonSlots?.[0] ?? 0, initialSides[0]), pairTarget(comparisonSlots?.[1] ?? 0, initialSides[1])]
-    setSelected(prev => prev.side === 'defender' ? { side: 'attacker', index: 0 } : prev)
-  }, [opponentResetRevision])
-
-  const opener = React.useRef<HTMLElement | null>(null)
-  const [, refreshMeta] = React.useState(0)
-  const [moveMetaReady, setMoveMetaReady] = React.useState(false)
-  React.useEffect(() => { if (!comparisonMode) localStorage.setItem(QUICK_KEY, JSON.stringify({ attacker, defender, conditions: configuredConditions, manualFields })) }, [attacker, defender, configuredConditions, manualFields, comparisonMode])
-  React.useEffect(() => {
-    if (!comparisonMode || !initialSides || !comparisonSlots) return
-    if (skipDraftWrite.current) { skipDraftWrite.current = false; return }
-    const legacyOwnSpeciesDraft = readDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0])?.dirty.has('key')
-    const ownKept = legacyOwnSpeciesDraft && !dirty.attacker.size ? true : writeDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
-    const otherKept = writeDraft(localStorage, 'defender', comparisonSlots[1], initialSides[1], defender, dirty.defender)
-    setDraftStorageFailed(!(ownKept && otherKept))
-  }, [comparisonMode, seed0, seed1, attacker, defender, dirty])
-  const poolMounted = React.useRef(false)
-  React.useEffect(() => {
-    poolMounted.current = true
-    return () => { poolMounted.current = false }
-  }, [])
-  React.useEffect(() => {
-    for (const key of new Set([attacker.key, defender.key])) {
-      if (!key || pools[key]) continue
-      setPools(prev => ({ ...prev, [key]: { status: 'loading', moves: [], moveIds: [], provenance: LEARNSET_SOURCE } }))
-      void loadFormLearnset(key).then(result => {
-        if (poolMounted.current) setPools(prev => ({ ...prev, [key]: result }))
-      }).catch(() => {
-        if (poolMounted.current) setPools(prev => ({ ...prev, [key]: { status: 'load-error', moves: [], moveIds: [], provenance: LEARNSET_SOURCE } }))
-      })
-    }
-  }, [attacker.key, defender.key])
-  React.useEffect(() => { let active = true; void loadMoveMetaByName().then(() => { if (active) { refreshMeta(n => n + 1); setMoveMetaReady(true) } }); return () => { active = false } }, [])
-  const attackingRow = indexByKey.get(attacker.key)
-  const defendingRow = indexByKey.get(defender.key)
-  const scarfFor = (entry: QuickSide) => entry.speedScarfOverride ?? isChoiceScarfItem(entry.item)
-  const abilityFor = (entry: QuickSide, row: Row | undefined) => getSpeedAbility(row ? resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '' : '')
-  const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '', { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: entry.battle.burned || entry.battle.poisoned }))
-  const speedFor = (entry: QuickSide, row: Row | undefined, scarf: boolean, ability: 1 | 1.5 | 2 = 1) => {
-    if (!row) return null
-    const itemStatus = classifyHeldItem(entry.key, entry.item)
-    if (!isCalculableHeldItem(entry.key, entry.item) || heldAbilityError(entry.key, entry.ability, language)) return { value: null, reason: heldItemError(entry.key, entry.item, language) || heldAbilityError(entry.key, entry.ability, language) }
-    if (scarf && itemStatus.requiredStone) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
-    if (entry.speedAbilityActive && entry.ability === 'unburden' && scarf) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
-    const actual = entry.actual.speed
-    if (actual !== undefined) {
-      const value = quickStat(entry, row, 'speed')
-      if (value === null) return { value: null, reason: lt('실수치는 1~999의 정수로 입력하세요.') }
-      if (scarf && row.key.startsWith('mega-')) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
-      if (scarf && entry.ability === 'unburden' && ability !== 1) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
-      return { value: applySpeedModifiers(applySpeedStage(value, entry.speedStage), { scarf, abilityMultiplier: ability }), reason: null }
-    }
-    return effectiveComparisonSpeed(row, entry.evs.speed, quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed')), entry.speedStage, scarf, ability, entry.ability)
-  }
-  const mySpeedResult = speedFor(attacker, attackingRow, scarfFor(attacker), attacker.speedAbilityActive && abilityPermitted(attacker, attackingRow) ? abilityFor(attacker, attackingRow)!.multiplier : 1)
-  const oppSpeedResult = speedFor(defender, defendingRow, scarfFor(defender), defender.speedAbilityActive && abilityPermitted(defender, defendingRow) ? abilityFor(defender, defendingRow)!.multiplier : 1)
-  const moveLabel = (name: string) => language === 'ko' ? name : language === 'en' ? moveDescriptionFor(name)?.nameEn || name : moveDescriptionFor(name)?.nameJa || name
-  const statKeys = ['hp', 'attack', 'defense', 'spAttack', 'spDefense'] as const
-  const toStats = (side: QuickSide, row: Row): BattleStatBlock | null => {
-    const stats = Object.fromEntries(statKeys.map(key => [key, quickStat(side, row, key)])) as Record<typeof statKeys[number], number | null>
-    return statKeys.every(key => stats[key] !== null) ? stats as BattleStatBlock : null
-  }
-  const calculate = (direction: 'attacker' | 'defender', name: string) => {
-    const source = direction === 'attacker' ? attacker : defender
-    const target = direction === 'attacker' ? defender : attacker
-    const sourceRow = indexByKey.get(source.key), targetRow = indexByKey.get(target.key)
-    if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item) || heldAbilityError(source.key, source.ability, language) || heldAbilityError(target.key, target.ability, language)) return null
-    const sourceAbility = resolveFormAbility(sourceRow, source.ability, abilityDescriptionFor, rows).slug ?? ''
-    const targetAbility = resolveFormAbility(targetRow, target.ability, abilityDescriptionFor, rows).slug ?? ''
-    if ((source.speedScarfOverride === true && classifyHeldItem(source.key, source.item).requiredStone) || (target.speedScarfOverride === true && classifyHeldItem(target.key, target.item).requiredStone)) return null
-    if ((source.ability === 'unburden' && source.speedAbilityActive && isChoiceScarfItem(source.item)) || (target.ability === 'unburden' && target.speedAbilityActive && isChoiceScarfItem(target.item))) return null
-    const sourceStats = sourceRow ? toStats(source, sourceRow) : null
-    const targetStats = targetRow ? toStats(target, targetRow) : null
-    const pool = choicesForPool(pools[source.key])
-    const poolMap: Record<string, MovePoolState> = { [source.key]: { status: 'ready', moves: pool } }
-    const base = moveInPool(name, pool) ? resolveMoveMeta(name, pool, poolMap) : null
-    if (!sourceStats || !targetStats || !base || !quickMoveSupported(name, base, Boolean(CONDITIONAL_MOVE_POWER_RULES[name]))) return null
-    const choices = multiHitOptions(name)
-    const meta = applyTargetWeightMovePower(name, resolveAbilityAdjustedMoveMeta(name, resolveMultiHitMeta(name, base, choices?.includes(conditions.hits) ? conditions.hits : choices?.[0] ?? null, sourceAbility), sourceAbility, conditions.weather), targetRow?.weightKg ?? null)
-    if (!meta) return null
-    const type = meta.type, mode = meta.category === 'physical' || meta.category === 'special' ? meta.category : null
-    if (!type || !mode || !meta.power || !sourceRow || !targetRow) return null
-    const sourceTypes = resolveAbilityAdjustedTypes(sourceRow.types, sourceAbility, conditions.weather, conditions.terrain)
-    const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, targetAbility, conditions.weather, conditions.terrain)
-    const foulPlay = name === '속임수'
-    const [attackStage, defenseStage] = quickStagePair(source.battle, target.battle, { ...meta, usesTargetAttack: foulPlay })
-    const modifiers = resolveDamageModifiers({ attackerAbility: sourceAbility, attackerTypes: sourceTypes, attackerItem: source.item, defenderAbility: targetAbility, defenderKey: target.key, defenderItem: target.item, moveName: name, moveMeta: meta, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned, attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: false, faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: target.battle.poisoned, electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
-    const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, sourceAbility, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
-    return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness } : null
-  }
-  const selectedSide = selected.side === 'attacker' ? attacker : defender
-  const selectedMove = selectedSide.moves[selected.index] ?? ''
-  const result = calculate(selected.side, selectedMove)
-  const selectedVerdict = quickKoVerdict(result)
-  const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
-  const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
-  const selectedPool = pools[selectedSide.key]
-  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !getMoveMetadata(selectedMove)?.provenance.category || getMoveMetadata(selectedMove)?.provenance.category === 'unknown' ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
-  const hits = multiHitOptions(selectedMove)
-  const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
-  const selectSide = (side: 'attacker' | 'defender', key: string) => {
-    if (comparisonMode && side === 'attacker') return
-    if (comparisonMode && side === 'defender' && onOpponentSpecies) {
-      onOpponentSpecies?.(key)
-      setDefenderSearch('')
-      window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
-      return
-    }
-    if (key === (side === 'attacker' ? attacker.key : defender.key)) { if (!comparisonMode && side === 'attacker') window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0); return }
-    setModalSide(null)
-    clearSideUI(side)
-    if (comparisonMode) {
-      setConditions(quickDefaultConditions())
-      setManualFields({ weather: false, terrain: false })
-      setAttacker(prev => resetPairAssumptions(prev, initialSides![0], dirty.attacker))
-      setDefender(prev => resetPairAssumptions(prev, initialSides![1], dirty.defender))
-      previousTargets.current[side === 'attacker' ? 0 : 1] = pairTarget(comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0, { key })
-    }
-    if (comparisonMode && key === initialSides?.[side === 'attacker' ? 0 : 1].key) {
-      if (side === 'attacker') setAttacker(initialSides![0]); else setDefender(initialSides![1])
-      setDirty(prev => ({ ...prev, [side]: new Set() }))
-      onDraftIdentity?.(side, '')
-      if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')
-      return
-    }
-    const next = { ...quickBlank(), key, ability: soleAbilityForSelectedSpecies(indexByKey.get(key)), item: megaStoneForKey(key) ?? '', moves: side === 'attacker' && comparisonMode ? Array.from({ length: 4 }, (_, index) => movesForSpecies?.(key)?.[index] ?? '') : ['', '', '', ''] }
-    if (comparisonMode) setDirty(prev => ({ ...prev, [side]: new Set(['key']) }))
-    onDraftIdentity?.(side, key)
-    if (side === 'attacker') { setAttacker(next); setAttackerSearch(''); setSelected({ side: 'attacker', index: 0 }) }
-    else { setDefender(next); setDefenderSearch('') }
-    if (!comparisonMode && side === 'attacker') window.setTimeout(() => document.getElementById('quick-defender')?.focus(), 0)
-  }
-  const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
-  const speciesSearch = (side: 'attacker' | 'defender', label: string) => <PokemonSearchField id={`quick-${side}`} label={label} value={side === 'attacker' ? attackerSearch : defenderSearch} onChange={side === 'attacker' ? setAttackerSearch : setDefenderSearch} onSelect={key => selectSide(side, key)} options={searchOptions(side === 'attacker' ? attackerSearch : defenderSearch)} placeholder={lt('종·폼 검색')} menuClassName="sample-damage-search-menu" />
-  const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
-  const opponentSource = comparisonMode ? initialSides?.[1] : undefined
-  const sourceLabels = {
-    ko: { shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '비교 초안', unknown: '미확인 · 계산값 0', natureUnknown: '성격 미확인', modifier: '기록 보정' },
-    en: { shared: 'Moves shared by same-species slots · edits apply to all', condition: 'Calculation conditions · this matchup only', battle: 'Battle conditions', draft: 'Comparison draft', unknown: 'Unknown · calculated as 0', natureUnknown: 'Nature unknown', modifier: 'Recorded modifier' },
-    ja: { shared: '同じ種の枠で技を共有 · 変更は全枠に反映', condition: '計算条件 · この対面のみ', battle: '戦闘条件', draft: '比較下書き', unknown: '未確認 · 計算値0', natureUnknown: '性格未確認', modifier: '記録補正' },
-  }[language]
-  const sourceStatus = (field: 'nature' | 'attack' | 'spAttack') => {
-    if (dirty.defender.has(field)) return sourceLabels.draft
-    if (field === 'nature') return opponentSource?.speedNatureKnown && !dirty.defender.has('key') ? null : sourceLabels.natureUnknown
-    return opponentSource?.knownOffense?.[field] && !dirty.defender.has('key') ? null : sourceLabels.unknown
-  }
-  const speedLabels = conciseSpeedLabels[language]
-  const speedCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
-    if (!row) return null
-    const scarf = scarfFor(entry), ability = abilityFor(entry, row)
-    return <div className="quick-speed-card">
-      <div className="quick-speed-card-heading"><strong><UiIcon name="speed" size={17} />{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {displayName(row, language)}</strong><span className="quick-speed-base-badge">{lt('스피드 종족값')} {row.speed}</span></div>
-      <div className="quick-speed-details"><div className="quick-speed-assumptions"><label>{speedLabels.nature}<select value={entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier} onChange={event => setSide(side, prev => ({ ...prev, speedNatureKnown: false, speedNatureMultiplier: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} -10%</option><option value={1}>{lt('무보정')}</option><option value={1.1}>{lt('스피드 +10%')}</option></select></label><label>{lt('스피드 랭크')}<select value={entry.speedStage} onChange={event => setSide(side, prev => ({ ...prev, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label><label>{speedLabels.scarf}<select value={scarf ? 'scarf' : 'normal'} onChange={event => setSide(side, prev => ({ ...prev, speedScarfOverride: event.target.value === 'scarf' }))}><option value="normal">{speedLabels.off}</option><option value="scarf">{speedLabels.on}</option></select></label>{ability ? <label className="quick-check"><input type="checkbox" checked={entry.speedAbilityActive} onChange={event => setSide(side, prev => ({ ...prev, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}{entry.speedAbilityActive && !abilityPermitted(entry, row) ? <small role="alert">{lt('(전제 조건 미충족 · 미적용)')}</small> : null}</div></div>
-    </div>
-  }
-  const sideCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined, setEntry: React.Dispatch<React.SetStateAction<QuickSide>>) => {
-    const search = side === 'attacker' ? attackerSearch : defenderSearch
-    const setSearch = side === 'attacker' ? setAttackerSearch : setDefenderSearch
-    const pool = choicesForPool(pools[entry.key])
-    const status = pools[entry.key]?.status ?? 'loading'
-    const poolMap: Record<string, MovePoolState> = { [entry.key]: { status: 'ready', moves: pool } }
-    const labels = { slot: language === 'ja' ? '番' : language === 'en' ? ' · Move' : lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, language), power: lt('위력'), accuracy: lt('명중'), pp: 'PP', unknown: lt('미확인') }
-    const commit = (index: number, option: MoveOption) => {
-      setEntry(prev => ({ ...prev, moves: replaceQuickMove(prev.moves, index, option.name) }))
-      if (comparisonMode) markDirty(side, 'moves')
-      setSelected({ side, index }); setActiveSlot(null)
-      setDrafts(prev => ({ ...prev, [`${side}-${index}`]: '' }))
-    }
-    return <section className="card entry-card quick-side-card">
-      <strong>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')}</strong>
-      {comparisonMode ? null : speciesSearch(side, lt(side === 'attacker' ? '공격측 포켓몬 검색' : '방어측 포켓몬 검색'))}
-      {row ? <>
-        <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
-        {statCard(side, entry, row)}
-        <MoveSlotsEditor label={lt('기술 배치')} labels={labels} ownerId={`quick-${side}-${entry.key}`} role="editable" selectedIndex={selected.side === side ? selected.index : null}
-          toolbar={<>{learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
-            {status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{language === 'ko' ? '다시 시도 (새로고침)' : language === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
-            {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}</>}
-          slots={Array.from({ length: 4 }, (_, index) => {
-          const name = entry.moves[index] ?? ''
-          const draftKey = `${side}-${index}`
-          const draft = drafts[draftKey] ?? ''
-          const options = filterMoveOptions(draft, pool).slice(0, 8)
-          const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
-          const preview = calculate(side, name)
-          const previewVerdict = quickKoVerdict(preview)
-          return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
-              children: recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null,
-              tooltipProps: tooltipForMove(name),
-              search: { id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                onSelect: option => { const found = options.find(move => move.name === option.key); if (found) commit(index, found) },
-                optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
-                renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
-                optionProps: option => tooltipForMove(option.key) },
-              inputProps: { 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
-              preview: <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : lt('조건 미지원 / 변화기') : lt('기술 등록 →')}</button>
-            }
-        })} />
-      </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
-    </section>
-  }
-
-  const statCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
-    const setEntry = side === 'attacker' ? setAttacker : setDefender
-    return row ? <div className="quick-stat-card" key={side}><PokemonBuildFields key={`${side}-${entry.key}`} identity={`${side}-${entry.key}`} className="quick-build-fields"
-          ability={entry.ability} abilityLabel={selectedAbilityDisplayName(row, entry.ability, language)} nature={entry.nature} item={entry.item}
-          abilities={row.abilities.map(value => ({ value, label: localizedAbilityLabel(row, value, language, abilityDescriptionFor) }))}
-          abilityError={heldAbilityError(row.key, entry.ability, language)}
-          natures={NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
-          itemOptions={query => filterItemOptions(query, language, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(row.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, language), secondary: itemAutocompleteSecondaryLabel(value, language), sprite: itemSpriteSrc(row.key, value) }))}
-          onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
-          onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}
-          onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
-          labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && sourceStatus('nature') ? sourceStatus('nature') === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${sourceStatus('nature')}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
-          itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />
-<PokemonStatGrid showEffort stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: `${lt(stat.label)}${side === 'defender' && comparisonMode && (stat.key === 'attack' || stat.key === 'spAttack') && sourceStatus(stat.key) ? ` · ${sourceStatus(stat.key)}` : ''}${side === 'defender' && comparisonMode && entry.statNatureMultipliers[stat.key] !== undefined ? ` · ${sourceLabels.modifier} ×${entry.statNatureMultipliers[stat.key]}` : ''}`, theme: statThemeClass(stat.key), value: quickStat(entry, row, stat.key), ev: entry.evs[stat.key] }))} onTune={() => { opener.current = document.activeElement as HTMLElement; setModalKey(entry.key); setModalSide(side) }} /></div> : null
-  }
-  const toggle = (key: 'critical' | 'typeChangeStab', label: string) => <label className="quick-check"><input type="checkbox" checked={conditions[key]} onChange={event => setConditions(prev => ({ ...prev, [key]: event.target.checked }))} />{lt(label)}</label>
-
-  const speedStrip = <div className="quick-speed-summary" aria-label={lt('스피드 비교')}>
-    <strong>{lt('스피드 비교')} · {speedVisual.valid ? `${speedVisual.delta! > 0 ? lt('내가 빠름') : speedVisual.delta! < 0 ? lt('내가 느림') : lt('동속')} ${speedVisual.delta! > 0 ? '+' : ''}${speedVisual.delta}` : lt('비교 불가')}</strong>
-    {speedVisual.valid ? <div className="quick-speed-overview-bars">{(['attacker', 'defender'] as const).map((side, index) => { const fraction = index === 0 ? speedVisual.ownFraction : speedVisual.opponentFraction; const row = index === 0 ? attackingRow : defendingRow; const label = `${lt(index === 0 ? '내 포켓몬' : '상대 포켓몬')} · ${row ? displayName(row, language) : '—'}`; const value = index === 0 ? mySpeedResult?.value : oppSpeedResult?.value; return <div key={side}><span>{label}</span><div className="quick-speed-track" role="img" aria-label={`${label} ${lt('최종 스피드')} ${value} / ${speedVisual.maximum}`}><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${(fraction ?? 0) * 100}%` }} /></div><strong>{value}</strong></div> })}</div> : null}
-    {([mySpeedResult, oppSpeedResult] as const).map((speed, index) => speed?.reason ? <small key={index} role="alert">{lt(index === 0 ? '내 포켓몬' : '상대 포켓몬')} · {lt(speed.reason)}</small> : null)}
-  </div>
-  const sideBattleControls = (side: 'attacker' | 'defender') => {
-    const battle = (side === 'attacker' ? attacker : defender).battle
-    const setBattle = (patch: Partial<QuickBattle>) => setSide(side, prev => ({ ...prev, battle: { ...prev.battle, ...patch } }))
-    return <fieldset className="quick-side-battle"><legend>{lt(side === 'attacker' ? '내 포켓몬' : '상대 포켓몬')} · {sourceLabels.battle}</legend>
-      {([['attackStage','공격 랭크'], ['spAttackStage','특수공격 랭크'], ['defenseStage','방어 랭크'], ['spDefenseStage','특수방어 랭크']] as const).map(([key,label]) => <label key={key}>{lt(label)}<select value={battle[key]} onChange={event => setBattle({ [key]: Number(event.target.value) })}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label>)}
-      {([['burned','화상'],['lowHp','HP 1/3 이하'],['poisoned','독/맹독'],['fullHp','HP 100%'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
-    </fieldset>
-  }
-  return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
-    {!comparisonMode ? <div className="quick-heading-actions"><button type="button" className="action-button" disabled={!attacker.key || !defender.key} onClick={() => { setModalSide(null); setAttacker(defender); setDefender(attacker); setAttackerSearch(''); setDefenderSearch(''); setSelected({ side: 'attacker', index: 0 }) }}><UiIcon name="swap" size={17} />{lt('공격측·방어측 바꾸기')}</button></div> : null}
-    {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}><UiIcon name="trash" size={17} />{lt('상대 초기화')}</button>)}
-    <div className="quick-comparison-results">
-      <div className="quick-speed-settings" aria-label={lt('스피드 조건')}>
-        {speedCard('attacker', attacker, attackingRow)}{speedCard('defender', defender, defendingRow)}
-      </div>
-      {speedStrip}
-      <div className={`quick-result${selectedVerdict ? ` quick-ko-${selectedVerdict}` : ''}`} aria-live="polite" aria-label={lt('대미지 결과')}><div className="quick-result-head"><strong>{moveLabel(selectedMove) || lt('기술 선택')}</strong><span>{selectedSource ? displayName(selectedSource, language) : lt(comparisonMode ? '내 포켓몬' : '공격측')} → {selectedTarget ? displayName(selectedTarget, language) : lt(comparisonMode ? '상대 포켓몬' : '방어측')}</span></div>{result ? <><h3><DamageRangeMeter damage={result.damage} targetHp={result.targetHp} language={language} />{selectedVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][selectedVerdict]}</strong> : null}</h3><p>{lt('상대 체력')} {result.targetHp}{result.effectiveness !== 1 ? ` · ${lt('상성')} ×${result.effectiveness}` : null}{result.hits === 1 && result.effectiveness > 0 && Number.isFinite(result.targetHp) && result.targetHp > 0 && Number.isFinite(result.damage.max) && result.damage.max < result.targetHp ? <> · {({ ko: '1타 불가', en: 'No OHKO', ja: '1発不可' } as const)[language]}</> : null}{selectedVerdict === 'possible' ? <span className="quick-ko-chance"> · {(result.damage.rolls.filter(roll => roll >= result.targetHp).length / result.damage.rolls.length * 100).toFixed(1)}%</span> : null}</p>{result.hits > 1 ? <p>{lt('연속기는 기절 확률 계산 제외')}</p> : null}</> : <p role="status">{selectedReason}</p>}</div>
-    </div>
-    <div className="quick-sides">{sideCard('attacker', attacker, attackingRow, setAttacker)}{sideCard('defender', defender, defendingRow, setDefender)}</div>
-    <div className="quick-conditions"><strong className="ui-section-label"><UiIcon name="settings" size={17} />{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
-      <label>{lt('날씨')}<select value={conditions.weather} onChange={event => { setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather })) }}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
-      <label>{lt('필드')}<select value={conditions.terrain} onChange={event => { setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain })) }}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
-      {toggle('critical','급소')}{toggle('typeChangeStab','타입변환 자속')}
-      {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
-    </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}
-    </div></div>
-    {comparisonMode && (dirty.attacker.size || dirty.defender.size || draftStorageFailed) ? <div className="quick-record-actions" aria-label={lt('기록에 반영')}><span role="status">{draftStorageFailed ? language === 'en' ? 'Comparison draft · automatic storage failed; edits remain on screen' : language === 'ja' ? '比較下書き · 自動保存できません · 編集内容は画面上のみ' : '비교 초안 · 자동 보관 실패 · 변경은 현재 화면에만 유지' : language === 'en' ? 'Comparison draft · kept automatically' : language === 'ja' ? '比較下書き · 自動保存' : '비교 초안 · 자동 보관'}</span>{(['attacker','defender'] as const).map(side => dirty[side].size ? <button key={side} type="button" className="action-button" disabled={!(side === 'attacker' ? attacker.key : defender.key)} onClick={() => { const slot = comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0; const entry = side === 'attacker' ? attacker : defender; if (side === 'attacker' && dirty[side].has('moves') && sharedMoveSpecies?.(entry.key) && !window.confirm(language === 'en' ? 'Apply these moves to all slots of this species?' : language === 'ja' ? 'この種のすべての枠に技を反映しますか？' : '같은 종의 모든 슬롯에 기술을 반영할까요?')) return; onSaveEntry?.(side, entry, dirty[side]); if (!forgetDraft(localStorage, side, slot)) setDraftStorageFailed(true); setDirty(prev => ({ ...prev, [side]: new Set() })) }}><UiIcon name="check" size={17} />{language === 'en' ? side === 'attacker' ? 'Apply to my party record' : 'Apply to opponent entry record' : language === 'ja' ? side === 'attacker' ? '自分のパーティ記録に反映' : '相手エントリー記録に反映' : side === 'attacker' ? '내 파티 기록에 반영' : '상대 엔트리 기록에 반영'}</button> : null)}</div> : null}
-    {modalSide && modalKey === (modalSide === 'attacker' ? attacker : defender).key && indexByKey.get(modalKey) ? (() => {
-      const entry = modalSide === 'attacker' ? attacker : defender
-      const row = indexByKey.get(entry.key)!
-      const magic = quickMagicProjection(entry, row)
-      return <EffortTuningModal evs={entry.evs} nature={entry.nature} magicCandidate={magic.candidate} magicPoints={magic.points} natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, language) }))} actualValue={(key, effort) => effort === undefined ? quickStat(entry, row, key) : actualStat(row[key], effort, quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key)), key === 'hp')} onEffort={(key, value) => { markDirty(modalSide, key); setSide(modalSide, prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) })) }} onNature={nature => { markDirty(modalSide, 'nature'); setSide(modalSide, prev => ({ ...prev, nature, statNatureMultipliers: {}, speedNatureKnown: true })) }} override={entry.actual} onOverride={(key, value) => setSide(modalSide, prev => { const actual = { ...prev.actual }; if (value === '') delete actual[key]; else actual[key] = value; return { ...prev, actual } })} onClose={() => setModalSide(null)} translate={lt} statTheme={statThemeClass} title={`${displayName(row, language)} · ${lt('노력치 보정')}`} opener={opener.current} />
-    })() : null}
-  </section>
-}
 
 function PartyContextBar({ language, label, activeId, records, selectedMy, selectedOpp, mode, onSelect }: {
   language: SiteLanguage; label: string; activeId: string; records: SavedPartyPreset[];

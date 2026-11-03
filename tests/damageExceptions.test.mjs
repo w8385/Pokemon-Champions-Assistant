@@ -12,6 +12,8 @@ const index = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champion
 const getMoveMetadata = name => index[name] ? { id:index[name].id, meta:metadata[name] } : null
 const text = fs.readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+const quickText = fs.readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
+const quickAst = ts.createSourceFile('calculateQuickDamage.ts', quickText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
 const context = { classifyHeldItem, canonicalChampionsItemName: canonicalHeldItem, chainMods, DAMAGE_MOD_SCALE }
 const attacker = {hp:150,attack:150,defense:110,spAttack:150,spDefense:90}
 const defender = {hp:160,attack:100,defense:120,spAttack:90,spDefense:120}
@@ -73,7 +75,7 @@ test('Double caller uses resolved effectiveness including defensive ability immu
   const app=ts.createSourceFile('App.tsx',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX)
   const candidates=[]
   const visit=node=>{ if(ts.isCallExpression(node)&&node.expression.getText(app)==='calcDamage') candidates.push(node);ts.forEachChild(node,visit) };visit(app)
-  assert.equal(candidates.length,5)
+  assert.equal(candidates.length + (() => { let count = 0; const visit = node => { if (ts.isCallExpression(node) && node.expression.getText(quickAst) === 'calcDamage') count++; ts.forEachChild(node, visit) }; visit(quickAst); return count })(),5)
   for(const candidate of candidates) assert.match(candidate.arguments[5].getText(app),/^(?:modifiers!?|reverseModifiers|modifierPack)\.effectiveness$/)
   const double=candidates.find(node=>node.getText(app).includes('attackerStats, defenderStats'))
   assert.ok(double)
@@ -105,6 +107,7 @@ test('actual Double callback passes ability immunity into all sixteen rolls', ()
 })
 test('all actual resolver call sites propagate post-transformation metadata', () => {
   const calls=[];const visit=node=>{if(ts.isCallExpression(node)&&node.expression.getText(ast)==='resolveDamageModifiers') calls.push(node);ts.forEachChild(node,visit)};visit(ast)
-  assert.equal(calls.length,7)
-  for(const call of calls) { const object=call.arguments[0];assert.ok(ts.isObjectLiteralExpression(object)); assert.ok(object.properties.some(p=>p.name?.getText(ast)==='moveMeta'),`missing moveMeta at ${ast.getLineAndCharacterOfPosition(call.pos).line+1}`) }
+  const quickCalls=[]; const visitQuick=node=>{if(ts.isCallExpression(node)&&node.expression.getText(quickAst)==='resolveDamageModifiers') quickCalls.push(node);ts.forEachChild(node,visitQuick)};visitQuick(quickAst)
+   assert.equal(calls.length + quickCalls.length,7)
+  for(const [call, owner] of [...calls.map(call => [call, ast]), ...quickCalls.map(call => [call, quickAst])]) { const object=call.arguments[0];assert.ok(ts.isObjectLiteralExpression(object)); assert.ok(object.properties.some(p=>p.name?.getText(owner)==='moveMeta'),`missing moveMeta at ${ast.getLineAndCharacterOfPosition(call.pos).line+1}`) }
 })

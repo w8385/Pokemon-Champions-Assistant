@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createServer } from 'vite'
 const snapshot = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameLearnsets.json', import.meta.url)))
+const quickCalc = () => readFileSync(new URL('../src/features/damage/prepareQuickDamageInput.ts', import.meta.url), 'utf8')
+const quickView = () => readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const app = () => readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 
 async function provider(fn) {
@@ -63,7 +65,7 @@ test('all four battle choices and both Dex directions use the canonical provider
   assert.match(source, /choicesForPool\(sampleMovePool\)/)
   assert.match(source, /choicesForPool\(myMovePool\)/)
   assert.match(source, /choicesForPool\(oppMovePool\)/)
-  assert.match(source, /choicesForPool\(pools\[entry\.key\]\)/)
+  assert.match(quickView(), /choicesForPool\(pools\[entry\.key\]\)/)
 })
 
 test('legacy recorded four move slots remain intact independent of source pool', async () => {
@@ -105,7 +107,7 @@ test('evidenced aliases resolve to the same source identity in either direction 
 }))
 
 test('Quick calculator gates a recorded alias through shared pool identity', () => {
-  assert.match(app(), /moveInPool\(name, pool\)\s*\?\s*resolveMoveMeta\(name, pool, poolMap\)/)
+  assert.match(quickCalc(), /moveInPool\(name, pool\)\s*\?\s*resolveMoveMeta\(name, pool, poolMap\)/)
 })
 
 test('new editor text requires exact form evidence while unchanged raw history and explicit clear survive', async () => provider(async ({ loadFormLearnset, commitRecordedMoveInput }) => {

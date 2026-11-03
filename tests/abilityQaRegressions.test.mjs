@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+const owner_10 = readFileSync(new URL('../src/shared/display/abilityPresentation.ts', import.meta.url), 'utf8')
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
@@ -46,8 +47,8 @@ test('known historic KO ability labels render in EN/JA without rewriting their s
 })
 
 test('party and builder use the same verified ability resolver for chips, retaining original storage', () => {
-  assert.match(app, /function selectedAbilityDisplayName\(row: Row, storedAbility: string, language: SiteLanguage\)/)
-  assert.match(app, /resolveSelectedAbility\(row, storedAbility, language\)/)
+  assert.match(owner_10, /function selectedAbilityDisplayName\(row: Row, storedAbility: string, language: SiteLanguage\)/)
+  assert.match(owner_10, /resolveSelectedAbility\(row, storedAbility, language\)/)
   assert.match(app, /abilityLabel=\{selectedAbilityDisplayName\(row, member\.ability, siteLanguage\)\}/)
   assert.match(app, /abilityLabel=\{selectedAbilityDisplayName\(sampleRow, sampleForge\.ability, siteLanguage\)\}/)
   assert.match(app, /ability=\{member\.ability\}/)
@@ -57,7 +58,7 @@ test('party and builder use the same verified ability resolver for chips, retain
 test('actual row resolver maps only known persisted ability values in each locale', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { selectedAbilityDisplayName } = await server.ssrLoadModule('/src/App.tsx')
+    const { selectedAbilityDisplayName } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/shared/display/abilityPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
     for (const [key, stored] of [['mega-eelektross', '천정부지'], ['mega-pyroar', '불꽃의갈기']]) {
       const row = roster.rows.find(entry => entry.key === key)
       for (const language of ['ko', 'en', 'ja']) {

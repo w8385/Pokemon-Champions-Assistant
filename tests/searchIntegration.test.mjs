@@ -1,12 +1,14 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+const owner_14 = readFileSync(new URL('../src/adapters/catalog/movePresentation.ts', import.meta.url), 'utf8')
 import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const quick = app.slice(app.indexOf('const sideCard ='), app.indexOf('const statCard ='))
+const quickView = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const quick = quickView.slice(quickView.indexOf('const sideCard ='), quickView.indexOf('const statCard ='))
 const party = app.slice(app.indexOf('slots={registeredMoves.slice(0, 4).map('), app.indexOf('memberTopSuggestedMoves.length ?'))
 const builder = app.slice(app.indexOf('slots={sampleRegisteredMoves.slice(0, 4).map('), app.indexOf('  const sampleTopSuggestedMoves ='))
 const damage = app.slice(app.indexOf('sampleDamageCalcs[0]?.row ?'), app.indexOf('sample-overview-stack sample-workbench-section sample-compare-targets-section', app.indexOf('sampleDamageCalcs[0]?.row ?')))
@@ -19,7 +21,7 @@ test('all editable move slots delegate the real input and option selection to on
     assert.doesNotMatch(section, /onKeyDown:/)
   }
   assert.match(quick, /filterMoveOptions\(draft, pool\)/)
-  assert.match(app, /searchMoves\(options, query/)
+  assert.match(owner_14, /searchMoves\(options, query/)
   assert.match(app, /searchMoves\(index, query/)
 })
 
