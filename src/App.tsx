@@ -11,7 +11,7 @@ import { useOpponentEntries } from './features/single/useOpponentEntries'
 import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './features/damage/quickPresentation.ts'
 import { QuickBattle, QuickSide, QuickConditions, quickBlankBattle, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat } from './features/damage/quickModel.ts'
 import { sanitizeEvs, applyChampionsEffort, clampEv, totalEffortPoints, remainingEffortPoints } from './domain/champions/effortProjection'
-import { natureById, boostedStatForNature } from './shared/display/naturePresentation'
+import { natureById, boostedStatForNature, SELECTABLE_NATURES } from './shared/display/naturePresentation'
 import { heldAbilityError, resolveSelectedAbility, abilityDisplayName, selectedAbilityDisplayName } from './shared/display/abilityPresentation.ts'
 import { lookupMoveMeta, findMatchingMoveOption, resolveMoveType, resolveMoveMeta, filterMoveOptions } from './adapters/catalog/movePresentation.ts'
 import { MEGA_STONE_SPRITE_BY_KEY, canonicalChampionsItemName, megaStoneForKey, isAllowedChampionsItem, heldItemError, itemSpriteSrc, matchesLooseQuery, displayItemLabel, filterItemOptions, itemAutocompleteSecondaryLabel, itemAutocompletePrimaryLabel } from './shared/display/itemPresentation.ts'
@@ -1423,7 +1423,7 @@ function resolveAbilityInput(options: string[], raw: string) {
 
 function filterNatureOptions(query: string, language: SiteLanguage = 'ko') {
   const normalized = query.trim().toLowerCase()
-  const options = NATURES.map((nature) => ({
+  const options = SELECTABLE_NATURES.map((nature) => ({
     id: nature.id,
     shortLabel: natureChipLabel(nature.id, language),
     fullLabel: natureLabel(nature.id, language),
@@ -4464,7 +4464,7 @@ export default function App() {
   const renderSampleForgeNatureField = () => <PokemonBuildFields key={`sample-nature-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} natureOnly className="sample-own-nature-field"
     ability={sampleForge.ability} nature={sampleForge.config.nature} item={sampleForge.item}
     abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
-    natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
+    natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
     itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(sampleForge.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
     onAbility={ability => setSampleForge(prev => ({ ...prev, ability }))}
     onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature: nature as NatureId } }))}
@@ -5015,7 +5015,7 @@ export default function App() {
       })() : null}
 
       {tuningModalIndex !== null && tuningMember && tuningRow ? <EffortTuningModal
-        evs={tuningMember.evs} nature={tuningMember.config.nature} natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
+        evs={tuningMember.evs} nature={tuningMember.config.nature} natureOptions={SELECTABLE_NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
         actualValue={(key, effort) => partyStatValue(tuningRow, effort === undefined ? tuningMember : { ...tuningMember, evs: { ...tuningMember.evs, [key]: effort } }, key)}
         onEffort={(key, value) => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, key, value) }; setParty(next) }}
         onNature={nature => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], config: { ...next[tuningModalIndex].config, nature } }; setParty(next) }}
@@ -5023,7 +5023,7 @@ export default function App() {
 
       {sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab !== 'library' && sampleTuningIdentity === sampleForge.key ? <EffortTuningModal
         evs={sampleForge.evs} nature={sampleForge.config.nature}
-        natureOptions={NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
+        natureOptions={SELECTABLE_NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
         actualValue={(key, effort) => partyStatValue(sampleRow, effort === undefined ? sampleForge : { ...sampleForge, evs: { ...sampleForge.evs, [key]: effort } }, key)}
         onEffort={(key, value) => setSampleForge(prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) }))}
         onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature } }))}
@@ -5722,7 +5722,7 @@ export default function App() {
               <PokemonBuildFields key={`sample-${sampleForge.key}`} identity={`sample-${sampleForge.key}`} className="sample-meta-grid"
                 ability={sampleForge.ability} abilityLabel={selectedAbilityDisplayName(sampleRow, sampleForge.ability, siteLanguage)} abilityError={heldAbilityError(sampleForge.key, sampleForge.ability, siteLanguage)} nature={sampleForge.config.nature} item={sampleForge.item}
                 abilities={sampleAbilityOptions.map(value => ({ value, label: value }))}
-                natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
+                natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                 itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(sampleForge.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(sampleForge.key, value) }))}
                 onAbility={ability => setSampleForge(prev => ({ ...prev, ability }))}
                 onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature: nature as NatureId } }))}

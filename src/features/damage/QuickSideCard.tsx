@@ -11,7 +11,7 @@ import { requiredMegaStone } from '../../domain/champions/itemIdentity'
 import { DamageRangeMeter } from '../../shared/display/DamageRangeMeter'
 import { quickItem, replaceQuickMove } from '../../domain/battle/quickDamageState'
 import { type ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter'
-import { NATURES } from '../../domain/champions/natures'
+import { SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
 import { PokemonCardHeading, PokemonStatGrid, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
 import { choicesForPool } from '../../domain/champions/sharedLearnsets'
@@ -92,7 +92,7 @@ const sourceLabels = {
           ability={entry.ability} abilityLabel={selectedAbilityDisplayName(row, entry.ability, language)} nature={entry.nature} item={entry.item}
           abilities={row.abilities.map(value => ({ value, label: localizedAbilityLabel(row, value, language, abilityDescriptionFor) }))}
           abilityError={heldAbilityError(row.key, entry.ability, language)}
-          natures={NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
+          natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
           itemOptions={query => filterItemOptions(query, language, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(row.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, language), secondary: itemAutocompleteSecondaryLabel(value, language), sprite: itemSpriteSrc(row.key, value) }))}
           onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
           onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}

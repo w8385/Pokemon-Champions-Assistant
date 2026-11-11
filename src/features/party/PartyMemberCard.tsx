@@ -9,8 +9,7 @@ import { selectedAbilityDisplayName, heldAbilityError } from '../../shared/displ
 import { displayItemLabel, megaStoneForKey, filterItemOptions, isAllowedChampionsItem, itemAutocompletePrimaryLabel, itemAutocompleteSecondaryLabel, itemSpriteSrc, heldItemError } from '../../shared/display/itemPresentation'
 import { classifyHeldItem } from '../../domain/champions/itemIdentity'
 import { localizedAbilityLabel } from '../../domain/champions/abilityIdentity'
-import { natureById } from '../../shared/display/naturePresentation'
-import { NATURES } from '../../domain/champions/natures'
+import { natureById, SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
 import { actualStat } from '../../domain/champions/statMechanics'
 import { natureMultiplier } from '../../domain/champions/buildRules'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
@@ -73,7 +72,7 @@ export function PartyMemberCard({ member, idx, siteLanguage, mainSection, editor
                     {row ? <><PokemonBuildFields key={`${idx}-${member.key}`} identity={`${idx}-${member.key}`}
                       ability={member.ability} abilityLabel={selectedAbilityDisplayName(row, member.ability, siteLanguage)} abilityError={heldAbilityError(member.key, member.ability, siteLanguage)} nature={member.config.nature} item={member.item}
                       abilities={abilityOptions.map(value => ({ value, label: value }))}
-                      natures={NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
+                      natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, siteLanguage) }))}
                       itemOptions={query => filterItemOptions(query, siteLanguage, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(member.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, siteLanguage), secondary: itemAutocompleteSecondaryLabel(value, siteLanguage), sprite: itemSpriteSrc(member.key, value) }))}
                       onAbility={ability => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, ability } : entry))}
                       onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature: nature as NatureId } } : entry))}

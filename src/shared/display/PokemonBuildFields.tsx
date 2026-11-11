@@ -1,6 +1,7 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
 import { UiIcon } from './UiIcon'
+import { natureSelectionId } from './naturePresentation'
 
 export type BuildOption = { value: string; label: string; sprite?: string; secondary?: string }
 type Field = 'ability' | 'nature' | 'item'
@@ -34,6 +35,7 @@ export type PokemonBuildFieldsProps = {
 /** The input and its popup are owned here; callers only adapt values and commits. */
 export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
   const { identity, ability, abilityLabel, nature, item, abilities, natures, itemOptions, onAbility, onNature, onItem, labels, itemLabel, itemSprite, fixedItem, itemError, abilityTooltip, itemTooltip } = props
+  const displayNature = natureSelectionId(nature)
   const [open, setOpen] = React.useState<Field | null>(null)
   const [draft, setDraft] = React.useState('')
   const [highlight, setHighlight] = React.useState(-1)
@@ -90,7 +92,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     close()
   }
   const button = (field: Field, title: string, content: React.ReactNode, tooltip?: Tooltip) => <button
-    type="button" className="party-meta-chip-button" aria-label={`${title}: ${field === 'ability' ? abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none : field === 'nature' ? natures.find(option => option.value === nature)?.label || nature || labels.none : item ? itemLabel(item) : labels.none}`}
+    type="button" className="party-meta-chip-button" aria-label={`${title}: ${field === 'ability' ? abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none : field === 'nature' ? natures.find(option => option.value === displayNature)?.label || nature || labels.none : item ? itemLabel(item) : labels.none}`}
     aria-expanded={open === field} ref={el => { trigger.current[field] = el }} onClick={() => begin(field)}
     {...tooltip}>{<><span>{title}</span>{content}<UiIcon name="chevron" size={14} className="ui-icon meta-field-chevron" /></>}
   </button>
@@ -98,7 +100,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     const optionTooltip = field === 'ability' ? abilityTooltip?.(option.value) : undefined
     return <button key={`${field}-${option.value}`} type="button"
       className={`party-meta-option ${field === 'item' ? 'move-autocomplete-item item-autocomplete-item' : ''} ${highlight === index ? 'active' : ''}`}
-      aria-pressed={field === 'nature' ? option.value === nature : undefined}
+      aria-pressed={field === 'nature' ? option.value === displayNature : undefined}
       ref={el => { optionRefs.current[index] = el }} autoFocus={field !== 'item' && index === 0}
       {...optionTooltip}
       onFocus={event => { setHighlight(index); optionTooltip?.onFocus?.(event) }} onMouseDown={event => event.preventDefault()} onClick={() => choose(field, option.value)}>
@@ -135,7 +137,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
       <div className="party-meta-chip party-meta-chip-editor">{button('ability', labels.ability, <strong {...abilityTooltip?.(ability)}>{abilityLabel || abilities.find(option => option.value === ability)?.label || ability || labels.none}</strong>)}</div>
       {props.abilityError && <small role="alert" className="item-validation-error">{props.abilityError}</small>}
     </>}
-    {!props.itemOnly && <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === nature)?.label || nature || labels.none}</strong>)}</div>}
+    {!props.itemOnly && <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === displayNature)?.label || nature || labels.none}</strong>)}</div>}
     {!props.natureOnly && <>
       <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || '')} alt="" className="item-sprite" /><strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
       {itemError && <small role="alert" className="item-validation-error">{itemError}</small>}

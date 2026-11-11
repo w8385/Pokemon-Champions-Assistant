@@ -19,7 +19,7 @@ const natures = [{ value: 'hardy', label: 'Hardy' }, { value: 'jolly', label: 'J
 const initial = { key: 'grimmsnarl', config: { nature: 'hardy', speedStage: 2 }, evs: { hp: 3, attack: 8, defense: 2, spAttack: 0, spDefense: 4, speed: 32 }, ability: 'prankster', item: 'leftovers' }
 
 test('both sample own effort cards call the same shared-nature editor and owner updater', () => {
-  assert.match(app, /const renderSampleForgeNatureField\s*=\s*\(\)\s*=>[\s\S]*?<PokemonBuildFields[^]*?natureOnly[^]*?nature=\{sampleForge\.config\.nature\}[^]*?natures=\{NATURES\.map\(n => \(\{ value: n\.id, label: natureChipLabel\(n\.id, siteLanguage\) \}\)\)\}[^]*?onNature=\{nature => setSampleForge\(prev => \(\{ \.\.\.prev, config: \{ \.\.\.prev\.config, nature: nature as NatureId \} \}\)\)\}/)
+  assert.match(app, /const renderSampleForgeNatureField\s*=\s*\(\)\s*=>[\s\S]*?<PokemonBuildFields[^]*?natureOnly[^]*?nature=\{sampleForge\.config\.nature\}[^]*?natures=\{SELECTABLE_NATURES\.map\(n => \(\{ value: n\.id, label: natureChipLabel\(n\.id, siteLanguage\) \}\)\)\}[^]*?onNature=\{nature => setSampleForge\(prev => \(\{ \.\.\.prev, config: \{ \.\.\.prev\.config, nature: nature as NatureId \} \}\)\)\}/)
   for (const tab of ['speed', 'damage']) {
     const card = app.slice(app.indexOf(`{sampleWorkbenchTab === '${tab}' ? <section`), app.indexOf(`renderSampleForgeEffortGrid('${tab}')`))
     assert.match(card, /sample-current-build-card-embedded/)
@@ -90,7 +90,7 @@ test('mounted speed/damage tabs commit own nature through App and retain draft f
       const before = stat()
       const beforeSaved = JSON.parse(localStorage.getItem(storageKey))
       await act(async () => trigger.click())
-      assert.equal(document.querySelectorAll('.build-fields-popover .party-meta-option').length, 25)
+      assert.equal(document.querySelectorAll('.build-fields-popover .party-meta-option').length, 21)
       const wanted = [...document.querySelectorAll('.build-fields-popover .party-meta-option')].find(button => button.textContent.includes(nextNature === 'jolly' ? '명랑' : '겁쟁이'))
       assert.ok(wanted, `missing localized ${nextNature} option`)
       await act(async () => wanted.click())
