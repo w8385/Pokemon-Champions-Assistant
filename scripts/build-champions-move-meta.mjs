@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
+import { reviewedChampionsScalars, FIXTURE } from './reviewed-champions-scalars.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const input = relative => path.join(root, relative)
@@ -107,6 +108,11 @@ async function build() {
   for (const name of historical) generated[name] = legacy[name]
   for (const [name,fields] of Object.entries(overrides)) generated[name] = { ...generated[name], ...fields }
 
+  // The historical equality guard above runs unchanged. Only this independently
+  // pinned, reviewed simulator scalar layer may replace its 18 listed fields.
+  const {manifest,ledger} = await reviewedChampionsScalars(root,source,generated)
+  for (const {name,field,value} of ledger) generated[name][field] = value
+
   const oldMatches = previousReport.generatedMoves
   assert(Array.isArray(oldMatches) && oldMatches.length === legacyNames.length,'historical match provenance missing')
   assert(new Set(oldMatches.map(row=>row.moveName)).size === legacyNames.length && oldMatches.every(row=>Object.hasOwn(legacy,row.moveName)), 'historical match names differ from frozen evidence')
@@ -121,6 +127,7 @@ async function build() {
       aliases: 'src/championsMoveMetaNameAliases.json',
       offline: true,
       sourceSnapshot: 'projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)',
+      reviewedScalarLayer: {fixture:FIXTURE,commit:manifest.commit,authority:'18 reviewed numeric power/accuracy fields only; after historical override validation; Smogon simulator, not official game source'},
     },
     totals: {
       pinnedIds: sourceNames.length,
@@ -130,9 +137,12 @@ async function build() {
       generatedMetaMoves: Object.keys(generated).length,
       aliasAnchoredComponents: aliasComponents.anchored,
       aliasSourceLessComponents: aliasComponents.sourceLess,
+      reviewedPowerFields: 15,
+      reviewedAccuracyFields: 3,
     },
     // Historical API-name mapping is provenance, not authority for new metadata.
     generatedMoves: [...oldMatches, ...sourceNames.filter(name=>!legacy[name]).map(name=>({moveName:name,apiName:null,ko:null,en:null}))],
+    reviewedScalars: ledger,
   }
   return { generated, report }
 }

@@ -422,7 +422,7 @@
     },
     {
       "path": "src/canonical-data/champions/championsLearnedMoveMeta.json",
-      "sha256": "5337d95fec60ce280324f4cea3f0a49c14a9c25ddc21f8fefba3ae11d4aee7f9",
+      "sha256": "0f143852cf8014af41b3da1a91ea9319faa799886b0de556b2f951e88ed77dfd",
       "rows": 732,
       "topLevelKeys": [
         "10만마력",

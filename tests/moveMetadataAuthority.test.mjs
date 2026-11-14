@@ -15,6 +15,7 @@ const legacy = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/
 const historicalEvidence = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaLegacyEvidence.json',import.meta.url),'utf8'))
 const pinned = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json',import.meta.url),'utf8'))
 const aliases = JSON.parse(readFileSync(new URL('../src/canonical-data/champions/championsMoveMetaNameAliases.json',import.meta.url),'utf8'))
+const reviewedFields = new Map(JSON.parse(readFileSync(new URL('./fixtures/champions-reviewed-scalars/manifest.json',import.meta.url),'utf8')).reviewedRows.map(row=>[`${row.name}.${row.field}`,row.value]))
 function fn(name) { const owner = ['findMatchingMoveOption','lookupMoveMeta','resolveMoveType','resolveMoveMeta'].includes(name) ? moveAst : ast; const found=owner.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name); assert.ok(found,name); return found.getText(owner).replace(/^export /, '') }
 async function runtime() {
   const server=await createServer({server:{middlewareMode:true},appType:'custom',logLevel:'silent'})
@@ -70,7 +71,7 @@ test('510 source identities and all historical-only rows survive without invente
   for(const [name,source] of Object.entries(pinned)) {
     const row=getMoveMetadata(name)
     assert.equal(row.id,source.id,name);assert.equal(row.canonicalName,name);assert.equal(row.meta.type,source.type)
-    if(legacy[name]) for(const [field,value] of Object.entries(legacy[name])) if(field!=='type') assert.deepEqual(row.meta[field],value,`${name}.${field}`)
+    if(legacy[name]) for(const [field,value] of Object.entries(legacy[name])) if(field!=='type') assert.deepEqual(row.meta[field],reviewedFields.get(`${name}.${field}`) ?? value,`${name}.${field}`)
   }
   const options=api.filterDexMoveOptions('')
   assert.equal(options.length,730) // 510 pinned + 220 source-less historical cards; two aliases fold into their ID.

@@ -6,7 +6,12 @@
     "manualOverrides": "src/championsMoveMetaOverrides.json",
     "aliases": "src/championsMoveMetaNameAliases.json",
     "offline": true,
-    "sourceSnapshot": "projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)"
+    "sourceSnapshot": "projectpokemon/champout@50e7233b78c3b81df29563f9695386c28e77fc95 (2026-09-09 pinned)",
+    "reviewedScalarLayer": {
+      "fixture": "tests/fixtures/champions-reviewed-scalars",
+      "commit": "d12b9c1e905d1f98dd0e2f2fd04987d721a735f5",
+      "authority": "18 reviewed numeric power/accuracy fields only; after historical override validation; Smogon simulator, not official game source"
+    }
   },
   "totals": {
     "pinnedIds": 510,
@@ -15,7 +20,9 @@
     "sourceOnlyRows": 1,
     "generatedMetaMoves": 732,
     "aliasAnchoredComponents": 39,
-    "aliasSourceLessComponents": 10
+    "aliasSourceLessComponents": 10,
+    "reviewedPowerFields": 15,
+    "reviewedAccuracyFields": 3
   },
   "generatedMoves": [
     {
@@ -4409,6 +4416,170 @@
       "apiName": null,
       "ko": null,
       "en": null
+    }
+  ],
+  "reviewedScalars": [
+    {
+      "id": 788,
+      "name": "G의힘",
+      "identifier": "gravapple",
+      "field": "power",
+      "previous": 80,
+      "value": 90,
+      "modLine": 459
+    },
+    {
+      "id": 874,
+      "name": "골드러시",
+      "identifier": "makeitrain",
+      "field": "accuracy",
+      "previous": 100,
+      "value": 95,
+      "modLine": 604
+    },
+    {
+      "id": 662,
+      "name": "그림자꿰매기",
+      "identifier": "spiritshackle",
+      "field": "power",
+      "previous": 80,
+      "value": 90,
+      "modLine": 953
+    },
+    {
+      "id": 539,
+      "name": "나이트버스트",
+      "identifier": "nightdaze",
+      "field": "power",
+      "previous": 85,
+      "value": 90,
+      "modLine": 680
+    },
+    {
+      "id": 745,
+      "name": "노려맞히기",
+      "identifier": "snipeshot",
+      "field": "power",
+      "previous": 80,
+      "value": 85,
+      "modLine": 928
+    },
+    {
+      "id": 660,
+      "name": "만나자마자",
+      "identifier": "firstimpression",
+      "field": "power",
+      "previous": 90,
+      "value": 100,
+      "modLine": 381
+    },
+    {
+      "id": 828,
+      "name": "배리어러시",
+      "identifier": "psyshieldbash",
+      "field": "power",
+      "previous": 70,
+      "value": 90,
+      "modLine": 785
+    },
+    {
+      "id": 844,
+      "name": "백귀야행",
+      "identifier": "infernalparade",
+      "field": "power",
+      "previous": 60,
+      "value": 65,
+      "modLine": 536
+    },
+    {
+      "id": 163,
+      "name": "베어가르기",
+      "identifier": "slash",
+      "field": "power",
+      "previous": 70,
+      "value": 80,
+      "modLine": 907
+    },
+    {
+      "id": 198,
+      "name": "본러시",
+      "identifier": "bonerush",
+      "field": "power",
+      "previous": 25,
+      "value": 30,
+      "modLine": 89
+    },
+    {
+      "id": 690,
+      "name": "부리캐논",
+      "identifier": "beakblast",
+      "field": "power",
+      "previous": 100,
+      "value": 120,
+      "modLine": 47
+    },
+    {
+      "id": 680,
+      "name": "불꽃채찍",
+      "identifier": "firelash",
+      "field": "power",
+      "previous": 80,
+      "value": 90,
+      "modLine": 373
+    },
+    {
+      "id": 836,
+      "name": "빙산바람",
+      "identifier": "mountaingale",
+      "field": "power",
+      "previous": 100,
+      "value": 120,
+      "modLine": 672
+    },
+    {
+      "id": 787,
+      "name": "사과산",
+      "identifier": "appleacid",
+      "field": "power",
+      "previous": 80,
+      "value": 90,
+      "modLine": 18
+    },
+    {
+      "id": 794,
+      "name": "스타어설트",
+      "identifier": "meteorassault",
+      "field": "power",
+      "previous": 150,
+      "value": 170,
+      "modLine": 630
+    },
+    {
+      "id": 903,
+      "name": "시럽봄",
+      "identifier": "syrupbomb",
+      "field": "accuracy",
+      "previous": 85,
+      "value": 90,
+      "modLine": 1009
+    },
+    {
+      "id": 152,
+      "name": "찝게햄머",
+      "identifier": "crabhammer",
+      "field": "accuracy",
+      "previous": 90,
+      "value": 95,
+      "modLine": 153
+    },
+    {
+      "id": 688,
+      "name": "트로피컬킥",
+      "identifier": "tropkick",
+      "field": "power",
+      "previous": 70,
+      "value": 85,
+      "modLine": 1088
     }
   ]
 }

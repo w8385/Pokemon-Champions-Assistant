@@ -1,0 +1,208 @@
+{
+  "source": "smogon/pokemon-showdown simulator (not official game data)",
+  "commit": "d12b9c1e905d1f98dd0e2f2fd04987d721a735f5",
+  "license": "MIT; see LICENSE in this subset; upstream attribution retained",
+  "files": {
+    "champions-moves.ts": {
+      "url": "https://raw.githubusercontent.com/smogon/pokemon-showdown/d12b9c1e905d1f98dd0e2f2fd04987d721a735f5/data/mods/champions/moves.ts",
+      "path": "data/mods/champions/moves.ts",
+      "sha256": "7830b5386ef0aad255ec8d02f9f2d35c1b89a5ecbb44c7ecb000892127b55e19",
+      "bytes": 18827
+    },
+    "base-moves.ts": {
+      "url": "https://raw.githubusercontent.com/smogon/pokemon-showdown/d12b9c1e905d1f98dd0e2f2fd04987d721a735f5/data/moves.ts",
+      "path": "data/moves.ts",
+      "sha256": "8bf68a2f0032ca21fc1de78a5bbcfcf1c5a704991eea912c9c546ff193743837",
+      "bytes": 484771
+    },
+    "LICENSE": {
+      "url": "https://raw.githubusercontent.com/smogon/pokemon-showdown/d12b9c1e905d1f98dd0e2f2fd04987d721a735f5/LICENSE",
+      "path": "LICENSE",
+      "sha256": "b2002a9fd52ba8db3783a05fbdebfb09c34fd09513b90f6b390a2c0dfbc93ed0",
+      "bytes": 1136
+    }
+  },
+  "reviewedFields": 18,
+  "reviewedRows": [
+    {
+      "id": 788,
+      "name": "G의힘",
+      "identifier": "gravapple",
+      "field": "power",
+      "value": 90,
+      "previous": 80,
+      "sourceKo": "G의힘",
+      "modLine": 459
+    },
+    {
+      "id": 874,
+      "name": "골드러시",
+      "identifier": "makeitrain",
+      "field": "accuracy",
+      "value": 95,
+      "previous": 100,
+      "sourceKo": "골드러시",
+      "modLine": 604
+    },
+    {
+      "id": 662,
+      "name": "그림자꿰매기",
+      "identifier": "spiritshackle",
+      "field": "power",
+      "value": 90,
+      "previous": 80,
+      "sourceKo": "그림자꿰매기",
+      "modLine": 953
+    },
+    {
+      "id": 539,
+      "name": "나이트버스트",
+      "identifier": "nightdaze",
+      "field": "power",
+      "value": 90,
+      "previous": 85,
+      "sourceKo": "나이트버스트",
+      "modLine": 680
+    },
+    {
+      "id": 745,
+      "name": "노려맞히기",
+      "identifier": "snipeshot",
+      "field": "power",
+      "value": 85,
+      "previous": 80,
+      "sourceKo": "노려맞히기",
+      "modLine": 928
+    },
+    {
+      "id": 660,
+      "name": "만나자마자",
+      "identifier": "firstimpression",
+      "field": "power",
+      "value": 100,
+      "previous": 90,
+      "sourceKo": "만나자마자",
+      "modLine": 381
+    },
+    {
+      "id": 828,
+      "name": "배리어러시",
+      "identifier": "psyshieldbash",
+      "field": "power",
+      "value": 90,
+      "previous": 70,
+      "sourceKo": "배리어러시",
+      "modLine": 785
+    },
+    {
+      "id": 844,
+      "name": "백귀야행",
+      "identifier": "infernalparade",
+      "field": "power",
+      "value": 65,
+      "previous": 60,
+      "sourceKo": "백귀야행",
+      "modLine": 536
+    },
+    {
+      "id": 163,
+      "name": "베어가르기",
+      "identifier": "slash",
+      "field": "power",
+      "value": 80,
+      "previous": 70,
+      "sourceKo": "베어가르기",
+      "modLine": 907
+    },
+    {
+      "id": 198,
+      "name": "본러시",
+      "identifier": "bonerush",
+      "field": "power",
+      "value": 30,
+      "previous": 25,
+      "sourceKo": "본러시",
+      "modLine": 89
+    },
+    {
+      "id": 690,
+      "name": "부리캐논",
+      "identifier": "beakblast",
+      "field": "power",
+      "value": 120,
+      "previous": 100,
+      "sourceKo": "부리캐논",
+      "modLine": 47
+    },
+    {
+      "id": 680,
+      "name": "불꽃채찍",
+      "identifier": "firelash",
+      "field": "power",
+      "value": 90,
+      "previous": 80,
+      "sourceKo": "불꽃채찍",
+      "modLine": 373
+    },
+    {
+      "id": 836,
+      "name": "빙산바람",
+      "identifier": "mountaingale",
+      "field": "power",
+      "value": 120,
+      "previous": 100,
+      "sourceKo": "빙산바람",
+      "modLine": 672
+    },
+    {
+      "id": 787,
+      "name": "사과산",
+      "identifier": "appleacid",
+      "field": "power",
+      "value": 90,
+      "previous": 80,
+      "sourceKo": "사과산",
+      "modLine": 18
+    },
+    {
+      "id": 794,
+      "name": "스타어설트",
+      "identifier": "meteorassault",
+      "field": "power",
+      "value": 170,
+      "previous": 150,
+      "sourceKo": "스타어설트",
+      "modLine": 630
+    },
+    {
+      "id": 903,
+      "name": "시럽봄",
+      "identifier": "syrupbomb",
+      "field": "accuracy",
+      "value": 90,
+      "previous": 85,
+      "sourceKo": "시럽봄",
+      "modLine": 1009
+    },
+    {
+      "id": 152,
+      "name": "찝게햄머",
+      "identifier": "crabhammer",
+      "field": "accuracy",
+      "value": 95,
+      "previous": 90,
+      "sourceKo": "집게해머",
+      "modLine": 153
+    },
+    {
+      "id": 688,
+      "name": "트로피컬킥",
+      "identifier": "tropkick",
+      "field": "power",
+      "value": 85,
+      "previous": 70,
+      "sourceKo": "트로피컬킥",
+      "modLine": 1088
+    }
+  ]
+}

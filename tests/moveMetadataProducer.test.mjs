@@ -14,6 +14,13 @@ const sha = bytes => createHash('sha256').update(bytes).digest('hex')
 const script = path.join(root,'scripts/build-champions-move-meta.mjs')
 const source = read('src/canonical-data/champions/dexGameMoveIndex.json')
 const generated = read('src/canonical-data/champions/championsLearnedMoveMeta.json')
+const reviewed = read('tests/fixtures/champions-reviewed-scalars/manifest.json').reviewedRows
+const reviewedFields = new Map(reviewed.map(row => [`${row.name}.${row.field}`,row.value]))
+
+test('reviewed Champions First Impression is 100 in generated metadata', () => {
+  assert.equal(source['만나자마자'].id,660)
+  assert.equal(generated['만나자마자'].power,100)
+})
 
 function guardedRun(args, directory) {
   // A preload blocks both fetch and socket transports; the test must actually spawn the generator.
@@ -38,7 +45,7 @@ test('pinned IDs drive generated type while all 731 historical non-type fields a
   for (const [name,record] of Object.entries(source)) {
     assert.equal(generated[name].type,record.type,name)
     if (original[name]) for (const [field,value] of Object.entries(original[name])) {
-      if (field !== 'type') assert.deepEqual(generated[name][field],value,`${name}.${field}`)
+      if (field !== 'type') assert.deepEqual(generated[name][field],reviewedFields.get(`${name}.${field}`) ?? value,`${name}.${field}`)
     }
   }
   for (const name of historical) assert.deepEqual(generated[name],original[name],name)
