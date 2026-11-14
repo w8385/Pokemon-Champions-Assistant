@@ -20,7 +20,7 @@ import { speedTemplate, makeFormRow, baseRows, baseIndexByKey, extraFormRows, ro
 import { UI_TRANSLATIONS, translateText } from './shared/display/translation.ts'
 import { typeChart, normalizedTypeChart, typeEffectiveness, effectiveDefenderAbility, abilityAdjustedTypeEffectiveness } from './domain/battle/typeEffectiveness.ts'
 import { battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded, resolveDamageModifiers } from './domain/battle/modifierRules.ts'
-import { opponentSpeedValue, partySpeedValue, buildPartyBattleStats, buildOpponentBattleStats, attackingFormRow, isChoiceScarfItem } from './domain/battle/statProjection.ts'
+import { opponentSpeedValue, partySpeedValue, buildPartyBattleStats, buildOpponentBattleStats, attackingFormRow, battleFormRow, isChoiceScarfItem } from './domain/battle/statProjection.ts'
 import { ConditionalMovePowerRule, CONDITIONAL_MOVE_POWER_RULES, normalizeConditionalPowerValue, applyConditionalMovePower, weightBasedMovePower, applyTargetWeightMovePower, multiHitOptions, resolveMultiHitMeta, multiHitSummary } from './domain/battle/movePower.ts'
 import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, weatherFromAbility, deriveAutoWeatherFromAbilities, terrainFromAbility, deriveAutoTerrainFromAbilities } from './domain/battle/moveEffects.ts'
 import { PUNCH_MOVE_NAMES, BITE_MOVE_NAMES, PULSE_MOVE_NAMES, SOUND_MOVE_NAMES, SLICING_MOVE_NAMES, CONTACT_MOVE_NAMES, RECKLESS_MOVE_NAMES, SHEER_FORCE_MOVE_NAMES, DOUBLE_SPREAD_MOVE_NAMES, moveMatchesTaggedSet, protectionDamageMultiplier } from './domain/battle/moveTags.ts'
@@ -47,7 +47,7 @@ import { UiIcon } from './shared/display/UiIcon'
 import { DamageRangeMeter } from './shared/display/DamageRangeMeter'
 import { libraryDetailHref, libraryListHref, type LibraryViewContext } from './app/libraryViewRoute'
 import { quickItem, quickSpeedState, quickStatNature, quickMoveSupported, readQuickSaved, restoreQuickMoves, replaceQuickMove, quickBattleStages, quickStagePair } from './domain/battle/quickDamageState'
-import { sampleBattle, sampleConditions, sampleMoveKey, sampleMoveStats, type SampleBattle } from './domain/battle/sampleDamageProjection'
+import { sampleBattle, sampleBattleAtForm, sampleConditions, sampleMoveKey, sampleMoveStats, type SampleBattle } from './domain/battle/sampleDamageProjection'
 import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate } from './domain/battle/sampleDamageMoves'
 import { comparisonSides, type ComparisonSeed } from './domain/party/unifiedComparisonAdapter'
 import { commitComparisonEntry } from './domain/party/singleInlineEntry'
@@ -3920,7 +3920,7 @@ export default function App() {
                                   const result = entry.forwardMoves.find(item => item.moveName === move)
                                   return <div key={`${entry.idx}-${moveIdx}`} className="sample-damage-move-result">
                                     <strong>{entry.row ? displayName(entry.row, siteLanguage) : lt('비교 대상 없음')}</strong>
-                                    <span>{result?.damage && result.defenderStats ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.unavailableReason}</span>
+                                    <span>{result?.damage && result.defenderStats ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}{(sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change' || entry.member.key === 'aegislash' && resolveSelectedAbility(entry.row!, entry.member.ability, siteLanguage)?.slug === 'stance-change') ? <small className="sample-form-result">{lt('적용 폼')} · {sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change' ? lt('블레이드') : '—'} → {entry.member.key === 'aegislash' ? lt(entry.conditions.opponent.hitForm === 'blade' ? '블레이드' : '실드') : '—'}</small> : null}</> : result?.unavailableReason}</span>
                                     {result?.damage ? <small>{lt('상대 적용 결정력')} {result.appliedDecisionPower == null ? '—' : formatBattleIndex(result.appliedDecisionPower, siteLanguage)} · {lt('적용 위력')} {result.effectivePower}</small> : null}
                                     {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                     {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'forward', move, 'conditionalValues', e.target.checked)} />}</label> : null}
@@ -4110,7 +4110,7 @@ export default function App() {
     const opponentOptions = choicesForPool(opponentPool)
     // Both recorded four-slot lists are the calculation owners; legacy selected names stay stored only.
     const opponentEffortsValid = validCompleteEfforts({ hp: member.hpEv, attack: member.attackEv, defense: member.defenseEv, spAttack: member.spAttackEv, spDefense: member.spDefenseEv, speed: member.speedEv })
-    const reverseDefenderStats = buildPartyBattleStats(sampleRow, sampleCalcMember)
+    const reverseDefenderStats = buildPartyBattleStats(battleFormRow(sampleRow, sampleAttackerAbilityValue, ownBattle.hitForm), sampleCalcMember)
     const reverseAbility = row ? (resolveSelectedAbility(row, member.ability, siteLanguage)?.slug ?? '') : ''
     const reverseAttackerStats = row ? buildOpponentBattleStats(attackingFormRow(row, reverseAbility), {
       hpEv: member.hpEv, defenseEv: member.defenseEv, spDefenseEv: member.spDefenseEv,
@@ -4139,7 +4139,7 @@ export default function App() {
       || null
     let reverseDamage: ReturnType<typeof calcDamage> = null
     if (!reverseReason && row && reverseAttackerStats && reverseMeta?.power && reverseMeta.type && (reverseMeta.category === 'physical' || reverseMeta.category === 'special')) {
-      const reverseProjection = sampleMoveStats(opponentMoveName, reverseMeta, reverseAttackerStats, reverseDefenderStats, opponentBattle, ownBattle)
+      const reverseProjection = sampleMoveStats(opponentMoveName, reverseMeta, reverseAttackerStats, reverseDefenderStats, row.key === 'aegislash' && reverseAbility === 'stance-change' ? sampleBattleAtForm(opponentBattle, 'blade') : opponentBattle, sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change' ? sampleBattleAtForm(ownBattle, ownBattle.hitForm) : ownBattle)
       const reverseTargetTypes = resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain)
       const reverseSourceTypes = resolveAbilityAdjustedTypes(row.types, reverseAbility, calcWeather, calcTerrain)
       const reverseModifiers = resolveDamageModifiers({
@@ -4211,7 +4211,7 @@ export default function App() {
             : null
     const effectiveAttackerTypes = row ? resolveAbilityAdjustedTypes(sampleRow.types, sampleAttackerAbilityValue, calcWeather, calcTerrain) : sampleRow.types
     const effectiveDefenderTypes = row ? resolveAbilityAdjustedTypes(row.types, defenderAbilityValue, calcWeather, calcTerrain) : []
-    const defenderStats = row ? buildOpponentBattleStats(row, {
+    const defenderStats = row ? buildOpponentBattleStats(battleFormRow(row, defenderAbilityValue, opponentBattle.hitForm), {
       hpEv: member.hpEv,
       defenseEv: member.defenseEv,
       spDefenseEv: member.spDefenseEv,
@@ -4222,7 +4222,7 @@ export default function App() {
       return { idx, member, row, reverse, moveName, moveCategory, movePower, effectivePower: null, appliedDecisionPower: null, attackStatLabel: moveCategory === 'physical' ? '공격' : '특수공격', attackStatValue: moveCategory === 'physical' ? damageSampleAttackerStats.attack : damageSampleAttackerStats.spAttack, defenderStats, damage: null, verdict: unavailableReason, moveRule, moveConditionValue, moveHitOptions, moveHitCount, moveHitSummary: multiHitSummary(moveName, moveMeta, moveHitCount), targetWeightKnown: typeof targetWeightKg === 'number', unavailableReason }
     }
     const effectivenessValue = abilityAdjustedTypeEffectiveness(moveType, effectiveDefenderTypes, defenderAbilityValue, sampleAttackerAbilityValue)
-    const forwardProjection = sampleMoveStats(moveName, moveMeta!, damageSampleAttackerStats, defenderStats, ownBattle, opponentBattle)
+    const forwardProjection = sampleMoveStats(moveName, moveMeta!, damageSampleAttackerStats, defenderStats, sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change' ? sampleBattleAtForm(ownBattle, 'blade') : ownBattle, member.key === 'aegislash' && defenderAbilityValue === 'stance-change' ? sampleBattleAtForm(opponentBattle, opponentBattle.hitForm) : opponentBattle)
     const modifierPack = resolveDamageModifiers({
       attackerAbility: sampleAttackerAbilityValue,
       attackerTypes: effectiveAttackerTypes,
@@ -6109,7 +6109,7 @@ export default function App() {
                                          onChange: event => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: event.target.value }),
                                          onBlur: event => { if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value); else setSampleOpponentMoveDraft(null) },
                                        }, children: recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null,
-                                     preview: move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}</> : result?.reason}</span>
+                                     preview: move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}{(entry.member.key === 'aegislash' && resolveSelectedAbility(entry.row!, entry.member.ability, siteLanguage)?.slug === 'stance-change' || sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change') ? <small className="sample-form-result">{lt('적용 폼')} · {entry.member.key === 'aegislash' ? lt('블레이드') : '—'} → {sampleForge.key === 'aegislash' ? lt(entry.conditions.own.hitForm === 'blade' ? '블레이드' : '실드') : '—'}</small> : null}</> : result?.reason}</span>
                                        {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                        {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
                                      </div> : null }
@@ -6179,9 +6179,10 @@ export default function App() {
                           disguiseActive: ability === 'disguise', parentalBond: ability === 'parental-bond',
                         } as Partial<Record<keyof SampleBattle, boolean>>)[key] === true
                         return <div key={side} className="sample-damage-control-section"><strong>{sideLabel} · {conciseSpeedLabels[siteLanguage].battle}</strong>
+                          {(side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && ability === 'stance-change' ? <div className="quick-form-controls"><div role="group" aria-label={`${sideLabel} ${lt('피격 폼')}`}><strong>{lt('피격 폼')}</strong>{(['shield','blade'] as const).map(form => <button key={form} type="button" className="pick-chip" aria-pressed={battle.hitForm === form} onClick={() => updateSampleBattle(entry.idx, side, {hitForm: form})}>{form === 'shield' ? lt('실드') : lt('블레이드')}</button>)}</div><small>{lt('적용 폼')}: {lt(battle.actualForm === 'blade' ? '블레이드' : '실드')}</small></div> : null}
                           <div className="sample-opponent-offense-grid">
                             {([{key:'attackStage',label:'공격 랭크'}, {key:'spAttackStage',label:'특공 랭크'}, {key:'defenseStage',label:'방어 랭크'}, {key:'spDefenseStage',label:'특방 랭크'}] as const).map(({key,label}) => <label key={key}>{sideLabel} {lt(label)}<select value={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: clampBattleStage(e.target.value)})}>{[6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6].map(n => <option key={n} value={n}>{n > 0 ? `+${n}` : n}</option>)}</select></label>)}
-                            {(['attack','defense','spAttack','spDefense'] as const).map(key => <label key={key}>{sideLabel} {lt(({attack:'공격 실수치',defense:'방어 실수치',spAttack:'특공 실수치',spDefense:'특방 실수치'} as const)[key])}<input type="number" min={1} max={999} placeholder={lt('기본 실수치')} value={battle.actual[key] ?? ''} onChange={e => updateSampleBattle(entry.idx, side, {actual: {...battle.actual, [key]: e.target.value === '' ? undefined : Number(e.target.value)}})} /></label>)}
+                            {(['attack','defense','spAttack','spDefense'] as const).map(key => <label key={key}>{sideLabel} {lt(({attack:'공격 실수치',defense:'방어 실수치',spAttack:'특공 실수치',spDefense:'특방 실수치'} as const)[key])}<input type="number" min={1} max={999} placeholder={lt('기본 실수치')} value={(side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && battle.actualForm !== battle.hitForm ? '' : battle.actual[key] ?? ''} onChange={e => updateSampleBattle(entry.idx, side, {actual: {...((side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && battle.actualForm !== battle.hitForm ? {} : battle.actual), [key]: e.target.value === '' ? undefined : Number(e.target.value)}, ...((side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' ? { actualForm: battle.hitForm } : {})})} /></label>)}
                           </div>
                           <div className="sample-reverse-conditions">
                             {([{key:'burned',label:'화상'}, {key:'lowHp',label:'HP 1/3 이하'}, {key:'poisoned',label:'독/맹독'}, {key:'statused',label:'상태이상'}, {key:'fullHp',label:'HP 100%'}, {key:'reflect',label:'리플렉터'}, {key:'lightScreen',label:'빛의장막'}, {key:'auroraVeil',label:'오로라베일'}, {key:'critical',label:'급소'}, {key:'movedAfterTarget',label:'상대보다 늦게 행동'}, {key:'electromorphosisCharged',label:'일렉트릭 차지됨'}, {key:'disguiseActive',label:'탈 intact'}, {key:'parentalBond',label:'부자유친 발동'}] as const).filter(({key}) => relevantCondition(key)).map(({key,label}) => <label key={key} className="sample-reverse-checkbox"><input type="checkbox" checked={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: e.target.checked})} />{sideLabel} {lt(label)}</label>)}

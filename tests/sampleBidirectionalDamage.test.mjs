@@ -30,8 +30,8 @@ test('opponent uses exact-form confirmed pool and shared registered slots withou
 
 test('reverse damage owns opponent attack and own HP and reports a separate verdict', () => {
   assert.match(app, /buildOpponentBattleStats\(attackingFormRow\(row, reverseAbility\), [\s\S]*?attackEv: member\.attackEv/)
-  assert.match(app, /buildPartyBattleStats\(sampleRow, sampleCalcMember\)/)
-  assert.match(app, /sampleMoveStats\(opponentMoveName, reverseMeta, reverseAttackerStats, reverseDefenderStats, opponentBattle, ownBattle\)/)
+  assert.match(app, /buildPartyBattleStats\(battleFormRow\(sampleRow, sampleAttackerAbilityValue, ownBattle\.hitForm\), sampleCalcMember\)/)
+  assert.match(app, /sampleMoveStats\(opponentMoveName, reverseMeta, reverseAttackerStats, reverseDefenderStats, row\.key === 'aegislash' && reverseAbility === 'stance-change' \? sampleBattleAtForm\(opponentBattle, 'blade'\) : opponentBattle, sampleForge\.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change' \? sampleBattleAtForm\(ownBattle, ownBattle\.hitForm\) : ownBattle\)/)
   assert.match(app, /calcDamage\(reverseProjection\.attacker, reverseProjection\.defender/)
   assert.match(app, /resolveDamageVerdict\(reverseDamage, reverseDefenderStats\.hp, siteLanguage,/)
   assert.match(app, /lt\('상대 → 내 포켓몬'\)/)

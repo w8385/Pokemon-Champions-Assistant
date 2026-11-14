@@ -39,9 +39,16 @@ export function buildOpponentBattleStats(row: Row, bulkConfig: OpponentBulkState
   }
 }
 
+export type AegislashForm = 'shield' | 'blade'
+
+/** Battle-only projection; registered identity and roster row remain Shield. */
+export function battleFormRow(row: Row, ability: string, form: AegislashForm): Row {
+  if (ability !== 'stance-change' || row.key !== 'aegislash' || form === 'shield') return row
+  return { ...row, attack: 140, defense: 50, spAttack: 140, spDefense: 50 }
+}
+
 export function attackingFormRow(row: Row, ability: string): Row {
-  if (ability !== 'stance-change' || row.key !== 'aegislash') return row
-  return { ...row, attack: 140, spAttack: 140 }
+  return battleFormRow(row, ability, 'blade')
 }
 
 export type OpponentBulkState = {

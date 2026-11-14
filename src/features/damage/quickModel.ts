@@ -16,7 +16,7 @@ import { actualStat } from '../../domain/champions/statMechanics'
 
 export type QuickBattle = ComparisonSeed['battle']
 
-export type QuickSide = ComparisonSeed & { actual: Partial<Record<EffortStatKey, string>> }
+export type QuickSide = ComparisonSeed & { actual: Partial<Record<EffortStatKey, string>>; actualForm?: 'shield' | 'blade'; hitForm?: 'shield' | 'blade' }
 
 export type QuickConditions = { weather: DamageWeather; terrain: DamageTerrain; critical: boolean; typeChangeStab: boolean; hits: number }
 
@@ -33,7 +33,7 @@ export function quickSide(input: unknown, legacy: Record<string, unknown> = {}, 
   const own = value.battle && typeof value.battle === 'object' && !Array.isArray(value.battle) ? value.battle : null
   const source = own ?? { attackStage: originalAttacker ? legacy.attackStage : 0, defenseStage: originalAttacker ? 0 : legacy.defenseStage, burned: originalAttacker ? legacy.burned : false, lowHp: originalAttacker ? legacy.lowHp : false, poisoned: originalAttacker ? false : legacy.targetPoisoned, fullHp: originalAttacker ? false : legacy.defenderFullHp, reflect: originalAttacker ? false : legacy.reflect, lightScreen: originalAttacker ? false : legacy.lightScreen, auroraVeil: originalAttacker ? false : legacy.auroraVeil, friendGuard: originalAttacker ? false : legacy.friendGuard }
   const battle = { ...quickBattleStages(source as Partial<QuickBattle>, legacy, originalAttacker), ...Object.fromEntries((['burned','lowHp','poisoned','fullHp','reflect','lightScreen','auroraVeil','friendGuard'] as const).map(flag => [flag, source[flag] === true])) } as QuickBattle
-  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
+  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: value.actual && typeof value.actual === 'object' ? Object.fromEntries(EFFORT_STAT_OPTIONS.filter(stat => typeof value.actual?.[stat.key] === 'string').map(stat => [stat.key, value.actual![stat.key]])) : {}, actualForm: value.actualForm === 'blade' ? 'blade' : 'shield', hitForm: value.hitForm === 'blade' ? 'blade' : 'shield', moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: typeof value.speedScarfOverride === 'boolean' ? value.speedScarfOverride : null, speedAbilityActive: value.speedAbilityActive === true }
 }
 
 export function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {

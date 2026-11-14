@@ -1,6 +1,7 @@
 import { SiteLanguage } from '../../app/types'
 export const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
   en: {
+    '피격 폼': 'Form when hit', '적용 폼': 'Applied form', '실드': 'Shield', '블레이드': 'Blade',
     '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': 'Build verification covers build information only, not official verification of rankings or results.',
     '파티 저장': 'Save party', '파티 불러오기': 'Load party', '저장 파티 덮어쓰기': 'Overwrite saved party', '저장 파티 이름 변경': 'Rename saved party', '저장 파티 삭제': 'Delete saved party', '현재 파티 비우기': 'Clear current party', '이미지에서 파티 가져오기': 'Import party from image',
     '새 파티': 'New party', '선택 파티 이름': 'Selected party name', '저장 중': 'Saving…', '자동 저장됨': 'Autosaved', '저장 실패 · 변경은 현재 화면에만 유지': 'Save failed · changes are kept only on this screen', '저장 데이터 읽기 실패 · 원본 보호 중': 'Could not read saved data · original is protected', '저장 재시도': 'Retry save', '원본 덮어쓰기 확인': 'Confirm overwrite of original', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': 'Overwrite the original stored data with this screen?', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'Party selection changed; image was not applied. Please try again.',
@@ -53,6 +54,7 @@ export const UI_TRANSLATIONS: Record<'en' | 'ja', Record<string, string>> = {
     '노력': 'Hardy', '외로움': 'Lonely', '용감': 'Brave', '고집': 'Adamant', '개구쟁이': 'Naughty', '대담': 'Bold', '온순': 'Docile', '무사태평': 'Relaxed', '장난꾸러기': 'Impish', '촐랑': 'Lax', '겁쟁이': 'Timid', '성급': 'Hasty', '성실': 'Serious', '명랑': 'Jolly', '천진난만': 'Naive', '조심': 'Modest', '의젓': 'Mild', '냉정': 'Quiet', '수줍음': 'Bashful', '덜렁': 'Rash', '차분': 'Calm', '얌전': 'Gentle', '건방': 'Sassy', '신중': 'Careful', '변덕': 'Quirky',
   },
   ja: {
+    '피격 폼': '被弾時フォルム', '적용 폼': '適用フォルム', '실드': 'シールド', '블레이드': 'ブレード',
     '구성 확인은 빌드 정보 기준이며, 순위·성적의 공식 검증이 아닙니다.': '構成の確認は育成情報のみが対象で、順位・成績の公式な検証ではありません。',
     '파티 저장': 'パーティを保存', '파티 불러오기': 'パーティを読み込む', '저장 파티 덮어쓰기': '保存パーティを上書き', '저장 파티 이름 변경': '保存パーティの名前を変更', '저장 파티 삭제': '保存パーティを削除', '현재 파티 비우기': '現在のパーティを空にする', '이미지에서 파티 가져오기': '画像からパーティを取り込む',
     '새 파티': '新しいパーティ', '선택 파티 이름': '選択中のパーティ名', '저장 중': '保存中…', '자동 저장됨': '自動保存済み', '저장 실패 · 변경은 현재 화면에만 유지': '保存失敗 · 変更はこの画面にのみ保持', '저장 데이터 읽기 실패 · 원본 보호 중': '保存データの読み込み失敗 · 元データを保護中', '저장 재시도': '保存を再試行', '원본 덮어쓰기 확인': '元データの上書きを確認', '원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?': '元の保存データを現在の画面で上書きしますか？', '파티 선택이 변경되어 사진을 반영하지 않았습니다. 다시 시도해 주세요.': 'パーティの選択が変わったため、画像は反映されませんでした。もう一度お試しください。',

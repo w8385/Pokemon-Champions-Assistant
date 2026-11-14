@@ -6,6 +6,8 @@ export type SampleBattle = QuickStages & {
   movedAfterTarget: boolean; electromorphosisCharged: boolean; disguiseActive: boolean
   faintedAllies: number; rivalryMode: 'neutral' | 'same' | 'opposite'; parentalBond: boolean
   actual: Partial<Record<'attack' | 'defense' | 'spAttack' | 'spDefense', number>>
+  hitForm: 'shield' | 'blade'
+  actualForm: 'shield' | 'blade'
 }
 export type SampleConditions = {
   ownerKey: string
@@ -28,9 +30,13 @@ export function sampleBattle(input: Partial<SampleBattle> = {}): SampleBattle {
     critical: input.critical === true, movedAfterTarget: input.movedAfterTarget === true, electromorphosisCharged: input.electromorphosisCharged === true,
     disguiseActive: input.disguiseActive === true, faintedAllies: typeof input.faintedAllies === 'number' && Number.isInteger(input.faintedAllies) ? Math.max(0, Math.min(5, input.faintedAllies)) : 0,
     rivalryMode: input.rivalryMode === 'same' || input.rivalryMode === 'opposite' ? input.rivalryMode : 'neutral', parentalBond: input.parentalBond === true,
-    actual,
+    actual, hitForm: input.hitForm === 'blade' ? 'blade' : 'shield', actualForm: input.actualForm === 'blade' ? 'blade' : 'shield',
   }
 }
+export function sampleBattleAtForm(battle: SampleBattle, form: 'shield' | 'blade'): SampleBattle {
+  return battle.actualForm === form ? battle : { ...battle, actual: {} }
+}
+
 export function sampleConditions(ownerKey: string, previous?: Partial<SampleConditions> | null): SampleConditions {
   return {
     ownerKey, own: sampleBattle(previous?.ownerKey === ownerKey ? previous.own : undefined),
