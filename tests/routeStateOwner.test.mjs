@@ -6,7 +6,7 @@ import { parseViewStateFromUrl, syncViewStateToUrl } from '../src/app/routeState
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const route = readFileSync(new URL('../src/app/routeState.ts', import.meta.url), 'utf8')
-const baseline = { parseViewStateFromUrl: '4ad3f6020b6d53af6e22368ab386a1900a2e3cebcb2f3dc91bb54f18bbad782a', syncViewStateToUrl: '3824a73d7e5776c8c93155b6f83ae3c4132ab88a173735149bd3e85fa1b44897' }
+const baseline = { parseViewStateFromUrl: '4ad3f6020b6d53af6e22368ab386a1900a2e3cebcb2f3dc91bb54f18bbad782a', syncViewStateToUrl: '9c63e2135596ad7da910a61acd844c0b2ee73ab5d90550aebe0a33a40964073c' }
 const hash = value => createHash('sha256').update(value).digest('hex')
 
 function browser(href) {
@@ -55,6 +55,18 @@ test('route parse retains aliases, raw keys, invalid warnings, and slot values',
     assert.equal(speed.selectedOpp, 4)
     browser('https://example.test/#/double?tab=speed')
     assert.equal(parseViewStateFromUrl().activeTab, 'power')
+  } finally { delete globalThis.window }
+})
+
+test('single battle tabs parse and serialize through the URL', () => {
+  try {
+    for (const tab of ['party', 'pick', 'speed', 'power']) {
+      browser(`https://example.test/#/single?tab=${tab}`)
+      assert.equal(parseViewStateFromUrl().activeTab, tab)
+    }
+    const single = browser('https://example.test/#/single?tab=party')
+    syncViewStateToUrl({ mainSection: 'single', activeTab: 'pick' })
+    assert.equal(new URL(single.href).hash, '#/single?tab=pick')
   } finally { delete globalThis.window }
 })
 
