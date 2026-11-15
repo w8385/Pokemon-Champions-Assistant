@@ -18,10 +18,12 @@ const server = await createServer({
   optimizeDeps: { noDiscovery: true, include: [] },
   logLevel: 'silent',
 })
-const [{ QuickDamagePanel }, { quickBlank }] = await Promise.all([
+const [{ QuickDamagePanel }, { quickBlank }, { loadMoveMetaByName }] = await Promise.all([
   server.ssrLoadModule('/src/features/damage/QuickDamagePanel.tsx'),
   server.ssrLoadModule('/src/features/damage/quickModel.ts'),
+  server.ssrLoadModule('/src/adapters/catalog/data.ts'),
 ])
+await loadMoveMetaByName()
 
 test.after(async () => {
   await server.close()
