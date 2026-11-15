@@ -1,15 +1,24 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { atomicReplaceFiles, readJsonIfExists } from './lib/atomic-output.mjs'
 import championsData from '../src/canonical-data/champions/pokemon_champions_verified_data.json' with { type: 'json' }
 import moveMetaReport from '../reports/championsMoveMetaReport.json' with { type: 'json' }
 import championsLearnedMoveMeta from '../src/canonical-data/champions/championsLearnedMoveMeta.json' with { type: 'json' }
 import pokeApiMoveDetailsCache from '../reports/pokeapiMoveDetailsCache.json' with { type: 'json' }
 
-const OUTPUT_PATH = path.resolve('src/canonical-data/champions/championsUsageTopMoves.json')
+const optionValue = name => {
+  const index = process.argv.indexOf(name)
+  if (index < 0) return null
+  if (!process.argv[index + 1]) throw new Error(`Missing value for ${name}`)
+  return process.argv[index + 1]
+}
+const OUTPUT_PATH = path.resolve(optionValue('--output') ?? 'src/canonical-data/champions/championsUsageTopMoves.json')
+const allowPartial = process.argv.includes('--allow-partial')
 const BASE_URL = 'https://champs.pokedb.tokyo'
 const SINGLE_RULE = 0
 const rows = championsData.rows ?? []
 const availableMoveNames = new Set(Object.keys(championsLearnedMoveMeta))
+const previousOutput = await readJsonIfExists(OUTPUT_PATH, {})
 
 const FORM_QUALIFIER_BY_KEY = {
   hisui: 'ヒスイ',
@@ -188,6 +197,7 @@ if (!listEntries.length) throw new Error('No Pokémon entries found on Japanese 
 const listByName = new Map(listEntries.map((entry) => [normalizeJaText(entry.nameJa), entry]))
 const pageCache = new Map()
 const missingMoveNames = new Map()
+const failedExistingKeys = []
 
 async function getPageTopMoves(entry) {
   if (pageCache.has(entry.href)) return pageCache.get(entry.href)
@@ -228,7 +238,8 @@ for (const row of rows) {
     continue
   }
 
-  const { moves } = await getPageTopMoves(entry)
+  const { moves, rawMoves } = await getPageTopMoves(entry)
+  if (!rawMoves.length && previousOutput[row.key]) failedExistingKeys.push(row.key)
   if (!moves.length) {
     coverage.missing += 1
     continue
@@ -250,7 +261,21 @@ for (const row of rows) {
   }
 }
 
-await fs.writeFile(OUTPUT_PATH, `${JSON.stringify(result, null, 2)}\n`, 'utf8')
+const resultKeys = Object.keys(result)
+const previousKeys = Object.keys(previousOutput)
+const retainedPrevious = previousKeys.filter(key => result[key]).length
+if (!resultKeys.length) throw new Error('Refusing to replace usage data with an empty result')
+const coverageCollapsed = previousKeys.length > 0 && (
+  resultKeys.length < Math.ceil(previousKeys.length * 0.8)
+  || retainedPrevious < Math.ceil(previousKeys.length * 0.8)
+)
+if (!allowPartial && (failedExistingKeys.length || coverageCollapsed)) {
+  throw new Error(`Refusing partial usage output: failed existing pages=${failedExistingKeys.length}, previous=${previousKeys.length}, next=${resultKeys.length}, retained=${retainedPrevious}`)
+}
+if (allowPartial && (failedExistingKeys.length || coverageCollapsed)) {
+  console.warn(`Allowing reviewed partial usage output: failed existing pages=${failedExistingKeys.length}, previous=${previousKeys.length}, next=${resultKeys.length}, retained=${retainedPrevious}`)
+}
+await atomicReplaceFiles([{ target: OUTPUT_PATH, content: `${JSON.stringify(result, null, 2)}\n` }])
 
 console.log(`Wrote ${Object.keys(result).length} usage top-move entries to ${OUTPUT_PATH}`)
 console.log(`Source: champs.pokedb.tokyo season=${season} (${seasonLabel}) rule=${SINGLE_RULE}`)

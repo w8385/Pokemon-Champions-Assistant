@@ -2659,18 +2659,24 @@ export default function App() {
     const defenderAbility = classifyAbilityForKey(defenderKey, defenderAbilityRaw).slug ?? ''
     const attackerAllySlot: DoubleBoardSlot | null = attackerSlot === 'myLeft' ? 'myRight' : attackerSlot === 'myRight' ? 'myLeft' : attackerSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
     const attackerAllyMeta = attackerAllySlot ? doubleSlotMeta[attackerAllySlot] : null
-    const attackerAllyAbility = attackerAllyMeta?.option?.row
+    const attackerAllyAbilityRaw = attackerAllyMeta?.option?.row
       ? (attackerAllyMeta.side === 'my'
         ? attackerAllyMeta.option.member.ability
         : attackerAllyMeta.option.entry.ability)
       : ''
-    if (attackerAllyMeta?.option?.row && heldAbilityError(attackerAllyMeta.option.row.key, attackerAllyAbility, siteLanguage)) return null
+    if (attackerAllyMeta?.option?.row && heldAbilityError(attackerAllyMeta.option.row.key, attackerAllyAbilityRaw, siteLanguage)) return null
+    const attackerAllyAbility = attackerAllyMeta?.option?.row
+      ? classifyAbilityForKey(attackerAllyMeta.option.row.key, attackerAllyAbilityRaw).slug ?? ''
+      : ''
     const defenderAllySlot: DoubleBoardSlot = defenderSlot === 'myLeft' ? 'myRight' : defenderSlot === 'myRight' ? 'myLeft' : defenderSlot === 'oppLeft' ? 'oppRight' : 'oppLeft'
     const defenderAllyMeta = doubleSlotMeta[defenderAllySlot]
-    const defenderAllyAbility = defenderAllyMeta.option?.row
+    const defenderAllyAbilityRaw = defenderAllyMeta.option?.row
       ? (defenderAllyMeta.side === 'my' ? defenderAllyMeta.option.member.ability : defenderAllyMeta.option.entry.ability)
       : ''
-    if (defenderAllyMeta.option?.row && heldAbilityError(defenderAllyMeta.option.row.key, defenderAllyAbility, siteLanguage)) return null
+    if (defenderAllyMeta.option?.row && heldAbilityError(defenderAllyMeta.option.row.key, defenderAllyAbilityRaw, siteLanguage)) return null
+    const defenderAllyAbility = defenderAllyMeta.option?.row
+      ? classifyAbilityForKey(defenderAllyMeta.option.row.key, defenderAllyAbilityRaw).slug ?? ''
+      : ''
     const resolvedAttackerRow = attackingFormRow(attackerRow, attackerAbility)
     const attackerStats = attackerMeta.side === 'my'
       ? buildPartyBattleStats(resolvedAttackerRow, attackerMeta.option.member)
@@ -2686,7 +2692,7 @@ export default function App() {
       }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const moveOptions = choicesForPool(movePoolByKey[attackerKey])
     const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
-    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, baseMoveMeta, attackerAbility)
+    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, resolveMultiHitMeta(moveName, baseMoveMeta, null, attackerAbility), attackerAbility)
     const moveType = moveMeta?.type ?? resolveMoveType(moveName, moveOptions, movePoolByKey) ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
@@ -2696,13 +2702,14 @@ export default function App() {
     const protectionMultiplier = protectionDamageMultiplier(attackerAbility, moveName, guardedByWide || protectedTarget)
     const piercesProtection = protectionMultiplier > 0 && protectionMultiplier < 1
     const blockedByProtection = protectionMultiplier === 0
-    const friendGuardAvailable = Boolean(defenderAllyMeta.option?.row && classifyAbilityForKey(defenderAllyMeta.option.row.key, defenderAllyAbility).slug === 'friend-guard')
+    const friendGuardAvailable = defenderAllyAbility === 'friend-guard'
     const friendGuard = attackerMeta.side !== defenderMeta.side && friendGuardAvailable && (defenderMeta.side === 'my' ? doubleFriendGuardMy : doubleFriendGuardOpp)
     const modifiers = blockedByProtection ? null : resolveDamageModifiers({
       attackerAbility,
       attackerTypes: resolveAbilityAdjustedTypes(attackerRow.types, attackerAbility, 'none', 'none'),
       format: 'Doubles',
-      attackerAllyAbility: attackerAllyMeta?.option?.row ? classifyAbilityForKey(attackerAllyMeta.option.row.key, attackerAllyAbility).slug ?? '' : '',
+      attackerAllyAbility,
+      defenderAllyAbility,
       attackerItem,
       defenderAbility,
       defenderKey,

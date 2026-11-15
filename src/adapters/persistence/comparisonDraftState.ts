@@ -2,6 +2,8 @@ import type { ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter
 import { EFFORT_KEYS, knownNature, validEffort, validCompleteEfforts } from '../../domain/champions/buildRules.ts'
 
 type StoragePort = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
+type StoragePortSource = StoragePort | (() => StoragePort)
+const resolveStorage = (source: StoragePortSource): StoragePort => typeof source === 'function' ? source() : source
 type Side = 'attacker' | 'defender'
 const STATS = EFFORT_KEYS
 const FIELDS = ['key', 'ability', 'item', 'nature', 'moves', ...STATS] as const
@@ -37,13 +39,13 @@ function validatedEnvelope(payload: unknown, seed: ComparisonSeed | BuildSide): 
   return { side: sideDraft as ComparisonSeed | BuildSide, dirty: new Set(fields) }
 }
 
-export function readDraft(storage: StoragePort, side: Side, slot: number, seed: ComparisonSeed | BuildSide) {
+export function readDraft(storage: StoragePortSource, side: Side, slot: number, seed: ComparisonSeed | BuildSide) {
   try {
-    const payload: unknown = JSON.parse(storage.getItem(draftStorageKey(side, slot)) ?? 'null')
+    const payload: unknown = JSON.parse(resolveStorage(storage).getItem(draftStorageKey(side, slot)) ?? 'null')
     return validatedEnvelope(payload, seed)
   } catch { return null }
 }
-export function writeDraft(storage: StoragePort, side: Side, slot: number, seed: ComparisonSeed | BuildSide, draft: BuildSide, dirty: ReadonlySet<string>) {
+export function writeDraft(storage: StoragePortSource, side: Side, slot: number, seed: ComparisonSeed | BuildSide, draft: BuildSide, dirty: ReadonlySet<string>) {
   if (!dirty.size) return forgetDraft(storage, side, slot)
   try {
     const patch: Patch = {}
@@ -68,11 +70,11 @@ export function writeDraft(storage: StoragePort, side: Side, slot: number, seed:
     // Validate the serialized shape too: undefined fields and exotic values cannot claim success.
     const serialized = JSON.stringify(payload)
     if (!validatedEnvelope(JSON.parse(serialized), seed)) return false
-    storage.setItem(draftStorageKey(side, slot), serialized)
+    resolveStorage(storage).setItem(draftStorageKey(side, slot), serialized)
     return true
   } catch { return false }
 }
-export function forgetDraft(storage: StoragePort, side: Side, slot: number) {
-  try { storage.removeItem(draftStorageKey(side, slot)); return true }
+export function forgetDraft(storage: StoragePortSource, side: Side, slot: number) {
+  try { resolveStorage(storage).removeItem(draftStorageKey(side, slot)); return true }
   catch { return false }
 }

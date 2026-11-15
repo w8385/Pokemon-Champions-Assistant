@@ -3,13 +3,16 @@ import { translateText } from '../../shared/display/translation.ts'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { DamageTerrain, DamageWeather, SiteLanguage } from '../../app/types'
 import type { useQuickDamageState } from './useQuickDamageState'
-export function QuickConditionsView({ language, conditions, hits, attacker, defender, setSide, setConditions, setManualFields }: {
-  language: SiteLanguage; conditions: QuickConditions; hits: number[] | null; attacker: QuickSide; defender: QuickSide;
+export function QuickConditionsView({ language, conditions, manualFields, hits, attacker, defender, setSide, setConditions, setManualFields }: {
+  language: SiteLanguage; conditions: QuickConditions; manualFields: { weather: boolean; terrain: boolean }; hits: number[] | null; attacker: QuickSide; defender: QuickSide;
   setSide: ReturnType<typeof useQuickDamageState>['commands']['setSide'];
   setConditions: ReturnType<typeof useQuickDamageState>['commands']['setConditions'];
   setManualFields: ReturnType<typeof useQuickDamageState>['commands']['setManualFields'];
 }) {
   const lt = (text: string) => translateText(language, text)
+  const autoLabel = language === 'ko' ? '자동' : language === 'ja' ? '自動' : 'Auto'
+  const weatherOptions = [['none','없음'],['sun','쾌청'],['rain','비'],['sand','모래바람'],['snow','싸라기눈']] as const
+  const terrainOptions = [['none','없음'],['electric','일렉트릭필드'],['grassy','그래스필드'],['psychic','사이코필드'],['misty','미스트필드']] as const
 const sourceLabels = {
     ko: { shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '비교 초안', unknown: '미확인 · 계산값 0', natureUnknown: '성격 미확인', modifier: '기록 보정' },
     en: { shared: 'Moves shared by same-species slots · edits apply to all', condition: 'Calculation conditions · this matchup only', battle: 'Battle conditions', draft: 'Comparison draft', unknown: 'Unknown · calculated as 0', natureUnknown: 'Nature unknown', modifier: 'Recorded modifier' },
@@ -27,8 +30,8 @@ const sourceLabels = {
   }
   return <>
     <div className="quick-conditions"><strong className="ui-section-label"><UiIcon name="settings" size={17} />{sourceLabels.condition}</strong><div className="quick-condition-grid"><div className="quick-common-conditions">
-      <label>{lt('날씨')}<select value={conditions.weather} onChange={event => { setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: event.target.value as DamageWeather })) }}>{(['none','sun','rain','sand','snow'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','쾌청','비','모래바람','싸라기눈'][idx])}</option>)}</select></label>
-      <label>{lt('필드')}<select value={conditions.terrain} onChange={event => { setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: event.target.value as DamageTerrain })) }}>{(['none','electric','grassy','psychic','misty'] as const).map((value, idx) => <option key={value} value={value}>{lt(['없음','일렉트릭필드','그래스필드','사이코필드','미스트필드'][idx])}</option>)}</select></label>
+      <label>{lt('날씨')}<select value={manualFields.weather ? conditions.weather : 'auto'} data-effective-value={conditions.weather} onChange={event => { const value = event.target.value; if (value === 'auto') { setManualFields(prev => ({ ...prev, weather: false })); return } setManualFields(prev => ({ ...prev, weather: true })); setConditions(prev => ({ ...prev, weather: value as DamageWeather })) }}><option value="auto">{autoLabel} · {lt(weatherOptions.find(([value]) => value === conditions.weather)?.[1] ?? '없음')}</option>{weatherOptions.map(([value, label]) => <option key={value} value={value}>{lt(label)}</option>)}</select></label>
+      <label>{lt('필드')}<select value={manualFields.terrain ? conditions.terrain : 'auto'} data-effective-value={conditions.terrain} onChange={event => { const value = event.target.value; if (value === 'auto') { setManualFields(prev => ({ ...prev, terrain: false })); return } setManualFields(prev => ({ ...prev, terrain: true })); setConditions(prev => ({ ...prev, terrain: value as DamageTerrain })) }}><option value="auto">{autoLabel} · {lt(terrainOptions.find(([value]) => value === conditions.terrain)?.[1] ?? '없음')}</option>{terrainOptions.map(([value, label]) => <option key={value} value={value}>{lt(label)}</option>)}</select></label>
       {toggle('critical','급소')}{toggle('typeChangeStab','타입변환 자속')}
       {hits?.length && hits.length > 1 ? <label>{lt('타수')}<select value={hits.includes(conditions.hits) ? conditions.hits : hits[0]} onChange={event => setConditions(prev => ({ ...prev, hits: Number(event.target.value) }))}>{hits.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
     </div>{sideBattleControls('attacker')}{sideBattleControls('defender')}

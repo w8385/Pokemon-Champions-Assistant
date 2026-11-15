@@ -27,15 +27,19 @@ test('ignored armor and defensive power effects differ from a nonignored support
   assert.deepEqual(ignored.rolls,neutral.rolls)
   const retained=hit('mold-breaker','prism-armor','fire',{effectiveness:2})
   assert.ok(retained.rolls[0]<neutral.rolls[0])
-  assert.ok(hit('mold-breaker','ice-scales','fire',{mode:'special',moveMeta:{power:80,category:'special'},effectiveness:2}).mod.finalMultiplier<1)
+  assert.ok(hit('','ice-scales','fire',{mode:'special',moveMeta:{power:80,category:'special'},effectiveness:2}).mod.finalMultiplier<1)
+  assert.equal(hit('mold-breaker','ice-scales','fire',{mode:'special',moveMeta:{power:80,category:'special'},effectiveness:2}).mod.finalMultiplier,1)
 })
-test('Mold Breaker does not erase ally Friend Guard or nonignored defender effects; Unaware stage reader uses projection', () => {
+test('Mold Breaker bypasses ally Friend Guard while retaining nonbreakable effects', () => {
   const stage={attackStage:2}
   assert.ok(hit('','unaware','ground',stage).rolls[0]<hit('mold-breaker','unaware','ground',stage).rolls[0])
-  const guarded=hit('mold-breaker','water-absorb','water',{friendGuard:true})
-  const unguarded=hit('mold-breaker','water-absorb','water')
+  const guarded=hit('','', 'water',{friendGuard:true,defenderAllyAbility:'friend-guard'})
+  const unguarded=hit('','', 'water')
   assert.ok(guarded.rolls[0]<unguarded.rolls[0])
   assert.ok(guarded.mod.notes.includes('프렌드가드'))
+  const broken=hit('mold-breaker','', 'water',{friendGuard:true,defenderAllyAbility:'friend-guard'})
+  assert.deepEqual(broken.rolls,hit('mold-breaker','', 'water').rolls)
+  assert.ok(!broken.mod.notes.includes('프렌드가드'))
   assert.ok(hit('mold-breaker','shadow-shield','ground').rolls[0]<hit('mold-breaker','','ground').rolls[0])
 })
 

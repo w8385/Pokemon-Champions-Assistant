@@ -1,4 +1,5 @@
 import { searchMoves } from '../../shared/search/moveSearch.ts'
+import { multiHitOptions } from './movePower.ts'
 
 export function quickStatNature(side: { speedNatureKnown: boolean; speedNatureMultiplier: number; statNatureMultipliers: Partial<Record<string, number>> }, key: string, nature: number): number {
   if (key === 'hp') return 1
@@ -42,7 +43,7 @@ export function quickMoveSupported(name: string, meta: { category?: string | nul
   if (unresolvedConditionalPower) return false
   if (!meta || (meta.category !== 'physical' && meta.category !== 'special')) return false
   const targetWeight = ['로우킥', '풀묶기', '안다리걸기', '안다리 걸기'].includes(name)
-  const supportedHits = ['스케일샷', '트리플악셀'].includes(name)
+  const supportedHits = Boolean(multiHitOptions(name))
   return (targetWeight || (typeof meta.power === 'number' && meta.power > 0)) && (!meta.variablePower || targetWeight || supportedHits)
 }
 

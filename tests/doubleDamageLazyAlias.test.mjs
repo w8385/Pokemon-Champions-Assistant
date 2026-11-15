@@ -54,7 +54,7 @@ test('lazy alias refreshes actual memoized Double damage callback and individual
       isCalculableAbility, isCalculableHeldItem: () => true, classifyAbilityForKey,
       attackingFormRow: row => row, buildPartyBattleStats: () => ({ hp: 100 }), buildOpponentBattleStats: () => ({ hp: 100 }),
       choicesForPool: () => [], resolveMoveMeta: () => ({ category: 'physical', power: 80, type: 'normal' }),
-      resolveAbilityAdjustedMoveMeta: (_name, meta) => meta, resolveMoveType: () => 'normal', resolveAbilityAdjustedTypes: () => ['normal'],
+      resolveAbilityAdjustedMoveMeta: (_name, meta) => meta, resolveMultiHitMeta: (_name, meta) => meta, resolveMoveType: () => 'normal', resolveAbilityAdjustedTypes: () => ['normal'],
       abilityAdjustedTypeEffectiveness: () => 1, protectionDamageMultiplier: () => 1,
       resolveDamageModifiers: () => ({ finalMultiplier: 1, notes: [] }),
       calcDamage: (_attacker, _defender, _power, _mode, _stab, _effectiveness, _move, modifier) => ({ min: 25 * modifier.finalMultiplier, max: 35 * modifier.finalMultiplier, minPct: 25 * modifier.finalMultiplier, maxPct: 35 * modifier.finalMultiplier }),

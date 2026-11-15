@@ -32,17 +32,19 @@ export function typeEffectiveness(attackType: string, defendTypes: string[]) {
   return defendTypes.reduce((acc, defendType) => acc * (normalizedTypeChart[attackKey]?.[defendType.toLowerCase()] ?? 1), 1)
 }
 
+export const MOLD_BREAKER_IGNORED_ABILITIES: ReadonlySet<string> = new Set([
+  'aura-guard', 'battle-armor', 'disguise', 'dry-skin', 'earth-eater', 'eelevate',
+  'filter', 'flash-fire', 'fluffy', 'friend-guard', 'fur-coat', 'grass-pelt',
+  'heatproof', 'ice-scales', 'levitate', 'lightning-rod', 'marvel-scale',
+  'motor-drive', 'multiscale', 'punk-rock', 'purifying-salt', 'sap-sipper',
+  'shell-armor', 'solid-rock', 'soundproof', 'storm-drain', 'thick-fat',
+  'unaware', 'volt-absorb', 'water-absorb', 'water-bubble', '부유', '탈',
+])
+
 export function effectiveDefenderAbility(attackerAbility: string, defenderAbility: string): string {
-  if (attackerAbility !== 'mold-breaker') return defenderAbility
-  const ignored = new Set([
-    'aura-guard', 'battle-armor', 'disguise', 'dry-skin', 'earth-eater', 'eelevate',
-    'filter', 'flash-fire', 'fluffy', 'fur-coat', 'grass-pelt', 'heatproof',
-    'levitate', 'lightning-rod', 'marvel-scale', 'motor-drive', 'multiscale',
-    'punk-rock', 'purifying-salt', 'sap-sipper', 'shell-armor', 'solid-rock',
-    'soundproof', 'storm-drain', 'thick-fat', 'unaware', 'volt-absorb',
-    'water-absorb', '부유', '탈',
-  ])
-  return ignored.has(defenderAbility) ? '' : defenderAbility
+  return attackerAbility === 'mold-breaker' && MOLD_BREAKER_IGNORED_ABILITIES.has(defenderAbility)
+    ? ''
+    : defenderAbility
 }
 
 export function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes: string[], defenderAbility: string, attackerAbility = '') {

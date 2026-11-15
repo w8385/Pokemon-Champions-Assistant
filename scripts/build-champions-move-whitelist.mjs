@@ -1,18 +1,27 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { atomicReplaceFiles } from './lib/atomic-output.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const root = path.resolve(__dirname, '..')
+const optionValue = name => {
+  const index = process.argv.indexOf(name)
+  if (index < 0) return null
+  if (!process.argv[index + 1]) throw new Error(`Missing value for ${name}`)
+  return process.argv[index + 1]
+}
+const outputPath = (name, fallback) => path.resolve(root, optionValue(name) ?? fallback)
+const allowPartial = process.argv.includes('--allow-partial')
 
 const baselinePath = path.join(root, 'src', 'canonical-data/champions/pokemonMovePools.json')
 const verifiedDataPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
 const moveNameOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsMoveNameOverrides.json')
-const whitelistPath = path.join(root, 'src', 'canonical-data/champions/championsMovePools.json')
-const sourceMetaPath = path.join(root, 'src', 'canonical-data/champions/championsMovePoolSources.json')
-const reportPath = path.join(root, 'reports', 'championsMoveWhitelistCoverage.json')
-const recommendationAuditPath = path.join(root, 'reports', 'championsRecommendationAudit.json')
+const whitelistPath = outputPath('--whitelist-output', 'src/canonical-data/champions/championsMovePools.json')
+const sourceMetaPath = outputPath('--sources-output', 'src/canonical-data/champions/championsMovePoolSources.json')
+const reportPath = outputPath('--report-output', 'reports/championsMoveWhitelistCoverage.json')
+const recommendationAuditPath = outputPath('--audit-output', 'reports/championsRecommendationAudit.json')
 const sampleMovesPath = path.join(root, 'src', 'domain/samples/sampleMoves.ts')
 const recommendationAuditOverridesPath = path.join(root, 'src', 'canonical-data/champions/championsRecommendationAuditOverrides.json')
 
@@ -96,6 +105,7 @@ const verifiedRows = Array.isArray(verifiedRaw)
 
 const moveMetaCache = new Map()
 const pokemonMoveCache = new Map()
+const upstreamFailures = []
 
 function confidenceLabel(tier, validationCount, sampleCount, isPresent) {
   if (!isPresent) return 'conflict'
@@ -118,7 +128,11 @@ function normalizeMoveName(name) {
 
 async function fetchJson(url) {
   const res = await fetch(url)
-  if (!res.ok) throw new Error(`${res.status} ${url}`)
+  if (!res.ok) {
+    const error = new Error(`${res.status} ${url}`)
+    error.status = res.status
+    throw error
+  }
   return res.json()
 }
 
@@ -145,16 +159,20 @@ async function fetchPokemonMovePoolFromApi(key) {
     for (const candidate of pokemonApiCandidates(key)) {
       try {
         const pokemon = await fetchJson(`https://pokeapi.co/api/v2/pokemon/${candidate}`)
-        const moves = await Promise.all(
-          (pokemon.moves ?? []).map((entry) => fetchMoveMeta(entry.move.url).catch(() => null))
-        )
+        const entries = pokemon.moves ?? []
+        const settled = await Promise.allSettled(entries.map(entry => fetchMoveMeta(entry.move.url)))
+        const moves = []
+        settled.forEach((result, index) => {
+          if (result.status === 'fulfilled') moves.push(result.value)
+          else upstreamFailures.push({ kind: 'move', key, candidate, url: entries[index]?.move?.url, message: String(result.reason) })
+        })
         for (const move of moves) {
           if (!move?.name) continue
           if (!merged.has(move.name)) merged.set(move.name, move)
         }
         if (moves.length) fetchedCandidates.push(candidate)
-      } catch {
-        // try next candidate
+      } catch (error) {
+        if (error?.status !== 404) upstreamFailures.push({ kind: 'pokemon', key, candidate, message: String(error) })
       }
     }
     return { moves: Array.from(merged.values()).sort(sortMoves), candidate: fetchedCandidates[0] ?? null, candidates: fetchedCandidates }
@@ -306,20 +324,37 @@ for (const entry of sampleMoves) {
   if (auditEntry.missingMoves.length) recommendationAudit.missingBySpecies[entry.key] = auditEntry.missingMoves
 }
 
-await fs.mkdir(path.dirname(reportPath), { recursive: true })
-await fs.writeFile(whitelistPath, `${JSON.stringify(whitelist, null, 2)}\n`)
-await fs.writeFile(sourceMetaPath, `${JSON.stringify({
-  _meta: {
-    generatedAt: new Date().toISOString(),
-    sourceOfTruth: 'src/canonical-data/champions/championsMovePools.json',
-    seededFrom: 'src/canonical-data/champions/pokemonMovePools.json',
-    purpose: '포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터',
-  },
-  pokemon: sources,
-}, null, 2)}\n`)
-await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`)
-await fs.writeFile(recommendationAuditPath, `${JSON.stringify(recommendationAudit, null, 2)}\n`)
-
+const expectedKeys = verifiedRows.filter(row => row?.key).map(row => row.key).sort()
+const actualKeys = Object.keys(whitelist).sort()
+if (JSON.stringify(actualKeys) !== JSON.stringify(expectedKeys)) {
+  throw new Error(`Generated whitelist keys do not match verified roster: expected=${expectedKeys.length}, actual=${actualKeys.length}`)
+}
+const previousMoveCount = Object.values(baseline).reduce((sum, moves) => sum + (Array.isArray(moves) ? moves.length : 0), 0)
+const nextMoveCount = Object.values(whitelist).reduce((sum, moves) => sum + moves.length, 0)
+const emptiedExisting = expectedKeys.filter(key => Array.isArray(baseline[key]) && baseline[key].length && !whitelist[key].length)
+const moveCountCollapsed = previousMoveCount > 0 && nextMoveCount < Math.floor(previousMoveCount * 0.95)
+if (!nextMoveCount) throw new Error('Refusing to replace move pools with an empty result')
+if (!allowPartial && (upstreamFailures.length || missing.length || emptiedExisting.length || moveCountCollapsed)) {
+  throw new Error(`Refusing partial move whitelist: upstream failures=${upstreamFailures.length}, missing=${missing.length}, emptied=${emptiedExisting.length}, moves=${previousMoveCount}->${nextMoveCount}`)
+}
+if (allowPartial && (upstreamFailures.length || missing.length || emptiedExisting.length || moveCountCollapsed)) {
+  console.warn(`Allowing reviewed partial move whitelist: upstream failures=${upstreamFailures.length}, missing=${missing.length}, emptied=${emptiedExisting.length}, moves=${previousMoveCount}->${nextMoveCount}`)
+}
+const generatedAt = new Date().toISOString()
+await atomicReplaceFiles([
+  { target: whitelistPath, content: `${JSON.stringify(whitelist, null, 2)}\n` },
+  { target: sourceMetaPath, content: `${JSON.stringify({
+    _meta: {
+      generatedAt,
+      sourceOfTruth: 'src/canonical-data/champions/championsMovePools.json',
+      seededFrom: 'src/canonical-data/champions/pokemonMovePools.json',
+      purpose: '포켓몬 챔피언스 전용 확정 화이트리스트로 발전시키기 위한 종별 검증 메타데이터',
+    },
+    pokemon: sources,
+  }, null, 2)}\n` },
+  { target: reportPath, content: `${JSON.stringify(report, null, 2)}\n` },
+  { target: recommendationAuditPath, content: `${JSON.stringify(recommendationAudit, null, 2)}\n` },
+])
 console.log(`Generated ${path.relative(root, whitelistPath)}`)
 console.log(`Generated ${path.relative(root, sourceMetaPath)}`)
 console.log(`Generated ${path.relative(root, reportPath)}`)

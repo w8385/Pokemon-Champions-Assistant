@@ -48,7 +48,12 @@ import type { QuickDamageProps } from './QuickDamagePanel'
 export function useQuickDamageState({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: QuickDamageProps) {
 const lt = (text: string) => translateText(language, text)
 
-  const [saved] = React.useState(() => readQuickStandalone(localStorage))
+  const [standaloneRead] = React.useState(() => comparisonMode
+    ? { value: {}, error: false }
+    : readQuickStandalone(() => window.localStorage))
+  const saved = standaloneRead.value
+  const standaloneWriteBlocked = React.useRef(standaloneRead.error)
+  const [standaloneStorageFailed, setStandaloneStorageFailed] = React.useState(standaloneRead.error)
   const [attacker, setAttacker] = React.useState(() => {
     const seed = initialSides?.[0]
     const side = seed ? restoredComparisonSide(seed, 'attacker', comparisonSlots?.[0] ?? 0).side : quickSide(saved.attacker, saved.conditions as Record<string, unknown> ?? {}, true)
@@ -59,7 +64,7 @@ const lt = (text: string) => translateText(language, text)
   const [configuredConditions, setConditions] = React.useState<QuickConditions>(() => {
     const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
     const defaults = quickDefaultConditions()
-    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: [1,2,3,4,5].includes(Number(input.hits)) ? Number(input.hits) : 2, critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false }
+    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: Number.isInteger(Number(input.hits)) && Number(input.hits) >= 1 && Number(input.hits) <= 10 ? Number(input.hits) : 2, critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false }
   })
   // The two cards own the field projection; persisted/manual conditions remain separate.
   const [manualFields, setManualFields] = React.useState(() => {
@@ -151,13 +156,17 @@ const lt = (text: string) => translateText(language, text)
   const opener = React.useRef<HTMLElement | null>(null)
   const [, refreshMeta] = React.useState(0)
   const [moveMetaReady, setMoveMetaReady] = React.useState(false)
-  React.useEffect(() => { if (!comparisonMode) writeQuickStandalone(localStorage, { attacker, defender, conditions: configuredConditions, manualFields }) }, [attacker, defender, configuredConditions, manualFields, comparisonMode])
+  React.useEffect(() => {
+    if (comparisonMode || standaloneWriteBlocked.current) return
+    const written = writeQuickStandalone(() => window.localStorage, { attacker, defender, conditions: configuredConditions, manualFields })
+    setStandaloneStorageFailed(!written)
+  }, [attacker, defender, configuredConditions, manualFields, comparisonMode])
   React.useEffect(() => {
     if (!comparisonMode || !initialSides || !comparisonSlots) return
     if (skipDraftWrite.current) { skipDraftWrite.current = false; return }
-    const legacyOwnSpeciesDraft = readDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0])?.dirty.has('key')
-    const ownKept = legacyOwnSpeciesDraft && !dirty.attacker.size ? true : writeDraft(localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
-    const otherKept = writeDraft(localStorage, 'defender', comparisonSlots[1], initialSides[1], defender, dirty.defender)
+    const legacyOwnSpeciesDraft = readDraft(() => window.localStorage, 'attacker', comparisonSlots[0], initialSides[0])?.dirty.has('key')
+    const ownKept = legacyOwnSpeciesDraft && !dirty.attacker.size ? true : writeDraft(() => window.localStorage, 'attacker', comparisonSlots[0], initialSides[0], attacker, dirty.attacker)
+    const otherKept = writeDraft(() => window.localStorage, 'defender', comparisonSlots[1], initialSides[1], defender, dirty.defender)
     setDraftStorageFailed(!(ownKept && otherKept))
   }, [comparisonMode, seed0, seed1, attacker, defender, dirty])
   const poolMounted = React.useRef(false)
@@ -246,5 +255,5 @@ const lt = (text: string) => translateText(language, text)
   }
   const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
   const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
-  return { model: { attacker, defender, attackingRow, defendingRow, conditions, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, hits, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, moveLabel, scarfFor, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
+  return { model: { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, hits, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, moveLabel, scarfFor, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
 }

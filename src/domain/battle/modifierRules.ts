@@ -5,6 +5,7 @@ import { effectiveDefenderAbility } from './typeEffectiveness.ts'
 import { abilityNoteLabel } from './abilityNoteLabel.ts'
 import { alwaysOnAbilityImmunity } from './abilityImmunities.ts'
 import { moveMatchesTaggedSet, SOUND_MOVE_NAMES, PUNCH_MOVE_NAMES, RECKLESS_MOVE_NAMES, SHEER_FORCE_MOVE_NAMES, BITE_MOVE_NAMES, PULSE_MOVE_NAMES, SLICING_MOVE_NAMES, CONTACT_MOVE_NAMES } from './moveTags.ts'
+import { skillLinkAppliesToMove } from './movePower.ts'
 
 export function battleStageMultiplier(stage: number) {
   if (stage > 0) return (2 + stage) / 2
@@ -23,6 +24,7 @@ export function isDamageGrounded(types: string[] | undefined, ability: string, i
 export function resolveDamageModifiers(params: {
   attackerAbility: string
   attackerAllyAbility?: string
+  defenderAllyAbility?: string
   attackerItem: string
   defenderAbility: string
   defenderItem: string
@@ -58,8 +60,10 @@ export function resolveDamageModifiers(params: {
   disguiseActive?: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerAllyAbility = '', attackerItem, defenderAbility: recordedDefenderAbility, defenderKey, defenderItem, moveName, moveMeta, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, attackerTypes, defenderTypes, format = 'Singles', burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const { attackerAbility, attackerAllyAbility = '', defenderAllyAbility: recordedDefenderAllyAbility = '', attackerItem, defenderAbility: recordedDefenderAbility, defenderKey, defenderItem, moveName, moveMeta, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, attackerTypes, defenderTypes, format = 'Singles', burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
   const defenderAbility = effectiveDefenderAbility(attackerAbility, recordedDefenderAbility)
+  const defenderAllyAbility = effectiveDefenderAbility(attackerAbility, recordedDefenderAllyAbility)
+  const fieldAbilities = [attackerAbility, attackerAllyAbility, recordedDefenderAbility, recordedDefenderAllyAbility]
   const canonicalAttackerItem = canonicalChampionsItemName(attackerItem)
   const canonicalDefenderItem = canonicalChampionsItemName(defenderItem)
   const attackerIgnoresDefenseStage = attackerAbility === 'unaware'
@@ -161,8 +165,13 @@ export function resolveDamageModifiers(params: {
   }
 
   if (moveType === 'water' && attackerAbility === 'water-bubble') {
-    powerMultiplier *= 2
+    attackMultiplier *= 2
     notes.push(abilityNoteLabel(attackerAbility))
+  }
+
+  if (adjustedEffectiveness > 0 && moveType === 'fire' && defenderAbility === 'water-bubble') {
+    finalMultiplier *= 0.5
+    notes.push(`${abilityNoteLabel(defenderAbility)}(불꽃 반감)`)
   }
 
   if (baseMoveType === 'normal' && moveType && moveType !== 'normal' && ['aerilate', 'pixilate', 'refrigerate', 'dragonize'].includes(attackerAbility)) {
@@ -204,7 +213,7 @@ export function resolveDamageModifiers(params: {
     notes.push(`${abilityNoteLabel(attackerAbility)} x${Math.min(5, Math.max(0, faintedAllies))}`)
   }
 
-  if (attackerAbility === 'skill-link' && ['드래곤애로', '스케일샷', '트리플악셀'].includes(moveName)) {
+  if (attackerAbility === 'skill-link' && skillLinkAppliesToMove(moveName)) {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
@@ -263,17 +272,25 @@ export function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  if (moveType === 'steel' && (attackerAbility === 'steelworker' || attackerAbility === 'steely-spirit')) {
+  if (moveType === 'steel' && attackerAbility === 'steelworker') {
     powerMultiplier *= 1.5
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  if (moveType === 'fairy' && (attackerAbility === 'fairy-aura' || defenderAbility === 'fairy-aura')) {
+  if (moveType === 'steel') {
+    const steelySpiritCount = [attackerAbility, attackerAllyAbility].filter(ability => ability === 'steely-spirit').length
+    for (let index = 0; index < steelySpiritCount; index += 1) powerMultiplier *= 1.5
+    if (steelySpiritCount) notes.push(steelySpiritCount === 1
+      ? abilityNoteLabel('steely-spirit')
+      : `${abilityNoteLabel('steely-spirit')} x${steelySpiritCount}`)
+  }
+
+  if (moveType === 'fairy' && fieldAbilities.includes('fairy-aura')) {
     powerMultiplier *= 4 / 3
     notes.push(abilityNoteLabel('fairy-aura'))
   }
 
-  if (moveType === 'dark' && (attackerAbility === 'dark-aura' || defenderAbility === 'dark-aura')) {
+  if (moveType === 'dark' && fieldAbilities.includes('dark-aura')) {
     powerMultiplier *= 4 / 3
     notes.push(abilityNoteLabel('dark-aura'))
   }
@@ -477,9 +494,9 @@ export function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(defenderAbility))
   }
 
-  if (adjustedEffectiveness > 0 && friendGuard) {
+  if (adjustedEffectiveness > 0 && friendGuard && defenderAllyAbility === 'friend-guard') {
     finalMultiplier *= 0.75
-    notes.push('프렌드가드')
+    notes.push(abilityNoteLabel('friend-guard'))
   }
 
   const defenderHasActiveDisguise = Boolean(disguiseActive && (defenderAbility === 'disguise' || defenderAbility === '탈'))

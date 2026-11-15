@@ -28,7 +28,7 @@ test('paired 390px cards retain two columns, but 320px cards stack for readable 
 })
 
 test('both modes retain independent state owners and condition controls after layout change', () => {
-  assert.match(hook, /if \(!comparisonMode\) writeQuickStandalone\(localStorage/)
+  assert.match(hook, /if \(comparisonMode \|\| standaloneWriteBlocked\.current\) return[\s\S]*writeQuickStandalone\(\(\) => window\.localStorage/)
   assert.match(hook, /if \(!comparisonMode \|\| !initialSides \|\| !comparisonSlots\) return/)
   assert.match(panel, /\{entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(cardOwner, /\{comparisonMode \? null : searchField/)
