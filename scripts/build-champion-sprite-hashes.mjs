@@ -1,10 +1,14 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
+import { atomicReplaceFiles, readJsonIfExists } from './lib/atomic-output.mjs'
 
 const root = path.resolve(new URL('..', import.meta.url).pathname)
 const sourcePath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
-const outputPath = path.join(root, 'src', 'assets/championSpriteHashes.json')
+const optionIndex = process.argv.indexOf('--output')
+if (optionIndex >= 0 && !process.argv[optionIndex + 1]) throw new Error('Missing value for --output')
+const outputPath = optionIndex >= 0 ? path.resolve(process.argv[optionIndex + 1]) : path.join(root, 'src', 'assets/championSpriteHashes.json')
+const allowPartial = process.argv.includes('--allow-partial')
 
 function computeDHash(buffer) {
   const bits = []
@@ -33,7 +37,9 @@ async function hashSprite(url) {
 
 const raw = JSON.parse(await fs.readFile(sourcePath, 'utf8'))
 const rows = Array.isArray(raw?.rows) ? raw.rows : []
+const previous = await readJsonIfExists(outputPath, [])
 const results = []
+const failures = []
 for (const row of rows) {
   if (!row?.key || !row?.sprite) continue
   try {
@@ -41,8 +47,27 @@ for (const row of rows) {
     results.push({ key: row.key, hash })
     console.log(`hashed ${row.key}`)
   } catch (error) {
-    console.warn(`failed ${row.key}: ${error instanceof Error ? error.message : String(error)}`)
+    const message = error instanceof Error ? error.message : String(error)
+    failures.push({ key: row.key, message })
+    console.warn(`failed ${row.key}: ${message}`)
   }
 }
-await fs.writeFile(outputPath, `${JSON.stringify(results, null, 2)}\n`)
+const resultKeys = results.map(entry => entry.key)
+const uniqueKeys = new Set(resultKeys)
+if (!results.length) throw new Error('Refusing to replace sprite hashes with an empty result')
+if (uniqueKeys.size !== results.length) throw new Error('Refusing duplicate sprite hash keys')
+if (results.some(entry => !/^[0-9a-f]{60}$/.test(entry.hash))) throw new Error('Refusing malformed sprite hashes')
+const previousKeys = new Set(Array.isArray(previous) ? previous.map(entry => entry?.key).filter(Boolean) : [])
+const retainedPrevious = [...previousKeys].filter(key => uniqueKeys.has(key)).length
+const coverageCollapsed = previousKeys.size > 0 && (
+  results.length < Math.ceil(previousKeys.size * 0.95)
+  || retainedPrevious < Math.ceil(previousKeys.size * 0.95)
+)
+if (!allowPartial && (failures.length || coverageCollapsed)) {
+  throw new Error(`Refusing partial sprite hashes: failures=${failures.length}, previous=${previousKeys.size}, next=${results.length}, retained=${retainedPrevious}`)
+}
+if (allowPartial && (failures.length || coverageCollapsed)) {
+  console.warn(`Allowing reviewed partial sprite hashes: failures=${failures.length}, previous=${previousKeys.size}, next=${results.length}, retained=${retainedPrevious}`)
+}
+await atomicReplaceFiles([{ target: outputPath, content: `${JSON.stringify(results, null, 2)}\n` }])
 console.log(`wrote ${results.length} sprite hashes -> ${outputPath}`)
