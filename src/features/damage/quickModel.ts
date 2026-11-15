@@ -37,7 +37,7 @@ export function quickSide(input: unknown, legacy: Record<string, unknown> = {}, 
 }
 
 export function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
-  const saved = readDraft(localStorage, side, slot, seed)
+  const saved = readDraft(() => window.localStorage, side, slot, seed)
   if (!saved) return { side: seed as QuickSide, dirty: new Set<string>() }
   if (side === 'attacker' && saved.dirty.has('key')) return { side: seed as QuickSide, dirty: new Set<string>() }
   const next = saved.side
