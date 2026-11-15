@@ -73,7 +73,7 @@ test('paired editor consumes target reconciliation and failed-write status', () 
   assert.match(quick, /const next = pairChanged \? resetPairAssumptions\(restored\.side/)
   assert.match(quick, /setDraftStorageFailed\(!\(ownKept && otherKept\)\)/)
   assert.match(quickView, /draftStorageFailed \? language === 'en' \? 'Comparison draft · automatic storage failed/)
-  assert.match(quickView, /if \(!forgetDraft\(localStorage, side, slot\)\) setDraftStorageFailed\(true\)/)
+  assert.match(quickView, /if \(!forgetDraft\(\(\) => window\.localStorage, side, slot\)\) setDraftStorageFailed\(true\)/)
 })
 
 test('draft quota/security failures return false, do not throw, and preserve live build', () => {
