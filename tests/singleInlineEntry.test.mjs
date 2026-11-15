@@ -9,7 +9,7 @@ import vm from 'node:vm'
 import ts from 'typescript'
 
 for (const tab of ['pick', 'speed', 'power', 'party']) test(`legacy ${tab} lands on unified matchup`, () => {
-  assert.deepEqual(normalizeRoute(`#/single?tab=${tab}&my=2&opp=3`), { section: 'single', tab: 'party' })
+  assert.deepEqual(normalizeRoute(`#/single?tab=${tab}&my=2&opp=3`), { section: 'single', tab })
 })
 
 test('opponent metadata-only save retains unknown nature/offense and recorded defense', () => {
