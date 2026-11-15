@@ -11,5 +11,5 @@ test('single and quick mount the same comparison panel, with independent persist
  assert.match(single, /comparisonSlots=\{\[selectedMy, selectedOpp\]\}/)
  assert.doesNotMatch(app, /<QuickDamagePanel key=\{/)
  assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url),'utf8'), /previousSeeds\.current\[index\] === fingerprint/)
- assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url),'utf8'), /if \(!comparisonMode\) writeQuickStandalone\(localStorage/)
+ assert.match(readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url),'utf8'), /if \(comparisonMode \|\| standaloneWriteBlocked\.current\) return[\s\S]*writeQuickStandalone\(\(\) => window\.localStorage/)
 })
