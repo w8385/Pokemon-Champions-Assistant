@@ -7,6 +7,7 @@ import { classifyHeldItem, canonicalHeldItem } from '../src/domain/champions/ite
 import { loadAppDamageEngine } from '../scripts/check-damage-parity.mjs'
 import { resolveDamageModifiers } from '../src/domain/battle/modifierRules.ts'
 import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
+import { resolveMultiHitMeta } from '../src/domain/battle/movePower.ts'
 const metadata = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/championsLearnedMoveMeta.json', import.meta.url)))
 const index = JSON.parse(fs.readFileSync(new URL('../src/canonical-data/champions/dexGameMoveIndex.json', import.meta.url)))
 const getMoveMetadata = name => index[name] ? { id:index[name].id, meta:metadata[name] } : null
@@ -47,7 +48,7 @@ for (const name of ['트릭플라워','얼음숨결','업어후리기']) test(`$
   }
 })
 for(const name of ['깨트리다','사이코팽']) test(`${name} bypasses all screens this hit, retains other reductions`, () => {
-  const base=run(name), screens=run(name,{reflect:true,lightScreen:true,auroraVeil:true}), guarded=run(name,{reflect:true,friendGuard:true})
+  const base=run(name), screens=run(name,{reflect:true,lightScreen:true,auroraVeil:true}), guarded=run(name,{reflect:true,friendGuard:true,defenderAllyAbility:'friend-guard'})
   assert.equal(screens.mod.incomingScreenName,null);same(base,screens)
   assert.equal(screens.p.reflect,true);assert.equal(screens.p.lightScreen,true);assert.equal(screens.p.auroraVeil,true)
   assert.ok(guarded.damage.max<base.damage.max)
@@ -95,7 +96,7 @@ test('actual Double callback passes ability immunity into all sixteen rolls', ()
   const side=(key,ability) => ({ key,ability,item:'',hpEv:0,defenseEv:0,spDefenseEv:0,defenseNature:1,spDefenseNature:1 })
   const owner={ key:'source', types:['normal'] }, target={ key:'target', types:[] }
   const slots={ myLeft:{side:'my',option:{row:owner,member:side('source','')}}, myRight:{side:'my',option:null}, oppLeft:{side:'opp',option:{row:target,entry:side('target','')}}, oppRight:{side:'opp',option:null} }
-  const env={...context,React:{useCallback:fn=>fn},doubleSlotMeta:slots,doubleFriendGuardMy:false,doubleFriendGuardOpp:false,doubleProtectBySlot:{myLeft:false,myRight:false,oppLeft:false,oppRight:false},doubleWideGuardMy:false,doubleWideGuardOpp:false,lt:x=>x,movePoolByKey:{},asyncDataVersion:0,siteLanguage:'ko',isCalculableHeldItem:()=>true,heldAbilityError:()=>null,classifyAbilityForKey:(_key,raw)=>({slug:raw}),attackingFormRow:row=>row,buildPartyBattleStats:()=>attacker,buildOpponentBattleStats:()=>defender,choicesForPool:()=>[],resolveMoveMeta:()=>({type:env.attackType,category:'physical',power:80}),resolveAbilityAdjustedMoveMeta:(_name,meta)=>meta,resolveMoveType:()=>env.attackType,resolveAbilityAdjustedTypes:row=>row,abilityAdjustedTypeEffectiveness:loadAppDamageEngine().abilityAdjustedTypeEffectiveness,protectionDamageMultiplier:()=>1,resolveDamageModifiers,calcDamage,abilityNoteLabel:x=>x,attackType:'water'}
+  const env={...context,React:{useCallback:fn=>fn},doubleSlotMeta:slots,doubleFriendGuardMy:false,doubleFriendGuardOpp:false,doubleProtectBySlot:{myLeft:false,myRight:false,oppLeft:false,oppRight:false},doubleWideGuardMy:false,doubleWideGuardOpp:false,lt:x=>x,movePoolByKey:{},asyncDataVersion:0,siteLanguage:'ko',isCalculableHeldItem:()=>true,heldAbilityError:()=>null,classifyAbilityForKey:(_key,raw)=>({slug:raw}),attackingFormRow:row=>row,buildPartyBattleStats:()=>attacker,buildOpponentBattleStats:()=>defender,choicesForPool:()=>[],resolveMoveMeta:()=>({type:env.attackType,category:'physical',power:80}),resolveAbilityAdjustedMoveMeta:(_name,meta)=>meta,resolveMultiHitMeta,resolveMoveType:()=>env.attackType,resolveAbilityAdjustedTypes:row=>row,abilityAdjustedTypeEffectiveness:loadAppDamageEngine().abilityAdjustedTypeEffectiveness,protectionDamageMultiplier:()=>1,resolveDamageModifiers,calcDamage,abilityNoteLabel:x=>x,attackType:'water'}
   vm.runInNewContext(compiled,env)
   const baseline=env.doubleCallback('myLeft','oppLeft','test-hit',false)
   assert.deepEqual([...baseline.damage.rolls],[39,39,40,40,40,41,41,42,42,43,43,44,44,45,45,46])
