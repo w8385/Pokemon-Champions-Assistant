@@ -24,16 +24,49 @@ async function mount(own, foe, comparisonMode = true) {
   const props = { language: 'ko', tooltipForMove: () => ({}), ...(comparisonMode ? { comparisonMode, comparisonSlots: [0, 0], initialSides: [own, foe] } : {}) }
   if (!comparisonMode && !localStorage.getItem('pokemon-champions-quick-damage:v1')) localStorage.setItem('pokemon-champions-quick-damage:v1', JSON.stringify({ attacker: own, defender: foe, conditions: { weather: 'none', terrain: 'none' } }))
   await act(async () => root.render(React.createElement(Panel, props)))
-  const values = () => [...host.querySelectorAll('.quick-common-conditions label select')].slice(0, 2).map(el => el.value)
+  const selects = () => [...host.querySelectorAll('.quick-common-conditions label select')].slice(0, 2)
+  const values = () => selects().map(el => el.dataset.effectiveValue)
+  const modes = () => selects().map(el => el.value)
   const choose = async (index, value) => { const select = host.querySelectorAll('.quick-common-conditions label select')[index]; await act(async () => { select.value = value; select.dispatchEvent(new browser.Event('change', { bubbles: true })) }) }
   const update = async (attacker, defender, reset = 0, comparisonSlots = [0, 0]) => { await act(async () => root.render(React.createElement(Panel, { ...props, comparisonSlots, initialSides: [attacker, defender], opponentResetRevision: reset }))) }
   const cleanup = async () => { await act(async () => root.unmount()); host.remove(); localStorage.clear() }
-  return { values, choose, update, cleanup, host }
+  return { values, modes, choose, update, cleanup, host }
 }
 
 test('mounted matchup uses canonical valid weather/terrain in visible conditions, not legacy stored fields', async () => {
   const view = await mount(side('pelipper', 'drizzle'), side('pincurchin', 'electric-surge'))
   try { assert.deepEqual(view.values(), ['rain', 'electric']) } finally { await view.cleanup() }
+})
+
+test('manual weather and terrain can return to automatic ownership', async () => {
+  const view = await mount(side('pelipper', 'drizzle'), side('pincurchin', 'electric-surge'), false)
+  try {
+    assert.deepEqual(view.modes(), ['auto', 'auto'])
+    assert.deepEqual(view.values(), ['rain', 'electric'])
+    await view.choose(0, 'sun'); await view.choose(1, 'none')
+    assert.deepEqual(view.modes(), ['sun', 'none'])
+    await view.choose(0, 'auto'); await view.choose(1, 'auto')
+    assert.deepEqual(view.modes(), ['auto', 'auto'])
+    assert.deepEqual(view.values(), ['rain', 'electric'])
+    assert.deepEqual(JSON.parse(localStorage.getItem('pokemon-champions-quick-damage:v1')).manualFields, { weather: false, terrain: false })
+  } finally { await view.cleanup() }
+})
+
+test('Aegislash actual-stat form is selectable and persisted independently of hit form', async () => {
+  const view = await mount(side('aegislash', 'stance-change'), side('garchomp', ''), false)
+  try {
+    const actualGroup = view.host.querySelector('[role="group"][aria-label="실수치 폼"]')
+    const hitGroup = view.host.querySelector('[role="group"][aria-label="피격 폼"]')
+    assert.ok(actualGroup)
+    assert.ok(hitGroup)
+    const blade = [...actualGroup.querySelectorAll('button')].find(button => button.textContent === '블레이드')
+    assert.ok(blade)
+    await act(async () => blade.click())
+    assert.equal(blade.getAttribute('aria-pressed'), 'true')
+    const saved = JSON.parse(localStorage.getItem('pokemon-champions-quick-damage:v1'))
+    assert.equal(saved.attacker.actualForm, 'blade')
+    assert.equal(saved.attacker.hitForm, 'shield')
+  } finally { await view.cleanup() }
 })
 
 test('wrong-form raw ability never activates either field and remains blocked', async () => {
