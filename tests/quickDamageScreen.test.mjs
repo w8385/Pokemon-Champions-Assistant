@@ -15,7 +15,7 @@ test('standalone damage reuses real picker and engine without changing party ent
   assert.match(screen, /<PokemonSearchField id=\{`quick-\$\{side\}`\}/)
   assert.match(calculator, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats/)
   assert.match(io, /storage\.setItem\(QUICK_KEY/)
-  assert.match(hook, /writeQuickStandalone\(localStorage/ )
+  assert.match(hook, /writeQuickStandalone\(\(\) => window\.localStorage/ )
   assert.doesNotMatch(screen, /setParty\(|setOpponents\(|updatePartyMember\(/)
 })
 
