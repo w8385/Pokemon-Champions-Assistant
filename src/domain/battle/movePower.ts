@@ -87,41 +87,65 @@ export function applyTargetWeightMovePower(moveName: string, moveMeta: MoveMeta 
   }
 }
 
-export function multiHitOptions(moveName: string) {
-  switch (moveName) {
-    case '드래곤애로':
-      return [2]
-    case '스케일샷':
-      return [2, 3, 4, 5]
-    case '트리플악셀':
-      return [1, 2, 3]
-    default:
-      return null
-  }
+type MultiHitRule = {
+  options: readonly number[]
+  skillLink?: boolean
+  powerMultipliers?: readonly number[]
+}
+
+const VARIABLE_HITS: MultiHitRule = { options: [2, 3, 4, 5], skillLink: true }
+const FIXED_TWO_HITS: MultiHitRule = { options: [2] }
+const rulesFor = (names: readonly string[], rule: MultiHitRule): Record<string, MultiHitRule> =>
+  Object.fromEntries(names.map(name => [name, rule]))
+
+// Canonical Champions move names plus historical Korean aliases kept in saved data.
+export const MULTI_HIT_RULES: Readonly<Record<string, MultiHitRule>> = {
+  ...rulesFor([
+    '손바닥치기', '본러쉬', '본러시', '기관총', '씨기관총', '연속펀치',
+    '연속뺨치기', '마구찌르기', '마구할퀴기', '고드름침', '바늘미사일',
+    '락블레스트', '록블라스트', '스케일샷', '가시대포', '스위프뺨치기', '물수리검',
+  ], VARIABLE_HITS),
+  ...rulesFor([
+    '더블어택', '두번차기', '두번치기', '드래곤애로', '더블촙',
+    '더블윙', '트윈빔', '더블니들',
+  ], FIXED_TWO_HITS),
+  '트리플악셀': { options: [1, 2, 3], skillLink: true, powerMultipliers: [1, 2, 3] },
+  '찍찍베기': { options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], skillLink: true },
+}
+
+export function multiHitOptions(moveName: string): number[] | null {
+  const options = MULTI_HIT_RULES[moveName]?.options
+  return options ? [...options] : null
+}
+
+export function skillLinkAppliesToMove(moveName: string) {
+  return Boolean(MULTI_HIT_RULES[moveName]?.skillLink)
 }
 
 export function resolveMultiHitMeta(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null, attackerAbility = '') {
   if (!moveMeta) return moveMeta
-  const skillLink = attackerAbility === 'skill-link'
-  if (moveName === '드래곤애로') return { ...moveMeta, hits: 2, hitPowers: [50, 50] }
-  if (moveName === '스케일샷') {
-    const hits = skillLink ? 5 : (hitCount && hitCount >= 2 && hitCount <= 5 ? hitCount : 2)
-    return { ...moveMeta, power: 25, hits, hitPowers: Array.from({ length: hits }, () => 25), variablePower: false }
-  }
-  if (moveName === '트리플악셀') {
-    const hits = skillLink ? 3 : (hitCount && hitCount >= 1 && hitCount <= 3 ? hitCount : 3)
-    return { ...moveMeta, power: 20, hits, hitPowers: [20, 40, 60].slice(0, hits), variablePower: false }
-  }
-  return moveMeta
+  const rule = MULTI_HIT_RULES[moveName]
+  if (!rule) return moveMeta
+  const requestedHits = hitCount !== null && rule.options.includes(hitCount) ? hitCount : rule.options[0]
+  const hits = attackerAbility === 'skill-link' && rule.skillLink
+    ? rule.options[rule.options.length - 1]
+    : requestedHits
+  const basePower = typeof moveMeta.power === 'number' ? moveMeta.power : null
+  const hitPowers = basePower === null
+    ? moveMeta.hitPowers
+    : rule.powerMultipliers
+      ? rule.powerMultipliers.slice(0, hits).map(multiplier => basePower * multiplier)
+      : Array.from({ length: hits }, () => basePower)
+  return { ...moveMeta, hits, hitPowers, variablePower: false }
 }
 
 export function multiHitSummary(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null) {
-  const resolved = resolveMultiHitMeta(moveName, moveMeta, hitCount)
-  const powers = resolved?.hitPowers ?? []
+  const resolved = moveMeta?.hitPowers?.length ? moveMeta : resolveMultiHitMeta(moveName, moveMeta, hitCount)
+  const powers = resolved?.hitPowers?.length
+    ? resolved.hitPowers
+    : typeof resolved?.power === 'number' && resolved.hits
+      ? Array.from({ length: resolved.hits }, () => resolved.power!)
+      : []
   if (!powers.length) return null
-  const totalPower = powers.reduce((sum, value) => sum + value, 0)
-  return {
-    hits: powers.length,
-    totalPower,
-  }
+  return { hits: powers.length, totalPower: powers.reduce((sum, value) => sum + value, 0) }
 }
