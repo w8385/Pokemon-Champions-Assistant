@@ -91,11 +91,13 @@ test('Quick standalone storage is a single adapter, not an App or comparison dra
   assert.equal(QUICK_KEY, 'pokemon-champions-quick-damage:v1')
   let raw = '{malformed', writes = []
   const storage = { getItem(key) { assert.equal(key, QUICK_KEY); return raw }, setItem(key, value) { writes.push([key,value]); raw = value } }
-  assert.deepEqual(readQuickStandalone(storage), {})
-  writeQuickStandalone(storage, { attacker: { moves: ['A','','C',''] }, defender: {}, conditions: { weather: 'rain' }, manualFields: { weather: true, terrain: true } })
+  assert.deepEqual(readQuickStandalone(storage), { value: {}, error: false })
+  assert.equal(writeQuickStandalone(storage, { attacker: { moves: ['A','','C',''] }, defender: {}, conditions: { weather: 'rain' }, manualFields: { weather: true, terrain: true } }), true)
   assert.deepEqual(JSON.parse(raw).attacker.moves, ['A','','C',''])
   assert.deepEqual(writes.map(([key]) => key), [QUICK_KEY])
-  assert.throws(() => readQuickStandalone({ getItem() { throw Error('getItem') } }), /getItem/)
-  assert.throws(() => writeQuickStandalone({ setItem() { throw Error('setItem') } }, {}), /setItem/)
+  assert.deepEqual(readQuickStandalone({ getItem() { throw Error('getItem') } }), { value: {}, error: true })
+  assert.deepEqual(readQuickStandalone(() => { throw Error('getter') }), { value: {}, error: true })
+  assert.equal(writeQuickStandalone({ setItem() { throw Error('setItem') } }, {}), false)
+  assert.equal(writeQuickStandalone(() => { throw Error('getter') }, {}), false)
   } finally { await server.close() }
 })
