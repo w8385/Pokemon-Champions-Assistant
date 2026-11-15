@@ -58,7 +58,17 @@ const sourceLabels = {
       {comparisonMode ? null : searchField}
       {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
-        {row.key === 'aegislash' && entry.ability && !heldAbilityError(row.key, entry.ability, language) && row.abilities.includes(entry.ability) ? <div className="quick-form-controls"><div role="group" aria-label={language === 'ko' ? '피격 폼' : language === 'ja' ? '被弾時フォルム' : 'Form when hit'}><strong>{language === 'ko' ? '피격 폼' : language === 'ja' ? '被弾時フォルム' : 'Form when hit'}</strong>{(['shield', 'blade'] as const).map(form => <button key={form} type="button" className="pick-chip" aria-pressed={(entry.hitForm ?? 'shield') === form} onClick={() => setEntry(prev => ({ ...prev, hitForm: form }))}>{form === 'shield' ? language === 'ko' ? '실드' : language === 'ja' ? 'シールド' : 'Shield' : language === 'ko' ? '블레이드' : language === 'ja' ? 'ブレード' : 'Blade'}</button>)}</div><small>{language === 'ko' ? `표시 실수치: ${entry.actualForm === 'blade' ? '블레이드' : '실드'} · 공격기 사용 시 블레이드 자동 · 선택 폼은 계산 조건(킹실드 후 실드 선택)` : language === 'ja' ? `表示実数値: ${entry.actualForm === 'blade' ? 'ブレード' : 'シールド'} · 攻撃技はブレード · 被弾時フォルムは計算条件` : `Shown stats: ${entry.actualForm === 'blade' ? 'Blade' : 'Shield'} · attacking moves use Blade · hit-time form is a calculation condition`}</small></div> : null}
+        {row.key === 'aegislash' && entry.ability && !heldAbilityError(row.key, entry.ability, language) && row.abilities.includes(entry.ability) ? <div className="quick-form-controls">
+          <div role="group" aria-label={language === 'ko' ? '실수치 폼' : language === 'ja' ? '実数値のフォルム' : 'Actual-stat form'}>
+            <strong>{language === 'ko' ? '실수치 폼' : language === 'ja' ? '実数値のフォルム' : 'Actual-stat form'}</strong>
+            {(['shield', 'blade'] as const).map(form => <button key={form} type="button" className="pick-chip" aria-pressed={(entry.actualForm ?? 'shield') === form} onClick={() => setEntry(prev => ({ ...prev, actualForm: form }))}>{form === 'shield' ? language === 'ko' ? '실드' : language === 'ja' ? 'シールド' : 'Shield' : language === 'ko' ? '블레이드' : language === 'ja' ? 'ブレード' : 'Blade'}</button>)}
+          </div>
+          <div role="group" aria-label={language === 'ko' ? '피격 폼' : language === 'ja' ? '被弾時フォルム' : 'Form when hit'}>
+            <strong>{language === 'ko' ? '피격 폼' : language === 'ja' ? '被弾時フォルム' : 'Form when hit'}</strong>
+            {(['shield', 'blade'] as const).map(form => <button key={form} type="button" className="pick-chip" aria-pressed={(entry.hitForm ?? 'shield') === form} onClick={() => setEntry(prev => ({ ...prev, hitForm: form }))}>{form === 'shield' ? language === 'ko' ? '실드' : language === 'ja' ? 'シールド' : 'Shield' : language === 'ko' ? '블레이드' : language === 'ja' ? 'ブレード' : 'Blade'}</button>)}
+          </div>
+          <small>{language === 'ko' ? `표시 실수치: ${entry.actualForm === 'blade' ? '블레이드' : '실드'} · 공격기 사용 시 블레이드 자동 · 피격 폼은 계산 조건(킹실드 후 실드 선택)` : language === 'ja' ? `表示実数値: ${entry.actualForm === 'blade' ? 'ブレード' : 'シールド'} · 攻撃技はブレード · 被弾時フォルムは計算条件` : `Shown stats: ${entry.actualForm === 'blade' ? 'Blade' : 'Shield'} · attacking moves use Blade · hit-time form is a calculation condition`}</small>
+        </div> : null}
         {statCard(side, entry, row)}
         <MoveSlotsEditor label={lt('기술 배치')} labels={labels} ownerId={`quick-${side}-${entry.key}`} role="editable" selectedIndex={selected.side === side ? selected.index : null}
           toolbar={<>{learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
