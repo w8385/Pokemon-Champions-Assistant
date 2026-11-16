@@ -1,6 +1,6 @@
 import type { QuickSide, QuickConditions } from './quickModel'
 import type { SharedPoolState, MovePoolState } from './quickPresentation'
-import type { SiteLanguage, Row } from '../../app/types'
+import type { ConditionalPowerValue, SiteLanguage, Row } from '../../app/types'
 import type { BattleStatBlock } from '../../domain/battle/damageCore'
 import { indexByKey, rows } from '../../adapters/catalog/roster'
 import { heldAbilityError } from '../../shared/display/abilityPresentation'
@@ -36,10 +36,10 @@ export function formStats(side: QuickSide, row: Row, ability: string, form: Aegi
   return statKeys.every(key => stats[key] !== null) ? stats as BattleStatBlock : null
 }
 
-export type QuickDamageRequest = { source: QuickSide; target: QuickSide; name: string; conditions: QuickConditions; pools: Record<string, SharedPoolState>; language: SiteLanguage }
+export type QuickDamageRequest = { source: QuickSide; target: QuickSide; name: string; conditions: QuickConditions; pools: Record<string, SharedPoolState>; language: SiteLanguage; hitCount?: number; conditionalValue?: ConditionalPowerValue; sourceSpeed?: number | null; targetSpeed?: number | null }
 
 /** Capture mutable catalog/cache inputs once; no damage modifiers or roll calculation here. */
-export function prepareQuickDamageInput({ source, target, name, conditions, pools, language }: QuickDamageRequest) {
+export function prepareQuickDamageInput({ source, target, name, conditions, pools, language, hitCount, conditionalValue, sourceSpeed, targetSpeed }: QuickDamageRequest) {
   const sourceRow = indexByKey.get(source.key), targetRow = indexByKey.get(target.key)
   const sourceAbilityValid = !heldAbilityError(source.key, source.ability, language)
   const targetAbilityValid = !heldAbilityError(target.key, target.ability, language)
@@ -54,6 +54,6 @@ export function prepareQuickDamageInput({ source, target, name, conditions, pool
   const sourceStat = name === '속임수' ? null : base?.usesDefenseAsAttack ? 'defense' : base?.category === 'special' ? 'spAttack' : 'attack'
   const sourceStats = sourceRow ? formStats(source, sourceRow, sourceAbilityValid ? sourceAbility : '', sourceForm, sourceStat) : null
   const targetStats = targetRow ? formStats(target, targetRow, targetAbilityValid ? targetAbility : '', targetForm, name === '속임수' ? 'attack' : null) : null
-  return { source, target, name, conditions, sourceRow, targetRow, sourceStats, targetStats, sourceForm, targetForm, sourceAbilityValid, targetAbilityValid, sourceAbility, targetAbility, base }
+  return { source, target, name, conditions, sourceRow, targetRow, sourceStats, targetStats, sourceForm, targetForm, sourceAbilityValid, targetAbilityValid, sourceAbility, targetAbility, base, hitCount, conditionalValue, sourceSpeed, targetSpeed }
 }
 export type QuickDamageInput = ReturnType<typeof prepareQuickDamageInput>

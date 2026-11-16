@@ -27,10 +27,9 @@ test('one Speed/damage result precedes the real inline editing cards and battle 
 test('Speed values and source uncertainty render once beside their real controls', () => {
   assert.equal((speed.match(/className="quick-speed-track"/g) ?? []).length, 1)
   assert.doesNotMatch(panel, /quick-speed-current|quick-speed-source|quick-assumptions|가정의 출처와 한계/)
-  assert.match(card, /sourceStatus\('nature'\)/)
-  assert.match(card, /stat\.key === 'attack' \|\| stat\.key === 'spAttack'/)
-  assert.match(card, /sourceStatus\(stat\.key\)/)
-  assert.match(card, /entry\.statNatureMultipliers\[stat\.key\]/)
+  assert.match(card, /natureSourceStatus\(\)/)
+  assert.doesNotMatch(card, /quick-stat-evidence|sourceStatus\(stat\.key\)|opponentSource\?\.knownOffense/)
+  assert.match(card, /theme: statThemeClass\(stat\.key\), value: quickStat/)
   assert.match(speed, /quick-speed-assumptions/)
   assert.match(panel, /className="quick-record-actions"/)
   assert.doesNotMatch(panel, /single-entry-commit/)

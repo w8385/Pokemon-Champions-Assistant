@@ -84,7 +84,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                     />{memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}</> : null}
                     {row ? (() => {
                       const magic = effortMagicProjection(row, member.evs, member.config.nature)
-                      return <CompactStatEditor identity={`party-${editorIdentity}-${idx}-${member.key}`} row={row} language={siteLanguage} evs={member.evs} nature={member.config.nature}
+                      return <CompactStatEditor identity={`party-${editorIdentity}-${idx}-${member.key}`} language={siteLanguage} evs={member.evs} nature={member.config.nature}
                         stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))}
                         actualValue={(key, effort) => partyStatValue(row, effort === undefined ? member : { ...member, evs: { ...member.evs, [key]: effort } }, key)}
                         onEffort={(key, value) => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, evs: applyChampionsEffort(entry.evs, key, value) } : entry))}

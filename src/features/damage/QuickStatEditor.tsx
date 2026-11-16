@@ -30,7 +30,6 @@ export function QuickStatEditor({ side, identity, entry, row, stats, language, s
   }
   return <CompactStatEditor
     identity={identity}
-    row={projectedRow}
     stats={stats}
     evs={entry.evs}
     nature={entry.nature}
@@ -40,22 +39,20 @@ export function QuickStatEditor({ side, identity, entry, row, stats, language, s
     effectiveNatureMultiplier={key => quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key))}
     onEffort={(key, value) => {
       onDirty(key)
-      setEntry(previous => ({ ...previous, evs: applyChampionsEffort(previous.evs, key, value) }))
+      setEntry(previous => {
+        const actual = { ...previous.actual }
+        delete actual[key]
+        return { ...previous, actual, evs: applyChampionsEffort(previous.evs, key, value) }
+      })
     }}
     onSpread={next => {
       for (const stat of STAT_PRESENTATION) if (entry.evs[stat.key] !== next[stat.key]) onDirty(stat.key)
-      setEntry(previous => ({ ...previous, evs: next }))
+      setEntry(previous => ({ ...previous, actual: {}, evs: next }))
     }}
     onNature={nature => {
       onDirty('nature')
-      setEntry(previous => ({ ...previous, nature, statNatureMultipliers: {}, speedNatureKnown: true }))
+      setEntry(previous => ({ ...previous, actual: {}, nature, statNatureMultipliers: {}, speedNatureKnown: true }))
     }}
-    override={entry.actual}
-    onOverride={(key, value) => setEntry(previous => {
-      const actual = { ...previous.actual }
-      if (value === '') delete actual[key]; else actual[key] = value
-      return { ...previous, actual }
-    })}
     magicScale={magic.scale}
   />
 }

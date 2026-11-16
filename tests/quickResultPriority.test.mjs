@@ -9,21 +9,20 @@ const browser = new Window({ url: 'http://localhost/#/damage?my=4&opp=0' })
 Object.assign(globalThis, { window: browser, document: browser.document, localStorage: browser.localStorage, HTMLElement: browser.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true })
 const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
-const { QuickDamagePanel, quickSide } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts"].map(path => server.ssrLoadModule(path)))))()
+const { QuickDamagePanel, quickSide, quickKoVerdict } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts", "/src/features/damage/quickPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
 const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
 const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
 test.before(async () => { await Promise.all([loadFormLearnset('starmie'), loadFormLearnset('pelipper'), loadFormLearnset('garchomp'), loadMoveMetaByName()]) })
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
-const fixture = (hp, ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기') => {
+const fixture = (ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기') => {
   const own = quickSide({ key: ownKey, ability: '', moves: [ownMove, '', '', ''] })
   const foe = quickSide({ key: foeKey, ability: '', moves: ['파도타기', '', '', ''] })
-  if (hp !== undefined) foe.actual.hp = String(hp)
   return [own, foe]
 }
-async function mount({ hp, comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove } = {}) {
+async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove } = {}) {
   localStorage.clear()
-  const sides = fixture(hp, ownKey, foeKey, ownMove)
+  const sides = fixture(ownKey, foeKey, ownMove)
   if (!comparisonMode) localStorage.setItem('pokemon-champions-quick-damage:v1', JSON.stringify({ attacker: sides[0], defender: sides[1] }))
   const host = document.createElement('div'); document.body.append(host)
   const root = createRoot(host)
@@ -56,66 +55,49 @@ for (const comparisonMode of [false, true]) {
   })
 }
 
-test('a one-hit verdict uses inclusive min/max versus actual target HP in both selected and move preview', async () => {
-  const baseline = await mount()
-  let min, max
+test('a one-hit verdict keeps inclusive min/max boundaries and both real result surfaces agree', async () => {
+  const result = hp => ({ damage: { min: 33, max: 40 }, targetHp: hp, hits: 1, effectiveness: .5 })
+  assert.equal(quickKoVerdict(result(33)), 'certain')
+  assert.equal(quickKoVerdict(result(40)), 'possible')
+  assert.equal(quickKoVerdict(result(41)), null)
+
+  const view = await mount()
   try {
-    const range = baseline.host.querySelector('.quick-result h3')?.textContent.match(/^(\d+)–(\d+)/)
-    assert.ok(range, 'supported numeric fixture')
-    ;[, min, max] = range.map(Number)
-    assert.ok(min > 1 && max > min, `fixture must straddle an integer HP: ${min}–${max}`)
-  } finally { await baseline.close() }
-  for (const [hp, verdict, tone] of [[min, '확정 1타', 'certain'], [max, '난수 1타', 'possible'], [max + 1, '', '']]) {
-    const view = await mount({ hp })
-    try {
-      const result = view.host.querySelector('.quick-result')
-      const preview = view.host.querySelector('.quick-side-card .quick-move-preview')
-      for (const element of [result, preview]) {
-        assert.equal(element.classList.contains(`quick-ko-${tone}`), Boolean(tone), `HP ${hp} tone`)
-        assert.equal(element.querySelector('.quick-ko-verdict')?.textContent ?? '', verdict, `HP ${hp} label`)
-      }
-    } finally { await view.close() }
-  }
+    const selected = view.host.querySelector('.quick-result')
+    const preview = view.host.querySelector('.quick-side-card .quick-move-preview')
+    assert.equal(selected.querySelector('.quick-ko-verdict')?.textContent ?? '', preview.querySelector('.quick-ko-verdict')?.textContent ?? '')
+    for (const tone of ['certain', 'possible']) assert.equal(selected.classList.contains(`quick-ko-${tone}`), preview.classList.contains(`quick-ko-${tone}`))
+  } finally { await view.close() }
 })
 
 test('both modes keep selected move and range primary, with concise HP and KO status', async () => {
   for (const comparisonMode of [false, true]) {
     const baseline = await mount({ comparisonMode })
-    let min, max
     try {
       const selected = baseline.host.querySelector('.quick-result')
       const range = selected.querySelector('h3')?.textContent.match(/^(\d+)–(\d+) \([\d.]+–[\d.]+%\)/)
       assert.ok(range, 'supported numeric range and percentage')
-      ;[, min, max] = range.map(Number)
+      const [, min, max] = range.map(Number)
       assert.ok(max > min)
       assert.match(selected.querySelector('.quick-result-head strong')?.textContent ?? '', /파도타기/)
       assert.doesNotMatch(selected.querySelector('.quick-result-head')?.textContent ?? '', /대미지 결과/)
       assert.match(selected.querySelector('.quick-result-head')?.textContent ?? '', /→/)
+      const targetHp = Number(selected.textContent.match(/상대 체력 (\d+)/)?.[1])
+      assert.ok(targetHp > max)
+      assert.doesNotMatch(selected.textContent, /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해/)
+      assert.equal(selected.querySelector('.quick-rolls'), null)
+      assert.match(selected.textContent, /1타 불가/)
+      assert.equal(selected.querySelector('.quick-ko-chance'), null)
     } finally { await baseline.close() }
-    for (const [hp, verdict] of [[max + 1, '1타 불가'], [max, '난수 1타'], [min, '확정 1타']]) {
-      const view = await mount({ comparisonMode, hp })
-      try {
-        const selected = view.host.querySelector('.quick-result')
-        assert.match(selected.textContent, new RegExp(`상대 체력 ${hp}`))
-        assert.doesNotMatch(selected.textContent, /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해/)
-        assert.equal(selected.querySelector('.quick-rolls'), null)
-        assert.match(selected.textContent, new RegExp(verdict))
-        if (hp === max) assert.match(selected.querySelector('.quick-ko-chance')?.textContent ?? '', /\d+(?:\.\d+)?%/)
-        else assert.equal(selected.querySelector('.quick-ko-chance'), null)
-      } finally { await view.close() }
-    }
   }
 })
 
 test('localized non-KO and uncertain cases do not claim a certain one-hit result', async () => {
   for (const [language, label] of [['ko', '1타 불가'], ['en', 'No OHKO'], ['ja', '1発不可']]) {
-    const baseline = await mount({ language })
-    let max
-    try { max = Number(baseline.host.querySelector('.quick-result h3')?.textContent.match(/^\d+–(\d+)/)?.[1]); assert.ok(max) } finally { await baseline.close() }
-    const view = await mount({ language, hp: max + 1 })
+    const view = await mount({ language })
     try { assert.match(view.host.querySelector('.quick-result')?.textContent ?? '', new RegExp(label)) } finally { await view.close() }
   }
-  for (const options of [{ hp: 1, ownMove: 'unknown move' }, { hp: 1, ownKey: 'garchomp', ownMove: '스케일샷' }]) {
+  for (const options of [{ ownMove: 'unknown move' }, { ownKey: 'garchomp', ownMove: '스케일샷' }]) {
     const view = await mount(options)
     try {
       const selected = view.host.querySelector('.quick-result')
@@ -164,7 +146,7 @@ test('legacy Speed and reverse lab labels omit assumption wording without changi
 
 test('KO labels are localized in selected results and move previews', async () => {
   for (const [language, label] of [['ko', '확정 1타'], ['en', 'Guaranteed OHKO'], ['ja', '確定1発']]) {
-    const view = await mount({ hp: 1, language })
+    const view = await mount({ foeKey: 'camerupt', language })
     try {
       assert.equal(view.host.querySelector('.quick-result .quick-ko-verdict')?.textContent, label)
       assert.equal(view.host.querySelector('.quick-side-card .quick-move-preview .quick-ko-verdict')?.textContent, label)
@@ -175,9 +157,9 @@ test('KO labels are localized in selected results and move previews', async () =
 
 test('an immune move, unsupported move, and multihit move do not claim a one-hit KO', async () => {
   for (const [options, numeric] of [
-    [{ hp: 1, foeKey: 'garchomp', ownMove: '10만볼트' }, false],
-    [{ hp: 1, ownMove: 'unknown move' }, false],
-    [{ hp: 1, ownKey: 'garchomp', ownMove: '스케일샷' }, true],
+    [{ foeKey: 'garchomp', ownMove: '10만볼트' }, false],
+    [{ ownMove: 'unknown move' }, false],
+    [{ ownKey: 'garchomp', ownMove: '스케일샷' }, true],
   ]) {
     const view = await mount(options)
     try {

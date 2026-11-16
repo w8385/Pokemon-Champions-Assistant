@@ -43,6 +43,7 @@
     "src/domain/battle/moveKey.ts",
     "src/domain/battle/movePower.ts",
     "src/domain/battle/moveTags.ts",
+    "src/domain/battle/quickBattleFacts.ts",
     "src/domain/battle/quickDamageState.ts",
     "src/domain/battle/sampleDamageMoves.ts",
     "src/domain/battle/sampleDamageProjection.ts",

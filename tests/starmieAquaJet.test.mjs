@@ -57,6 +57,6 @@ test('selected Aqua Jet crosses the real calculation eligibility gate with water
   assert.deepEqual({ type: meta.type, category: meta.category, power: meta.power, priority: meta.priority }, { type: 'water', category: 'physical', power: 40, priority: 1 })
   assert.equal(quickMoveSupported('아쿠아제트', meta), true)
   assert.match(owner_5, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
-  assert.match(calculator, /quickMoveSupported\(name, base, Boolean\(CONDITIONAL_MOVE_POWER_RULES\[name\]\)\)/)
+  assert.match(calculator, /quickMoveSupported\(name, supportedBase\)/)
   assert.match(calculator, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats, meta\.power/)
 })

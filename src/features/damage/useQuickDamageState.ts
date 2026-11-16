@@ -3,7 +3,7 @@ import { prepareQuickDamageInput, toStats } from './prepareQuickDamageInput'
 import { readQuickStandalone, writeQuickStandalone } from '../../adapters/persistence/quickDamage'
 import { filterSpeciesOptions } from '../../shared/search/speciesOptions'
 import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './quickPresentation.ts'
-import { QuickBattle, QuickSide, QuickConditions, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat } from './quickModel.ts'
+import { QuickBattle, QuickSide, QuickConditions, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat, quickMoveConditionKey, quickMoveHits, quickMoveValues, quickStatused } from './quickModel.ts'
 import { applyChampionsEffort } from '../../domain/champions/effortProjection'
 import { heldAbilityError, selectedAbilityDisplayName } from '../../shared/display/abilityPresentation.ts'
 import { resolveMoveMeta, filterMoveOptions } from '../../adapters/catalog/movePresentation.ts'
@@ -64,7 +64,7 @@ const lt = (text: string) => translateText(language, text)
   const [configuredConditions, setConditions] = React.useState<QuickConditions>(() => {
     const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
     const defaults = quickDefaultConditions()
-    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: Number.isInteger(Number(input.hits)) && Number(input.hits) >= 1 && Number(input.hits) <= 10 ? Number(input.hits) : 2, critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false }
+    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: Number.isInteger(Number(input.hits)) && Number(input.hits) >= 1 && Number(input.hits) <= 10 ? Number(input.hits) : 2, moveHits: quickMoveHits(input.moveHits), moveValues: quickMoveValues(input.moveValues), critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false, gravity: input.gravity === true }
   })
   // The two cards own the field projection; persisted/manual conditions remain separate.
   const [manualFields, setManualFields] = React.useState(() => {
@@ -90,7 +90,7 @@ const lt = (text: string) => translateText(language, text)
   const [modalKey, setModalKey] = React.useState('')
   const [dirty, setDirty] = React.useState<Record<'attacker' | 'defender', ReadonlySet<string>>>(() => ({ attacker: initialSides ? restoredComparisonSide(initialSides[0], 'attacker', comparisonSlots?.[0] ?? 0).dirty : new Set(), defender: initialSides ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).dirty : new Set() }))
   const [draftStorageFailed, setDraftStorageFailed] = React.useState(false)
-  const markDirty = (side: 'attacker' | 'defender', field: string) => setDirty(prev => ({ ...prev, [side]: new Set([...prev[side], field]) }))
+  const markDirty = (side: 'attacker' | 'defender', field: string) => setDirty(prev => prev[side].has(field) ? prev : ({ ...prev, [side]: new Set([...prev[side], field]) }))
   // A saved seed or slot change belongs to one card; never remount both cards.
   const seedFingerprint = initialSides?.map((seed, index) => `${comparisonSlots?.[index] ?? 0}:${JSON.stringify(seed)}`) as [string, string] | undefined
   const seed0 = seedFingerprint?.[0], seed1 = seedFingerprint?.[1]
@@ -190,10 +190,11 @@ const lt = (text: string) => translateText(language, text)
   const defendingRow = indexByKey.get(defender.key)
   const scarfFor = (entry: QuickSide) => entry.speedScarfOverride ?? isChoiceScarfItem(entry.item)
   const abilityFor = (entry: QuickSide, row: Row | undefined) => getSpeedAbility(row ? resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '' : '')
-  const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '', { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: entry.battle.burned || entry.battle.poisoned }))
+  const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '', { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: quickStatused(entry) }))
   const speedFor = (entry: QuickSide, row: Row | undefined, scarf: boolean, ability: 1 | 1.5 | 2 = 1) => {
     if (!row) return null
     const itemStatus = classifyHeldItem(entry.key, entry.item)
+    const itemMultiplier = itemStatus.canonical === 'くろいてっきゅう' ? 0.5 : 1
     if (!isCalculableHeldItem(entry.key, entry.item) || heldAbilityError(entry.key, entry.ability, language)) return { value: null, reason: heldItemError(entry.key, entry.item, language) || heldAbilityError(entry.key, entry.ability, language) }
     if (scarf && itemStatus.requiredStone) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
     if (entry.speedAbilityActive && entry.ability === 'unburden' && scarf) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
@@ -203,22 +204,26 @@ const lt = (text: string) => translateText(language, text)
       if (value === null) return { value: null, reason: lt('실수치는 1~999의 정수로 입력하세요.') }
       if (scarf && row.key.startsWith('mega-')) return { value: null, reason: lt('메가폼은 메가스톤이 필요하여 스카프를 사용할 수 없습니다.') }
       if (scarf && entry.ability === 'unburden' && ability !== 1) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
-      return { value: applySpeedModifiers(applySpeedStage(value, entry.speedStage), { scarf, abilityMultiplier: ability }), reason: null }
+      return { value: applySpeedModifiers(applySpeedStage(value, entry.speedStage), { scarf, abilityMultiplier: ability, itemMultiplier }), reason: null }
     }
-    return effectiveComparisonSpeed(row, entry.evs.speed, quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed')), entry.speedStage, scarf, ability, entry.ability)
+    return effectiveComparisonSpeed(row, entry.evs.speed, quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed')), entry.speedStage, scarf, ability, entry.ability, itemMultiplier)
   }
   const mySpeedResult = speedFor(attacker, attackingRow, scarfFor(attacker), attacker.speedAbilityActive && abilityPermitted(attacker, attackingRow) ? abilityFor(attacker, attackingRow)!.multiplier : 1)
   const oppSpeedResult = speedFor(defender, defendingRow, scarfFor(defender), defender.speedAbilityActive && abilityPermitted(defender, defendingRow) ? abilityFor(defender, defendingRow)!.multiplier : 1)
   const moveLabel = (name: string) => language === 'ko' ? name : language === 'en' ? moveDescriptionFor(name)?.nameEn || name : moveDescriptionFor(name)?.nameJa || name
   const selectedSide = selected.side === 'attacker' ? attacker : defender
   const selectedMove = selectedSide.moves[selected.index] ?? ''
-  const calculate = (direction: 'attacker' | 'defender', name: string) => calculateQuickDamage(prepareQuickDamageInput({ source: direction === 'attacker' ? attacker : defender, target: direction === 'attacker' ? defender : attacker, name, conditions, pools, language }))
-  const result = calculate(selected.side, selectedMove)
+  const selectedMetadata = getMoveMetadata(selectedMove)
+  const calculate = (direction: 'attacker' | 'defender', name: string, slot = 0) => {
+    const conditionKey = quickMoveConditionKey(direction, slot, name)
+    return calculateQuickDamage(prepareQuickDamageInput({ source: direction === 'attacker' ? attacker : defender, target: direction === 'attacker' ? defender : attacker, name, conditions, pools, language, hitCount: conditions.moveHits[conditionKey] ?? conditions.hits, conditionalValue: conditions.moveValues[conditionKey], sourceSpeed: direction === 'attacker' ? mySpeedResult?.value : oppSpeedResult?.value, targetSpeed: direction === 'attacker' ? oppSpeedResult?.value : mySpeedResult?.value }))
+  }
+  const result = calculate(selected.side, selectedMove, selected.index)
   const selectedVerdict = quickKoVerdict(result)
   const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
   const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
   const selectedPool = pools[selectedSide.key]
-  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !getMoveMetadata(selectedMove)?.provenance.category || getMoveMetadata(selectedMove)?.provenance.category === 'unknown' ? lt('기술/계산 메타 미확인') : lt('이 기술은 현재 계산 조건에서 지원되지 않거나 변화기입니다.'))
+  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !selectedMetadata?.provenance.category || selectedMetadata.provenance.category === 'unknown' ? lt('기술/계산 메타 미확인') : selectedMetadata.meta.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : lt('이 기술은 현재 계산 조건에서 지원되지 않습니다.'))
   const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {

@@ -31,6 +31,8 @@ test('one combined fixed-point modifier rounds after stage, not sequential floor
   assert.equal(applySpeedModifiers(167, { scarf: true, abilityMultiplier: 2 }), 501)
   assert.equal(applySpeedModifiers(167, { scarf: true, abilityMultiplier: 1.5 }), 376)
   assert.equal(applySpeedModifiers(167, { scarf: false, abilityMultiplier: 1 }), 167)
+  assert.equal(applySpeedModifiers(167, { scarf: false, abilityMultiplier: 1, itemMultiplier: 0.5 }), 83)
+  assert.equal(applySpeedModifiers(167, { scarf: true, abilityMultiplier: 2, itemMultiplier: 0.5 }), 250)
 })
 
 test('base rows remain inactive while explicit ability scenarios carry separate conditions and identities', () => {
