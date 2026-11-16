@@ -90,7 +90,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                         onEffort={(key, value) => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, evs: applyChampionsEffort(entry.evs, key, value) } : entry))}
                         onSpread={evs => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, evs } : entry))}
                         onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature } } : entry))}
-                        magicCandidate={magic.candidate} magicPoints={magic.points} />
+                        magicScale={magic.scale} />
                     })() : null}
                     {row ? <MoveSlotsEditor className="inline-move-card" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
                       toolbar={<>

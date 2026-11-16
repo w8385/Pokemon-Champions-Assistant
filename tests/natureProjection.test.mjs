@@ -16,9 +16,12 @@ test('nature axes resolve to the canonical persisted NatureId', () => {
 
 test('compact stat tile offers only down/up and renders an impossible partner as a dash', () => {
   assert.match(compact, /className="nature-down"/)
-  assert.match(compact, />↓ \.9<\/button>/)
+  assert.match(compact, /className="nature-down"[^>]*aria-label=\{`\$\{selectedName\} · \$\{text\.lowerNature\}`\}/)
+  assert.match(compact, /<span aria-hidden="true">↓<\/span>/)
   assert.match(compact, /className="nature-up"/)
-  assert.match(compact, />↑ 1\.1<\/button>/)
+  assert.match(compact, /className="nature-up"[^>]*aria-label=\{`\$\{selectedName\} · \$\{text\.raiseNature\}`\}/)
+  assert.match(compact, /<span aria-hidden="true">↑<\/span>/)
+  assert.doesNotMatch(compact, />↓ \.9<\/button>|>↑ 1\.1<\/button>/)
   assert.match(compact, /className="nature-impossible"[^>]*>—<\/span>/)
   assert.match(compact, /onNature\(next\)/)
   assert.doesNotMatch(compact, /nature-neutral/)

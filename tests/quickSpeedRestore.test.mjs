@@ -9,9 +9,9 @@ test('stat tiles and modal checkpoints use the same Speed nature as comparison',
  assert.equal(quickStatNature(side,'defense',1),1.1)
  assert.equal(quickStatNature(side,'hp',.9),1)
  assert.equal(quickStatNature({...side,speedNatureKnown:true},'speed',.9),.9)
- const app=readFileSync(new URL('../src/App.tsx',import.meta.url),'utf8')
  assert.match(readFileSync(new URL('../src/features/damage/quickModel.ts',import.meta.url),'utf8'), /quickStatNature\(side, key,/)
  assert.match(readFileSync(new URL('../src/features/damage/QuickEffortModal.tsx',import.meta.url),'utf8'), /quickStatNature\(entry, key,/)
+ assert.match(readFileSync(new URL('../src/features/damage/QuickStatEditor.tsx',import.meta.url),'utf8'), /effectiveNatureMultiplier=\{key => quickStatNature\(entry, key,/)
 })
 
 test('speed assumptions and stages survive a quick reload', () => {

@@ -108,7 +108,7 @@ export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '', a
   </div>
 }
 
-export function PokemonStatGrid({ stats, onTune, tuneExpandedKey, tuneControls, renderTune, unknown = '미확인', className = '', sampleStyle = false, showEffort = true }: { stats: CardStat[]; onTune?: (key: EffortStatKey) => void; tuneExpandedKey?: EffortStatKey | null; tuneControls?: string; renderTune?: (stat: CardStat) => ReactNode; unknown?: string; className?: string; sampleStyle?: boolean; showEffort?: boolean }) {
+export function PokemonStatGrid({ stats, onTune, tuneExpandedKey, tuneControls, renderTune, renderPreview, unknown = '미확인', className = '', sampleStyle = false, showEffort = true }: { stats: CardStat[]; onTune?: (key: EffortStatKey) => void; tuneExpandedKey?: EffortStatKey | null; tuneControls?: string; renderTune?: (stat: CardStat) => ReactNode; renderPreview?: (stat: CardStat, open: () => void) => ReactNode; unknown?: string; className?: string; sampleStyle?: boolean; showEffort?: boolean }) {
   return <div className={`stat-preview-list ${className}`.trim()}>{stats.map(stat => {
     const content = <>
       <div className={`stat-preview-topline ${sampleStyle ? 'sample-stat-topline' : ''}`.trim()}><span>{stat.label}</span><strong>{stat.value ?? unknown}</strong></div>
@@ -117,6 +117,7 @@ export function PokemonStatGrid({ stats, onTune, tuneExpandedKey, tuneControls, 
     </>
     const rowClass = `stat-preview-row ${sampleStyle ? 'sample-stat-preview-row ' : ''}${stat.theme}`
     if (onTune && tuneExpandedKey === stat.key && renderTune) return <div key={stat.key} className={`${rowClass} stat-preview-editor`} id={tuneControls} role="group" aria-label={stat.label} tabIndex={-1}>{renderTune(stat)}</div>
+    if (onTune && renderPreview) return <div key={stat.key} className={`${rowClass} stat-preview-interactive`}>{renderPreview(stat, () => onTune(stat.key))}</div>
     return onTune
       ? <button key={stat.key} type="button" className={`${rowClass} stat-preview-button`} data-stat-key={stat.key} onClick={e => { e.stopPropagation(); onTune(stat.key) }}>{content}</button>
       : <div key={stat.key} className={rowClass}>{content}</div>
