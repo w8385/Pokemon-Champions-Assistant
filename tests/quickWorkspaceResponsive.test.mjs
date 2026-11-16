@@ -28,7 +28,7 @@ test('paired cards stack by 600px so inline stat controls remain readable', () =
   assert.match(statEditor, /identity=\{identity\}/)
   assert.match(panel, /const seedIdentity = seed \? JSON\.stringify/)
   assert.match(panel, /editorIdentity=\{editorIdentity\}/)
-  assert.match(compactEditor, /<PokemonStatGrid stats=\{visibleStats\} showEffort/)
+  assert.match(compactEditor, /<PokemonStatGrid stats=\{stats\} showEffort/)
   assert.match(compactEditor, /const presetIds:[^=]*= \['hb', 'hd', 'as', 'cs', 'max-speed', 'clear'\]/)
   assert.match(cardOwner, /showPresets=\{!comparisonMode \|\| side === 'defender'\}/)
 })

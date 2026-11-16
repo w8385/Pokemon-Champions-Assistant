@@ -12,9 +12,15 @@ const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageSta
 test('party tuning shares the compact editor and its canonical magic projection', () => {
   assert.match(member, /<CompactStatEditor/)
   assert.match(member, /effortMagicProjection\(row, member\.evs, member\.config\.nature\)/)
-  assert.match(member, /magicCandidate=\{magic\.candidate\} magicPoints=\{magic\.points\}/)
-  assert.match(compact, /className="quick-compact-tile-magic/)
-  assert.match(compact, /onClick=\{\(\) => setEffort\(selected, magicTarget\.effort\)\}/)
+  assert.match(member, /magicScale=\{magic\.scale\}/)
+  assert.match(compact, /className="quick-compact-effort-scale"/)
+  assert.match(compact, /className="quick-compact-effort-scale" aria-hidden="true"/)
+  assert.doesNotMatch(compact, /className="quick-compact-effort-bounds" aria-hidden/)
+  assert.match(compact, /magicScale\?\.points\.map/)
+  assert.match(compact, /type="range"[^]*?max=\{inputMax\}/)
+  assert.match(compact, /aria-controls=\{`\$\{tunerId\}-\$\{stat\.key\}`\}/)
+  assert.match(compact, /renderPreview=\{renderPreview\}/)
+  assert.doesNotMatch(compact, /stat-preview-magic|quick-compact-tile-magic/)
 })
 test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {
   assert.match(quickCalc, /quickStagePair\(source\.battle, target\.battle/)

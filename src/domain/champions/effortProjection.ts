@@ -1,6 +1,6 @@
 import type { EffortValues } from '../samples/myPartyChampionsSamples'
 import type { EffortStatKey } from '../../app/types'
-import { CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_CAP } from './buildRules'
+import { CHAMPIONS_EFFORT_PER_STAT_CAP, CHAMPIONS_EFFORT_CAP } from './buildRules.ts'
 
 export type ChampionsEffortPreset = 'hb' | 'hd' | 'as' | 'cs' | 'max-speed' | 'clear'
 

@@ -37,6 +37,7 @@ export function QuickStatEditor({ side, identity, entry, row, stats, language, s
     language={language}
     showPresets={showPresets}
     actualValue={actualValue}
+    effectiveNatureMultiplier={key => quickStatNature(entry, key, key === 'hp' ? 1 : natureMultiplier(entry.nature, key))}
     onEffort={(key, value) => {
       onDirty(key)
       setEntry(previous => ({ ...previous, evs: applyChampionsEffort(previous.evs, key, value) }))
@@ -55,7 +56,6 @@ export function QuickStatEditor({ side, identity, entry, row, stats, language, s
       if (value === '') delete actual[key]; else actual[key] = value
       return { ...previous, actual }
     })}
-    magicCandidate={magic.candidate}
-    magicPoints={magic.points}
+    magicScale={magic.scale}
   />
 }
