@@ -1,7 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { natureAxes, natureIdForAxes } from '../src/domain/champions/natureProjection.ts'
+import { natureAxes, natureIdAfterAxisClick, natureIdForAxes } from '../src/domain/champions/natureProjection.ts'
+import { NATURES } from '../src/domain/champions/natures.ts'
 
 const compact = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 
@@ -14,15 +15,48 @@ test('nature axes resolve to the canonical persisted NatureId', () => {
   assert.equal(natureIdForAxes('defense', null), null)
 })
 
-test('compact stat tile offers only down/up and renders an impossible partner as a dash', () => {
+test('each nature arrow click applies the requested axis immediately', () => {
+  assert.equal(natureIdAfterAxisClick('hardy', 'up', 'attack'), 'adamant')
+  assert.equal(natureIdAfterAxisClick('hardy', 'up', 'speed'), 'jolly')
+  assert.equal(natureIdAfterAxisClick('hardy', 'down', 'defense'), 'mild')
+  assert.equal(natureIdAfterAxisClick('jolly', 'up', 'defense'), 'impish')
+  assert.equal(natureIdAfterAxisClick('jolly', 'up', 'spAttack'), 'quiet')
+  assert.equal(natureIdAfterAxisClick('jolly', 'down', 'speed'), 'quiet')
+  assert.equal(natureIdAfterAxisClick('jolly', 'up', 'speed'), 'jolly')
+  assert.equal(natureIdAfterAxisClick('jolly', 'down', 'spAttack'), 'jolly')
+})
+
+test('every direct nature arrow transition preserves the clicked intent', () => {
+  const stats = ['attack', 'defense', 'spAttack', 'spDefense', 'speed']
+  for (const nature of NATURES) for (const axis of ['up', 'down']) for (const stat of stats) {
+    const next = natureIdAfterAxisClick(nature.id, axis, stat)
+    const axes = natureAxes(next)
+    assert.equal(axes[axis], stat, `${nature.id} ${axis} ${stat}`)
+    assert.notEqual(axes.up, axes.down, `${nature.id} ${axis} ${stat}`)
+  }
+})
+
+test('every stat tile keeps both direct nature arrows available without an expanded editor', () => {
+  assert.match(compact, /const renderNatureControls = \(stat: StatKey, name: string\)/)
+  assert.match(compact, /renderNatureControls\(stat\.key as StatKey, name\)/)
   assert.match(compact, /className="nature-down"/)
-  assert.match(compact, /className="nature-down"[^>]*aria-label=\{`\$\{selectedName\} · \$\{text\.lowerNature\}`\}/)
+  assert.match(compact, /className="nature-down"[^>]*aria-label=\{`\$\{name\} · \$\{text\.lowerNature\}`\}/)
   assert.match(compact, /<span aria-hidden="true">↓<\/span>/)
   assert.match(compact, /className="nature-up"/)
-  assert.match(compact, /className="nature-up"[^>]*aria-label=\{`\$\{selectedName\} · \$\{text\.raiseNature\}`\}/)
+  assert.match(compact, /className="nature-up"[^>]*aria-label=\{`\$\{name\} · \$\{text\.raiseNature\}`\}/)
   assert.match(compact, /<span aria-hidden="true">↑<\/span>/)
   assert.doesNotMatch(compact, />↓ \.9<\/button>|>↑ 1\.1<\/button>/)
-  assert.match(compact, /className="nature-impossible"[^>]*>—<\/span>/)
-  assert.match(compact, /onNature\(next\)/)
-  assert.doesNotMatch(compact, /nature-neutral/)
+  assert.doesNotMatch(compact, /nature-impossible|>—<\/span>/)
+  assert.match(compact, /natureIdAfterAxisClick\(nature, axis, stat\)/)
+  assert.match(compact, /aria-pressed=\{actualDown\}/)
+  assert.match(compact, /aria-pressed=\{actualUp\}/)
+  assert.doesNotMatch(compact, /pendingNature|setPendingNature|data-pending/)
+  assert.doesNotMatch(compact, /nature-neutral|quick-compact-tile-partner|quick-compact-preview-open|tuneContent|EffortNumberInput/)
+})
+
+test('compact tile renders only actual stat, nature arrows, slider, and current effort number', () => {
+  assert.match(compact, /className="quick-compact-tile-value"/)
+  assert.match(compact, /className="quick-compact-effort-row"/)
+  assert.match(compact, /className="quick-compact-effort-value"/)
+  assert.doesNotMatch(compact, /quick-compact-tile-base|quick-compact-preview-footer|UiIcon name="chevron"|aria-controls=/)
 })

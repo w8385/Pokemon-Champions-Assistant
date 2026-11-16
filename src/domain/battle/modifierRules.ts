@@ -17,8 +17,11 @@ export function knockOffPowerMultiplier(moveName: string, defenderKey: string, d
   return moveName === '탁쳐서떨구기' && classifyHeldItem(defenderKey, defenderItem).status === 'allowed' ? 1.5 : 1
 }
 
-export function isDamageGrounded(types: string[] | undefined, ability: string, item: string): boolean {
-  return Boolean(types?.length && !types.includes('flying') && !['levitate', '부유', 'eelevate'].includes(ability) && item !== 'ふうせん')
+export function isDamageGrounded(types: string[] | undefined, ability: string, item: string, gravity = false): boolean {
+  if (!types?.length) return false
+  const canonicalItem = canonicalChampionsItemName(item)
+  if (gravity || canonicalItem === 'くろいてっきゅう') return true
+  return !types.includes('flying') && !['levitate', '부유', 'eelevate'].includes(ability) && canonicalItem !== 'ふうせん'
 }
 
 export function resolveDamageModifiers(params: {
@@ -53,6 +56,7 @@ export function resolveDamageModifiers(params: {
   electromorphosisCharged: boolean
   weather: DamageWeather
   terrain: DamageTerrain
+  gravity?: boolean
   reflect: boolean
   lightScreen: boolean
   auroraVeil: boolean
@@ -60,7 +64,7 @@ export function resolveDamageModifiers(params: {
   disguiseActive?: boolean
   critical?: boolean
 }) {
-  const { attackerAbility, attackerAllyAbility = '', defenderAllyAbility: recordedDefenderAllyAbility = '', attackerItem, defenderAbility: recordedDefenderAbility, defenderKey, defenderItem, moveName, moveMeta, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, attackerTypes, defenderTypes, format = 'Singles', burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
+  const { attackerAbility, attackerAllyAbility = '', defenderAllyAbility: recordedDefenderAllyAbility = '', attackerItem, defenderAbility: recordedDefenderAbility, defenderKey, defenderItem, moveName, moveMeta, baseMoveType, moveType, movePower, mode, effectiveness, attackStage, defenseStage, attackerTypes, defenderTypes, format = 'Singles', burned, attackerLowHp, targetPoisoned, defenderFullHp, movedAfterTarget, faintedAllies, rivalryMode, parentalBond, defenderStatused, electromorphosisCharged, weather, terrain, gravity = false, reflect, lightScreen, auroraVeil, friendGuard, disguiseActive, critical } = params
   const defenderAbility = effectiveDefenderAbility(attackerAbility, recordedDefenderAbility)
   const defenderAllyAbility = effectiveDefenderAbility(attackerAbility, recordedDefenderAllyAbility)
   const fieldAbilities = [attackerAbility, attackerAllyAbility, recordedDefenderAbility, recordedDefenderAllyAbility]
@@ -339,23 +343,23 @@ export function resolveDamageModifiers(params: {
     notes.push('모래바람')
   }
 
-  if (terrain === 'electric' && moveType === 'electric' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+  if (terrain === 'electric' && moveType === 'electric' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem, gravity)) {
     fixedBpMods.push(5325)
     notes.push('일렉트릭필드')
   }
-  if (terrain === 'grassy' && moveType === 'grass' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+  if (terrain === 'grassy' && moveType === 'grass' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem, gravity)) {
     fixedBpMods.push(5325)
     notes.push('그래스필드')
   }
-  if (terrain === 'psychic' && moveType === 'psychic' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem)) {
+  if (terrain === 'psychic' && moveType === 'psychic' && isDamageGrounded(attackerTypes, attackerAbility, canonicalAttackerItem, gravity)) {
     fixedBpMods.push(5325)
     notes.push('사이코필드')
   }
-  if (terrain === 'misty' && moveType === 'dragon' && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem)) {
+  if (terrain === 'misty' && moveType === 'dragon' && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem, gravity)) {
     fixedBpMods.push(2048)
     notes.push('미스트필드')
   }
-  if (terrain === 'grassy' && ['지진', '땅고르기'].includes(moveName) && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem)) {
+  if (terrain === 'grassy' && ['지진', '땅고르기'].includes(moveName) && isDamageGrounded(defenderTypes, defenderAbility, canonicalDefenderItem, gravity)) {
     fixedBpMods.push(2048)
     notes.push('그래스필드(지면)')
   }

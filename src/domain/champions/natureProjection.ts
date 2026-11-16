@@ -16,3 +16,39 @@ export function natureIdForAxes(up: StatKey | null, down: StatKey | null): Natur
   if (!up || !down || up === down) return null
   return NATURES.find(nature => nature.up === up && nature.down === down)?.id ?? null
 }
+
+const neutralPartner: Record<'up' | 'down', Record<StatKey, StatKey>> = {
+  up: {
+    attack: 'spAttack',
+    defense: 'attack',
+    spAttack: 'attack',
+    spDefense: 'attack',
+    speed: 'spAttack',
+  },
+  down: {
+    attack: 'spAttack',
+    defense: 'spAttack',
+    spAttack: 'attack',
+    spDefense: 'attack',
+    speed: 'attack',
+  },
+}
+
+/**
+ * Apply one direct arrow click without leaving an incomplete UI-only nature.
+ * Keep the other axis when possible; clicking the current opposite axis swaps
+ * the two stats, and a neutral nature starts from a conventional valid pair.
+ */
+export function natureIdAfterAxisClick(natureId: NatureId, axis: 'up' | 'down', stat: StatKey): NatureId {
+  const axes = natureAxes(natureId)
+  if (axes[axis] === stat) return natureId
+
+  const oppositeAxis = axis === 'up' ? 'down' : 'up'
+  let partner = axes[oppositeAxis]
+  if (partner === stat) partner = axes[axis]
+  if (!partner || partner === stat) partner = neutralPartner[axis][stat]
+
+  const up = axis === 'up' ? stat : partner
+  const down = axis === 'down' ? stat : partner
+  return natureIdForAxes(up, down) ?? natureId
+}

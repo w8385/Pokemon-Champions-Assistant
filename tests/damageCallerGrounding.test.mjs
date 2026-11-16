@@ -5,6 +5,7 @@ import path from 'node:path'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { loadAppDamageEngine } from '../scripts/check-damage-parity.mjs'
+import { isDamageGrounded } from '../src/domain/battle/modifierRules.ts'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const source = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8')
@@ -50,4 +51,13 @@ test('airborne, Levitate and Air Balloon do not receive attacker terrain power',
     { attackerTypes: ['flying'] }, { attackerTypes: ['normal'], attackerAbility: 'levitate' },
     { attackerTypes: ['normal'], attackerItem: 'ふうせん' }, { attackerTypes: undefined },
   ]) assert.deepEqual(Array.from(resolve({ ...baseline, ...patch }).fixedBpMods), [])
+  assert.deepEqual(Array.from(resolve({ ...baseline, attackerTypes: ['flying'], gravity: true }).fixedBpMods), [5325])
+})
+
+test('Gravity and Iron Ball ground otherwise airborne damage participants', () => {
+  assert.equal(isDamageGrounded(['flying'], '', '', false), false)
+  assert.equal(isDamageGrounded(['flying'], '', '', true), true)
+  assert.equal(isDamageGrounded(['normal'], 'levitate', '', true), true)
+  assert.equal(isDamageGrounded(['flying'], '', 'くろいてっきゅう'), true)
+  assert.equal(isDamageGrounded(['normal'], '', 'ふうせん'), false)
 })

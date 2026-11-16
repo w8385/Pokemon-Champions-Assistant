@@ -18,8 +18,11 @@ test('party tuning shares the compact editor and its canonical magic projection'
   assert.doesNotMatch(compact, /className="quick-compact-effort-bounds" aria-hidden/)
   assert.match(compact, /magicScale\?\.points\.map/)
   assert.match(compact, /type="range"[^]*?max=\{inputMax\}/)
-  assert.match(compact, /aria-controls=\{`\$\{tunerId\}-\$\{stat\.key\}`\}/)
+  assert.match(compact, /pointerActive\.current \? onPreview/)
+  assert.match(compact, /onPointerUp=\{event => \{[^]*?onCommit/)
+  assert.match(compact, /setEffortDraft\(\{ key, value: legal \}\)/)
   assert.match(compact, /renderPreview=\{renderPreview\}/)
+  assert.doesNotMatch(compact, /aria-controls=|quick-compact-preview-open|tuneContent/)
   assert.doesNotMatch(compact, /stat-preview-magic|quick-compact-tile-magic/)
 })
 test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {

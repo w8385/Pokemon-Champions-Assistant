@@ -7,8 +7,8 @@ export function applyChoiceScarf(actualSpeed: number): number {
 
 // Showdown fixed-point chainModify: combine factors in 4096ths, then final speed
 // uses trunc((trunc(value * modifier) + 2047) / 4096).
-export function applySpeedModifiers(stageSpeed: number, options: { scarf: boolean; abilityMultiplier: 1 | 1.5 | 2 }): number {
-  const modifier = Math.trunc((options.scarf ? 1.5 : 1) * options.abilityMultiplier * 4096)
+export function applySpeedModifiers(stageSpeed: number, options: { scarf: boolean; abilityMultiplier: 1 | 1.5 | 2; itemMultiplier?: 0.5 | 1 }): number {
+  const modifier = Math.trunc((options.scarf ? 1.5 : 1) * options.abilityMultiplier * (options.itemMultiplier ?? 1) * 4096)
   return Math.trunc((Math.trunc(stageSpeed * modifier) + 2047) / 4096)
 }
 

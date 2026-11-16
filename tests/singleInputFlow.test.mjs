@@ -39,6 +39,7 @@ test('one-on-one damage hides ally-only Friend Guard and ignores stale persisted
 
 test('full-health labels use precise HP 100% wording without renaming battle state', () => {
   assert.doesNotMatch(app, /HP 만땅/)
-  assert.match(controls, /\['fullHp','HP 100%'\]/)
-  assert.match(controls, /fullHp/)
+  assert.match(controls, /checked=\{battle\.fullHp\}/)
+  assert.match(controls, /lt\('HP 100%'\)/)
+  assert.match(controls, /setHpPercent\(event\.target\.checked \? 100 : Math\.min\(99, battle\.hpPercent\)\)/)
 })

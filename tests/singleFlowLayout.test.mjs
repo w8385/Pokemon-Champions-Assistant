@@ -26,7 +26,7 @@ test('one Speed comparison, compact provenance and battle conditions are expande
   assert.doesNotMatch(panel, /className="quick-rolls"/)
   assert.match(conditions, /className="quick-condition-grid"/)
   assert.doesNotMatch(panel, /className="quick-source-badges"/)
-  assert.match(card, /sourceStatus\('nature'\)/)
+  assert.match(card, /natureSourceStatus\(\)/)
   assert.doesNotMatch(panel, /<details|conditionsOpen|speedOpen|detailHref/)
 })
 test('same card contains shared build, effort and 2x2 move inputs', () => {

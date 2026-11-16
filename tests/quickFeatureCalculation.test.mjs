@@ -24,6 +24,11 @@ test('pure Quick calculation preserves independent side direction and four-slot 
   assert.deepEqual(evaluate({ ...own, ability: 'unknown-ability' }, foe, own.moves[2]), null)
   assert.deepEqual(evaluate(own, { ...foe, key: 'unknown-form' }, own.moves[2]), null)
   assert.ok(evaluate({ ...own, ability: '' }, foe, own.moves[2])?.damage.min > 0, 'blank ability is neutral and calculable')
+  const facadeUser = quickSide({ key: 'cinderace', ability: '', moves: ['객기', '', '', ''] })
+  const facadeNormal = evaluate(facadeUser, foe, '객기')
+  const facadeStatused = evaluate({ ...facadeUser, battle: { ...facadeUser.battle, burned: true } }, foe, '객기')
+  assert.ok(facadeNormal?.damage.min > 0, 'Facade is a physical damaging move at base power 70')
+  assert.ok(facadeStatused && facadeNormal && facadeStatused.damage.min > facadeNormal.damage.min, 'Facade doubles to 140 when the user is statused')
   const [drillPool, rotomPool] = await Promise.all([loadFormLearnset('excadrill'), loadFormLearnset('rotom')])
   pools.excadrill = drillPool; pools.rotom = rotomPool
   const drill = quickSide({ key: 'excadrill', ability: 'mold-breaker', moves: ['지진','','',''] })
