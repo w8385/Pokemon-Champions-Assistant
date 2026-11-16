@@ -28,10 +28,11 @@ test('Quick may identify a named-nature magic target only with complete nature a
   assert.equal(namedNatureMagicAvailable('attack', { actual: {}, speedNatureKnown: true, statNatureMultipliers: { defense: 1.1 } }), false)
   assert.equal(namedNatureMagicAvailable('speed', { actual: {}, speedNatureKnown: false, statNatureMultipliers: {} }), false)
 })
-test('Quick shared modal supplies magic projection, while double bulk uses only active boosted rows', () => {
+test('Quick compact editor supplies magic projection, while double bulk uses only active boosted rows', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-  const quick = readFileSync(new URL('../src/features/damage/QuickEffortModal.tsx', import.meta.url), 'utf8')
-  assert.match(quick, /magicCandidate=\{[^}]*\}/)
-  assert.match(quick, /magicPoints=\{[^}]*\}/)
+  const quick = readFileSync(new URL('../src/features/damage/QuickStatEditor.tsx', import.meta.url), 'utf8')
+  assert.match(quick, /quickMagicProjection\(entry, projectedRow\)/)
+  assert.match(quick, /magicCandidate=\{magic\.candidate\}/)
+  assert.match(quick, /magicPoints=\{magic\.points\}/)
   assert.match(app, /double-opponent-effort-cell-[^]*?magicPoints\.includes\(point\)/)
 })

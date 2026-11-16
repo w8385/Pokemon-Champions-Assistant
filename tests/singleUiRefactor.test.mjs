@@ -19,7 +19,7 @@ test('one Speed/damage result precedes the real inline editing cards and battle 
   assert.equal((view.match(/<QuickDamageResult/g) ?? []).length, 1)
   assert.match(view, /<QuickSideCard key=\{side\}/)
   assert.match(card, /<PokemonBuildFields/)
-  assert.match(card, /<PokemonStatGrid/)
+  assert.match(card, /<QuickStatEditor/)
   assert.match(card, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
   assert.doesNotMatch(css, /\.quick-sides\s*\{\s*order:/)
 })

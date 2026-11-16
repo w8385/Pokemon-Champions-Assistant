@@ -6,15 +6,15 @@ const css = readFileSync(new URL('../src/features/single/matchupWorkspace.css', 
 const cardOwner = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const speedOwner = readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx', import.meta.url), 'utf8')
 const conditionsOwner = readFileSync(new URL('../src/features/damage/QuickConditions.tsx', import.meta.url), 'utf8')
-const modalOwner = readFileSync(new URL('../src/features/damage/QuickEffortModal.tsx', import.meta.url), 'utf8')
+const statEditor = readFileSync(new URL('../src/features/damage/QuickStatEditor.tsx', import.meta.url), 'utf8')
+const compactEditor = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const hook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
 const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
 const storage = readFileSync(new URL('../src/adapters/persistence/quickDamage.ts', import.meta.url), 'utf8')
 
-test('paired 390px cards retain two columns, but 320px cards stack for readable move editors', () => {
-  assert.match(css, /@media\s*\(max-width:\s*600px\)[^]*?\.quick-damage \.quick-sides\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
-  assert.match(css, /@media\s*\(max-width:\s*360px\)[^]*?\.quick-damage \.quick-sides\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+test('paired cards stack by 600px so inline stat controls remain readable', () => {
+  assert.match(css, /@media\s*\(max-width:\s*600px\)[^]*?\.quick-damage \.quick-sides\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
   assert.match(css, /@media\s*\(min-width:\s*361px\) and \(max-width:\s*600px\)[^]*?\.quick-damage \.quick-side-card \.stat-preview-list\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
   assert.match(css, /\.quick-damage \.quick-side-card \.stat-preview-topline\s*\{[^}]*flex-direction:\s*column/)
   assert.match(css, /\.quick-damage \.quick-side-card \.stat-preview-row\s*\{[^}]*padding:/)
@@ -24,7 +24,13 @@ test('paired 390px cards retain two columns, but 320px cards stack for readable 
   assert.match(css, /\.quick-damage \.quick-side-card \.registered-move-slot \.pokemon-search-field \.move-autocomplete-menu/)
   assert.match(cardOwner, /<MoveSlotsEditor[^]*?preview: <button type="button" className=\{`quick-move-preview/)
   assert.match(cardOwner, /Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
-  assert.match(modalOwner, /<EffortTuningModal/)
+  assert.match(statEditor, /<CompactStatEditor/)
+  assert.match(statEditor, /identity=\{identity\}/)
+  assert.match(panel, /const seedIdentity = seed \? JSON\.stringify/)
+  assert.match(panel, /editorIdentity=\{editorIdentity\}/)
+  assert.match(compactEditor, /<PokemonStatGrid stats=\{visibleStats\} showEffort/)
+  assert.match(compactEditor, /const presetIds:[^=]*= \['hb', 'hd', 'as', 'cs', 'max-speed', 'clear'\]/)
+  assert.match(cardOwner, /showPresets=\{!comparisonMode \|\| side === 'defender'\}/)
 })
 
 test('both modes retain independent state owners and condition controls after layout change', () => {
@@ -48,6 +54,6 @@ test('speed scenario editors live once per owner adjacent to the shared results,
   assert.match(speed, /전제 조건 미충족/)
   assert.match(speedOwner, /speedCard\('attacker', attacker, attackingRow\)[\s\S]*speedCard\('defender', defender, defendingRow\)[\s\S]*\{speedStrip\}/)
   assert.match(results, /<QuickSpeedPresentation[^]*?<QuickDamageResult/)
-  assert.match(cardOwner, /<PokemonStatGrid showEffort/)
+  assert.match(cardOwner, /<QuickStatEditor/)
   assert.match(cardOwner, /<MoveSlotsEditor/)
 })

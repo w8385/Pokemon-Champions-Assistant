@@ -1,6 +1,5 @@
 import React from 'react'
 import type { PartyMember, SiteLanguage, MoveFieldTarget, MoveCategory, NatureId, Row, HoverTooltipCard } from '../../app/types'
-import type { EffortValues } from '../../domain/samples/myPartyChampionsSamples'
 import { rows, indexByKey } from '../../adapters/catalog/roster'
 import { abilityDescriptionFor, usageTopMovesForKey } from '../../adapters/catalog/data'
 import { filterSpeciesOptions } from '../../shared/search/speciesOptions'
@@ -10,10 +9,11 @@ import { displayItemLabel, megaStoneForKey, filterItemOptions, isAllowedChampion
 import { classifyHeldItem } from '../../domain/champions/itemIdentity'
 import { localizedAbilityLabel } from '../../domain/champions/abilityIdentity'
 import { natureById, SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
-import { actualStat } from '../../domain/champions/statMechanics'
-import { natureMultiplier } from '../../domain/champions/buildRules'
+import { applyChampionsEffort } from '../../domain/champions/effortProjection'
+import { effortMagicProjection } from '../../domain/champions/effortMagic'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
-import { PokemonCardHeading, PokemonStatGrid, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
+import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
+import { CompactStatEditor } from '../../shared/display/CompactStatEditor'
 import PokemonSearchField from '../../shared/search/PokemonSearchField'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
 import { UiIcon } from '../../shared/display/UiIcon'
@@ -35,14 +35,13 @@ type MovePort = {
   commitEditorMove: (raw: string, previous: string, pool: SharedPoolState | undefined, key: string, slot: number, scope: 'party' | 'sample') => void;
   applyMoveToSlot: (key: string, move: string, preferredSlot?: number) => void;
 }
-export function PartyMemberCard({ member, idx, siteLanguage, mainSection, editor, setParty, confirmedMovesByKey, movePoolByKey, moveSlotLabels, moves, tooltip, onTune }: {
-  member: PartyMember; idx: number; siteLanguage: SiteLanguage; mainSection: 'party' | 'double'; editor: CardEditor;
+export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mainSection, editor, setParty, confirmedMovesByKey, movePoolByKey, moveSlotLabels, moves, tooltip }: {
+  member: PartyMember; idx: number; editorIdentity: string; siteLanguage: SiteLanguage; mainSection: 'party' | 'double'; editor: CardEditor;
   setParty: (update: PartyMember[] | ((prev: PartyMember[]) => PartyMember[])) => void;
   confirmedMovesByKey: Readonly<Record<string, string[]>>; movePoolByKey: Readonly<Record<string, SharedPoolState>>;
   moveSlotLabels: { slot: string; category: (category: MoveCategory | null) => string; power: string; accuracy: string; pp: string; unknown: string };
   moves: MovePort;
   tooltip: { bindTooltip: (card: HoverTooltipCard | null | undefined) => React.HTMLAttributes<HTMLElement>; abilityTooltipData: (name: string, language: SiteLanguage, row?: Row | null) => HoverTooltipCard | null; itemTooltipData: (name: string, language: SiteLanguage) => HoverTooltipCard | null; moveTooltipData: (name: string, language: SiteLanguage) => HoverTooltipCard | null };
-  onTune: (idx: number) => void
 }) {
   const { partySearch, setPartySearch, clearPartySlot, selectPartySpecies } = editor
   const { activeMoveField, moveInputDraft, moveCommitNotice, setActiveMoveField, setMoveInputDraft, setMoveCommitNotice, selectMoveOption, commitEditorMove, applyMoveToSlot } = moves
@@ -83,7 +82,16 @@ export function PartyMemberCard({ member, idx, siteLanguage, mainSection, editor
                       abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, row) : null)}
                       itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
                     />{memberMovePool?.status === 'loading' ? <div className="move-pool-helper">{lt('기술풀 불러오는 중…')}</div> : null}</> : null}
-                    {row ? <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))} onTune={() => onTune(idx)} /> : null}
+                    {row ? (() => {
+                      const magic = effortMagicProjection(row, member.evs, member.config.nature)
+                      return <CompactStatEditor identity={`party-${editorIdentity}-${idx}-${member.key}`} row={row} language={siteLanguage} evs={member.evs} nature={member.config.nature}
+                        stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(row, member, stat.key), ev: member.evs[stat.key] }))}
+                        actualValue={(key, effort) => partyStatValue(row, effort === undefined ? member : { ...member, evs: { ...member.evs, [key]: effort } }, key)}
+                        onEffort={(key, value) => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, evs: applyChampionsEffort(entry.evs, key, value) } : entry))}
+                        onSpread={evs => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, evs } : entry))}
+                        onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature } } : entry))}
+                        magicCandidate={magic.candidate} magicPoints={magic.points} />
+                    })() : null}
                     {row ? <MoveSlotsEditor className="inline-move-card" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
                       toolbar={<>
                         {member.key ? learnsetStatusText(memberMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null : null}

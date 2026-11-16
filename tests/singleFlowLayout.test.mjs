@@ -36,6 +36,6 @@ test('same card contains shared build, effort and 2x2 move inputs', () => {
   assert.ok(sideRegion.indexOf('{statCard(side, entry, row)}') < sideRegion.indexOf('<MoveSlotsEditor label='))
   assert.doesNotMatch(panel, /className="quick-build-sides"/)
   assert.match(card, /<PokemonBuildFields/)
-  assert.match(card, /<PokemonStatGrid/)
+  assert.match(card, /<QuickStatEditor/)
   assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
 })

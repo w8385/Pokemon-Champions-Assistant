@@ -28,9 +28,9 @@
 .quick-damage .quick-speed-assumptions .quick-check,
 .quick-damage .quick-speed-assumptions [role="alert"] { grid-column: 1 / -1; }
 @media (max-width: 600px) {
-  /* Keep the real cards paired; recover space in the workspace, not the type. */
+  /* Inline stat controls need the full card width before phone breakpoints. */
   .quick-damage.panel { padding-inline: 8px; }
-  .quick-damage .quick-sides { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-items: start; }
+  .quick-damage .quick-sides { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
   .quick-damage .quick-side-card { min-width: 0; padding-inline: 6px; gap: 7px; }
   .quick-damage .quick-side-card .entry-card-top { gap: 4px; margin-bottom: 0; min-width: 0; }
   .quick-damage .quick-side-card .entry-sprite { width: 36px; height: 36px; flex: 0 0 36px; }

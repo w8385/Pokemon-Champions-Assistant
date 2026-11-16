@@ -21,7 +21,6 @@ type EditorInput = {
   language: SiteLanguage
   defaultNatureForKey: (key: string) => PartyMember['config']['nature']
   onSelectMy: (index: number) => void
-  onCloseTuning: () => void
   onPresetSelectControls: () => void
   onClearSlotControls: (index: number, key: string) => void
 }
@@ -29,7 +28,7 @@ type EditorInput = {
 // App calls this on every render, regardless of whether either Party surface is mounted.
 // Transient raw input survives menu round trips; only explicit transitions replace it.
 export function usePartyEditor(input: EditorInput) {
-  const { initialParty, emptyParty, workspace, setParty, selectPreset, createPreset, renamePreset, deletePreset, language, defaultNatureForKey, onSelectMy, onCloseTuning, onPresetSelectControls, onClearSlotControls } = input
+  const { initialParty, emptyParty, workspace, setParty, selectPreset, createPreset, renamePreset, deletePreset, language, defaultNatureForKey, onSelectMy, onPresetSelectControls, onClearSlotControls } = input
   const { party, savedPartyPresets, activePartyPresetId } = workspace
   const lt = (text: string) => translateText(language, text)
   const activePartyLabel = savedPartyPresets.find(record => record.id === activePartyPresetId)?.label ?? ''
@@ -56,7 +55,6 @@ export function usePartyEditor(input: EditorInput) {
     resetDrafts(record.party)
     onSelectMy(0)
     onPresetSelectControls()
-    onCloseTuning()
     return true
   }
   const createNewParty = () => {
@@ -65,7 +63,6 @@ export function usePartyEditor(input: EditorInput) {
     setPartySearch(emptyParty.map(() => ''))
     setPartyItemDrafts(emptyParty.map(() => ''))
     onSelectMy(0)
-    onCloseTuning()
   }
   const renamePartyPreset = (preset: SavedPartyPreset) => {
     if (typeof window === 'undefined') return
@@ -83,7 +80,6 @@ export function usePartyEditor(input: EditorInput) {
     setPartySearch(emptyParty.map(() => ''))
     setPartyItemDrafts(emptyParty.map(() => ''))
     onSelectMy(0)
-    onCloseTuning()
   }
   const clearPartySlot = (idx: number) => {
     const previousKey = party[idx]?.key ?? ''

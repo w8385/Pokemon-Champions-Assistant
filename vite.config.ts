@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: process.env.GITHUB_ACTIONS ? '/Pokemon-Champions-Assistant/' : '/',
+  server: {
+    allowedHosts: ['midnight.tail8a61.ts.net'],
+  },
   build: {
     rollupOptions: {
       output: {
