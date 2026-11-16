@@ -247,6 +247,12 @@ test('Knock Off boosts only a removable target item', () => {
   assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'garchomp', 'unknown-item'), 1)
   assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'mega-garchomp', '한카리아스나이트'), 1)
   assert.equal(knockOffPowerMultiplier('지진', 'garchomp', 'いのちのたま'), 1)
+
+  const withoutItem = calculate({ name: '탁쳐서떨구기', base: physical(65, 'dark') })
+  const removableItem = calculate({ name: '탁쳐서떨구기', base: physical(65, 'dark'), targetItem: 'いのちのたま' })
+  assert.ok(withoutItem && removableItem)
+  assert.equal(removableItem.decisionPower, Math.round(withoutItem.decisionPower * 1.5))
+  assert.ok(removableItem.damage.min > withoutItem.damage.min)
 })
 
 test('normalization clamps count rules while toggle rules remain booleans', () => {

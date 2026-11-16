@@ -35,6 +35,7 @@
     "src/domain/battle/README.md",
     "src/domain/battle/abilityImmunities.ts",
     "src/domain/battle/abilityNoteLabel.ts",
+    "src/domain/battle/battleIndices.ts",
     "src/domain/battle/damageCore.ts",
     "src/domain/battle/doubleOrderPresentation.ts",
     "src/domain/battle/modifierRules.ts",

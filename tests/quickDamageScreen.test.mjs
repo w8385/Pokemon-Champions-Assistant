@@ -14,7 +14,8 @@ const translations = readFileSync(new URL('../src/shared/display/translation.ts'
 
 test('standalone damage reuses real picker and engine without changing party entries', () => {
   assert.match(screen, /<PokemonSearchField id=\{`quick-\$\{side\}`\}/)
-  assert.match(calculator, /calcDamage\(foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats, targetStats/)
+  assert.match(calculator, /const appliedSourceStats = foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats/)
+  assert.match(calculator, /calcDamage\(appliedSourceStats, targetStats/)
   assert.match(io, /resolvePort\(source\)\.setItem\(QUICK_KEY/)
   assert.match(hook, /writeQuickStandalone\(\(\) => window\.localStorage/ )
   assert.doesNotMatch(screen, /setParty\(|setOpponents\(|updatePartyMember\(/)

@@ -36,6 +36,27 @@ test('shared fields render original values and three labeled buttons', async () 
   } finally { await server.close() }
 })
 
+test('blank held item renders no broken image while a selected item keeps its sprite', async () => {
+  const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
+  try {
+    const { PokemonBuildFields } = await server.ssrLoadModule('/src/shared/display/PokemonBuildFields.tsx')
+    let spriteCalls = 0
+    const props = {
+      identity: 'item-image', ability: '', nature: 'hardy', item: '', abilities: [], natures: [{ value: 'hardy', label: 'Hardy' }],
+      itemOptions: () => [], onAbility: () => {}, onNature: () => {}, onItem: () => {},
+      labels: { ability: 'Ability', nature: 'Nature', item: 'Item', none: 'None', itemPlaceholder: 'Search items' },
+      itemLabel: value => value, itemSprite: () => { spriteCalls += 1; return '/sprite.svg' },
+    }
+    const blank = renderToStaticMarkup(React.createElement(PokemonBuildFields, props))
+    assert.doesNotMatch(blank, /class="item-sprite"/)
+    assert.equal(spriteCalls, 0)
+
+    const selected = renderToStaticMarkup(React.createElement(PokemonBuildFields, { ...props, item: 'leftovers' }))
+    assert.match(selected, /<img src="\/sprite\.svg"[^>]*class="item-sprite"/)
+    assert.equal(spriteCalls, 1)
+  } finally { await server.close() }
+})
+
 test('shared popover keyboard navigation focuses options and ignores composition', () => {
   const source = readFileSync(new URL('../src/shared/display/PokemonBuildFields.tsx', import.meta.url), 'utf8')
   assert.match(source, /optionRefs\.current\[next\]\?\.focus\(\)/)

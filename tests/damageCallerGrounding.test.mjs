@@ -21,17 +21,19 @@ function visit(node, owner) {
 visit(ast, ast)
 visit(quickAst, quickAst)
 
-test('each of seven real resolver callers passes attacker identity; only Double passes Doubles format', () => {
-  assert.equal(calls.length, 7)
+test('each real resolver call carries attacker identity; only Double passes Doubles format', () => {
+  assert.equal(calls.length, 8)
   let doubleCalls = 0
   for (const { call, owner } of calls) {
     const arg = call.arguments[0]
-    assert.ok(ts.isObjectLiteralExpression(arg))
-    const keys = arg.properties.map(p => p.name?.getText(owner))
-    assert.ok(keys.includes('attackerTypes'), `missing actual attacker types at ${owner.fileName}:${owner.getLineAndCharacterOfPosition(call.pos).line + 1}`)
+    const directKeys = ts.isObjectLiteralExpression(arg) ? arg.properties.map(p => p.name?.getText(owner)) : []
+    const derivesFromQuickInput = arg.getText(owner) === 'modifierInput'
+      || (ts.isObjectLiteralExpression(arg) && arg.properties.some(p => ts.isSpreadAssignment(p) && p.expression.getText(owner) === 'modifierInput'))
+    assert.ok(directKeys.includes('attackerTypes') || derivesFromQuickInput, `missing actual attacker types at ${owner.fileName}:${owner.getLineAndCharacterOfPosition(call.pos).line + 1}`)
     if (arg.getText(owner).includes("format: 'Doubles'")) doubleCalls += 1
   }
-  assert.equal(doubleCalls, 1, 'one actual Double caller and six Singles/Quick/sample callers')
+  assert.match(quickSource, /const modifierInput = \{[^\n]*attackerTypes: sourceTypes/)
+  assert.equal(doubleCalls, 1, 'one actual Double caller and seven Singles/Quick/sample callers')
 })
 
 test('airborne, Levitate and Air Balloon do not receive attacker terrain power', () => {

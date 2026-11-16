@@ -139,7 +139,7 @@ export function PokemonBuildFields(props: PokemonBuildFieldsProps) {
     </>}
     {!props.itemOnly && <div className="party-meta-chip party-meta-chip-editor wide">{button('nature', labels.nature, <strong>{natures.find(option => option.value === displayNature)?.label || nature || labels.none}</strong>)}</div>}
     {!props.natureOnly && <>
-      <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row"><img src={itemSprite(item || '')} alt="" className="item-sprite" /><strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
+      <div className="party-meta-chip party-meta-chip-editor item-meta-chip">{button('item', labels.item, <div className="item-meta-row">{item ? <img src={itemSprite(item)} alt="" className="item-sprite" /> : null}<strong>{item ? itemLabel(item) : labels.none}</strong></div>, itemTooltip?.(item))}</div>
       {itemError && <small role="alert" className="item-validation-error">{itemError}</small>}
     </>}
     {open && typeof document !== 'undefined' ? createPortal(popup(open), document.body) : null}

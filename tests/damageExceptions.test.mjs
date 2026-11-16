@@ -109,6 +109,13 @@ test('actual Double callback passes ability immunity into all sixteen rolls', ()
 test('all actual resolver call sites propagate post-transformation metadata', () => {
   const calls=[];const visit=node=>{if(ts.isCallExpression(node)&&node.expression.getText(ast)==='resolveDamageModifiers') calls.push(node);ts.forEachChild(node,visit)};visit(ast)
   const quickCalls=[]; const visitQuick=node=>{if(ts.isCallExpression(node)&&node.expression.getText(quickAst)==='resolveDamageModifiers') quickCalls.push(node);ts.forEachChild(node,visitQuick)};visitQuick(quickAst)
-   assert.equal(calls.length + quickCalls.length,7)
-  for(const [call, owner] of [...calls.map(call => [call, ast]), ...quickCalls.map(call => [call, quickAst])]) { const object=call.arguments[0];assert.ok(ts.isObjectLiteralExpression(object)); assert.ok(object.properties.some(p=>p.name?.getText(owner)==='moveMeta'),`missing moveMeta at ${ast.getLineAndCharacterOfPosition(call.pos).line+1}`) }
+  assert.equal(calls.length + quickCalls.length,8)
+  for(const [call, owner] of [...calls.map(call => [call, ast]), ...quickCalls.map(call => [call, quickAst])]) {
+    const input=call.arguments[0]
+    const direct=ts.isObjectLiteralExpression(input) && input.properties.some(p=>p.name?.getText(owner)==='moveMeta')
+    const derivesFromQuickInput=input.getText(owner)==='modifierInput'
+      || (ts.isObjectLiteralExpression(input) && input.properties.some(p=>ts.isSpreadAssignment(p)&&p.expression.getText(owner)==='modifierInput'))
+    assert.ok(direct || derivesFromQuickInput,`missing moveMeta at ${owner.fileName}:${owner.getLineAndCharacterOfPosition(call.pos).line+1}`)
+  }
+  assert.match(quickText,/const modifierInput = \{[^\n]*moveMeta: meta/)
 })

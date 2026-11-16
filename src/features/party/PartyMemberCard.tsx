@@ -129,7 +129,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                           <strong>{lt('사용률 상위 기술')}</strong>
                           <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
                         </div>
-                        <div className="move-chip-wrap">
+                        <div className="move-chip-wrap party-top-move-grid">
                           {memberTopSuggestedMoves.map((move) => {
                             const locked = registeredMoves.includes(move)
                             const eligible = Boolean(resolveEligibleMoveInput(move, memberMovePool))

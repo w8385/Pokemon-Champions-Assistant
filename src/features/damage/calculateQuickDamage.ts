@@ -4,8 +4,9 @@ import { quickMoveSupported, quickStagePair } from '../../domain/battle/quickDam
 import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, applyConditionalMovePower, applyTerrainPulseType, electroBallPower, gyroBallPower, multiHitOptions, resolveMultiHitMeta, applyTargetWeightMovePower, userWeightMovePower } from '../../domain/battle/movePower'
 import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier } from '../../domain/battle/moveEffects'
 import { abilityAdjustedTypeEffectiveness } from '../../domain/battle/typeEffectiveness'
-import { isDamageGrounded, resolveDamageModifiers } from '../../domain/battle/modifierRules'
+import { isDamageGrounded, knockOffPowerMultiplier, resolveDamageModifiers } from '../../domain/battle/modifierRules'
 import { calcDamage } from '../../domain/battle/damageCore'
+import { decisionPowerIndex } from '../../domain/battle/battleIndices'
 import { quickPositiveStageTotal, quickStatused } from '../../domain/battle/quickBattleFacts'
 export function calculateQuickDamage({ source, target, name, conditions, sourceRow, targetRow, sourceStats, targetStats, sourceForm, targetForm, sourceAbilityValid, targetAbilityValid, sourceAbility, targetAbility, base, hitCount, conditionalValue: configuredConditionalValue, sourceSpeed, targetSpeed }: QuickDamageInput) {
     if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item) || !sourceAbilityValid || !targetAbilityValid) return null
@@ -57,7 +58,24 @@ export function calculateQuickDamage({ source, target, name, conditions, sourceR
     const targetTypes = resolveAbilityAdjustedTypes(targetRow.types, targetAbility, conditions.weather, conditions.terrain)
     const foulPlay = name === '속임수'
     const [attackStage, defenseStage] = quickStagePair(source.battle, target.battle, { ...meta, usesTargetAttack: foulPlay })
-    const modifiers = resolveDamageModifiers({ attackerAbility: sourceAbility, attackerTypes: sourceTypes, attackerItem: source.item, defenderAbility: targetAbility, defenderKey: target.key, defenderItem: target.item, moveName: name, moveMeta: meta, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned || (sourceAbility === 'guts' && quickStatused(source)), attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: source.battle.movedAfterTarget || source.battle.damagedByTarget, faintedAllies: source.battle.faintedAllies, rivalryMode: 'neutral', parentalBond: false, defenderStatused: quickStatused(target), electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, gravity: conditions.gravity, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical })
-    const damage = calcDamage(foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats, targetStats, meta.power, mode, resolveStabMultiplier(sourceTypes, type, sourceAbility, conditions.typeChangeStab), modifiers.effectiveness, meta, modifiers)
-    return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness, sourceForm: sourceRow.key === 'aegislash' && sourceAbility === 'stance-change' ? sourceForm : null, targetForm: targetRow.key === 'aegislash' && targetAbility === 'stance-change' ? targetForm : null } : null
+    const modifierInput = { attackerAbility: sourceAbility, attackerTypes: sourceTypes, attackerItem: source.item, defenderAbility: targetAbility, defenderKey: target.key, defenderItem: target.item, moveName: name, moveMeta: meta, baseMoveType: base.type ?? type, moveType: type, movePower: meta.power, mode, effectiveness: abilityAdjustedTypeEffectiveness(type, targetTypes, targetAbility, sourceAbility), attackStage, defenseStage, defenderTypes: targetTypes, burned: source.battle.burned || (sourceAbility === 'guts' && quickStatused(source)), attackerLowHp: source.battle.lowHp, targetPoisoned: target.battle.poisoned, defenderFullHp: target.battle.fullHp, movedAfterTarget: source.battle.movedAfterTarget || source.battle.damagedByTarget, faintedAllies: source.battle.faintedAllies, rivalryMode: 'neutral' as const, parentalBond: false, defenderStatused: quickStatused(target), electromorphosisCharged: false, weather: conditions.weather, terrain: conditions.terrain, gravity: conditions.gravity, reflect: target.battle.reflect, lightScreen: target.battle.lightScreen, auroraVeil: target.battle.auroraVeil, friendGuard: false, critical: conditions.critical }
+    const modifiers = resolveDamageModifiers(modifierInput)
+    // A conventional decision-power index describes the attacker and move. Keep
+    // the selected hit count and offensive conditions, but exclude target typing,
+    // bulk, defensive ability/item, and screens; those remain in actual damage.
+    const targetNeutralModifiers = resolveDamageModifiers({ ...modifierInput,
+      defenderAbility: '', defenderKey: '', defenderItem: '', effectiveness: 1,
+      defenseStage: 0, defenderTypes: [], defenderFullHp: false, defenderStatused: false,
+      reflect: false, lightScreen: false, auroraVeil: false, friendGuard: false,
+    })
+    const decisionModifiers = {
+      ...targetNeutralModifiers,
+      // Knock Off changes the move's effective power rather than the target's
+      // bulk, so keep that visible condition in the attacker's power index.
+      powerMultiplier: targetNeutralModifiers.powerMultiplier * knockOffPowerMultiplier(name, target.key, target.item),
+    }
+    const appliedSourceStats = foulPlay ? { ...sourceStats, attack: targetStats.attack } : sourceStats
+    const stab = resolveStabMultiplier(sourceTypes, type, sourceAbility, conditions.typeChangeStab)
+    const damage = calcDamage(appliedSourceStats, targetStats, meta.power, mode, stab, modifiers.effectiveness, meta, modifiers)
+    return damage ? { damage, targetHp: targetStats.hp, hits: meta.hits ?? 1, effectiveness: modifiers.effectiveness, decisionPower: decisionPowerIndex(appliedSourceStats, meta, stab, decisionModifiers), sourceForm: sourceRow.key === 'aegislash' && sourceAbility === 'stance-change' ? sourceForm : null, targetForm: targetRow.key === 'aegislash' && targetAbility === 'stance-change' ? targetForm : null } : null
 }
