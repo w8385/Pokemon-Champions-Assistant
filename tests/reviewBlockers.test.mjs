@@ -27,13 +27,13 @@ test('party tuning shares the compact editor and its canonical magic projection'
   assert.doesNotMatch(compact, /aria-controls=|quick-compact-preview-open|tuneContent/)
   assert.doesNotMatch(compact, /stat-preview-magic|quick-compact-tile-magic/)
 })
-test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {
+test('quick battle statuses and screens stay attached to their Pokémon without a standalone swap action', () => {
   assert.match(quickCalc, /quickStagePair\(source\.battle, target\.battle/)
   assert.match(quickCalc, /attackStage, defenseStage, defenderTypes/)
   assert.match(quickCalc, /source\.battle\.lowHp/)
   assert.match(quickCalc, /target\.battle\.fullHp/)
   assert.match(quickCalc, /target\.battle\.reflect/)
-  assert.match(view, /setAttacker\(defender\); setDefender\(attacker\)/)
+  assert.doesNotMatch(view, /setAttacker\(defender\); setDefender\(attacker\)|swapQuickMoveConditionSides|포켓몬 1·2 바꾸기/)
   assert.doesNotMatch(quick, /burned: conditions\.burned/)
 })
 test('builder Enter chooses from the same ranked visible results', () => {

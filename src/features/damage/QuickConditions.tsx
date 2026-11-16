@@ -3,8 +3,8 @@ import { translateText } from '../../shared/display/translation.ts'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { DamageTerrain, DamageWeather, SiteLanguage } from '../../app/types'
 import type { useQuickDamageState } from './useQuickDamageState'
-export function QuickConditionsView({ language, comparisonMode, conditions, manualFields, attacker, defender, setSide, setConditions, setManualFields }: {
-  language: SiteLanguage; comparisonMode: boolean; conditions: QuickConditions; manualFields: { weather: boolean; terrain: boolean }; attacker: QuickSide; defender: QuickSide;
+export function QuickConditionsView({ language, comparisonMode, sideNames, conditions, manualFields, attacker, defender, setSide, setConditions, setManualFields }: {
+  language: SiteLanguage; comparisonMode: boolean; sideNames: Record<'attacker' | 'defender', string>; conditions: QuickConditions; manualFields: { weather: boolean; terrain: boolean }; attacker: QuickSide; defender: QuickSide;
   setSide: ReturnType<typeof useQuickDamageState>['commands']['setSide'];
   setConditions: ReturnType<typeof useQuickDamageState>['commands']['setConditions'];
   setManualFields: ReturnType<typeof useQuickDamageState>['commands']['setManualFields'];
@@ -26,7 +26,9 @@ export function QuickConditionsView({ language, comparisonMode, conditions, manu
     const battle = entry.battle
     const setBattle = (patch: Partial<QuickBattle>) => setSide(side, prev => ({ ...prev, battle: { ...prev.battle, ...patch } }))
     const setHpPercent = (value: number) => setBattle(quickHpFacts(value))
-    return <fieldset className="quick-side-battle"><legend>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '포켓몬 1' : '포켓몬 2')} · {sourceLabels.battle}</legend>
+    const sideLabel = lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '포켓몬 1' : '포켓몬 2')
+    const visibleLabel = comparisonMode ? sideLabel : sideNames[side]
+    return <fieldset className="quick-side-battle" aria-label={`${sideLabel} · ${sideNames[side]} · ${sourceLabels.battle}`}><legend>{visibleLabel} · {sourceLabels.battle}</legend>
       {([['attackStage','공격 랭크'], ['spAttackStage','특수공격 랭크'], ['defenseStage','방어 랭크'], ['spDefenseStage','특수방어 랭크']] as const).map(([key,label]) => <label key={key}>{lt(label)}<select value={battle[key]} onChange={event => setBattle({ [key]: Number(event.target.value) })}>{Array.from({ length: 13 }, (_, idx) => idx - 6).map(value => <option key={value} value={value}>{value > 0 ? `+${value}` : value}</option>)}</select></label>)}
       {([['burned','화상'],['poisoned','독/맹독'],['statused','기타 상태이상'],['movedAfterTarget','상대보다 늦게 행동'],['reflect','리플렉터'],['lightScreen','빛의장막'],['auroraVeil','오로라베일']] as const).map(([key, label]) => <label key={key} className="quick-check"><input type="checkbox" checked={battle[key]} onChange={event => setBattle({ [key]: event.target.checked })} />{lt(label)}</label>)}
       <label className="quick-check"><input type="checkbox" checked={battle.lowHp} onChange={event => setHpPercent(event.target.checked ? Math.min(33, battle.hpPercent) : Math.max(34, battle.hpPercent))} />{lt('HP 1/3 이하')}</label>

@@ -12,7 +12,7 @@ import { natureById, SELECTABLE_NATURES } from '../../shared/display/naturePrese
 import { applyChampionsEffort } from '../../domain/champions/effortProjection'
 import { effortMagicProjection } from '../../domain/champions/effortMagic'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
-import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
+import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions } from '../../shared/display/PokemonCardOverview'
 import { CompactStatEditor } from '../../shared/display/CompactStatEditor'
 import PokemonSearchField from '../../shared/search/PokemonSearchField'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
@@ -22,7 +22,7 @@ import { lookupMoveMeta, resolveMoveType, resolveMoveMeta, filterMoveOptions } f
 import { choicesForPool, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
 import { learnsetStatusText, recordedLearnsetText, type SharedPoolState } from '../damage/quickPresentation'
 import { translateText } from '../../shared/display/translation'
-import { emptySlotLabel, natureChipLabel, resolveItemInput, partyStatValue, displayAbilities, sameMoveField, SmallTypeBadgeImage } from '../../shared/display/entryHelpers'
+import { emptySlotLabel, natureChipLabel, resolveItemInput, partyStatValue, displayAbilities, sameMoveField } from '../../shared/display/entryHelpers'
 import type { usePartyEditor } from './usePartyEditor'
 
 type Editor = ReturnType<typeof usePartyEditor>
@@ -124,21 +124,16 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                               },
                             }, children: <>{recordedLearnsetText(move, memberMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, memberMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, member.key, moveIdx, 'party') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</> }
                         })}
-                      belowGrid={memberTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card">
-                        <div className="row-between sample-track-head compact-gap">
-                          <strong>{lt('사용률 상위 기술')}</strong>
-                          <span className="muted-inline">Top {Math.min(10, memberTopSuggestedMoves.length)}</span>
-                        </div>
-                        <div className="move-chip-wrap party-top-move-grid">
-                          {memberTopSuggestedMoves.map((move) => {
-                            const locked = registeredMoves.includes(move)
-                            const eligible = Boolean(resolveEligibleMoveInput(move, memberMovePool))
-                            const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
-                            const moveType = findMoveType(move)
-                            return <button key={`party-top-${member.key}-${move}`} type="button" className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(moveType)}`} onClick={() => applyMoveToSlot(member.key, move)} disabled={!eligible} title={!eligible ? reason : undefined} aria-label={!eligible ? `${move} — ${reason}` : move} {...bindTooltip(moveTooltipData(move, siteLanguage))}>{moveType ? <SmallTypeBadgeImage type={moveType} /> : null}<span>{move}</span></button>
-                          })}
-                        </div>
-                      </div> : null} /> : null}
+                      belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={memberTopSuggestedMoves.map(move => {
+                        const selected = registeredMoves.includes(move)
+                        const eligible = Boolean(resolveEligibleMoveInput(move, memberMovePool))
+                        const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
+                        const moveType = findMoveType(move)
+                        const preferredSlot = sameMoveField(activeMoveField, member.key, activeMoveField?.slotIdx ?? -1, 'party') ? activeMoveField?.slotIdx : undefined
+                        return { name: move, type: moveType, selected, disabled: !eligible, title: !eligible ? reason : undefined,
+                          ariaLabel: !eligible ? `${move} — ${reason}` : move, className: moveTypeThemeClass(moveType),
+                          onSelect: () => applyMoveToSlot(member.key, move, preferredSlot), tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)) }
+                      })} />} /> : null}
                   </div>
                 )
 }

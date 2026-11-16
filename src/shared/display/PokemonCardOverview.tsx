@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './typeBadges'
 import type { EffortStatKey, MoveMeta } from '../../app/types'
 import type { PartialLibraryBuild } from '../../domain/samples/creatorSampleLibrary'
@@ -35,6 +35,28 @@ export function MoveCandidateRow({ name, type, meta, labels }: {
 }
 
 export type RegisteredMoveLabels = { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
+export type MoveUsageSuggestion = {
+  name: string; type?: string | null; selected?: boolean; disabled?: boolean; title?: string; ariaLabel?: string; className?: string;
+  onSelect: () => void; tooltipProps?: HTMLAttributes<HTMLElement>;
+}
+
+/** Shared compact Top-usage rail. Callers own eligibility and slot selection; this component only presents the SSOT result. */
+export function MoveUsageSuggestions({ label, moves }: { label: string; moves: readonly MoveUsageSuggestion[] }) {
+  if (!moves.length) return null
+  return <section className="move-usage-suggestions" aria-label={label}>
+    <div className="move-usage-suggestions-head"><strong>{label}</strong><span>Top {moves.length}</span></div>
+    <div className="move-usage-suggestions-grid">
+      {moves.map((move, index) => <button key={`${move.name}-${index}`} type="button"
+        className={`move-usage-suggestion ${move.className ?? ''}`.trim()} disabled={move.disabled}
+        aria-pressed={move.selected} aria-label={move.ariaLabel ?? move.name} title={move.title}
+        {...move.tooltipProps} onClick={move.onSelect}>
+        {move.type ? <img src={getTypeBadgeSrc(move.type)} alt="" aria-hidden="true" className="type-badge-image-small" /> : null}
+        <span>{move.name}</span>
+      </button>)}
+    </div>
+  </section>
+}
+
 export type MoveSlotView = {
   id: string; name: string; type?: string | null; meta?: MoveMeta | null;
   /** Persisted occupancy can differ from the live search draft while an editor is focused. */

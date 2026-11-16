@@ -42,11 +42,12 @@ test('speed investment retains target and numbers but not duplicated effort/natu
 })
 
 test('distinct import and export destinations have scoped Korean keys and EN/JA translations', () => {
-  for (const label of ['전체 데이터 내보내기', '전체 데이터 불러오기', '저장 파티에 추가', '샘플 편집기에 가져오기', '출처 링크 저장', '저장 링크 삭제', '샘플 편집기로 보내기', '파티 슬롯 선택', '선택 슬롯에 넣기', '포켓몬 1·2 바꾸기']) {
-    assert.ok((label === '포켓몬 1·2 바꾸기' ? quickView : app).includes(`lt('${label}')`), label)
+  for (const label of ['전체 데이터 내보내기', '전체 데이터 불러오기', '저장 파티에 추가', '샘플 편집기에 가져오기', '출처 링크 저장', '저장 링크 삭제', '샘플 편집기로 보내기', '파티 슬롯 선택', '선택 슬롯에 넣기']) {
+    assert.ok(app.includes(`lt('${label}')`), label)
     const translationsSource = translations
     assert.equal((translationsSource.match(new RegExp(`'${label}':`, 'g')) ?? []).length, 2, label)
   }
+  assert.doesNotMatch(quickView, /lt\('포켓몬 1·2 바꾸기'\)/)
   assert.match(app, /onClick=\{\(\) => \{ exportState\(\); setSettingsMenuOpen\(false\) \}\}>\s*<strong><UiIcon name=\"download\"[^>]*\/>\{lt\('전체 데이터 내보내기'\)\}/)
   assert.match(app, /onClick=\{\(\) => importCreatorParty\(librarySource\)\}><UiIcon name=\"plus\"[^>]*\/>\{lt\('저장 파티에 추가'\)\}/)
 })

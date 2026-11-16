@@ -31,7 +31,8 @@ test('each target places four move results beside editable conditions and bulk',
   const target = section.split('key={`sample-damage-target-${entry.idx}`}')[1]?.split(')}) : <div className="sample-empty-state')[0]
   assert.ok(target)
   assert.match(app, /entry\.forwardMoves\.find\(item => item\.moveName === move\)/)
-  assert.match(target, /entry\.member\.opponentMoves\.slice\(0, 4\)\.map\(\(move, slot\)/)
+  assert.match(app, /const opponentRegisteredMoves = Array\.from\(\{ length: 4 \}, \(_, slot\) => entry\.member\.opponentMoves\[slot\] \?\? ''\)/)
+  assert.match(target, /opponentRegisteredMoves\.map\(\(move, slot\)/)
   assert.doesNotMatch(target, /공격 선택|moveName: e\.target\.value|sample-damage-metric-grid/)
   assert.match(target, /applySampleDamageBulkPresetSelection\(entry\.idx/)
   for (const field of ['hpEv', 'defenseEv', 'spDefenseEv', 'defenseNature', 'spDefenseNature']) {

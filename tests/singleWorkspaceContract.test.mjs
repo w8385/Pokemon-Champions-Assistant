@@ -13,11 +13,11 @@ const quickProps = readFileSync(new URL('../src/features/damage/QuickDamagePanel
 const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
 assert.match(app, /mainSection === 'single' \? <SingleEntryComparison/)
 
-test('entry selectors render inside the actual comparison panel and disable independent identity search/swap', () => {
+test('entry selectors render inside the actual comparison panel and calculator omits the side-swap action', () => {
   assert.match(quickProps, /entrySelectors\?: \(opponentSearch: React\.ReactNode, reset: React\.ReactNode\) => React\.ReactNode/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(quick, /<PokemonSearchField id={`quick-\${side}`}/)
-  assert.match(quick, /!comparisonMode \? <div className="quick-heading-actions"><button type="button" className="action-button"[^]*?포켓몬 1·2 바꾸기/)
+  assert.doesNotMatch(quick, /포켓몬 1·2 바꾸기|swapQuickMoveConditionSides/)
   assert.doesNotMatch(single, /<section className="panel wide"><h2>/)
   assert.match(single, /entrySelectors=\{/)
 })

@@ -18,7 +18,8 @@ test('legacy forward move remains separate from opponent registered moves on res
 test('opponent uses exact-form confirmed pool and shared registered slots without selecting an attack', () => {
   assert.match(app, /movePoolByKey\[member\.key\]/)
   assert.match(app, /resolveEligibleMoveInput\(move, movePoolByKey\[member\.key\]\)/)
-  assert.match(app, /<MoveSlotsEditor[^]*?slots=\{entry\.member\.opponentMoves\.slice\(0, 4\)/)
+  assert.match(app, /const opponentRegisteredMoves = Array\.from\(\{ length: 4 \}, \(_, slot\) => entry\.member\.opponentMoves\[slot\] \?\? ''\)/)
+  assert.match(app, /<MoveSlotsEditor[^]*?slots=\{opponentRegisteredMoves\.map\(\(move, slot\)/)
   assert.match(app, /selectSampleOpponentMove\(entry\.idx, slot, option\.key\)/)
   const opponentEditor = app.slice(app.indexOf("<strong>{lt('상대 → 내 포켓몬')}</strong>"), app.indexOf("{lt('타수')}", app.indexOf("<strong>{lt('상대 → 내 포켓몬')}</strong>")))
   assert.ok(opponentEditor.length > 0)

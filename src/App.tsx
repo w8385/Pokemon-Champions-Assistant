@@ -70,7 +70,7 @@ import { actualStat } from './domain/champions/statMechanics'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './shared/display/statPresentation'
 import { getSpeedAbility, speedActivationAllowed } from './domain/battle/speed/speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './domain/battle/singleSpeedComparison'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, MoveSlotsEditor, MoveCandidateRow, createReadonlyCardStats, type CardStat } from './shared/display/PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, createReadonlyCardStats, type CardStat } from './shared/display/PokemonCardOverview'
 import SpeedLinePanel from './features/speedline/SpeedLinePanel'
 import PokemonSearchField from './shared/search/PokemonSearchField'
 import SearchCombobox from './shared/search/SearchCombobox'
@@ -3894,7 +3894,24 @@ export default function App() {
                                     {result && (result.moveRule || result.moveHitOptions?.length || move === '로우킥' || move === '풀묶기') ? <small>{variablePowerHint(move, lt, { targetWeightKnown: result.targetWeightKnown, resolvedPower: result.movePower, totalPower: result.moveHitSummary?.totalPower ?? null })}</small> : null}
                                   </div>
                                 }) : null
-                            }))} />
+                            }))}
+      belowGrid={sampleTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={sampleTopSuggestedMoves.map(move => {
+        const selectedSlot = sampleRegisteredMoves.indexOf(move)
+        const eligible = Boolean(resolveEligibleMoveInput(move, sampleMovePool))
+        const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
+        const moveType = sampleMoveType(move)
+        return {
+          name: move,
+          type: moveType,
+          selected: selectedSlot >= 0,
+          disabled: !eligible,
+          title: !eligible ? reason : undefined,
+          ariaLabel: !eligible ? `${move} — ${reason}` : move,
+          className: moveTypeThemeClass(moveType),
+          onSelect: () => selectedSlot >= 0 ? focusSampleSlot(selectedSlot) : applySampleCandidateMove(move, activeSampleMoveSlotIdx),
+          tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)),
+        }
+      })} /> : null} />
   )
   const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
   const sampleCuratedMoveBuckets = [
@@ -5727,33 +5744,7 @@ export default function App() {
                               </section>
                             ))}
                           </div>
-                        </div> : sampleTopSuggestedMoves.length ? <div className="sample-track-card top-move-chip-card sample-track-secondary-section">
-                          <div className="row-between sample-track-head compact-gap">
-                            <strong>{lt('사용률 상위 기술')}</strong>
-                            <span className="muted-inline">Top {Math.min(10, sampleTopSuggestedMoves.length)}</span>
-                          </div>
-                          <div className="move-chip-wrap">
-                            {sampleTopSuggestedMoves.map((move) => {
-                              const locked = sampleConfirmedMoves.includes(move)
-                              const eligible = Boolean(resolveEligibleMoveInput(move, sampleMovePool))
-                              const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
-                              return (
-                                <button
-                                  key={`sample-top-move-${sampleForge.key}-${move}`}
-                                  type="button"
-                                  className={`move-chip core ${locked ? 'confirmed' : ''} ${moveTypeThemeClass(sampleMoveType(move))}`}
-                                  onClick={() => applySampleCandidateMove(move, activeSampleMoveSlotIdx)}
-                                  disabled={!eligible}
-                                  title={!eligible ? reason : undefined}
-                                  aria-label={!eligible ? `${move} — ${reason}` : move}
-                                  {...bindTooltip(moveTooltipData(move, siteLanguage))}
-                                >
-                                  {move}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        </div> : sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
+                        </div> : sampleTopSuggestedMoves.length || sampleMovePool?.status === 'loading' ? null : <div className="sample-empty-state">{lt('기술 데이터가 없는 포켓몬만 직접 입력합니다.')}</div>}
                       </div>
                     </div>
                   </div>
@@ -5983,6 +5974,8 @@ export default function App() {
                 </div>
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => {
                   const bulkPresetKey = detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })
+                  const opponentRegisteredMoves = Array.from({ length: 4 }, (_, slot) => entry.member.opponentMoves[slot] ?? '')
+                  const opponentTopSuggestedMoves = usageTopMovesForKey(entry.member.key)
                   return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     {heldAbilityError(entry.member.key, entry.member.ability, siteLanguage) && <div role="alert" className="item-validation-error">{heldAbilityError(entry.member.key, entry.member.ability, siteLanguage)}</div>}
@@ -6025,7 +6018,7 @@ export default function App() {
                                <small role="status">{learnsetStatusText(entry.reverse.opponentPool, siteLanguage) ? `${learnsetStatusText(entry.reverse.opponentPool, siteLanguage)} · ` : ''}{`EV ${entry.member.attackEv}/${entry.member.spAttackEv} · 성격 ${entry.member.attackNature}/${entry.member.spAttackNature} · ${entry.member.speedEv} Speed EV · ${conciseSpeedLabels[siteLanguage].lab}`}</small>
                                {!entry.opponentEffortsValid ? <p role="alert">{lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')}</p> : null}
                                <MoveSlotsEditor label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`sample-opponent-${entry.member.key}-${entry.idx}`} role="editable"
-                                 slots={entry.member.opponentMoves.slice(0, 4).map((move, slot) => {
+                                 slots={opponentRegisteredMoves.map((move, slot) => {
                                    const editing = sampleOpponentMoveDraft?.key === entry.member.key && sampleOpponentMoveDraft.index === slot
                                    const input = editing ? sampleOpponentMoveDraft.text : move
                                    const meta = resolveMoveMeta(move, entry.reverse.opponentOptions, movePoolByKey)
@@ -6047,6 +6040,26 @@ export default function App() {
                                        {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
                                      </div> : null }
                                  })}
+                                 belowGrid={opponentTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={opponentTopSuggestedMoves.map(move => {
+                                   const selectedSlot = opponentRegisteredMoves.indexOf(move)
+                                   const eligible = Boolean(resolveEligibleMoveInput(move, entry.reverse.opponentPool))
+                                   const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
+                                   const moveType = resolveMoveType(move, entry.reverse.opponentOptions, movePoolByKey)
+                                   const draftSlot = sampleOpponentMoveDraft?.key === entry.member.key ? sampleOpponentMoveDraft.index : -1
+                                   const emptySlot = opponentRegisteredMoves.findIndex(candidate => !candidate)
+                                   const targetSlot = selectedSlot >= 0 ? selectedSlot : draftSlot >= 0 ? draftSlot : emptySlot >= 0 ? emptySlot : 3
+                                   return {
+                                     name: move,
+                                     type: moveType,
+                                     selected: selectedSlot >= 0,
+                                     disabled: !eligible,
+                                     title: !eligible ? reason : undefined,
+                                     ariaLabel: !eligible ? `${move} — ${reason}` : move,
+                                     className: moveTypeThemeClass(moveType),
+                                     onSelect: () => selectSampleOpponentMove(entry.idx, targetSlot, move),
+                                     tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)),
+                                   }
+                                 })} /> : null}
                                />
                              <div className="sample-opponent-offense-grid">
                                 {([{ key: 'attackEv', label: lt('상대 공격 EV') }, { key: 'spAttackEv', label: lt('상대 특공 EV') }] as const).map(({ key, label }) => <label key={key}>{label}<input type="number" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} value={entry.member[key]} onChange={e => updateSampleDamageTarget(entry.idx, { [key]: clampNonNegativeInt(e.target.value, CHAMPIONS_EFFORT_PER_STAT_CAP) })} /></label>)}
