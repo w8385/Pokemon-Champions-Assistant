@@ -40,6 +40,6 @@ test('same card contains shared build, effort and adaptively compact move inputs
   assert.doesNotMatch(panel, /className="quick-build-sides"/)
   assert.match(card, /<PokemonBuildFields/)
   assert.match(card, /<QuickStatEditor/)
-  assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
-  assert.match(css, /@container \(min-width:\s*480px\)\s*\{[^]*?\.quick-side-moves \.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
+  assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+  assert.match(css, /@container move-editor \(min-width:\s*480px\)\s*\{[^]*?\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
 })

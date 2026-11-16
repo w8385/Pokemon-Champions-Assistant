@@ -8,6 +8,7 @@ import { createServer } from 'vite'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+const quick = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 test('every editable owner and library mount the actual four-slot shell, not separate grids', () => {
   for (const marker of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-move-${member.key}-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${slot}', 'creator-library-moves']) {
     const owner = marker.startsWith('quick-') ? readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8') : marker.startsWith('party-') ? member : app
@@ -17,12 +18,24 @@ test('every editable owner and library mount the actual four-slot shell, not sep
   assert.match(app, /renderSampleMoveEditor\([^)]*\)/)
   assert.doesNotMatch(app, /<div className="registered-move-grid (?:quick|sample)/)
 })
-test('one grid policy and outer shell for all parent widths and fixed upper editor geometry', () => {
-  assert.match(css, /\.move-slots-editor\s*\{/)
-  assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
-  assert.match(css, /@media\s*\(max-width:\s*600px\)[^{]*\{\s*\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+test('one named-container grid policy and tile shell serve every parent width', () => {
+  const shell = css.match(/\.move-slots-editor\s*\{([^}]*)\}/)?.[1] ?? ''
+  assert.match(shell, /container:\s*move-editor\s*\/\s*inline-size/)
+  assert.match(shell, /border:\s*0/)
+  assert.match(shell, /background:\s*transparent/)
+  assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+  assert.match(css, /@container\s+move-editor\s*\(min-width:\s*480px\)[^{]*\{\s*\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2/)
   assert.match(css, /\.move-slots-editor-slot\.registered-move-slot\s*\{[^}]*min-height:/)
   assert.match(css, /\.move-slots-editor-preview\s*\{[^}]*min-height:/)
+})
+test('all editable four-slot owners mount the shared usage rail while readonly source cards do not', () => {
+  assert.match(member, /<MoveSlotsEditor[^]*?belowGrid=\{<MoveUsageSuggestions/)
+  assert.match(quick, /<MoveSlotsEditor[^]*?belowGrid=\{<MoveUsageSuggestions/)
+  assert.match(app, /ownerId=\{`sample-\$\{sampleForge\.key\}`\}[^]*?belowGrid=\{sampleTopSuggestedMoves\.length \? <MoveUsageSuggestions/)
+  assert.match(app, /ownerId=\{`sample-opponent-\$\{entry\.member\.key\}-\$\{entry\.idx\}`\}[^]*?belowGrid=\{opponentTopSuggestedMoves\.length \? <MoveUsageSuggestions/)
+  const readonly = app.slice(app.indexOf('className="creator-library-moves"'), app.indexOf('/> : null}', app.indexOf('className="creator-library-moves"')))
+  assert.ok(readonly.length > 0)
+  assert.doesNotMatch(readonly, /MoveUsageSuggestions|belowGrid=/)
 })
 test('mounted shell retains four positional blanks, owner state, selection, readOnly, tooltip and IME', async () => {
   const window = new Window({ url: 'http://localhost/' })

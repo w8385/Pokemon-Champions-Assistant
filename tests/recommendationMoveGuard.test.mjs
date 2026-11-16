@@ -9,6 +9,8 @@ import { Window } from 'happy-dom'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const memberSource = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+const quickSource = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const overviewSource = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const names = ['applyMoveToSlot', 'selectMoveOption', 'commitEditorMove', 'selectSampleMoveOption', 'applySampleCandidateMove']
 const declarations = new Map()
@@ -108,19 +110,28 @@ test('opponent usage and picker callback cannot add unverified move while retain
   }
 })
 
-test('suggestion chips are unavailable with a visible reason unless exact-form source authorizes move', () => {
+test('shared usage suggestions stay unavailable with a visible reason unless exact-form source authorizes move', () => {
   assert.match(source, /<PartyView\b/)
-  const party = memberSource.slice(memberSource.indexOf('memberTopSuggestedMoves.map((move)'), memberSource.indexOf('</div> : null}', memberSource.indexOf('memberTopSuggestedMoves.map((move)')))
-  const builder = source.slice(source.indexOf('sampleVisibleMoveBuckets.map((bucket)'), source.indexOf('</div> : sampleMovePool', source.indexOf('sampleVisibleMoveBuckets.map((bucket)')))
-  const oppEntry = source.slice(source.indexOf('oppTopSuggestedMoves.map((move)'), source.indexOf('</details> : null}', source.indexOf('oppTopSuggestedMoves.map((move)')))
-  const oppDamage = source.slice(source.lastIndexOf('oppTopSuggestedMoves.map((move)'), source.indexOf('</details> : null}', source.lastIndexOf('oppTopSuggestedMoves.map((move)')))
-  for (const section of [party, builder, oppEntry, oppDamage]) {
-    assert.match(section, /disabled=\{[^}]+\}/)
-    assert.match(section, /title=\{[^}]+\}/)
-    assert.match(section, /aria-label=\{[^}]+\}/)
-    assert.match(section, /resolveEligibleMoveInput\(move,/)
+  const region = (owner, marker) => {
+    const start = owner.indexOf(marker)
+    assert.ok(start >= 0, marker)
+    return owner.slice(start, start + 2500)
   }
-  assert.equal((builder.match(/onClick=\{\(\) => applySampleCandidateMove\(move,/g) ?? []).length, 2)
+  const sections = [
+    region(memberSource, 'memberTopSuggestedMoves.map(move =>'),
+    region(quickSource, 'usageTopMovesForKey(entry.key).map(name =>'),
+    region(source, 'sampleTopSuggestedMoves.map(move =>'),
+    region(source, 'opponentTopSuggestedMoves.map(move =>'),
+  ]
+  for (const section of sections) {
+    assert.match(section, /disabled:\s*!?(?:eligible|Boolean\(reason\))/)
+    assert.match(section, /title:\s*[^,]+/)
+    assert.match(section, /ariaLabel:\s*[^,]+/)
+    assert.match(section, /resolveEligibleMoveInput\((?:move|name),/)
+  }
+  assert.match(overviewSource, /disabled=\{move\.disabled\}/)
+  assert.match(overviewSource, /aria-label=\{move\.ariaLabel \?\? move\.name\}/)
+  assert.match(overviewSource, /title=\{move\.title\}/)
 })
 
 test('pending, missing and failed pools reject recommendations, while an evidenced alias normalizes only on explicit choice', async () => {

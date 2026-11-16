@@ -172,7 +172,7 @@ test('Speed comparison nature is isolated from the build card nature and actual 
   } finally { await view.close() }
 })
 
-test('standalone calculator uses neutral Pokemon 1/2 labels while matchup keeps ownership labels', async () => {
+test('standalone calculator keeps 1/2 card identity but uses species names in shared summaries', async () => {
   for (const [comparisonMode, expected] of [
     [false, ['포켓몬 1', '포켓몬 2']],
     [true, ['내 포켓몬', '상대 포켓몬']],
@@ -184,12 +184,13 @@ test('standalone calculator uses neutral Pokemon 1/2 labels while matchup keeps 
       const speedLabels = [...view.host.querySelectorAll('.quick-speed-lane output')].map(node => node.getAttribute('aria-label'))
       assert.ok(speedLabels[0]?.startsWith(expected[0]))
       assert.ok(speedLabels[1]?.startsWith(expected[1]))
+      const visibleExpected = comparisonMode ? expected : ['아쿠스타', '패리퍼']
+      const speedLegends = [...view.host.querySelectorAll('.quick-speed-lane legend')].map(node => node.textContent)
+      assert.deepEqual(speedLegends, comparisonMode ? ['내 포켓몬 · 아쿠스타', '상대 포켓몬 · 패리퍼'] : visibleExpected)
       const battleLabels = [...view.host.querySelectorAll('.quick-side-battle legend')].map(node => node.textContent)
-      assert.ok(battleLabels[0]?.startsWith(expected[0]))
-      assert.ok(battleLabels[1]?.startsWith(expected[1]))
-      const swap = view.host.querySelector('.quick-heading-actions button')
-      if (comparisonMode) assert.equal(swap, null)
-      else assert.match(swap?.textContent ?? '', /포켓몬 1·2 바꾸기/)
+      assert.ok(battleLabels[0]?.startsWith(visibleExpected[0]))
+      assert.ok(battleLabels[1]?.startsWith(visibleExpected[1]))
+      assert.equal(view.host.querySelector('.quick-heading-actions button'), null)
     } finally { await view.close() }
   }
 })

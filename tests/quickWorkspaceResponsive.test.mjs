@@ -17,8 +17,9 @@ const storage = readFileSync(new URL('../src/adapters/persistence/quickDamage.ts
 test('paired cards and merged Speed lanes stack before controls become cramped', () => {
   assert.match(sharedCss, /@media \(max-width: 760px\)[^]*?\.quick-speed-lanes\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)[^]*?\.quick-sides\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
   assert.match(sharedCss, /@media \(max-width: 390px\)[^]*?\.quick-compact-stat-editor \.stat-preview-list\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
-  assert.match(sharedCss, /\.quick-side-card \.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
-  assert.match(sharedCss, /@container \(min-width: 480px\)[^]*?\.quick-side-moves \.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
+  assert.match(sharedCss, /\.move-slots-editor\s*\{[^}]*container:\s*move-editor\s*\/\s*inline-size/)
+  assert.match(sharedCss, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
+  assert.match(sharedCss, /@container move-editor \(min-width: 480px\)[^]*?\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
   assert.match(css, /\.single-workspace \.single-entry-toolbar/)
   assert.match(cardOwner, /<MoveSlotsEditor[^]*?preview: name \? <button type="button" className=\{`quick-move-preview[^]*?: null/)
   assert.match(cardOwner, /Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)

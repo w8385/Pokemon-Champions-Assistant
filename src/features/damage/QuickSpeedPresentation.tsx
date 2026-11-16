@@ -26,8 +26,11 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
   const lt = (text: string) => translateText(language, text)
   const speedLabels = conciseSpeedLabels[language]
   const speedId = `quick-speed-${React.useId().replace(/:/g, '')}`
-  const firstAhead = comparisonMode ? lt('내가 빠름') : ({ ko: '포켓몬 1이 빠름', en: 'Pokémon 1 is faster', ja: 'ポケモン1が速い' } as const)[language]
-  const secondAhead = comparisonMode ? lt('내가 느림') : ({ ko: '포켓몬 2가 빠름', en: 'Pokémon 2 is faster', ja: 'ポケモン2が速い' } as const)[language]
+  const firstName = attackingRow ? displayName(attackingRow, language) : lt('포켓몬 1')
+  const secondName = defendingRow ? displayName(defendingRow, language) : lt('포켓몬 2')
+  const fasterLabel = (name: string) => ({ ko: `${name} 쪽이 빠름`, en: `${name} is faster`, ja: `${name}が速い` } as const)[language]
+  const firstAhead = comparisonMode ? lt('내가 빠름') : fasterLabel(firstName)
+  const secondAhead = comparisonMode ? lt('내가 느림') : fasterLabel(secondName)
   const verdict = speedVisual.valid
     ? `${speedVisual.delta! > 0 ? firstAhead : speedVisual.delta! < 0 ? secondAhead : lt('동속')}${speedVisual.delta ? ` ${speedVisual.delta > 0 ? '+' : ''}${speedVisual.delta}` : ''}`
     : lt('비교 불가')
@@ -36,7 +39,9 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
     if (!row) return null
     const own = side === 'attacker'
     const sideLabel = lt(comparisonMode ? own ? '내 포켓몬' : '상대 포켓몬' : own ? '포켓몬 1' : '포켓몬 2')
-    const label = `${sideLabel} · ${displayName(row, language)}`
+    const name = displayName(row, language)
+    const label = comparisonMode ? `${sideLabel} · ${name}` : name
+    const accessibleLabel = `${sideLabel} · ${name}`
     const result = own ? mySpeedResult : oppSpeedResult
     const fraction = own ? speedVisual.ownFraction : speedVisual.opponentFraction
     const ability = abilityFor(entry, row)
@@ -49,7 +54,7 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
       abilityApplied && ability ? `${lt(ability.labelKo)} ×${ability.multiplier}` : '',
     ].filter(Boolean).join(' · ')
 
-    return <fieldset className={`quick-speed-lane quick-speed-lane-${side}`}>
+    return <fieldset className={`quick-speed-lane quick-speed-lane-${side}`} aria-label={accessibleLabel}>
       <legend>{label}</legend>
       <div className="quick-speed-lane-result">
         <span>{lt('최종 스피드')}</span>
@@ -67,8 +72,8 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
     </fieldset>
   }
 
-  const firstLabel = lt(comparisonMode ? '내 포켓몬' : '포켓몬 1')
-  const secondLabel = lt(comparisonMode ? '상대 포켓몬' : '포켓몬 2')
+  const firstLabel = comparisonMode ? lt('내 포켓몬') : firstName
+  const secondLabel = comparisonMode ? lt('상대 포켓몬') : secondName
   const statusLabel = speedVisual.valid
     ? `${lt('스피드 비교')} · ${verdict} · ${firstLabel} ${mySpeedResult?.value} · ${secondLabel} ${oppSpeedResult?.value}`
     : `${lt('스피드 비교')} · ${verdict}`
