@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const screen = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const card = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
-const modal = readFileSync(new URL('../src/features/damage/QuickEffortModal.tsx', import.meta.url), 'utf8')
+const statEditor = readFileSync(new URL('../src/features/damage/QuickStatEditor.tsx', import.meta.url), 'utf8')
+const compactEditor = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 const calculator = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
 const io = readFileSync(new URL('../src/adapters/persistence/quickDamage.ts', import.meta.url), 'utf8')
 const hook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
@@ -20,9 +21,11 @@ test('standalone damage reuses real picker and engine without changing party ent
 })
 
 test('both swapped cards keep every damage-relevant stat visible and repairable', () => {
-  assert.match(card, /<PokemonStatGrid showEffort stats=\{EFFORT_STAT_OPTIONS\.map/)
-  assert.match(modal, /<EffortTuningModal[^]*override=\{entry\.actual\}/)
-  assert.match(modal, /delete actual\[key\]/)
+  assert.match(card, /<QuickStatEditor[^]*stats=\{EFFORT_STAT_OPTIONS\.map/)
+  assert.match(statEditor, /<CompactStatEditor/)
+  assert.match(compactEditor, /<PokemonStatGrid stats=\{visibleStats\} showEffort/)
+  assert.match(compactEditor, /renderTune=\{\(\) => tuneContent\}/)
+  assert.match(statEditor, /delete actual\[key\]/)
 })
 
 test('multihit summed rolls cannot be presented as exact KO probability', () => {

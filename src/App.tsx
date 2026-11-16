@@ -9,7 +9,7 @@ import { OpponentsPickView } from './features/single/OpponentsPickView'
 import { QuickDamagePanel } from './features/damage/QuickDamagePanel'
 import { useOpponentEntries } from './features/single/useOpponentEntries'
 import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './features/damage/quickPresentation.ts'
-import { QuickBattle, QuickSide, QuickConditions, quickBlankBattle, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat } from './features/damage/quickModel.ts'
+import { QuickBattle, QuickSide, QuickConditions, quickBlankBattle, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickStat } from './features/damage/quickModel.ts'
 import { sanitizeEvs, applyChampionsEffort, clampEv, totalEffortPoints, remainingEffortPoints } from './domain/champions/effortProjection'
 import { natureById, boostedStatForNature, SELECTABLE_NATURES } from './shared/display/naturePresentation'
 import { heldAbilityError, resolveSelectedAbility, abilityDisplayName, selectedAbilityDisplayName } from './shared/display/abilityPresentation.ts'
@@ -61,7 +61,7 @@ import { effectiveComparisonSpeed } from './domain/battle/unifiedComparisonSpeed
 import { presentDoubleActionOrder } from './domain/battle/doubleOrderPresentation'
 import { compareSpeedVisual } from './domain/battle/speedVisual'
 import { EffortTuningModal } from './shared/display/EffortTuningModal'
-import { magicEffortCandidate, magicEffortMarkers, namedNatureMagicAvailable } from './domain/champions/effortMagic'
+import { magicEffortCandidate, magicEffortMarkers } from './domain/champions/effortMagic'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './shared/display/typeBadges'
 import { analyzePartyMatchups } from './domain/party/partyAnalysis'
 import { PartyAnalysisPanel } from './features/party/PartyAnalysisPanel'
@@ -2159,11 +2159,9 @@ export default function App() {
   const [autocompleteHighlight, setAutocompleteHighlight] = React.useState<AutocompleteHighlight>(null)
   const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false)
   const [settingsMenuOpen, setSettingsMenuOpen] = React.useState(false)
-  const [tuningModalIndex, setTuningModalIndex] = React.useState<number | null>(null)
-  const partyTuningOpener = React.useRef<HTMLElement | null>(null)
   const partyEditor = usePartyEditor({
     initialParty: initialWorkspace.party, emptyParty, workspace, setParty, selectPreset, createPreset, renamePreset, deletePreset,
-    language: siteLanguage, defaultNatureForKey, onSelectMy: setSelectedMy, onCloseTuning: () => setTuningModalIndex(null),
+    language: siteLanguage, defaultNatureForKey, onSelectMy: setSelectedMy,
     onPresetSelectControls: () => {
       setActiveItemField(prev => prev?.scope === 'party' ? null : prev)
       setActiveMoveField(prev => prev?.scope === 'party' ? null : prev)
@@ -2171,7 +2169,6 @@ export default function App() {
     onClearSlotControls: (idx, key) => {
       setActiveItemField(prev => sameItemField(prev, 'party', idx) ? null : prev)
       setActiveMoveField(prev => prev?.scope === 'party' && prev.key === key ? null : prev)
-      if (tuningModalIndex === idx) setTuningModalIndex(null)
       if (selectedMy === idx) setSelectedMy(0)
     },
   })
@@ -2241,9 +2238,6 @@ export default function App() {
   const [asyncDataVersion, setAsyncDataVersion] = React.useState(0)
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
   const partyImageInputRef = React.useRef<HTMLInputElement | null>(null)
-  const tuningMember = tuningModalIndex !== null ? party[tuningModalIndex] : null
-  const tuningRow = tuningMember?.key ? (indexByKey.get(tuningMember.key) ?? rows[0]) : null
-  const magicCandidate = tuningMember && tuningRow ? findMagicNumberCandidate(tuningRow, tuningMember) : null
   const lt = React.useCallback((text: string) => translateText(siteLanguage, text), [siteLanguage])
   React.useEffect(() => {
     if (mainSection === 'home') return
@@ -4520,7 +4514,6 @@ export default function App() {
     resetRegisteredOpponents()
     setPartySearch(emptyParty.map(() => ''))
     setSelectedMy(0)
-    setTuningModalIndex(null)
     setCalcSwapSides(false)
     setCalcAttackStage(0)
     setCalcDefenseStage(0)
@@ -5020,13 +5013,6 @@ export default function App() {
           </div>
         </div>
       })() : null}
-
-      {tuningModalIndex !== null && tuningMember && tuningRow ? <EffortTuningModal
-        evs={tuningMember.evs} nature={tuningMember.config.nature} natureOptions={SELECTABLE_NATURES.map(nature => ({ id: nature.id, label: natureLabel(nature.id, siteLanguage) }))}
-        actualValue={(key, effort) => partyStatValue(tuningRow, effort === undefined ? tuningMember : { ...tuningMember, evs: { ...tuningMember.evs, [key]: effort } }, key)}
-        onEffort={(key, value) => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], evs: applyChampionsEffort(next[tuningModalIndex].evs, key, value) }; setParty(next) }}
-        onNature={nature => { const next = [...party]; next[tuningModalIndex] = { ...next[tuningModalIndex], config: { ...next[tuningModalIndex].config, nature } }; setParty(next) }}
-        onClose={() => setTuningModalIndex(null)} translate={lt} statTheme={statThemeClass} opener={partyTuningOpener.current} magicCandidate={magicCandidate} magicPoints={key => magicEffortPoints(tuningRow, tuningMember, key)} /> : null}
 
       {sampleTuningModalOpen && mainSection === 'sample' && sampleWorkbenchTab !== 'library' && sampleTuningIdentity === sampleForge.key ? <EffortTuningModal
         evs={sampleForge.evs} nature={sampleForge.config.nature}
@@ -5602,7 +5588,7 @@ export default function App() {
           onOpenImageImport={() => partyImageInputRef.current?.click()}
           onRetrySave={() => { setPersistenceStatus('saving'); setRetryPersistence(value => value + 1) }}
           onApproveOverwrite={() => { if (window.confirm(lt('원본 저장 데이터를 덮어쓰고 현재 화면으로 다시 저장할까요?'))) { setPersistenceStatus('saving'); setAllowRecoveryWrite(true) } }}
-          onTune={idx => { partyTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setTuningModalIndex(idx) }} setParty={setParty} /> : null}
+          setParty={setParty} /> : null}
 
         {mainSection === 'home' ? null : ((mainSection === 'single' && activeTab === 'pick') || (mainSection === 'double' && activeTab === 'pick')) ? <OpponentsPickView
           entry={opponentEntries} siteLanguage={siteLanguage} movePoolByKey={movePoolByKey} moveSlotLabels={moveSlotLabels}

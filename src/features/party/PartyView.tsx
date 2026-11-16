@@ -17,7 +17,7 @@ import type { SharedPoolState } from '../damage/quickPresentation'
 
 type Workspace = ReturnType<typeof usePartyWorkspace>['workspace']
 type Editor = ReturnType<typeof usePartyEditor>
-export function PartyView({ workspace, editor, siteLanguage, mainSection, asyncDataVersion, movePoolByKey, moveSlotLabels, moves, tooltip, persistenceStatus, partyImageImportBusy, partyImageImportStatus, onOpenImageImport, onRetrySave, onApproveOverwrite, onTune, setParty }: {
+export function PartyView({ workspace, editor, siteLanguage, mainSection, asyncDataVersion, movePoolByKey, moveSlotLabels, moves, tooltip, persistenceStatus, partyImageImportBusy, partyImageImportStatus, onOpenImageImport, onRetrySave, onApproveOverwrite, setParty }: {
   workspace: Workspace; editor: Editor; siteLanguage: SiteLanguage; mainSection: 'party' | 'double'; asyncDataVersion: number;
   movePoolByKey: Readonly<Record<string, SharedPoolState>>;
   moveSlotLabels: { slot: string; category: (category: MoveCategory | null) => string; power: string; accuracy: string; pp: string; unknown: string };
@@ -29,7 +29,7 @@ export function PartyView({ workspace, editor, siteLanguage, mainSection, asyncD
     applyMoveToSlot: (key: string, move: string, preferredSlot?: number) => void };
   tooltip: { bindTooltip: (card: HoverTooltipCard | null | undefined) => React.HTMLAttributes<HTMLElement>; abilityTooltipData: (name: string, language: SiteLanguage, row?: Row | null) => HoverTooltipCard | null; itemTooltipData: (name: string, language: SiteLanguage) => HoverTooltipCard | null; moveTooltipData: (name: string, language: SiteLanguage) => HoverTooltipCard | null };
   persistenceStatus: 'saving' | 'saved' | 'failed' | 'read-failed'; partyImageImportBusy: boolean; partyImageImportStatus: string;
-  onOpenImageImport: () => void; onRetrySave: () => void; onApproveOverwrite: () => void; onTune: (idx: number) => void;
+  onOpenImageImport: () => void; onRetrySave: () => void; onApproveOverwrite: () => void;
   setParty: ReturnType<typeof usePartyWorkspace>['setParty'];
 }) {
   const { party, confirmedMovesByKey, savedPartyPresets, activePartyPresetId } = workspace
@@ -63,10 +63,10 @@ export function PartyView({ workspace, editor, siteLanguage, mainSection, asyncD
         persistenceStatus={persistenceStatus} partyImageImportBusy={partyImageImportBusy} partyImageImportStatus={partyImageImportStatus}
         onOpenImageImport={onOpenImageImport} onRetrySave={onRetrySave} onApproveOverwrite={onApproveOverwrite} />
       <div className="entry-grid manage-entry-grid">
-        {party.map((member, idx) => <PartyMemberCard key={`${member.key}-${idx}`} member={member} idx={idx} siteLanguage={siteLanguage} mainSection={mainSection}
+        {party.map((member, idx) => <PartyMemberCard key={`${member.key}-${idx}`} member={member} idx={idx} editorIdentity={activePartyPresetId} siteLanguage={siteLanguage} mainSection={mainSection}
           editor={{ partySearch: editor.partySearch, setPartySearch: editor.setPartySearch, clearPartySlot: editor.clearPartySlot, selectPartySpecies: editor.selectPartySpecies }}
           setParty={setParty} confirmedMovesByKey={confirmedMovesByKey} movePoolByKey={movePoolByKey} moveSlotLabels={moveSlotLabels}
-          moves={moves} tooltip={tooltip} onTune={onTune} />)}
+          moves={moves} tooltip={tooltip} />)}
       </div>
       <PartyAnalysisPanel analysis={partyAnalysis} language={siteLanguage} loading={partyAnalysisLoading} />
     </div>

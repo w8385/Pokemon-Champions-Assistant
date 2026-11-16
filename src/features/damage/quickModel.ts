@@ -11,7 +11,7 @@ import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/s
 import { sanitizeEvs, applyChampionsEffort } from '../../domain/champions/effortProjection'
 import { boostedStatForNature } from '../../shared/display/naturePresentation'
 import { readDraft } from '../../adapters/persistence/comparisonDraftState'
-import { namedNatureMagicAvailable, magicEffortCandidate, magicEffortMarkers } from '../../domain/champions/effortMagic'
+import { effortMagicProjection, namedNatureMagicAvailable } from '../../domain/champions/effortMagic'
 import { actualStat } from '../../domain/champions/statMechanics'
 
 export type QuickBattle = ComparisonSeed['battle']
@@ -56,12 +56,7 @@ export function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 
 
 export function quickMagicProjection(side: QuickSide, row: Row) {
   const boosted = boostedStatForNature(side.nature)
-  const magic = boosted && namedNatureMagicAvailable(boosted, side) ? boosted : null
-  const actualAt = (stat: EffortStatKey, effort: number) => actualStat(row[stat], effort, stat === 'hp' ? 1 : natureMultiplier(side.nature, stat), stat === 'hp')
-  return {
-    candidate: magic ? magicEffortCandidate(magic, side.evs, effort => actualAt(magic, effort)) : null,
-    points: (stat: EffortStatKey) => magic ? magicEffortMarkers(magic, stat, effort => actualAt(stat, effort)) : [],
-  }
+  return effortMagicProjection(row, side.evs, side.nature, Boolean(boosted && namedNatureMagicAvailable(boosted, side)))
 }
 
 export function quickStat(side: QuickSide, row: Row, key: EffortStatKey) {

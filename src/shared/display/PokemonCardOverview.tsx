@@ -4,7 +4,7 @@ import type { EffortStatKey, MoveMeta } from '../../app/types'
 import type { PartialLibraryBuild } from '../../domain/samples/creatorSampleLibrary'
 import SearchCombobox, { type SearchComboboxProps, type SearchOption } from '../search/SearchCombobox'
 
-export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null }
+export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null; meta?: ReactNode }
 
 /** Source-recorded values take priority; missing nature/roster never erases confirmed efforts. */
 export function createReadonlyCardStats(
@@ -108,16 +108,17 @@ export function PokemonCardHeading({ name, sprite, types = [], spriteAlt = '', a
   </div>
 }
 
-export function PokemonStatGrid({ stats, onTune, unknown = '미확인', className = '', sampleStyle = false, showEffort = true }: { stats: CardStat[]; onTune?: () => void; unknown?: string; className?: string; sampleStyle?: boolean; showEffort?: boolean }) {
+export function PokemonStatGrid({ stats, onTune, tuneExpandedKey, tuneControls, renderTune, unknown = '미확인', className = '', sampleStyle = false, showEffort = true }: { stats: CardStat[]; onTune?: (key: EffortStatKey) => void; tuneExpandedKey?: EffortStatKey | null; tuneControls?: string; renderTune?: (stat: CardStat) => ReactNode; unknown?: string; className?: string; sampleStyle?: boolean; showEffort?: boolean }) {
   return <div className={`stat-preview-list ${className}`.trim()}>{stats.map(stat => {
     const content = <>
       <div className={`stat-preview-topline ${sampleStyle ? 'sample-stat-topline' : ''}`.trim()}><span>{stat.label}</span><strong>{stat.value ?? unknown}</strong></div>
       <div className="stat-preview-bar"><span style={{ width: stat.value === null ? '0%' : `${Math.max(0, Math.min(100, (stat.value / 255) * 100))}%` }} /></div>
-      {showEffort ? <div className="stat-preview-meta"><span className={`stat-preview-ev ${sampleStyle ? 'sample-stat-ev' : ''}`.trim()}>{stat.ev === null ? unknown : `EV +${stat.ev}`}</span></div> : null}
+      {showEffort ? <div className="stat-preview-meta"><span className={`stat-preview-ev ${sampleStyle ? 'sample-stat-ev' : ''}`.trim()}>{stat.ev === null ? unknown : `EV +${stat.ev}`}</span>{stat.meta}</div> : null}
     </>
-    const rowClass = `stat-preview-row ${onTune ? 'stat-preview-button ' : ''}${sampleStyle ? 'sample-stat-preview-row ' : ''}${stat.theme}`
+    const rowClass = `stat-preview-row ${sampleStyle ? 'sample-stat-preview-row ' : ''}${stat.theme}`
+    if (onTune && tuneExpandedKey === stat.key && renderTune) return <div key={stat.key} className={`${rowClass} stat-preview-editor`} id={tuneControls} role="group" aria-label={stat.label} tabIndex={-1}>{renderTune(stat)}</div>
     return onTune
-      ? <button key={stat.key} type="button" className={rowClass} onClick={e => { e.stopPropagation(); onTune() }}>{content}</button>
+      ? <button key={stat.key} type="button" className={`${rowClass} stat-preview-button`} data-stat-key={stat.key} onClick={e => { e.stopPropagation(); onTune(stat.key) }}>{content}</button>
       : <div key={stat.key} className={rowClass}>{content}</div>
   })}</div>
 }

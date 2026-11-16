@@ -3,16 +3,18 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const modal = readFileSync(new URL('../src/shared/display/EffortTuningModal.tsx', import.meta.url), 'utf8')
+const member = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
+const compact = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 const view = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const quick = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
 const quickCalc = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
 const quickHook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
-test('party tuning passes existing magic candidate and 11-multiple points to shared modal', () => {
-  assert.match(app, /magicCandidate=\{magicCandidate\}/)
-  assert.match(app, /magicPoints=\{key => magicEffortPoints\(tuningRow, tuningMember, key\)\}/)
-  assert.match(modal, /className=\{\['effort-gauge-cell'[^]*points\.includes\(i \+ 1\) \? 'magic'/)
-  assert.match(modal, /isMagicStat \? <span className="magic-inline"/)
-  assert.match(modal, /targetEffort !== null \? <span className="magic-inline"/)
+test('party tuning shares the compact editor and its canonical magic projection', () => {
+  assert.match(member, /<CompactStatEditor/)
+  assert.match(member, /effortMagicProjection\(row, member\.evs, member\.config\.nature\)/)
+  assert.match(member, /magicCandidate=\{magic\.candidate\} magicPoints=\{magic\.points\}/)
+  assert.match(compact, /className="quick-compact-tile-magic/)
+  assert.match(compact, /onClick=\{\(\) => setEffort\(selected, magicTarget\.effort\)\}/)
 })
 test('quick battle statuses and screens are attached to their Pokémon and follow swaps', () => {
   assert.match(quickCalc, /quickStagePair\(source\.battle, target\.battle/)

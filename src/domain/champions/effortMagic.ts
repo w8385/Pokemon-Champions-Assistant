@@ -1,10 +1,22 @@
 import { CHAMPIONS_EFFORT_CAP, CHAMPIONS_EFFORT_PER_STAT_CAP } from './buildRules.ts'
-import type { EffortStatKey } from '../../app/types.ts'
+import type { EffortStatKey, NatureId, Row } from '../../app/types.ts'
 import type { EffortValues } from '../samples/myPartyChampionsSamples.ts'
+import { natureAxes } from './natureProjection.ts'
+import { actualStat } from './statMechanics.ts'
+import { natureMultiplier } from './buildRules.ts'
+
+export type MagicEffortCandidate = Readonly<{
+  stat: EffortStatKey
+  reached: boolean
+  currentActual: number
+  currentEffort: number
+  nextEffort: number | null
+  nextActual: number | null
+}>
 
 // A magic point belongs only to the stat raised by a complete named nature.
 // Checkpoints and recorded actual-stat overrides are separate from predictions.
-export function magicEffortCandidate(boostedStat: EffortStatKey | null, evs: EffortValues, actualAtEffort: (effort: number) => number) {
+export function magicEffortCandidate(boostedStat: EffortStatKey | null, evs: EffortValues, actualAtEffort: (effort: number) => number): MagicEffortCandidate | null {
   if (!boostedStat) return null
   const currentEffort = evs[boostedStat]
   const currentActual = actualAtEffort(currentEffort)
@@ -32,4 +44,14 @@ export function namedNatureMagicAvailable(stat: EffortStatKey, side: {
   statNatureMultipliers: Partial<Record<EffortStatKey, number>>
 }): boolean {
   return side.actual[stat] === undefined && side.speedNatureKnown && Object.keys(side.statNatureMultipliers).length === 0
+}
+
+/** Canonical projection shared by the party editor and matchup editor. */
+export function effortMagicProjection(row: Row, evs: EffortValues, nature: NatureId, available = true) {
+  const boosted = available ? natureAxes(nature).up : null
+  const actualAt = (stat: EffortStatKey, effort: number) => actualStat(row[stat], effort, stat === 'hp' ? 1 : natureMultiplier(nature, stat), stat === 'hp')
+  return {
+    candidate: boosted ? magicEffortCandidate(boosted, evs, effort => actualAt(boosted, effort)) : null,
+    points: (stat: EffortStatKey) => boosted ? magicEffortMarkers(boosted, stat, effort => actualAt(stat, effort)) : [],
+  }
 }

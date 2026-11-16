@@ -13,7 +13,7 @@ import { quickItem, replaceQuickMove } from '../../domain/battle/quickDamageStat
 import { type ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter'
 import { SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
-import { PokemonCardHeading, PokemonStatGrid, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
+import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
 import { choicesForPool } from '../../domain/champions/sharedLearnsets'
 import { getMoveMetadata } from '../../domain/champions/moveMetadata'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
@@ -23,14 +23,16 @@ import { abilityDescriptionFor } from '../../adapters/catalog/data'
 import { battleFormRow } from '../../domain/battle/statProjection'
 import type { QuickDamageProps } from './QuickDamagePanel'
 import type { useQuickDamageState } from './useQuickDamageState'
-export function QuickSideCard({ side, entry, row, setEntry, searchField, language, comparisonMode, sharedMoveSpecies, tooltipForMove, opponentSource, model, commands }: {
+import { QuickStatEditor } from './QuickStatEditor'
+export function QuickSideCard({ side, editorIdentity, entry, row, setEntry, searchField, language, comparisonMode, sharedMoveSpecies, tooltipForMove, opponentSource, model, commands }: {
   side: 'attacker' | 'defender'; entry: QuickSide; row: Row | undefined; setEntry: React.Dispatch<React.SetStateAction<QuickSide>>; searchField: React.ReactNode;
+  editorIdentity?: string;
   language: SiteLanguage; comparisonMode: boolean; sharedMoveSpecies?: (key: string) => boolean; tooltipForMove: QuickDamageProps['tooltipForMove']; opponentSource: ComparisonSeed | undefined;
   model: Pick<ReturnType<typeof useQuickDamageState>['model'], 'pools' | 'selected' | 'drafts' | 'activeSlot' | 'dirty' | 'moveMetaReady' | 'calculate'>;
-  commands: Pick<ReturnType<typeof useQuickDamageState>['commands'], 'setActiveSlot' | 'setDrafts' | 'setSelected' | 'setModalKey' | 'setModalSide' | 'markDirty' | 'opener'>;
+  commands: Pick<ReturnType<typeof useQuickDamageState>['commands'], 'setActiveSlot' | 'setDrafts' | 'setSelected' | 'markDirty'>;
 }) {
   const { pools, selected, drafts, activeSlot, dirty, moveMetaReady, calculate } = model
-  const { setActiveSlot, setDrafts, setSelected, setModalKey, setModalSide, markDirty, opener } = commands
+  const { setActiveSlot, setDrafts, setSelected, markDirty } = commands
   const lt = (text: string) => translateText(language, text)
 const sourceLabels = {
     ko: { shared: '같은 종 슬롯과 기술 공유 · 변경 시 모두 적용', condition: '계산 조건 · 이 대면만', battle: '전투 조건', draft: '비교 초안', unknown: '미확인 · 계산값 0', natureUnknown: '성격 미확인', modifier: '기록 보정' },
@@ -111,7 +113,7 @@ const sourceLabels = {
           onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
           labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && sourceStatus('nature') ? sourceStatus('nature') === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${sourceStatus('nature')}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
           itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />
-<PokemonStatGrid showEffort stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: `${lt(stat.label)}${side === 'defender' && comparisonMode && (stat.key === 'attack' || stat.key === 'spAttack') && sourceStatus(stat.key) ? ` · ${sourceStatus(stat.key)}` : ''}${side === 'defender' && comparisonMode && entry.statNatureMultipliers[stat.key] !== undefined ? ` · ${sourceLabels.modifier} ×${entry.statNatureMultipliers[stat.key]}` : ''}`, theme: statThemeClass(stat.key), value: quickStat(entry, battleFormRow(row, entry.ability, entry.actualForm ?? 'shield'), stat.key), ev: entry.evs[stat.key] }))} onTune={() => { opener.current = document.activeElement as HTMLElement; setModalKey(entry.key); setModalSide(side) }} /></div> : null
+<QuickStatEditor side={side} identity={editorIdentity ?? `${side}-standalone-${entry.key}`} entry={entry} row={row} language={language} showPresets={!comparisonMode || side === 'defender'} setEntry={setEntry} onDirty={field => { if (comparisonMode) markDirty(side, field) }} stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: `${lt(stat.label)}${side === 'defender' && comparisonMode && (stat.key === 'attack' || stat.key === 'spAttack') && sourceStatus(stat.key) ? ` · ${sourceStatus(stat.key)}` : ''}${side === 'defender' && comparisonMode && entry.statNatureMultipliers[stat.key] !== undefined ? ` · ${sourceLabels.modifier} ×${entry.statNatureMultipliers[stat.key]}` : ''}`, theme: statThemeClass(stat.key), value: quickStat(entry, battleFormRow(row, entry.ability, entry.actualForm ?? 'shield'), stat.key), ev: entry.evs[stat.key] }))} /></div> : null
   }
   return sideCard()
 }
