@@ -39,6 +39,7 @@ test('every direct nature arrow transition preserves the clicked intent', () => 
 test('every stat tile keeps both direct nature arrows available without an expanded editor', () => {
   assert.match(compact, /const renderNatureControls = \(stat: StatKey, name: string\)/)
   assert.match(compact, /renderNatureControls\(stat\.key as StatKey, name\)/)
+  assert.ok(compact.indexOf('className="nature-up"') < compact.indexOf('className="nature-down"'), 'boosting nature precedes lowering nature in visual and reading order')
   assert.match(compact, /className="nature-down"/)
   assert.match(compact, /className="nature-down"[^>]*aria-label=\{`\$\{name\} · \$\{text\.lowerNature\}`\}/)
   assert.match(compact, /<span aria-hidden="true">↓<\/span>/)

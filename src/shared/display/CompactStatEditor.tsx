@@ -125,8 +125,8 @@ export function CompactStatEditor({ identity, stats, evs, nature, language, show
     const actualUp = factor === 1.1
     const actualDown = factor === .9
     return <div className="quick-compact-tile-nature" role="group" aria-label={`${name} ${text.nature}`}>
-      <button type="button" className="nature-down" title={text.lowerNature} aria-label={`${name} · ${text.lowerNature}`} aria-pressed={actualDown} onClick={() => chooseNatureAxis('down', stat)}><span aria-hidden="true">↓</span></button>
       <button type="button" className="nature-up" title={text.raiseNature} aria-label={`${name} · ${text.raiseNature}`} aria-pressed={actualUp} onClick={() => chooseNatureAxis('up', stat)}><span aria-hidden="true">↑</span></button>
+      <button type="button" className="nature-down" title={text.lowerNature} aria-label={`${name} · ${text.lowerNature}`} aria-pressed={actualDown} onClick={() => chooseNatureAxis('down', stat)}><span aria-hidden="true">↓</span></button>
     </div>
   }
 
