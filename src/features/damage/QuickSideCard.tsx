@@ -114,7 +114,7 @@ const sourceLabels = {
     else if (['로우킥', '풀묶기', '안다리걸기', '안다리 걸기'].includes(name) && targetRow) automaticCondition = auto('자동 위력', weightBasedMovePower(targetWeight))
     const knockOff = name === '탁쳐서떨구기' ? classifyHeldItem(targetEntry.key, targetEntry.item).status === 'allowed' : null
     if (!automaticCondition && !hitOptions?.length && knockOff === null) return null
-    return <div className="quick-move-local-condition" aria-label={language === 'ko' ? `${name} 계산 조건` : language === 'ja' ? `${name}の計算条件` : `${name} calculation conditions`}>
+    return <div className="quick-move-local-condition" role="group" aria-label={language === 'ko' ? `${name} 계산 조건` : language === 'ja' ? `${name}の計算条件` : `${name} calculation conditions`}>
       {automaticCondition}
       {hitOptions?.length ? hitOptions.length === 1 || skillLink
         ? <span className="quick-move-auto-condition"><span>{skillLink ? moveControlCopy.skillLink : lt('타수')}</span><strong>{effectiveHits}</strong></span>
@@ -139,11 +139,14 @@ const sourceLabels = {
       if (comparisonMode) markDirty(side, 'moves')
       setSelected({ side, index }); setActiveSlot(null)
       setDrafts(prev => ({ ...prev, [`${side}-${index}`]: '' }))
+      if (index < 3 && !entry.moves[index + 1]) window.setTimeout(() => document.getElementById(`quick-${side}-move-${index + 1}`)?.focus(), 0)
     }
-    return <section className="card entry-card quick-side-card">
-      <strong>{lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')}</strong>
-      {comparisonMode ? null : searchField}
-      {row ? <>
+    const sideLabel = lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '포켓몬 1' : '포켓몬 2')
+    return <section className="card entry-card quick-side-card" data-side={side} data-has-entry={Boolean(row)}>
+      <div className="quick-side-identity">
+        <strong>{sideLabel}</strong>
+        {comparisonMode ? null : searchField}
+        {row ? <>
         <PokemonCardHeading name={<strong>{displayName(row, language)}</strong>} sprite={row.sprite} spriteAlt={displayName(row, language)} types={row.types} />
         {row.key === 'aegislash' && entry.ability && !heldAbilityError(row.key, entry.ability, language) && row.abilities.includes(entry.ability) ? <div className="quick-form-controls">
           <div role="group" aria-label={language === 'ko' ? '실수치 폼' : language === 'ja' ? '実数値のフォルム' : 'Actual-stat form'}>
@@ -156,8 +159,11 @@ const sourceLabels = {
           </div>
           <small>{language === 'ko' ? `표시 실수치: ${entry.actualForm === 'blade' ? '블레이드' : '실드'} · 공격기 사용 시 블레이드 자동 · 피격 폼은 계산 조건(킹실드 후 실드 선택)` : language === 'ja' ? `表示実数値: ${entry.actualForm === 'blade' ? 'ブレード' : 'シールド'} · 攻撃技はブレード · 被弾時フォルムは計算条件` : `Shown stats: ${entry.actualForm === 'blade' ? 'Blade' : 'Shield'} · attacking moves use Blade · hit-time form is a calculation condition`}</small>
         </div> : null}
+        </> : null}
+      </div>
+      {row ? <>
         {statCard(side, entry, row)}
-        <MoveSlotsEditor label={lt('기술 배치')} labels={labels} ownerId={`quick-${side}-${entry.key}`} role="editable" selectedIndex={selected.side === side ? selected.index : null}
+        <MoveSlotsEditor className="quick-side-moves" label={lt('기술 배치')} ariaLabel={`${sideLabel} · ${lt('기술 배치')}`} labels={labels} ownerId={`quick-${side}-${entry.key}`} role="editable" selectedIndex={selected.side === side ? selected.index : null}
           toolbar={<>{learnsetStatusText(pools[entry.key], language) ? <small className="quick-source-badge" role="status">{learnsetStatusText(pools[entry.key], language)}</small> : null}
             {status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{language === 'ko' ? '다시 시도 (새로고침)' : language === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
             {side === 'attacker' && comparisonMode && sharedMoveSpecies?.(entry.key) ? <small className="quick-source-badge">{sourceLabels.shared}</small> : null}</>}
@@ -169,16 +175,17 @@ const sourceLabels = {
           const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
           const preview = calculate(side, name, index)
           const previewVerdict = quickKoVerdict(preview)
-          return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
-              children: <>{recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null}{renderMoveControls(name, index)}</>,
+          return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, occupied: Boolean(name), type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
+              metaActions: renderMoveControls(name, index),
+              children: recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null,
               tooltipProps: tooltipForMove(name),
               search: { id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
                 onSelect: option => { const found = options.find(move => move.name === option.key); if (found) commit(index, found) },
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
                 optionProps: option => tooltipForMove(option.key) },
-              inputProps: { 'aria-label': `${lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '공격측' : '방어측')} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
-              preview: <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : name ? status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원') : lt('기술 등록 →')}</button>
+              inputProps: { 'aria-label': `${sideLabel} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
+              preview: name ? <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-label={`${sideLabel} ${index + 1} ${lt('기술')} · ${name} · ${lt('계산 결과')}`} aria-pressed={selected.side === side && selected.index === index} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원')}</button> : null
             }
         })} />
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
@@ -186,8 +193,9 @@ const sourceLabels = {
   }
 
   const statCard = (side: 'attacker' | 'defender', entry: QuickSide, row: Row | undefined) => {
-    const stats = row ? EFFORT_STAT_OPTIONS.map(stat => {
-      return { key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: quickStat(entry, battleFormRow(row, entry.ability, entry.actualForm ?? 'shield'), stat.key), ev: entry.evs[stat.key] }
+    const projectedRow = row ? battleFormRow(row, entry.ability, entry.actualForm ?? 'shield') : null
+    const stats = projectedRow ? EFFORT_STAT_OPTIONS.map(stat => {
+      return { key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: quickStat(entry, projectedRow, stat.key), ev: entry.evs[stat.key], base: stat.key === 'speed' ? projectedRow.speed : undefined }
     }) : []
 
     return row ? <div className="quick-stat-card" key={side}><PokemonBuildFields key={`${side}-${entry.key}`} identity={`${side}-${entry.key}`} className="quick-build-fields"
@@ -197,7 +205,7 @@ const sourceLabels = {
           natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
           itemOptions={query => filterItemOptions(query, language, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(row.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, language), secondary: itemAutocompleteSecondaryLabel(value, language), sprite: itemSpriteSrc(row.key, value) }))}
           onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
-          onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}
+          onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true, speedNatureOverride: null })); if (comparisonMode) markDirty(side, 'nature') }}
           onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
           labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && natureSourceStatus() ? natureSourceStatus() === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${natureSourceStatus()}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
           itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />

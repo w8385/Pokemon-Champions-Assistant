@@ -20,17 +20,23 @@ test('ties are equal-length and invalid speeds have neither bars nor verdict', (
 })
 test('shared panel renders numeric lanes from existing speed results with accessible labels', () => {
   assert.match(quickState, /compareSpeedVisual\(mySpeedResult\?\.value, oppSpeedResult\?\.value\)/)
+  assert.match(quickView, /className="quick-speed-comparison-card"/)
   assert.match(quickView, /className="quick-speed-track"/)
-  assert.match(quickView, /role="img"[^>]*aria-label=/)
+  assert.match(quickView, /className="quick-speed-track" aria-hidden="true"/)
+  assert.match(quickView, /<output aria-label=\{`\$\{sideLabel\} \$\{lt\('최종 스피드'\)\}`\}/)
+  assert.match(quickView, /className="quick-speed-verdict" aria-live="polite"/)
   assert.match(quickView, /speedVisual\.valid/)
 })
 test('each shared speed lane can edit its own Speed stage', () => {
-  assert.match(quickView, /<select value=\{entry\.speedStage\} onChange=\{event => setSide\(side, prev => \(\{ \.\.\.prev, speedStage: Number\(event\.target\.value\) \}\)\)\}/)
+  assert.match(quickView, /<select[^>]*value=\{entry\.speedStage\}[^>]*onChange=\{event => setSide\(side, previous => \(\{ \.\.\.previous, speedStage: Number\(event\.target\.value\) \}\)\)\}/)
 })
-test('four shared registered slots use a 2x2 grid and vertical preview without left-border shift', () => {
-  assert.match(panel, /<MoveSlotsEditor label=\{lt\('기술 배치'\)\}/)
+test('four shared registered slots use compact responsive tiles and advance focus after selection', () => {
+  assert.match(panel, /<MoveSlotsEditor[^]*?label=\{lt\('기술 배치'\)\}/)
   assert.match(panel, /slots=\{Array\.from\(\{ length: 4 \}, \(_, index\) => \{/)
   assert.match(css, /\.move-slots-editor-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/)
   assert.match(css, /\.move-slots-editor-cell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/)
+  assert.match(css, /\.quick-side-card \.quick-move-local-condition\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/)
+  assert.match(css, /\.quick-side-card \.quick-move-local-condition > label,[^}]*flex-direction:\s*row[^}]*white-space:\s*nowrap/)
   assert.doesNotMatch(css, /\.quick-move-row\.selected\s*\{[^}]*border-inline-start/)
+  assert.match(panel, /if \(index < 3 && !entry\.moves\[index \+ 1\]\) window\.setTimeout\(\(\) => document\.getElementById\(`quick-\$\{side\}-move-\$\{index \+ 1\}`\)\?\.focus\(\), 0\)/)
 })

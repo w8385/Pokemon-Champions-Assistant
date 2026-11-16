@@ -28,8 +28,10 @@ test('party registered moves use the shared 600px policy', () => {
   assert.match(view, /<PartyMemberCard\b/)
   const party = member.split('ownerId={`party-${idx}-${member.key}`}')[0]
   assert.match(party, /id=\{`party-slot-\$\{idx\}`\} className=\{`card entry-card /)
-  assert.match(member, /<MoveSlotsEditor className="inline-move-card"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
+  assert.match(member, /<MoveSlotsEditor className="inline-move-card party-move-slots"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
   assert.match(member, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
+  assert.match(css, /\.party-member-card \.party-move-slots \.move-slots-editor-cell\[data-empty='true'\][^}]*min-height:\s*72px/)
+  assert.match(css, /\.party-member-card \.top-move-chip-card \.move-chip-wrap\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/)
   for (const width of [320, 390, 600, 601, 1280]) assert.equal(columnsAt('.move-slots-editor-grid', width)?.value, width <= 600 ? oneColumn : twoColumns)
 })
 

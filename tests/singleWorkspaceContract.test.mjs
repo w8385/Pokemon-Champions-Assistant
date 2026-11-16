@@ -17,7 +17,7 @@ test('entry selectors render inside the actual comparison panel and disable inde
   assert.match(quickProps, /entrySelectors\?: \(opponentSearch: React\.ReactNode, reset: React\.ReactNode\) => React\.ReactNode/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(quick, /<PokemonSearchField id={`quick-\${side}`}/)
-  assert.match(quick, /!comparisonMode \? <div className="quick-heading-actions"><button type="button" className="action-button"[^]*?공격측·방어측 바꾸기/)
+  assert.match(quick, /!comparisonMode \? <div className="quick-heading-actions"><button type="button" className="action-button"[^]*?포켓몬 1·2 바꾸기/)
   assert.doesNotMatch(single, /<section className="panel wide"><h2>/)
   assert.match(single, /entrySelectors=\{/)
 })
@@ -34,9 +34,11 @@ test('unknown sources are localized beside build values and temporary battle con
 })
 
 test('single speed shares one scale and build cards hold speed controls; selected damage omits raw rolls', () => {
-  assert.match(speed, /quick-speed-summary/)
-  assert.match(speed, /quick-speed-card/)
-  assert.match(speed, /className="quick-speed-assumptions"/)
+  assert.match(speed, /className="quick-speed-comparison-card"/)
+  assert.match(speed, /className="quick-speed-lanes"/)
+  assert.match(speed, /className=\{`quick-speed-lane quick-speed-lane-\$\{side\}`\}/)
+  assert.doesNotMatch(speed, /quick-speed-summary|quick-speed-card|quick-speed-assumptions|speedScarfOverride|quick-speed-base-badge/)
+  assert.match(card, /base: stat\.key === 'speed' \? projectedRow\.speed : undefined/)
   assert.match(result, /<div className=\{`quick-result\$\{selectedVerdict[^]*?aria-live="polite"/)
   assert.doesNotMatch(quick, /className="quick-rolls"/)
   assert.match(css, /\.single-workspace/)

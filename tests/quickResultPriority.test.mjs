@@ -42,15 +42,17 @@ for (const comparisonMode of [false, true]) {
       const cards = section.querySelector('.quick-sides')
       assert.ok(results && cards)
       assert.ok(children.indexOf(results) < children.indexOf(cards), 'results must precede both actual card editors')
-      const settings = results.querySelector('.quick-speed-settings')
-      const summary = results.querySelector('.quick-speed-summary')
-      assert.ok(settings?.nextElementSibling === summary, 'both Speed setting cards must be immediately followed by the shared comparison')
-      assert.equal(settings?.children.length, 2)
-      assert.match(summary?.textContent ?? '', /스피드 비교/)
+      const speed = results.querySelector('.quick-speed-comparison-card')
+      assert.ok(speed, 'one merged Speed comparison card must own both sides')
+      assert.equal(speed.querySelectorAll('.quick-speed-lane').length, 2)
+      assert.match(speed.textContent ?? '', /스피드 비교/)
+      assert.equal(results.querySelector('.quick-speed-settings'), null)
+      assert.equal(results.querySelector('.quick-speed-summary'), null)
+      assert.equal(results.querySelector('.quick-speed-base-badge'), null)
       assert.match(results.querySelector('.quick-result h3')?.textContent ?? '', /\d+–\d+/)
       assert.equal(section.querySelectorAll('.quick-result').length, 1)
       assert.equal(section.querySelectorAll('.quick-sides').length, 1)
-      assert.equal(cards.querySelectorAll('.quick-move-preview').length, 8)
+      assert.equal(cards.querySelectorAll('.quick-move-preview').length, 2, 'blank move slots do not render fake result surfaces')
     } finally { await view.close() }
   })
 }
@@ -82,7 +84,7 @@ test('both modes keep selected move and range primary, with concise HP and KO st
       assert.match(selected.querySelector('.quick-result-head strong')?.textContent ?? '', /파도타기/)
       assert.doesNotMatch(selected.querySelector('.quick-result-head')?.textContent ?? '', /대미지 결과/)
       assert.match(selected.querySelector('.quick-result-head')?.textContent ?? '', /→/)
-      const targetHp = Number(selected.textContent.match(/상대 체력 (\d+)/)?.[1])
+      const targetHp = Number(selected.textContent.match(/대상 체력 (\d+)/)?.[1])
       assert.ok(targetHp > max)
       assert.doesNotMatch(selected.textContent, /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해/)
       assert.equal(selected.querySelector('.quick-rolls'), null)
@@ -111,28 +113,120 @@ test('localized non-KO and uncertain cases do not claim a certain one-hit result
 test('meter-equipped move preview still selects the opposite direction through the real callback', async () => {
   const view = await mount()
   try {
-    const target = view.host.querySelectorAll('.quick-side-card .quick-move-preview')[4]
+    const target = view.host.querySelector('.quick-side-card[data-side="defender"] .quick-move-preview')
     assert.ok(target && !target.disabled)
     await act(async () => target.click())
     assert.equal(target.getAttribute('aria-pressed'), 'true')
     assert.match(view.host.querySelector('.quick-result-head')?.textContent ?? '', /패리퍼 → 아쿠스타/)
+    assert.match(view.host.querySelector('.quick-result')?.textContent ?? '', /대상 체력/)
+    assert.doesNotMatch(view.host.querySelector('.quick-result')?.textContent ?? '', /상대 체력/)
     assert.ok(view.host.querySelector('.quick-result .damage-range-meter'))
   } finally { await view.close() }
 })
 
-test('Speed controls use field labels rather than assumption/scenario prose in KO/EN/JA', async () => {
-  for (const comparisonMode of [false, true]) for (const [language, nature, scarf, inactive, active] of [
-    ['ko', '성격 보정', '구애스카프', '미적용', '적용'],
-    ['en', 'Nature modifier', 'Choice Scarf', 'Off', 'On'],
-    ['ja', '性格補正', 'こだわりスカーフ', '未適用', '適用'],
+test('merged Speed controls expose nature and rank without a duplicate scarf selector in KO/EN/JA', async () => {
+  for (const comparisonMode of [false, true]) for (const [language, nature, rank, scarf] of [
+    ['ko', '성격 보정', '스피드 랭크', '구애스카프'],
+    ['en', 'Nature modifier', 'Speed stage', 'Choice Scarf'],
+    ['ja', '性格補正', '素早さランク', 'こだわりスカーフ'],
   ]) {
     const view = await mount({ comparisonMode, language })
     try {
-      const controls = view.host.querySelector('.quick-speed-settings')?.textContent ?? ''
-      for (const value of [nature, scarf, inactive, active]) assert.match(controls, new RegExp(value))
+      const card = view.host.querySelector('.quick-speed-comparison-card')
+      const controls = card?.textContent ?? ''
+      for (const value of [nature, rank]) assert.match(controls, new RegExp(value))
+      assert.doesNotMatch(controls, new RegExp(scarf))
+      assert.equal(card?.querySelectorAll('select').length, 4, 'each lane has only nature and Speed stage')
       assert.doesNotMatch(controls, /가정|시나리오|assumption|scenario|想定/)
     } finally { await view.close() }
   }
+})
+
+test('Speed comparison nature is isolated from the build card nature and actual stat', async () => {
+  const view = await mount()
+  try {
+    const tile = view.host.querySelector('.quick-side-card[data-side="attacker"] [data-stat-code="S"]')?.closest('.stat-preview-row')
+    const select = view.host.querySelector('.quick-speed-lane-attacker .quick-speed-lane-controls select')
+    const output = view.host.querySelector('.quick-speed-lane-attacker output')
+    assert.ok(tile && select && output)
+    const buildText = tile.textContent
+    const buildNature = [...tile.querySelectorAll('.quick-compact-tile-nature button')].map(button => button.getAttribute('aria-pressed'))
+    const before = output.textContent
+    await act(async () => {
+      select.value = '0.9'
+      select.dispatchEvent(new browser.Event('change', { bubbles: true }))
+    })
+    assert.notEqual(output.textContent, before, 'comparison-only nature changes the compared Speed')
+    assert.equal(tile.textContent, buildText, 'build Speed remains sourced from the saved nature')
+    assert.deepEqual([...tile.querySelectorAll('.quick-compact-tile-nature button')].map(button => button.getAttribute('aria-pressed')), buildNature)
+  } finally { await view.close() }
+})
+
+test('standalone calculator uses neutral Pokemon 1/2 labels while matchup keeps ownership labels', async () => {
+  for (const [comparisonMode, expected] of [
+    [false, ['포켓몬 1', '포켓몬 2']],
+    [true, ['내 포켓몬', '상대 포켓몬']],
+  ]) {
+    const view = await mount({ comparisonMode })
+    try {
+      const identities = [...view.host.querySelectorAll('.quick-side-identity > strong')].map(node => node.textContent)
+      assert.deepEqual(identities, expected)
+      const speedLabels = [...view.host.querySelectorAll('.quick-speed-lane output')].map(node => node.getAttribute('aria-label'))
+      assert.ok(speedLabels[0]?.startsWith(expected[0]))
+      assert.ok(speedLabels[1]?.startsWith(expected[1]))
+      const battleLabels = [...view.host.querySelectorAll('.quick-side-battle legend')].map(node => node.textContent)
+      assert.ok(battleLabels[0]?.startsWith(expected[0]))
+      assert.ok(battleLabels[1]?.startsWith(expected[1]))
+      const swap = view.host.querySelector('.quick-heading-actions button')
+      if (comparisonMode) assert.equal(swap, null)
+      else assert.match(swap?.textContent ?? '', /포켓몬 1·2 바꾸기/)
+    } finally { await view.close() }
+  }
+})
+
+test('multi-hit count is a compact local control with all legal hit choices', async () => {
+  const view = await mount({ ownKey: 'garchomp', ownMove: '스케일샷' })
+  try {
+    const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
+    assert.ok(group)
+    assert.equal(group.getAttribute('role'), 'group')
+    assert.match(group.getAttribute('aria-label') ?? '', /스케일샷 계산 조건/)
+    const label = group.querySelector('label')
+    assert.match(label?.textContent ?? '', /타수/)
+    assert.deepEqual([...label.querySelectorAll('option')].map(option => Number(option.value)), [2, 3, 4, 5])
+    const cell = group.closest('.move-slots-editor-cell')
+    const input = cell.querySelector('input')
+    await act(async () => input.focus())
+    assert.equal(cell.getAttribute('data-empty'), 'false', 'search draft does not erase persisted slot occupancy')
+    assert.ok(cell.querySelector('.quick-move-local-condition'), 'focusing a filled move keeps its hit-count control visible')
+  } finally { await view.close() }
+})
+
+test('choosing a move opens the next slot for continuous entry and stops after slot four', async () => {
+  const view = await mount()
+  try {
+    const first = view.host.querySelector('#quick-attacker-move-0')
+    assert.ok(first)
+    await act(async () => first.focus())
+    const option = view.host.querySelector('#quick-attacker-move-0-options [role="option"]')
+    assert.ok(option, 'focus opens the ranked move pool')
+    await act(async () => {
+      option.click()
+      await new Promise(resolve => browser.setTimeout(resolve, 5))
+    })
+    assert.equal(document.activeElement?.id, 'quick-attacker-move-1')
+    assert.equal(document.activeElement?.getAttribute('aria-expanded'), 'true')
+
+    const fourth = view.host.querySelector('#quick-attacker-move-3')
+    await act(async () => fourth.focus())
+    const finalOption = view.host.querySelector('#quick-attacker-move-3-options [role="option"]')
+    assert.ok(finalOption)
+    await act(async () => {
+      finalOption.click()
+      await new Promise(resolve => browser.setTimeout(resolve, 5))
+    })
+    assert.notEqual(document.activeElement?.id, 'quick-defender-move-0', 'slot four does not jump to the other card')
+  } finally { await view.close() }
 })
 
 test('legacy Speed and reverse lab labels omit assumption wording without changing source ownership', () => {

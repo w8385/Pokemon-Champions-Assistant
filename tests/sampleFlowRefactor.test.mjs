@@ -5,16 +5,15 @@ import { appTranslate } from './appTranslations.mjs'
 import { routeGroups } from '../src/app/navigation.ts'
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
-const card = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 
-test('builder reuses shared six-tile grid with editable sample styling', () => {
-  assert.match(app, /<PokemonStatGrid\s+stats=\{EFFORT_STAT_OPTIONS\.map\(/)
-  assert.match(app, /className="sample-stat-preview-list"/)
-  assert.match(app, /onTune=\{\(\) => \{ sampleTuningOpener\.current = document\.activeElement/)
-  assert.match(app, /sampleTuningIdentity === sampleForge\.key \? <EffortTuningModal/)
-  assert.match(card, /sample-stat-preview-row/)
-  assert.match(card, /sample-stat-topline/)
-  assert.match(card, /sample-stat-ev/)
+test('builder reuses the inline compact six-stat editor instead of a tuning popup', () => {
+  const builder = app.slice(app.indexOf('<section id="sample-builder-section"'), app.indexOf('<section id="sample-speed-section"'))
+  assert.match(builder, /<CompactStatEditor identity=\{`sample-builder-\$\{sampleForge\.key\}`\}/)
+  assert.match(builder, /stats=\{EFFORT_STAT_OPTIONS\.map\(stat =>/)
+  assert.match(builder, /onEffort=\{\(key, value\) => setSampleForge/)
+  assert.match(builder, /onNature=\{nature => setSampleForge/)
+  assert.match(builder, /magicScale=\{effortMagicProjection\(sampleRow, sampleForge\.evs, sampleForge\.config\.nature\)\.scale\}/)
+  assert.doesNotMatch(builder, /<PokemonStatGrid|sampleTuningOpener|<EffortTuningModal/)
 })
 
 test('library uses one filtered visible list and a separate source detail', () => {

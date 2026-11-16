@@ -17,8 +17,8 @@ test('one shared top toolbar owns existing opponent search and scoped reset befo
   assert.doesNotMatch(selectors.slice(selectors.indexOf('className="unified-pair-pickers"')), /\{reset\}|\{opponentSearch\}/)
   assert.match(selectors, /<strong>\{lt\('내 파티'\)\}<\/strong>/)
   assert.match(selectors, /<strong>\{lt\('상대 엔트리'\)\}<\/strong>/)
-  assert.match(css, /\.quick-damage \.single-entry-toolbar\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) auto/)
-  assert.match(css, /@media \(max-width: 600px\)[^]*?\.quick-damage \.single-entry-toolbar\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
+  assert.match(css, /\.single-workspace \.single-entry-toolbar\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) auto/)
+  assert.match(css, /@media \(max-width: 600px\)[^]*?\.single-workspace \.single-entry-toolbar\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
 })
 
 test('short visible reset keeps full destructive scope in accessible title and existing handler', () => {
