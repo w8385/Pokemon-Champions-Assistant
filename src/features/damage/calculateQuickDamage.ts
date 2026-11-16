@@ -6,13 +6,9 @@ import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveSta
 import { abilityAdjustedTypeEffectiveness } from '../../domain/battle/typeEffectiveness'
 import { isDamageGrounded, resolveDamageModifiers } from '../../domain/battle/modifierRules'
 import { calcDamage } from '../../domain/battle/damageCore'
-import { isChoiceScarfItem } from '../../domain/battle/statProjection'
 import { quickPositiveStageTotal, quickStatused } from '../../domain/battle/quickBattleFacts'
 export function calculateQuickDamage({ source, target, name, conditions, sourceRow, targetRow, sourceStats, targetStats, sourceForm, targetForm, sourceAbilityValid, targetAbilityValid, sourceAbility, targetAbility, base, hitCount, conditionalValue: configuredConditionalValue, sourceSpeed, targetSpeed }: QuickDamageInput) {
     if (!isCalculableHeldItem(source.key, source.item) || !isCalculableHeldItem(target.key, target.item) || !sourceAbilityValid || !targetAbilityValid) return null
-    if ((source.speedScarfOverride === true && classifyHeldItem(source.key, source.item).requiredStone) || (target.speedScarfOverride === true && classifyHeldItem(target.key, target.item).requiredStone)) return null
-    if ((source.ability === 'unburden' && source.speedAbilityActive && isChoiceScarfItem(source.item)) || (target.ability === 'unburden' && target.speedAbilityActive && isChoiceScarfItem(target.item))) return null
-
     if (!sourceStats || !targetStats || !base || !sourceRow || !targetRow) return null
     const rule = CONDITIONAL_MOVE_POWER_RULES[name]
     const sourceGrounded = isDamageGrounded(sourceRow.types, sourceAbility, source.item, conditions.gravity)

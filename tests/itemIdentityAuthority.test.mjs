@@ -103,8 +103,9 @@ test('single and Builder speed outcomes do not report numbers for bad restored i
 
 test('App and Quick consume raw authority at restoration and before calculation', () => {
   assert.match(app, /item: typeof raw\.item === 'string' \? raw\.item : ''/)
+  assert.match(owner_5, /isCalculableHeldItem\(source\.key, source\.item\)/)
+  assert.match(owner_5, /isCalculableHeldItem\(target\.key, target\.item\)/)
   assert.match(owner_5, /classifyHeldItem\(source\.key, source\.item\)/)
-  assert.match(owner_5, /classifyHeldItem\(target\.key, target\.item\)/)
   assert.match(app, /heldItemError\(myMember\.key, myMember\.item, siteLanguage\)/)
   assert.match(app, /heldItemError\(oppMember\.key, oppMember\.item, siteLanguage\)/)
   assert.match(owner_0, /fixedItem=\{requiredMegaStone\(row\.key\)\}/)

@@ -18,15 +18,19 @@ const labels = { ability: 'Ability', nature: 'Nature', item: 'Item', none: 'None
 const natures = [{ value: 'hardy', label: 'Hardy' }, { value: 'jolly', label: 'Jolly' }, { value: 'timid', label: 'Timid' }]
 const initial = { key: 'grimmsnarl', config: { nature: 'hardy', speedStage: 2 }, evs: { hp: 3, attack: 8, defense: 2, spAttack: 0, spDefense: 4, speed: 32 }, ability: 'prankster', item: 'leftovers' }
 
-test('both sample own effort cards call the same shared-nature editor and owner updater', () => {
+test('both sample own effort cards share the full nature picker and compact direct stat editor', () => {
   assert.match(app, /const renderSampleForgeNatureField\s*=\s*\(\)\s*=>[\s\S]*?<PokemonBuildFields[^]*?natureOnly[^]*?nature=\{sampleForge\.config\.nature\}[^]*?natures=\{SELECTABLE_NATURES\.map\(n => \(\{ value: n\.id, label: natureChipLabel\(n\.id, siteLanguage\) \}\)\)\}[^]*?onNature=\{nature => setSampleForge\(prev => \(\{ \.\.\.prev, config: \{ \.\.\.prev\.config, nature: nature as NatureId \} \}\)\)\}/)
+  assert.match(app, /const renderSampleForgeStatEditor\s*=\s*\(scope: 'speed' \| 'damage'\)[^]*?<CompactStatEditor[^]*?showPresets=\{false\} magicScale=\{effortMagicProjection\(sampleRow, sampleForge\.evs, sampleForge\.config\.nature\)\.scale\}/)
   for (const tab of ['speed', 'damage']) {
-    const card = app.slice(app.indexOf(`{sampleWorkbenchTab === '${tab}' ? <section`), app.indexOf(`renderSampleForgeEffortGrid('${tab}')`))
+    const card = app.slice(app.indexOf(`{sampleWorkbenchTab === '${tab}' ? <section`), app.indexOf(`renderSampleForgeStatEditor('${tab}')`))
     assert.match(card, /sample-current-build-card-embedded/)
   }
   assert.equal((app.match(/\{renderSampleForgeNatureField\(\)\}/g) ?? []).length, 2)
+  assert.equal((app.match(/\{renderSampleForgeStatEditor\('(speed|damage)'\)\}/g) ?? []).length, 2)
+  assert.doesNotMatch(app, /renderSampleForgeEffortGrid/)
   assert.match(css, /\.pokemon-build-fields\.nature-only\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/)
   assert.match(css, /@media \(max-width: 390px\)[^\n]*\.pokemon-build-fields\.nature-only[^\n]*grid-template-columns:\s*minmax\(0, 1fr\)/)
+  assert.match(css, /\.sample-embedded-compact-stat-editor-damage \.stat-preview-list\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
 })
 
 test('real nature portal commits selected value only, preserves owner, labels, focus, identity and existing full/item layouts', async () => {
@@ -86,7 +90,7 @@ test('mounted speed/damage tabs commit own nature through App and retain draft f
       const trigger = panel.querySelector('.sample-current-build-card-embedded .nature-only .party-meta-chip-button')
       assert.ok(trigger, 'own nature control missing')
       assert.equal(panel.querySelectorAll('[data-owner^="sample-grimmsnarl"] .move-slots-editor-cell').length, 4)
-      const stat = () => Number(panel.querySelector('.sample-embedded-drag-stat-list .drag-stat-card .row-between span').textContent)
+      const stat = () => Number(panel.querySelector('.sample-embedded-compact-stat-editor .quick-compact-tile-value > strong').textContent)
       const before = stat()
       const beforeSaved = JSON.parse(localStorage.getItem(storageKey))
       await act(async () => trigger.click())

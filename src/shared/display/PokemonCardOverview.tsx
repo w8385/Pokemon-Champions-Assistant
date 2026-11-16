@@ -4,7 +4,7 @@ import type { EffortStatKey, MoveMeta } from '../../app/types'
 import type { PartialLibraryBuild } from '../../domain/samples/creatorSampleLibrary'
 import SearchCombobox, { type SearchComboboxProps, type SearchOption } from '../search/SearchCombobox'
 
-export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null; meta?: ReactNode }
+export type CardStat = { key: EffortStatKey; label: string; theme: string; value: number | null; ev: number | null; base?: number; meta?: ReactNode }
 
 /** Source-recorded values take priority; missing nature/roster never erases confirmed efforts. */
 export function createReadonlyCardStats(
@@ -37,32 +37,36 @@ export function MoveCandidateRow({ name, type, meta, labels }: {
 export type RegisteredMoveLabels = { slot: string; category: (category: MoveMeta['category']) => string; power: string; accuracy: string; pp: string; unknown: string }
 export type MoveSlotView = {
   id: string; name: string; type?: string | null; meta?: MoveMeta | null;
+  /** Persisted occupancy can differ from the live search draft while an editor is focused. */
+  occupied?: boolean;
   inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>;
   tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>;
-  search?: RegisteredMoveSearch; children?: ReactNode; className?: string; preview?: ReactNode;
+  search?: RegisteredMoveSearch; metaActions?: ReactNode; children?: ReactNode; className?: string; preview?: ReactNode;
 }
-export function MoveSlotsEditor({ label, labels, slots, role, ownerId, selectedIndex = null, toolbar, belowGrid, onClick, className = '' }: {
+export function MoveSlotsEditor({ label, ariaLabel, labels, slots, role, ownerId, selectedIndex = null, toolbar, belowGrid, onClick, className = '' }: {
   label: string; labels: RegisteredMoveLabels; slots: readonly MoveSlotView[]; role: 'editable' | 'readonly'; ownerId: string;
-  selectedIndex?: number | null; toolbar?: ReactNode; belowGrid?: ReactNode; onClick?: React.MouseEventHandler<HTMLDivElement>; className?: string
+  ariaLabel?: string; selectedIndex?: number | null; toolbar?: ReactNode; belowGrid?: ReactNode; onClick?: React.MouseEventHandler<HTMLDivElement>; className?: string
 }) {
-  return <div className={`move-slots-editor ${className}`.trim()} aria-label={label} data-owner={ownerId} onClick={onClick}>
+  return <div className={`move-slots-editor ${className}`.trim()} role="group" aria-label={ariaLabel ?? label} data-owner={ownerId} onClick={onClick}>
     <div className="move-slots-editor-head"><strong>{label}</strong>{toolbar ? <div className="move-slots-editor-toolbar">{toolbar}</div> : null}</div>
     <div className="move-slots-editor-grid">{Array.from({ length: 4 }, (_, index) => {
       const slot = slots[index]
-      const selected = role === 'editable' && selectedIndex === index
-      return <div key={`${ownerId}-${slot?.id ?? index}`} className="move-slots-editor-cell" data-slot={index + 1}>
+      const occupied = slot?.occupied ?? Boolean(slot?.name)
+      const selected = role === 'editable' && selectedIndex === index && occupied
+      return <div key={`${ownerId}-${slot?.id ?? index}`} className={`move-slots-editor-cell ${slot?.className ?? ''}`.trim()} data-slot={index + 1} data-empty={!occupied} data-selected={selected}>
         <RegisteredMoveSlot number={index + 1} name={slot?.name ?? ''} type={slot?.type} meta={slot?.meta} labels={labels}
           className={`move-slots-editor-slot ${slot?.className ?? ''}`.trim()} data-selected={selected}
           inputProps={{ ...slot?.inputProps, readOnly: role === 'readonly' || slot?.inputProps?.readOnly }}
-          tooltipProps={slot?.tooltipProps} search={role === 'editable' ? slot?.search : undefined}>{slot?.children}</RegisteredMoveSlot>
+          tooltipProps={slot?.tooltipProps} search={role === 'editable' ? slot?.search : undefined} metaActions={slot?.metaActions}>{slot?.children}</RegisteredMoveSlot>
         <div className="move-slots-editor-preview">{role === 'editable' ? slot?.preview : null}</div>
       </div>
     })}</div>{belowGrid}
   </div>
 }
 
-export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, children, className = '', labels, search, ...surfaceProps }: {
+export function RegisteredMoveSlot({ number, name, type, meta, inputProps, tooltipProps, metaActions, children, className = '', labels, search, ...surfaceProps }: {
   number: number; name: string; type?: string | null; meta?: MoveMeta | null; inputProps: Omit<InputHTMLAttributes<HTMLInputElement>, 'value'>; tooltipProps?: Pick<InputHTMLAttributes<HTMLInputElement>, 'onFocus' | 'onBlur' | 'onMouseEnter' | 'onMouseLeave'>; children?: ReactNode; className?: string
+  metaActions?: ReactNode
   search?: RegisteredMoveSearch
   labels: RegisteredMoveLabels; 'data-selected'?: boolean
 }) {
@@ -81,11 +85,9 @@ export function RegisteredMoveSlot({ number, name, type, meta, inputProps, toolt
       optionClassName={(option, index) => `move-autocomplete-item ${typeof search.optionClassName === 'function' ? search.optionClassName(option, index) : search.optionClassName ?? ''}`.trim()} /> : <input {...inputProps} {...tooltipProps} value={name}
       onFocus={event => { tooltipProps?.onFocus?.(event); inputProps.onFocus?.(event) }}
       onBlur={event => { tooltipProps?.onBlur?.(event); inputProps.onBlur?.(event) }} />}
-    <small className="registered-move-meta" aria-hidden={name ? undefined : true}>
-      {name ? <>
-      {meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}
-      </> : '\u00a0'}
-    </small>
+    <div className="registered-move-slot-detail"><small className="registered-move-meta" aria-hidden={name ? undefined : true}>
+      {name ? <>{meta?.category ? labels.category(meta.category) : labels.unknown} · {labels.power} {meta?.power ?? '—'} · {labels.accuracy} {meta?.accuracy == null ? '—' : `${meta.accuracy}%`} · {labels.pp} {meta?.pp ?? '—'}</> : '\u00a0'}
+    </small>{metaActions ? <div className="registered-move-slot-meta-actions">{metaActions}</div> : null}</div>
     {children}
   </>
   return search && !inputProps.readOnly

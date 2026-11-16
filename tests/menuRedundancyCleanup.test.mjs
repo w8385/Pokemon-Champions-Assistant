@@ -23,7 +23,7 @@ test('builder removes only secondary build echoes and keeps tuning, calculation 
   for (const obsolete of ['sample-current-build-summary', 'sample-current-build-badges', 'sample-current-build-copy', 'sample-current-build-label', 'sample-saved-slot-badge', 'saved-sample-latest-badge']) assert.doesNotMatch(lab, new RegExp(obsolete))
   const actionHead = region('className="sample-builder-action-head"', 'className="sample-builder-save-row"')
   assert.doesNotMatch(actionHead, /sampleConfirmedMoves\.length|savedSamples\.length/)
-  for (const retained of ["renderSampleForgeEffortGrid('speed')", "renderSampleForgeEffortGrid('damage')", 'combat-index-strip', 'sample-speed-stage-inline-card', 'sampleDecisionPowerIndices', 'sample-damage-section', 'sample-saved-move-row', 'savedSampleCountLabel(savedSamples.length', 'className="sample-meta-grid"', 'sample-saved-actions']) assert.ok(app.includes(retained), retained)
+  for (const retained of ["renderSampleForgeStatEditor('speed')", "renderSampleForgeStatEditor('damage')", 'combat-index-strip', 'sample-speed-stage-inline-card', 'sampleDecisionPowerIndices', 'sample-damage-section', 'sample-saved-move-row', 'savedSampleCountLabel(savedSamples.length', 'className="sample-meta-grid"', 'sample-saved-actions']) assert.ok(app.includes(retained), retained)
   assert.match(lab, /onClick=\{saveCurrentSample\}><UiIcon name=\"plus\"[^>]*\/>\{lt\('샘플 저장'\)\}/)
   assert.match(lab, /onClick=\{\(\) => applySampleToPartySlot\(selectedMy\)\}><UiIcon name=\"check\"[^>]*\/>\{putInPartySlotLabel\(selectedMy, siteLanguage\)\}/)
   assert.match(lab, /onClick=\{\(\) => confirmPartySlotReplacement\(entry\.member, selectedMy, entry\.lockedMoves\)\}><UiIcon name=\"check\"[^>]*\/>\{putInPartySlotLabel\(selectedMy, siteLanguage\)\}/)
@@ -42,8 +42,8 @@ test('speed investment retains target and numbers but not duplicated effort/natu
 })
 
 test('distinct import and export destinations have scoped Korean keys and EN/JA translations', () => {
-  for (const label of ['전체 데이터 내보내기', '전체 데이터 불러오기', '저장 파티에 추가', '샘플 편집기에 가져오기', '출처 링크 저장', '저장 링크 삭제', '샘플 편집기로 보내기', '파티 슬롯 선택', '선택 슬롯에 넣기', '공격측·방어측 바꾸기']) {
-    assert.ok((label === '공격측·방어측 바꾸기' ? quickView : app).includes(`lt('${label}')`), label)
+  for (const label of ['전체 데이터 내보내기', '전체 데이터 불러오기', '저장 파티에 추가', '샘플 편집기에 가져오기', '출처 링크 저장', '저장 링크 삭제', '샘플 편집기로 보내기', '파티 슬롯 선택', '선택 슬롯에 넣기', '포켓몬 1·2 바꾸기']) {
+    assert.ok((label === '포켓몬 1·2 바꾸기' ? quickView : app).includes(`lt('${label}')`), label)
     const translationsSource = translations
     assert.equal((translationsSource.match(new RegExp(`'${label}':`, 'g')) ?? []).length, 2, label)
   }

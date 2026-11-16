@@ -51,7 +51,7 @@ export function QuickStatEditor({ side, identity, entry, row, stats, language, s
     }}
     onNature={nature => {
       onDirty('nature')
-      setEntry(previous => ({ ...previous, actual: {}, nature, statNatureMultipliers: {}, speedNatureKnown: true }))
+      setEntry(previous => ({ ...previous, actual: {}, nature, statNatureMultipliers: {}, speedNatureKnown: true, speedNatureOverride: null }))
     }}
     magicScale={magic.scale}
   />

@@ -8,6 +8,8 @@ import { readFileSync } from 'node:fs'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const quickView = readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx', import.meta.url), 'utf8')
+const quickCard = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const compactEditor = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const key = 'pokemon-champions-assistant-demo:v1'
 let server, App, createRoot
@@ -100,8 +102,9 @@ test('slot focus scrolls the editing input into view instead of centering a tall
   assert.doesNotMatch(source, /target\?\.scrollIntoView\?\.\(\{ block: 'center' \}\)/)
 })
 
-test('shared speed renderer distinguishes base stat badge from effective comparison', () => {
-  assert.match(quickView, /className="quick-speed-base-badge"/)
-  assert.match(quickView, /\{lt\('스피드 종족값'\)\} \{row\.speed\}/)
-  assert.match(css, /\.quick-speed-base-badge\s*\{/)
+test('effective Speed comparison leaves base Speed in the lower stat tile', () => {
+  assert.doesNotMatch(quickView, /quick-speed-base-badge|스피드 종족값|row\.speed/)
+  assert.match(quickCard, /base: stat\.key === 'speed' \? projectedRow\.speed : undefined/)
+  assert.match(compactEditor, /className="quick-compact-speed-base"/)
+  assert.match(css, /\.quick-compact-tile-value > small\s*\{/)
 })

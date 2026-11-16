@@ -188,7 +188,7 @@ const lt = (text: string) => translateText(language, text)
   React.useEffect(() => { let active = true; void loadMoveMetaByName().then(() => { if (active) { refreshMeta(n => n + 1); setMoveMetaReady(true) } }); return () => { active = false } }, [])
   const attackingRow = indexByKey.get(attacker.key)
   const defendingRow = indexByKey.get(defender.key)
-  const scarfFor = (entry: QuickSide) => entry.speedScarfOverride ?? isChoiceScarfItem(entry.item)
+  const scarfFor = (entry: QuickSide) => isChoiceScarfItem(entry.item)
   const abilityFor = (entry: QuickSide, row: Row | undefined) => getSpeedAbility(row ? resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '' : '')
   const abilityPermitted = (entry: QuickSide, row: Row | undefined) => Boolean(abilityFor(entry, row) && speedActivationAllowed(resolveFormAbility(row, entry.ability, abilityDescriptionFor, rows).slug ?? '', { weather: conditions.weather, terrain: conditions.terrain, item: entry.item, scarf: scarfFor(entry), statused: quickStatused(entry) }))
   const speedFor = (entry: QuickSide, row: Row | undefined, scarf: boolean, ability: 1 | 1.5 | 2 = 1) => {
@@ -206,7 +206,8 @@ const lt = (text: string) => translateText(language, text)
       if (scarf && entry.ability === 'unburden' && ability !== 1) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
       return { value: applySpeedModifiers(applySpeedStage(value, entry.speedStage), { scarf, abilityMultiplier: ability, itemMultiplier }), reason: null }
     }
-    return effectiveComparisonSpeed(row, entry.evs.speed, quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed')), entry.speedStage, scarf, ability, entry.ability, itemMultiplier)
+    const comparisonNature = entry.speedNatureOverride ?? quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed'))
+    return effectiveComparisonSpeed(row, entry.evs.speed, comparisonNature, entry.speedStage, scarf, ability, entry.ability, itemMultiplier)
   }
   const mySpeedResult = speedFor(attacker, attackingRow, scarfFor(attacker), attacker.speedAbilityActive && abilityPermitted(attacker, attackingRow) ? abilityFor(attacker, attackingRow)!.multiplier : 1)
   const oppSpeedResult = speedFor(defender, defendingRow, scarfFor(defender), defender.speedAbilityActive && abilityPermitted(defender, defendingRow) ? abilityFor(defender, defendingRow)!.multiplier : 1)
@@ -245,7 +246,7 @@ const lt = (text: string) => translateText(language, text)
       previousTargets.current[side === 'attacker' ? 0 : 1] = pairTarget(comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0, { key })
     }
     if (comparisonMode && key === initialSides?.[side === 'attacker' ? 0 : 1].key) {
-      if (side === 'attacker') setAttacker(initialSides![0]); else setDefender(initialSides![1])
+      if (side === 'attacker') setAttacker({ ...initialSides![0], speedNatureOverride: null }); else setDefender({ ...initialSides![1], speedNatureOverride: null })
       setDirty(prev => ({ ...prev, [side]: new Set() }))
       onDraftIdentity?.(side, '')
       if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')
@@ -260,5 +261,5 @@ const lt = (text: string) => translateText(language, text)
   }
   const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
   const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
-  return { model: { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, hits, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, moveLabel, scarfFor, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
+  return { model: { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, hits, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, moveLabel, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
 }

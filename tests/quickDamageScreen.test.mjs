@@ -21,7 +21,7 @@ test('standalone damage reuses real picker and engine without changing party ent
 })
 
 test('both swapped cards keep every damage-relevant stat visible and repairable', () => {
-  assert.match(card, /const stats = row \? EFFORT_STAT_OPTIONS\.map/)
+  assert.match(card, /const stats = projectedRow \? EFFORT_STAT_OPTIONS\.map/)
   assert.match(card, /<QuickStatEditor[^]*stats=\{stats\}/)
   assert.match(statEditor, /<CompactStatEditor/)
   assert.match(compactEditor, /<PokemonStatGrid stats=\{stats\} showEffort/)

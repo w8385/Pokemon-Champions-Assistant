@@ -61,7 +61,7 @@ import { effectiveComparisonSpeed } from './domain/battle/unifiedComparisonSpeed
 import { presentDoubleActionOrder } from './domain/battle/doubleOrderPresentation'
 import { compareSpeedVisual } from './domain/battle/speedVisual'
 import { EffortTuningModal } from './shared/display/EffortTuningModal'
-import { magicEffortCandidate, magicEffortMarkers } from './domain/champions/effortMagic'
+import { effortMagicProjection, magicEffortCandidate, magicEffortMarkers } from './domain/champions/effortMagic'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from './shared/display/typeBadges'
 import { analyzePartyMatchups } from './domain/party/partyAnalysis'
 import { PartyAnalysisPanel } from './features/party/PartyAnalysisPanel'
@@ -87,6 +87,7 @@ import { getMoveMetadata } from './domain/champions/moveMetadata'
 import { sourceBackedCardAbility } from './domain/samples/creatorCardAbility'
 import { confirmedCreatorEfforts } from './domain/samples/creatorConfirmedEfforts'
 import { PokemonBuildFields } from './shared/display/PokemonBuildFields'
+import { CompactStatEditor } from './shared/display/CompactStatEditor'
 import { normalizeSearchText, speciesSearchCandidates, searchPokemon, prioritizeExactSpecies } from './shared/search/pokemonSearch'
 import { applyChoiceScarf, applySpeedModifiers, applySpeedStage } from './domain/battle/speed/speedModifiers'
 import { defaultSpeedLineState } from './features/speedline/speedLineState'
@@ -4442,21 +4443,6 @@ export default function App() {
     setParty(next)
   }
 
-  const updateSampleEffortFromPointer = (stat: EffortStatKey, availableCap: number, clientX: number, element: HTMLDivElement) => {
-    const rect = element.getBoundingClientRect()
-    if (rect.width <= 0) return
-    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
-    const nextValue = Math.round(ratio * availableCap)
-    setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat, nextValue) }))
-  }
-
-  const nudgeSampleEffort = (stat: EffortStatKey, delta: number, availableCap: number) => {
-    setSampleForge((prev) => ({
-      ...prev,
-      evs: applyChampionsEffort(prev.evs, stat, Math.max(0, Math.min(availableCap, prev.evs[stat] + delta))),
-    }))
-  }
-
   const focusEffortRange = (element: HTMLDivElement) => {
     const range = element.querySelector<HTMLInputElement>('.effort-gauge-range')
     range?.focus()
@@ -4474,33 +4460,19 @@ export default function App() {
     itemLabel={value => displayItemLabel(value, siteLanguage)} itemSprite={value => itemSpriteSrc(sampleForge.key, value)}
   />
 
-  const renderSampleForgeEffortGrid = (scope: 'speed' | 'damage') => {
+  const renderSampleForgeStatEditor = (scope: 'speed' | 'damage') => {
     if (!sampleRow) return null
     const visibleStats = scope === 'speed'
       ? EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'speed')
       : EFFORT_STAT_OPTIONS.filter((stat) => stat.key === 'attack' || stat.key === 'spAttack')
-    return <div className={`drag-stat-list sample-embedded-drag-stat-list sample-embedded-drag-stat-list-${scope}`}>
-      {visibleStats.map((stat) => {
-        const currentEffort = sampleForge.evs[stat.key]
-        const availableCap = Math.min(CHAMPIONS_EFFORT_PER_STAT_CAP, remainingEffortPoints(sampleForge.evs, stat.key))
-        const additionalAvailable = Math.max(0, availableCap - currentEffort)
-        const actualValue = partyStatValue(sampleRow, sampleForge, stat.key)
-        const isMagicStat = sampleMagicCandidate?.stat === stat.key && actualValue % 11 === 0
-        const targetEffort = sampleMagicCandidate?.stat === stat.key ? sampleMagicCandidate.nextEffort : null
-        const magicPoints = magicEffortPoints(sampleRow, sampleForge, stat.key)
-        return <div key={`${scope}-sample-drag-stat-${stat.key}`} className={`drag-stat-card ${statThemeClass(stat.key)} ${isMagicStat ? 'magic' : ''}`}>
-          <div className="row-between"><strong>{lt(stat.label)}</strong><span>{actualValue}</span></div>
-          <div className="effort-gauge-wrap" role="group" aria-label={`${lt(stat.label)} effort points`}>
-            <div className={`effort-gauge-track ${statThemeClass(stat.key)}`} tabIndex={0} role="slider" aria-label={`${lt(stat.label)} effort points`} aria-valuemin={0} aria-valuemax={availableCap} aria-valuenow={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onPointerDown={(e) => { e.preventDefault(); focusEffortRange(e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerMove={(e) => { if ((e.buttons & 1) !== 1) return; updateSampleEffortFromPointer(stat.key, availableCap, e.clientX, e.currentTarget) }} onPointerUp={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId) }}>
-              <div className={`effort-gauge-cells ${statThemeClass(stat.key)}`} aria-hidden="true">{Array.from({ length: CHAMPIONS_EFFORT_PER_STAT_CAP }, (_, cellIdx) => { const point = cellIdx + 1; const reachable = point <= availableCap; const filled = point <= currentEffort; const magicPoint = magicPoints.includes(point); const currentPoint = point === currentEffort && currentEffort > 0; const checkpointPoint = EFFORT_CHECKPOINTS.includes(point as 11 | 22 | 32); const targetPoint = point === targetEffort; return <span key={`${scope}-sample-effort-cell-${stat.key}-${point}`} className={['effort-gauge-cell', reachable ? 'reachable' : 'locked', filled ? 'filled' : '', magicPoint ? 'magic' : '', currentPoint ? 'current' : '', checkpointPoint ? 'checkpoint' : '', targetPoint ? 'target' : ''].filter(Boolean).join(' ')} title={`${lt(stat.label)} ${point}pt`} /> })}</div>
-              <input type="range" className="effort-gauge-range" min={0} max={CHAMPIONS_EFFORT_PER_STAT_CAP} step={1} value={currentEffort} onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'ArrowLeft') { e.preventDefault(); nudgeSampleEffort(stat.key, -1, availableCap) } if (e.key === 'ArrowRight') { e.preventDefault(); nudgeSampleEffort(stat.key, 1, availableCap) } }} onChange={(e) => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, e.target.value) }))} />
-            </div>
-            <div className={`effort-gauge-scale ${statThemeClass(stat.key)}`}>{EFFORT_CHECKPOINTS.map((checkpoint) => { const checkpointValue = partyStatValue(sampleRow, { ...sampleForge, evs: { ...sampleForge.evs, [stat.key]: checkpoint } }, stat.key); return <div key={`${scope}-sample-effort-scale-${stat.key}-${checkpoint}`} className="effort-gauge-scale-item"><span>{checkpoint}pt</span><small>{stat.key === sampleMagicCandidate?.stat ? checkpointValue : ''}</small></div> })}</div>
-          </div>
-          <div className="effort-cell-toolbar"><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.max(0, currentEffort - 1)) }))} disabled={currentEffort <= 0}>-1</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, 0) }))} disabled={currentEffort <= 0}>{lt('최소')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, availableCap) }))} disabled={currentEffort >= availableCap}>{lt('최대')}</button><button type="button" className="mini-action" onClick={() => setSampleForge((prev) => ({ ...prev, evs: applyChampionsEffort(prev.evs, stat.key, Math.min(availableCap, currentEffort + 1)) }))} disabled={currentEffort >= availableCap}>+1</button></div>
-          <div className="row-between effort-cell-meta"><span className="muted-inline">{lt('현재')} {currentEffort}pt · {lt('추가 가능')} {additionalAvailable}pt</span>{sampleMagicCandidate?.stat === stat.key && targetEffort ? <span className="magic-inline">{lt('목표')} {targetEffort}칸</span> : isMagicStat ? <span className="magic-inline">{lt('11배수 달성')}</span> : null}</div>
-        </div>
-      })}
+    return <div className={`sample-embedded-compact-stat-editor sample-embedded-compact-stat-editor-${scope}`}>
+      <CompactStatEditor identity={`sample-${scope}-${sampleForge.key}`} language={siteLanguage} evs={sampleForge.evs} nature={sampleForge.config.nature}
+        stats={visibleStats.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(sampleRow, sampleForge, stat.key), ev: sampleForge.evs[stat.key] }))}
+        actualValue={(key, effort) => partyStatValue(sampleRow, effort === undefined ? sampleForge : { ...sampleForge, evs: { ...sampleForge.evs, [key]: effort } }, key)}
+        onEffort={(key, value) => setSampleForge(prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) }))}
+        onSpread={evs => setSampleForge(prev => ({ ...prev, evs }))}
+        onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature } }))}
+        showPresets={false} magicScale={effortMagicProjection(sampleRow, sampleForge.evs, sampleForge.config.nature).scale} />
     </div>
   }
 
@@ -5726,10 +5698,13 @@ export default function App() {
                 abilityTooltip={value => bindTooltip(value ? abilityTooltipData(value, siteLanguage, sampleRow) : null)}
                 itemTooltip={value => bindTooltip(value ? itemTooltipData(value, siteLanguage) : null)}
               />
-              <PokemonStatGrid stats={EFFORT_STAT_OPTIONS.map(stat => ({
-                key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key),
-                value: partyStatValue(sampleRow, sampleForge, stat.key), ev: sampleForge.evs[stat.key],
-              }))} className="sample-stat-preview-list" sampleStyle onTune={() => { sampleTuningOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setSampleTuningIdentity(sampleForge.key); setSampleTuningModalOpen(true) }} />
+              <CompactStatEditor identity={`sample-builder-${sampleForge.key}`} language={siteLanguage} evs={sampleForge.evs} nature={sampleForge.config.nature}
+                stats={EFFORT_STAT_OPTIONS.map(stat => ({ key: stat.key, label: lt(stat.label), theme: statThemeClass(stat.key), value: partyStatValue(sampleRow, sampleForge, stat.key), ev: sampleForge.evs[stat.key] }))}
+                actualValue={(key, effort) => partyStatValue(sampleRow, effort === undefined ? sampleForge : { ...sampleForge, evs: { ...sampleForge.evs, [key]: effort } }, key)}
+                onEffort={(key, value) => setSampleForge(prev => ({ ...prev, evs: applyChampionsEffort(prev.evs, key, value) }))}
+                onSpread={evs => setSampleForge(prev => ({ ...prev, evs }))}
+                onNature={nature => setSampleForge(prev => ({ ...prev, config: { ...prev.config, nature } }))}
+                magicScale={effortMagicProjection(sampleRow, sampleForge.evs, sampleForge.config.nature).scale} />
             </div>
             <div id="sample-moves-card" className="move-card flat-sample-move-card">
               <>
@@ -5863,7 +5838,7 @@ export default function App() {
                   <div className="sample-speed-inline-controls sample-current-build-toolbar sample-current-build-toolbar-speed">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
                       {renderSampleForgeNatureField()}
-                      {renderSampleForgeEffortGrid('speed')}
+                      {renderSampleForgeStatEditor('speed')}
                       <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                         <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
                           <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.physical, siteLanguage)}</strong>
@@ -5976,7 +5951,7 @@ export default function App() {
                   <div className="sample-speed-inline-controls sample-current-build-toolbar">
                     <div className="sample-speed-control-card sample-current-build-card sample-current-build-card-embedded sample-workbench-section-block">
                     {renderSampleForgeNatureField()}
-                    {renderSampleForgeEffortGrid('damage')}
+                    {renderSampleForgeStatEditor('damage')}
                     <div className="combat-index-strip" aria-label={`${lt('물리 내구력')} / ${lt('특수 내구력')}`}>
                       <span tabIndex={0} {...bindTooltip(battleIndexTooltipData('physical-bulk', siteLanguage, [{ label: lt('계산 기준'), value: `${sampleAttackerStats.hp} × ${sampleAttackerStats.defense}` }]))}>
                         <small>{lt('물리 내구력')}</small><strong>{formatBattleIndex(sampleBulkIndices.physical, siteLanguage)}</strong>

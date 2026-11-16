@@ -1,5 +1,6 @@
 import type { OpponentState, PartyMember, NatureId } from '../../app/types'
 import type { EffortValues } from '../samples/myPartyChampionsSamples'
+import { isChoiceScarfItem } from '../battle/statProjection.ts'
 
 type Draft = { key: string; item: string; ability: string; nature: NatureId; evs: EffortValues; moves: string[] }
 type Dirty = ReadonlySet<string>
@@ -21,7 +22,10 @@ export function commitComparisonEntry<T extends 'own' | 'opponent'>(side: T, rec
   const speciesChanged = dirty.has('key') && current.key !== draft.key
   const next = speciesChanged ? { ...current, item: '', ability: '', notes: '', revealedMoves: [], nature: undefined, attackEv: undefined, spAttackEv: undefined, natureBoost: false, scarf: false, speedStage: 0, hpEv: 0, defenseEv: 0, spDefenseEv: 0, speedEv: 0, defenseNature: 1, spDefenseNature: 1 } : { ...current }
   if (dirty.has('key')) next.key = draft.key
-  if (dirty.has('item') || dirty.has('key')) next.item = draft.item
+  if (dirty.has('item') || dirty.has('key')) {
+    next.item = draft.item
+    next.scarf = isChoiceScarfItem(draft.item)
+  }
   if (dirty.has('ability') || dirty.has('key')) next.ability = draft.ability
   if (dirty.has('nature')) next.nature = draft.nature
   if (dirty.has('moves')) next.revealedMoves = draft.moves.filter(Boolean).slice(0, 4)

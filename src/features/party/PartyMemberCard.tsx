@@ -58,7 +58,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
     return (
-                  <div id={`party-slot-${idx}`} className={`card entry-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
+                  <div id={`party-slot-${idx}`} className={`card entry-card party-member-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
                       actions={row ? <button type="button" className="entry-card-clear-button" aria-label={`${idx + 1} · ${lt('슬롯 비우기')}`} title={lt('슬롯 비우기')} onClick={() => clearPartySlot(idx)}><UiIcon name="trash" size={17} /><span className="visually-hidden">{idx + 1} · {lt('슬롯 비우기')}</span></button> : null} name={
                             <PokemonSearchField id={`party-species-${idx}`} className="party-inline-species-picker"
@@ -92,7 +92,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                         onNature={nature => setParty(prev => prev.map((entry, slot) => slot === idx ? { ...entry, config: { ...entry.config, nature } } : entry))}
                         magicScale={magic.scale} />
                     })() : null}
-                    {row ? <MoveSlotsEditor className="inline-move-card" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
+                    {row ? <MoveSlotsEditor className="inline-move-card party-move-slots" label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`party-${idx}-${member.key}`} role="editable" onClick={e => e.stopPropagation()}
                       toolbar={<>
                         {member.key ? learnsetStatusText(memberMovePool, siteLanguage) ? <small className="quick-source-badge" role="status">{learnsetStatusText(memberMovePool, siteLanguage)}</small> : null : null}
                         {memberMovePool?.status === 'load-error' ? <button type="button" onClick={() => window.location.reload()}>{siteLanguage === 'ko' ? '다시 시도 (새로고침)' : siteLanguage === 'ja' ? '再読込' : 'Reload to retry'}</button> : null}
