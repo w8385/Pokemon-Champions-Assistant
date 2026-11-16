@@ -12,17 +12,27 @@ const server = await createServer({ server: { middlewareMode: true, hmr: false }
 const { QuickDamagePanel, quickSide, quickKoVerdict } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts", "/src/features/damage/quickPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
 const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
 const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
-test.before(async () => { await Promise.all([loadFormLearnset('starmie'), loadFormLearnset('pelipper'), loadFormLearnset('garchomp'), loadMoveMetaByName()]) })
+test.before(async () => { await Promise.all([
+  loadFormLearnset('starmie'),
+  loadFormLearnset('pelipper'),
+  loadFormLearnset('garchomp'),
+  loadFormLearnset('farigiraf'),
+  loadFormLearnset('toucannon'),
+  loadFormLearnset('weavile'),
+  loadFormLearnset('furfrou'),
+  loadFormLearnset('persian-alolan'),
+  loadMoveMetaByName(),
+]) })
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
-const fixture = (ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기') => {
-  const own = quickSide({ key: ownKey, ability: '', moves: [ownMove, '', '', ''] })
-  const foe = quickSide({ key: foeKey, ability: '', moves: ['파도타기', '', '', ''] })
+const fixture = (ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기', ownAbility = '', foeAbility = '') => {
+  const own = quickSide({ key: ownKey, ability: ownAbility, moves: [ownMove, '', '', ''] })
+  const foe = quickSide({ key: foeKey, ability: foeAbility, moves: ['파도타기', '', '', ''] })
   return [own, foe]
 }
-async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove } = {}) {
+async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove, ownAbility, foeAbility } = {}) {
   localStorage.clear()
-  const sides = fixture(ownKey, foeKey, ownMove)
+  const sides = fixture(ownKey, foeKey, ownMove, ownAbility, foeAbility)
   if (!comparisonMode) localStorage.setItem('pokemon-champions-quick-damage:v1', JSON.stringify({ attacker: sides[0], defender: sides[1] }))
   const host = document.createElement('div'); document.body.append(host)
   const root = createRoot(host)
@@ -184,21 +194,110 @@ test('standalone calculator uses neutral Pokemon 1/2 labels while matchup keeps 
   }
 })
 
-test('multi-hit count is a compact local control with all legal hit choices', async () => {
+test('multi-hit decision power stays visible and every legal hit count is a direct horizontal choice', async () => {
   const view = await mount({ ownKey: 'garchomp', ownMove: '스케일샷' })
   try {
     const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
     assert.ok(group)
     assert.equal(group.getAttribute('role'), 'group')
-    assert.match(group.getAttribute('aria-label') ?? '', /스케일샷 계산 조건/)
-    const label = group.querySelector('label')
-    assert.match(label?.textContent ?? '', /타수/)
-    assert.deepEqual([...label.querySelectorAll('option')].map(option => Number(option.value)), [2, 3, 4, 5])
+    assert.match(group.getAttribute('aria-label') ?? '', /스케일샷 결정력 및 계산 조건/)
+    const power = group.querySelector('.quick-move-condition-power')
+    assert.match(power?.textContent ?? '', /결정력\s*[\d,]+/)
+    const initialDecisionPower = Number(power.textContent.replace(/\D/g, ''))
+    assert.ok(initialDecisionPower > 0)
+    const hitControl = group.querySelector('.quick-hit-count')
+    assert.ok(hitControl)
+    assert.equal(hitControl.getAttribute('role'), 'group')
+    assert.equal(hitControl.getAttribute('aria-label'), '타수')
+    const buttons = [...hitControl.querySelectorAll('.quick-hit-count-option')]
+    assert.deepEqual(buttons.map(button => Number(button.textContent)), [2, 3, 4, 5])
+    assert.deepEqual(buttons.map(button => button.getAttribute('aria-pressed')), ['true', 'false', 'false', 'false'])
+    assert.equal(group.querySelector('select'), null, 'hit count does not require opening a select')
+    const before = view.host.querySelector('.quick-result h3')?.textContent
+    await act(async () => buttons[2].click())
+    assert.equal(buttons[2].getAttribute('aria-pressed'), 'true')
+    const fourHitDecisionPower = Number(power.textContent.replace(/\D/g, ''))
+    assert.ok(fourHitDecisionPower > initialDecisionPower)
+    assert.notEqual(view.host.querySelector('.quick-result h3')?.textContent, before, 'direct hit selection updates damage')
     const cell = group.closest('.move-slots-editor-cell')
     const input = cell.querySelector('input')
     await act(async () => input.focus())
     assert.equal(cell.getAttribute('data-empty'), 'false', 'search draft does not erase persisted slot occupancy')
     assert.ok(cell.querySelector('.quick-move-local-condition'), 'focusing a filled move keeps its hit-count control visible')
+  } finally { await view.close() }
+})
+
+test('ordinary damaging moves show decision power without needing an extra condition', async () => {
+  const view = await mount({ ownKey: 'garchomp', ownMove: '지진' })
+  try {
+    const cell = view.host.querySelector('.quick-side-card[data-side="attacker"] .move-slots-editor-cell')
+    const group = cell?.querySelector('.quick-move-local-condition')
+    assert.ok(group)
+    assert.equal(group.getAttribute('aria-label'), '지진 결정력 및 계산 조건')
+    assert.match(group.querySelector('.quick-move-condition-power')?.textContent ?? '', /결정력\s*[\d,]+/)
+    assert.equal(group.querySelector('.quick-hit-count'), null)
+    assert.equal(group.querySelector('.quick-move-auto-condition'), null)
+  } finally { await view.close() }
+})
+
+test('decision power excludes target bulk modifiers while actual damage still applies them', async () => {
+  const results = []
+  for (const foeAbility of ['', 'fur-coat']) {
+    const view = await mount({ ownKey: 'garchomp', foeKey: 'furfrou', ownMove: '지진', foeAbility })
+    try {
+      const powerText = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-condition-power')?.textContent ?? ''
+      results.push({
+        power: Number(powerText.replace(/\D/g, '')),
+        damage: view.host.querySelector('.quick-result h3')?.textContent,
+      })
+    } finally { await view.close() }
+  }
+  assert.ok(results[0].power > 0)
+  assert.equal(results[1].power, results[0].power, 'Fur Coat is target bulk, not attacker decision power')
+  assert.notEqual(results[1].damage, results[0].damage, 'Fur Coat still changes real damage')
+})
+
+test('Foul Play decision power uses the target Attack stat without importing target bulk', async () => {
+  const powers = []
+  for (const foeKey of ['furfrou', 'garchomp']) {
+    const view = await mount({ ownKey: 'persian-alolan', foeKey, ownMove: '속임수' })
+    try {
+      const text = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-condition-power')?.textContent ?? ''
+      powers.push(Number(text.replace(/\D/g, '')))
+    } finally { await view.close() }
+  }
+  assert.ok(powers[0] > 0)
+  assert.ok(powers[1] > powers[0], 'the higher-Attack target raises Foul Play decision power')
+})
+
+test('fixed and Skill Link hit counts stay read-only beside the visible decision power', async () => {
+  for (const options of [
+    { ownKey: 'farigiraf', ownMove: '트윈빔', label: /타수\s*2/ },
+    { ownKey: 'toucannon', ownMove: '록블라스트', ownAbility: 'skill-link', label: /스킬링크\s*5/ },
+  ]) {
+    const view = await mount(options)
+    try {
+      const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
+      assert.ok(group)
+      assert.match(group.querySelector('.quick-move-condition-power')?.textContent ?? '', /결정력\s*[\d,]+/)
+      assert.match(group.querySelector('.quick-hit-count-static')?.textContent ?? '', options.label)
+      assert.equal(group.querySelector('.quick-hit-count-option'), null)
+      assert.equal(group.querySelector('select'), null)
+    } finally { await view.close() }
+  }
+})
+
+test('Triple Axel decision power follows its escalating per-hit powers', async () => {
+  const view = await mount({ ownKey: 'weavile', ownMove: '트리플악셀' })
+  try {
+    const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
+    const power = group?.querySelector('.quick-move-condition-power')
+    const buttons = [...(group?.querySelectorAll('.quick-hit-count-option') ?? [])]
+    assert.deepEqual(buttons.map(button => Number(button.textContent)), [1, 2, 3])
+    assert.match(power?.textContent ?? '', /결정력\s*[\d,]+/)
+    const oneHitDecisionPower = Number(power.textContent.replace(/\D/g, ''))
+    await act(async () => buttons[2].click())
+    assert.ok(Number(power.textContent.replace(/\D/g, '')) > oneHitDecisionPower)
   } finally { await view.close() }
 })
 

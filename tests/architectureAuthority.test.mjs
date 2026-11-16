@@ -2,11 +2,13 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const require = createRequire(import.meta.url)
 const src = path.join(root, 'src')
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/module-ownership.json'), 'utf8'))
 const config = ts.readConfigFile(path.join(root, 'tsconfig.json'), ts.sys.readFile)
@@ -22,7 +24,9 @@ for (const file of files) {
   const ast = program.getSourceFile(file)
   if (!ast) continue
   function add(specifier, kind, node) {
-    const resolved = ts.resolveModuleName(specifier, file, parsed.options, ts.sys).resolvedModule?.resolvedFileName ?? (specifier.endsWith('.css') && fs.existsSync(path.resolve(path.dirname(file), specifier)) ? path.resolve(path.dirname(file), specifier) : undefined)
+    const resolved = ts.resolveModuleName(specifier, file, parsed.options, ts.sys).resolvedModule?.resolvedFileName
+      ?? (specifier.endsWith('.css') && fs.existsSync(path.resolve(path.dirname(file), specifier)) ? path.resolve(path.dirname(file), specifier) : undefined)
+      ?? (!specifier.startsWith('.') && specifier.endsWith('.css') ? require.resolve(specifier) : undefined)
     assert.ok(resolved, `unresolved ${relative(file)}:${ast.getLineAndCharacterOfPosition(node.pos).line + 1} ${specifier}`)
     if (resolved.startsWith(src + path.sep)) edges.push({ from: relative(file), to: relative(resolved), kind })
     else externalEdges.push({ from: relative(file), specifier, kind })

@@ -1,24 +1,18 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import vm from 'node:vm'
-import ts from 'typescript'
+import { createServer } from 'vite'
 import { knockOffPowerMultiplier } from '../src/domain/battle/modifierRules.ts'
-import { calcDamage, engineMovePower, chainMods, DAMAGE_MOD_SCALE } from '../src/domain/battle/damageCore.ts'
+import { calcDamage, engineMovePower } from '../src/domain/battle/damageCore.ts'
+
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
+const { decisionPowerIndex, durabilityIndices, formatBattleIndex } = await server.ssrLoadModule('/src/domain/battle/battleIndices.ts')
+test.after(async () => { await server.close() })
 
 const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 const section = app.split('<section id="sample-damage-section"')[1]?.split('</section>')[0]
 const modifierRules = readFileSync(new URL('../src/domain/battle/modifierRules.ts', import.meta.url), 'utf8')
-function appDecisionPowerIndex() {
-  const source = ts.createSourceFile('App.tsx', app, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
-  const node = source.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === 'decisionPowerIndex')
-  assert.ok(node, 'actual App decision-power caller')
-  const code = ts.transpileModule(`${node.getText(source)}\nglobalThis.decisionPowerIndex = decisionPowerIndex`, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
-  const context = { chainMods, DAMAGE_MOD_SCALE }
-  vm.runInNewContext(code, context)
-  return context.decisionPowerIndex
-}
 
 test('sample damage shows the real condition controls without a disclosure or repeated condition summaries', () => {
   assert.ok(section)
@@ -56,6 +50,14 @@ test('sample target uses the shared item editor with the same item validation an
   assert.match(app, /defenderItem: member.item/)
 })
 
+test('battle indices have one domain implementation shared by App and quick damage', () => {
+  assert.match(app, /import \{ decisionPowerIndex, durabilityIndices, formatBattleIndex \} from '.\/domain\/battle\/battleIndices'/)
+  assert.doesNotMatch(app, /function (?:decisionPowerIndex|durabilityIndices|formatBattleIndex)\s*\(/)
+  assert.equal(decisionPowerIndex({ hp: 150, attack: 150, defense: 110, spAttack: 80, spDefense: 90 }, { power: 65, category: 'physical' }, 1.5, {}), 14625)
+  assert.deepEqual(durabilityIndices({ hp: 150, attack: 150, defense: 100, spAttack: 80, spDefense: 120 }), { physical: 15000, special: 18000 })
+  assert.equal(formatBattleIndex(39420, 'ko'), '39,420')
+})
+
 test('Knock Off power depends on an allowed removable target item, not no item or its required Mega Stone', () => {
   assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', ''), 1)
   assert.equal(knockOffPowerMultiplier('탁쳐서떨구기', 'scizor', 'いのちのたま'), 1.5)
@@ -73,8 +75,7 @@ test('Knock Off power depends on an allowed removable target item, not no item o
 })
 
 test('Knock Off item branches feed the existing damage and decision-power engines', () => {
-  // Execute the moved rule directly; the remaining decision-power caller stays in App.
-  const decisionPowerIndex = appDecisionPowerIndex()
+  // Execute the moved rule and the shared domain index implementation directly.
   assert.equal(engineMovePower(65, 1.5), 97)
   // champions.ts:640–652 chains fixed BP modifiers before rounding; the same
   // optional BP chain now reaches the display and actual damage engine.

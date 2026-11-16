@@ -25,6 +25,7 @@ import type { QuickDamageProps } from './QuickDamagePanel'
 import type { useQuickDamageState } from './useQuickDamageState'
 import { QuickStatEditor } from './QuickStatEditor'
 import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, electroBallPower, gyroBallPower, multiHitOptions, normalizeConditionalPowerValue, userWeightMovePower, weightBasedMovePower } from '../../domain/battle/movePower'
+import { formatBattleIndex } from '../../domain/battle/battleIndices'
 import { indexByKey } from '../../adapters/catalog/roster'
 import { isDamageGrounded } from '../../domain/battle/modifierRules'
 export function QuickSideCard({ side, editorIdentity, entry, targetEntry, row, setEntry, setTargetEntry, searchField, language, comparisonMode, sharedMoveSpecies, tooltipForMove, opponentSource, model, commands }: {
@@ -53,7 +54,7 @@ const sourceLabels = {
   }[language]
   const patchBattle = (dispatch: React.Dispatch<React.SetStateAction<QuickSide>>, patch: Partial<QuickSide['battle']>) => dispatch(prev => ({ ...prev, battle: { ...prev.battle, ...patch } }))
   const setStatused = (dispatch: React.Dispatch<React.SetStateAction<QuickSide>>, checked: boolean) => dispatch(prev => ({ ...prev, battle: { ...prev.battle, statused: checked, ...(checked ? {} : { burned: false, poisoned: false }) } }))
-  const renderMoveControls = (name: string, index: number) => {
+  const renderMoveControls = (name: string, index: number, decisionPower?: number | null) => {
     if (!name) return null
     const conditionKey = quickMoveConditionKey(side, index, name)
     const rule = CONDITIONAL_MOVE_POWER_RULES[name]
@@ -113,12 +114,12 @@ const sourceLabels = {
     else if (rule) automaticCondition = checkbox(rule.label, Boolean(normalizeConditionalPowerValue(rule, conditions.moveValues[conditionKey] ?? rule.defaultValue)), setMoveValue)
     else if (['로우킥', '풀묶기', '안다리걸기', '안다리 걸기'].includes(name) && targetRow) automaticCondition = auto('자동 위력', weightBasedMovePower(targetWeight))
     const knockOff = name === '탁쳐서떨구기' ? classifyHeldItem(targetEntry.key, targetEntry.item).status === 'allowed' : null
-    if (!automaticCondition && !hitOptions?.length && knockOff === null) return null
-    return <div className="quick-move-local-condition" role="group" aria-label={language === 'ko' ? `${name} 계산 조건` : language === 'ja' ? `${name}の計算条件` : `${name} calculation conditions`}>
+    return <div className="quick-move-local-condition" role="group" aria-label={language === 'ko' ? `${name} 결정력 및 계산 조건` : language === 'ja' ? `${name}の火力指数と計算条件` : `${name} power index and calculation conditions`}>
+      <span className="quick-move-condition-power"><span>{lt('결정력')}</span><strong>{decisionPower == null ? '—' : formatBattleIndex(decisionPower, language)}</strong></span>
       {automaticCondition}
       {hitOptions?.length ? hitOptions.length === 1 || skillLink
-        ? <span className="quick-move-auto-condition"><span>{skillLink ? moveControlCopy.skillLink : lt('타수')}</span><strong>{effectiveHits}</strong></span>
-        : <label><span>{lt('타수')}</span><select value={effectiveHits ?? hitOptions[0]} onChange={event => setHitCount(Number(event.target.value))}>{hitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
+        ? <span className="quick-hit-count-static"><span>{skillLink ? moveControlCopy.skillLink : lt('타수')}</span><strong>{effectiveHits}</strong></span>
+        : <span className="quick-hit-count" role="group" aria-label={lt('타수')}><span>{lt('타수')}</span><span className="quick-hit-count-options">{hitOptions.map(hit => <button key={hit} type="button" className="quick-hit-count-option" aria-label={`${lt('타수')} ${hit}`} aria-pressed={effectiveHits === hit} onClick={() => setHitCount(hit)}>{hit}</button>)}</span></span> : null}
       {knockOff !== null ? <span className="quick-move-auto-condition" title={`${moveControlCopy.auto} · ${moveControlCopy.targetItem}`}><span>{moveControlCopy.targetItem}</span><strong>{knockOff ? moveControlCopy.removable : moveControlCopy.absent}</strong></span> : null}
     </div>
   }
@@ -176,7 +177,7 @@ const sourceLabels = {
           const preview = calculate(side, name, index)
           const previewVerdict = quickKoVerdict(preview)
           return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, occupied: Boolean(name), type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
-              metaActions: renderMoveControls(name, index),
+              metaActions: renderMoveControls(name, index, preview?.decisionPower),
               children: recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null,
               tooltipProps: tooltipForMove(name),
               search: { id: `quick-${side}-move-${index}`, options: options.map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,

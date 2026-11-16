@@ -31,8 +31,22 @@ test('party registered moves use the shared 600px policy', () => {
   assert.match(member, /<MoveSlotsEditor className="inline-move-card party-move-slots"[^]*?slots=\{registeredMoves\.slice\(0, 4\)\.map\(/)
   assert.match(member, /while \(registeredMoves\.length < 4\) registeredMoves\.push\(''\)/)
   assert.match(css, /\.party-member-card \.party-move-slots \.move-slots-editor-cell\[data-empty='true'\][^}]*min-height:\s*72px/)
-  assert.match(css, /\.party-member-card \.top-move-chip-card \.move-chip-wrap\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/)
   for (const width of [320, 390, 600, 601, 1280]) assert.equal(columnsAt('.move-slots-editor-grid', width)?.value, width <= 600 ? oneColumn : twoColumns)
+})
+
+test('party usage moves flow sequentially through two mobile rows and become a wide 5x2 grid', () => {
+  assert.match(member, /className="move-chip-wrap party-top-move-grid"/)
+
+  const narrowGrid = css.match(/\.party-member-card \.top-move-chip-card \.party-top-move-grid\s*\{([^}]*)\}/)?.[1] ?? ''
+  assert.match(narrowGrid, /display:\s*grid/)
+  assert.match(narrowGrid, /grid-template-columns:\s*none/)
+  assert.match(narrowGrid, /grid-template-rows:\s*repeat\(2,\s*minmax\(36px,\s*auto\)\)/)
+  assert.match(narrowGrid, /grid-auto-flow:\s*column/)
+  assert.match(narrowGrid, /grid-auto-columns:\s*minmax\(120px,\s*1fr\)/)
+  assert.match(narrowGrid, /overflow-x:\s*auto/)
+
+  assert.match(css, /\.party-member-card \.top-move-chip-card \.party-top-move-grid \.move-chip\s*\{[^}]*min-height:\s*36px/)
+  assert.match(css, /@container party-member \(min-width:\s*560px\)\s*\{[^]*?\.party-member-card \.top-move-chip-card \.party-top-move-grid\s*\{[^}]*grid-template-columns:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\)[^}]*grid-auto-flow:\s*row[^}]*grid-auto-columns:\s*auto[^}]*overflow-x:\s*visible/)
 })
 
 test('builder registered moves use the same shared 600px policy', () => {

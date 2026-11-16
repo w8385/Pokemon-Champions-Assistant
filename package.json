@@ -25,6 +25,7 @@
     "check:ui-consistency": "python3 scripts/check-ui-consistency-harness.py"
   },
   "dependencies": {
+    "pretendard": "1.3.9",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tesseract.js": "^7.0.0"
