@@ -1,21 +1,64 @@
 /* Matchup-only composition. Shared quick cards live in styles.css. */
+.single-workspace .single-entry-picker-pane {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+}
+.single-workspace .single-entry-picker-pane-party {
+  padding-inline-end: 5px;
+}
+.single-workspace .single-entry-picker-pane-opponent {
+  box-sizing: border-box;
+  padding-inline-start: 5px;
+  border-inline-start: 1px solid var(--ui-separator, var(--border, #66758b));
+}
+.single-workspace .single-entry-picker-pane > .single-picker-head {
+  min-height: 44px;
+  align-items: center;
+}
+.single-workspace .single-opponent-picker-head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px;
+}
 .single-workspace .single-entry-toolbar {
   min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin: 0;
 }
 .single-workspace .single-entry-toolbar .action-button { min-height: 44px; white-space: nowrap; }
-.single-workspace .single-entry-toolbar input { min-height: 40px; }
+.single-workspace .single-entry-toolbar input { min-height: 44px; }
+.single-workspace .single-entry-toolbar .pokemon-search-field { display: block; }
+.single-workspace .single-entry-toolbar .pokemon-search-field > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .single-workspace .selected-opponent-search,
 .single-workspace .selected-opponent-search .pokemon-search-field,
 .single-workspace .selected-opponent-search input { min-width: 0; width: 100%; box-sizing: border-box; }
 .single-workspace .quick-record-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .single-workspace .quick-record-actions span { color: var(--muted); font-size: .85rem; }
 
-@media (max-width: 600px) {
-  .single-workspace .single-entry-toolbar { grid-template-columns: minmax(0, 1fr); }
-  .single-workspace .single-entry-toolbar .action-button { justify-self: end; }
+@media (max-width: 760px) {
+  .single-workspace .unified-pair-pickers { grid-template-columns: minmax(0, 1fr); }
+  .single-workspace .single-entry-picker-pane-party { padding-inline-end: 0; }
+  .single-workspace .single-entry-picker-pane-opponent {
+    padding-block-start: 8px;
+    padding-inline-start: 0;
+    border-block-start: 1px solid var(--ui-separator, var(--border, #66758b));
+    border-inline-start: 0;
+  }
+}
+@media (max-width: 350px) {
+  .single-workspace .single-opponent-picker-head { grid-template-columns: minmax(0, 1fr); }
 }

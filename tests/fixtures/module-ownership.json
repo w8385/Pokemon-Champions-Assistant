@@ -1166,7 +1166,7 @@
     },
     {
       "path": "src/canonical-data/champions/championsLearnedMoveWhitelist.json",
-      "sha256": "acc5d715f62e0e0cffedd1871678cfb8e947b7a72e60a023f0efc561aa98c56a",
+      "sha256": "2fc0e5f3eb246c038c3fae96156b3c5007c1387b169b80c6dbe55a473b9a6be3",
       "rows": 2,
       "topLevelKeys": [
         "_meta",
@@ -2387,7 +2387,7 @@
     },
     {
       "path": "src/canonical-data/champions/championsRecommendationAuditOverrides.json",
-      "sha256": "b491ba8f655f87da14a88a368d4cd29190de6586f37d541cb8f54901d9f12138",
+      "sha256": "347ef3d0f1e0729ab590f483b8636b02e185506204ce8b36ddf3f529f0ea4634",
       "rows": 2,
       "topLevelKeys": [
         "aliases",
@@ -2396,7 +2396,7 @@
     },
     {
       "path": "src/canonical-data/champions/championsUsageTopMoves.json",
-      "sha256": "51d464ca9702b71890b8366286961a41e3c6f8cb98940cf5d70c0e012900e327",
+      "sha256": "2fb5fb6557f774b88f7fecdcef45338d4f1bc0cab4fc99934869b6b2625d121c",
       "rows": 277,
       "topLevelKeys": [
         "abomasnow",

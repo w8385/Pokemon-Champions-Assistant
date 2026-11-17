@@ -3,7 +3,10 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import postcss from 'postcss'
 
-const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
+const css = [
+  readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/features/single/matchupWorkspace.css', import.meta.url), 'utf8'),
+].join('\n')
 const root = postcss.parse(css)
 
 function declarationsAt(selector, width) {
@@ -32,10 +35,11 @@ test('mobile build fields give the item a full row', () => {
   assert.equal(declarationsAt('.pokemon-build-fields > .item-meta-chip', 391).get('grid-column'), undefined)
 })
 
-test('mobile matchup gives each saved-party picker the full available width', () => {
+test('mobile matchup stacks the party and opponent panes at full width', () => {
   const narrow = declarationsAt('.single-workspace .unified-pair-pickers', 390)
   assert.equal(narrow.get('grid-template-columns'), 'minmax(0, 1fr)')
-  assert.equal(declarationsAt('.single-workspace .unified-pair-pickers', 601).get('grid-template-columns'), undefined)
+  assert.equal(declarationsAt('.single-workspace .unified-pair-pickers', 760).get('grid-template-columns'), 'minmax(0, 1fr)')
+  assert.equal(declarationsAt('.unified-pair-pickers', 761).get('grid-template-columns'), 'repeat(2, minmax(0, 1fr))')
 })
 
 test('the sample builder keeps the shared two-column stat density on narrow screens', () => {

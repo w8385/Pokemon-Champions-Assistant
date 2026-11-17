@@ -1,10 +1,23 @@
 {
   "_meta": {
-    "generatedAt": "2026-05-15T05:53:08.635Z",
+    "generatedAt": "2026-11-17T06:51:41.046Z",
     "purpose": "현재 사이트가 학습/추천하고 있는 종별 가용 기술만 추린 learned whitelist",
-    "sourceOfTruth": "src/sampleMoves.ts",
-    "comparedAgainst": "src/championsMovePools.json",
-    "caveat": "전체 기술풀이 아니라 현재 사이트가 학습한 종/추천기술만 포함한다."
+    "sourceOfTruth": "src/domain/samples/sampleMoves.ts",
+    "comparedAgainst": "src/canonical-data/champions/dexGameLearnsets.json",
+    "exactFormSource": {
+      "algorithm": "waza_learn[id].waza ∩ {waza[id].available == \"1\"}; exact species/form id",
+      "commit": "50e7233b78c3b81df29563f9695386c28e77fc95",
+      "date": "2026-09-09",
+      "repo": "projectpokemon/champout",
+      "sha256": {
+        "masterdata/personal.json": "5ab5444e4e08cc692c1c309dc0c113e8ba63e23187f9f6331cc4505db3ab96a7",
+        "masterdata/waza.json": "f6bfc143b78410ead2d69bebf52dff7ddbed9bb08bfaf7fd0ca2d28f21838ffa",
+        "masterdata/waza_learn.json": "fa40af93a85ad57b7308332e498437bed35be42c526a237b02f0af314e766b1a",
+        "parse/personal_dump.txt": "a5ec82c4b92ef96355b3044fad9bedd7dc22521ec1e35f0d0331e6fd07f5ec1c",
+        "rom-txt/kor/wazaname.json": "fb072eeef94204cf1f5dd97dbd6fdfc24dfbb29ad40ee739efece856e4e450a5"
+      }
+    },
+    "caveat": "전체 기술풀이 아니라 현재 사이트가 학습한 종/추천기술만 포함하며, 각 이름은 고정 게임 스냅샷의 정확한 폼별 표기와 일치한다."
   },
   "pokemon": {
     "mega-lopunny": {
@@ -25,39 +38,32 @@
         ]
       },
       "notes": [
-        "포챔스 통계 프록시에서는 인파이트/유턴/트리플악셀 비중이 높음",
-        "냉동펀치/번개펀치는 저우선 커버 분기로 제외"
+        "시즌 usage 상위축을 기준으로 인파이트/트리플악셀 우선순위를 상향",
+        "마하펀치/냉동펀치는 저우선 커버 분기로 제외"
       ],
       "availableMoves": [
-        "속이다",
+        "속이기",
+        "인파이트",
+        "트리플악셀",
         "무릎차기",
         "유턴",
-        "트리플악셀",
-        "앵콜"
+        "칼춤"
       ],
       "moves": [
         {
-          "name": "속이다",
-          "canonicalName": "속이다",
+          "name": "속이기",
+          "canonicalName": "속이기",
           "type": "normal",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "무릎차기",
-          "canonicalName": "무릎차기",
+          "name": "인파이트",
+          "canonicalName": "인파이트",
           "type": "fighting",
           "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "유턴",
-          "canonicalName": "유턴",
-          "type": "bug",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -65,15 +71,31 @@
           "canonicalName": "트리플악셀",
           "type": "ice",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "앵콜",
-          "canonicalName": "앵콜",
+          "name": "무릎차기",
+          "canonicalName": "무릎차기",
+          "type": "fighting",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "유턴",
+          "canonicalName": "유턴",
+          "type": "bug",
+          "tier": "utility",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "칼춤",
+          "canonicalName": "칼춤",
           "type": "normal",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -96,56 +118,64 @@
         ]
       },
       "notes": [
-        "포챔스 통계 프록시에서는 화염방사/사이코키네시스/매지컬샤인이 상위",
-        "앵콜 여부가 샘플 분기점",
-        "대타출동/명상은 저우선 분기로 제외"
+        "시즌 usage 기준 화염방사/사이코쇼크 축을 코어로 승격",
+        "대타출동/도깨비불은 저우선 분기로 제외"
       ],
       "availableMoves": [
-        "사이코키네시스",
-        "매지컬샤인",
-        "오버히트",
+        "화염방사",
         "사이코쇼크",
-        "앵콜"
+        "앙코르",
+        "나쁜음모",
+        "사이코키네시스",
+        "매지컬샤인"
       ],
       "moves": [
         {
-          "name": "사이코키네시스",
-          "canonicalName": "사이코키네시스",
-          "type": "psychic",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "매지컬샤인",
-          "canonicalName": "매지컬샤인",
-          "type": "fairy",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "오버히트",
-          "canonicalName": "오버히트",
+          "name": "화염방사",
+          "canonicalName": "화염방사",
           "type": "fire",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "tier": "core",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "사이코쇼크",
           "canonicalName": "사이코쇼크",
           "type": "psychic",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "tier": "core",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "앵콜",
-          "canonicalName": "앵콜",
+          "name": "앙코르",
+          "canonicalName": "앙코르",
           "type": "normal",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "나쁜음모",
+          "canonicalName": "나쁜음모",
+          "type": "dark",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "사이코키네시스",
+          "canonicalName": "사이코키네시스",
+          "type": "psychic",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "매지컬샤인",
+          "canonicalName": "매지컬샤인",
+          "type": "fairy",
+          "tier": "utility",
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -169,15 +199,15 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 지진/역린 뒤로 스텔스록, 암석봉인 비중이 높음",
-        "독찌르기/칼춤은 저우선 분기로 제외"
+        "시즌 usage 기준 스텔스록 채용률을 코어 축으로 상향",
+        "스톤샤워/독찌르기/드래곤테일은 저우선 분기로 제외"
       ],
       "availableMoves": [
         "지진",
+        "스텔스록",
         "역린",
         "암석봉인",
-        "스케일샷",
-        "스텔스록"
+        "스케일샷"
       ],
       "moves": [
         {
@@ -185,15 +215,23 @@
           "canonicalName": "지진",
           "type": "ground",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "스텔스록",
+          "canonicalName": "스텔스록",
+          "type": "rock",
+          "tier": "core",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "역린",
           "canonicalName": "역린",
           "type": "dragon",
-          "tier": "core",
-          "presentInChampionsPool": true,
+          "tier": "options",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -201,23 +239,15 @@
           "canonicalName": "암석봉인",
           "type": "rock",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "스케일샷",
           "canonicalName": "스케일샷",
           "type": "dragon",
-          "tier": "options",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "스텔스록",
-          "canonicalName": "스텔스록",
-          "type": "rock",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -240,39 +270,31 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 맹독/흑안개 축 우선",
-        "토치카/냉동빔은 저우선 후보로 제외"
+        "시즌 usage 기준 독/흑안개/회복 축으로 재정렬",
+        "토치카/찬물끼얹기/보복은 저우선 후보로 제외"
       ],
       "availableMoves": [
-        "열탕",
         "HP회복",
         "맹독",
         "흑안개",
+        "엉겨붙기",
         "독압정"
       ],
       "moves": [
         {
-          "name": "열탕",
-          "canonicalName": "열탕",
-          "type": "water",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "회복",
+          "name": "HP회복",
           "canonicalName": "HP회복",
           "type": "normal",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "맹독",
           "canonicalName": "맹독",
           "type": "poison",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "tier": "core",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -280,7 +302,15 @@
           "canonicalName": "흑안개",
           "type": "ice",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "엉겨붙기",
+          "canonicalName": "엉겨붙기",
+          "type": "bug",
+          "tier": "options",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -288,7 +318,7 @@
           "canonicalName": "독압정",
           "type": "poison",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -311,8 +341,8 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 날개쉬기/바디프레스/철벽 축 비중이 높음",
-        "아이언헤드/도발/벌크업은 저빈도 분기로 제외"
+        "시즌 usage 기준 날개쉬기/바디프레스/철벽/유턴 4축 유지",
+        "아이언헤드/도발/벌크업은 저우선 분기로 제외"
       ],
       "availableMoves": [
         "날개쉬기",
@@ -327,7 +357,7 @@
           "canonicalName": "날개쉬기",
           "type": "flying",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -335,7 +365,7 @@
           "canonicalName": "바디프레스",
           "type": "fighting",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -343,7 +373,7 @@
           "canonicalName": "철벽",
           "type": "steel",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -351,7 +381,7 @@
           "canonicalName": "유턴",
           "type": "bug",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -359,7 +389,7 @@
           "canonicalName": "브레이브버드",
           "type": "flying",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -383,33 +413,31 @@
         ]
       },
       "notes": [
-        "포챔스 통계 기준 도각참 누락은 오류로 보고 바로 보강",
-        "기습/칼춤 확인이 우선",
-        "메탈버스트는 실전 추적 우선도 낮아 제외"
+        "시즌 usage 기준 칼춤과 안다리걸기 채용률을 반영",
+        "가위자르기/깨트리다/메탈버스트는 추적 우선도 낮아 제외"
       ],
       "availableMoves": [
-        "도각참",
         "기습",
+        "도각참",
         "아이언헤드",
-        "로우킥",
         "칼춤",
-        "도발"
+        "안다리걸기"
       ],
       "moves": [
-        {
-          "name": "도각참",
-          "canonicalName": "도각참",
-          "type": "dark",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
         {
           "name": "기습",
           "canonicalName": "기습",
           "type": "dark",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "도각참",
+          "canonicalName": "도각참",
+          "type": "dark",
+          "tier": "core",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -417,31 +445,23 @@
           "canonicalName": "아이언헤드",
           "type": "steel",
           "tier": "options",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "로우킥",
-          "canonicalName": "로우킥",
-          "type": "fighting",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "칼춤",
           "canonicalName": "칼춤",
           "type": "normal",
-          "tier": "utility",
-          "presentInChampionsPool": true,
+          "tier": "options",
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "도발",
-          "canonicalName": "도발",
-          "type": "dark",
+          "name": "안다리걸기",
+          "canonicalName": "안다리걸기",
+          "type": "fighting",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -464,15 +484,15 @@
         ]
       },
       "notes": [
-        "트릭/상태이상기 보유 확인",
-        "악의파동/전기자석파는 저우선 분기로 제외"
+        "시즌 usage 기준 볼체/도깨비불/트릭/10만볼트 4축을 우선 유지",
+        "섀도볼/전기자석파/방전은 저우선 분기로 제외"
       ],
       "availableMoves": [
         "볼트체인지",
-        "하이드로펌프",
-        "10만볼트",
+        "도깨비불",
         "트릭",
-        "도깨비불"
+        "10만볼트",
+        "병상첨병"
       ],
       "moves": [
         {
@@ -480,23 +500,15 @@
           "canonicalName": "볼트체인지",
           "type": "electric",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "하이드로펌프",
-          "canonicalName": "하이드로펌프",
-          "type": null,
+          "name": "도깨비불",
+          "canonicalName": "도깨비불",
+          "type": "fire",
           "tier": "core",
-          "presentInChampionsPool": false,
-          "confidence": "conflict"
-        },
-        {
-          "name": "10만볼트",
-          "canonicalName": "10만볼트",
-          "type": "electric",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -504,15 +516,23 @@
           "canonicalName": "트릭",
           "type": "psychic",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "도깨비불",
-          "canonicalName": "도깨비불",
-          "type": "fire",
+          "name": "10만볼트",
+          "canonicalName": "10만볼트",
+          "type": "electric",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "병상첨병",
+          "canonicalName": "병상첨병",
+          "type": "ghost",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -534,15 +554,16 @@
         ]
       },
       "notes": [
-        "앵콜/명상 여부로 운영 달라짐",
-        "냉동빔/앵콜은 저우선 분기로 제외"
+        "시즌 usage 기준 하이드로펌프보다 물거품아리아/아쿠아제트 축을 우선",
+        "파도타기/미스트필드는 저우선 분기로 제외"
       ],
       "availableMoves": [
         "문포스",
-        "하이드로펌프",
-        "하이퍼보이스",
-        "에너지볼",
-        "명상"
+        "물거품아리아",
+        "아쿠아제트",
+        "앙코르",
+        "명상",
+        "퀵턴"
       ],
       "moves": [
         {
@@ -550,31 +571,31 @@
           "canonicalName": "문포스",
           "type": "fairy",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "하이드로펌프",
-          "canonicalName": "하이드로펌프",
+          "name": "물거품아리아",
+          "canonicalName": "물거품아리아",
           "type": "water",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "하이퍼보이스",
-          "canonicalName": "하이퍼보이스",
+          "name": "아쿠아제트",
+          "canonicalName": "아쿠아제트",
+          "type": "water",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "앙코르",
+          "canonicalName": "앙코르",
           "type": "normal",
           "tier": "options",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "에너지볼",
-          "canonicalName": "에너지볼",
-          "type": "grass",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -582,7 +603,15 @@
           "canonicalName": "명상",
           "type": "psychic",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "medium"
+        },
+        {
+          "name": "퀵턴",
+          "canonicalName": "퀵턴",
+          "type": "water",
+          "tier": "utility",
+          "presentInExactFormPool": true,
           "confidence": "medium"
         }
       ]
@@ -605,15 +634,16 @@
         ]
       },
       "notes": [
-        "물리/특수/서포트 분기 추적",
-        "불대문자/전기자석파는 보조 저빈도 분기로 제외"
+        "시즌 usage 기준 유턴 축을 코어로 승격",
+        "섀도볼/용의춤은 저우선 분기로 제외"
       ],
       "availableMoves": [
         "드래곤애로",
-        "고스트다이브",
-        "용성군",
         "유턴",
-        "도깨비불"
+        "고스트다이브",
+        "도깨비불",
+        "기습",
+        "용성군"
       ],
       "moves": [
         {
@@ -621,39 +651,47 @@
           "canonicalName": "드래곤애로",
           "type": "dragon",
           "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "고스트다이브",
-          "canonicalName": "고스트다이브",
-          "type": "ghost",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "용성군",
-          "canonicalName": "용성군",
-          "type": "dragon",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "유턴",
           "canonicalName": "유턴",
           "type": "bug",
+          "tier": "core",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "고스트다이브",
+          "canonicalName": "고스트다이브",
+          "type": "ghost",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "도깨비불",
           "canonicalName": "도깨비불",
           "type": "fire",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "기습",
+          "canonicalName": "기습",
+          "type": "dark",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "용성군",
+          "canonicalName": "용성군",
+          "type": "dragon",
+          "tier": "utility",
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]
@@ -675,55 +713,55 @@
         ]
       },
       "notes": [
-        "칼춤형인지 유틸형인지 확인",
-        "도깨비불/대타출동은 저우선 분기로 제외"
+        "시즌 usage 기준 야습/칼춤 우선순위를 상향",
+        "트릭룸/아픔나누기/저주는 저우선 분기로 제외"
       ],
       "availableMoves": [
-        "치근거리기",
-        "섀도크루",
         "야습",
-        "우드해머",
-        "칼춤"
+        "치근거리기",
+        "칼춤",
+        "섀도클로",
+        "드레인펀치"
       ],
       "moves": [
+        {
+          "name": "야습",
+          "canonicalName": "야습",
+          "type": "ghost",
+          "tier": "core",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
         {
           "name": "치근거리기",
           "canonicalName": "치근거리기",
           "type": "fairy",
           "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "섀도클로",
-          "canonicalName": "섀도크루",
-          "type": "ghost",
-          "tier": "core",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "야습",
-          "canonicalName": "야습",
-          "type": "ghost",
-          "tier": "options",
-          "presentInChampionsPool": true,
-          "confidence": "high"
-        },
-        {
-          "name": "우드해머",
-          "canonicalName": "우드해머",
-          "type": "grass",
-          "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
           "name": "칼춤",
           "canonicalName": "칼춤",
           "type": "normal",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "섀도클로",
+          "canonicalName": "섀도클로",
+          "type": "ghost",
+          "tier": "options",
+          "presentInExactFormPool": true,
+          "confidence": "high"
+        },
+        {
+          "name": "드레인펀치",
+          "canonicalName": "드레인펀치",
+          "type": "fighting",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "medium"
         }
       ]
@@ -746,15 +784,15 @@
         ]
       },
       "notes": [
-        "유턴/압정 여부 중요",
-        "로우킥/도발은 저우선 분기로 제외"
+        "시즌 usage 상위 4축을 우선 남기고 치근거리기는 보조 후보에서 제외",
+        "번개펀치/안다리걸기는 저우선 분기로 제외"
       ],
       "availableMoves": [
         "트릭플라워",
-        "탁쳐서떨구기",
+        "트리플악셀",
         "유턴",
-        "치근거리기",
-        "압정뿌리기"
+        "탁쳐서떨구기",
+        "기습"
       ],
       "moves": [
         {
@@ -762,15 +800,15 @@
           "canonicalName": "트릭플라워",
           "type": "grass",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "탁쳐서떨구기",
-          "canonicalName": "탁쳐서떨구기",
-          "type": "dark",
+          "name": "트리플악셀",
+          "canonicalName": "트리플악셀",
+          "type": "ice",
           "tier": "core",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
@@ -778,23 +816,23 @@
           "canonicalName": "유턴",
           "type": "bug",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "치근거리기",
-          "canonicalName": "치근거리기",
-          "type": "fairy",
+          "name": "탁쳐서떨구기",
+          "canonicalName": "탁쳐서떨구기",
+          "type": "dark",
           "tier": "options",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         },
         {
-          "name": "압정뿌리기",
-          "canonicalName": "압정뿌리기",
-          "type": "ground",
+          "name": "기습",
+          "canonicalName": "기습",
+          "type": "dark",
           "tier": "utility",
-          "presentInChampionsPool": true,
+          "presentInExactFormPool": true,
           "confidence": "high"
         }
       ]

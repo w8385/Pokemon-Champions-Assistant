@@ -19,7 +19,7 @@ import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { getTypeBadgeLabel, getTypeBadgeSrc } from '../../shared/display/typeBadges'
 import { lookupMoveMeta, resolveMoveType, resolveMoveMeta, filterMoveOptions } from '../../adapters/catalog/movePresentation'
-import { choicesForPool, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
+import { choicesForPool, eligibleMoveRecommendations, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
 import { learnsetStatusText, recordedLearnsetText, type SharedPoolState } from '../damage/quickPresentation'
 import { translateText } from '../../shared/display/translation'
 import { emptySlotLabel, natureChipLabel, resolveItemInput, partyStatValue, displayAbilities, sameMoveField } from '../../shared/display/entryHelpers'
@@ -53,7 +53,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                 const abilityOptions = row ? displayAbilities(row, siteLanguage) : []
                 const memberMovePool = movePoolByKey[member.key]
                 const memberMoveOptions = choicesForPool(memberMovePool)
-                const memberTopSuggestedMoves = usageTopMovesForKey(member.key)
+                const memberTopSuggestedMoves = eligibleMoveRecommendations(usageTopMovesForKey(member.key), memberMovePool)
                 const partySpeciesOptions = filterSpeciesOptions(partySearch[idx] ?? '').slice(0, 8)
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]

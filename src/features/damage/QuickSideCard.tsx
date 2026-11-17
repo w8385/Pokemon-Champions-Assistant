@@ -15,7 +15,7 @@ import { type ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter
 import { SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
 import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, isFocusEnteringMoveUsageRail } from '../../shared/display/PokemonCardOverview'
-import { choicesForPool, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
+import { choicesForPool, eligibleMoveRecommendations, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
 import { getMoveMetadata } from '../../domain/champions/moveMetadata'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
 import { localizedAbilityLabel } from '../../domain/champions/abilityIdentity'
@@ -148,7 +148,7 @@ const sourceLabels = {
       if (nextIndex !== null) window.setTimeout(() => document.getElementById(`quick-${side}-move-${nextIndex}`)?.focus(), 0)
     }
     const sideLabel = lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '포켓몬 1' : '포켓몬 2')
-    const topMoveSuggestions = usageTopMovesForKey(entry.key).map(name => {
+    const topMoveSuggestions = eligibleMoveRecommendations(usageTopMovesForKey(entry.key), pools[entry.key]).map(name => {
       const accepted = resolveEligibleMoveInput(name, pools[entry.key])
       const option = accepted ? pool.find(candidate => candidate.name === accepted) : undefined
       const existingIndex = entry.moves.indexOf(name)
