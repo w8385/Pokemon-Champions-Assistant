@@ -7,6 +7,7 @@ import { filterSpeciesOptions } from './shared/search/speciesOptions'
 import { SingleEntryComparison } from './features/single/SingleEntryComparison'
 import { OpponentsPickView } from './features/single/OpponentsPickView'
 import { QuickDamagePanel } from './features/damage/QuickDamagePanel'
+import { FeedbackWidget } from './features/feedback/FeedbackWidget'
 import { useOpponentEntries } from './features/single/useOpponentEntries'
 import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './features/damage/quickPresentation.ts'
 import { QuickBattle, QuickSide, QuickConditions, quickBlankBattle, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickStat } from './features/damage/quickModel.ts'
@@ -6838,6 +6839,22 @@ export default function App() {
           </div> : null}
         </div> : null}
       </main>
+      <FeedbackWidget
+        language={siteLanguage}
+        view={{
+          mainSection,
+          activeTab,
+          sampleWorkbenchTab,
+          sampleLibraryDetailOpen: Boolean(librarySourceId),
+          dexSearchMode,
+          dexDetailOpen: Boolean(dexSelectedValue),
+        }}
+        onBeforeOpen={() => {
+          setLanguageMenuOpen(false)
+          setSettingsMenuOpen(false)
+          hideHoverTooltip()
+        }}
+      />
     </div>
   )
 }

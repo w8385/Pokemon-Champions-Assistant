@@ -1,5 +1,5 @@
 /* Small original geometric marks; never an icon font or SF Symbols asset. */
-export type UiIconName = 'home' | 'party' | 'battle' | 'calculator' | 'speed' | 'library' | 'lab' | 'dex' | 'globe' | 'settings' | 'chevron' | 'search' | 'plus' | 'trash' | 'edit' | 'close' | 'swap' | 'info' | 'upload' | 'download' | 'check' | 'warning'
+export type UiIconName = 'home' | 'party' | 'battle' | 'calculator' | 'speed' | 'library' | 'lab' | 'dex' | 'globe' | 'settings' | 'chevron' | 'search' | 'plus' | 'trash' | 'edit' | 'close' | 'swap' | 'info' | 'upload' | 'download' | 'check' | 'warning' | 'message' | 'copy'
 
 export function UiIcon({ name, size = 20, className }: { name: UiIconName; size?: number; className?: string }) {
   const paths: Record<UiIconName, React.ReactNode> = {
@@ -25,6 +25,8 @@ export function UiIcon({ name, size = 20, className }: { name: UiIconName; size?
     download: <><path d="M12 3v13m-5-5 5 5 5-5M4 16v4h16v-4"/></>,
     check: <path d="m4 12 5 5L20 6"/>,
     warning: <><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3v1"/></>,
+    message: <><path d="M4 4.5h16v12H9l-5 4v-16Z"/><path d="M8 9h8M8 12.5h5"/></>,
+    copy: <><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></>,
   }
   return <svg className={className ?? 'ui-icon'} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{paths[name]}</svg>
 }

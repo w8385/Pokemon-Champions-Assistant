@@ -56,6 +56,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_FEEDBACK_ENDPOINT: ${{ vars.FEEDBACK_ENDPOINT }}
 
       - name: Check core workspace UI consistency
         run: npm run check:ui-consistency

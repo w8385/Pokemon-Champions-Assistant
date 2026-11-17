@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __APP_VERSION__: JSON.stringify(packageJson.version),
+    __APP_REVISION__: JSON.stringify((process.env.GITHUB_SHA || 'dev').slice(0, 12)),
+  },
   base: process.env.GITHUB_ACTIONS ? '/Pokemon-Champions-Assistant/' : '/',
   server: {
     allowedHosts: ['midnight.tail8a61.ts.net'],

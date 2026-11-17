@@ -1,0 +1,12 @@
+name = "pokemon-champions-feedback"
+main = "worker.mjs"
+compatibility_date = "2026-11-17"
+
+[vars]
+ALLOWED_ORIGINS = "https://w8385.dev,https://midnight.tail8a61.ts.net,http://localhost:5173,http://127.0.0.1:5173"
+RATE_LIMIT_MAX = "5"
+RATE_LIMIT_WINDOW_SECONDS = "60"
+DISCORD_TIMEOUT_MS = "8000"
+
+# Never put DISCORD_WEBHOOK_URL here. Add it as a Worker secret:
+# npx wrangler secret put DISCORD_WEBHOOK_URL
