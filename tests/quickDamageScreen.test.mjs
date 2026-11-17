@@ -9,7 +9,6 @@ const compactEditor = readFileSync(new URL('../src/shared/display/CompactStatEdi
 const calculator = readFileSync(new URL('../src/features/damage/calculateQuickDamage.ts', import.meta.url), 'utf8')
 const io = readFileSync(new URL('../src/adapters/persistence/quickDamage.ts', import.meta.url), 'utf8')
 const hook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
-const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
 const translations = readFileSync(new URL('../src/shared/display/translation.ts', import.meta.url), 'utf8')
 
 test('standalone damage reuses real picker and engine without changing party entries', () => {
@@ -34,9 +33,10 @@ test('both swapped cards keep every damage-relevant stat visible and repairable'
   assert.doesNotMatch(card, /sourceLabels\.modifier/)
 })
 
-test('multihit summed rolls cannot be presented as exact KO probability', () => {
-  assert.match(result, /result\.hits > 1 \? <p>\{lt\('연속기는 기절 확률 계산 제외'\)\}<\/p> : null/)
-  for (const label of ['KO probability is not calculated for multihit moves', '連続技のひんし確率は計算対象外']) assert.ok(translations.includes(label))
+test('move previews use the shared verdict guard instead of presenting exact multihit KO probability', () => {
+  assert.match(card, /const previewVerdict = quickKoVerdict\(preview\)/)
+  assert.match(card, /<DamageRangeMeter damage=\{preview\.damage\}[^>]*compact/)
+  assert.doesNotMatch(card, /quick-ko-chance|damage\.rolls\.filter/)
 })
 
 test('Quick distinguishes unsupported damage moves from status moves and resolves Facade', () => {

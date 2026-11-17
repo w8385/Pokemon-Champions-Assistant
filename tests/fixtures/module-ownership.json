@@ -93,7 +93,6 @@
     "src/domain/samples/sampleMoves.ts",
     "src/features/damage/QuickConditions.tsx",
     "src/features/damage/QuickDamagePanel.tsx",
-    "src/features/damage/QuickDamageResult.tsx",
     "src/features/damage/QuickDamageView.tsx",
     "src/features/damage/QuickEffortModal.tsx",
     "src/features/damage/QuickSideCard.tsx",

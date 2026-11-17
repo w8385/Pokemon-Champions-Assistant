@@ -8678,10 +8678,7 @@ html {
 .quick-speed-bar-defender { background: #f2ad67; }
 .single-workspace .quick-speed-card { gap: .2rem; }
 .single-workspace .quick-speed-chips span { border-color: var(--border, #66758b); }
-.single-picker-head, .quick-result-head { display: flex; align-items: center; justify-content: space-between; gap: .4rem; flex-wrap: wrap; }
-.quick-result { border: 1px solid var(--border, #66758b); border-radius: .6rem; padding: .6rem .75rem; }
-.quick-result p { margin: .25rem 0; }
-.quick-result h3 { margin: .25rem 0; }
+.single-picker-head { display: flex; align-items: center; justify-content: space-between; gap: .4rem; flex-wrap: wrap; }
 .quick-stat-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; min-width: 0; }
 .quick-stat-card { min-width: 0; }
 .quick-stat-card h3 { margin: 0 0 .5rem; font-size: .95rem; }
@@ -8727,12 +8724,8 @@ html {
 .quick-moves { min-width: 0; display: grid; gap: 10px; }
 .quick-moves .move-chip-wrap { max-height: 210px; overflow-y: auto; }
 .quick-moves .move-chip[aria-pressed='true'] { outline: 2px solid currentColor; outline-offset: -2px; }
-.quick-result { min-width: 0; overflow-wrap: anywhere; }
-.quick-result h3 { font-size: clamp(1.25rem, 3vw, 1.9rem); margin: 8px 0; }
-.quick-result-head > span { color: var(--muted, #aab5c4); font-size: .85rem; }
-.quick-result small { display: block; line-height: 1.6; }
-.quick-result.quick-ko-certain, .quick-move-preview.quick-ko-certain { border-color: #54d99a; background: rgba(38, 161, 103, .17); }
-.quick-result.quick-ko-possible, .quick-move-preview.quick-ko-possible { border-color: #f4bd65; background: rgba(210, 133, 32, .16); }
+.quick-move-preview.quick-ko-certain { border-color: #54d99a; background: rgba(38, 161, 103, .17); }
+.quick-move-preview.quick-ko-possible { border-color: #f4bd65; background: rgba(210, 133, 32, .16); }
 .quick-ko-verdict { display: inline-block; margin-inline-start: .55em; padding: .08em .4em; border-radius: .3em; font-size: .78em; white-space: nowrap; vertical-align: middle; }
 .quick-ko-certain .quick-ko-verdict { color: #112d22; background: #8ff0b7; }
 .quick-ko-possible .quick-ko-verdict { color: #382108; background: #ffda82; }
@@ -8868,9 +8861,6 @@ html {
 @media (max-width: 350px) { .single-workspace .unified-pair-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .single-workspace .quick-speed-summary { gap: .25rem .6rem; padding: .35rem .6rem; }
 .single-workspace .quick-speed-overview-bars { gap: .2rem; }
-.single-workspace .quick-result { padding: .35rem .6rem; }
-.single-workspace .quick-result h3 { margin: .1rem 0; font-size: 1.15rem; }
-.single-workspace .quick-result p { display: inline; margin: 0 .5rem 0 0; font-size: .8rem; }
 .single-workspace .quick-conditions { padding: .3rem .6rem; }
 /* My Party: per-slot defensive and verified-attack matrices. */
 .party-analysis { min-width: 0; padding: 1rem; border: 1px solid #66758b; border-radius: .8rem; background: #182431; color: #edf4fc; }
@@ -9106,8 +9096,6 @@ html {
 .damage-range-remainder, .damage-range-solid { position: absolute; inset: 0 auto 0 0; height: 100%; border-radius: inherit; }
 .damage-range-remainder { background: var(--link); opacity: .6; }
 .damage-range-solid { background: var(--link); }
-.quick-result .damage-range-meter { width: min(100%, 340px); }
-.quick-result h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
 .quick-move-preview .damage-range-meter { width: 100%; text-align: left; }
 .sample-damage-move-result .damage-range-meter { width: min(100%, 240px); }
 .sample-damage-move-result > span { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
@@ -9261,7 +9249,6 @@ html {
   gap: var(--quick-section-gap);
 }
 .quick-damage.single-workspace { gap: var(--quick-section-gap); }
-.quick-damage .quick-comparison-results { display: grid; gap: var(--quick-section-gap); }
 
 /* Speed settings and comparison are a single compact card. */
 .quick-speed-comparison-card {
@@ -9330,9 +9317,6 @@ html {
 .quick-side-identity .entry-card-top { min-width: 0; margin-bottom: 0; }
 .quick-stat-card { min-width: 0; display: grid; align-content: start; gap: var(--quick-tile-gap); }
 .single-workspace .quick-side-card { gap: var(--quick-card-gap); padding: 12px; }
-.single-workspace .quick-result { padding: .6rem .75rem; }
-.single-workspace .quick-result h3 { margin: 8px 0; font-size: clamp(1.25rem, 3vw, 1.9rem); }
-.single-workspace .quick-result p { display: block; margin: .25rem 0; font-size: inherit; }
 .single-workspace .quick-conditions { padding: .5rem .7rem; }
 
 /* Compact stat tiles: actual value, Speed base and direct nature controls share one line. */

@@ -8,19 +8,19 @@ const conditions = readFileSync(new URL('../src/features/damage/QuickConditions.
 const panel = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 
-test('one Speed/damage result precedes the real inline editing cards and battle conditions', () => {
+test('one Speed card precedes inline cards whose move tiles own damage results', () => {
   const view = panel.slice(panel.indexOf('return <section className={`panel wide quick-damage'))
-  const order = ['{entrySelectors?.(', 'className="quick-comparison-results"', '<QuickSpeedPresentation', '<QuickDamageResult', 'className="quick-sides"', '<QuickConditionsView']
+  const order = ['{entrySelectors?.(', '<QuickSpeedPresentation', 'className="quick-sides"', '<QuickConditionsView']
   let previous = -1
   for (const marker of order) { const position = view.indexOf(marker); assert.ok(position > previous, `${marker} must follow previous region`); previous = position }
   assert.equal((view.match(/className="quick-sides"/g) ?? []).length, 1)
-  assert.equal((view.match(/className="quick-comparison-results"/g) ?? []).length, 1)
   assert.equal((view.match(/<QuickSpeedPresentation/g) ?? []).length, 1)
-  assert.equal((view.match(/<QuickDamageResult/g) ?? []).length, 1)
+  assert.equal((view.match(/<QuickDamageResult/g) ?? []).length, 0)
   assert.match(view, /<QuickSideCard key=\{side\}/)
   assert.match(card, /<PokemonBuildFields/)
   assert.match(card, /<QuickStatEditor/)
   assert.match(card, /<MoveSlotsEditor[^]*?label=\{lt\('기술 배치'\)\}/)
+  assert.match(card, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
   assert.doesNotMatch(css, /\.quick-sides\s*\{\s*order:/)
 })
 

@@ -1,8 +1,8 @@
 import { calculateQuickDamage } from './calculateQuickDamage'
-import { prepareQuickDamageInput, toStats } from './prepareQuickDamageInput'
+import { prepareQuickDamageInput } from './prepareQuickDamageInput'
 import { readQuickStandalone, writeQuickStandalone } from '../../adapters/persistence/quickDamage'
 import { filterSpeciesOptions } from '../../shared/search/speciesOptions'
-import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoVerdict, quickKoLabels, conciseSpeedLabels } from './quickPresentation.ts'
+import { MovePoolState, SharedPoolState, learnsetStatusText, recordedLearnsetText, quickKoLabels, conciseSpeedLabels } from './quickPresentation.ts'
 import { QuickBattle, QuickSide, QuickConditions, quickBlank, quickDefaultConditions, quickSide, restoredComparisonSide, quickMagicProjection, quickStat, quickMoveConditionKey, quickMoveHits, quickMoveValues, quickStatused } from './quickModel.ts'
 import { applyChampionsEffort } from '../../domain/champions/effortProjection'
 import { heldAbilityError, selectedAbilityDisplayName } from '../../shared/display/abilityPresentation.ts'
@@ -14,7 +14,7 @@ import { translateText } from '../../shared/display/translation.ts'
 import { abilityAdjustedTypeEffectiveness } from '../../domain/battle/typeEffectiveness.ts'
 import { resolveDamageModifiers } from '../../domain/battle/modifierRules.ts'
 import { isChoiceScarfItem } from '../../domain/battle/statProjection.ts'
-import { CONDITIONAL_MOVE_POWER_RULES, applyTargetWeightMovePower, multiHitOptions, resolveMultiHitMeta } from '../../domain/battle/movePower.ts'
+import { CONDITIONAL_MOVE_POWER_RULES, applyTargetWeightMovePower, resolveMultiHitMeta } from '../../domain/battle/movePower.ts'
 import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, deriveAutoWeatherFromAbilities, deriveAutoTerrainFromAbilities } from '../../domain/battle/moveEffects.ts'
 import React from 'react'
 import { CHAMPIONS_ITEM_OPTIONS } from '../../domain/champions/championsItems'
@@ -37,13 +37,12 @@ import { getSpeedAbility, speedActivationAllowed } from '../../domain/battle/spe
 import { PokemonCardHeading, PokemonStatGrid, MoveSlotsEditor, MoveCandidateRow } from '../../shared/display/PokemonCardOverview'
 import PokemonSearchField from '../../shared/search/PokemonSearchField'
 import { loadFormLearnset, choicesForPool, moveInPool, LEARNSET_SOURCE } from '../../domain/champions/sharedLearnsets'
-import { getMoveMetadata } from '../../domain/champions/moveMetadata'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
 import { applySpeedModifiers, applySpeedStage } from '../../domain/battle/speed/speedModifiers'
 import { localizedAbilityLabel, resolveFormAbility } from '../../domain/champions/abilityIdentity'
 import { calcDamage, type BattleStatBlock } from '../../domain/battle/damageCore'
 import { DamageTerrain, DamageWeather, MoveCategory, MoveOption, NatureId, Row, SiteLanguage } from '../../app/types'
-import { abilityDescriptionFor, loadMoveMetaByName, moveDescriptionFor } from '../../adapters/catalog/data'
+import { abilityDescriptionFor, loadMoveMetaByName } from '../../adapters/catalog/data'
 import type { QuickDamageProps } from './QuickDamagePanel'
 export function useQuickDamageState({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: QuickDamageProps) {
 const lt = (text: string) => translateText(language, text)
@@ -211,21 +210,10 @@ const lt = (text: string) => translateText(language, text)
   }
   const mySpeedResult = speedFor(attacker, attackingRow, scarfFor(attacker), attacker.speedAbilityActive && abilityPermitted(attacker, attackingRow) ? abilityFor(attacker, attackingRow)!.multiplier : 1)
   const oppSpeedResult = speedFor(defender, defendingRow, scarfFor(defender), defender.speedAbilityActive && abilityPermitted(defender, defendingRow) ? abilityFor(defender, defendingRow)!.multiplier : 1)
-  const moveLabel = (name: string) => language === 'ko' ? name : language === 'en' ? moveDescriptionFor(name)?.nameEn || name : moveDescriptionFor(name)?.nameJa || name
-  const selectedSide = selected.side === 'attacker' ? attacker : defender
-  const selectedMove = selectedSide.moves[selected.index] ?? ''
-  const selectedMetadata = getMoveMetadata(selectedMove)
   const calculate = (direction: 'attacker' | 'defender', name: string, slot = 0) => {
     const conditionKey = quickMoveConditionKey(direction, slot, name)
     return calculateQuickDamage(prepareQuickDamageInput({ source: direction === 'attacker' ? attacker : defender, target: direction === 'attacker' ? defender : attacker, name, conditions, pools, language, hitCount: conditions.moveHits[conditionKey] ?? conditions.hits, conditionalValue: conditions.moveValues[conditionKey], sourceSpeed: direction === 'attacker' ? mySpeedResult?.value : oppSpeedResult?.value, targetSpeed: direction === 'attacker' ? oppSpeedResult?.value : mySpeedResult?.value }))
   }
-  const result = calculate(selected.side, selectedMove, selected.index)
-  const selectedVerdict = quickKoVerdict(result)
-  const selectedSource = selected.side === 'attacker' ? attackingRow : defendingRow
-  const selectedTarget = selected.side === 'attacker' ? defendingRow : attackingRow
-  const selectedPool = pools[selectedSide.key]
-  const selectedReason = heldItemError(attacker.key, attacker.item, language) || heldItemError(defender.key, defender.item, language) || heldAbilityError(attacker.key, attacker.ability, language) || heldAbilityError(defender.key, defender.ability, language) || (!selectedMove ? lt('기술을 등록하거나 선택하세요.') : !selectedSource || !selectedTarget ? lt('양쪽 포켓몬을 선택하세요.') : !toStats(attacker, attackingRow!) || !toStats(defender, defendingRow!) ? lt('실수치는 1~999의 정수로 입력하세요.') : !selectedPool || selectedPool.status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : selectedPool.status === 'load-error' || selectedPool.status === 'missing' || !selectedMetadata?.provenance.category || selectedMetadata.provenance.category === 'unknown' ? lt('기술/계산 메타 미확인') : selectedMetadata.meta.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : lt('이 기술은 현재 계산 조건에서 지원되지 않습니다.'))
-  const hits = multiHitOptions(selectedMove)
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {
     if (comparisonMode && side === 'attacker') return
@@ -261,5 +249,5 @@ const lt = (text: string) => translateText(language, text)
   }
   const searchOptions = (query: string) => query.trim() ? filterSpeciesOptions(query, { includeMega: true, allowLoose: false }).slice(0, 12).map(option => ({ key: option.key, label: searchDisplayLabel(option.key, language), sprite: indexByKey.get(option.key)?.sprite })) : []
   const speedVisual = compareSpeedVisual(mySpeedResult?.value, oppSpeedResult?.value)
-  return { model: { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, hits, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, moveLabel, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
+  return { model: { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, modalSide, modalKey, abilityFor, abilityPermitted, calculate, searchOptions }, commands: { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setModalSide, setModalKey, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide, opener } }
 }

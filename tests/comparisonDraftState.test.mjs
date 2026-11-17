@@ -114,13 +114,14 @@ test('sparse payload rejects unclaimed effort objects rather than treating them 
   assert.equal(memory.has(key), true)
 })
 
-test('shared results precede cards, with moves below stats and one opponent search near slot', () => {
+test('shared Speed precedes cards, with per-move damage below stats and one opponent search near slot', () => {
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
   const card = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
   const quick = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
-  assert.match(quick, /quick-comparison-results[^]*?<QuickSpeedPresentation[^]*?<QuickDamageResult/)
   const view = quick.slice(quick.indexOf('return <section className={`panel wide quick-damage'))
-  assert.ok(view.indexOf('className="quick-comparison-results"') < view.indexOf('className="quick-sides"'))
+  assert.ok(view.indexOf('<QuickSpeedPresentation') < view.indexOf('className="quick-sides"'))
+  assert.doesNotMatch(quick, /QuickDamageResult|quick-comparison-results/)
+  assert.match(card, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
   assert.match(card, /\{statCard\(side, entry, row\)\}[^]*?<MoveSlotsEditor[^]*?label=\{lt\('기술 배치'\)\}/)
   assert.match(quick, /entrySelectors\?\.\(speciesSearch\('defender', lt\('상대 엔트리 입력'\)\),/)
   assert.match(readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8'), /entrySelectors=\{\(opponentSearch, reset\) =>[^]*?className="selected-opponent-search">\{opponentSearch\}/)

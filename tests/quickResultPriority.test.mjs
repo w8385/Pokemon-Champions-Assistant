@@ -43,31 +43,36 @@ async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, 
 }
 
 for (const comparisonMode of [false, true]) {
-  test(`${comparisonMode ? 'entry comparison' : 'standalone damage'} mounts the real Speed and selected damage before the existing cards`, async () => {
+  test(`${comparisonMode ? 'entry comparison' : 'standalone damage'} keeps Speed before the cards and damage inside each filled move`, async () => {
     const view = await mount({ comparisonMode })
     try {
       const section = view.host.querySelector('.quick-damage')
       const children = [...section.children]
-      const results = section.querySelector('.quick-comparison-results')
+      const speed = section.querySelector('.quick-speed-comparison-card')
       const cards = section.querySelector('.quick-sides')
-      assert.ok(results && cards)
-      assert.ok(children.indexOf(results) < children.indexOf(cards), 'results must precede both actual card editors')
-      const speed = results.querySelector('.quick-speed-comparison-card')
+      assert.ok(speed && cards)
+      assert.ok(children.indexOf(speed) < children.indexOf(cards), 'Speed must precede both actual card editors')
       assert.ok(speed, 'one merged Speed comparison card must own both sides')
       assert.equal(speed.querySelectorAll('.quick-speed-lane').length, 2)
       assert.match(speed.textContent ?? '', /스피드 비교/)
-      assert.equal(results.querySelector('.quick-speed-settings'), null)
-      assert.equal(results.querySelector('.quick-speed-summary'), null)
-      assert.equal(results.querySelector('.quick-speed-base-badge'), null)
-      assert.match(results.querySelector('.quick-result h3')?.textContent ?? '', /\d+–\d+/)
-      assert.equal(section.querySelectorAll('.quick-result').length, 1)
+      assert.equal(speed.querySelector('.quick-speed-settings'), null)
+      assert.equal(speed.querySelector('.quick-speed-summary'), null)
+      assert.equal(speed.querySelector('.quick-speed-base-badge'), null)
+      assert.equal(section.querySelector('.quick-comparison-results'), null)
+      assert.equal(section.querySelectorAll('.quick-result').length, 0)
       assert.equal(section.querySelectorAll('.quick-sides').length, 1)
-      assert.equal(cards.querySelectorAll('.quick-move-preview').length, 2, 'blank move slots do not render fake result surfaces')
+      const previews = [...cards.querySelectorAll('.quick-move-preview')]
+      assert.equal(previews.length, 2, 'blank move slots do not render fake result surfaces')
+      assert.ok(previews.every(preview => preview.querySelector('.damage-range-meter')), 'each calculable filled move owns its damage meter')
+      const livePreviews = previews.filter(preview => preview.getAttribute('aria-live') === 'polite')
+      assert.equal(livePreviews.length, 1, 'only the selected move announces changed damage')
+      assert.equal(livePreviews[0].getAttribute('aria-pressed'), 'true')
+      assert.equal(livePreviews[0].getAttribute('aria-atomic'), 'true')
     } finally { await view.close() }
   })
 }
 
-test('a one-hit verdict keeps inclusive min/max boundaries and both real result surfaces agree', async () => {
+test('a one-hit verdict keeps inclusive min/max boundaries and the move preview is the only result surface', async () => {
   const result = hp => ({ damage: { min: 33, max: 40 }, targetHp: hp, hits: 1, effectiveness: .5 })
   assert.equal(quickKoVerdict(result(33)), 'certain')
   assert.equal(quickKoVerdict(result(40)), 'possible')
@@ -75,47 +80,51 @@ test('a one-hit verdict keeps inclusive min/max boundaries and both real result 
 
   const view = await mount()
   try {
-    const selected = view.host.querySelector('.quick-result')
     const preview = view.host.querySelector('.quick-side-card .quick-move-preview')
-    assert.equal(selected.querySelector('.quick-ko-verdict')?.textContent ?? '', preview.querySelector('.quick-ko-verdict')?.textContent ?? '')
-    for (const tone of ['certain', 'possible']) assert.equal(selected.classList.contains(`quick-ko-${tone}`), preview.classList.contains(`quick-ko-${tone}`))
+    assert.ok(preview?.querySelector('.damage-range-meter'))
+    assert.equal(view.host.querySelector('.quick-result'), null)
   } finally { await view.close() }
 })
 
-test('both modes keep selected move and range primary, with concise HP and KO status', async () => {
+test('both modes keep each move range primary with concise target HP context', async () => {
   for (const comparisonMode of [false, true]) {
     const baseline = await mount({ comparisonMode })
     try {
-      const selected = baseline.host.querySelector('.quick-result')
-      const range = selected.querySelector('h3')?.textContent.match(/^(\d+)–(\d+) \([\d.]+–[\d.]+%\)/)
+      const preview = baseline.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+      const meter = preview?.querySelector('.damage-range-meter')
+      const range = meter?.querySelector('.damage-range-values')?.textContent.match(/^(\d+)–(\d+) \([\d.]+–[\d.]+%\)/)
       assert.ok(range, 'supported numeric range and percentage')
       const [, min, max] = range.map(Number)
       assert.ok(max > min)
-      assert.match(selected.querySelector('.quick-result-head strong')?.textContent ?? '', /파도타기/)
-      assert.doesNotMatch(selected.querySelector('.quick-result-head')?.textContent ?? '', /대미지 결과/)
-      assert.match(selected.querySelector('.quick-result-head')?.textContent ?? '', /→/)
-      const targetHp = Number(selected.textContent.match(/대상 체력 (\d+)/)?.[1])
+      assert.match(preview?.getAttribute('aria-label') ?? '', /파도타기/)
+      const targetHp = Number(meter?.getAttribute('aria-label')?.match(/대상 HP (\d+)/)?.[1])
       assert.ok(targetHp > max)
-      assert.doesNotMatch(selected.textContent, /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해/)
-      assert.equal(selected.querySelector('.quick-rolls'), null)
-      assert.match(selected.textContent, /1타 불가/)
-      assert.equal(selected.querySelector('.quick-ko-chance'), null)
+      assert.doesNotMatch(preview?.textContent ?? '', /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해|1타 불가/)
+      assert.equal(preview?.querySelector('.quick-rolls'), null)
+      assert.equal(preview?.querySelector('.quick-ko-chance'), null)
+      assert.equal(baseline.host.querySelector('.quick-result'), null)
     } finally { await baseline.close() }
   }
 })
 
-test('localized non-KO and uncertain cases do not claim a certain one-hit result', async () => {
-  for (const [language, label] of [['ko', '1타 불가'], ['en', 'No OHKO'], ['ja', '1発不可']]) {
+test('non-KO, unsupported, and multihit moves stay concise without a false one-hit verdict', async () => {
+  for (const language of ['ko', 'en', 'ja']) {
     const view = await mount({ language })
-    try { assert.match(view.host.querySelector('.quick-result')?.textContent ?? '', new RegExp(label)) } finally { await view.close() }
+    try {
+      const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+      assert.ok(preview?.querySelector('.damage-range-meter'))
+      assert.equal(preview?.querySelector('.quick-ko-verdict'), null)
+      assert.equal(view.host.querySelector('.quick-result'), null)
+    } finally { await view.close() }
   }
   for (const options of [{ ownMove: 'unknown move' }, { ownKey: 'garchomp', ownMove: '스케일샷' }]) {
     const view = await mount(options)
     try {
-      const selected = view.host.querySelector('.quick-result')
-      assert.doesNotMatch(selected.textContent, /1타 불가|1타 확률|0\/16|16\/16/)
-      if (options.ownMove === '스케일샷') assert.match(selected.textContent, /연속기는 기절 확률 계산 제외/)
-      else assert.match(selected.querySelector('[role="status"]')?.textContent ?? '', /미확인|지원되지/)
+      const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+      assert.doesNotMatch(preview?.textContent ?? '', /1타 불가|1타 확률|0\/16|16\/16/)
+      assert.equal(preview?.querySelector('.quick-ko-verdict'), null)
+      if (options.ownMove === '스케일샷') assert.ok(preview?.querySelector('.damage-range-meter'))
+      else assert.match(preview?.textContent ?? '', /미확인|지원되지/)
     } finally { await view.close() }
   }
 })
@@ -127,10 +136,9 @@ test('meter-equipped move preview still selects the opposite direction through t
     assert.ok(target && !target.disabled)
     await act(async () => target.click())
     assert.equal(target.getAttribute('aria-pressed'), 'true')
-    assert.match(view.host.querySelector('.quick-result-head')?.textContent ?? '', /패리퍼 → 아쿠스타/)
-    assert.match(view.host.querySelector('.quick-result')?.textContent ?? '', /대상 체력/)
-    assert.doesNotMatch(view.host.querySelector('.quick-result')?.textContent ?? '', /상대 체력/)
-    assert.ok(view.host.querySelector('.quick-result .damage-range-meter'))
+    assert.match(target.getAttribute('aria-label') ?? '', /포켓몬 2.*파도타기/)
+    assert.ok(target.querySelector('.damage-range-meter'))
+    assert.equal(view.host.querySelector('.quick-result'), null)
   } finally { await view.close() }
 })
 
@@ -214,12 +222,13 @@ test('multi-hit decision power stays visible and every legal hit count is a dire
     assert.deepEqual(buttons.map(button => Number(button.textContent)), [2, 3, 4, 5])
     assert.deepEqual(buttons.map(button => button.getAttribute('aria-pressed')), ['true', 'false', 'false', 'false'])
     assert.equal(group.querySelector('select'), null, 'hit count does not require opening a select')
-    const before = view.host.querySelector('.quick-result h3')?.textContent
+    const damage = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview .damage-range-values')
+    const before = damage?.textContent
     await act(async () => buttons[2].click())
     assert.equal(buttons[2].getAttribute('aria-pressed'), 'true')
     const fourHitDecisionPower = Number(power.textContent.replace(/\D/g, ''))
     assert.ok(fourHitDecisionPower > initialDecisionPower)
-    assert.notEqual(view.host.querySelector('.quick-result h3')?.textContent, before, 'direct hit selection updates damage')
+    assert.notEqual(damage?.textContent, before, 'direct hit selection updates the move preview damage')
     const cell = group.closest('.move-slots-editor-cell')
     const input = cell.querySelector('input')
     await act(async () => input.focus())
@@ -249,7 +258,7 @@ test('decision power excludes target bulk modifiers while actual damage still ap
       const powerText = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-condition-power')?.textContent ?? ''
       results.push({
         power: Number(powerText.replace(/\D/g, '')),
-        damage: view.host.querySelector('.quick-result h3')?.textContent,
+        damage: view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview .damage-range-values')?.textContent,
       })
     } finally { await view.close() }
   }
@@ -338,13 +347,13 @@ test('legacy Speed and reverse lab labels omit assumption wording without changi
   assert.doesNotMatch(app, /lt\('전투 가정'\)/)
 })
 
-test('KO labels are localized in selected results and move previews', async () => {
+test('KO labels are localized once in the owning move preview', async () => {
   for (const [language, label] of [['ko', '확정 1타'], ['en', 'Guaranteed OHKO'], ['ja', '確定1発']]) {
     const view = await mount({ foeKey: 'camerupt', language })
     try {
-      assert.equal(view.host.querySelector('.quick-result .quick-ko-verdict')?.textContent, label)
       assert.equal(view.host.querySelector('.quick-side-card .quick-move-preview .quick-ko-verdict')?.textContent, label)
-      assert.equal(view.host.querySelectorAll('.quick-ko-verdict').length, 2, 'blank moves and unknown inputs have no verdict')
+      assert.equal(view.host.querySelectorAll('.quick-ko-verdict').length, 1, 'blank moves and unknown inputs have no verdict')
+      assert.equal(view.host.querySelector('.quick-result'), null)
     } finally { await view.close() }
   }
 })
@@ -357,12 +366,12 @@ test('an immune move, unsupported move, and multihit move do not claim a one-hit
   ]) {
     const view = await mount(options)
     try {
-      if (numeric) assert.match(view.host.querySelector('.quick-result h3')?.textContent ?? '', /\d+–\d+/, 'multi-hit fixture is calculable')
-      for (const element of [view.host.querySelector('.quick-result'), view.host.querySelector('.quick-side-card .quick-move-preview')]) {
-        assert.equal(element.querySelector('.quick-ko-verdict'), null, JSON.stringify(options))
-        assert.equal(element.classList.contains('quick-ko-certain'), false)
-        assert.equal(element.classList.contains('quick-ko-possible'), false)
-      }
+      const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+      if (numeric) assert.match(preview?.querySelector('.damage-range-values')?.textContent ?? '', /\d+–\d+/, 'multi-hit fixture is calculable')
+      assert.equal(preview?.querySelector('.quick-ko-verdict'), null, JSON.stringify(options))
+      assert.equal(preview?.classList.contains('quick-ko-certain'), false)
+      assert.equal(preview?.classList.contains('quick-ko-possible'), false)
+      assert.equal(view.host.querySelector('.quick-result'), null)
     } finally { await view.close() }
   }
 })
