@@ -21,6 +21,7 @@ import { speedTemplate, makeFormRow, baseRows, baseIndexByKey, extraFormRows, ro
 import { UI_TRANSLATIONS, translateText } from './shared/display/translation.ts'
 import { typeChart, normalizedTypeChart, typeEffectiveness, effectiveDefenderAbility, abilityAdjustedTypeEffectiveness } from './domain/battle/typeEffectiveness.ts'
 import { battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded, resolveDamageModifiers } from './domain/battle/modifierRules.ts'
+import { BATTLE_STAT_STAGE_OPTIONS, battleStatStageLabel } from './domain/battle/statStages'
 import { opponentSpeedValue, partySpeedValue, buildPartyBattleStats, buildOpponentBattleStats, attackingFormRow, battleFormRow, isChoiceScarfItem } from './domain/battle/statProjection.ts'
 import { ConditionalMovePowerRule, CONDITIONAL_MOVE_POWER_RULES, normalizeConditionalPowerValue, applyConditionalMovePower, weightBasedMovePower, applyTargetWeightMovePower, multiHitOptions, resolveMultiHitMeta, multiHitSummary } from './domain/battle/movePower.ts'
 import { resolveCalculableMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, weatherFromAbility, deriveAutoWeatherFromAbilities, terrainFromAbility, deriveAutoTerrainFromAbilities } from './domain/battle/moveEffects.ts'
@@ -5823,7 +5824,7 @@ export default function App() {
                     <label className="sample-speed-slider-field sample-speed-stage-inline-card sample-workbench-section-block">
                       <span className="sample-workbench-section-label">{lt('내 스피드 랭크')}</span>
                       <select value={sampleForge.config.speedStage} onChange={(e) => setSampleForge((prev) => ({ ...prev, config: { ...prev.config, speedStage: clampSpeedStage(e.target.value) } }))}>
-                        {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                        {SPEED_STAGE_OPTIONS.map((stage) => <option key={`sample-speed-self-stage-${stage}`} value={stage}>{battleStatStageLabel(stage)}</option>)}
                       </select>
                     </label>
                   </div>
@@ -5869,7 +5870,7 @@ export default function App() {
                       <label>
                         <span>{lt('랭크')}</span>
                         <select value={entry.member.speedStage} onChange={(e) => updateSampleSpeedTarget(entry.idx, { speedStage: clampSpeedStage(e.target.value) })}>
-                          {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                          {SPEED_STAGE_OPTIONS.map((stage) => <option key={`sample-speed-stage-${entry.idx}-${stage}`} value={stage}>{battleStatStageLabel(stage)}</option>)}
                         </select>
                       </label>
                     </div>
@@ -6162,7 +6163,7 @@ export default function App() {
                         return <div key={side} className="sample-damage-control-section"><strong>{sideLabel} · {conciseSpeedLabels[siteLanguage].battle}</strong>
                           {(side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && ability === 'stance-change' ? <div className="quick-form-controls"><div role="group" aria-label={`${sideLabel} ${lt('피격 폼')}`}><strong>{lt('피격 폼')}</strong>{(['shield','blade'] as const).map(form => <button key={form} type="button" className="pick-chip" aria-pressed={battle.hitForm === form} onClick={() => updateSampleBattle(entry.idx, side, {hitForm: form})}>{form === 'shield' ? lt('실드') : lt('블레이드')}</button>)}</div><small>{lt('적용 폼')}: {lt(battle.actualForm === 'blade' ? '블레이드' : '실드')}</small></div> : null}
                           <div className="sample-opponent-offense-grid">
-                            {([{key:'attackStage',label:'공격 랭크'}, {key:'spAttackStage',label:'특공 랭크'}, {key:'defenseStage',label:'방어 랭크'}, {key:'spDefenseStage',label:'특방 랭크'}] as const).map(({key,label}) => <label key={key}>{sideLabel} {lt(label)}<select value={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: clampBattleStage(e.target.value)})}>{[6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6].map(n => <option key={n} value={n}>{n > 0 ? `+${n}` : n}</option>)}</select></label>)}
+                            {([{key:'attackStage',label:'공격 랭크'}, {key:'spAttackStage',label:'특공 랭크'}, {key:'defenseStage',label:'방어 랭크'}, {key:'spDefenseStage',label:'특방 랭크'}] as const).map(({key,label}) => <label key={key}>{sideLabel} {lt(label)}<select value={battle[key]} onChange={e => updateSampleBattle(entry.idx, side, {[key]: clampBattleStage(e.target.value)})}>{BATTLE_STAT_STAGE_OPTIONS.map(n => <option key={n} value={n}>{battleStatStageLabel(n)}</option>)}</select></label>)}
                             {(['attack','defense','spAttack','spDefense'] as const).map(key => <label key={key}>{sideLabel} {lt(({attack:'공격 실수치',defense:'방어 실수치',spAttack:'특공 실수치',spDefense:'특방 실수치'} as const)[key])}<input type="number" min={1} max={999} placeholder={lt('기본 실수치')} value={(side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && battle.actualForm !== battle.hitForm ? '' : battle.actual[key] ?? ''} onChange={e => updateSampleBattle(entry.idx, side, {actual: {...((side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' && battle.actualForm !== battle.hitForm ? {} : battle.actual), [key]: e.target.value === '' ? undefined : Number(e.target.value)}, ...((side === 'own' ? sampleForge.key : entry.member.key) === 'aegislash' ? { actualForm: battle.hitForm } : {})})} /></label>)}
                           </div>
                           <div className="sample-reverse-conditions">
@@ -6590,7 +6591,7 @@ export default function App() {
                   <label>
                     <span>{lt('공격측 화력 랭크')}</span>
                     <select value={calcAttackStage} onChange={(e) => setCalcAttackStage(clampBattleStage(e.target.value))}>
-                      {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                      {BATTLE_STAT_STAGE_OPTIONS.map((stage) => <option key={`atk-stage-${stage}`} value={stage}>{battleStatStageLabel(stage)}</option>)}
                     </select>
                   </label>
                   {activeDamageMoveAlwaysCrit ? <span className="damage-quick-status">{lt('급소')}</span> : <label className="damage-quick-toggle">
@@ -6726,7 +6727,7 @@ export default function App() {
                       <label>
                         {lt('방어측 내구 랭크')}
                         <select value={calcDefenseStage} onChange={(e) => setCalcDefenseStage(clampBattleStage(e.target.value))}>
-                          {[6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6].map((stage) => <option key={`def-stage-${stage}`} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}
+                          {BATTLE_STAT_STAGE_OPTIONS.map((stage) => <option key={`def-stage-${stage}`} value={stage}>{battleStatStageLabel(stage)}</option>)}
                         </select>
                       </label>
                     </div>

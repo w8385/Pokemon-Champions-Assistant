@@ -5,6 +5,7 @@ import { displayName } from '../../shared/display/formatters.ts'
 import { translateText } from '../../shared/display/translation.ts'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { isChoiceScarfItem } from '../../domain/battle/statProjection'
+import { BATTLE_STAT_STAGE_OPTIONS, battleStatStageLabel } from '../../domain/battle/statStages'
 import type { Row, SiteLanguage } from '../../app/types'
 import type { useQuickDamageState } from './useQuickDamageState'
 
@@ -62,7 +63,7 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
       <div className="quick-speed-track" aria-hidden="true"><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${speedVisual.valid ? (fraction ?? 0) * 100 : 0}%` }} /></div>
       {outputDescription ? <span id={modifiersId} className="visually-hidden">{outputDescription}</span> : null}
       <div className="quick-speed-lane-controls">
-        <label><span>{lt('스피드 랭크')}</span><select aria-label={`${sideLabel} ${lt('스피드 랭크')}`} value={entry.speedStage} onChange={event => setSide(side, previous => ({ ...previous, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
+        <label><span>{lt('스피드 랭크')}</span><select aria-label={`${sideLabel} ${lt('스피드 랭크')}`} value={entry.speedStage} onChange={event => setSide(side, previous => ({ ...previous, speedStage: Number(event.target.value) }))}>{BATTLE_STAT_STAGE_OPTIONS.map(stage => <option key={stage} value={stage}>{battleStatStageLabel(stage)}</option>)}</select></label>
       </div>
       {ability ? <label className="quick-check quick-speed-ability"><input type="checkbox" checked={entry.speedAbilityActive} disabled={!abilityAllowed && !entry.speedAbilityActive} aria-describedby={!abilityAllowed ? reasonId : undefined} onChange={event => setSide(side, previous => ({ ...previous, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}
       {!abilityAllowed && ability ? <small id={reasonId}>{lt('(전제 조건 미충족 · 미적용)')}</small> : null}

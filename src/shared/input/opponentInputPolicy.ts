@@ -1,4 +1,6 @@
-export const SPEED_STAGE_OPTIONS = [-2, -1, 0, 1, 2] as const
+import { BATTLE_STAT_STAGE_OPTIONS } from '../../domain/battle/statStages'
+
+export const SPEED_STAGE_OPTIONS = BATTLE_STAT_STAGE_OPTIONS.filter(stage => Math.abs(stage) <= 2)
 
 export const MAX_OPPONENTS = 6
 
