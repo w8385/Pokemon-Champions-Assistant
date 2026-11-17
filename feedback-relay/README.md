@@ -16,7 +16,9 @@ The frontend defaults to `/Pokemon-Champions-Assistant/api/feedback`, so the sam
 
 The client recognizes success only when the relay returns HTTP `202` with JSON `{ "ok": true }`. A missing route, an HTML fallback, or a Discord failure therefore keeps the draft visible and offers retry/copy recovery instead of reporting a false success.
 
-The relay accepts only schema version 1, five known categories, canonical screen identifiers, `ko`/`en`/`ja`, bounded viewport data, and a message of at most 1,500 Unicode code points. It rejects unknown fields, raw URLs, oversized bodies, and unapproved origins. Discord mentions are disabled.
+The relay accepts the original JSON request and the screenshot-enabled multipart request. Multipart submissions contain exactly `payload_json` plus one PNG screenshot; the screenshot is limited to 1.8 MB, validated by signature and dimensions, renamed by the Worker, and forwarded to Discord as `files[0]`. The browser captures only the current app viewport, excludes the feedback UI, and lets the user preview, remove, or recapture it before sending.
+
+The relay accepts only schema version 1, five known categories, canonical screen identifiers, `ko`/`en`/`ja`, bounded viewport data, and a message of at most 1,500 Unicode code points. It rejects unknown fields, raw URLs, malformed or oversized screenshots, oversized bodies, and unapproved origins. Discord mentions are disabled. Screenshot bytes are not written to a separate application store; Discord retains the delivered attachment according to the channel's own retention.
 
 Cloudflare documents that Rate Limiting bindings are approximate and apply separately in each location. The binding, isolate-local fallback, honeypot, and submission-ID cache are layered abuse controls rather than a strict global quota. Use a WAF rule or Durable Object if the endpoint later needs a strict global limit.
 

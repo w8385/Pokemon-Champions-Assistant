@@ -46,7 +46,7 @@ test('header renders named visible groups with native direct anchors, including 
   } finally { await mounted.cleanup() }
 })
 
-test('same PartyContextBar on party and single selects the existing saved record without creating one', async () => {
+test('saved-party selector moves inside the single left entry pane without creating records', async () => {
   window.localStorage.removeItem(key)
   const mounted = await mount()
   try {
@@ -65,8 +65,10 @@ test('same PartyContextBar on party and single selects the existing saved record
     await navigate('#/single?tab=party&my=2&opp=3')
     const singleBar = mounted.host.querySelector('.party-context-bar')
     assert.ok(singleBar)
+    assert.ok(singleBar.classList.contains('embedded'))
+    assert.ok(singleBar.closest('.single-entry-picker-pane-party'))
     assert.equal(singleBar.querySelector('select').value, first.id)
-    assert.equal(singleBar.querySelector('a[href^="#/party"]')?.getAttribute('href'), '#/party?my=2&opp=3&edit=2')
+    assert.equal(singleBar.querySelector('a'), null)
     assert.equal(mounted.host.querySelector('.unified-pair-buttons button[aria-pressed="true"]')?.textContent.includes('3.'), true)
     const beforeReselect = JSON.parse(window.localStorage.getItem(key))
     await act(async () => { singleBar.querySelector('select').dispatchEvent(new window.Event('change', { bubbles: true })) })
@@ -80,20 +82,14 @@ test('same PartyContextBar on party and single selects the existing saved record
   } finally { await mounted.cleanup() }
 })
 
-test('party slot link targets stable card and does not mutate selection before native navigation', async () => {
+test('party screen keeps its matchup link while single removes the edit detour', async () => {
   const mounted = await mount()
   try {
+    await navigate('#/party?my=4&opp=1')
+    const link = mounted.host.querySelector('.party-context-bar a[href^="#/single"]')
+    assert.equal(link?.getAttribute('href'), '#/single?tab=party&my=4&opp=1')
     await navigate('#/single?tab=party&my=4&opp=1')
-    const link = mounted.host.querySelector('.party-context-bar a[href^="#/party"]')
-    assert.equal(link.getAttribute('href'), '#/party?my=4&opp=1&edit=4')
-    // happy-dom navigates modified anchors in-place; suppress its default action, not the App handler.
-    link.addEventListener('click', event => event.preventDefault(), { once: true })
-    link.dispatchEvent(new window.MouseEvent('click', { bubbles: true, ctrlKey: true, cancelable: true }))
-    assert.equal(new URL(window.location.hash.slice(1), 'http://localhost').pathname, '/single')
-    assert.equal(new URL(window.location.hash.slice(1), 'http://localhost').searchParams.get('my'), '4')
-    await navigate(link.getAttribute('href'))
-    assert.equal(mounted.host.querySelector('#party-slot-4')?.classList.contains('party-entry-target'), true)
-    assert.equal(document.activeElement?.id, 'party-species-4')
+    assert.equal(mounted.host.querySelector('.single-entry-picker-pane-party .party-context-bar a'), null)
   } finally { await mounted.cleanup() }
 })
 

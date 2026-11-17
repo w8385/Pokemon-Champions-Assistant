@@ -1959,14 +1959,14 @@ function PartyContextBar({ language, label, activeId, records, selectedMy, selec
 }) {
   const lt = (text: string) => translateText(language, text)
   const query = new URLSearchParams({ my: String(selectedMy), opp: String(selectedOpp) })
-  const href = mode === 'party' ? `#/single?tab=party&${query}` : `#/party?${query}&edit=${selectedMy}`
-  return <section className="party-context-bar" aria-label={lt('사용 중인 파티')}>
-    <label className="party-context-selector"><span>{lt('사용 중인 파티')} · <strong>{label}</strong></span>
+  const href = `#/single?tab=party&${query}`
+  return <section className={`party-context-bar${mode === 'single' ? ' embedded' : ''}`} aria-label={lt('사용 중인 파티')}>
+    <label className="party-context-selector">{mode === 'party' ? <span>{lt('사용 중인 파티')} · <strong>{label}</strong></span> : null}
       <select aria-label={lt('사용 중인 파티')} value={activeId} onChange={event => onSelect(event.target.value)}>
         {records.map(record => <option key={record.id} value={record.id}>{record.label}</option>)}
       </select>
     </label>
-    <a className="action-button party-context-link" href={href}>{lt(mode === 'party' ? '이 파티로 대면 보기' : '선택 내 슬롯 파티 편집')}</a>
+    {mode === 'party' ? <a className="action-button party-context-link" href={href}>{lt('이 파티로 대면 보기')}</a> : null}
   </section>
 }
 
@@ -4998,10 +4998,10 @@ export default function App() {
       <main className="grid page-frame">
         <PageHeading title={lt(mainSection === 'home' ? '홈' : mainSection === 'party' ? '내 파티' : mainSection === 'single' ? '대면' : mainSection === 'quickDamage' ? '계산기' : mainSection === 'speedLine' ? '스피드라인' : mainSection === 'sample' ? sampleWorkbenchTab === 'library' ? '샘플 라이브러리' : '샘플 연구소' : mainSection === 'dex' ? '도감' : '더블배틀')}
           icon={routeIconFor(mainSection, sampleWorkbenchTab)} />
-        {(mainSection === 'party' || mainSection === 'single') ? <PartyContextBar
+        {mainSection === 'party' ? <PartyContextBar
           language={siteLanguage} label={activePartyLabel} activeId={activePartyPresetId}
           records={savedPartyPresets} selectedMy={selectedMy} selectedOpp={selectedOpp}
-          mode={mainSection} onSelect={applyPartyPreset} /> : null}
+          mode="party" onSelect={applyPartyPreset} /> : null}
         {mainSection === 'quickDamage' ? <QuickDamagePanel language={siteLanguage} tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} /> : null}
         {mainSection === 'home' ? (
         <>
@@ -5024,7 +5024,6 @@ export default function App() {
               <span className="home-footer-label">{lt('프로젝트 링크')}</span>
               <div className="home-link-list text-only">
                 <a href="https://github.com/w8385/Pokemon-Champions-Assistant" target="_blank" rel="noreferrer">GitHub — Pokemon-Champions-Assistant</a>
-                <a href="https://forms.gle/Yrav9HB7Fzdffh3Q8" target="_blank" rel="noreferrer">{lt('기능제안/버그제보')}</a>
                 <a href="mailto:me@w8385.dev">me@w8385.dev</a>
               </div>
             </div>
@@ -5547,6 +5546,7 @@ export default function App() {
         </section> : null}
 
         {mainSection === 'single' ? <SingleEntryComparison language={siteLanguage} party={party} selectedMy={selectedMy} onSelectMy={setSelectedMy}
+          partyContext={<PartyContextBar language={siteLanguage} label={activePartyLabel} activeId={activePartyPresetId} records={savedPartyPresets} selectedMy={selectedMy} selectedOpp={selectedOpp} mode="single" onSelect={applyPartyPreset} />}
           entry={{ opponents, selectedOpp, setSelectedOpp, opponentResetRevision, registerSingleOpponentSpecies, resetSingleOpponentEntry, setOpponentDraftIdentity, saveComparisonOpponent }}
           confirmedMovesByKey={confirmedMovesByKey} comparisonAbility={comparisonAbility} onSaveParty={setParty} onSaveMoves={setConfirmedMovesByKey}
           tooltipForMove={name => bindTooltip(name ? moveTooltipData(name, siteLanguage) : null)} /> : null}

@@ -48,6 +48,26 @@ test('successful relay uses privacy-preserving fetch options and an explicit pay
   assert.deepEqual(Object.keys(JSON.parse(calls[0][1].body)), ['schemaVersion', 'submissionId', 'category', 'message', 'context', 'website'])
 })
 
+test('screenshot submission uses multipart without overriding its boundary', async () => {
+  const calls = []
+  const screenshot = new Blob([new Uint8Array([137, 80, 78, 71])], { type: 'image/png' })
+  const result = await transport.postFeedback(request(), {
+    endpoint: 'https://feedback.example.test/',
+    screenshot,
+    fetchImpl: async (...args) => { calls.push(args); return new Response(JSON.stringify({ ok: true }), { status: 202, headers: { 'content-type': 'application/json' } }) },
+  })
+  assert.deepEqual(result, { ok: true })
+  const options = calls[0][1]
+  assert.ok(options.body instanceof FormData)
+  assert.equal(options.headers['content-type'], undefined)
+  assert.equal(options.headers.accept, 'application/json')
+  assert.deepEqual(Object.keys(JSON.parse(options.body.get('payload_json'))), ['schemaVersion', 'submissionId', 'category', 'message', 'context', 'website'])
+  const attached = options.body.get('screenshot')
+  assert.equal(attached.type, 'image/png')
+  assert.equal(attached.name, 'feedback-screenshot.png')
+  assert.equal(attached.size, screenshot.size)
+})
+
 test('HTTP failures map to stable user-facing result codes without reading server bodies', async t => {
   const cases = [
     [400, {}, { ok: false, code: 'invalid', retryable: false }],
@@ -101,6 +121,8 @@ test('invalid client input is rejected before fetch and Unicode length counts co
   assert.equal(transport.feedbackMessageLength('가😀'), 2)
   assert.deepEqual(await transport.postFeedback(request({ message: '' }), { endpoint: 'https://feedback.example.test/', fetchImpl }), { ok: false, code: 'invalid', retryable: false })
   assert.deepEqual(await transport.postFeedback(request({ message: 'x'.repeat(1_501) }), { endpoint: 'https://feedback.example.test/', fetchImpl }), { ok: false, code: 'too-large', retryable: false })
+  assert.deepEqual(await transport.postFeedback(request(), { endpoint: 'https://feedback.example.test/', screenshot: new Blob(['x'], { type: 'image/jpeg' }), fetchImpl }), { ok: false, code: 'invalid', retryable: false })
+  assert.deepEqual(await transport.postFeedback(request(), { endpoint: 'https://feedback.example.test/', screenshot: new Blob([new Uint8Array(1_800_001)], { type: 'image/png' }), fetchImpl }), { ok: false, code: 'too-large', retryable: false })
   assert.equal(calls, 0)
 })
 
