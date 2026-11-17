@@ -7,7 +7,8 @@ import React, { act } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Window } from 'happy-dom'
 import { createServer } from 'vite'
-import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate } from '../src/domain/battle/sampleDamageMoves.ts'
+import { fixedSampleOpponentMoves, replaceSampleOpponentMove, sampleDamageMoveGate, SAMPLE_CONDITIONAL_POWER_MOVES } from '../src/domain/battle/sampleDamageMoves.ts'
+import { CONDITIONAL_MOVE_POWER_RULES } from '../src/domain/battle/movePower.ts'
 
 import { validateBackup } from '../src/adapters/persistence/backupValidation.ts'
 const ts = createRequire(import.meta.url)('typescript')
@@ -88,6 +89,16 @@ test('symmetric source eligibility and mechanics support keep unknown/unsupporte
   }
   assert.equal((app.match(/sampleDamageMoveGate\(/g) ?? []).length, 3)
   assert.doesNotMatch(app, /reverseRule \? \{ \.\.\.reverseMeta, variablePower: false \}/)
+})
+
+test('sample conditional connection derives all 36 names from the shared power registry', () => {
+  assert.equal(Object.keys(CONDITIONAL_MOVE_POWER_RULES).length, 36)
+  assert.deepEqual([...SAMPLE_CONDITIONAL_POWER_MOVES].sort(), Object.keys(CONDITIONAL_MOVE_POWER_RULES).sort())
+  for (const name of SAMPLE_CONDITIONAL_POWER_MOVES) {
+    const rule = CONDITIONAL_MOVE_POWER_RULES[name]
+    const meta = { type: 'normal', category: 'physical', power: rule.basePower ?? 50, variablePower: true }
+    assert.equal(sampleDamageMoveGate(name, 'ready-verified', true, meta, true), null, name)
+  }
 })
 
 test('mounted actual registered editor renders four inputs and edits a slot', async () => {

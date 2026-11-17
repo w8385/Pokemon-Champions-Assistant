@@ -3,7 +3,8 @@ import { QuickSide, quickHpFacts, quickMoveConditionKey, quickPositiveStageTotal
 import { heldAbilityError, selectedAbilityDisplayName } from '../../shared/display/abilityPresentation.ts'
 import { resolveMoveMeta, filterMoveOptions } from '../../adapters/catalog/movePresentation.ts'
 import { megaStoneForKey, isAllowedChampionsItem, heldItemError, itemSpriteSrc, displayItemLabel, filterItemOptions, itemAutocompleteSecondaryLabel, itemAutocompletePrimaryLabel } from '../../shared/display/itemPresentation.ts'
-import { statThemeClass, moveTypeThemeClass, natureLabel, displayMoveCategoryName, displayName } from '../../shared/display/formatters.ts'
+import { statThemeClass, moveTypeThemeClass, displayMoveCategoryName, displayName } from '../../shared/display/formatters.ts'
+import { natureChipLabel } from '../../shared/display/entryHelpers.tsx'
 import { translateText } from '../../shared/display/translation.ts'
 import React from 'react'
 import { CHAMPIONS_ITEM_OPTIONS } from '../../domain/champions/championsItems'
@@ -13,7 +14,7 @@ import { quickItem, replaceQuickMove } from '../../domain/battle/quickDamageStat
 import { type ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter'
 import { SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
-import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions } from '../../shared/display/PokemonCardOverview'
+import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, isFocusEnteringMoveUsageRail } from '../../shared/display/PokemonCardOverview'
 import { choicesForPool, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
 import { getMoveMetadata } from '../../domain/champions/moveMetadata'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
@@ -28,6 +29,8 @@ import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, electroBallPower, 
 import { formatBattleIndex } from '../../domain/battle/battleIndices'
 import { indexByKey } from '../../adapters/catalog/roster'
 import { isDamageGrounded } from '../../domain/battle/modifierRules'
+import { nextOpenMoveSlot } from '../../domain/party/moveSlots'
+import { quickDamageContextUnavailableReason } from '../../domain/battle/moveDamageSupport'
 export function QuickSideCard({ side, editorIdentity, entry, targetEntry, row, setEntry, setTargetEntry, searchField, language, comparisonMode, sharedMoveSpecies, tooltipForMove, opponentSource, model, commands }: {
   side: 'attacker' | 'defender'; entry: QuickSide; targetEntry: QuickSide; row: Row | undefined; setEntry: React.Dispatch<React.SetStateAction<QuickSide>>; setTargetEntry: React.Dispatch<React.SetStateAction<QuickSide>>; searchField: React.ReactNode;
   editorIdentity?: string;
@@ -129,6 +132,7 @@ const sourceLabels = {
     const poolMap: Record<string, MovePoolState> = { [entry.key]: { status: 'ready', moves: pool } }
     const labels = { slot: language === 'ja' ? '番' : language === 'en' ? ' · Move' : lt('번'), category: (category: MoveCategory | null) => displayMoveCategoryName(category, language), power: lt('위력'), accuracy: lt('명중'), pp: 'PP', unknown: lt('미확인') }
     const commit = (index: number, option: MoveOption) => {
+      const nextMoves = replaceQuickMove(entry.moves, index, option.name)
       setEntry(prev => ({ ...prev, moves: replaceQuickMove(prev.moves, index, option.name) }))
       if (entry.moves[index] !== option.name) {
         const prefix = `${side}:${index}:`
@@ -140,7 +144,8 @@ const sourceLabels = {
       if (comparisonMode) markDirty(side, 'moves')
       setSelected({ side, index }); setActiveSlot(null)
       setDrafts(prev => ({ ...prev, [`${side}-${index}`]: '' }))
-      if (index < 3 && !entry.moves[index + 1]) window.setTimeout(() => document.getElementById(`quick-${side}-move-${index + 1}`)?.focus(), 0)
+      const nextIndex = nextOpenMoveSlot(nextMoves, index)
+      if (nextIndex !== null) window.setTimeout(() => document.getElementById(`quick-${side}-move-${nextIndex}`)?.focus(), 0)
     }
     const sideLabel = lt(comparisonMode ? side === 'attacker' ? '내 포켓몬' : '상대 포켓몬' : side === 'attacker' ? '포켓몬 1' : '포켓몬 2')
     const topMoveSuggestions = usageTopMovesForKey(entry.key).map(name => {
@@ -196,7 +201,8 @@ const sourceLabels = {
           const rangePresentation = preview ? damageRangePresentation(preview.damage, preview.targetHp, language) : null
           const noEffect = Boolean(preview && preview.effectiveness <= 0)
           const verdictLabel = noEffect ? lt('무효') : previewVerdict ? quickKoLabels[language][previewVerdict] : null
-          const unavailableLabel = status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원')
+          const contextualUnavailable = quickDamageContextUnavailableReason(name, conditions)
+          const unavailableLabel = contextualUnavailable === 'gravity-blocked' ? lt('중력 중 사용 불가') : status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원')
           const resultLabel = rangePresentation?.label ?? unavailableLabel
           return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, occupied: Boolean(name), type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
               metaActions: renderMoveControls(name, index, preview?.decisionPower),
@@ -207,10 +213,13 @@ const sourceLabels = {
                 optionClassName: option => moveTypeThemeClass(options.find(move => move.name === option.key)?.type),
                 renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
                 optionProps: option => tooltipForMove(option.key) },
-              inputProps: { 'aria-label': `${sideLabel} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
+              inputProps: { 'aria-label': `${sideLabel} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: event => {
+                if (isFocusEnteringMoveUsageRail(event.currentTarget, event.relatedTarget)) return
+                setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev)
+              } },
               preview: name ? <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-label={`${sideLabel} ${index + 1} ${lt('기술')} · ${name} · ${lt('계산 결과')} · ${resultLabel}${verdictLabel ? ` · ${verdictLabel}` : ''}`} aria-pressed={selected.side === side && selected.index === index} aria-live={selected.side === side && selected.index === index ? 'polite' : undefined} aria-atomic={selected.side === side && selected.index === index ? 'true' : undefined} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{noEffect ? <strong className="quick-effectiveness-immune">{verdictLabel}</strong> : previewVerdict ? <strong className="quick-ko-verdict">{verdictLabel}</strong> : null}</> : unavailableLabel}</button> : null
             }
-        })} belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={topMoveSuggestions} />} />
+        })} belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={topMoveSuggestions} onFocusLeave={() => setActiveSlot(prev => prev?.side === side ? null : prev)} />} />
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}
     </section>
   }
@@ -225,10 +234,10 @@ const sourceLabels = {
           ability={entry.ability} abilityLabel={selectedAbilityDisplayName(row, entry.ability, language)} nature={entry.nature} item={entry.item}
           abilities={row.abilities.map(value => ({ value, label: localizedAbilityLabel(row, value, language, abilityDescriptionFor) }))}
           abilityError={heldAbilityError(row.key, entry.ability, language)}
-          natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureLabel(n.id, language) }))}
+          natures={SELECTABLE_NATURES.map(n => ({ value: n.id, label: natureChipLabel(n.id, language) }))}
           itemOptions={query => filterItemOptions(query, language, { fallbackToAll: false }).filter(value => isAllowedChampionsItem(row.key, value)).slice(0, 8).map(value => ({ value, label: itemAutocompletePrimaryLabel(value, language), secondary: itemAutocompleteSecondaryLabel(value, language), sprite: itemSpriteSrc(row.key, value) }))}
           onAbility={value => { setEntry(prev => ({ ...prev, ability: value, speedAbilityActive: false })); if (comparisonMode) markDirty(side, 'ability') }}
-          onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true, speedNatureOverride: null })); if (comparisonMode) markDirty(side, 'nature') }}
+          onNature={value => { setEntry(prev => ({ ...prev, nature: value as NatureId, statNatureMultipliers: {}, speedNatureKnown: true })); if (comparisonMode) markDirty(side, 'nature') }}
           onItem={value => { setEntry(prev => ({ ...prev, item: quickItem(value, megaStoneForKey(row.key), CHAMPIONS_ITEM_OPTIONS) })); if (comparisonMode) markDirty(side, 'item') }}
           labels={{ ability: lt('특성'), nature: side === 'defender' && comparisonMode && natureSourceStatus() ? natureSourceStatus() === sourceLabels.natureUnknown ? sourceLabels.natureUnknown : `${lt('성격')} · ${natureSourceStatus()}` : lt('성격'), item: lt('도구'), none: lt('미선택'), itemPlaceholder: lt('사용 가능 도구 선택'), fixed: lt('메가스톤 고정'), clear: lt('지우기') }}
           itemLabel={value => displayItemLabel(value, language)} itemSprite={value => itemSpriteSrc(row.key, value)} fixedItem={requiredMegaStone(row.key)} itemError={heldItemError(row.key, entry.item, language)} repairLabel={language === 'ko' ? `${requiredMegaStone(row.key)} 장착` : language === 'ja' ? `${requiredMegaStone(row.key)} を装備` : `Equip ${requiredMegaStone(row.key)}`} />

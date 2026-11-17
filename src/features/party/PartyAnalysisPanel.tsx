@@ -24,6 +24,10 @@ export function PartyAnalysisPanel({ analysis, language, loading }: { analysis: 
   const text = labels[language]
   const typeName = (type: string) => language === 'en' ? type[0].toUpperCase() + type.slice(1) : (names[language] as readonly string[])[types.indexOf(type)] ?? type
   const slots = Array.from({ length: 6 }, (_, slot) => analysis.defense[0]?.members.find((member, index) => (member.slot ?? index) === slot))
+  const hasOffenseData = analysis.offense.some(row => row.knownCount > 0 || row.incompleteCount > 0)
+  React.useEffect(() => {
+    if (!loading && !hasOffenseData) setSelected(current => current?.startsWith('offense:') ? null : current)
+  }, [hasOffenseData, loading])
   const rows = (kind: 'offense' | 'defense') => analysis[kind].map(row => {
     const partial = kind === 'offense' && (row as Result['offense'][number]).incompleteCount > 0
     const entries = kind === 'offense' ? (row as Result['offense'][number]).cells : (row as Result['defense'][number]).members
@@ -55,16 +59,17 @@ export function PartyAnalysisPanel({ analysis, language, loading }: { analysis: 
       {(['defense', 'offense'] as const).map(kind => <div className="party-analysis-group" key={kind}>
         <h4>{text[kind]}</h4>
         {loading && kind === 'offense' ? <p className="muted">{text.loading}</p> : null}
-        <div className="party-analysis-table-scroll" role="region" aria-label={`${text[kind]} ${text.detail}`} tabIndex={0}>
+        {kind === 'offense' && !loading && !hasOffenseData ? <p className="muted party-analysis-empty">{text.noMove}</p> : <div className="party-analysis-table-scroll" role="region" aria-label={`${text[kind]} ${text.detail}`} tabIndex={0}>
           <table className="party-analysis-table">
-            <caption>{text[kind]} · {kind === 'defense' ? text.incoming : text.target}</caption>
+            <caption className="visually-hidden">{text[kind]} · {kind === 'defense' ? text.incoming : text.target}</caption>
             <thead><tr><th scope="col" rowSpan={2} className="party-analysis-type-col">{text.type}</th><th scope="colgroup" colSpan={6}>{text.slot} 1–6</th><th scope="colgroup" colSpan={2}>{text.detail}</th></tr><tr>{slots.map((entry, slot) => <th scope="col" key={slot} className="party-analysis-slot"><span>{text.slot} {slot + 1}</span>{entry ? <span className="party-analysis-slot-name">{entry.sprite ? <img src={entry.sprite} alt="" /> : null}{entry.name}</span> : <span className="party-analysis-slot-name muted">{text.blank}</span>}</th>)}<th scope="col">{kind === 'defense' ? text.weak : text.cover}</th><th scope="col">{kind === 'defense' ? text.resist : text.confirmedResist}</th></tr></thead>
             <tbody>{rows(kind)}</tbody>
           </table>
-        </div>
+        </div>}
       </div>)}
       {selected ? (() => {
         const [kind, type, slotText] = selected.split(':')
+        if (kind === 'offense' && !loading && !hasOffenseData) return null
         const slot = Number(slotText)
         const row = kind === 'offense' ? analysis.offense.find(x => x.type === type) : analysis.defense.find(x => x.type === type)
         const entry = row && (kind === 'offense' ? (row as Result['offense'][number]).cells : (row as Result['defense'][number]).members).find((item, index) => (item.slot ?? index) === slot)

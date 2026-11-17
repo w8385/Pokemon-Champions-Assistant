@@ -25,6 +25,7 @@ export const SLICING_MOVE_NAMES = new Set([
 
 export const CONTACT_MOVE_NAMES = new Set([
   '아쿠아브레이크', '애크러뱃', '엄청난힘', '원념의칼', '치근거리기', '용의클로', '플레어드라이브', '인파이트',
+  'DD래리어트', '성스러운칼', '플라잉프레스', '레이징불',
 ].map(normalizeSearchText))
 
 export const RECKLESS_MOVE_NAMES = new Set([
@@ -44,7 +45,12 @@ export function moveMatchesTaggedSet(moveName: string, taggedMoves: Set<string>)
   return moveNameCandidates(moveName).some((candidate) => taggedMoves.has(normalizeSearchText(candidate)))
 }
 
-export function protectionDamageMultiplier(attackerAbility: string, moveName: string, protectionActive: boolean) {
+/** Shell Side Arm gains contact only when its resolved category is Physical. */
+export function moveMakesContact(moveName: string, mode?: 'physical' | 'special' | null) {
+  return moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES) || (moveName === '셸암즈' && mode === 'physical')
+}
+
+export function protectionDamageMultiplier(attackerAbility: string, moveName: string, protectionActive: boolean, mode?: 'physical' | 'special' | null) {
   if (!protectionActive) return 1
-  return attackerAbility === 'piercing-drill' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES) ? 0.25 : 0
+  return attackerAbility === 'piercing-drill' && moveMakesContact(moveName, mode) ? 0.25 : 0
 }

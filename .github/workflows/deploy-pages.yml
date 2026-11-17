@@ -57,6 +57,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check core workspace UI consistency
+        run: npm run check:ui-consistency
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

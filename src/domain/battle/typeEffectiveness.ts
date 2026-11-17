@@ -1,4 +1,4 @@
-
+import { moveEffectivenessRule } from './moveDamageSupport.ts'
 export const typeChart: Record<string, Partial<Record<string, number>>> = {
   Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
   Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
@@ -58,4 +58,25 @@ export function abilityAdjustedTypeEffectiveness(attackType: string, defendTypes
   const baseEffectiveness = typeEffectiveness(attackType, normalizedDefendTypes)
   if (attackKey === 'ground' && (effectiveAbility === 'levitate' || effectiveAbility === '부유')) return 0
   return baseEffectiveness
+}
+
+/** Move-specific effectiveness layered on top of ordinary type and ability rules. */
+export function applyMoveEffectivenessRule(moveName: string, attackType: string, defendTypes: string[], ordinaryEffectiveness: number) {
+  const rule = moveEffectivenessRule(moveName)
+  if (rule === 'freeze-dry') {
+    const waterTypes = defendTypes.filter(type => type.toLowerCase() === 'water').length
+    const ordinaryWaterFactor = normalizedTypeChart[attackType.toLowerCase()]?.water ?? 1
+    return ordinaryEffectiveness * ((2 / ordinaryWaterFactor) ** waterTypes)
+  }
+  if (rule === 'flying-press') return ordinaryEffectiveness * typeEffectiveness('flying', defendTypes)
+  return ordinaryEffectiveness
+}
+
+export function moveAdjustedTypeEffectiveness(moveName: string, attackType: string, defendTypes: string[], defenderAbility: string, attackerAbility = '') {
+  return applyMoveEffectivenessRule(
+    moveName,
+    attackType,
+    defendTypes,
+    abilityAdjustedTypeEffectiveness(attackType, defendTypes, defenderAbility, attackerAbility),
+  )
 }

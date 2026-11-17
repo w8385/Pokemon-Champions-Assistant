@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-10T14:11:56.780Z",
+  "generatedAt": "2026-11-17T06:19:11.715Z",
   "totalAbilities": 215,
-  "implementedCount": 79,
+  "implementedCount": 81,
   "categories": {
     "implemented": {
-      "count": 79,
+      "count": 81,
       "abilities": [
         "adaptability",
         "aerilate",
@@ -27,6 +27,7 @@
         "flash-fire",
         "fluffy",
         "forecast",
+        "friend-guard",
         "fur-coat",
         "grass-pelt",
         "grassy-surge",
@@ -34,6 +35,7 @@
         "heatproof",
         "huge-power",
         "hustle",
+        "infiltrator",
         "iron-fist",
         "levitate",
         "libero",
@@ -145,7 +147,7 @@
       ]
     },
     "indirectOrNonDamage": {
-      "count": 103,
+      "count": 101,
       "abilities": [
         "aftermath",
         "anticipation",
@@ -169,7 +171,6 @@
         "flame-body",
         "flower-veil",
         "forewarn",
-        "friend-guard",
         "frisk",
         "gluttony",
         "good-as-gold",
@@ -183,7 +184,6 @@
         "illusion",
         "immunity",
         "imposter",
-        "infiltrator",
         "innards-out",
         "inner-focus",
         "insomnia",
@@ -286,7 +286,7 @@
     },
     {
       "ability": "friend-guard",
-      "implemented": false
+      "implemented": true
     },
     {
       "ability": "fur-coat",
@@ -343,6 +343,58 @@
     {
       "ability": "water-bubble",
       "implemented": true
+    }
+  ],
+  "calculationFunctions": [
+    {
+      "source": "src/domain/battle/abilityImmunities.ts",
+      "functionName": "alwaysOnAbilityImmunity",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveEffects.ts",
+      "functionName": "resolveAbilityAdjustedMoveMeta",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveTags.ts",
+      "functionName": "protectionDamageMultiplier",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/statProjection.ts",
+      "functionName": "attackingFormRow",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/statProjection.ts",
+      "functionName": "battleFormRow",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveEffects.ts",
+      "functionName": "resolveAbilityAdjustedTypes",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveEffects.ts",
+      "functionName": "resolveStabMultiplier",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveEffects.ts",
+      "functionName": "weatherFromAbility",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/moveEffects.ts",
+      "functionName": "terrainFromAbility",
+      "found": true
+    },
+    {
+      "source": "src/domain/battle/modifierRules.ts",
+      "functionName": "resolveDamageModifiers",
+      "found": true
     }
   ]
 }

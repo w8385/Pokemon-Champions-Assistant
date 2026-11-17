@@ -34,8 +34,12 @@ async function fixture(key, initial) {
       confirmedMovesByKey: state.party, setConfirmedMovesByKey: set('party'), setSampleLockedMoves: set('sample'),
       setMoveCommitNotice: set('notice'), setMoveInputDraft: set('draft'), setActiveMoveField: set('focus'),
       setConfirmedMoveSlot: (owner, slot, value) => { const next = [...state.party[owner]]; next[slot] = value; state.party = { ...state.party, [owner]: next } },
-      normalizeMoveSlots: moves => [...moves, ...Array(4).fill('')].slice(0, 4),
-      nextOpenSampleSlot: () => null, focusSampleSlot: slot => { state.focus = slot },
+      normalizeMoveSlots: moves => {
+        const normalized = moves.slice(0, 4).map(value => value.trim())
+        while (normalized.length && !normalized[normalized.length - 1]) normalized.pop()
+        return normalized
+      },
+      nextOpenMoveSlot: () => null, focusSampleSlot: slot => { state.focus = slot },
       oppMember: state.opponents[0], oppMovePool: pool, selectedOpp: 0, opponents: state.opponents, setOpponents: set('opponents'), setOpponentMoveNotice: set('opponentNotice'),
     })
     vm.runInContext(callbacks, context)
@@ -77,6 +81,30 @@ test('all explicit choices share source identity gate; valid learned Aqua Jet en
     assert.equal(f.state.sample[0], '이전 기록')
     f.handlers.selectMoveOption(f.key, 0, '이전 기록')
     assert.equal(f.state.party[f.key][0], '이전 기록')
+  } finally { await f.close() }
+})
+
+test('Party recommendation fills the first sparse slot instead of replacing a later move', async () => {
+  const f = await fixture('starmie', ['', '냉동빔', '', '10만볼트'])
+  try {
+    f.handlers.applyMoveToSlot(f.key, '아쿠아제트')
+    assert.deepEqual(slots(f.state.party[f.key]), ['아쿠아제트', '냉동빔', '', '10만볼트'])
+  } finally { await f.close() }
+})
+
+test('Party recommendation keeps the canonical trimmed shape after filling an empty build', async () => {
+  const f = await fixture('starmie', [])
+  try {
+    f.handlers.applyMoveToSlot(f.key, '아쿠아제트')
+    assert.deepEqual(slots(f.state.party[f.key]), ['아쿠아제트'])
+  } finally { await f.close() }
+})
+
+test('removing a Party recommendation preserves every other sparse slot', async () => {
+  const f = await fixture('starmie', ['아쿠아제트', '', '냉동빔'])
+  try {
+    f.handlers.applyMoveToSlot(f.key, '아쿠아제트')
+    assert.deepEqual(slots(f.state.party[f.key]), ['', '', '냉동빔'])
   } finally { await f.close() }
 })
 

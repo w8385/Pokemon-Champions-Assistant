@@ -1,5 +1,6 @@
 import { searchMoves } from '../../shared/search/moveSearch.ts'
 import { CONDITIONAL_MOVE_POWER_RULES, multiHitOptions } from './movePower.ts'
+import { quickDamageUnsupportedReason } from './moveDamageSupport.ts'
 
 export function quickStatNature(side: { speedNatureKnown: boolean; speedNatureMultiplier: number; statNatureMultipliers: Partial<Record<string, number>> }, key: string, nature: number): number {
   if (key === 'hp') return 1
@@ -41,6 +42,7 @@ export function quickStagePair(source: Partial<QuickStages>, target: Partial<Qui
 
 export function quickMoveSupported(name: string, meta: { category?: string | null; power?: number | null; variablePower?: boolean } | null, unresolvedConditionalPower = false): boolean {
   if (unresolvedConditionalPower) return false
+  if (quickDamageUnsupportedReason(name)) return false
   if (!meta || (meta.category !== 'physical' && meta.category !== 'special')) return false
   const targetWeight = ['로우킥', '풀묶기', '안다리걸기', '안다리 걸기'].includes(name)
   const contextualPower = Boolean(CONDITIONAL_MOVE_POWER_RULES[name])

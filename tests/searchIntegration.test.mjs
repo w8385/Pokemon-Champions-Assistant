@@ -18,7 +18,7 @@ const damage = app.slice(app.indexOf('sampleDamageCalcs[0]?.row ?'), app.indexOf
 test('all editable move slots delegate the real input and option selection to one combobox', () => {
   for (const [section, callback] of [[quick, 'commit'], [party, 'selectMoveOption'], [builder, 'selectSampleMoveOption']]) {
     assert.match(section, /search: \{ id:/)
-    assert.match(section, new RegExp('onSelect:.*' + callback))
+    assert.match(section, new RegExp('onSelect:[^]*?' + callback))
     assert.doesNotMatch(section, /<div className="move-autocomplete-menu/)
     assert.doesNotMatch(section, /onKeyDown:/)
   }

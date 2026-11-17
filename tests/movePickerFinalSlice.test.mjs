@@ -17,7 +17,7 @@ const itemPresentation = readFileSync(new URL('../src/shared/display/itemPresent
 const cardSource = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 test('all editable callers use shared candidate row, including sample damage and both legacy adders', () => {
   assert.match(cardSource, /export function MoveCandidateRow/)
-  for (const id of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-move-${member.key}-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${slot}']) {
+  for (const id of ['quick-${side}-move-${index}', 'sample-move-${sampleForge.key}-${moveIdx}', 'party-${idx}-${member.key}-move-${moveIdx}', 'sample-opponent-move-${entry.member.key}-${entry.idx}-${slot}']) {
     const owner = id.startsWith('quick-') ? quickView : id.startsWith('party-') ? member : source
     const index = owner.indexOf('id: `'+id+'`')
     assert.ok(index > 0, `missing ${id}`)

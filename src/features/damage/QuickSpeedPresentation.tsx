@@ -4,7 +4,6 @@ import type { QuickSide } from './quickModel.ts'
 import { displayName } from '../../shared/display/formatters.ts'
 import { translateText } from '../../shared/display/translation.ts'
 import { UiIcon } from '../../shared/display/UiIcon'
-import { natureMultiplier } from '../../domain/champions/buildRules'
 import { isChoiceScarfItem } from '../../domain/battle/statProjection'
 import type { Row, SiteLanguage } from '../../app/types'
 import type { useQuickDamageState } from './useQuickDamageState'
@@ -63,7 +62,6 @@ export function QuickSpeedPresentation({ language, comparisonMode, attacker, def
       <div className="quick-speed-track" aria-hidden="true"><span className={`quick-speed-bar quick-speed-bar-${side}`} style={{ width: `${speedVisual.valid ? (fraction ?? 0) * 100 : 0}%` }} /></div>
       {outputDescription ? <span id={modifiersId} className="visually-hidden">{outputDescription}</span> : null}
       <div className="quick-speed-lane-controls">
-        <label><span>{speedLabels.nature}</span><select aria-label={`${sideLabel} ${speedLabels.nature}`} value={entry.speedNatureOverride ?? (entry.speedNatureKnown ? natureMultiplier(entry.nature, 'speed') : entry.speedNatureMultiplier)} onChange={event => setSide(side, previous => ({ ...previous, speedNatureOverride: Number(event.target.value) }))}><option value={0.9}>{lt('스피드')} −10%</option><option value={1}>{lt('무보정')} ×1.0</option><option value={1.1}>{lt('스피드')} +10%</option></select></label>
         <label><span>{lt('스피드 랭크')}</span><select aria-label={`${sideLabel} ${lt('스피드 랭크')}`} value={entry.speedStage} onChange={event => setSide(side, previous => ({ ...previous, speedStage: Number(event.target.value) }))}>{Array.from({ length: 13 }, (_, index) => index - 6).map(stage => <option key={stage} value={stage}>{stage > 0 ? `+${stage}` : stage}</option>)}</select></label>
       </div>
       {ability ? <label className="quick-check quick-speed-ability"><input type="checkbox" checked={entry.speedAbilityActive} disabled={!abilityAllowed && !entry.speedAbilityActive} aria-describedby={!abilityAllowed ? reasonId : undefined} onChange={event => setSide(side, previous => ({ ...previous, speedAbilityActive: event.target.checked }))} />{lt(ability.labelKo)} · {lt(ability.conditionKo)} ×{ability.multiplier}</label> : null}

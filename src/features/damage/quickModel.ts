@@ -17,7 +17,7 @@ import { actualStat } from '../../domain/champions/statMechanics'
 
 export type QuickBattle = ComparisonSeed['battle']
 
-export type QuickSide = ComparisonSeed & { actual: Partial<Record<EffortStatKey, string>>; actualForm?: 'shield' | 'blade'; hitForm?: 'shield' | 'blade'; speedNatureOverride: number | null }
+export type QuickSide = ComparisonSeed & { actual: Partial<Record<EffortStatKey, string>>; actualForm?: 'shield' | 'blade'; hitForm?: 'shield' | 'blade' }
 
 export type QuickConditions = {
   weather: DamageWeather
@@ -31,7 +31,7 @@ export type QuickConditions = {
 
 export const quickBlankBattle = (): QuickBattle => ({ attackStage: 0, spAttackStage: 0, defenseStage: 0, spDefenseStage: 0, accuracyStage: 0, evasionStage: 0, burned: false, lowHp: false, poisoned: false, statused: false, fullHp: true, hpPercent: 100, movedAfterTarget: false, damagedByTarget: false, damagedThisTurn: false, statDroppedThisTurn: false, previousMoveFailed: false, allyUsedRound: false, randomDoublePower: false, faintedAllies: 0, timesHit: 0, stockpile: 1, reflect: false, lightScreen: false, auroraVeil: false, friendGuard: false })
 
-export const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {}, moves: ['', '', '', ''], battle: quickBlankBattle(), speedStage: 0, speedNatureKnown: true, speedNatureMultiplier: 1, speedNatureOverride: null, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false })
+export const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {}, moves: ['', '', '', ''], battle: quickBlankBattle(), speedStage: 0, speedNatureKnown: true, speedNatureMultiplier: 1, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false })
 
 export const quickDefaultConditions = (): QuickConditions => ({ weather: 'none', terrain: 'none', critical: false, typeChangeStab: true, moveHits: {}, moveValues: {}, gravity: false })
 
@@ -77,13 +77,12 @@ export function quickSide(input: unknown, legacy: Record<string, unknown> = {}, 
     timesHit: typeof source.timesHit === 'number' && Number.isFinite(source.timesHit) ? Math.max(0, Math.min(6, Math.trunc(source.timesHit))) : 0,
     stockpile: typeof source.stockpile === 'number' && Number.isFinite(source.stockpile) ? Math.max(1, Math.min(3, Math.trunc(source.stockpile))) : 1,
   } as QuickBattle
-  const speedNatureOverride = typeof value.speedNatureOverride === 'number' && [0.9, 1, 1.1].includes(value.speedNatureOverride) ? value.speedNatureOverride : null
-  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: {}, actualForm: value.actualForm === 'blade' ? 'blade' : 'shield', hitForm: value.hitForm === 'blade' ? 'blade' : 'shield', moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedNatureOverride, speedScarfOverride: null, speedAbilityActive: value.speedAbilityActive === true }
+  return { key, item, nature: NATURES.some(n => n.id === value.nature) ? value.nature! : 'hardy', ability: typeof value.ability === 'string' ? value.ability : '', evs: sanitizeEvs(value.evs), actual: {}, actualForm: value.actualForm === 'blade' ? 'blade' : 'shield', hitForm: value.hitForm === 'blade' ? 'blade' : 'shield', moves: Array.isArray(value.moves) ? value.moves.slice(0, 4).map(move => typeof move === 'string' ? move : '') : ['', '', '', ''], battle, ...quickSpeedState(value), speedScarfOverride: null, speedAbilityActive: value.speedAbilityActive === true }
 }
 
 export function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 'defender', slot: number) {
   const saved = readDraft(() => window.localStorage, side, slot, seed)
-  const seedSide = { ...seed, speedNatureOverride: null } as QuickSide
+  const seedSide = { ...seed } as QuickSide
   if (!saved) return { side: seedSide, dirty: new Set<string>() }
   if (side === 'attacker' && saved.dirty.has('key')) return { side: seedSide, dirty: new Set<string>() }
   const next = saved.side
@@ -95,7 +94,6 @@ export function restoredComparisonSide(seed: ComparisonSeed, side: 'attacker' | 
   return { dirty: saved.dirty, side: { ...next, actual: {}, battle: quickBlankBattle(), speedStage: speciesChanged ? 0 : seed.speedStage,
     speedNatureKnown: saved.dirty.has('nature') || speciesChanged ? true : seed.speedNatureKnown,
     speedNatureMultiplier: speciesChanged ? 1 : seed.speedNatureMultiplier,
-    speedNatureOverride: null,
     statNatureMultipliers: saved.dirty.has('nature') || speciesChanged ? {} : seed.statNatureMultipliers,
     speedScarfOverride: null,
     speedAbilityActive: false, knownOffense: speciesChanged ? { attack: false, spAttack: false } : seed.knownOffense } as QuickSide }

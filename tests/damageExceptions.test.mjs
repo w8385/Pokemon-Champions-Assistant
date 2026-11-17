@@ -96,7 +96,7 @@ test('actual Double callback passes ability immunity into all sixteen rolls', ()
   const side=(key,ability) => ({ key,ability,item:'',hpEv:0,defenseEv:0,spDefenseEv:0,defenseNature:1,spDefenseNature:1 })
   const owner={ key:'source', types:['normal'] }, target={ key:'target', types:[] }
   const slots={ myLeft:{side:'my',option:{row:owner,member:side('source','')}}, myRight:{side:'my',option:null}, oppLeft:{side:'opp',option:{row:target,entry:side('target','')}}, oppRight:{side:'opp',option:null} }
-  const env={...context,React:{useCallback:fn=>fn},doubleSlotMeta:slots,doubleFriendGuardMy:false,doubleFriendGuardOpp:false,doubleProtectBySlot:{myLeft:false,myRight:false,oppLeft:false,oppRight:false},doubleWideGuardMy:false,doubleWideGuardOpp:false,lt:x=>x,movePoolByKey:{},asyncDataVersion:0,siteLanguage:'ko',isCalculableHeldItem:()=>true,heldAbilityError:()=>null,classifyAbilityForKey:(_key,raw)=>({slug:raw}),attackingFormRow:row=>row,buildPartyBattleStats:()=>attacker,buildOpponentBattleStats:()=>defender,choicesForPool:()=>[],resolveMoveMeta:()=>({type:env.attackType,category:'physical',power:80}),resolveAbilityAdjustedMoveMeta:(_name,meta)=>meta,resolveMultiHitMeta,resolveMoveType:()=>env.attackType,resolveAbilityAdjustedTypes:row=>row,abilityAdjustedTypeEffectiveness:loadAppDamageEngine().abilityAdjustedTypeEffectiveness,protectionDamageMultiplier:()=>1,resolveDamageModifiers,calcDamage,abilityNoteLabel:x=>x,attackType:'water'}
+  const env={...context,React:{useCallback:fn=>fn},doubleSlotMeta:slots,doubleFriendGuardMy:false,doubleFriendGuardOpp:false,doubleProtectBySlot:{myLeft:false,myRight:false,oppLeft:false,oppRight:false},doubleWideGuardMy:false,doubleWideGuardOpp:false,lt:x=>x,movePoolByKey:{},asyncDataVersion:0,siteLanguage:'ko',isCalculableHeldItem:()=>true,heldAbilityError:()=>null,classifyAbilityForKey:(_key,raw)=>({slug:raw}),attackingFormRow:row=>row,buildPartyBattleStats:()=>attacker,buildOpponentBattleStats:()=>defender,choicesForPool:()=>[],resolveMoveMeta:()=>({type:env.attackType,category:'physical',power:80}),resolveCalculableMoveMeta:(_name,meta)=>meta,resolveMultiHitMeta,resolveMoveType:()=>env.attackType,resolveAbilityAdjustedTypes:row=>row,abilityAdjustedTypeEffectiveness:loadAppDamageEngine().abilityAdjustedTypeEffectiveness,protectionDamageMultiplier:()=>1,resolveDamageModifiers,calcDamage,abilityNoteLabel:x=>x,attackType:'water'}
   vm.runInNewContext(compiled,env)
   const baseline=env.doubleCallback('myLeft','oppLeft','test-hit',false)
   assert.deepEqual([...baseline.damage.rolls],[39,39,40,40,40,41,41,42,42,43,43,44,44,45,45,46])
@@ -117,5 +117,5 @@ test('all actual resolver call sites propagate post-transformation metadata', ()
       || (ts.isObjectLiteralExpression(input) && input.properties.some(p=>ts.isSpreadAssignment(p)&&p.expression.getText(owner)==='modifierInput'))
     assert.ok(direct || derivesFromQuickInput,`missing moveMeta at ${owner.fileName}:${owner.getLineAndCharacterOfPosition(call.pos).line+1}`)
   }
-  assert.match(quickText,/const modifierInput = \{[^\n]*moveMeta: meta/)
+  assert.match(quickText,/const modifierInput = \{[^\n]*moveMeta: resolvedMeta/)
 })

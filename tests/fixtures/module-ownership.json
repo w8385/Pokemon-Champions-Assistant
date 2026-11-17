@@ -40,6 +40,7 @@
     "src/domain/battle/doubleOrderPresentation.ts",
     "src/domain/battle/modifierRules.ts",
     "src/domain/battle/moveAliases.ts",
+    "src/domain/battle/moveDamageSupport.ts",
     "src/domain/battle/moveEffects.ts",
     "src/domain/battle/moveKey.ts",
     "src/domain/battle/movePower.ts",
@@ -426,7 +427,7 @@
     },
     {
       "path": "src/canonical-data/champions/championsLearnedMoveMeta.json",
-      "sha256": "0f143852cf8014af41b3da1a91ea9319faa799886b0de556b2f951e88ed77dfd",
+      "sha256": "972a2f9d7ac0b62b75d645f0a6fc8140ac8dbcf792b7c074bf2da05cdf2ef37e",
       "rows": 732,
       "topLevelKeys": [
         "10만마력",
@@ -1968,13 +1969,14 @@
     },
     {
       "path": "src/canonical-data/champions/championsMoveMetaOverrides.json",
-      "sha256": "4f567fc833b357d1307ea9bf769ec2c1c2bdeb9b9540174444dc9088df721d6b",
-      "rows": 12,
+      "sha256": "1242f7ef8d13d39eb4e475c93e3009674f3a8378420dfc9dd9502cfaa2c3f430",
+      "rows": 13,
       "topLevelKeys": [
         "기습",
         "드래곤애로",
         "로우킥",
         "바디프레스",
+        "볼가득넣기",
         "사이코쇼크",
         "속이다",
         "스케일샷",

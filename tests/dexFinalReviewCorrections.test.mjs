@@ -57,7 +57,7 @@ test('ID 747 resolves synchronously on a fresh direct URL but unknown identity r
   let getMoveMetadata
   try { ({getMoveMetadata} = await server.ssrLoadModule('/src/domain/champions/moveMetadata.ts'))
   const projected = getMoveMetadata('볼가득넣기').meta
-  assert.equal(projected.category,null)
+  assert.equal(projected.category,'status')
   assert.equal(projected.power,null)
   assert.equal(projected.accuracy,null)
   assert.equal(projected.pp,null)
@@ -74,6 +74,7 @@ test('ID 747 resolves synchronously on a fresh direct URL but unknown identity r
     return context.result
   }
   assert.equal(resolve('move:볼가득넣기').meta.type,'normal')
+  assert.equal(resolve('move:볼가득넣기').meta.category,'status')
   assert.equal(resolve('move:실제로없는기술'),null)
   assert.match(app, /dexSelectedMove\.meta\.category \? displayMoveCategoryName\(dexSelectedMove\.meta\.category, siteLanguage\) : '—'/)
   assert.match(app, /dexSelectedMove\.meta\.priority \?\? '—'/)

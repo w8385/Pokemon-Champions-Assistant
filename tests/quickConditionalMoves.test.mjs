@@ -16,8 +16,8 @@ import {
   userWeightMovePower,
   weightBasedMovePower,
 } from '../src/domain/battle/movePower.ts'
-import { resolveAbilityAdjustedMoveMeta } from '../src/domain/battle/moveEffects.ts'
-import { knockOffPowerMultiplier } from '../src/domain/battle/modifierRules.ts'
+import { resolveAbilityAdjustedMoveMeta, resolveCalculableMoveMeta } from '../src/domain/battle/moveEffects.ts'
+import { knockOffPowerMultiplier, resolveDamageModifiers } from '../src/domain/battle/modifierRules.ts'
 import { quickMoveSupported } from '../src/domain/battle/quickDamageState.ts'
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
 const {
@@ -51,18 +51,24 @@ const calculate = ({
   targetItem = '',
   sourceAbility = '',
   targetAbility = '',
+  sourceKey = 'garchomp',
+  targetKey = 'blissey',
+  sourceTypes = ['normal'],
+  targetTypes = ['normal'],
+  sourceStatPatch = {},
+  targetStatPatch = {},
 }) => {
-  const source = { ...quickBlank(), key: 'garchomp', item: sourceItem, battle: { ...quickBlank().battle, ...sourceBattle } }
-  const target = { ...quickBlank(), key: 'blissey', item: targetItem, battle: { ...quickBlank().battle, ...targetBattle } }
+  const source = { ...quickBlank(), key: sourceKey, item: sourceItem, battle: { ...quickBlank().battle, ...sourceBattle } }
+  const target = { ...quickBlank(), key: targetKey, item: targetItem, battle: { ...quickBlank().battle, ...targetBattle } }
   return calculateQuickDamage({
     source,
     target,
     name,
     conditions: { ...quickDefaultConditions(), ...conditions },
-    sourceRow: { key: 'garchomp', types: ['normal'], weightKg: sourceWeight },
-    targetRow: { key: 'blissey', types: ['normal'], weightKg: targetWeight },
-    sourceStats: { hp: 200, attack: 140, defense: 100, spAttack: 140, spDefense: 100 },
-    targetStats: { hp: 200, attack: 100, defense: 100, spAttack: 100, spDefense: 100 },
+    sourceRow: { key: sourceKey, types: sourceTypes, weightKg: sourceWeight },
+    targetRow: { key: targetKey, types: targetTypes, weightKg: targetWeight },
+    sourceStats: { hp: 200, attack: 140, defense: 100, spAttack: 140, spDefense: 100, ...sourceStatPatch },
+    targetStats: { hp: 200, attack: 100, defense: 100, spAttack: 100, spDefense: 100, ...targetStatPatch },
     sourceForm: 'shield',
     targetForm: 'shield',
     sourceAbilityValid: true,
@@ -253,6 +259,98 @@ test('Knock Off boosts only a removable target item', () => {
   assert.ok(withoutItem && removableItem)
   assert.equal(removableItem.decisionPower, Math.round(withoutItem.decisionPower * 1.5))
   assert.ok(removableItem.damage.min > withoutItem.damage.min)
+})
+
+test('reviewed active move exceptions use their real effectiveness, stage, and category rules', () => {
+  const freezeDry = calculate({ name: '프리즈드라이', base: special(70, 'ice'), sourceTypes: ['ice'], targetTypes: ['water'] })
+  const flyingPress = calculate({ name: '플라잉프레스', base: physical(100, 'fighting'), sourceTypes: ['fighting'], targetTypes: ['grass'] })
+  assert.equal(freezeDry?.effectiveness, 2, 'Freeze-Dry is super effective against Water')
+  assert.equal(flyingPress?.effectiveness, 2, 'Flying Press multiplies Fighting and Flying effectiveness')
+
+  for (const [name, base] of [['DD래리어트', physical(85, 'dark')], ['성스러운칼', physical(90, 'fighting')]]) {
+    const neutral = calculate({ name, base })
+    const boostedDefense = calculate({ name, base, targetBattle: { defenseStage: 6 } })
+    assert.deepEqual(boostedDefense?.damage, neutral?.damage, `${name} ignores target defensive stages`)
+  }
+  assert.ok(
+    minimumDamage({ name: '지진', base: physical(100, 'ground') }) >
+    minimumDamage({ name: '지진', base: physical(100, 'ground'), targetBattle: { defenseStage: 6 } }),
+    'ordinary physical moves still consume the target Defense stage',
+  )
+
+  const physicalStats = { attack: 220, spAttack: 40 }
+  const splitBulk = { defense: 60, spDefense: 220 }
+  const shellPhysical = calculate({ name: '셸암즈', base: special(90, 'poison'), sourceTypes: ['poison'], sourceStatPatch: physicalStats, targetStatPatch: splitBulk })
+  const ordinaryPhysical = calculate({ name: '독찌르기', base: physical(90, 'poison'), sourceTypes: ['poison'], sourceStatPatch: physicalStats, targetStatPatch: splitBulk })
+  assert.deepEqual(shellPhysical?.damage, ordinaryPhysical?.damage, 'Shell Side Arm selects Physical from the raw comparison')
+
+  const specialStats = { attack: 40, spAttack: 220 }
+  const reverseBulk = { defense: 220, spDefense: 60 }
+  const shellSpecial = calculate({ name: '셸암즈', base: special(90, 'poison'), sourceTypes: ['poison'], sourceStatPatch: specialStats, targetStatPatch: reverseBulk })
+  const ordinarySpecial = calculate({ name: '오물폭탄', base: special(90, 'poison'), sourceTypes: ['poison'], sourceStatPatch: specialStats, targetStatPatch: reverseBulk })
+  assert.deepEqual(shellSpecial?.damage, ordinarySpecial?.damage, 'Shell Side Arm selects Special from the raw comparison')
+})
+
+test('reviewed physical exceptions preserve contact, including Shell Side Arm only on its physical branch', () => {
+  const base = {
+    attackerAbility: '', attackerItem: '', defenderAbility: 'fluffy', defenderKey: 'houndstone', defenderItem: '',
+    moveMeta: physical(90, 'fighting'), baseMoveType: 'fighting', moveType: 'fighting', movePower: 90,
+    mode: 'physical', effectiveness: 1, attackStage: 0, defenseStage: 0, attackerTypes: ['fighting'], defenderTypes: ['ghost'],
+    burned: false, attackerLowHp: false, targetPoisoned: false, defenderFullHp: false, movedAfterTarget: false,
+    faintedAllies: 0, rivalryMode: 'neutral', parentalBond: false, defenderStatused: false,
+    electromorphosisCharged: false, weather: 'none', terrain: 'none', reflect: false, lightScreen: false,
+    auroraVeil: false, friendGuard: false,
+  }
+  for (const moveName of ['DD래리어트', '성스러운칼', '플라잉프레스']) {
+    const fluffy = resolveDamageModifiers({ ...base, moveName })
+    const claws = resolveDamageModifiers({ ...base, moveName, attackerAbility: 'tough-claws', defenderAbility: '' })
+    assert.equal(fluffy.finalMultiplier, 0.5, `${moveName} is contact against Fluffy`)
+    assert.equal(claws.powerMultiplier, 1.3, `${moveName} receives Tough Claws`)
+  }
+  assert.equal(resolveDamageModifiers({ ...base, moveName: '셸암즈', mode: 'physical' }).finalMultiplier, 0.5)
+  assert.equal(resolveDamageModifiers({ ...base, moveName: '셸암즈', mode: 'special', moveMeta: special(90, 'poison') }).finalMultiplier, 1)
+})
+
+test('Gravity makes every active gravity-flag damaging move unavailable instead of returning fake damage', () => {
+  for (const [name, base] of [
+    ['공중날기', physical(90, 'flying')],
+    ['무릎차기', physical(130, 'fighting')],
+    ['뛰어오르기', physical(85, 'flying')],
+    ['플라잉프레스', physical(100, 'fighting')],
+  ]) {
+    assert.ok(calculate({ name, base, conditions: { gravity: false } }), name)
+    assert.equal(calculate({ name, base, conditions: { gravity: true } }), null, name)
+  }
+})
+
+test('Raging Bull resolves the attacker breed type and removes screens before its own damage', () => {
+  const combat = { name: '레이징불', base: physical(90), sourceKey: 'tauros-paldean', sourceTypes: ['fighting'], targetTypes: ['rock'] }
+  const plain = calculate(combat)
+  const screened = calculate({ ...combat, targetBattle: { reflect: true, lightScreen: true, auroraVeil: true } })
+  const kantonian = calculate({ ...combat, sourceKey: 'tauros', sourceTypes: ['normal'] })
+  assert.equal(plain?.effectiveness, 2)
+  assert.deepEqual(screened?.damage, plain?.damage)
+  assert.equal(kantonian?.effectiveness, 0.5)
+  assert.equal(calculate({ ...combat, sourceKey: 'garchomp' }), null, 'unknown species context must not guess Normal')
+})
+
+test('Shell Side Arm tie exposes the exact union while Aura Wheel refuses an unrecorded form guess', () => {
+  const stats = { attack: 140, spAttack: 140 }
+  const bulk = { defense: 100, spDefense: 100 }
+  const targetBattle = { reflect: true }
+  const shell = calculate({ name: '셸암즈', base: special(90, 'poison'), sourceStatPatch: stats, targetStatPatch: bulk, targetBattle })
+  const physicalBranch = calculate({ name: '독찌르기', base: physical(90, 'poison'), sourceStatPatch: stats, targetStatPatch: bulk, targetBattle })
+  const specialBranch = calculate({ name: '오물폭탄', base: special(90, 'poison'), sourceStatPatch: stats, targetStatPatch: bulk, targetBattle })
+  assert.ok(shell && physicalBranch && specialBranch)
+  assert.equal(shell.damage.min, Math.min(physicalBranch.damage.min, specialBranch.damage.min))
+  assert.equal(shell.damage.max, Math.max(physicalBranch.damage.max, specialBranch.damage.max))
+  assert.equal(shell.decisionPower, null, 'a random category has no single honest decision-power value')
+  assert.equal(calculate({ name: '오라휠', base: physical(110, 'electric') }), null)
+  assert.equal(resolveAbilityAdjustedMoveMeta('오라휠', physical(110, 'electric'), '')?.type, 'electric', 'display metadata remains available')
+  assert.equal(resolveAbilityAdjustedMoveMeta('셸암즈', special(90, 'poison'), '')?.type, 'poison', 'display metadata remains available')
+  assert.equal(resolveCalculableMoveMeta('오라휠', physical(110, 'electric'), ''), null)
+  assert.equal(resolveCalculableMoveMeta('셸암즈', special(90, 'poison'), ''), null, 'calculation cannot guess a dynamic category')
+  assert.equal(resolveCalculableMoveMeta('셸암즈', special(90, 'poison'), '', 'none', 'physical')?.category, 'physical')
 })
 
 test('normalization clamps count rules while toggle rules remain booleans', () => {

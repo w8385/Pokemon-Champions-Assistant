@@ -40,16 +40,24 @@ export type MoveUsageSuggestion = {
   onSelect: () => void; tooltipProps?: HTMLAttributes<HTMLElement>;
 }
 
+/** Keep a move target only while focus enters the usage rail owned by the same editor. */
+export function isFocusEnteringMoveUsageRail(currentTarget: HTMLElement, relatedTarget: EventTarget | null) {
+  const rail = currentTarget.closest('.move-slots-editor')?.querySelector('.move-usage-suggestions')
+  return Boolean(relatedTarget && rail?.contains(relatedTarget as Node))
+}
+
 /** Shared compact Top-usage rail. Callers own eligibility and slot selection; this component only presents the SSOT result. */
-export function MoveUsageSuggestions({ label, moves }: { label: string; moves: readonly MoveUsageSuggestion[] }) {
+export function MoveUsageSuggestions({ label, moves, onFocusLeave }: { label: string; moves: readonly MoveUsageSuggestion[]; onFocusLeave?: () => void }) {
   if (!moves.length) return null
-  return <section className="move-usage-suggestions" aria-label={label}>
+  return <section className="move-usage-suggestions" aria-label={label} onBlur={event => {
+    if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node)) onFocusLeave?.()
+  }}>
     <div className="move-usage-suggestions-head"><strong>{label}</strong><span>Top {moves.length}</span></div>
     <div className="move-usage-suggestions-grid">
       {moves.map((move, index) => <button key={`${move.name}-${index}`} type="button"
         className={`move-usage-suggestion ${move.className ?? ''}`.trim()} disabled={move.disabled}
         aria-pressed={move.selected} aria-label={move.ariaLabel ?? move.name} title={move.title}
-        {...move.tooltipProps} onClick={move.onSelect}>
+        {...move.tooltipProps} onPointerDown={event => event.preventDefault()} onMouseDown={event => event.preventDefault()} onClick={move.onSelect}>
         {move.type ? <img src={getTypeBadgeSrc(move.type)} alt="" aria-hidden="true" className="type-badge-image-small" /> : null}
         <span>{move.name}</span>
       </button>)}

@@ -28,8 +28,10 @@ test('invalid speed restore values use safe validated defaults', () => {
  assert.equal(restored.speedNatureMultiplier,1)
  assert.deepEqual(restored.statNatureMultipliers,{})
 })
-test('speed nature control includes the lowering multiplier as well as neutral and boosted', () => {
- const app=readFileSync(new URL('../src/App.tsx',import.meta.url),'utf8')
- assert.match(readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx',import.meta.url),'utf8'), /option value=\{0\.9\}/)
- assert.match(readFileSync(new URL('../src/features/damage/quickModel.ts',import.meta.url),'utf8'), /\.\.\.quickSpeedState\(value\)/)
+test('Speed comparison has no second nature state and legacy overrides are ignored', () => {
+ const presentation=readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx',import.meta.url),'utf8')
+ const model=readFileSync(new URL('../src/features/damage/quickModel.ts',import.meta.url),'utf8')
+ assert.doesNotMatch(presentation, /speedNatureOverride|option value=\{0\.9\}/)
+ assert.doesNotMatch(model, /speedNatureOverride/)
+ assert.match(model, /\.\.\.quickSpeedState\(value\)/)
 })
