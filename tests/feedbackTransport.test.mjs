@@ -36,7 +36,7 @@ test('successful relay uses privacy-preserving fetch options and an explicit pay
   const calls = []
   const result = await transport.postFeedback(request(), {
     endpoint: 'https://feedback.example.test/',
-    fetchImpl: async (...args) => { calls.push(args); return new Response(JSON.stringify({ receiptId: 'receipt-1' }), { status: 202, headers: { 'content-type': 'application/json' } }) },
+    fetchImpl: async (...args) => { calls.push(args); return new Response(JSON.stringify({ ok: true, receiptId: 'receipt-1' }), { status: 202, headers: { 'content-type': 'application/json' } }) },
   })
   assert.deepEqual(result, { ok: true, receiptId: 'receipt-1' })
   assert.equal(calls.length, 1)
@@ -67,6 +67,23 @@ test('HTTP failures map to stable user-facing result codes without reading serve
   })
 })
 
+test('only the Worker 202 JSON success contract is accepted', async t => {
+  const cases = [
+    ['HTML 200', new Response('<!doctype html><title>SPA fallback</title>', { status: 200, headers: { 'content-type': 'text/html' } })],
+    ['JSON 200', new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'content-type': 'application/json' } })],
+    ['empty 204', new Response(null, { status: 204 })],
+    ['malformed 202', new Response('{', { status: 202, headers: { 'content-type': 'application/json' } })],
+    ['negative 202', new Response(JSON.stringify({ ok: false }), { status: 202, headers: { 'content-type': 'application/json' } })],
+  ]
+  for (const [name, response] of cases) await t.test(name, async () => {
+    const result = await transport.postFeedback(request(), {
+      endpoint: '/Pokemon-Champions-Assistant/api/feedback',
+      fetchImpl: async () => response,
+    })
+    assert.deepEqual(result, { ok: false, code: 'unavailable', retryable: true })
+  })
+})
+
 test('timeout aborts the relay request and remains retryable', async () => {
   const result = await transport.postFeedback(request(), {
     endpoint: 'https://feedback.example.test/',
@@ -87,7 +104,7 @@ test('invalid client input is rejected before fetch and Unicode length counts co
   assert.equal(calls, 0)
 })
 
-test('request construction drops unknown data and GitHub fallback prefills only safe context', () => {
+test('request construction and recovery text retain only safe context', () => {
   const marker = 'PRIVATE_RAW_HASH_QUERY_2718'
   const built = transport.createFeedbackRequest({
     submissionId: 'feedback_test_1234', category: 'bug', message: '  broken  ', context, website: ' ', rawUrl: marker, party: marker,
@@ -95,10 +112,12 @@ test('request construction drops unknown data and GitHub fallback prefills only 
   assert.deepEqual(Object.keys(built), ['schemaVersion', 'submissionId', 'category', 'message', 'context', 'website'])
   assert.equal(built.message, 'broken')
   assert.doesNotMatch(JSON.stringify(built), new RegExp(marker))
-  const url = new URL(transport.buildFeedbackIssueUrl(built))
-  assert.equal(url.origin, 'https://github.com')
-  assert.equal(url.pathname, '/w8385/Pokemon-Champions-Assistant/issues/new')
-  assert.match(url.searchParams.get('body'), /single\.party/)
-  assert.match(url.searchParams.get('body'), /390 × 844/)
-  assert.doesNotMatch(url.toString(), new RegExp(marker))
+  const recoveryText = transport.feedbackClipboardText(built)
+  assert.match(recoveryText, /single\.party/)
+  assert.match(recoveryText, /390 × 844/)
+  assert.match(recoveryText, /feedback_test_1234/)
+  assert.doesNotMatch(recoveryText, new RegExp(marker))
+  assert.match(transport.feedbackClipboardText(built, 'en'), /Feedback[\s\S]*Category[\s\S]*Bug[\s\S]*Submission ID/)
+  assert.match(transport.feedbackClipboardText(built, 'ja'), /意見[\s\S]*種類[\s\S]*不具合[\s\S]*送信ID/)
+  assert.equal(transport.buildFeedbackIssueUrl, undefined)
 })

@@ -1,12 +1,25 @@
 name = "pokemon-champions-feedback"
 main = "worker.mjs"
 compatibility_date = "2026-11-17"
+workers_dev = false
+
+routes = [
+  { pattern = "w8385.dev/Pokemon-Champions-Assistant/api/feedback*", zone_name = "w8385.dev" },
+]
 
 [vars]
 ALLOWED_ORIGINS = "https://w8385.dev,https://midnight.tail8a61.ts.net,http://localhost:5173,http://127.0.0.1:5173"
 RATE_LIMIT_MAX = "5"
 RATE_LIMIT_WINDOW_SECONDS = "60"
 DISCORD_TIMEOUT_MS = "8000"
+
+[[ratelimits]]
+name = "FEEDBACK_RATE_LIMITER"
+namespace_id = "35171117"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
 
 # Never put DISCORD_WEBHOOK_URL here. Add it as a Worker secret:
 # npx wrangler secret put DISCORD_WEBHOOK_URL

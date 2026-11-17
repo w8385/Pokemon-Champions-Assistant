@@ -1,9 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { createFeedbackWorker } from '../feedback-relay/worker.mjs'
 
 const origin = 'https://w8385.dev'
 const webhook = 'https://discord.com/api/webhooks/123/token'
+const wranglerConfig = readFileSync(new URL('../feedback-relay/wrangler.toml', import.meta.url), 'utf8')
 
 function payload(overrides = {}) {
   return {
@@ -30,6 +32,14 @@ function request(body = payload(), headers = {}) {
     body: JSON.stringify(body),
   })
 }
+
+test('tracked Worker route owns only the feedback API path and contains no webhook secret', () => {
+  assert.match(wranglerConfig, /workers_dev\s*=\s*false/)
+  assert.match(wranglerConfig, /w8385\.dev\/Pokemon-Champions-Assistant\/api\/feedback\*/)
+  assert.match(wranglerConfig, /name\s*=\s*"FEEDBACK_RATE_LIMITER"[\s\S]*limit\s*=\s*5[\s\S]*period\s*=\s*60/)
+  assert.doesNotMatch(wranglerConfig, /DISCORD_WEBHOOK_URL\s*=/)
+  assert.doesNotMatch(wranglerConfig, /discord(?:app)?\.com\/api\/webhooks\//)
+})
 
 test('valid feedback is relayed once with mentions disabled and privacy-minimal context', async () => {
   const calls = []
@@ -115,4 +125,18 @@ test('per-isolate IP throttle returns a retry hint and Discord failures stay gen
   time += 61_000
   const afterWindow = await worker.fetch(request(payload({ submissionId: 'feedback_test_9012' })), { DISCORD_WEBHOOK_URL: 'https://example.com/not-discord' })
   assert.equal(afterWindow.status, 503)
+})
+
+test('Cloudflare rate-limit binding blocks before parsing or Discord delivery', async () => {
+  let discordCalls = 0
+  const keys = []
+  const worker = createFeedbackWorker({ fetchImpl: async () => { discordCalls += 1; return new Response(null, { status: 204 }) } })
+  const response = await worker.fetch(request(), {
+    DISCORD_WEBHOOK_URL: webhook,
+    FEEDBACK_RATE_LIMITER: { limit: async ({ key }) => { keys.push(key); return { success: false } } },
+  })
+  assert.equal(response.status, 429)
+  assert.equal(response.headers.get('retry-after'), '60')
+  assert.deepEqual(keys, ['203.0.113.8'])
+  assert.equal(discordCalls, 0)
 })

@@ -56,7 +56,16 @@ test('dialog contract covers focus, escape, scroll lock, status and retry-safe d
   assert.match(widgetSource, /role="alert"/)
   assert.match(widgetSource, /if \(submittingRef\.current \|\| status === 'submitting'/)
   assert.match(widgetSource, /disabled=\{status === 'submitting'\}/)
+  assert.match(widgetSource, /await postFeedback\(submittedRequest, \{ endpoint \}\)/)
   assert.match(widgetSource, /setMessage\(''\)[\s\S]*setStatus\('sent'\)/)
+})
+
+test('ordinary submissions stay inside the site and always target the relay', () => {
+  assert.match(widgetSource, /VITE_FEEDBACK_ENDPOINT\?\.trim\(\) \|\| `\$\{import\.meta\.env\.BASE_URL\}api\/feedback`/)
+  assert.match(widgetSource, /feedbackClipboardText\(request\(\), language\)/)
+  assert.doesNotMatch(widgetSource, /if \(website\).*setStatus\('sent'\)/)
+  assert.doesNotMatch(widgetSource, /github(?:\.com)?|forms\.gle|handoff|openExternal/i)
+  assert.doesNotMatch(widgetSource, /target="_blank"/)
 })
 
 test('privacy disclosure is localized and feedback code does not inspect sensitive browser state', () => {
