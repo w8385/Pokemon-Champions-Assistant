@@ -23,6 +23,7 @@ type Props = {
   party: PartyMember[]
   selectedMy: number
   onSelectMy: (idx: number) => void
+  partyContext: React.ReactNode
   entry: EntryOwner
   confirmedMovesByKey: Record<string, string[]>
   comparisonAbility: Parameters<typeof comparisonSides>[5]
@@ -31,7 +32,7 @@ type Props = {
   tooltipForMove: QuickDamageProps['tooltipForMove']
 }
 
-export function SingleEntryComparison({ language, party, selectedMy, onSelectMy, entry, confirmedMovesByKey, comparisonAbility, onSaveParty, onSaveMoves, tooltipForMove }: Props) {
+export function SingleEntryComparison({ language, party, selectedMy, onSelectMy, partyContext, entry, confirmedMovesByKey, comparisonAbility, onSaveParty, onSaveMoves, tooltipForMove }: Props) {
   const { opponents, selectedOpp, setSelectedOpp, opponentResetRevision, registerSingleOpponentSpecies, resetSingleOpponentEntry, setOpponentDraftIdentity, saveComparisonOpponent } = entry
   const lt = (text: string) => translateText(language, text)
 
@@ -57,7 +58,10 @@ export function SingleEntryComparison({ language, party, selectedMy, onSelectMy,
       entrySelectors={(opponentSearch, reset) => <div className="single-entry-selectors">
         <div className="unified-pair-pickers">
           <div className="single-entry-picker-pane single-entry-picker-pane-party">
-            <div className="single-picker-head"><strong>{lt('내 파티')}</strong></div>
+            <div className="single-picker-head single-party-picker-head">
+              <strong>{lt('내 파티')}</strong>
+              {partyContext}
+            </div>
             <div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setOpponentDraftIdentity('attacker', ''); onSelectMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, language) : lt('빈 슬롯')}</span></button> })}</div>
             {!party[selectedMy]?.key ? <small>{lt('빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.')}</small> : null}
           </div>

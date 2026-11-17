@@ -8,7 +8,21 @@ const DEFAULT_ALLOWED_ORIGINS = [
 const CATEGORIES = new Set(['bug', 'feature', 'data', 'ui', 'other'])
 const LOCALES = new Set(['ko', 'en', 'ja'])
 const POINTERS = new Set(['coarse', 'fine', 'unknown'])
-const BODY_LIMIT_BYTES = 12_000
+const JSON_BODY_LIMIT_BYTES = 12_000
+const SCREENSHOT_LIMIT_BYTES = 1_800_000
+const MULTIPART_BODY_LIMIT_BYTES = 1_900_000
+const SCREENSHOT_MAX_EDGE = 10_000
+const SCREENSHOT_MAX_PIXELS = 4_000_000
+const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10]
+const PNG_CRC_TABLE = (() => {
+  const table = new Uint32Array(256)
+  for (let value = 0; value < 256; value += 1) {
+    let crc = value
+    for (let bit = 0; bit < 8; bit += 1) crc = (crc & 1) ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1
+    table[value] = crc >>> 0
+  }
+  return table
+})()
 const MESSAGE_LIMIT_CODE_POINTS = 1_500
 const CACHE_TTL_MS = 10 * 60 * 1_000
 const ALLOWED_PATHS = new Set(['/', '/Pokemon-Champions-Assistant/api/feedback'])
@@ -70,7 +84,7 @@ function json(origin, status, payload, extraHeaders = {}) {
 }
 
 async function readBoundedBody(request, limit) {
-  if (!request.body) return { ok: true, value: '' }
+  if (!request.body) return { ok: true, value: new Uint8Array() }
   const reader = request.body.getReader()
   const chunks = []
   let total = 0
@@ -88,11 +102,136 @@ async function readBoundedBody(request, limit) {
     const bytes = new Uint8Array(total)
     let offset = 0
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength }
-    return { ok: true, value: new TextDecoder('utf-8', { fatal: true }).decode(bytes) }
+    return { ok: true, value: bytes }
   } catch {
     try { await reader.cancel('invalid-body') } catch { /* The stream may already be closed. */ }
     return { ok: false, code: 'invalid' }
   }
+}
+
+function decodeUtf8(bytes) {
+  try {
+    return { ok: true, value: new TextDecoder('utf-8', { fatal: true }).decode(bytes) }
+  } catch {
+    return { ok: false, code: 'invalid' }
+  }
+}
+
+async function validateScreenshot(file) {
+  if (!file || typeof file !== 'object' || typeof file.arrayBuffer !== 'function') return { ok: false, code: 'invalid' }
+  if (file.type !== 'image/png') return { ok: false, code: 'invalid' }
+  if (!Number.isFinite(file.size) || file.size < 57) return { ok: false, code: 'invalid' }
+  if (file.size > SCREENSHOT_LIMIT_BYTES) return { ok: false, code: 'too-large' }
+  let bytes
+  try {
+    bytes = new Uint8Array(await file.arrayBuffer())
+  } catch {
+    return { ok: false, code: 'invalid' }
+  }
+  if (PNG_SIGNATURE.some((byte, idx) => bytes[idx] !== byte)) return { ok: false, code: 'invalid' }
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+  let offset = 8
+  let chunks = 0
+  let width = 0
+  let height = 0
+  let sawHeader = false
+  let sawPalette = false
+  let sawImageData = false
+  let imageDataEnded = false
+  let imageDataBytes = 0
+  let sawEnd = false
+  while (offset < bytes.length) {
+    chunks += 1
+    if (chunks > 2_048 || offset + 12 > bytes.length) return { ok: false, code: 'invalid' }
+    const length = view.getUint32(offset)
+    const chunkEnd = offset + 12 + length
+    if (chunkEnd > bytes.length) return { ok: false, code: 'invalid' }
+    const typeOffset = offset + 4
+    const typeBytes = bytes.slice(typeOffset, typeOffset + 4)
+    if ([...typeBytes].some(byte => !((byte >= 65 && byte <= 90) || (byte >= 97 && byte <= 122)))) return { ok: false, code: 'invalid' }
+    const type = String.fromCharCode(...typeBytes)
+    let crc = 0xffffffff
+    for (let idx = typeOffset; idx < offset + 8 + length; idx += 1) crc = PNG_CRC_TABLE[(crc ^ bytes[idx]) & 0xff] ^ (crc >>> 8)
+    if ((crc ^ 0xffffffff) >>> 0 !== view.getUint32(offset + 8 + length)) return { ok: false, code: 'invalid' }
+    if (!sawHeader) {
+      if (type !== 'IHDR' || length !== 13) return { ok: false, code: 'invalid' }
+      width = view.getUint32(offset + 8)
+      height = view.getUint32(offset + 12)
+      const bitDepth = bytes[offset + 16]
+      const colorType = bytes[offset + 17]
+      const allowedDepths = { 0: [1, 2, 4, 8, 16], 2: [8, 16], 3: [1, 2, 4, 8], 4: [8, 16], 6: [8, 16] }
+      if (!allowedDepths[colorType]?.includes(bitDepth) || bytes[offset + 18] !== 0 || bytes[offset + 19] !== 0 || ![0, 1].includes(bytes[offset + 20])) {
+        return { ok: false, code: 'invalid' }
+      }
+      sawHeader = true
+    } else if (type === 'IHDR') {
+      return { ok: false, code: 'invalid' }
+    } else if (type === 'PLTE') {
+      if (sawPalette || sawImageData || length < 3 || length > 768 || length % 3 !== 0) return { ok: false, code: 'invalid' }
+      sawPalette = true
+    } else if (type === 'IDAT') {
+      if (imageDataEnded) return { ok: false, code: 'invalid' }
+      sawImageData = true
+      imageDataBytes += length
+    } else if (type === 'IEND') {
+      if (length !== 0 || !sawImageData || !imageDataBytes || chunkEnd !== bytes.length) return { ok: false, code: 'invalid' }
+      sawEnd = true
+    } else {
+      if (sawImageData) imageDataEnded = true
+      if (typeBytes[0] >= 65 && typeBytes[0] <= 90) return { ok: false, code: 'invalid' }
+    }
+    offset = chunkEnd
+    if (sawEnd) break
+  }
+  if (!sawHeader || !sawImageData || !sawEnd || offset !== bytes.length) return { ok: false, code: 'invalid' }
+  if (!width || !height || width > SCREENSHOT_MAX_EDGE || height > SCREENSHOT_MAX_EDGE || width * height > SCREENSHOT_MAX_PIXELS) {
+    return { ok: false, code: 'invalid' }
+  }
+  return { ok: true, value: file }
+}
+
+async function parseBody(request, contentType, bytes) {
+  const normalizedContentType = contentType.toLowerCase()
+  if (normalizedContentType.startsWith('application/json')) {
+    const decoded = decodeUtf8(bytes)
+    if (!decoded.ok) return decoded
+    try {
+      return { ok: true, value: { payload: JSON.parse(decoded.value), screenshot: null } }
+    } catch {
+      return { ok: false, code: 'invalid' }
+    }
+  }
+  if (!normalizedContentType.startsWith('multipart/form-data')) return { ok: false, code: 'invalid' }
+  let form
+  try {
+    form = await new Request('https://feedback.invalid/', {
+      method: 'POST',
+      headers: { 'content-type': contentType },
+      body: bytes,
+    }).formData()
+  } catch {
+    return { ok: false, code: 'invalid' }
+  }
+  const entries = [...form.entries()]
+  if (entries.length !== 2 || entries.some(([key]) => key !== 'payload_json' && key !== 'screenshot')) {
+    return { ok: false, code: 'invalid' }
+  }
+  if (entries.filter(([key]) => key === 'payload_json').length !== 1 || entries.filter(([key]) => key === 'screenshot').length !== 1) {
+    return { ok: false, code: 'invalid' }
+  }
+  const rawPayload = form.get('payload_json')
+  if (typeof rawPayload !== 'string' || new TextEncoder().encode(rawPayload).byteLength > JSON_BODY_LIMIT_BYTES) {
+    return { ok: false, code: 'invalid' }
+  }
+  let payload
+  try {
+    payload = JSON.parse(rawPayload)
+  } catch {
+    return { ok: false, code: 'invalid' }
+  }
+  const screenshot = await validateScreenshot(form.get('screenshot'))
+  if (!screenshot.ok) return screenshot
+  return { ok: true, value: { payload, screenshot: screenshot.value } }
 }
 
 function validDiscordWebhook(value) {
@@ -186,7 +325,7 @@ function screenText(context) {
   return context.screen.id
 }
 
-function discordPayload(payload, now) {
+function discordPayload(payload, now, hasScreenshot = false) {
   const categoryLabels = {
     bug: 'Bug',
     feature: 'Feature idea',
@@ -202,17 +341,20 @@ function discordPayload(payload, now) {
       { name: 'Release', value: `${payload.context.app.version} · ${payload.context.app.revision}`, inline: false },
     )
   }
+  const embed = {
+    title: categoryLabels[payload.category],
+    description: payload.message,
+    color: payload.category === 'bug' ? 0xef4444 : payload.category === 'data' ? 0xf59e0b : 0x60a5fa,
+    fields,
+    footer: { text: `Submission ${payload.submissionId}` },
+    timestamp: new Date(now).toISOString(),
+    ...(hasScreenshot ? { image: { url: 'attachment://feedback-screenshot.png' } } : {}),
+  }
   return {
     username: 'Champions Feedback',
     allowed_mentions: { parse: [] },
-    embeds: [{
-      title: categoryLabels[payload.category],
-      description: payload.message,
-      color: payload.category === 'bug' ? 0xef4444 : payload.category === 'data' ? 0xf59e0b : 0x60a5fa,
-      fields,
-      footer: { text: `Submission ${payload.submissionId}` },
-      timestamp: new Date(now).toISOString(),
-    }],
+    embeds: [embed],
+    ...(hasScreenshot ? { attachments: [{ id: 0, filename: 'feedback-screenshot.png', description: 'Current app viewport' }] } : {}),
   }
 }
 
@@ -241,10 +383,14 @@ export function createFeedbackWorker({ fetchImpl = globalThis.fetch, now = () =>
       if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) })
       if (request.method !== 'POST') return json(origin, 405, { ok: false, code: 'method-not-allowed' }, { allow: 'POST, OPTIONS' })
 
-      const contentType = request.headers.get('content-type')?.toLowerCase() ?? ''
-      if (!contentType.startsWith('application/json')) return json(origin, 415, { ok: false, code: 'invalid' })
+      const contentType = request.headers.get('content-type')?.trim() ?? ''
+      const normalizedContentType = contentType.toLowerCase()
+      const isJson = normalizedContentType.startsWith('application/json')
+      const isMultipart = normalizedContentType.startsWith('multipart/form-data')
+      if (!isJson && !isMultipart) return json(origin, 415, { ok: false, code: 'invalid' })
+      const bodyLimit = isMultipart ? MULTIPART_BODY_LIMIT_BYTES : JSON_BODY_LIMIT_BYTES
       const declaredLength = Number(request.headers.get('content-length'))
-      if (Number.isFinite(declaredLength) && declaredLength > BODY_LIMIT_BYTES) {
+      if (Number.isFinite(declaredLength) && declaredLength > bodyLimit) {
         return json(origin, 413, { ok: false, code: 'too-large' })
       }
 
@@ -279,19 +425,14 @@ export function createFeedbackWorker({ fetchImpl = globalThis.fetch, now = () =>
         }
       }
 
-      const body = await readBoundedBody(request, BODY_LIMIT_BYTES)
+      const body = await readBoundedBody(request, bodyLimit)
       if (!body.ok) return json(origin, body.code === 'too-large' ? 413 : 400, { ok: false, code: body.code })
-      const raw = body.value
-
-      let parsed
-      try {
-        parsed = JSON.parse(raw)
-      } catch {
-        return json(origin, 400, { ok: false, code: 'invalid' })
-      }
-      const validated = validatePayload(parsed)
+      const parsed = await parseBody(request, contentType, body.value)
+      if (!parsed.ok) return json(origin, parsed.code === 'too-large' ? 413 : 400, { ok: false, code: parsed.code })
+      const validated = validatePayload(parsed.value.payload)
       if (!validated.ok) return json(origin, validated.code === 'too-large' ? 413 : 400, { ok: false, code: validated.code })
       const payload = validated.value
+      const screenshot = parsed.value.screenshot
 
       // Quiet success keeps the honeypot useful without telling automated senders how it was detected.
       if (payload.website) return json(origin, 202, { ok: true })
@@ -306,10 +447,20 @@ export function createFeedbackWorker({ fetchImpl = globalThis.fetch, now = () =>
       try {
         const discordUrl = new URL(env.DISCORD_WEBHOOK_URL)
         discordUrl.searchParams.set('wait', 'true')
+        const webhookPayload = discordPayload(payload, currentTime, Boolean(screenshot))
+        let discordBody = JSON.stringify(webhookPayload)
+        let discordHeaders = { 'content-type': 'application/json' }
+        if (screenshot) {
+          const form = new FormData()
+          form.set('payload_json', JSON.stringify(webhookPayload))
+          form.set('files[0]', screenshot, 'feedback-screenshot.png')
+          discordBody = form
+          discordHeaders = undefined
+        }
         discordResponse = await fetchImpl(discordUrl.toString(), {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(discordPayload(payload, currentTime)),
+          ...(discordHeaders ? { headers: discordHeaders } : {}),
+          body: discordBody,
           signal: controller.signal,
         })
       } catch {

@@ -9609,6 +9609,49 @@ html {
 .feedback-message-field textarea[aria-invalid='true'] { border-color: #ef7777; }
 .feedback-message-field textarea:disabled { cursor: wait; opacity: .72; }
 .feedback-error { margin: -7px 0 0; color: #ffaaaa; font-size: .75rem; }
+.feedback-screenshot {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .018);
+}
+.feedback-screenshot-copy { min-width: 0; display: grid; gap: 3px; }
+.feedback-screenshot-copy > strong { font-size: .78rem; }
+.feedback-screenshot-copy > small { color: var(--muted); font-size: .69rem; line-height: 1.45; }
+.feedback-screenshot-state { min-width: 0; }
+.feedback-screenshot-status,
+.feedback-screenshot-controls > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: var(--muted);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+.feedback-screenshot-status .ui-icon,
+.feedback-screenshot-controls .ui-icon { flex: 0 0 auto; margin-top: 1px; }
+.feedback-screenshot-preview {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px 10px;
+}
+.feedback-screenshot-preview > img {
+  width: 104px;
+  height: 72px;
+  border: 1px solid rgba(148, 163, 184, .35);
+  border-radius: 8px;
+  background: #0b1220;
+  object-fit: contain;
+}
+.feedback-screenshot-preview > div { min-width: 0; display: grid; gap: 3px; }
+.feedback-screenshot-preview > div strong { font-size: .72rem; }
+.feedback-screenshot-preview > div small { color: var(--muted); font-size: .66rem; font-variant-numeric: tabular-nums; }
+.feedback-screenshot-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; margin-top: 8px; }
+.feedback-screenshot-controls > .action-button { min-height: 44px; justify-content: center; white-space: nowrap; font-size: .7rem; }
 .feedback-diagnostics-toggle {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -9681,6 +9724,8 @@ html {
   .feedback-panel-header { padding: 14px; }
   .feedback-form { gap: 12px; padding: 14px; }
   .feedback-message-field textarea { min-height: 108px; }
+  .feedback-screenshot-preview { grid-template-columns: 92px minmax(0, 1fr); }
+  .feedback-screenshot-preview > img { width: 92px; height: 68px; }
 }
 
 @media (max-width: 360px) {

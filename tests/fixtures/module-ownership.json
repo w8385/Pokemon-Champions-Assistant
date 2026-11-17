@@ -112,6 +112,7 @@
     "src/features/dex/dexPagination.ts",
     "src/features/dex/helpers.ts",
     "src/features/feedback/FeedbackWidget.tsx",
+    "src/features/feedback/feedbackScreenshot.ts",
     "src/features/feedback/feedbackTransport.ts",
     "src/features/party/CreatorPartySpriteStrip.tsx",
     "src/features/party/PartyAnalysisPanel.tsx",

@@ -1,5 +1,6 @@
 import type { FeedbackContextV1 } from '../../app/feedbackContext'
 import type { SiteLanguage } from '../../app/types'
+import { MAX_FEEDBACK_SCREENSHOT_BYTES } from './feedbackScreenshot'
 
 export const MAX_FEEDBACK_MESSAGE = 1_500
 export const FEEDBACK_CATEGORIES = ['bug', 'feature', 'data', 'ui', 'other'] as const
@@ -57,12 +58,18 @@ export async function postFeedback(request: FeedbackRequestV1, options: {
   fetchImpl?: typeof fetch
   timeoutMs?: number
   signal?: AbortSignal
+  screenshot?: Blob | null
 }): Promise<FeedbackSubmitResult> {
   if (!request.message || feedbackMessageLength(request.message) > MAX_FEEDBACK_MESSAGE || !FEEDBACK_CATEGORIES.includes(request.category)) {
     return { ok: false, code: feedbackMessageLength(request.message) > MAX_FEEDBACK_MESSAGE ? 'too-large' : 'invalid', retryable: false }
   }
   const endpoint = options.endpoint.trim()
   if (!endpoint) return { ok: false, code: 'unavailable', retryable: true }
+  const screenshot = options.screenshot ?? null
+  if (screenshot && screenshot.type !== 'image/png') return { ok: false, code: 'invalid', retryable: false }
+  if (screenshot && (!screenshot.size || screenshot.size > MAX_FEEDBACK_SCREENSHOT_BYTES)) {
+    return { ok: false, code: 'too-large', retryable: false }
+  }
   const fetchImpl = options.fetchImpl ?? fetch
   const controller = new AbortController()
   let timedOut = false
@@ -71,17 +78,25 @@ export async function postFeedback(request: FeedbackRequestV1, options: {
   if (options.signal?.aborted) abortFromParent()
   else options.signal?.addEventListener('abort', abortFromParent, { once: true })
   try {
+    const payload = {
+      schemaVersion: 1,
+      submissionId: request.submissionId,
+      category: request.category,
+      message: request.message,
+      context: request.context,
+      website: request.website,
+    }
+    let body: BodyInit = JSON.stringify(payload)
+    if (screenshot) {
+      const form = new FormData()
+      form.set('payload_json', JSON.stringify(payload))
+      form.set('screenshot', screenshot, 'feedback-screenshot.png')
+      body = form
+    }
     const response = await fetchImpl(endpoint, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', accept: 'application/json' },
-      body: JSON.stringify({
-        schemaVersion: 1,
-        submissionId: request.submissionId,
-        category: request.category,
-        message: request.message,
-        context: request.context,
-        website: request.website,
-      }),
+      headers: screenshot ? { accept: 'application/json' } : { 'content-type': 'application/json', accept: 'application/json' },
+      body,
       credentials: 'omit',
       cache: 'no-store',
       referrerPolicy: 'no-referrer',

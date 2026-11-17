@@ -34,14 +34,17 @@ test('a direct Dex detail omits the rejected global snapshot banner without chan
   } finally { await view.close() }
 })
 
-test('Home project information is an ordinary visible section with its original links and copyright', async () => {
+test('Home project information keeps project contacts without the retired feedback form', async () => {
   const view = await mount('#/')
   try {
     const project = view.host.querySelector('section.home-footer-text-block')
     assert.ok(project)
     assert.equal(project.closest('details'), null)
     assert.match(project.querySelector('h3').textContent, /프로젝트 정보/)
-    assert.equal(project.querySelectorAll('a').length, 3)
+    assert.equal(project.querySelectorAll('a').length, 2)
+    assert.ok(project.querySelector('a[href^="https://github.com/"]'))
+    assert.ok(project.querySelector('a[href^="mailto:"]'))
+    assert.equal(project.querySelector('a[href*="forms.gle"]'), null)
     assert.match(project.textContent, /비공식 팬메이드/)
     assert.match(project.textContent, /PokéAPI/)
     assert.ok(!view.host.querySelector('.app-data-notice'), 'remove the rejected global snapshot banner')
