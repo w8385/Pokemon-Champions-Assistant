@@ -5,6 +5,7 @@ import { natureAxes, natureIdAfterAxisClick, natureIdForAxes } from '../src/doma
 import { NATURES } from '../src/domain/champions/natures.ts'
 
 const compact = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
+const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
 
 test('nature axes resolve to the canonical persisted NatureId', () => {
   assert.deepEqual(natureAxes('bold'), { up: 'defense', down: 'attack' })
@@ -60,4 +61,24 @@ test('compact tile renders only actual stat, nature arrows, slider, and current 
   assert.match(compact, /className="quick-compact-effort-row"/)
   assert.match(compact, /className="quick-compact-effort-value"/)
   assert.doesNotMatch(compact, /quick-compact-tile-base|quick-compact-preview-footer|UiIcon name="chevron"|aria-controls=/)
+})
+
+test('compact effort slider distinguishes the 32 cap from quiet magic ticks without a nearest target', () => {
+  const effortSlider = compact.slice(compact.indexOf('function EffortSlider'), compact.indexOf('export function CompactStatEditor'))
+  const effortDescription = compact.slice(compact.indexOf('const effortDescription'), compact.indexOf('const renderPreview'))
+  const effortOutput = compact.slice(compact.indexOf('className="quick-compact-effort-value"'), compact.indexOf('</output>', compact.indexOf('className="quick-compact-effort-value"')))
+
+  assert.match(effortSlider, /magicScale\?\.points\.map\(point => <i/)
+  assert.match(effortSlider, /magic-reached/)
+  assert.doesNotMatch(effortSlider, /quick-compact-effort-guide|recommendation\.direction|target === point\.effort|\bmagic-(?:up|down)\b/)
+  assert.doesNotMatch(effortDescription, /kind === 'apply'|targetUp|targetDown|blocked/)
+  assert.match(effortOutput, /\{effort\}/)
+  assert.match(effortOutput, /\{CHAMPIONS_EFFORT_PER_STAT_CAP\}/)
+
+  assert.doesNotMatch(css, /\.quick-compact-effort-guide|\.quick-compact-effort-scale i\.target/)
+  const tickRule = css.match(/\.quick-compact-effort-scale i\s*\{([^}]*)\}/)?.[1] ?? ''
+  const rangeRule = css.match(/\.quick-compact-effort-bounds > input\[type='range'\]\s*\{([^}]*)\}/)?.[1] ?? ''
+  assert.match(tickRule, /width:\s*2px/)
+  assert.doesNotMatch(tickRule, /rotate\(/)
+  assert.match(rangeRule, /width:\s*calc\(100% \+ var\(--effort-thumb-size\)\)/)
 })
