@@ -76,7 +76,7 @@ import PokemonSearchField from './shared/search/PokemonSearchField'
 import SearchCombobox from './shared/search/SearchCombobox'
 import { searchMoves } from './shared/search/moveSearch'
 import { byDisplayName, compareDisplayName } from './shared/search/displayOrder'
-import { loadFormLearnset, loadMoveLearners, choicesForPool, moveInPool, resolveEligibleMoveInput, commitRecordedMoveInput, recordedMoveSnapshotState, LEARNSET_SOURCE, type FormLearnset } from './domain/champions/sharedLearnsets'
+import { loadFormLearnset, loadMoveLearners, choicesForPool, eligibleMoveRecommendations, moveInPool, resolveEligibleMoveInput, commitRecordedMoveInput, recordedMoveSnapshotState, LEARNSET_SOURCE, type FormLearnset } from './domain/champions/sharedLearnsets'
 
 import { DexBrowseGrid, type DexBrowseCard } from './features/dex/DexBrowseGrid'
 import { DEX_PAGE_SIZE, dexNextPage, dexPageScope, dexScrollRestoreReady, dexVisibleCount, type DexPage, type DexScrollRestore } from './features/dex/dexPagination'
@@ -3339,7 +3339,7 @@ export default function App() {
   const revealedMoveCandidates = (query: string) => oppMovePool?.status === 'ready-verified' && oppMember.revealedMoves.length < 4 && query.trim()
     ? filterMoveOptions(query, oppMoveOptions).filter(option => !oppMember.revealedMoves.includes(option.name)).slice(0, 8)
     : []
-  const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
+  const oppTopSuggestedMoves = eligibleMoveRecommendations(usageTopMovesForKey(oppMember.key), oppMovePool)
   const myCalcAbility = calcMyKey === myMember.key ? myMember.ability : defaultAbilityForKey(calcMyKey)
   const oppCalcAbility = calcOppKey === oppMember.key ? oppMember.ability : defaultAbilityForKey(calcOppKey)
   const selectedMyAbility = resolveSelectedAbility(myRow, myCalcAbility, siteLanguage)
@@ -3924,7 +3924,7 @@ export default function App() {
         }
       })} /> : null} />
   )
-  const sampleTopSuggestedMoves = usageTopMovesForKey(sampleForge.key)
+  const sampleTopSuggestedMoves = eligibleMoveRecommendations(usageTopMovesForKey(sampleForge.key), sampleMovePool)
   const sampleCuratedMoveBuckets = [
     { id: 'core' as const, label: lt('코어'), moves: sampleMoveSet?.core ?? [] },
     { id: 'options' as const, label: lt('선택'), moves: sampleMoveSet?.options ?? [] },
@@ -5990,7 +5990,7 @@ export default function App() {
                 {sampleDamageCalcs.length ? sampleDamageCalcs.map((entry) => {
                   const bulkPresetKey = detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })
                   const opponentRegisteredMoves = Array.from({ length: 4 }, (_, slot) => entry.member.opponentMoves[slot] ?? '')
-                  const opponentTopSuggestedMoves = usageTopMovesForKey(entry.member.key)
+                  const opponentTopSuggestedMoves = eligibleMoveRecommendations(usageTopMovesForKey(entry.member.key), entry.reverse.opponentPool)
                   const selectSampleOpponentMoveAndAdvance = (slot: number, move: string) => {
                     const accepted = resolveEligibleMoveInput(move, entry.reverse.opponentPool)
                     selectSampleOpponentMove(entry.idx, slot, move)

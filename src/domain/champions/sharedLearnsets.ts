@@ -65,6 +65,17 @@ export function resolveEligibleMoveInput(raw: string, pool: { status: FormLearns
   return identity ? pool.moves.find(move => getDexGameMoveIdentity(move.name)?.id === identity.id)?.name ?? null : null
 }
 
+/** Project recommendation data through the same exact-form gate used when it is selected. */
+export function eligibleMoveRecommendations(names: readonly string[], pool: { status: FormLearnset['status'] | 'loading'; moves: MoveOption[] } | undefined): string[] {
+  const seen = new Set<string>()
+  return names.flatMap(raw => {
+    const accepted = resolveEligibleMoveInput(raw, pool)
+    if (!accepted || seen.has(accepted)) return []
+    seen.add(accepted)
+    return [accepted]
+  })
+}
+
 /** Preserve unchanged raw history and permit explicit clearing without source evidence. */
 export function commitRecordedMoveInput(raw: string, previous: string, pool: { status: FormLearnset['status'] | 'loading'; moves: MoveOption[] } | undefined): string {
   if (raw === previous) return previous

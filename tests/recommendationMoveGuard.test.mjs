@@ -10,6 +10,7 @@ import { Window } from 'happy-dom'
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
 const memberSource = readFileSync(new URL('../src/features/party/PartyMemberCard.tsx', import.meta.url), 'utf8')
 const quickSource = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+const opponentsSource = readFileSync(new URL('../src/features/single/OpponentsPickView.tsx', import.meta.url), 'utf8')
 const overviewSource = readFileSync(new URL('../src/shared/display/PokemonCardOverview.tsx', import.meta.url), 'utf8')
 const ast = ts.createSourceFile('App.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 const names = ['applyMoveToSlot', 'selectMoveOption', 'commitEditorMove', 'selectSampleMoveOption', 'applySampleCandidateMove']
@@ -138,25 +139,18 @@ test('opponent usage and picker callback cannot add unverified move while retain
   }
 })
 
-test('shared usage suggestions stay unavailable with a visible reason unless exact-form source authorizes move', () => {
+test('every selectable usage rail is projected through the shared exact-form gate', () => {
   assert.match(source, /<PartyView\b/)
-  const region = (owner, marker) => {
-    const start = owner.indexOf(marker)
-    assert.ok(start >= 0, marker)
-    return owner.slice(start, start + 2500)
-  }
-  const sections = [
-    region(memberSource, 'memberTopSuggestedMoves.map(move =>'),
-    region(quickSource, 'usageTopMovesForKey(entry.key).map(name =>'),
-    region(source, 'sampleTopSuggestedMoves.map(move =>'),
-    region(source, 'opponentTopSuggestedMoves.map(move =>'),
+  const projections = [
+    [memberSource, /eligibleMoveRecommendations\(usageTopMovesForKey\(member\.key\), memberMovePool\)/],
+    [quickSource, /eligibleMoveRecommendations\(usageTopMovesForKey\(entry\.key\), pools\[entry\.key\]\)/],
+    [opponentsSource, /eligibleMoveRecommendations\(usageTopMovesForKey\(oppMember\.key\), oppMovePool\)/],
+    [source, /eligibleMoveRecommendations\(usageTopMovesForKey\(oppMember\.key\), oppMovePool\)/],
+    [source, /eligibleMoveRecommendations\(usageTopMovesForKey\(sampleForge\.key\), sampleMovePool\)/],
+    [source, /eligibleMoveRecommendations\(usageTopMovesForKey\(entry\.member\.key\), entry\.reverse\.opponentPool\)/],
   ]
-  for (const section of sections) {
-    assert.match(section, /disabled:\s*!?(?:eligible|Boolean\(reason\))/)
-    assert.match(section, /title:\s*[^,]+/)
-    assert.match(section, /ariaLabel:\s*[^,]+/)
-    assert.match(section, /resolveEligibleMoveInput\((?:move|name),/)
-  }
+  for (const [owner, projection] of projections) assert.match(owner, projection)
+  assert.equal((source.match(/eligibleMoveRecommendations\(usageTopMovesForKey/g) ?? []).length, 3)
   assert.match(overviewSource, /disabled=\{move\.disabled\}/)
   assert.match(overviewSource, /aria-label=\{move\.ariaLabel \?\? move\.name\}/)
   assert.match(overviewSource, /title=\{move\.title\}/)
@@ -165,10 +159,11 @@ test('shared usage suggestions stay unavailable with a visible reason unless exa
 test('pending, missing and failed pools reject recommendations, while an evidenced alias normalizes only on explicit choice', async () => {
   const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent' })
   try {
-    const { resolveEligibleMoveInput, loadFormLearnset, commitRecordedMoveInput } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
+    const { resolveEligibleMoveInput, eligibleMoveRecommendations, loadFormLearnset, commitRecordedMoveInput } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
     const pool = await loadFormLearnset('mega-lopunny')
     assert.equal(resolveEligibleMoveInput('속이다', pool), null)
     assert.equal(resolveEligibleMoveInput('로우킥', pool), '안다리걸기')
+    assert.deepEqual([...eligibleMoveRecommendations(['속이다', '로우킥', '안다리걸기', '화염방사'], pool)], ['안다리걸기'])
     for (const status of ['loading', 'missing', 'load-error', 'legacy-unverified']) {
       assert.equal(resolveEligibleMoveInput('안다리걸기', { status, moves: pool.moves }), null, status)
     }

@@ -13,7 +13,7 @@ import { displayItemLabel, filterItemOptions, isAllowedChampionsItem, itemSprite
 import { resolveSelectedAbility, selectedAbilityDisplayName, heldAbilityError } from '../../shared/display/abilityPresentation'
 import { localizedAbilityLabel } from '../../domain/champions/abilityIdentity'
 import { resolveMoveType, resolveMoveMeta, filterMoveOptions } from '../../adapters/catalog/movePresentation'
-import { choicesForPool, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
+import { choicesForPool, eligibleMoveRecommendations, resolveEligibleMoveInput } from '../../domain/champions/sharedLearnsets'
 import { usageTopMovesForKey, abilityDescriptionFor } from '../../adapters/catalog/data'
 import { translateText } from '../../shared/display/translation'
 import { CHAMPIONS_EFFORT_PER_STAT_CAP } from '../../domain/champions/buildRules'
@@ -73,7 +73,7 @@ export function OpponentsPickView({ entry, siteLanguage, movePoolByKey, moveSlot
   const oppRow = oppMember.key ? (indexByKey.get(oppMember.key) ?? rows[0]) : null
   const oppMovePool = movePoolByKey[oppMember.key]
   const oppMoveOptions = choicesForPool(oppMovePool)
-  const oppTopSuggestedMoves = usageTopMovesForKey(oppMember.key)
+  const oppTopSuggestedMoves = eligibleMoveRecommendations(usageTopMovesForKey(oppMember.key), oppMovePool)
   const revealedMoveCandidates = (query: string) => oppMovePool?.status === 'ready-verified' && oppMember.revealedMoves.length < 4 && query.trim()
     ? filterMoveOptions(query, oppMoveOptions).filter(option => !oppMember.revealedMoves.includes(option.name)).slice(0, 8) : []
   return <>

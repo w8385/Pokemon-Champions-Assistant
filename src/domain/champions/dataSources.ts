@@ -28,9 +28,9 @@ export const dataSourcePolicy = {
   learnedMoveWhitelist: {
     sourceOfTruth: 'src/canonical-data/champions/championsLearnedMoveWhitelist.json',
     report: 'reports/championsLearnedMoveWhitelistReport.json',
-    primary: '현재 사이트가 실제로 학습한 종별 추천기술 화이트리스트',
-    supplements: ['src/domain/samples/sampleMoves.ts', 'src/canonical-data/champions/championsMovePools.json', 'src/canonical-data/champions/championsRecommendationAuditOverrides.json'],
-    caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함한다.',
+    primary: '현재 사이트가 실제로 학습한 종별 추천기술을 고정 게임 스냅샷의 정확한 폼별 습득 목록에 대조한 화이트리스트',
+    supplements: ['src/domain/samples/sampleMoves.ts', 'src/canonical-data/champions/dexGameLearnsets.json'],
+    caveat: '전체 기술풀이 아니라 현재 사이트가 학습/추천 중인 기술만 포함하며, 과거 시드의 구명칭은 신규 추천 자격으로 승격하지 않는다.',
   },
   moveMeta: {
     identityAndBasicType: 'src/canonical-data/champions/dexGameMoveIndex.json (510 pinned IDs)',

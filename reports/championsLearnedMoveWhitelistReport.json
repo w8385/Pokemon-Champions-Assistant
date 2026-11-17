@@ -1,19 +1,15 @@
 {
-  "generatedAt": "2026-05-15T05:53:08.635Z",
+  "generatedAt": "2026-11-17T06:51:41.046Z",
   "totals": {
     "speciesTracked": 11,
-    "whitelistMoves": 56,
+    "whitelistMoves": 59,
     "core": 22,
     "options": 22,
-    "utility": 12,
-    "presentInChampionsPool": 55,
-    "missingFromChampionsPool": 1,
+    "utility": 15,
+    "presentInExactFormPool": 59,
+    "missingFromExactFormPool": 0,
     "untranslatedMoveLabels": 0
   },
-  "missingBySpecies": {
-    "rotom": [
-      "하이드로펌프"
-    ]
-  },
+  "missingBySpecies": {},
   "untranslatedMoveLabels": []
 }

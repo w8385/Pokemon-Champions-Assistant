@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { atomicReplaceFiles, readJsonIfExists } from './lib/atomic-output.mjs'
 import championsData from '../src/canonical-data/champions/pokemon_champions_verified_data.json' with { type: 'json' }
+import dexGameMoveIndex from '../src/canonical-data/champions/dexGameMoveIndex.json' with { type: 'json' }
 import moveMetaReport from '../reports/championsMoveMetaReport.json' with { type: 'json' }
 import championsLearnedMoveMeta from '../src/canonical-data/champions/championsLearnedMoveMeta.json' with { type: 'json' }
 import pokeApiMoveDetailsCache from '../reports/pokeapiMoveDetailsCache.json' with { type: 'json' }
@@ -18,6 +19,12 @@ const BASE_URL = 'https://champs.pokedb.tokyo'
 const SINGLE_RULE = 0
 const rows = championsData.rows ?? []
 const availableMoveNames = new Set(Object.keys(championsLearnedMoveMeta))
+const canonicalMoveNames = new Set(Object.keys(dexGameMoveIndex))
+const canonicalMoveNameByApiName = new Map(
+  (moveMetaReport.generatedMoves ?? [])
+    .filter(entry => entry.apiName && canonicalMoveNames.has(entry.moveName))
+    .map(entry => [entry.apiName, entry.moveName]),
+)
 const previousOutput = await readJsonIfExists(OUTPUT_PATH, {})
 
 const FORM_QUALIFIER_BY_KEY = {
@@ -153,8 +160,8 @@ function buildJapaneseMoveMap() {
   const jaToKo = new Map()
 
   for (const entry of moveMetaReport.generatedMoves ?? []) {
-    const ko = entry.ko ?? entry.moveName
     const apiName = entry.apiName
+    const ko = canonicalMoveNameByApiName.get(apiName) ?? entry.ko ?? entry.moveName
     const ja = pokeApiMoveDetailsCache[apiName]?.names?.ja
     if (ja && ko) jaToKo.set(normalizeJaText(ja), ko)
   }
@@ -169,13 +176,13 @@ function buildJapaneseMoveMap() {
     'おんがえし': '은혜갚기',
     'グロウパンチ': '그로우펀치',
     'トリプルアクセル': '트리플악셀',
-    'ねこだまし': '속이다',
+    'ねこだまし': '속이기',
     'とんぼがえり': '유턴',
     'ドレインパンチ': '드레인펀치',
     'マッハパンチ': '마하펀치',
     'かみなりパンチ': '번개펀치',
     'つるぎのまい': '칼춤',
-    'であいがしら': '기선제압',
+    'であいがしら': '만나자마자',
   }
 
   for (const [ja, ko] of Object.entries(manualOverrides)) {

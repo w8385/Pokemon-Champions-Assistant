@@ -55,8 +55,20 @@ export function SingleEntryComparison({ language, party, selectedMy, onSelectMy,
         setOpponentDraftIdentity(side, '')
       }}
       entrySelectors={(opponentSearch, reset) => <div className="single-entry-selectors">
-        <div className="single-entry-toolbar"><div className="selected-opponent-search">{opponentSearch}</div>{reset}</div>
-        <div className="unified-pair-pickers"><div><div className="single-picker-head"><strong>{lt('내 파티')}</strong></div><div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setOpponentDraftIdentity('attacker', ''); onSelectMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, language) : lt('빈 슬롯')}</span></button> })}</div>{!party[selectedMy]?.key ? <small>{lt('빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.')}</small> : null}</div><div><div className="single-picker-head"><strong>{lt('상대 엔트리')}</strong></div><div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setOpponentDraftIdentity('defender', ''); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, language) : lt('빈 슬롯')}</span></button> })}</div></div></div>
+        <div className="unified-pair-pickers">
+          <div className="single-entry-picker-pane single-entry-picker-pane-party">
+            <div className="single-picker-head"><strong>{lt('내 파티')}</strong></div>
+            <div className="unified-pair-buttons">{party.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedMy === idx} onClick={() => { if (idx !== selectedMy) { setOpponentDraftIdentity('attacker', ''); onSelectMy(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, language) : lt('빈 슬롯')}</span></button> })}</div>
+            {!party[selectedMy]?.key ? <small>{lt('빈 슬롯: 내 파티 관리에서 포켓몬을 등록하세요.')}</small> : null}
+          </div>
+          <div className="single-entry-picker-pane single-entry-picker-pane-opponent">
+            <div className="single-picker-head single-opponent-picker-head">
+              <strong>{lt('상대 엔트리')}</strong>
+              <div className="single-entry-toolbar"><div className="selected-opponent-search">{opponentSearch}</div>{reset}</div>
+            </div>
+            <div className="unified-pair-buttons">{opponents.map((member, idx) => { const row = indexByKey.get(member.key); return <button key={idx} type="button" aria-pressed={selectedOpp === idx} onClick={() => { if (idx !== selectedOpp) { setOpponentDraftIdentity('defender', ''); setSelectedOpp(idx) } }}>{row?.sprite ? <img src={row.sprite} alt="" /> : null}<span>{idx + 1}. {row ? displayName(row, language) : lt('빈 슬롯')}</span></button> })}</div>
+          </div>
+        </div>
       </div>} />
   </div>
 }
