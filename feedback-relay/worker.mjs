@@ -256,6 +256,16 @@ export function createFeedbackWorker({ fetchImpl = globalThis.fetch, now = () =>
       const ip = request.headers.get('cf-connecting-ip')
       const rateLimitMax = parsePositiveInteger(env.RATE_LIMIT_MAX, 5, 1, 100)
       const rateLimitWindowMs = parsePositiveInteger(env.RATE_LIMIT_WINDOW_SECONDS, 60, 10, 3_600) * 1_000
+      if (ip && typeof env.FEEDBACK_RATE_LIMITER?.limit === 'function') {
+        try {
+          const edgeLimit = await env.FEEDBACK_RATE_LIMITER.limit({ key: ip })
+          if (!edgeLimit.success) {
+            return json(origin, 429, { ok: false, code: 'rate-limited' }, { 'retry-after': String(Math.ceil(rateLimitWindowMs / 1_000)) })
+          }
+        } catch {
+          // Fail open to the isolate-local fallback below if the optional binding is unavailable.
+        }
+      }
       if (ip) {
         const existing = rateBuckets.get(ip)
         const bucket = existing && existing.expiresAt > currentTime

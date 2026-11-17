@@ -1,4 +1,5 @@
 import type { FeedbackContextV1 } from '../../app/feedbackContext'
+import type { SiteLanguage } from '../../app/types'
 
 export const MAX_FEEDBACK_MESSAGE = 1_500
 export const FEEDBACK_CATEGORIES = ['bug', 'feature', 'data', 'ui', 'other'] as const
@@ -86,13 +87,15 @@ export async function postFeedback(request: FeedbackRequestV1, options: {
       referrerPolicy: 'no-referrer',
       signal: controller.signal,
     })
-    if (response.ok) {
-      let receiptId: string | undefined
+    if (response.status === 202) {
       try {
-        const body = await response.json() as { receiptId?: unknown }
-        if (typeof body.receiptId === 'string') receiptId = body.receiptId.slice(0, 100)
-      } catch { /* A 204 or non-JSON success is still a success. */ }
-      return { ok: true, ...(receiptId ? { receiptId } : {}) }
+        const body = await response.json() as { ok?: unknown; receiptId?: unknown }
+        if (body?.ok !== true) return { ok: false, code: 'unavailable', retryable: true }
+        const receiptId = typeof body.receiptId === 'string' ? body.receiptId.slice(0, 100) : undefined
+        return { ok: true, ...(receiptId ? { receiptId } : {}) }
+      } catch {
+        return { ok: false, code: 'unavailable', retryable: true }
+      }
     }
     if (response.status === 400 || response.status === 422) return { ok: false, code: 'invalid', retryable: false }
     if (response.status === 413) return { ok: false, code: 'too-large', retryable: false }
@@ -109,26 +112,42 @@ export async function postFeedback(request: FeedbackRequestV1, options: {
   }
 }
 
-const issueCategory = {
-  bug: '버그', feature: '기능 제안', data: '데이터 오류', ui: 'UI·UX', other: '기타',
-} satisfies Record<FeedbackCategory, string>
+const clipboardCopy = {
+  ko: {
+    headings: { message: '의견', category: '분류', diagnostics: '자동 첨부 정보', submission: '제출 ID' },
+    fields: { screen: '화면', route: '정규화 경로', locale: '언어', viewport: '뷰포트', app: '앱' },
+    categories: { bug: '버그', feature: '기능 제안', data: '데이터 오류', ui: 'UI·UX', other: '기타' },
+    omitted: '사용자가 화면 정보 첨부를 해제했습니다.', privacy: '파티·상대 정보, 메모, 검색어, 원본 URL은 첨부하지 않았습니다.',
+  },
+  en: {
+    headings: { message: 'Feedback', category: 'Category', diagnostics: 'Attached diagnostics', submission: 'Submission ID' },
+    fields: { screen: 'Screen', route: 'Canonical route', locale: 'Language', viewport: 'Viewport', app: 'App' },
+    categories: { bug: 'Bug', feature: 'Feature idea', data: 'Data issue', ui: 'UI/UX', other: 'Other' },
+    omitted: 'Screen details were not included.', privacy: 'Party and opponent data, notes, searches, and the original URL were not included.',
+  },
+  ja: {
+    headings: { message: '意見', category: '種類', diagnostics: '添付情報', submission: '送信ID' },
+    fields: { screen: '画面', route: '正規化経路', locale: '言語', viewport: '表示サイズ', app: 'アプリ' },
+    categories: { bug: '不具合', feature: '機能提案', data: 'データ不備', ui: 'UI・UX', other: 'その他' },
+    omitted: '画面情報は添付されていません。', privacy: 'パーティ、相手、メモ、検索語、元のURLは添付されていません。',
+  },
+} satisfies Record<SiteLanguage, {
+  headings: Record<'message' | 'category' | 'diagnostics' | 'submission', string>
+  fields: Record<'screen' | 'route' | 'locale' | 'viewport' | 'app', string>
+  categories: Record<FeedbackCategory, string>
+  omitted: string
+  privacy: string
+}>
 
-export function feedbackIssueBody(request: FeedbackRequestV1) {
+export function feedbackClipboardText(request: FeedbackRequestV1, language: SiteLanguage = 'ko') {
+  const copy = clipboardCopy[language]
   const context = request.context
   const diagnostics = context ? [
-    `- 화면: \`${context.screen.id}\``,
-    `- 정규화 경로: \`${context.screen.canonicalRoute}\``,
-    `- 언어: \`${context.locale}\``,
-    `- 뷰포트: \`${context.viewport.width} × ${context.viewport.height}\` / \`${context.viewport.pointer}\``,
-    `- 앱: \`${context.app.version}\` / \`${context.app.revision}\``,
-  ].join('\n') : '- 사용자가 화면 정보 첨부를 해제했습니다.'
-  return `## 의견\n\n${request.message}\n\n## 분류\n\n${issueCategory[request.category]}\n\n## 자동 첨부 정보\n\n${diagnostics}\n\n> 파티·상대 정보, 메모, 검색어, 원본 URL은 첨부하지 않았습니다.\n\n<!-- feedback-id: ${request.submissionId} -->`
-}
-
-export function buildFeedbackIssueUrl(request: FeedbackRequestV1) {
-  const url = new URL('https://github.com/w8385/Pokemon-Champions-Assistant/issues/new')
-  const summary = Array.from(request.message.replace(/\s+/g, ' ')).slice(0, 56).join('')
-  url.searchParams.set('title', `[${issueCategory[request.category]}] ${summary}`)
-  url.searchParams.set('body', feedbackIssueBody(request))
-  return url.toString()
+    `- ${copy.fields.screen}: \`${context.screen.id}\``,
+    `- ${copy.fields.route}: \`${context.screen.canonicalRoute}\``,
+    `- ${copy.fields.locale}: \`${context.locale}\``,
+    `- ${copy.fields.viewport}: \`${context.viewport.width} × ${context.viewport.height}\` / \`${context.viewport.pointer}\``,
+    `- ${copy.fields.app}: \`${context.app.version}\` / \`${context.app.revision}\``,
+  ].join('\n') : `- ${copy.omitted}`
+  return `${copy.headings.message}\n${request.message}\n\n${copy.headings.category}\n${copy.categories[request.category]}\n\n${copy.headings.diagnostics}\n${diagnostics}\n\n${copy.headings.submission}\n${request.submissionId}\n\n${copy.privacy}`
 }
