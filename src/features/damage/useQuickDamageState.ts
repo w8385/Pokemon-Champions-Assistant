@@ -15,7 +15,7 @@ import { abilityAdjustedTypeEffectiveness } from '../../domain/battle/typeEffect
 import { resolveDamageModifiers } from '../../domain/battle/modifierRules.ts'
 import { isChoiceScarfItem } from '../../domain/battle/statProjection.ts'
 import { CONDITIONAL_MOVE_POWER_RULES, applyTargetWeightMovePower, resolveMultiHitMeta } from '../../domain/battle/movePower.ts'
-import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, deriveAutoWeatherFromAbilities, deriveAutoTerrainFromAbilities } from '../../domain/battle/moveEffects.ts'
+import { deriveAutoWeatherFromAbilities, deriveAutoTerrainFromAbilities } from '../../domain/battle/moveEffects.ts'
 import React from 'react'
 import { CHAMPIONS_ITEM_OPTIONS } from '../../domain/champions/championsItems'
 import { classifyHeldItem, requiredMegaStone, isCalculableHeldItem } from '../../domain/champions/itemIdentity'
@@ -224,7 +224,7 @@ const lt = (text: string) => translateText(language, text)
       if (scarf && entry.ability === 'unburden' && ability !== 1) return { value: null, reason: lt('곡예 발동에는 현재 지닌 도구가 없어야 합니다.') }
       return { value: applySpeedModifiers(applySpeedStage(value, entry.speedStage), { scarf, abilityMultiplier: ability, itemMultiplier }), reason: null }
     }
-    const comparisonNature = entry.speedNatureOverride ?? quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed'))
+    const comparisonNature = quickStatNature(entry, 'speed', natureMultiplier(entry.nature, 'speed'))
     return effectiveComparisonSpeed(row, entry.evs.speed, comparisonNature, entry.speedStage, scarf, ability, entry.ability, itemMultiplier)
   }
   const mySpeedResult = speedFor(attacker, attackingRow, scarfFor(attacker), attacker.speedAbilityActive && abilityPermitted(attacker, attackingRow) ? abilityFor(attacker, attackingRow)!.multiplier : 1)
@@ -253,7 +253,7 @@ const lt = (text: string) => translateText(language, text)
       previousTargets.current[side === 'attacker' ? 0 : 1] = pairTarget(comparisonSlots?.[side === 'attacker' ? 0 : 1] ?? 0, { key })
     }
     if (comparisonMode && key === initialSides?.[side === 'attacker' ? 0 : 1].key) {
-      if (side === 'attacker') setAttacker({ ...initialSides![0], speedNatureOverride: null }); else setDefender({ ...initialSides![1], speedNatureOverride: null })
+      if (side === 'attacker') setAttacker({ ...initialSides![0] }); else setDefender({ ...initialSides![1] })
       setDirty(prev => ({ ...prev, [side]: new Set() }))
       onDraftIdentity?.(side, '')
       if (side === 'attacker') setAttackerSearch(''); else setDefenderSearch('')

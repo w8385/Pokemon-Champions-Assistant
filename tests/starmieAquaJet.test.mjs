@@ -59,5 +59,5 @@ test('selected Aqua Jet crosses the real calculation eligibility gate with water
   assert.match(owner_5, /moveInPool\(name, pool\) \? resolveMoveMeta\(name, pool, poolMap\) : null/)
   assert.match(calculator, /quickMoveSupported\(name, supportedBase\)/)
   assert.match(calculator, /const appliedSourceStats = foulPlay \? \{ \.\.\.sourceStats, attack: targetStats\.attack \} : sourceStats/)
-  assert.match(calculator, /calcDamage\(appliedSourceStats, targetStats, meta\.power/)
+  assert.match(calculator, /calcDamage\(appliedSourceStats, targetStats, resolvedMeta\.power/)
 })

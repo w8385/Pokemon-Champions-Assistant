@@ -43,5 +43,6 @@ test('four shared registered slots use compact responsive tiles and advance focu
   assert.match(css, /\.quick-side-card \.quick-hit-count-option\[aria-pressed='true'\]/)
   assert.doesNotMatch(panel, /<select value=\{effectiveHits/)
   assert.doesNotMatch(css, /\.quick-move-row\.selected\s*\{[^}]*border-inline-start/)
-  assert.match(panel, /if \(index < 3 && !entry\.moves\[index \+ 1\]\) window\.setTimeout\(\(\) => document\.getElementById\(`quick-\$\{side\}-move-\$\{index \+ 1\}`\)\?\.focus\(\), 0\)/)
+  assert.match(panel, /const nextIndex = nextOpenMoveSlot\(nextMoves, index\)/)
+  assert.match(panel, /document\.getElementById\(`quick-\$\{side\}-move-\$\{nextIndex\}`\)\?\.focus\(\)/)
 })

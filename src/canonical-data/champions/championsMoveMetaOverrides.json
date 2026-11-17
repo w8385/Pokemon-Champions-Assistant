@@ -3,6 +3,7 @@
   "드래곤애로": { "hits": 2 },
   "로우킥": { "variablePower": true },
   "바디프레스": { "usesDefenseAsAttack": true },
+  "볼가득넣기": { "category": "status" },
   "사이코쇼크": { "targetsDefenseStat": "defense" },
   "속이다": { "priority": 3 },
   "스케일샷": { "variablePower": true },

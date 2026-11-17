@@ -46,13 +46,15 @@ test('real App readers agree with pinned types for conflict moves including tool
   }
 })
 
-test('source-only 747 has unknown non-type metadata and priority across actual readers',async()=>{
+test('source-only 747 keeps its reviewed status classification and unknown scalar metadata',async()=>{
   const {api,getMoveMetadata}=await runtime()
   const name='볼가득넣기', record=getMoveMetadata(name)
   assert.equal(record.id,747)
   assert.equal(record.canonicalName,name)
   assert.equal(record.meta.type,'normal')
-  for(const field of ['category','power','accuracy','pp','priority']) {
+  assert.equal(record.meta.category,'status')
+  assert.equal(record.provenance.category,'legacy')
+  for(const field of ['power','accuracy','pp','priority']) {
     assert.equal(record.meta[field],null,field)
     assert.equal(record.provenance[field],'unknown',field)
   }

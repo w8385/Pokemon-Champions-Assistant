@@ -41,3 +41,6 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Check core workspace UI consistency
+        run: npm run check:ui-consistency

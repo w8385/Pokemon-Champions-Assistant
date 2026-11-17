@@ -6,8 +6,10 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 import { analyzePartyMatchups } from '../src/domain/party/partyAnalysis.ts'
 import { normalizedTypeChart as chart } from '../src/domain/battle/typeEffectiveness.ts'
+import { resolveAbilityAdjustedMoveMeta } from '../src/domain/battle/moveEffects.ts'
 
 const source = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8')
+const partyViewSource = readFileSync(new URL('../src/features/party/PartyView.tsx', import.meta.url), 'utf8')
 const member = (key, slot, types, ability = '', moves = []) => ({ key, name: key, slot, types, ability, moves })
 const move = (name, type, category = 'special') => ({ name, type, category })
 const members = [member('rotom', 0, ['electric', 'ghost'], 'levitate', [move('10만볼트', 'electric')]), member('dragon', 2, ['dragon', 'flying'], '', [move('프리즈드라이', 'ice')]), member('dragon', 5, ['dragon', 'flying'], '', [move('파멸의빛', 'fairy')])]
@@ -39,6 +41,19 @@ test('pure matchup cells preserve actual slots, abilities, dual types and best v
   assert.equal(row(updated, 'dragon', 'offense').count, 1)
 })
 
+test('display metadata keeps dynamic moves in party coverage while calculation-only gates stay in App', () => {
+  const shell = resolveAbilityAdjustedMoveMeta('셸암즈', { type: 'poison', category: 'special', power: 90 }, '')
+  const ragingBull = resolveAbilityAdjustedMoveMeta('레이징불', { type: 'normal', category: 'physical', power: 90 }, '', 'none', null, 'tauros-paldean')
+  assert.deepEqual([shell?.type, shell?.category], ['poison', 'special'])
+  assert.deepEqual([ragingBull?.type, ragingBull?.category], ['fighting', 'physical'])
+  const analysis = analyze([member('slowbro-galarian', 0, ['poison', 'psychic'], '', [{ name: '셸암즈', type: shell?.type, category: shell?.category }])])
+  assert.equal(row(analysis, 'fairy', 'offense').cells[0].multiplier, 2)
+  assert.equal(row(analysis, 'fairy', 'offense').cells[0].moves[0], '셸암즈')
+  assert.match(partyViewSource, /resolveAbilityAdjustedMoveMeta\(name, base, ability, 'none', null, row\.key\)/)
+  assert.doesNotMatch(source, /resolveAbilityAdjustedMoveMeta\(/)
+  assert.match(source, /resolveCalculableMoveMeta\(/)
+})
+
 let server, Panel, totalClass
 test.before(async () => { server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } }); const module = await server.ssrLoadModule('/src/features/party/PartyAnalysisPanel.tsx'); Panel = module.PartyAnalysisPanel; totalClass = module.partyTotalClass })
 test.after(async () => { await server?.close() })
@@ -56,7 +71,7 @@ test('SSR renders two semantic 18-row tables, six fixed slot headings and numeri
   assert.match(html, /파멸의빛/)
   assert.match(html, /2×/)
   assert.match(html, /빈 슬롯/)
-  assert.match(html, /<caption>.*?등록 공격기/)
+  assert.match(html, /<caption class="visually-hidden">.*?등록 공격기/)
   assert.match(html, /등록 공격기 타점/)
   assert.match(html, />약점</)
   assert.doesNotMatch(html, /등록 공격기 커버리지|약점공략/)
@@ -65,7 +80,8 @@ test('SSR renders two semantic 18-row tables, six fixed slot headings and numeri
   assert.match(unknownHtml, /확인되지 않은 기술/)
   assert.match(unknownHtml, />\?</)
   const emptyHtml = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze([member('no-attacks', 4, ['water'])]), language: 'ko', loading: false }))
-  assert.match(emptyHtml, /<td class="party-analysis-total">—<\/td><td class="party-analysis-total"[^>]*>—<\/td>/)
+  assert.equal((emptyHtml.match(/<table\b/g) ?? []).length, 1, 'an empty offense matrix should collapse to a concise state')
+  assert.match(emptyHtml, /class="muted party-analysis-empty">등록 공격기 없음<\/p>/)
 })
 
 test('count colors distinguish 0–6 and invert meaning between defensive weakness and offensive coverage', () => {
@@ -99,10 +115,12 @@ test('selected partial and loading offense details retain the matrix uncertainty
     assert.ok(detail.includes('partial · ≥0.5×'), 'selected detail must not turn the known lower bound into an exact value')
     assert.ok(detail.includes('미확인') || detail.includes('확인된 기술 기준'), 'partial details retain an explanation')
     const loadingHtml = renderToStaticMarkup(React.createElement(Panel, { analysis, language: 'ko', loading: true }))
-    const offense = loadingHtml.slice(loadingHtml.indexOf('<caption>등록 공격기'))
+    const offense = loadingHtml.slice(loadingHtml.indexOf('<caption class="visually-hidden">등록 공격기'))
     assert.match(offense, /<span>\?<\/span>/)
     const pendingDetail = loadingHtml.slice(loadingHtml.indexOf('class="party-analysis-detail"'))
     assert.ok(pendingDetail.includes('partial · ?') && pendingDetail.includes('불러오는 중'))
+    const emptyHtml = renderToStaticMarkup(React.createElement(Panel, { analysis: analyze([member('partial', 0, ['water'])]), language: 'ko', loading: false }))
+    assert.doesNotMatch(emptyHtml, /class="party-analysis-detail"/, 'a collapsed offense matrix cannot retain an orphan selected detail')
   } finally {
     React.useState = originalUseState
   }

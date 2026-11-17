@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-25T03:24:47.977Z",
+  "generatedAt": "2026-11-17T06:19:11.668Z",
   "source": {
-    "local": "src/App.tsx#typeChart",
+    "local": "src/domain/battle/typeEffectiveness.ts#typeChart",
     "remote": "PokeAPI /type endpoints"
   },
   "totals": {

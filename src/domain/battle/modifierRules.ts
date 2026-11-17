@@ -4,8 +4,10 @@ import { canonicalHeldItem as canonicalChampionsItemName, classifyHeldItem } fro
 import { effectiveDefenderAbility } from './typeEffectiveness.ts'
 import { abilityNoteLabel } from './abilityNoteLabel.ts'
 import { alwaysOnAbilityImmunity } from './abilityImmunities.ts'
-import { moveMatchesTaggedSet, SOUND_MOVE_NAMES, PUNCH_MOVE_NAMES, RECKLESS_MOVE_NAMES, SHEER_FORCE_MOVE_NAMES, BITE_MOVE_NAMES, PULSE_MOVE_NAMES, SLICING_MOVE_NAMES, CONTACT_MOVE_NAMES } from './moveTags.ts'
+import { moveMatchesTaggedSet, moveMakesContact, SOUND_MOVE_NAMES, PUNCH_MOVE_NAMES, RECKLESS_MOVE_NAMES, SHEER_FORCE_MOVE_NAMES, BITE_MOVE_NAMES, PULSE_MOVE_NAMES, SLICING_MOVE_NAMES } from './moveTags.ts'
 import { skillLinkAppliesToMove } from './movePower.ts'
+import { moveIgnoresDefensiveStage } from './moveDamageSupport.ts'
+import { applyMoveEffectivenessRule } from './typeEffectiveness.ts'
 
 export function battleStageMultiplier(stage: number) {
   if (stage > 0) return (2 + stage) / 2
@@ -76,7 +78,7 @@ export function resolveDamageModifiers(params: {
   const criticalBlocked = wantsCritical && ['battle-armor', 'shell-armor'].includes(defenderAbility)
   const effectiveCritical = wantsCritical && !criticalBlocked
   const effectiveAttackStage = defenderIgnoresAttackStage ? 0 : effectiveCritical && attackStage < 0 ? 0 : attackStage
-  const effectiveDefenseStage = attackerIgnoresDefenseStage ? 0 : effectiveCritical && defenseStage > 0 ? 0 : defenseStage
+  const effectiveDefenseStage = moveIgnoresDefensiveStage(moveName) || attackerIgnoresDefenseStage ? 0 : effectiveCritical && defenseStage > 0 ? 0 : defenseStage
   let attackMultiplier = battleStageMultiplier(effectiveAttackStage)
   let defenseMultiplier = battleStageMultiplier(effectiveDefenseStage)
   let powerMultiplier = 1
@@ -86,7 +88,7 @@ export function resolveDamageModifiers(params: {
   let finalMultiplier = 1
   const fixedFinalMods: number[] = []
   let weatherMod: number | undefined
-  let adjustedEffectiveness = effectiveness
+  let adjustedEffectiveness = applyMoveEffectivenessRule(moveName, moveType ?? baseMoveType ?? '', defenderTypes, effectiveness)
   const notes: string[] = []
   if (knockOffMultiplier > 1) notes.push('탁쳐서떨구기(상대 도구)')
   let incomingScreenName: string | null = null
@@ -256,7 +258,7 @@ export function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  if (attackerAbility === 'tough-claws' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+  if (attackerAbility === 'tough-claws' && moveMakesContact(moveName, mode)) {
     powerMultiplier *= 1.3
     notes.push(abilityNoteLabel(attackerAbility))
   }
@@ -429,7 +431,7 @@ export function resolveDamageModifiers(params: {
   }
 
   if (adjustedEffectiveness > 0 && defenderAbility === 'fluffy') {
-    if (moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+    if (moveMakesContact(moveName, mode)) {
       finalMultiplier *= 0.5
       notes.push(`${abilityNoteLabel(defenderAbility)}(접촉 반감)`)
     }
@@ -439,7 +441,7 @@ export function resolveDamageModifiers(params: {
     }
   }
 
-  if (adjustedEffectiveness > 0 && defenderAbility === 'aura-guard' && moveMatchesTaggedSet(moveName, CONTACT_MOVE_NAMES)) {
+  if (adjustedEffectiveness > 0 && defenderAbility === 'aura-guard' && moveMakesContact(moveName, mode)) {
     finalMultiplier *= 0.5
     notes.push(`${abilityNoteLabel(defenderAbility)}(접촉 반감)`)
   }
@@ -538,9 +540,9 @@ export function resolveDamageModifiers(params: {
     notes.push(abilityNoteLabel(attackerAbility))
   }
 
-  // Brick Break/Psychic Fangs remove screens before their own hit; Infiltrator
-  // passes through without removing them. Neither mutates saved battle state.
-  const ignoresScreens = moveName === '깨트리다' || moveName === '사이코팽' || attackerAbility === 'infiltrator'
+  // Brick Break/Psychic Fangs/Raging Bull remove screens before their own hit;
+  // Infiltrator passes through without removing them. Neither mutates saved state.
+  const ignoresScreens = moveName === '깨트리다' || moveName === '사이코팽' || moveName === '레이징불' || attackerAbility === 'infiltrator'
   const screenApplies = !effectiveCritical && !ignoresScreens && (auroraVeil || (mode === 'physical' ? reflect : lightScreen))
   if (screenApplies) {
     fixedFinalMods.push(format === 'Doubles' ? 2732 : 2048)

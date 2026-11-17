@@ -49,7 +49,7 @@ test('pinned IDs drive generated type while all 731 historical non-type fields a
     }
   }
   for (const name of historical) assert.deepEqual(generated[name],original[name],name)
-  assert.deepEqual(generated['볼가득넣기'],{type:'normal',category:null,power:null,accuracy:null,pp:null,priority:null})
+  assert.deepEqual(generated['볼가득넣기'],{type:'normal',category:'status',power:null,accuracy:null,pp:null,priority:null})
   assert.equal(original['성장'].type,'normal')
   assert.equal(original['집게덫'].type,'grass')
   assert.equal(generated['성장'].type,'grass')

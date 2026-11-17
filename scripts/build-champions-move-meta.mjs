@@ -84,8 +84,13 @@ async function build() {
   assert(legacyNames.length === 731 && intersection.length === 509 && historical.length === 222,'legacy evidence coverage changed')
   for (const [name,row] of Object.entries(source)) assert(Number.isInteger(row.id) && row.sourceKo && typeof row.type === 'string' && row.type,`invalid source row ${name}`)
   for (const [name,fields] of Object.entries(overrides)) {
-    assert(Object.hasOwn(legacy,name),`override without evidence: ${name}`)
     assert(!Object.hasOwn(fields,'id') && !Object.hasOwn(fields,'type'),`override must not own ID/type: ${name}`)
+    // Stuff Cheeks #747 is the sole source-only row. Its reviewed simulator
+    // classification is Status; keep this exception narrower than the row.
+    if (!Object.hasOwn(legacy,name)) {
+      assert(name === '볼가득넣기' && source[name]?.id === 747 && JSON.stringify(fields) === JSON.stringify({category:'status'}),`override without evidence: ${name}`)
+      continue
+    }
     for (const [field,value] of Object.entries(fields)) {
       // Pinned Showdown moves.ts: Frost Breath #524 and Storm Throw #480 willCrit.
       // The frozen legacy extraction omitted these mechanics; never broaden this exception.

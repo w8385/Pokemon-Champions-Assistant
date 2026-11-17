@@ -1,470 +1,439 @@
 {
-  "generatedAt": "2026-06-26T02:50:14Z",
-  "source": "Chromium headless DOM/screenshot harness",
+  "generatedAt": "2026-11-17T06:17:49Z",
+  "source": "Chromium headless DOM/overflow/screenshot harness",
+  "browser": "Google Chrome",
   "routes": [
     {
-      "id": "home",
-      "url": "http://127.0.0.1:47139/#/",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "포켓몬 챔피언스 배틀에서 파티·선출·스피드·대미지를 한 번에 정리합니다.",
-      "activePrimary": [
-        "홈"
-      ],
-      "activeSecondary": null,
-      "panelCount": 1,
-      "sectionHeadCount": 1,
-      "utilityButtonCount": 2,
-      "screenshots": [
+      "id": "party",
+      "hash": "#/party",
+      "viewports": [
         {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/home-desktop.png"
+          "id": "desktop",
+          "requestedWidth": 1440,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/party?my=0&opp=0",
+            "viewportWidth": 1440,
+            "clientWidth": 1440,
+            "scrollWidth": 1440,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 1440, got 1440"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 1440 / clientWidth 1440"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 1440x2200, got 1440x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/party-desktop.png",
+          "ok": true
         },
         {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/home-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        }
-      ],
-      "ok": true
-    },
-    {
-      "id": "single-party",
-      "url": "http://127.0.0.1:47139/#/single?tab=party",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "내 파티 관리",
-      "activePrimary": [
-        "싱글배틀 메뉴"
-      ],
-      "activeSecondary": "내 파티 관리",
-      "panelCount": 2,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
-        {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/single-party-desktop.png"
-        },
-        {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/single-party-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
-        }
-      ],
-      "ok": true
-    },
-    {
-      "id": "single-pick",
-      "url": "http://127.0.0.1:47139/#/single?tab=pick",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "상대 엔트리",
-      "activePrimary": [
-        "싱글배틀 메뉴"
-      ],
-      "activeSecondary": "상대 엔트리",
-      "panelCount": 5,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
-        {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/single-pick-desktop.png"
-        },
-        {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/single-pick-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
+          "id": "mobile",
+          "requestedWidth": 390,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/party?my=0&opp=0",
+            "viewportWidth": 390,
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 390, got 390"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 390 / clientWidth 390"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 390x2200, got 390x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/party-mobile.png",
+          "ok": true
         }
       ],
       "ok": true
     },
     {
-      "id": "single-speed",
-      "url": "http://127.0.0.1:47139/#/single?tab=speed",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "스피드 계산",
-      "activePrimary": [
-        "싱글배틀 메뉴"
-      ],
-      "activeSecondary": "스피드 계산",
-      "panelCount": 3,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
+      "id": "matchup",
+      "hash": "#/single?tab=party",
+      "viewports": [
         {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/single-speed-desktop.png"
+          "id": "desktop",
+          "requestedWidth": 1440,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/single?tab=party&my=0&opp=0",
+            "viewportWidth": 1440,
+            "clientWidth": 1440,
+            "scrollWidth": 1440,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 1440, got 1440"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 1440 / clientWidth 1440"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 1440x2200, got 1440x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/matchup-desktop.png",
+          "ok": true
         },
         {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/single-speed-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
+          "id": "mobile",
+          "requestedWidth": 390,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/single?tab=party&my=0&opp=0",
+            "viewportWidth": 390,
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 390, got 390"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 390 / clientWidth 390"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 390x2200, got 390x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/matchup-mobile.png",
+          "ok": true
         }
       ],
       "ok": true
     },
     {
-      "id": "single-power",
-      "url": "http://127.0.0.1:47139/#/single?tab=power",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "대미지 계산",
-      "activePrimary": [
-        "싱글배틀 메뉴"
-      ],
-      "activeSecondary": "대미지 계산",
-      "panelCount": 4,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
+      "id": "calculator",
+      "hash": "#/damage",
+      "viewports": [
         {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/single-power-desktop.png"
+          "id": "desktop",
+          "requestedWidth": 1440,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/damage?my=0&opp=0",
+            "viewportWidth": 1440,
+            "clientWidth": 1440,
+            "scrollWidth": 1440,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 1440, got 1440"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 1440 / clientWidth 1440"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 1440x2200, got 1440x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/calculator-desktop.png",
+          "ok": true
         },
         {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/single-power-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
-        }
-      ],
-      "ok": true
-    },
-    {
-      "id": "double-board",
-      "url": "http://127.0.0.1:47139/#/double",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "더블배틀 메뉴",
-      "activePrimary": [
-        "더블배틀 메뉴"
-      ],
-      "activeSecondary": "내 파티 관리",
-      "panelCount": 2,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
-        {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/double-board-desktop.png"
-        },
-        {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/double-board-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "subtitle",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "route content",
-          "pass": true,
-          "detail": "ok"
+          "id": "mobile",
+          "requestedWidth": 390,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/damage?my=0&opp=0",
+            "viewportWidth": 390,
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 390, got 390"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 390 / clientWidth 390"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 390x2200, got 390x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/calculator-mobile.png",
+          "ok": true
         }
       ],
       "ok": true
     },
     {
       "id": "sample-builder",
-      "url": "http://127.0.0.1:47139/#/sample-builder?sampleTab=builder",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "포켓몬 샘플 깎기",
-      "activePrimary": [
-        "포켓몬 샘플 깎기"
-      ],
-      "activeSecondary": "샘플 빌드",
-      "panelCount": 6,
-      "sectionHeadCount": 1,
-      "utilityButtonCount": 2,
-      "screenshots": [
+      "hash": "#/sample-builder",
+      "viewports": [
         {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/sample-builder-desktop.png"
+          "id": "desktop",
+          "requestedWidth": 1440,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/sample-builder?sampleTab=builder&my=0&opp=0",
+            "viewportWidth": 1440,
+            "clientWidth": 1440,
+            "scrollWidth": 1440,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 1440, got 1440"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 1440 / clientWidth 1440"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 1440x2200, got 1440x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/sample-builder-desktop.png",
+          "ok": true
         },
         {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/sample-builder-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
-        }
-      ],
-      "ok": true
-    },
-    {
-      "id": "sample-speed",
-      "url": "http://127.0.0.1:47139/#/sample-builder?sampleTab=speed",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "포켓몬 샘플 깎기",
-      "activePrimary": [
-        "포켓몬 샘플 깎기"
-      ],
-      "activeSecondary": "샘플 스피드",
-      "panelCount": 12,
-      "sectionHeadCount": 2,
-      "utilityButtonCount": 2,
-      "screenshots": [
-        {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/sample-speed-desktop.png"
-        },
-        {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/sample-speed-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
-        }
-      ],
-      "ok": true
-    },
-    {
-      "id": "sample-damage",
-      "url": "http://127.0.0.1:47139/#/sample-builder?sampleTab=damage",
-      "title": "포켓몬 챔피언스 배틀 도우미",
-      "subtitle": "포켓몬 샘플 깎기",
-      "activePrimary": [
-        "포켓몬 샘플 깎기"
-      ],
-      "activeSecondary": "샘플 대미지 계산",
-      "panelCount": 13,
-      "sectionHeadCount": 3,
-      "utilityButtonCount": 2,
-      "screenshots": [
-        {
-          "viewport": "desktop",
-          "path": "reports/ui-consistency/sample-damage-desktop.png"
-        },
-        {
-          "viewport": "mobile",
-          "path": "reports/ui-consistency/sample-damage-mobile.png"
-        }
-      ],
-      "checks": [
-        {
-          "name": "primary tab",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "utility buttons",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "page title",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "panel presence",
-          "pass": true,
-          "detail": "ok"
-        },
-        {
-          "name": "secondary tab",
-          "pass": true,
-          "detail": "ok"
+          "id": "mobile",
+          "requestedWidth": 390,
+          "requestedHeight": 2200,
+          "metrics": {
+            "ready": true,
+            "title": "포켓몬 챔피언스 배틀 도우미",
+            "hash": "#/sample-builder?sampleTab=builder&my=0&opp=0",
+            "viewportWidth": 390,
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "horizontalOverflow": false,
+            "missingSelectors": [],
+            "runtimeErrors": []
+          },
+          "checks": [
+            {
+              "name": "document ready",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "requested viewport",
+              "pass": true,
+              "detail": "expected 390, got 390"
+            },
+            {
+              "name": "core surfaces",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "runtime errors",
+              "pass": true,
+              "detail": "ok"
+            },
+            {
+              "name": "horizontal overflow",
+              "pass": true,
+              "detail": "scrollWidth 390 / clientWidth 390"
+            },
+            {
+              "name": "screenshot viewport",
+              "pass": true,
+              "detail": "expected 390x2200, got 390x2200"
+            }
+          ],
+          "screenshot": "reports/ui-consistency/sample-builder-mobile.png",
+          "ok": true
         }
       ],
       "ok": true
     }
   ],
   "summary": {
-    "passed": 9,
-    "failed": 0,
-    "warnings": 0
+    "passed": 4,
+    "failed": 0
   }
 }

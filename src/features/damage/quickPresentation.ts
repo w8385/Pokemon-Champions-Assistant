@@ -43,7 +43,7 @@ export const quickKoLabels = {
 } as const
 
 export const conciseSpeedLabels = {
-  ko: { nature: '성격 보정', scarf: '구애스카프', off: '미적용', on: '적용', partyNote: '파티 도구 변경 없음', entryNote: '엔트리 변경 없음', opponentSpeed: '상대 스피드', item: '상대 도구', ability: '상대 특성 발동', active: '발동', battle: '전투 조건', lab: '비교용 설정 · 원본 빌드 아님' },
-  en: { nature: 'Nature modifier', scarf: 'Choice Scarf', off: 'Off', on: 'On', partyNote: 'Party item unchanged', entryNote: 'Entry unchanged', opponentSpeed: 'Opponent Speed', item: 'Opponent item', ability: 'Opponent ability activation', active: 'Active', battle: 'Battle conditions', lab: 'Comparison settings · not the original build' },
-  ja: { nature: '性格補正', scarf: 'こだわりスカーフ', off: '未適用', on: '適用', partyNote: 'パーティの持ち物は変更なし', entryNote: 'エントリーは変更なし', opponentSpeed: '相手の素早さ', item: '相手の持ち物', ability: '相手の特性発動', active: '発動', battle: '戦闘条件', lab: '比較用設定 · 元のビルドではありません' },
+  ko: { nature: '비교 보정', scarf: '구애스카프', off: '미적용', on: '적용', partyNote: '파티 도구 변경 없음', entryNote: '엔트리 변경 없음', opponentSpeed: '상대 스피드', item: '상대 도구', ability: '상대 특성 발동', active: '발동', battle: '전투 조건', lab: '비교용 설정 · 원본 빌드 아님' },
+  en: { nature: 'Comparison modifier', scarf: 'Choice Scarf', off: 'Off', on: 'On', partyNote: 'Party item unchanged', entryNote: 'Entry unchanged', opponentSpeed: 'Opponent Speed', item: 'Opponent item', ability: 'Opponent ability activation', active: 'Active', battle: 'Battle conditions', lab: 'Comparison settings · not the original build' },
+  ja: { nature: '比較補正', scarf: 'こだわりスカーフ', off: '未適用', on: '適用', partyNote: 'パーティの持ち物は変更なし', entryNote: 'エントリーは変更なし', opponentSpeed: '相手の素早さ', item: '相手の持ち物', ability: '相手の特性発動', active: '発動', battle: '戦闘条件', lab: '比較用設定 · 元のビルドではありません' },
 } as const

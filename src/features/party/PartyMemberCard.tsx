@@ -12,7 +12,7 @@ import { natureById, SELECTABLE_NATURES } from '../../shared/display/naturePrese
 import { applyChampionsEffort } from '../../domain/champions/effortProjection'
 import { effortMagicProjection } from '../../domain/champions/effortMagic'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from '../../shared/display/statPresentation'
-import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions } from '../../shared/display/PokemonCardOverview'
+import { PokemonCardHeading, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, isFocusEnteringMoveUsageRail } from '../../shared/display/PokemonCardOverview'
 import { CompactStatEditor } from '../../shared/display/CompactStatEditor'
 import PokemonSearchField from '../../shared/search/PokemonSearchField'
 import { PokemonBuildFields } from '../../shared/display/PokemonBuildFields'
@@ -24,6 +24,7 @@ import { learnsetStatusText, recordedLearnsetText, type SharedPoolState } from '
 import { translateText } from '../../shared/display/translation'
 import { emptySlotLabel, natureChipLabel, resolveItemInput, partyStatValue, displayAbilities, sameMoveField } from '../../shared/display/entryHelpers'
 import type { usePartyEditor } from './usePartyEditor'
+import { nextOpenMoveSlot } from '../../domain/party/moveSlots'
 
 type Editor = ReturnType<typeof usePartyEditor>
 type CardEditor = Pick<Editor, 'partySearch' | 'setPartySearch' | 'clearPartySlot' | 'selectPartySpecies'>
@@ -57,6 +58,10 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                 const findMoveType = (moveName: string) => resolveMoveType(moveName, memberMoveOptions, movePoolByKey)
                 const registeredMoves = [...(confirmedMovesByKey[member.key] ?? [])]
                 while (registeredMoves.length < 4) registeredMoves.push('')
+                const focusNextMoveSlot = (nextMoves: readonly string[], fromIndex: number) => {
+                  const nextIndex = nextOpenMoveSlot(nextMoves, fromIndex)
+                  if (nextIndex !== null) window.setTimeout(() => document.getElementById(`party-${idx}-${member.key}-move-${nextIndex}`)?.focus(), 0)
+                }
     return (
                   <div id={`party-slot-${idx}`} className={`card entry-card party-member-card ${mainSection === 'party' && new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('edit') === String(idx) ? 'party-entry-target' : ''}`}>
                     <PokemonCardHeading sprite={row?.sprite} spriteAlt={row ? displayName(row, siteLanguage) : ''} types={row?.types}
@@ -101,8 +106,17 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                           const moveType = findMoveType(move)
                           return { id: `${moveIdx}`, name: sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, type: moveType, meta: resolveMoveMeta(move, memberMoveOptions, movePoolByKey), className: moveTypeThemeClass(moveType),
                             tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
-                            search: { id: `party-move-${member.key}-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                              onSelect: option => { selectMoveOption(member.key, moveIdx, option.key); setActiveMoveField(null) },
+                            search: { id: `party-${idx}-${member.key}-move-${moveIdx}`, options: filterMoveOptions(sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null ? moveInputDraft : move, memberMoveOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                              onSelect: option => {
+                                const accepted = resolveEligibleMoveInput(option.key, memberMovePool)
+                                selectMoveOption(member.key, moveIdx, option.key)
+                                setActiveMoveField(null)
+                                if (accepted) {
+                                  const nextMoves = [...registeredMoves]
+                                  nextMoves[moveIdx] = accepted
+                                  focusNextMoveSlot(nextMoves, moveIdx)
+                                }
+                              },
                               optionClassName: option => moveTypeThemeClass(memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type),
                               renderOption: option => <MoveCandidateRow name={option.label} type={memberMoveOptions.find(moveOption => moveOption.name === option.key)?.type} meta={resolveMoveMeta(option.key, memberMoveOptions, movePoolByKey)} labels={moveSlotLabels} />,
                               optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
@@ -114,6 +128,7 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                                 setMoveCommitNotice(null)
                               },
                               onBlur: (e) => {
+                                if (isFocusEnteringMoveUsageRail(e.currentTarget, e.relatedTarget)) return
                                 if (sameMoveField(activeMoveField, member.key, moveIdx, 'party') && moveInputDraft !== null) commitEditorMove(e.target.value, move, memberMovePool, member.key, moveIdx, 'party')
                                 setActiveMoveField((prev) => sameMoveField(prev, member.key, moveIdx, 'party') ? null : prev)
                               },
@@ -124,7 +139,13 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                               },
                             }, children: <>{recordedLearnsetText(move, memberMovePool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, memberMovePool, siteLanguage)}</small> : null}{sameMoveField(moveCommitNotice, member.key, moveIdx, 'party') ? <small role="status">{lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')}</small> : null}</> }
                         })}
-                      belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={memberTopSuggestedMoves.map(move => {
+                      belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} onFocusLeave={() => {
+                        if (activeMoveField?.scope === 'party' && activeMoveField.key === member.key) {
+                          const slotIdx = activeMoveField.slotIdx
+                          if (moveInputDraft !== null) commitEditorMove(moveInputDraft, registeredMoves[slotIdx] ?? '', memberMovePool, member.key, slotIdx, 'party')
+                        }
+                        setActiveMoveField(prev => prev?.scope === 'party' && prev.key === member.key ? null : prev)
+                      }} moves={memberTopSuggestedMoves.map(move => {
                         const selected = registeredMoves.includes(move)
                         const eligible = Boolean(resolveEligibleMoveInput(move, memberMovePool))
                         const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
@@ -132,7 +153,24 @@ export function PartyMemberCard({ member, idx, editorIdentity, siteLanguage, mai
                         const preferredSlot = sameMoveField(activeMoveField, member.key, activeMoveField?.slotIdx ?? -1, 'party') ? activeMoveField?.slotIdx : undefined
                         return { name: move, type: moveType, selected, disabled: !eligible, title: !eligible ? reason : undefined,
                           ariaLabel: !eligible ? `${move} — ${reason}` : move, className: moveTypeThemeClass(moveType),
-                          onSelect: () => applyMoveToSlot(member.key, move, preferredSlot), tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)) }
+                          onSelect: () => {
+                            const accepted = resolveEligibleMoveInput(move, memberMovePool)
+                            const existingIndex = accepted ? registeredMoves.indexOf(accepted) : -1
+                            const firstEmptyIndex = registeredMoves.findIndex(entry => !entry.trim())
+                            const targetIndex = preferredSlot ?? (existingIndex >= 0 ? existingIndex : firstEmptyIndex >= 0 ? firstEmptyIndex : 3)
+                            // The usage rail preserves input focus through mousedown so the
+                            // clicked slot remains the target. Retire its draft before the
+                            // deferred next-slot focus can fire a blur commit.
+                            setMoveInputDraft(null)
+                            setActiveMoveField(null)
+                            applyMoveToSlot(member.key, move, preferredSlot)
+                            if (accepted && !(existingIndex >= 0 && preferredSlot === undefined)) {
+                              const nextMoves = [...registeredMoves]
+                              if (existingIndex >= 0) nextMoves[existingIndex] = ''
+                              nextMoves[targetIndex] = accepted
+                              focusNextMoveSlot(nextMoves, targetIndex)
+                            }
+                          }, tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)) }
                       })} />} /> : null}
                   </div>
                 )

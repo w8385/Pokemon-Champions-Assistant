@@ -48,7 +48,14 @@ test('actual exported finite guard and slot normalization preserve original boun
     for (const [input, result] of [[NaN, 0], [Infinity, 0], [-Infinity, 0], ['invalid', 0], ['', 0], [' 1.9 ', 1], [-7, -2], [7, 2], [-0, -0]]) assert.equal(clampSpeedStage(input), result, `stage ${String(input)}`)
     assert.equal(MAX_OPPONENTS, 6)
     assert.deepEqual([...SPEED_STAGE_OPTIONS], [-2, -1, 0, 1, 2])
-    const { normalizeMoveSlots } = await vite.ssrLoadModule('/src/domain/party/moveSlots.ts')
+    const { nextOpenMoveSlot, normalizeMoveSlots } = await vite.ssrLoadModule('/src/domain/party/moveSlots.ts')
     for (const [raw, expected] of [[[' a ', '', ' b ', ''], ['a', '', 'b']], [['', '', ''], []], [[' a ', ' b ', ' c ', ' d ', ' e '], ['a', 'b', 'c', 'd']], [[' raw  inner ', ''], ['raw  inner']]]) assert.deepEqual(normalizeMoveSlots(raw), expected)
+    for (const [moves, from, expected] of [
+      [['first', '', '', ''], 0, 1],
+      [['first', 'second', '', ''], 0, 2],
+      [['', 'second', 'third', 'fourth'], 3, 0],
+      [['first', 'second', 'third', 'fourth'], 1, null],
+      [['first', '', '', ''], -1, null],
+    ]) assert.equal(nextOpenMoveSlot(moves, from), expected)
   } finally { await vite.close() }
 })

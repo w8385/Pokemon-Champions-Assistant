@@ -1,6 +1,8 @@
 import { quickMoveSupported, replaceQuickMove } from './quickDamageState.ts'
+import { CONDITIONAL_MOVE_POWER_RULES } from './movePower.ts'
 
-const CONNECTED_CONDITIONAL_POWER = new Set(['성묘', '어시스트파워', '객기', '병상첨병', '리벤지'])
+export const SAMPLE_CONDITIONAL_POWER_MOVES = Object.freeze(Object.keys(CONDITIONAL_MOVE_POWER_RULES))
+const CONNECTED_CONDITIONAL_POWER = new Set(SAMPLE_CONDITIONAL_POWER_MOVES)
 
 // Unlike compact confirmed-move lists, sample opponent moves are positional records.
 export function fixedSampleOpponentMoves(input: unknown): string[] {

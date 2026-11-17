@@ -1,6 +1,6 @@
 import type { ComparisonSeed } from './unifiedComparisonAdapter'
 
-type PairSide = ComparisonSeed & { actual: Partial<Record<'hp' | 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed', string>>; speedNatureOverride?: number | null }
+type PairSide = ComparisonSeed & { actual: Partial<Record<'hp' | 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed', string>> }
 
 export const pairTarget = (slot: number, side: Pick<ComparisonSeed, 'key'>) => JSON.stringify([slot, side.key])
 
@@ -14,7 +14,6 @@ export function resetPairAssumptions<T extends PairSide>(side: T, seed: Comparis
     speedStage: changedSpecies ? 0 : seed.speedStage,
     speedNatureKnown: dirty.has('nature') || changedSpecies ? true : seed.speedNatureKnown,
     speedNatureMultiplier: changedSpecies ? 1 : seed.speedNatureMultiplier,
-    speedNatureOverride: null,
     statNatureMultipliers: dirty.has('nature') || changedSpecies ? {} : { ...seed.statNatureMultipliers },
     speedScarfOverride: null,
     speedAbilityActive: false,

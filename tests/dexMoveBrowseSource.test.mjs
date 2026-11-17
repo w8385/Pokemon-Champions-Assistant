@@ -52,13 +52,14 @@ test('shared Dex blank and queried options prefer source type without changing l
   assert.equal(historicalEvidence['집게덫'].type,'grass')
 })
 
-test('ID 747 is in actual blank and unified search results with unknown non-type metadata', async () => {
+test('ID 747 is in actual blank and unified search results with reviewed status metadata', async () => {
   const filter = await browse()
   for (const query of ['', '볼가득넣기']) {
     const option = filter(query,{allowLoose:false}).find(option=>option.name==='볼가득넣기')
     assert.equal(option?.key,'볼가득넣기')
     assert.equal(option.meta.type,'normal')
-    for (const field of ['category','power','accuracy','pp']) assert.equal(option.meta[field],null)
+    assert.equal(option.meta.category,'status')
+    for (const field of ['power','accuracy','pp']) assert.equal(option.meta[field],null)
   }
   assert.equal(historicalEvidence['볼가득넣기'],undefined)
   assert.equal(legacy['볼가득넣기'].priority,null)

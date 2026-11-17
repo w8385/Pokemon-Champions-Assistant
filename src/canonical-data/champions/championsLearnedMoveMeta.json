@@ -1446,7 +1446,7 @@
   },
   "볼가득넣기": {
     "type": "normal",
-    "category": null,
+    "category": "status",
     "power": null,
     "accuracy": null,
     "pp": null,

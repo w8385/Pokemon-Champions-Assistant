@@ -1,5 +1,6 @@
 import type { MoveMeta } from '../../app/types'
 import { getDexGameMove, getDexGameMoveIdentity, getDexGameMoveNames } from './dexGameMoveIndex'
+import moveMetaOverrides from '../../canonical-data/champions/championsMoveMetaOverrides.json'
 
 // The catalog adapter supplies its existing mutable lazy cache without making
 // metadata identity depend on loading, React or the adapter implementation.
@@ -24,14 +25,18 @@ export function getMoveMetadata(name: string): MoveMetadata | null {
   const canonicalName = identity ? canonicalById.get(identity.id) ?? null : null
   // Preserve an alias's own historical mechanics; fall back to canonical legacy fields only if absent.
   const legacy = legacyForName(name) ?? (canonicalName ? legacyForName(canonicalName) : null) ?? null
-  if (!identity && !legacy) return null
+  const reviewedOverride = canonicalName
+    ? (moveMetaOverrides[canonicalName as keyof typeof moveMetaOverrides] as Partial<MoveMeta> | undefined) ?? null
+    : null
+  const evidence = legacy ?? reviewedOverride
+  if (!identity && !evidence) return null
   const meta: MoveMeta = identity
-    ? { ...(legacy ?? {}), type: identity.type, category: legacy?.category ?? null,
-        power: legacy?.power ?? null, accuracy: legacy?.accuracy ?? null, pp: legacy?.pp ?? null,
-        priority: legacy?.priority ?? null }
-    : { ...legacy! }
+    ? { ...(evidence ?? {}), type: identity.type, category: evidence?.category ?? null,
+        power: evidence?.power ?? null, accuracy: evidence?.accuracy ?? null, pp: evidence?.pp ?? null,
+        priority: evidence?.priority ?? null }
+    : { ...evidence! } as MoveMeta
   const provenance = Object.fromEntries((['type', 'category', 'power', 'accuracy', 'pp', 'priority'] as const).map(field => [field,
-    field === 'type' && identity ? 'game-snapshot' : legacy?.[field] != null ? 'legacy' : 'unknown',
+    field === 'type' && identity ? 'game-snapshot' : evidence?.[field] != null ? 'legacy' : 'unknown',
   ])) as MoveMetadata['provenance']
   return { id: identity?.id ?? null, canonicalName, meta, provenance }
 }

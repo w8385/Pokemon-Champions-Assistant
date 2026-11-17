@@ -11,7 +11,7 @@ const { createRoot } = await import('react-dom/client')
 const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
 const { QuickDamagePanel, quickSide, quickKoVerdict } = await (async () => Object.assign({}, ...await Promise.all(["/src/App.tsx", "/src/features/damage/QuickDamagePanel.tsx", "/src/features/damage/quickModel.ts", "/src/features/damage/quickPresentation.ts"].map(path => server.ssrLoadModule(path)))))()
 const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
-const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
+const { loadMoveMetaByName, loadUsageTopMovesByKey } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
 test.before(async () => { await Promise.all([
   loadFormLearnset('starmie'),
   loadFormLearnset('pelipper'),
@@ -23,17 +23,18 @@ test.before(async () => { await Promise.all([
   loadFormLearnset('furfrou'),
   loadFormLearnset('persian-alolan'),
   loadMoveMetaByName(),
+  loadUsageTopMovesByKey(),
 ]) })
 test.after(async () => { await server.close(); await browser.happyDOM.abort() })
 
-const fixture = (ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기', ownAbility = '', foeAbility = '') => {
-  const own = quickSide({ key: ownKey, ability: ownAbility, moves: [ownMove, '', '', ''] })
+const fixture = (ownKey = 'starmie', foeKey = 'pelipper', ownMove = '파도타기', ownAbility = '', foeAbility = '', ownMoves) => {
+  const own = quickSide({ key: ownKey, ability: ownAbility, moves: ownMoves ?? [ownMove, '', '', ''] })
   const foe = quickSide({ key: foeKey, ability: foeAbility, moves: ['파도타기', '', '', ''] })
   return [own, foe]
 }
-async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove, ownAbility, foeAbility } = {}) {
+async function mount({ comparisonMode = false, language = 'ko', ownKey, foeKey, ownMove, ownAbility, foeAbility, ownMoves } = {}) {
   localStorage.clear()
-  const sides = fixture(ownKey, foeKey, ownMove, ownAbility, foeAbility)
+  const sides = fixture(ownKey, foeKey, ownMove, ownAbility, foeAbility, ownMoves)
   if (!comparisonMode) localStorage.setItem('pokemon-champions-quick-damage:v1', JSON.stringify({ attacker: sides[0], defender: sides[1] }))
   const host = document.createElement('div'); document.body.append(host)
   const root = createRoot(host)
@@ -145,42 +146,51 @@ test('meter-equipped move preview still selects the opposite direction through t
   } finally { await view.close() }
 })
 
-test('merged Speed controls expose nature and rank without a duplicate scarf selector in KO/EN/JA', async () => {
+test('merged Speed controls expose only rank while nature stays in the shared stat editor', async () => {
   for (const comparisonMode of [false, true]) for (const [language, nature, rank, scarf] of [
-    ['ko', '성격 보정', '스피드 랭크', '구애스카프'],
-    ['en', 'Nature modifier', 'Speed stage', 'Choice Scarf'],
-    ['ja', '性格補正', '素早さランク', 'こだわりスカーフ'],
+    ['ko', '비교 보정', '스피드 랭크', '구애스카프'],
+    ['en', 'Comparison modifier', 'Speed stage', 'Choice Scarf'],
+    ['ja', '比較補正', '素早さランク', 'こだわりスカーフ'],
   ]) {
     const view = await mount({ comparisonMode, language })
     try {
       const card = view.host.querySelector('.quick-speed-comparison-card')
       const controls = card?.textContent ?? ''
-      for (const value of [nature, rank]) assert.match(controls, new RegExp(value))
-      assert.doesNotMatch(controls, new RegExp(scarf))
-      assert.equal(card?.querySelectorAll('select').length, 4, 'each lane has only nature and Speed stage')
+      assert.match(controls, new RegExp(rank))
+      for (const value of [nature, scarf]) assert.doesNotMatch(controls, new RegExp(value))
+      assert.equal(card?.querySelectorAll('select').length, 2, 'each lane owns only its Speed stage')
       assert.doesNotMatch(controls, /가정|시나리오|assumption|scenario|想定/)
     } finally { await view.close() }
   }
 })
 
-test('Speed comparison nature is isolated from the build card nature and actual stat', async () => {
+test('shared Speed nature arrow immediately drives both the build tile and comparison result', async () => {
   const view = await mount()
   try {
     const tile = view.host.querySelector('.quick-side-card[data-side="attacker"] [data-stat-code="S"]')?.closest('.stat-preview-row')
-    const select = view.host.querySelector('.quick-speed-lane-attacker .quick-speed-lane-controls select')
+    const natureUp = tile?.querySelector('.quick-compact-tile-nature .nature-up')
     const output = view.host.querySelector('.quick-speed-lane-attacker output')
-    assert.ok(tile && select && output)
-    const buildText = tile.textContent
-    const buildNature = [...tile.querySelectorAll('.quick-compact-tile-nature button')].map(button => button.getAttribute('aria-pressed'))
+    assert.ok(tile && natureUp && output)
+    assert.equal(natureUp.getAttribute('aria-pressed'), 'false')
     const before = output.textContent
-    await act(async () => {
-      select.value = '0.9'
-      select.dispatchEvent(new browser.Event('change', { bubbles: true }))
-    })
-    assert.notEqual(output.textContent, before, 'comparison-only nature changes the compared Speed')
-    assert.equal(tile.textContent, buildText, 'build Speed remains sourced from the saved nature')
-    assert.deepEqual([...tile.querySelectorAll('.quick-compact-tile-nature button')].map(button => button.getAttribute('aria-pressed')), buildNature)
+    await act(async () => natureUp.click())
+    assert.equal(natureUp.getAttribute('aria-pressed'), 'true')
+    assert.notEqual(output.textContent, before, 'the compared Speed consumes the same named nature')
   } finally { await view.close() }
+})
+
+test('shared build chip keeps the compact nature name instead of repeating its stat axes', async () => {
+  const view = await mount()
+  try {
+    const nature = view.host.querySelector('.quick-side-card[data-side="attacker"] .pokemon-build-fields .party-meta-chip:nth-child(2) strong')
+    assert.ok(nature?.textContent?.trim(), 'the compact nature name stays visible')
+    assert.doesNotMatch(nature?.textContent ?? '', /[()↑↓]/)
+  } finally { await view.close() }
+})
+
+test('legacy comparison-only nature overrides are discarded during hydration', () => {
+  const restored = quickSide({ key: 'starmie', nature: 'hardy', speedNatureOverride: 1.1 })
+  assert.equal(Object.hasOwn(restored, 'speedNatureOverride'), false)
 })
 
 test('standalone calculator keeps 1/2 card identity but uses species names in shared summaries', async () => {
@@ -344,7 +354,7 @@ test('Population Bomb starts at the visible one-hit choice instead of the legacy
   } finally { await view.close() }
 })
 
-test('choosing a move opens the next slot for continuous entry and stops after slot four', async () => {
+test('choosing a move opens the next empty slot inside the same card, including gaps and wraparound', async () => {
   const view = await mount()
   try {
     const first = view.host.querySelector('#quick-attacker-move-0')
@@ -367,7 +377,40 @@ test('choosing a move opens the next slot for continuous entry and stops after s
       finalOption.click()
       await new Promise(resolve => browser.setTimeout(resolve, 5))
     })
-    assert.notEqual(document.activeElement?.id, 'quick-defender-move-0', 'slot four does not jump to the other card')
+    assert.equal(document.activeElement?.id, 'quick-attacker-move-1', 'slot four wraps to the first remaining empty slot in the same card')
+  } finally { await view.close() }
+
+  const gap = await mount({ ownMoves: ['파도타기', '냉동빔', '', '10만볼트'] })
+  try {
+    const first = gap.host.querySelector('#quick-attacker-move-0')
+    await act(async () => first.focus())
+    const option = gap.host.querySelector('#quick-attacker-move-0-options [role="option"]')
+    assert.ok(option)
+    await act(async () => {
+      option.click()
+      await new Promise(resolve => browser.setTimeout(resolve, 5))
+    })
+    assert.equal(document.activeElement?.id, 'quick-attacker-move-2', 'a filled adjacent slot is skipped')
+  } finally { await gap.close() }
+})
+
+test('quick usage suggestion preserves the intended slot through keyboard focus', async () => {
+  const view = await mount({ ownMoves: ['파도타기', '냉동빔', '', '10만볼트'] })
+  try {
+    const card = view.host.querySelector('.quick-side-card[data-side="attacker"]')
+    const target = card?.querySelector('#quick-attacker-move-1')
+    const suggestion = [...(card?.querySelectorAll('.move-usage-suggestion') ?? [])].find(button => button.getAttribute('aria-pressed') !== 'true' && !button.disabled)
+    assert.ok(target && suggestion)
+    const selectedName = suggestion.textContent.trim()
+    await act(async () => target.focus())
+    await act(async () => suggestion.focus())
+    assert.equal(suggestion.disabled, false, 'the keyboard transition retains its replacement target')
+    await act(async () => {
+      suggestion.click()
+      await new Promise(resolve => browser.setTimeout(resolve, 5))
+    })
+    assert.equal(card.querySelector('#quick-attacker-move-1')?.value, selectedName)
+    assert.equal(document.activeElement?.id, 'quick-attacker-move-2')
   } finally { await view.close() }
 })
 

@@ -2,7 +2,7 @@ import { searchSlotPlaceholder } from './shared/display/searchSlotLabel'
 import { SPEED_STAGE_OPTIONS, MAX_OPPONENTS, clampNonNegativeInt, clampSpeedStage } from './shared/input/opponentInputPolicy'
 import { TypeBadgeImage } from './shared/display/TypeBadgeImage'
 import { sameItemField } from './shared/input/autocompleteField'
-import { normalizeMoveSlots } from './domain/party/moveSlots'
+import { nextOpenMoveSlot, normalizeMoveSlots } from './domain/party/moveSlots'
 import { filterSpeciesOptions } from './shared/search/speciesOptions'
 import { SingleEntryComparison } from './features/single/SingleEntryComparison'
 import { OpponentsPickView } from './features/single/OpponentsPickView'
@@ -22,7 +22,7 @@ import { typeChart, normalizedTypeChart, typeEffectiveness, effectiveDefenderAbi
 import { battleStageMultiplier, knockOffPowerMultiplier, isDamageGrounded, resolveDamageModifiers } from './domain/battle/modifierRules.ts'
 import { opponentSpeedValue, partySpeedValue, buildPartyBattleStats, buildOpponentBattleStats, attackingFormRow, battleFormRow, isChoiceScarfItem } from './domain/battle/statProjection.ts'
 import { ConditionalMovePowerRule, CONDITIONAL_MOVE_POWER_RULES, normalizeConditionalPowerValue, applyConditionalMovePower, weightBasedMovePower, applyTargetWeightMovePower, multiHitOptions, resolveMultiHitMeta, multiHitSummary } from './domain/battle/movePower.ts'
-import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, weatherFromAbility, deriveAutoWeatherFromAbilities, terrainFromAbility, deriveAutoTerrainFromAbilities } from './domain/battle/moveEffects.ts'
+import { resolveCalculableMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier, weatherFromAbility, deriveAutoWeatherFromAbilities, terrainFromAbility, deriveAutoTerrainFromAbilities } from './domain/battle/moveEffects.ts'
 import { PUNCH_MOVE_NAMES, BITE_MOVE_NAMES, PULSE_MOVE_NAMES, SOUND_MOVE_NAMES, SLICING_MOVE_NAMES, CONTACT_MOVE_NAMES, RECKLESS_MOVE_NAMES, SHEER_FORCE_MOVE_NAMES, DOUBLE_SPREAD_MOVE_NAMES, moveMatchesTaggedSet, protectionDamageMultiplier } from './domain/battle/moveTags.ts'
 import { MOVE_NAME_ALIASES, MOVE_NAME_ALIASES_BY_NORMALIZED, moveNameCandidates } from './domain/battle/moveAliases.ts'
 import { abilityNoteLabel, titleCaseSlug } from './domain/battle/abilityNoteLabel.ts'
@@ -70,7 +70,7 @@ import { actualStat } from './domain/champions/statMechanics'
 import { STAT_PRESENTATION as EFFORT_STAT_OPTIONS } from './shared/display/statPresentation'
 import { getSpeedAbility, speedActivationAllowed } from './domain/battle/speed/speedAbilities'
 import { compareSingleSpeed, type SingleSpeedNature, type SingleSpeedItem } from './domain/battle/singleSpeedComparison'
-import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, createReadonlyCardStats, type CardStat } from './shared/display/PokemonCardOverview'
+import { PokemonCardHeading, PokemonStatGrid, ReadonlyPokemonCard, MoveSlotsEditor, MoveCandidateRow, MoveUsageSuggestions, isFocusEnteringMoveUsageRail, createReadonlyCardStats, type CardStat } from './shared/display/PokemonCardOverview'
 import SpeedLinePanel from './features/speedline/SpeedLinePanel'
 import PokemonSearchField from './shared/search/PokemonSearchField'
 import SearchCombobox from './shared/search/SearchCombobox'
@@ -2186,7 +2186,7 @@ export default function App() {
             own: sampleBattle({ defenseStage: member.reverseDefenseStage, reflect: member.reverseReflect, lightScreen: member.reverseLightScreen, auroraVeil: member.reverseAuroraVeil, fullHp: member.reverseDefenderFullHp }),
             opponent: sampleBattle({ attackStage: member.reverseAttackStage, burned: member.reverseBurned }) } }))
   }, [sampleForge.key])
-  const [sampleOpponentMoveDraft, setSampleOpponentMoveDraft] = React.useState<{ key: string; index: number; text: string } | null>(null)
+  const [sampleOpponentMoveDraft, setSampleOpponentMoveDraft] = React.useState<{ targetIdx: number; key: string; index: number; text: string } | null>(null)
   const [sampleMoveHitCounts, setSampleMoveHitCounts] = React.useState<Record<string, number>>({})
   const [sampleSpeedSearch, setSampleSpeedSearch] = React.useState('')
 
@@ -2652,14 +2652,14 @@ export default function App() {
       }, { attackEv: 0, spAttackEv: 0, attackNature: 1, spAttackNature: 1 })
     const moveOptions = choicesForPool(movePoolByKey[attackerKey])
     const baseMoveMeta = resolveMoveMeta(moveName, moveOptions, movePoolByKey)
-    const moveMeta = resolveAbilityAdjustedMoveMeta(moveName, resolveMultiHitMeta(moveName, baseMoveMeta, null, attackerAbility), attackerAbility)
+    const moveMeta = resolveCalculableMoveMeta(moveName, resolveMultiHitMeta(moveName, baseMoveMeta, null, attackerAbility), attackerAbility, 'none', null, attackerKey)
     const moveType = moveMeta?.type ?? resolveMoveType(moveName, moveOptions, movePoolByKey) ?? null
     const mode = moveMeta?.category === 'physical' || moveMeta?.category === 'special' ? moveMeta.category : 'physical'
     const effectiveTypes = resolveAbilityAdjustedTypes(defenderRow.types, defenderAbility, 'none', 'none')
     const effectiveness = moveType ? abilityAdjustedTypeEffectiveness(moveType, effectiveTypes, defenderAbility, attackerAbility) : 1
     const guardedByWide = spreadMove && attackerMeta.side !== defenderMeta.side && (defenderMeta.side === 'my' ? doubleWideGuardMy : doubleWideGuardOpp)
     const protectedTarget = doubleProtectBySlot[defenderSlot]
-    const protectionMultiplier = protectionDamageMultiplier(attackerAbility, moveName, guardedByWide || protectedTarget)
+    const protectionMultiplier = protectionDamageMultiplier(attackerAbility, moveName, guardedByWide || protectedTarget, mode)
     const piercesProtection = protectionMultiplier > 0 && protectionMultiplier < 1
     const blockedByProtection = protectionMultiplier === 0
     const friendGuardAvailable = defenderAllyAbility === 'friend-guard'
@@ -2708,7 +2708,7 @@ export default function App() {
       modifiers.notes.push(`${abilityNoteLabel(attackerAbility)}(방어 관통 1/4)`)
     }
     const damage = blockedByProtection ? null : calcDamage(attackerStats, defenderStats, moveMeta?.power ?? 0, mode, moveType && attackerRow.types.includes(moveType) ? 1.5 : 1, modifiers!.effectiveness, moveMeta, modifiers ?? undefined)
-    const reason = blockedByProtection && guardedByWide ? lt('와이드가드로 차단됨') : blockedByProtection && protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : null
+    const reason = blockedByProtection && guardedByWide ? lt('와이드가드로 차단됨') : blockedByProtection && protectedTarget ? lt('방어로 막힘') : moveMeta?.category === 'status' ? lt('변화기는 대미지 계산 대상이 아님') : baseMoveMeta && !moveMeta ? lt('이 기술은 현재 계산 조건에서 지원되지 않습니다.') : null
     return { attackerRow, defenderRow, defenderHp: defenderStats.hp, moveType, moveMeta, damage, reason, guardedByWide, protectedTarget, friendGuard, effectiveness: modifiers?.effectiveness ?? effectiveness }
   }, [doubleFriendGuardMy, doubleFriendGuardOpp, doubleProtectBySlot, doubleSlotMeta, doubleWideGuardMy, doubleWideGuardOpp, lt, movePoolByKey, asyncDataVersion])
   const doubleDamageContext = React.useMemo(() => buildDoubleDamageContext(doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove), [buildDoubleDamageContext, doubleAttackerSlot, doubleDefenderSlot, doubleMoveName, doubleSpreadMove])
@@ -3384,11 +3384,13 @@ export default function App() {
     activeDamageMove,
     applyTargetWeightMovePower(
       activeDamageMove,
-      resolveAbilityAdjustedMoveMeta(
+      resolveCalculableMoveMeta(
         activeDamageMove,
         resolveMultiHitMeta(activeDamageMove, activeDamageMoveBaseMeta, activeDamageMoveHitCount, attackerAbilityValue),
         attackerAbilityValue,
         calcWeather,
+        null,
+        attackerMemberKey,
       ),
       defenderWeightKg,
     ),
@@ -3521,7 +3523,9 @@ export default function App() {
   }
   const applyMoveToSlot = (key: string, move: string, preferredSlotIdx?: number) => {
     const current = confirmedMovesByKey[key] ?? []
-    const slotIdx = preferredSlotIdx ?? (current.indexOf(move) >= 0 ? current.indexOf(move) : Math.min(current.length, 3))
+    const currentSlots = Array.from({ length: 4 }, (_, index) => current[index] ?? '')
+    const firstEmptyIdx = currentSlots.findIndex((entry) => !entry.trim())
+    const slotIdx = preferredSlotIdx ?? (current.indexOf(move) >= 0 ? current.indexOf(move) : firstEmptyIdx >= 0 ? firstEmptyIdx : 3)
     const accepted = resolveEligibleMoveInput(move, movePoolByKey[key])
     if (!accepted) {
       setMoveCommitNotice({ key, slotIdx, scope: 'party' })
@@ -3533,8 +3537,8 @@ export default function App() {
       const current = [...(prev[key] ?? [])]
       const existingIdx = current.indexOf(move)
       if (existingIdx >= 0 && preferredSlotIdx === undefined) {
-        current.splice(existingIdx, 1)
-        return { ...prev, [key]: current }
+        current[existingIdx] = ''
+        return { ...prev, [key]: normalizeMoveSlots(current) }
       }
       if (preferredSlotIdx !== undefined) {
         while (current.length < 4) current.push('')
@@ -3542,9 +3546,10 @@ export default function App() {
         current[preferredSlotIdx] = move
         return { ...prev, [key]: normalizeMoveSlots(current) }
       }
-      if (current.length < 4) return { ...prev, [key]: [...current, move] }
-      current[3] = move
-      return { ...prev, [key]: current }
+      while (current.length < 4) current.push('')
+      const emptyIdx = current.findIndex((entry) => !entry.trim())
+      current[emptyIdx >= 0 ? emptyIdx : 3] = move
+      return { ...prev, [key]: normalizeMoveSlots(current) }
     })
   }
   const selectMoveOption = (key: string, slotIdx: number, moveName: string) => {
@@ -3658,11 +3663,13 @@ export default function App() {
       moveName,
       applyTargetWeightMovePower(
         moveName,
-        resolveAbilityAdjustedMoveMeta(
+        resolveCalculableMoveMeta(
           moveName,
           resolveMultiHitMeta(moveName, baseMeta, hitCount, attackerAbilityValue),
           attackerAbilityValue,
           calcWeather,
+          null,
+          attackerMemberKey,
         ),
         defenderWeightKg,
       ),
@@ -3781,21 +3788,13 @@ export default function App() {
   const sampleRegisteredMoves = [...sampleLockedMoves]
   while (sampleRegisteredMoves.length < 4) sampleRegisteredMoves.push('')
   const sampleConfirmedMoves = sampleRegisteredMoves.filter(Boolean).slice(0, 4)
-  const nextOpenSampleSlot = (moves: string[], fromIdx: number) => {
-    for (let idx = fromIdx + 1; idx < 4; idx += 1) {
-      if (!moves[idx]?.trim()) return idx
-    }
-    for (let idx = 0; idx < fromIdx; idx += 1) {
-      if (!moves[idx]?.trim()) return idx
-    }
-    return null
-  }
   const focusSampleSlot = (slotIdx: number | null) => {
     if (slotIdx === null) {
       setActiveMoveField(null)
       return
     }
     setActiveMoveField({ key: sampleForge.key, slotIdx, scope: 'sample' })
+    window.setTimeout(() => document.getElementById(`sample-move-${sampleForge.key}-${slotIdx}`)?.focus(), 0)
   }
   const commitSampleMoveOption = (slotIdx: number, rawQuery: string) => {
     const top = filterMoveOptions(rawQuery, sampleMoveOptions)[0]
@@ -3808,7 +3807,7 @@ export default function App() {
       current[slotIdx] = top.name
       return normalizeMoveSlots(current)
     })
-    focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
+    focusSampleSlot(nextOpenMoveSlot(nextMoves, slotIdx))
     return true
   }
   const selectSampleMoveOption = (slotIdx: number, moveName: string) => {
@@ -3824,10 +3823,11 @@ export default function App() {
       current[slotIdx] = accepted
       return normalizeMoveSlots(current)
     })
-    focusSampleSlot(nextOpenSampleSlot(nextMoves, slotIdx))
+    focusSampleSlot(nextOpenMoveSlot(nextMoves, slotIdx))
   }
   const applySampleCandidateMove = (move: string, preferredSlotIdx: number) => {
     const accepted = resolveEligibleMoveInput(move, sampleMovePool)
+    setMoveInputDraft(null)
     if (!accepted) {
       setMoveCommitNotice({ key: sampleForge.key, slotIdx: preferredSlotIdx, scope: 'sample' })
       return
@@ -3846,7 +3846,7 @@ export default function App() {
       current[preferredSlotIdx] = move
       return normalizeMoveSlots(current)
     })
-    focusSampleSlot(nextOpenSampleSlot(nextMoves, preferredSlotIdx))
+    focusSampleSlot(nextOpenMoveSlot(nextMoves, preferredSlotIdx))
   }
   const renderSampleMoveEditor = () => (
     <MoveSlotsEditor label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`sample-${sampleForge.key}`} role="editable" selectedIndex={activeSampleMoveSlotIdx}
@@ -3874,6 +3874,7 @@ export default function App() {
                                     setMoveCommitNotice(null)
                                   },
                                   onBlur: (e) => {
+                                    if (isFocusEnteringMoveUsageRail(e.currentTarget, e.relatedTarget)) return
                                     if (sameMoveField(activeMoveField, sampleForge.key, moveIdx, 'sample') && moveInputDraft !== null) commitEditorMove(e.target.value, move, sampleMovePool, sampleForge.key, moveIdx, 'sample')
                                     setActiveMoveField((prev) => sameMoveField(prev, sampleForge.key, moveIdx, 'sample') ? null : prev)
                                   },
@@ -3895,7 +3896,13 @@ export default function App() {
                                   </div>
                                 }) : null
                             }))}
-      belowGrid={sampleTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={sampleTopSuggestedMoves.map(move => {
+      belowGrid={sampleTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} onFocusLeave={() => {
+        if (activeMoveField?.scope === 'sample' && activeMoveField.key === sampleForge.key) {
+          const slotIdx = activeMoveField.slotIdx
+          if (moveInputDraft !== null) commitEditorMove(moveInputDraft, sampleRegisteredMoves[slotIdx] ?? '', sampleMovePool, sampleForge.key, slotIdx, 'sample')
+        }
+        setActiveMoveField(prev => prev?.scope === 'sample' && prev.key === sampleForge.key ? null : prev)
+      }} moves={sampleTopSuggestedMoves.map(move => {
         const selectedSlot = sampleRegisteredMoves.indexOf(move)
         const eligible = Boolean(resolveEligibleMoveInput(move, sampleMovePool))
         const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
@@ -3908,7 +3915,11 @@ export default function App() {
           title: !eligible ? reason : undefined,
           ariaLabel: !eligible ? `${move} — ${reason}` : move,
           className: moveTypeThemeClass(moveType),
-          onSelect: () => selectedSlot >= 0 ? focusSampleSlot(selectedSlot) : applySampleCandidateMove(move, activeSampleMoveSlotIdx),
+          onSelect: () => {
+            setMoveInputDraft(null)
+            if (selectedSlot >= 0) focusSampleSlot(selectedSlot)
+            else applySampleCandidateMove(move, activeSampleMoveSlotIdx)
+          },
           tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)),
         }
       })} /> : null} />
@@ -3993,11 +4004,13 @@ export default function App() {
     const moveRule = CONDITIONAL_MOVE_POWER_RULES[moveName] ?? null
     const moveMeta = applyConditionalMovePower(
       moveName,
-      resolveAbilityAdjustedMoveMeta(
+      resolveCalculableMoveMeta(
         moveName,
         resolveMultiHitMeta(moveName, moveMetaBase, defaultHitCount, sampleAttackerAbilityValue),
         sampleAttackerAbilityValue,
         sampleBaselineWeather,
+        null,
+        sampleForge.key,
       ),
       moveRule?.defaultValue,
     )
@@ -4107,9 +4120,9 @@ export default function App() {
     const reverseRule = CONDITIONAL_MOVE_POWER_RULES[opponentMoveName]
     const reverseMeta = reverseBase && applyConditionalMovePower(opponentMoveName,
       applyTargetWeightMovePower(opponentMoveName,
-        resolveAbilityAdjustedMoveMeta(opponentMoveName,
+        resolveCalculableMoveMeta(opponentMoveName,
           resolveMultiHitMeta(opponentMoveName, reverseBase, reverseHits?.includes(condition.moveHits[reverseMoveKey]) ? condition.moveHits[reverseMoveKey] : reverseHits?.[0] ?? null, reverseAbility),
-          reverseAbility, calcWeather),
+          reverseAbility, calcWeather, null, member.key),
         typeof sampleRow.weightKg === 'number' ? sampleRow.weightKg : weightByKey[sampleRow.key] ?? null),
       reverseRule ? normalizeConditionalPowerValue(reverseRule, condition.conditionalValues[reverseMoveKey] ?? reverseRule.defaultValue) : null)
     const reverseGate = sampleDamageMoveGate(opponentMoveName, opponentPool?.status, moveInPool(opponentMoveName, opponentOptions), reverseMeta, Boolean(reverseRule && reverseBase && reverseMeta?.power))
@@ -4164,11 +4177,13 @@ export default function App() {
       moveName,
       applyTargetWeightMovePower(
         moveName,
-        resolveAbilityAdjustedMoveMeta(
+        resolveCalculableMoveMeta(
           moveName,
           resolveMultiHitMeta(moveName, moveMetaBase, moveHitCount, sampleAttackerAbilityValue),
           sampleAttackerAbilityValue,
           calcWeather,
+          null,
+          sampleForge.key,
         ),
         targetWeightKg,
       ),
@@ -5976,6 +5991,14 @@ export default function App() {
                   const bulkPresetKey = detectOpponentBulkPreset({ hpEv: entry.member.hpEv, defenseEv: entry.member.defenseEv, spDefenseEv: entry.member.spDefenseEv, defenseNature: entry.member.defenseNature, spDefenseNature: entry.member.spDefenseNature })
                   const opponentRegisteredMoves = Array.from({ length: 4 }, (_, slot) => entry.member.opponentMoves[slot] ?? '')
                   const opponentTopSuggestedMoves = usageTopMovesForKey(entry.member.key)
+                  const selectSampleOpponentMoveAndAdvance = (slot: number, move: string) => {
+                    const accepted = resolveEligibleMoveInput(move, entry.reverse.opponentPool)
+                    selectSampleOpponentMove(entry.idx, slot, move)
+                    if (!accepted) return
+                    const nextMoves = replaceSampleOpponentMove(opponentRegisteredMoves, slot, accepted)
+                    const nextSlot = nextOpenMoveSlot(nextMoves, slot)
+                    if (nextSlot !== null) window.setTimeout(() => document.getElementById(`sample-opponent-move-${entry.member.key}-${entry.idx}-${nextSlot}`)?.focus(), 0)
+                  }
                   return (
                   <div key={`sample-damage-target-${entry.idx}`} className="sample-overview-card sample-damage-target-card sample-workbench-wide-card sample-damage-compare-card">
                     {heldAbilityError(entry.member.key, entry.member.ability, siteLanguage) && <div role="alert" className="item-validation-error">{heldAbilityError(entry.member.key, entry.member.ability, siteLanguage)}</div>}
@@ -6019,33 +6042,44 @@ export default function App() {
                                {!entry.opponentEffortsValid ? <p role="alert">{lt('노력치 합계가 66을 초과하거나 유효하지 않습니다.')}</p> : null}
                                <MoveSlotsEditor label={lt('기술 배치')} labels={moveSlotLabels} ownerId={`sample-opponent-${entry.member.key}-${entry.idx}`} role="editable"
                                  slots={opponentRegisteredMoves.map((move, slot) => {
-                                   const editing = sampleOpponentMoveDraft?.key === entry.member.key && sampleOpponentMoveDraft.index === slot
+                                   const editing = sampleOpponentMoveDraft?.targetIdx === entry.idx && sampleOpponentMoveDraft.key === entry.member.key && sampleOpponentMoveDraft.index === slot
                                    const input = editing ? sampleOpponentMoveDraft.text : move
                                    const meta = resolveMoveMeta(move, entry.reverse.opponentOptions, movePoolByKey)
                                    const result = entry.reverseMoves.find(item => item.moveName === move)
                                    return { id: `${slot}`, name: input, type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
-                                       search: { id: `sample-opponent-move-${entry.member.key}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
-                                         onSelect: option => selectSampleOpponentMove(entry.idx, slot, option.key),
+                                       search: { id: `sample-opponent-move-${entry.member.key}-${entry.idx}-${slot}`, options: filterMoveOptions(input, entry.reverse.opponentOptions).slice(0, 8).map(option => ({ key: option.name, label: option.name })), showAllOnEmpty: true,
+                                         onSelect: option => selectSampleOpponentMoveAndAdvance(slot, option.key),
                                          optionClassName: option => moveTypeThemeClass(entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type),
                                          renderOption: option => <MoveCandidateRow name={option.label} type={entry.reverse.opponentOptions.find(candidate => candidate.name === option.key)?.type} meta={resolveMoveMeta(option.key, entry.reverse.opponentOptions, movePoolByKey)} labels={moveSlotLabels} />,
                                          optionProps: option => bindTooltip(moveTooltipData(option.key, siteLanguage)) },
                                        tooltipProps: bindTooltip(move ? moveTooltipData(move, siteLanguage) : null),
                                        inputProps: { placeholder: lt('상대 기술 검색'),
-                                         onFocus: () => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: move }),
-                                         onChange: event => setSampleOpponentMoveDraft({ key: entry.member.key, index: slot, text: event.target.value }),
-                                         onBlur: event => { if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value); else setSampleOpponentMoveDraft(null) },
+                                         onFocus: () => setSampleOpponentMoveDraft({ targetIdx: entry.idx, key: entry.member.key, index: slot, text: move }),
+                                         onChange: event => setSampleOpponentMoveDraft({ targetIdx: entry.idx, key: entry.member.key, index: slot, text: event.target.value }),
+                                         onBlur: event => {
+                                           if (isFocusEnteringMoveUsageRail(event.currentTarget, event.relatedTarget)) return
+                                           if (event.target.value !== move) selectSampleOpponentMove(entry.idx, slot, event.target.value)
+                                           else setSampleOpponentMoveDraft(prev => prev?.targetIdx === entry.idx && prev.key === entry.member.key && prev.index === slot ? null : prev)
+                                         },
                                        }, children: recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage) ? <small role="status">{recordedLearnsetText(move, entry.reverse.opponentPool, siteLanguage)}</small> : null,
                                      preview: move ? <div className="sample-damage-move-result"><span>{result?.damage ? <><DamageRangeMeter damage={result.damage} targetHp={result.defenderStats.hp} language={siteLanguage} compact />{result.verdict ? <strong className="damage-verdict">{result.verdict}</strong> : null}{(entry.member.key === 'aegislash' && resolveSelectedAbility(entry.row!, entry.member.ability, siteLanguage)?.slug === 'stance-change' || sampleForge.key === 'aegislash' && sampleAttackerAbilityValue === 'stance-change') ? <small className="sample-form-result">{lt('적용 폼')} · {entry.member.key === 'aegislash' ? lt('블레이드') : '—'} → {sampleForge.key === 'aegislash' ? lt(entry.conditions.own.hitForm === 'blade' ? '블레이드' : '실드') : '—'}</small> : null}</> : result?.reason}</span>
                                        {result?.moveHitOptions?.length ? <label>{lt('타수')}<select value={result.moveHitCount ?? result.moveHitOptions[0]} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'moveHits', Number(e.target.value))}>{result.moveHitOptions.map(hit => <option key={hit} value={hit}>{hit}</option>)}</select></label> : null}
                                        {result?.moveRule ? <label>{lt(result.moveRule.label)}{result.moveRule.kind === 'count' ? <input type="number" min={result.moveRule.min ?? 0} max={result.moveRule.max ?? 999} value={Number(result.moveConditionValue ?? result.moveRule.defaultValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', Number(e.target.value))} /> : <input type="checkbox" checked={Boolean(result.moveConditionValue)} onChange={e => updateSampleMoveCondition(entry.idx, 'reverse', move, 'conditionalValues', e.target.checked)} />}</label> : null}
                                      </div> : null }
                                  })}
-                                 belowGrid={opponentTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={opponentTopSuggestedMoves.map(move => {
+                                 belowGrid={opponentTopSuggestedMoves.length ? <MoveUsageSuggestions label={lt('사용률 상위 기술')} onFocusLeave={() => {
+                                   const draft = sampleOpponentMoveDraft
+                                   if (draft?.targetIdx === entry.idx && draft.key === entry.member.key) {
+                                     const previous = opponentRegisteredMoves[draft.index] ?? ''
+                                     if (draft.text !== previous) selectSampleOpponentMove(entry.idx, draft.index, draft.text)
+                                     else setSampleOpponentMoveDraft(prev => prev?.targetIdx === entry.idx && prev.key === entry.member.key ? null : prev)
+                                   }
+                                 }} moves={opponentTopSuggestedMoves.map(move => {
                                    const selectedSlot = opponentRegisteredMoves.indexOf(move)
                                    const eligible = Boolean(resolveEligibleMoveInput(move, entry.reverse.opponentPool))
                                    const reason = lt('스냅샷 후보만 새로 저장할 수 있습니다. 기존 값 유지.')
                                    const moveType = resolveMoveType(move, entry.reverse.opponentOptions, movePoolByKey)
-                                   const draftSlot = sampleOpponentMoveDraft?.key === entry.member.key ? sampleOpponentMoveDraft.index : -1
+                                   const draftSlot = sampleOpponentMoveDraft?.targetIdx === entry.idx && sampleOpponentMoveDraft.key === entry.member.key ? sampleOpponentMoveDraft.index : -1
                                    const emptySlot = opponentRegisteredMoves.findIndex(candidate => !candidate)
                                    const targetSlot = selectedSlot >= 0 ? selectedSlot : draftSlot >= 0 ? draftSlot : emptySlot >= 0 ? emptySlot : 3
                                    return {
@@ -6056,7 +6090,7 @@ export default function App() {
                                      title: !eligible ? reason : undefined,
                                      ariaLabel: !eligible ? `${move} — ${reason}` : move,
                                      className: moveTypeThemeClass(moveType),
-                                     onSelect: () => selectSampleOpponentMove(entry.idx, targetSlot, move),
+                                     onSelect: () => selectSampleOpponentMoveAndAdvance(targetSlot, move),
                                      tooltipProps: bindTooltip(moveTooltipData(move, siteLanguage)),
                                    }
                                  })} /> : null}

@@ -26,6 +26,7 @@ test('exact 18 reviewed fields and no other field or row change, including alias
     for(const [field,value] of Object.entries(record)) if(!approved.has(`${name}.${field}`)) {
       if(field==='type' && source[name]) assert.equal(value,source[name].type)
       else if((name==='얼음숨결'||name==='업어후리기')&&field==='alwaysCrit') assert.equal(value,true)
+      else if(name==='볼가득넣기'&&source[name]?.id===747&&field==='category') assert.equal(value,'status')
       else assert.deepEqual(value,baseline[field],`${name}.${field}`)
     }
     for(const field of Object.keys(baseline)) assert.ok(Object.hasOwn(record,field),`${name}.${field} missing`)

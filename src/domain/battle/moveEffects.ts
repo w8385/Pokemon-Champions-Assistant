@@ -1,16 +1,23 @@
 import type { MoveMeta, DamageWeather, DamageTerrain } from '../../app/types'
 import { normalizeSearchText } from './moveKey.ts'
 import { moveMatchesTaggedSet, SOUND_MOVE_NAMES } from './moveTags.ts'
+import { moveDynamicCategoryRule, moveDynamicTypeRule, quickDamageUnsupportedReason, ragingBullType } from './moveDamageSupport.ts'
 
-export function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string, weather: DamageWeather = 'none') {
+/** Metadata transformation only. Calculation support is enforced at calculation boundaries. */
+export function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string, weather: DamageWeather = 'none', resolvedDynamicCategory: 'physical' | 'special' | null = null, attackerKey = '') {
   if (!moveMeta) return moveMeta
   const isDamaging = moveMeta.category === 'physical' || moveMeta.category === 'special'
   if (!isDamaging) return moveMeta
   const effectiveWeather = attackerAbility === 'mega-sol' ? 'sun' : weather
-  let adjusted = moveMeta
+  const dynamicCategory = moveDynamicCategoryRule(moveName) && resolvedDynamicCategory ? resolvedDynamicCategory : null
+  let adjusted = dynamicCategory ? { ...moveMeta, category: dynamicCategory } : moveMeta
   if (normalizeSearchText(moveName) === normalizeSearchText('웨더볼') && effectiveWeather !== 'none') {
     const weatherType = effectiveWeather === 'sun' ? 'fire' : effectiveWeather === 'rain' ? 'water' : effectiveWeather === 'sand' ? 'rock' : 'ice'
     adjusted = { ...adjusted, type: weatherType, power: 100 }
+  }
+  if (moveDynamicTypeRule(moveName) === 'raging-bull') {
+    const dynamicType = ragingBullType(attackerKey)
+    if (dynamicType) adjusted = { ...adjusted, type: dynamicType }
   }
   if (adjusted.type === 'normal') {
     if (attackerAbility === 'aerilate') return { ...adjusted, type: 'flying' }
@@ -22,6 +29,14 @@ export function resolveAbilityAdjustedMoveMeta(moveName: string, moveMeta: MoveM
     return { ...adjusted, type: 'water' }
   }
   return adjusted
+}
+
+/** Reject mechanics that need unresolved battle context before damage is attempted. */
+export function resolveCalculableMoveMeta(moveName: string, moveMeta: MoveMeta | null, attackerAbility: string, weather: DamageWeather = 'none', resolvedDynamicCategory: 'physical' | 'special' | null = null, attackerKey = '') {
+  if (!moveMeta || quickDamageUnsupportedReason(moveName)) return null
+  if (moveDynamicCategoryRule(moveName) && !resolvedDynamicCategory) return null
+  if (moveDynamicTypeRule(moveName) && !ragingBullType(attackerKey)) return null
+  return resolveAbilityAdjustedMoveMeta(moveName, moveMeta, attackerAbility, weather, resolvedDynamicCategory, attackerKey)
 }
 
 export function resolveAbilityAdjustedTypes(baseTypes: string[], ability: string, weather: DamageWeather, terrain: DamageTerrain) {

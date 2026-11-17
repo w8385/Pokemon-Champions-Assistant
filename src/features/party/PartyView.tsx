@@ -45,7 +45,7 @@ export function PartyView({ workspace, editor, siteLanguage, mainSection, asyncD
       const ability = selectedAbility?.slug ?? ''
       const moves = (confirmedMovesByKey[member.key] ?? []).filter(Boolean).slice(0, 4).map(name => {
         const base = lookupMoveMeta(name)
-        const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability)
+        const adjusted = resolveAbilityAdjustedMoveMeta(name, base, ability, 'none', null, row.key)
         return { name, type: adjusted?.type ?? null, category: adjusted?.category ?? null }
       })
       return [{ key: member.key, name: displayName(row, siteLanguage), sprite: row.sprite, types: row.types, ability, moves, slot }]

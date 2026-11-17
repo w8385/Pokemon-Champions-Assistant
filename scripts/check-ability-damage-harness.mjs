@@ -1,45 +1,52 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import ts from 'typescript'
 
 const root = process.cwd()
-const appPath = path.join(root, 'src', 'App.tsx')
 const verifiedPath = path.join(root, 'src', 'canonical-data/champions/pokemon_champions_verified_data.json')
 const reportPath = path.join(root, 'reports', 'abilityDamageHarness.json')
 
-const appSource = fs.readFileSync(appPath, 'utf8')
+const calculationSources = {
+  abilityImmunities: fs.readFileSync(path.join(root, 'src', 'domain', 'battle', 'abilityImmunities.ts'), 'utf8'),
+  modifierRules: fs.readFileSync(path.join(root, 'src', 'domain', 'battle', 'modifierRules.ts'), 'utf8'),
+  moveEffects: fs.readFileSync(path.join(root, 'src', 'domain', 'battle', 'moveEffects.ts'), 'utf8'),
+  moveTags: fs.readFileSync(path.join(root, 'src', 'domain', 'battle', 'moveTags.ts'), 'utf8'),
+  statProjection: fs.readFileSync(path.join(root, 'src', 'domain', 'battle', 'statProjection.ts'), 'utf8'),
+}
 const verified = JSON.parse(fs.readFileSync(verifiedPath, 'utf8'))
 const rows = Array.isArray(verified) ? verified : verified.rows
 const allAbilities = [...new Set(rows.flatMap((row) => row.abilities || []))].sort()
 
 function extractFunctionBlock(source, name) {
-  const start = source.indexOf(`function ${name}`)
-  if (start < 0) return ''
-  const tail = source.slice(start)
-  const signatureMatch = tail.match(new RegExp(`function\\s+${name}[^]*?\\)\\s*\\{`))
-  if (!signatureMatch) return ''
-  const bodyStart = start + signatureMatch[0].length - 1
-  let depth = 0
-  for (let i = bodyStart; i < source.length; i += 1) {
-    const ch = source[i]
-    if (ch === '{') depth += 1
-    else if (ch === '}') {
-      depth -= 1
-      if (depth === 0) return source.slice(start, i + 1)
-    }
+  const sourceFile = ts.createSourceFile('ability-damage-source.ts', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  let match = null
+  function visit(node) {
+    if (ts.isFunctionDeclaration(node) && node.name?.text === name) match = node
+    if (!match) ts.forEachChild(node, visit)
   }
-  return source.slice(start)
+  visit(sourceFile)
+  return match ? source.slice(match.getStart(sourceFile), match.end) : ''
 }
 
-const damageBlock = [
-  extractFunctionBlock(appSource, 'resolveAbilityAdjustedMoveMeta'),
-  extractFunctionBlock(appSource, 'protectionDamageMultiplier'),
-  extractFunctionBlock(appSource, 'attackingFormRow'),
-  extractFunctionBlock(appSource, 'resolveAbilityAdjustedTypes'),
-  extractFunctionBlock(appSource, 'resolveStabMultiplier'),
-  extractFunctionBlock(appSource, 'weatherFromAbility'),
-  extractFunctionBlock(appSource, 'terrainFromAbility'),
-  extractFunctionBlock(appSource, 'resolveDamageModifiers'),
-].join('\n')
+const calculationFunctions = [
+  ['abilityImmunities', 'alwaysOnAbilityImmunity'],
+  ['moveEffects', 'resolveAbilityAdjustedMoveMeta'],
+  ['moveTags', 'protectionDamageMultiplier'],
+  ['statProjection', 'attackingFormRow'],
+  ['statProjection', 'battleFormRow'],
+  ['moveEffects', 'resolveAbilityAdjustedTypes'],
+  ['moveEffects', 'resolveStabMultiplier'],
+  ['moveEffects', 'weatherFromAbility'],
+  ['moveEffects', 'terrainFromAbility'],
+  ['modifierRules', 'resolveDamageModifiers'],
+]
+const extractedFunctions = calculationFunctions.map(([sourceName, functionName]) => ({
+  sourceName,
+  functionName,
+  source: extractFunctionBlock(calculationSources[sourceName], functionName),
+}))
+const missingFunctions = extractedFunctions.filter(({ source }) => !source)
+const damageBlock = extractedFunctions.map(({ source }) => source).join('\n')
 const slugMatches = [...damageBlock.matchAll(/'([a-z][a-z-]+)'/g)].map((m) => m[1])
 const implemented = new Set(slugMatches.filter((slug) => allAbilities.includes(slug)))
 
@@ -104,6 +111,11 @@ const report = {
     ability,
     implemented: implemented.has(ability),
   })),
+  calculationFunctions: extractedFunctions.map(({ sourceName, functionName, source }) => ({
+    source: `src/domain/battle/${sourceName}.ts`,
+    functionName,
+    found: Boolean(source),
+  })),
 }
 
 fs.mkdirSync(path.dirname(reportPath), { recursive: true })
@@ -115,4 +127,10 @@ console.log(`damage relevant missing: ${damageRelevantMissing.length}`)
 if (categories.uncategorized.length) {
   console.log('uncategorized abilities:')
   for (const ability of categories.uncategorized) console.log(`- ${ability}`)
+}
+if (missingFunctions.length || categories.uncategorized.length || damageRelevantMissing.length) {
+  if (missingFunctions.length) {
+    console.error(`missing calculation functions: ${missingFunctions.map(({ sourceName, functionName }) => `${sourceName}.${functionName}`).join(', ')}`)
+  }
+  process.exitCode = 1
 }
