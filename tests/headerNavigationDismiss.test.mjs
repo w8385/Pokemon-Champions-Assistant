@@ -21,7 +21,7 @@ test('library destination has explicit English and Japanese translations', () =>
 
 test('header keeps an accessible name and working utilities without a duplicated visible page title or description', () => {
   const header = source.slice(source.indexOf('<header>'), source.indexOf('</header>'))
-  assert.match(header, /<h1 className="visually-hidden">\{lt\('포켓몬 챔피언스 배틀 도우미'\)\}<\/h1>/)
+  assert.match(header, /<h1 className="visually-hidden">\{lt\('포켓몬 챔피언스 실전 계산기'\)\}<\/h1>/)
   assert.doesNotMatch(header, /menuLabelForSection\(|파티·선출·스피드·대미지/)
   assert.match(header, /setLanguageMenuOpen\(\(prev\) => !prev\)/)
   assert.match(header, /setSettingsMenuOpen\(\(prev\) => !prev\)/)

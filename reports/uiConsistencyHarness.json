@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T09:24:56Z",
+  "generatedAt": "2026-11-17T12:51:56Z",
   "source": "Chromium headless DOM/overflow/screenshot harness",
   "browser": "Google Chrome",
   "routes": [
@@ -13,7 +13,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/party?my=0&opp=0",
             "viewportWidth": 1440,
             "clientWidth": 1440,
@@ -63,7 +63,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/party?my=0&opp=0",
             "viewportWidth": 390,
             "clientWidth": 390,
@@ -120,7 +120,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/single?tab=party&my=0&opp=0",
             "viewportWidth": 1440,
             "clientWidth": 1440,
@@ -170,7 +170,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/single?tab=party&my=0&opp=0",
             "viewportWidth": 390,
             "clientWidth": 390,
@@ -227,7 +227,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/damage?my=0&opp=0",
             "viewportWidth": 1440,
             "clientWidth": 1440,
@@ -277,7 +277,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/damage?my=0&opp=0",
             "viewportWidth": 390,
             "clientWidth": 390,
@@ -334,7 +334,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/sample-builder?sampleTab=builder&my=0&opp=0",
             "viewportWidth": 1440,
             "clientWidth": 1440,
@@ -384,7 +384,7 @@
           "requestedHeight": 2200,
           "metrics": {
             "ready": true,
-            "title": "포켓몬 챔피언스 배틀 도우미",
+            "title": "포켓몬 챔피언스 실전 계산기",
             "hash": "#/sample-builder?sampleTab=builder&my=0&opp=0",
             "viewportWidth": 390,
             "clientWidth": 390,

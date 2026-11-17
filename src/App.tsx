@@ -2966,9 +2966,9 @@ export default function App() {
 
   React.useEffect(() => {
     if (typeof document === 'undefined') return
-    const siteTitle = lt('포켓몬 챔피언스 배틀 도우미')
+    const siteTitle = lt('포켓몬 챔피언스 실전 계산기')
     const siteDescription = lt('파티 관리, 상대 엔트리, 스피드 계산, 대미지 계산을 한곳에서 정리하는 포켓몬 챔피언스 배틀 도구')
-    const siteImageAlt = lt('포켓몬 챔피언스 배틀 도우미 대표 이미지')
+    const siteImageAlt = lt('포켓몬 챔피언스 실전 계산기 대표 이미지')
     document.title = siteTitle
     const setNamedMeta = (name: string, content: string) => {
       const target = document.querySelector(`meta[name="${name}"]`)
@@ -4852,7 +4852,7 @@ export default function App() {
           <div className="header-title-row">
             <div className="header-title-stack">
               <div className="header-main-row">
-                <h1 className="visually-hidden">{lt('포켓몬 챔피언스 배틀 도우미')}</h1>
+                <h1 className="visually-hidden">{lt('포켓몬 챔피언스 실전 계산기')}</h1>
                 <div className="header-utility-row">
                   <div className="header-icon-actions">
                   <div className="language-menu-wrap header-language-wrap">
