@@ -1,4 +1,5 @@
 import React from 'react'
+import { BATTLE_STAT_STAGE_OPTIONS, battleStatStageLabel } from '../../domain/battle/statStages'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { buildSpeedComparison, buildSpeedScenario } from '../../domain/battle/speed/speedLine'
 import { calculateSpeedInvestment } from '../../domain/battle/speed/speedLineInvestment'
@@ -112,7 +113,7 @@ export default function SpeedLinePanel({ rows, state, onChange, language, transl
         {select(l('refNature'), state.referenceNature, ['boost', 'neutral', 'lower'].map(key => [key, l(key)]), value => update({ referenceNature: value as SpeedLineState['referenceNature'] }))}
       </div>
       <div className="speed-line-controls speed-line-reference-options">
-        {select(l('stage'), String(referenceStage), Array.from({ length: 13 }, (_, index) => index - 6).map(stage => [String(stage), stage > 0 ? `+${stage}` : String(stage)]), value => update({ referenceStage: Number(value) }))}
+        {select(l('stage'), String(referenceStage), BATTLE_STAT_STAGE_OPTIONS.map(stage => [String(stage), battleStatStageLabel(stage)]), value => update({ referenceStage: Number(value) }))}
         {select(abilityText.reference, state.referenceAbility ?? '', [['', abilityText.noAbility], ...speedAbilitiesFor(referenceRow ?? {}).map(ability => [ability.slug, abilityLabel(ability.slug)] as [string, string]), ...(state.referenceAbility && !speedAbilitiesFor(referenceRow ?? {}).some(ability => ability.slug === state.referenceAbility) ? [[state.referenceAbility, `${state.referenceAbility} · ${abilityText.unavailable}`] as [string, string]] : [])], value => update({ referenceAbility: value || null }), !referenceRow)}
       </div>
       {result?.referenceMissing ? <p role="alert">{l('missing')}</p> : null}

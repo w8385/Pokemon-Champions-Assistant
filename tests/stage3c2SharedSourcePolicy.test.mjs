@@ -47,7 +47,7 @@ test('actual exported finite guard and slot normalization preserve original boun
     ]) assert.equal(clampNonNegativeInt(input, max), result, `number ${String(input)} / ${max}`)
     for (const [input, result] of [[NaN, 0], [Infinity, 0], [-Infinity, 0], ['invalid', 0], ['', 0], [' 1.9 ', 1], [-7, -2], [7, 2], [-0, -0]]) assert.equal(clampSpeedStage(input), result, `stage ${String(input)}`)
     assert.equal(MAX_OPPONENTS, 6)
-    assert.deepEqual([...SPEED_STAGE_OPTIONS], [-2, -1, 0, 1, 2])
+    assert.deepEqual([...SPEED_STAGE_OPTIONS], [2, 1, 0, -1, -2])
     const { nextOpenMoveSlot, normalizeMoveSlots } = await vite.ssrLoadModule('/src/domain/party/moveSlots.ts')
     for (const [raw, expected] of [[[' a ', '', ' b ', ''], ['a', '', 'b']], [['', '', ''], []], [[' a ', ' b ', ' c ', ' d ', ' e '], ['a', 'b', 'c', 'd']], [[' raw  inner ', ''], ['raw  inner']]]) assert.deepEqual(normalizeMoveSlots(raw), expected)
     for (const [moves, from, expected] of [

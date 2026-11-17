@@ -59,6 +59,7 @@
     "src/domain/battle/speed/speedModifiers.ts",
     "src/domain/battle/speedVisual.ts",
     "src/domain/battle/statProjection.ts",
+    "src/domain/battle/statStages.ts",
     "src/domain/battle/typeEffectiveness.ts",
     "src/domain/battle/unifiedComparisonSpeed.ts",
     "src/domain/champions/abilityIdentity.ts",
