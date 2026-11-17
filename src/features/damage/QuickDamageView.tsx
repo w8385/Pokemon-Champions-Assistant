@@ -1,7 +1,6 @@
 import { QuickSideCard } from './QuickSideCard'
 import { QuickConditionsView } from './QuickConditions'
 import { QuickSpeedPresentation } from './QuickSpeedPresentation'
-import { QuickDamageResult } from './QuickDamageResult'
 import { translateText } from '../../shared/display/translation.ts'
 import { UiIcon } from '../../shared/display/UiIcon'
 import { forgetDraft } from '../../adapters/persistence/comparisonDraftState'
@@ -11,7 +10,7 @@ import type { QuickDamageProps } from './QuickDamagePanel'
 import type { useQuickDamageState } from './useQuickDamageState'
 export function QuickDamageView(props: QuickDamageProps & ReturnType<typeof useQuickDamageState>) {
   const { language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies } = props
-  const { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, selectedMove, selectedSource, selectedTarget, selectedVerdict, selectedReason, result, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, moveLabel, abilityFor, abilityPermitted, calculate, searchOptions } = props.model
+  const { attacker, defender, attackingRow, defendingRow, conditions, manualFields, pools, selected, attackerSearch, defenderSearch, drafts, activeSlot, dirty, draftStorageFailed, standaloneStorageFailed, moveMetaReady, mySpeedResult, oppSpeedResult, speedVisual, abilityFor, abilityPermitted, calculate, searchOptions } = props.model
   const { setAttacker, setDefender, setConditions, setManualFields, setAttackerSearch, setDefenderSearch, setActiveSlot, setDrafts, setSelected, setDirty, setDraftStorageFailed, setSide, markDirty, selectSide } = props.commands
   const lt = (text: string) => translateText(language, text)
   const opponentSource = comparisonMode ? initialSides?.[1] : undefined
@@ -22,10 +21,7 @@ export function QuickDamageView(props: QuickDamageProps & ReturnType<typeof useQ
   }
   return <section className={`panel wide quick-damage ${comparisonMode ? 'single-workspace' : ''}`} aria-label={lt(comparisonMode ? '대면' : '계산기')}>
     {entrySelectors?.(speciesSearch('defender', lt('상대 엔트리 입력')), <button type="button" className="action-button danger" onClick={() => { if (onResetOpponents?.(defenderSearch)) setDefenderSearch('') }} title={lt('상대 엔트리·비교 초안 초기화')}><UiIcon name="trash" size={17} />{lt('상대 초기화')}</button>)}
-    <div className="quick-comparison-results">
-      <QuickSpeedPresentation language={language} comparisonMode={comparisonMode} attacker={attacker} defender={defender} attackingRow={attackingRow} defendingRow={defendingRow} speedVisual={speedVisual} mySpeedResult={mySpeedResult} oppSpeedResult={oppSpeedResult} abilityFor={abilityFor} abilityPermitted={abilityPermitted} setSide={setSide} />
-      <QuickDamageResult model={props.model} language={language} comparisonMode={comparisonMode} lt={lt} />
-    </div>
+    <QuickSpeedPresentation language={language} comparisonMode={comparisonMode} attacker={attacker} defender={defender} attackingRow={attackingRow} defendingRow={defendingRow} speedVisual={speedVisual} mySpeedResult={mySpeedResult} oppSpeedResult={oppSpeedResult} abilityFor={abilityFor} abilityPermitted={abilityPermitted} setSide={setSide} />
     <div className="quick-sides">{(['attacker', 'defender'] as const).map((side, index) => {
       const entry = side === 'attacker' ? attacker : defender
       const seed = initialSides?.[index]

@@ -11,7 +11,6 @@ const statEditor = readFileSync(new URL('../src/features/damage/QuickStatEditor.
 const compactEditor = readFileSync(new URL('../src/shared/display/CompactStatEditor.tsx', import.meta.url), 'utf8')
 const panel = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
 const hook = readFileSync(new URL('../src/features/damage/useQuickDamageState.ts', import.meta.url), 'utf8')
-const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
 const storage = readFileSync(new URL('../src/adapters/persistence/quickDamage.ts', import.meta.url), 'utf8')
 
 test('paired cards and merged Speed lanes stack before controls become cramped', () => {
@@ -38,20 +37,21 @@ test('both modes retain independent state owners and condition controls after la
   assert.match(panel, /\{entrySelectors\?\.\(speciesSearch\('defender'/)
   assert.match(cardOwner, /\{comparisonMode \? null : searchField/)
   assert.match(conditionsOwner, /\{sideBattleControls\('attacker'\)\}\{sideBattleControls\('defender'\)\}/)
-  assert.doesNotMatch(panel, /result\.damage\.rolls\.join\(', '\)/)
-  assert.match(result, /result\.damage\.rolls\.filter\(roll => roll >= result\.targetHp\)/)
+  assert.doesNotMatch(panel, /QuickDamageResult|quick-result|quick-comparison-results/)
+  assert.match(cardOwner, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
 })
 
 test('one merged Speed comparison owns both lanes without base stat or scarf editors', () => {
   const card = cardOwner.slice(cardOwner.indexOf('const sideCard ='), cardOwner.indexOf('const statCard ='))
-  const results = panel.split('className="quick-comparison-results"')[1].split('className="quick-conditions"')[0]
+  const results = panel.slice(panel.indexOf('<QuickSpeedPresentation'), panel.indexOf('className="quick-sides"'))
   assert.doesNotMatch(card, /speedCard\(/)
   assert.match(speedOwner, /className="quick-speed-comparison-card"/)
   assert.match(speedOwner, /className="quick-speed-lanes"[^]*?speedLane\('attacker', attacker, attackingRow\)[^]*?speedLane\('defender', defender, defendingRow\)/)
   assert.match(speedOwner, /className=\{`quick-speed-lane quick-speed-lane-\$\{side\}`\}/)
   assert.doesNotMatch(speedOwner, /quick-speed-chips|quick-speed-assumptions|quick-speed-base-badge|스피드 종족값|speedScarfOverride/)
   assert.match(speedOwner, /전제 조건 미충족/)
-  assert.match(results, /<QuickSpeedPresentation[^]*?<QuickDamageResult/)
+  assert.match(results, /<QuickSpeedPresentation/)
+  assert.doesNotMatch(results, /QuickDamageResult/)
   assert.match(cardOwner, /<QuickStatEditor/)
   assert.match(cardOwner, /<MoveSlotsEditor/)
 })

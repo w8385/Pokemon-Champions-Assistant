@@ -8,7 +8,6 @@ const card = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', im
 const speed = readFileSync(new URL('../src/features/damage/QuickSpeedPresentation.tsx', import.meta.url), 'utf8')
 const conditions = readFileSync(new URL('../src/features/damage/QuickConditions.tsx', import.meta.url), 'utf8')
 const quick = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
-const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
 const quickProps = readFileSync(new URL('../src/features/damage/QuickDamagePanel.tsx', import.meta.url), 'utf8')
 const single = readFileSync(new URL('../src/features/single/SingleEntryComparison.tsx', import.meta.url), 'utf8')
 assert.match(app, /mainSection === 'single' \? <SingleEntryComparison/)
@@ -33,13 +32,14 @@ test('unknown sources are localized beside build values and temporary battle con
   assert.match(conditions, /계산 조건 · 이 대면만/)
 })
 
-test('single speed shares one scale and build cards hold speed controls; selected damage omits raw rolls', () => {
+test('single speed shares one scale and build cards own every damage result without a selected duplicate', () => {
   assert.match(speed, /className="quick-speed-comparison-card"/)
   assert.match(speed, /className="quick-speed-lanes"/)
   assert.match(speed, /className=\{`quick-speed-lane quick-speed-lane-\$\{side\}`\}/)
   assert.doesNotMatch(speed, /quick-speed-summary|quick-speed-card|quick-speed-assumptions|speedScarfOverride|quick-speed-base-badge/)
   assert.match(card, /base: stat\.key === 'speed' \? projectedRow\.speed : undefined/)
-  assert.match(result, /<div className=\{`quick-result\$\{selectedVerdict[^]*?aria-live="polite"/)
-  assert.doesNotMatch(quick, /className="quick-rolls"/)
+  assert.doesNotMatch(quick, /QuickDamageResult|quick-result|quick-comparison-results/)
+  assert.match(card, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
+  assert.doesNotMatch(card, /className="quick-rolls"/)
   assert.match(css, /\.single-workspace/)
 })

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve, dirname, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
@@ -19,19 +19,20 @@ test('Quick panel and Quick-only declarations have one feature owner; both actua
   assert.match(panel, /QuickDamageView/)
   assert.doesNotMatch(panel, /function calculateQuickDamage\(/)
 })
-test('selected damage result is a focused presentation owner, not inline in the feature shell', () => {
+test('duplicate selected result owner is removed while every move tile retains damage presentation', () => {
   const view = readFileSync(new URL('../src/features/damage/QuickDamageView.tsx', import.meta.url), 'utf8')
-  const result = readFileSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url), 'utf8')
-  assert.match(view, /<QuickDamageResult model=/)
-  assert.doesNotMatch(view, /className="quick-result-head"/)
-  assert.match(result, /className="quick-result-head"/)
-  assert.match(result, /selectedReason/)
+  const card = readFileSync(new URL('../src/features/damage/QuickSideCard.tsx', import.meta.url), 'utf8')
+  assert.equal(existsSync(new URL('../src/features/damage/QuickDamageResult.tsx', import.meta.url)), false)
+  assert.doesNotMatch(view, /QuickDamageResult|quick-result|quick-comparison-results/)
+  assert.match(card, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
+  assert.match(card, /const previewVerdict = quickKoVerdict\(preview\)/)
+  assert.match(card, /quick-ko-verdict[^]*?quickKoLabels\[language\]\[previewVerdict\]/)
 })
 
-test('retargeted Quick view, state, calculation, result and standalone IO form the actual import graph', () => {
+test('retargeted Quick view, state, calculation and standalone IO form the actual import graph', () => {
   const files = {
     panel: 'QuickDamagePanel.tsx', hook: 'useQuickDamageState.ts', view: 'QuickDamageView.tsx',
-    result: 'QuickDamageResult.tsx', calculation: 'calculateQuickDamage.ts',
+    calculation: 'calculateQuickDamage.ts',
   }
   const imports = name => {
     const text = readFileSync(new URL(`../src/features/damage/${files[name]}`, import.meta.url), 'utf8')
@@ -43,9 +44,8 @@ test('retargeted Quick view, state, calculation, result and standalone IO form t
   assert.ok(imports('panel').includes('./QuickDamageView'))
   assert.ok(imports('hook').includes('./calculateQuickDamage'))
   assert.ok(imports('hook').includes('../../adapters/persistence/quickDamage'))
-  assert.ok(imports('view').includes('./QuickDamageResult'))
+  assert.ok(!imports('view').includes('./QuickDamageResult'))
   assert.ok(imports('view').includes('./QuickSpeedPresentation'))
-  assert.ok(imports('result').includes('./quickPresentation'))
   assert.ok(imports('calculation').includes('./prepareQuickDamageInput'))
   assert.ok(imports('hook').includes('./prepareQuickDamageInput'))
   assert.ok(imports('view').includes('./QuickSideCard'))

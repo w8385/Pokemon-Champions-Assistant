@@ -110,7 +110,7 @@ test('pair change and opponent reset clear manual provenance on both fields', as
   } finally { await view.cleanup() }
 })
 
-test('selected damage uses the visible automatic field in both battle directions', async () => {
+test('each move preview uses the visible automatic field in both battle directions', async () => {
   const { loadFormLearnset } = await server.ssrLoadModule('/src/domain/champions/sharedLearnsets.ts')
   const { loadMoveMetaByName } = await server.ssrLoadModule('/src/adapters/catalog/data.ts')
   await Promise.all([loadFormLearnset('pelipper'), loadFormLearnset('pincurchin'), loadMoveMetaByName()])
@@ -124,10 +124,11 @@ test('selected damage uses the visible automatic field in both battle directions
       const view = await mount(direction === 'attacker' ? source : neutralSide, direction === 'defender' ? source : neutralSide)
       try {
         assert.equal(view.values()[index], auto)
-        const computed = view.host.querySelector('.quick-result h3')?.textContent
+        const preview = () => view.host.querySelector(`.quick-side-card[data-side="${direction}"] .quick-move-preview .damage-range-values`)?.textContent
+        const computed = preview()
         assert.match(computed ?? '', /\d+–\d+/)
         await view.choose(index, 'none')
-        const neutral = view.host.querySelector('.quick-result h3')?.textContent
+        const neutral = preview()
         assert.match(neutral ?? '', /\d+–\d+/)
         assert.notEqual(computed, neutral, `${direction} ${key} ${move}: automatic field changes numerical damage`)
       } finally { await view.cleanup() }
