@@ -26,7 +26,8 @@ test('duplicate selected result owner is removed while every move tile retains d
   assert.doesNotMatch(view, /QuickDamageResult|quick-result|quick-comparison-results/)
   assert.match(card, /quick-move-preview[^]*?<DamageRangeMeter[^>]*damage=\{preview\.damage\}/)
   assert.match(card, /const previewVerdict = quickKoVerdict\(preview\)/)
-  assert.match(card, /quick-ko-verdict[^]*?quickKoLabels\[language\]\[previewVerdict\]/)
+  assert.match(card, /const verdictLabel = noEffect[^]*?quickKoLabels\[language\]\[previewVerdict\]/)
+  assert.match(card, /quick-ko-verdict[^]*?\{verdictLabel\}/)
 })
 
 test('retargeted Quick view, state, calculation and standalone IO form the actual import graph', () => {

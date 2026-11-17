@@ -44,6 +44,23 @@ import { calcDamage, type BattleStatBlock } from '../../domain/battle/damageCore
 import { DamageTerrain, DamageWeather, MoveCategory, MoveOption, NatureId, Row, SiteLanguage } from '../../app/types'
 import { abilityDescriptionFor, loadMoveMetaByName } from '../../adapters/catalog/data'
 import type { QuickDamageProps } from './QuickDamagePanel'
+
+export type QuickMoveSelection = { side: 'attacker' | 'defender'; index: number }
+
+export function firstQuickMoveSelection(
+  attackerMoves: readonly string[],
+  defenderMoves: readonly string[],
+  preferredSide: QuickMoveSelection['side'] = 'attacker',
+): QuickMoveSelection {
+  const preferredMoves = preferredSide === 'attacker' ? attackerMoves : defenderMoves
+  const preferredIndex = preferredMoves.findIndex(Boolean)
+  if (preferredIndex >= 0) return { side: preferredSide, index: preferredIndex }
+  const fallbackSide = preferredSide === 'attacker' ? 'defender' : 'attacker'
+  const fallbackMoves = fallbackSide === 'attacker' ? attackerMoves : defenderMoves
+  const fallbackIndex = fallbackMoves.findIndex(Boolean)
+  return fallbackIndex >= 0 ? { side: fallbackSide, index: fallbackIndex } : { side: 'attacker', index: 0 }
+}
+
 export function useQuickDamageState({ language, tooltipForMove, initialSides, comparisonSlots, comparisonMode = false, entrySelectors, onSaveEntry, onDraftIdentity, onOpponentSpecies, onResetOpponents, opponentResetRevision = 0, movesForSpecies, sharedMoveSpecies }: QuickDamageProps) {
 const lt = (text: string) => translateText(language, text)
 
@@ -63,7 +80,7 @@ const lt = (text: string) => translateText(language, text)
   const [configuredConditions, setConditions] = React.useState<QuickConditions>(() => {
     const input = !comparisonMode && saved.conditions && typeof saved.conditions === 'object' ? saved.conditions as Record<string, unknown> : {}
     const defaults = quickDefaultConditions()
-    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', hits: Number.isInteger(Number(input.hits)) && Number(input.hits) >= 1 && Number(input.hits) <= 10 ? Number(input.hits) : 2, moveHits: quickMoveHits(input.moveHits), moveValues: quickMoveValues(input.moveValues), critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false, gravity: input.gravity === true }
+    return { ...defaults, weather: ['none','sun','rain','sand','snow'].includes(String(input.weather)) ? input.weather as DamageWeather : 'none', terrain: ['none','electric','grassy','psychic','misty'].includes(String(input.terrain)) ? input.terrain as DamageTerrain : 'none', moveHits: quickMoveHits(input.moveHits), moveValues: quickMoveValues(input.moveValues), critical: input.critical === true, typeChangeStab: input.typeChangeStab !== false, gravity: input.gravity === true }
   })
   // The two cards own the field projection; persisted/manual conditions remain separate.
   const [manualFields, setManualFields] = React.useState(() => {
@@ -80,11 +97,7 @@ const lt = (text: string) => translateText(language, text)
   const [pools, setPools] = React.useState<Record<string, SharedPoolState>>({})
   const [activeSlot, setActiveSlot] = React.useState<{ side: 'attacker' | 'defender'; index: number } | null>(null)
   const [drafts, setDrafts] = React.useState<Record<string, string>>({})
-  const [selected, setSelected] = React.useState<{ side: 'attacker' | 'defender'; index: number }>(() => {
-    const own = initialSides?.[0].moves.findIndex(Boolean) ?? -1
-    const opp = initialSides?.[1].moves.findIndex(Boolean) ?? -1
-    return own >= 0 ? { side: 'attacker', index: own } : opp >= 0 ? { side: 'defender', index: opp } : { side: 'attacker', index: 0 }
-  })
+  const [selected, setSelected] = React.useState<QuickMoveSelection>(() => firstQuickMoveSelection(attacker.moves, defender.moves))
   const [modalSide, setModalSide] = React.useState<'attacker' | 'defender' | null>(null)
   const [modalKey, setModalKey] = React.useState('')
   const [dirty, setDirty] = React.useState<Record<'attacker' | 'defender', ReadonlySet<string>>>(() => ({ attacker: initialSides ? restoredComparisonSide(initialSides[0], 'attacker', comparisonSlots?.[0] ?? 0).dirty : new Set(), defender: initialSides ? restoredComparisonSide(initialSides[1], 'defender', comparisonSlots?.[1] ?? 0).dirty : new Set() }))
@@ -101,6 +114,12 @@ const lt = (text: string) => translateText(language, text)
     setActiveSlot(prev => prev?.side === side ? null : prev)
     setModalSide(prev => prev === side ? null : prev)
   }
+  React.useEffect(() => {
+    const selectedMoves = selected.side === 'attacker' ? attacker.moves : defender.moves
+    if (selectedMoves[selected.index]) return
+    const next = firstQuickMoveSelection(attacker.moves, defender.moves, selected.side)
+    if (next.side !== selected.side || next.index !== selected.index) setSelected(next)
+  }, [attacker.moves, defender.moves, selected.side, selected.index])
   React.useEffect(() => {
     if (!comparisonMode || !initialSides) return
     const changed = (['attacker', 'defender'] as const).map((side, index) => previousSeeds.current[index] === (index === 0 ? seed0 : seed1) ? null : restoredComparisonSide(initialSides[index], side, comparisonSlots?.[index] ?? 0))
@@ -212,7 +231,7 @@ const lt = (text: string) => translateText(language, text)
   const oppSpeedResult = speedFor(defender, defendingRow, scarfFor(defender), defender.speedAbilityActive && abilityPermitted(defender, defendingRow) ? abilityFor(defender, defendingRow)!.multiplier : 1)
   const calculate = (direction: 'attacker' | 'defender', name: string, slot = 0) => {
     const conditionKey = quickMoveConditionKey(direction, slot, name)
-    return calculateQuickDamage(prepareQuickDamageInput({ source: direction === 'attacker' ? attacker : defender, target: direction === 'attacker' ? defender : attacker, name, conditions, pools, language, hitCount: conditions.moveHits[conditionKey] ?? conditions.hits, conditionalValue: conditions.moveValues[conditionKey], sourceSpeed: direction === 'attacker' ? mySpeedResult?.value : oppSpeedResult?.value, targetSpeed: direction === 'attacker' ? oppSpeedResult?.value : mySpeedResult?.value }))
+    return calculateQuickDamage(prepareQuickDamageInput({ source: direction === 'attacker' ? attacker : defender, target: direction === 'attacker' ? defender : attacker, name, conditions, pools, language, hitCount: conditions.moveHits[conditionKey] ?? null, conditionalValue: conditions.moveValues[conditionKey], sourceSpeed: direction === 'attacker' ? mySpeedResult?.value : oppSpeedResult?.value, targetSpeed: direction === 'attacker' ? oppSpeedResult?.value : mySpeedResult?.value }))
   }
   const setSide = (side: 'attacker' | 'defender', updater: (prev: QuickSide) => QuickSide) => side === 'attacker' ? setAttacker(updater) : setDefender(updater)
   const selectSide = (side: 'attacker' | 'defender', key: string) => {

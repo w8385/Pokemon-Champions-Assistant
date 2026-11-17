@@ -36,7 +36,7 @@ export function formStats(side: QuickSide, row: Row, ability: string, form: Aegi
   return statKeys.every(key => stats[key] !== null) ? stats as BattleStatBlock : null
 }
 
-export type QuickDamageRequest = { source: QuickSide; target: QuickSide; name: string; conditions: QuickConditions; pools: Record<string, SharedPoolState>; language: SiteLanguage; hitCount?: number; conditionalValue?: ConditionalPowerValue; sourceSpeed?: number | null; targetSpeed?: number | null }
+export type QuickDamageRequest = { source: QuickSide; target: QuickSide; name: string; conditions: QuickConditions; pools: Record<string, SharedPoolState>; language: SiteLanguage; hitCount?: number | null; conditionalValue?: ConditionalPowerValue; sourceSpeed?: number | null; targetSpeed?: number | null }
 
 /** Capture mutable catalog/cache inputs once; no damage modifiers or roll calculation here. */
 export function prepareQuickDamageInput({ source, target, name, conditions, pools, language, hitCount, conditionalValue, sourceSpeed, targetSpeed }: QuickDamageRequest) {

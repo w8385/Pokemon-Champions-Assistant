@@ -61,3 +61,25 @@ test('shared text inputs use 40px while the metadata popover retains 46px and fo
   assert.ok(css.nodes.some(rule => rule.type === 'rule' && rule.selector.includes(':focus-visible') && rule.nodes.some(decl => decl.prop === 'outline' && decl.value === '2px solid var(--focus-ring)')))
   assert.ok(css.nodes.some(rule => rule.type === 'rule' && rule.selector.includes(':disabled') && rule.nodes.some(decl => decl.prop === 'opacity' && decl.value === '.55')))
 })
+
+test('move slot sizing targets only the search field and leaves local condition controls compact', () => {
+  for (const selector of [
+    '.move-slots-editor-slot > input',
+    '.move-slots-editor-slot > .pokemon-search-field input',
+  ]) {
+    assert.equal(declarations(selector).get('width'), '100%', selector)
+    assert.equal(declarations(selector).get('height'), '40px', selector)
+    assert.equal(declarations(selector).get('min-height'), '40px', selector)
+  }
+
+  const checkbox = declarations('.quick-move-condition-check input[type="checkbox"]')
+  assert.equal(checkbox.get('width'), '16px')
+  assert.equal(checkbox.get('min-width'), '16px')
+  assert.equal(checkbox.get('height'), '16px')
+  assert.equal(checkbox.get('min-height'), '16px')
+  assert.equal(checkbox.get('flex'), '0 0 16px')
+  assert.equal(declarations('.quick-move-local-condition input[type="number"]').get('width'), '48px')
+  assert.equal(declarations(".quick-side-card .quick-move-local-condition :is(select, input[type='number'])").get('height'), '22px')
+
+  assert.ok(!css.nodes.some(rule => rule.type === 'rule' && rule.selector.includes('.move-slots-editor-slot :is(input')), 'nested condition inputs must not inherit the search-field size')
+})

@@ -19,6 +19,7 @@ test.before(async () => { await Promise.all([
   loadFormLearnset('farigiraf'),
   loadFormLearnset('toucannon'),
   loadFormLearnset('weavile'),
+  loadFormLearnset('maushold'),
   loadFormLearnset('furfrou'),
   loadFormLearnset('persian-alolan'),
   loadMoveMetaByName(),
@@ -97,7 +98,9 @@ test('both modes keep each move range primary with concise target HP context', a
       const [, min, max] = range.map(Number)
       assert.ok(max > min)
       assert.match(preview?.getAttribute('aria-label') ?? '', /파도타기/)
-      const targetHp = Number(meter?.getAttribute('aria-label')?.match(/대상 HP (\d+)/)?.[1])
+      const meterLabel = meter?.getAttribute('aria-label') ?? ''
+      assert.ok(preview?.getAttribute('aria-label')?.includes(meterLabel), 'the button announces the same live range shown by its meter')
+      const targetHp = Number(meterLabel.match(/대상 HP (\d+)/)?.[1])
       assert.ok(targetHp > max)
       assert.doesNotMatch(preview?.textContent ?? '', /상성 ×1(?:\D|$)|0\/16|16\/16|16개 난수 피해|1타 불가/)
       assert.equal(preview?.querySelector('.quick-rolls'), null)
@@ -223,12 +226,15 @@ test('multi-hit decision power stays visible and every legal hit count is a dire
     assert.deepEqual(buttons.map(button => button.getAttribute('aria-pressed')), ['true', 'false', 'false', 'false'])
     assert.equal(group.querySelector('select'), null, 'hit count does not require opening a select')
     const damage = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview .damage-range-values')
+    const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
     const before = damage?.textContent
+    const beforeLabel = preview?.getAttribute('aria-label')
     await act(async () => buttons[2].click())
     assert.equal(buttons[2].getAttribute('aria-pressed'), 'true')
     const fourHitDecisionPower = Number(power.textContent.replace(/\D/g, ''))
     assert.ok(fourHitDecisionPower > initialDecisionPower)
     assert.notEqual(damage?.textContent, before, 'direct hit selection updates the move preview damage')
+    assert.notEqual(preview?.getAttribute('aria-label'), beforeLabel, 'the selected live result announces the updated range')
     const cell = group.closest('.move-slots-editor-cell')
     const input = cell.querySelector('input')
     await act(async () => input.focus())
@@ -302,12 +308,39 @@ test('Triple Axel decision power follows its escalating per-hit powers', async (
   try {
     const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
     const power = group?.querySelector('.quick-move-condition-power')
+    const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
     const buttons = [...(group?.querySelectorAll('.quick-hit-count-option') ?? [])]
     assert.deepEqual(buttons.map(button => Number(button.textContent)), [1, 2, 3])
-    assert.match(power?.textContent ?? '', /결정력\s*[\d,]+/)
-    const oneHitDecisionPower = Number(power.textContent.replace(/\D/g, ''))
+    assert.equal(buttons[0].getAttribute('aria-pressed'), 'true')
+    assert.match(power?.textContent ?? '', /결정력\s*4,200/)
+    assert.match(preview?.textContent ?? '', /15–18 \(11\.1–13\.3%\)/)
+    const initialPower = power.textContent
+    const initialDamage = preview.textContent
+    await act(async () => buttons[0].click())
+    assert.equal(power.textContent, initialPower, 'clicking the visibly selected default cannot change the calculation')
+    assert.equal(preview.textContent, initialDamage, 'one-hit preview and one-hit control share one default')
     await act(async () => buttons[2].click())
-    assert.ok(Number(power.textContent.replace(/\D/g, '')) > oneHitDecisionPower)
+    assert.match(power.textContent, /결정력\s*25,200/)
+    assert.match(preview.textContent, /82–99 \(60\.7–73\.3%\)/)
+  } finally { await view.close() }
+})
+
+test('Population Bomb starts at the visible one-hit choice instead of the legacy global two-hit default', async () => {
+  const view = await mount({ ownKey: 'maushold', ownMove: '찍찍베기' })
+  try {
+    const group = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-local-condition')
+    const power = group?.querySelector('.quick-move-condition-power')
+    const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+    const buttons = [...(group?.querySelectorAll('.quick-hit-count-option') ?? [])]
+    assert.deepEqual(buttons.map(button => Number(button.textContent)), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    assert.equal(buttons[0].getAttribute('aria-pressed'), 'true')
+    assert.match(power?.textContent ?? '', /결정력\s*2,850/)
+    assert.match(preview?.textContent ?? '', /9–12 \(6\.7–8\.9%\)/)
+    const initialPower = power.textContent
+    const initialDamage = preview.textContent
+    await act(async () => buttons[0].click())
+    assert.equal(power.textContent, initialPower)
+    assert.equal(preview.textContent, initialDamage)
   } finally { await view.close() }
 })
 
@@ -360,7 +393,6 @@ test('KO labels are localized once in the owning move preview', async () => {
 
 test('an immune move, unsupported move, and multihit move do not claim a one-hit KO', async () => {
   for (const [options, numeric] of [
-    [{ foeKey: 'garchomp', ownMove: '10만볼트' }, false],
     [{ ownMove: 'unknown move' }, false],
     [{ ownKey: 'garchomp', ownMove: '스케일샷' }, true],
   ]) {
@@ -369,6 +401,26 @@ test('an immune move, unsupported move, and multihit move do not claim a one-hit
       const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
       if (numeric) assert.match(preview?.querySelector('.damage-range-values')?.textContent ?? '', /\d+–\d+/, 'multi-hit fixture is calculable')
       assert.equal(preview?.querySelector('.quick-ko-verdict'), null, JSON.stringify(options))
+      assert.equal(preview?.classList.contains('quick-ko-certain'), false)
+      assert.equal(preview?.classList.contains('quick-ko-possible'), false)
+      assert.equal(view.host.querySelector('.quick-result'), null)
+    } finally { await view.close() }
+  }
+})
+
+test('immunity is visible and announced with the same zero range in KO/EN/JA', async () => {
+  for (const [language, label, range] of [
+    ['ko', '무효', /대미지 0–0, 대상 HP \d+의 0(?:\.0)?–0(?:\.0)?%/],
+    ['en', 'No effect', /Damage 0–0, 0(?:\.0)?–0(?:\.0)?% of target HP \d+/],
+    ['ja', '無効', /ダメージ 0–0、対象HP \d+ の 0(?:\.0)?–0(?:\.0)?%/],
+  ]) {
+    const view = await mount({ foeKey: 'garchomp', ownMove: '10만볼트', language })
+    try {
+      const preview = view.host.querySelector('.quick-side-card[data-side="attacker"] .quick-move-preview')
+      assert.equal(preview?.querySelector('.quick-effectiveness-immune')?.textContent, label)
+      assert.match(preview?.getAttribute('aria-label') ?? '', range)
+      assert.match(preview?.getAttribute('aria-label') ?? '', new RegExp(`${label}$`))
+      assert.equal(preview?.querySelector('.quick-ko-verdict'), null)
       assert.equal(preview?.classList.contains('quick-ko-certain'), false)
       assert.equal(preview?.classList.contains('quick-ko-possible'), false)
       assert.equal(view.host.querySelector('.quick-result'), null)

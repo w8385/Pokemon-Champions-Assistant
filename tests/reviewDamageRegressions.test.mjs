@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { calcDamage } from '../src/domain/battle/damageCore.ts'
 import { resolveDamageModifiers } from '../src/domain/battle/modifierRules.ts'
-import { multiHitOptions, multiHitSummary, resolveMultiHitMeta } from '../src/domain/battle/movePower.ts'
+import { multiHitOptions, multiHitSummary, resolveMultiHitCount, resolveMultiHitMeta } from '../src/domain/battle/movePower.ts'
 import { quickMoveSupported } from '../src/domain/battle/quickDamageState.ts'
 
 const stats = { hp: 160, attack: 150, defense: 120, spAttack: 150, spDefense: 120 }
@@ -38,6 +38,16 @@ test('Skill Link chooses the registered maximum and summaries keep that result',
   assert.deepEqual(multiHitSummary('씨기관총', linked, 2), { hits: 5, totalPower: 125 })
   assert.equal(resolveMultiHitMeta('찍찍베기', physical, 1, 'skill-link').hits, 10)
   assert.deepEqual(resolveMultiHitMeta('트리플악셀', { ...physical, power: 20 }, 3).hitPowers, [20, 40, 60])
+})
+
+test('one hit-count authority supplies defaults, stored choices, and Skill Link', () => {
+  assert.equal(resolveMultiHitCount('트리플악셀', null), 1)
+  assert.equal(resolveMultiHitCount('찍찍베기', undefined), 1)
+  assert.equal(resolveMultiHitCount('스케일샷', null), 2)
+  assert.equal(resolveMultiHitCount('트리플악셀', 3), 3)
+  assert.equal(resolveMultiHitCount('스케일샷', 3, 'skill-link'), 5)
+  assert.equal(resolveMultiHitCount('더블윙', null), 2)
+  assert.equal(resolveMultiHitCount('파도타기', null), null)
 })
 
 const baseParams = {
