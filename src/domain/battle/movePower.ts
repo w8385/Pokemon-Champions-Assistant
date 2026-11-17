@@ -203,14 +203,19 @@ export function skillLinkAppliesToMove(moveName: string) {
   return Boolean(MULTI_HIT_RULES[moveName]?.skillLink)
 }
 
-export function resolveMultiHitMeta(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null, attackerAbility = '') {
+/** One authority for the hit count shown in controls and used by damage math. */
+export function resolveMultiHitCount(moveName: string, hitCount: number | null | undefined, attackerAbility = '') {
+  const rule = MULTI_HIT_RULES[moveName]
+  if (!rule) return null
+  if (attackerAbility === 'skill-link' && rule.skillLink) return rule.options[rule.options.length - 1]
+  return typeof hitCount === 'number' && rule.options.includes(hitCount) ? hitCount : rule.options[0]
+}
+
+export function resolveMultiHitMeta(moveName: string, moveMeta: MoveMeta | null, hitCount: number | null | undefined, attackerAbility = '') {
   if (!moveMeta) return moveMeta
   const rule = MULTI_HIT_RULES[moveName]
   if (!rule) return moveMeta
-  const requestedHits = hitCount !== null && rule.options.includes(hitCount) ? hitCount : rule.options[0]
-  const hits = attackerAbility === 'skill-link' && rule.skillLink
-    ? rule.options[rule.options.length - 1]
-    : requestedHits
+  const hits = resolveMultiHitCount(moveName, hitCount, attackerAbility)!
   const basePower = typeof moveMeta.power === 'number' ? moveMeta.power : null
   const hitPowers = basePower === null
     ? moveMeta.hitPowers

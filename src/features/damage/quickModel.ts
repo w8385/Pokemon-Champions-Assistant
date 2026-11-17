@@ -24,8 +24,6 @@ export type QuickConditions = {
   terrain: DamageTerrain
   critical: boolean
   typeChangeStab: boolean
-  /** Legacy fallback for snapshots written before hit counts became slot-local. */
-  hits: number
   moveHits: Record<string, number>
   moveValues: Record<string, ConditionalPowerValue>
   gravity: boolean
@@ -35,7 +33,7 @@ export const quickBlankBattle = (): QuickBattle => ({ attackStage: 0, spAttackSt
 
 export const quickBlank = (): QuickSide => ({ key: '', ability: '', item: '', nature: 'hardy', evs: { hp: 0, attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 }, actual: {}, moves: ['', '', '', ''], battle: quickBlankBattle(), speedStage: 0, speedNatureKnown: true, speedNatureMultiplier: 1, speedNatureOverride: null, statNatureMultipliers: {}, speedScarfOverride: null, speedAbilityActive: false })
 
-export const quickDefaultConditions = (): QuickConditions => ({ weather: 'none', terrain: 'none', critical: false, typeChangeStab: true, hits: 2, moveHits: {}, moveValues: {}, gravity: false })
+export const quickDefaultConditions = (): QuickConditions => ({ weather: 'none', terrain: 'none', critical: false, typeChangeStab: true, moveHits: {}, moveValues: {}, gravity: false })
 
 export const quickMoveConditionKey = (side: 'attacker' | 'defender', slot: number, move: string) => `${side}:${Math.max(0, Math.min(3, Math.trunc(slot)))}:${move}`
 

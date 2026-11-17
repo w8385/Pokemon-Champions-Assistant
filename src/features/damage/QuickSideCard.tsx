@@ -8,7 +8,7 @@ import { translateText } from '../../shared/display/translation.ts'
 import React from 'react'
 import { CHAMPIONS_ITEM_OPTIONS } from '../../domain/champions/championsItems'
 import { classifyHeldItem, requiredMegaStone } from '../../domain/champions/itemIdentity'
-import { DamageRangeMeter } from '../../shared/display/DamageRangeMeter'
+import { DamageRangeMeter, damageRangePresentation } from '../../shared/display/DamageRangeMeter'
 import { quickItem, replaceQuickMove } from '../../domain/battle/quickDamageState'
 import { type ComparisonSeed } from '../../domain/party/unifiedComparisonAdapter'
 import { SELECTABLE_NATURES } from '../../shared/display/naturePresentation'
@@ -24,7 +24,7 @@ import { battleFormRow } from '../../domain/battle/statProjection'
 import type { QuickDamageProps } from './QuickDamagePanel'
 import type { useQuickDamageState } from './useQuickDamageState'
 import { QuickStatEditor } from './QuickStatEditor'
-import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, electroBallPower, gyroBallPower, multiHitOptions, normalizeConditionalPowerValue, userWeightMovePower, weightBasedMovePower } from '../../domain/battle/movePower'
+import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, electroBallPower, gyroBallPower, multiHitOptions, normalizeConditionalPowerValue, resolveMultiHitCount, userWeightMovePower, weightBasedMovePower } from '../../domain/battle/movePower'
 import { formatBattleIndex } from '../../domain/battle/battleIndices'
 import { indexByKey } from '../../adapters/catalog/roster'
 import { isDamageGrounded } from '../../domain/battle/modifierRules'
@@ -61,7 +61,7 @@ const sourceLabels = {
     const hitOptions = multiHitOptions(name)
     const storedHits = conditions.moveHits[conditionKey]
     const skillLink = entry.ability === 'skill-link' && Boolean(hitOptions?.length && hitOptions.length > 1)
-    const effectiveHits = hitOptions?.length ? skillLink ? hitOptions[hitOptions.length - 1] : hitOptions.includes(storedHits) ? storedHits : hitOptions[0] : null
+    const effectiveHits = resolveMultiHitCount(name, storedHits, entry.ability)
     const choose = () => setSelected({ side, index })
     const setHitCount = (value: number) => {
       choose()
@@ -193,6 +193,11 @@ const sourceLabels = {
           const meta = name ? resolveMoveMeta(name, pool, poolMap) : null
           const preview = calculate(side, name, index)
           const previewVerdict = quickKoVerdict(preview)
+          const rangePresentation = preview ? damageRangePresentation(preview.damage, preview.targetHp, language) : null
+          const noEffect = Boolean(preview && preview.effectiveness <= 0)
+          const verdictLabel = noEffect ? lt('무효') : previewVerdict ? quickKoLabels[language][previewVerdict] : null
+          const unavailableLabel = status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원')
+          const resultLabel = rangePresentation?.label ?? unavailableLabel
           return { id: `${index}`, name: activeSlot?.side === side && activeSlot.index === index ? draft : name, occupied: Boolean(name), type: meta?.type, meta, className: moveTypeThemeClass(meta?.type),
               metaActions: renderMoveControls(name, index, preview?.decisionPower),
               children: recordedLearnsetText(name, pools[entry.key], language) ? <small role="status">{recordedLearnsetText(name, pools[entry.key], language)}</small> : null,
@@ -203,7 +208,7 @@ const sourceLabels = {
                 renderOption: option => <MoveCandidateRow name={option.label} type={options.find(move => move.name === option.key)?.type} meta={resolveMoveMeta(option.key, options, poolMap)} labels={labels} />,
                 optionProps: option => tooltipForMove(option.key) },
               inputProps: { 'aria-label': `${sideLabel} ${index + 1} ${lt('기술')}`, placeholder: status === 'loading' ? lt('기술풀 불러오는 중…') : status === 'load-error' ? lt('기술풀을 불러오지 못했습니다.') : status === 'missing' ? lt('기술풀 미확인') : lt('사용 가능 기술 검색'), onFocus: () => { setActiveSlot({ side, index }); setDrafts(prev => ({ ...prev, [draftKey]: '' })) }, onChange: event => setDrafts(prev => ({ ...prev, [draftKey]: event.target.value })), onBlur: () => setActiveSlot(prev => prev?.side === side && prev.index === index ? null : prev) },
-              preview: name ? <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-label={`${sideLabel} ${index + 1} ${lt('기술')} · ${name} · ${lt('계산 결과')}`} aria-pressed={selected.side === side && selected.index === index} aria-live={selected.side === side && selected.index === index ? 'polite' : undefined} aria-atomic={selected.side === side && selected.index === index ? 'true' : undefined} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{previewVerdict ? <strong className="quick-ko-verdict">{quickKoLabels[language][previewVerdict]}</strong> : null}</> : status === 'loading' || !moveMetaReady ? lt('기술/계산 메타 확인 중 · 미확인') : status === 'load-error' || status === 'missing' || getMoveMetadata(name)?.provenance.category !== 'legacy' ? lt('기술/계산 메타 미확인') : meta?.category === 'status' ? lt('변화기') : lt('계산 미지원')}</button> : null
+              preview: name ? <button type="button" className={`quick-move-preview${previewVerdict ? ` quick-ko-${previewVerdict}` : ''}`} aria-label={`${sideLabel} ${index + 1} ${lt('기술')} · ${name} · ${lt('계산 결과')} · ${resultLabel}${verdictLabel ? ` · ${verdictLabel}` : ''}`} aria-pressed={selected.side === side && selected.index === index} aria-live={selected.side === side && selected.index === index ? 'polite' : undefined} aria-atomic={selected.side === side && selected.index === index ? 'true' : undefined} onClick={() => setSelected({ side, index })}>{preview ? <><DamageRangeMeter damage={preview.damage} targetHp={preview.targetHp} language={language} compact />{noEffect ? <strong className="quick-effectiveness-immune">{verdictLabel}</strong> : previewVerdict ? <strong className="quick-ko-verdict">{verdictLabel}</strong> : null}</> : unavailableLabel}</button> : null
             }
         })} belowGrid={<MoveUsageSuggestions label={lt('사용률 상위 기술')} moves={topMoveSuggestions} />} />
       </> : <p className="muted">{lt('포켓몬을 선택하세요.')}</p>}

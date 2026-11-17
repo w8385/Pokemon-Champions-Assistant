@@ -29,6 +29,17 @@ test('paired cards and merged Speed lanes stack before controls become cramped',
   assert.match(compactEditor, /<PokemonStatGrid stats=\{stats\} showEffort/)
   assert.match(compactEditor, /const presetIds:[^=]*= \['hb', 'hd', 'as', 'cs', 'max-speed', 'clear'\]/)
   assert.match(cardOwner, /showPresets=\{!comparisonMode \|\| side === 'defender'\}/)
+  assert.match(sharedCss, /\.move-slots-editor-slot > input,\s*\.move-slots-editor-slot > \.pokemon-search-field input\s*\{[^}]*height:\s*40px[^}]*min-height:\s*40px/)
+  assert.doesNotMatch(sharedCss, /\.move-slots-editor-slot\s+:is\(input/)
+  assert.match(sharedCss, /\.quick-move-condition-check input\[type="checkbox"\]\s*\{[^}]*width:\s*16px[^}]*min-width:\s*16px[^}]*height:\s*16px[^}]*min-height:\s*16px/)
+})
+
+test('populated desktop cards share identity, stat, and move rows without affecting empty or mobile cards', () => {
+  const populatedPair = String.raw`\.quick-sides:has\(> \.quick-side-card\[data-side='attacker'\]\[data-has-entry='true'\]\):has\(> \.quick-side-card\[data-side='defender'\]\[data-has-entry='true'\]\)`
+  assert.match(sharedCss, new RegExp(String.raw`@supports \(grid-template-rows: subgrid\)[^]*?@media \(min-width: 761px\)[^]*?${populatedPair}\s*\{[^}]*grid-template-rows:\s*repeat\(3, auto\)[^}]*row-gap:\s*var\(--quick-card-gap\)`))
+  assert.match(sharedCss, new RegExp(String.raw`${populatedPair} > \.quick-side-card\[data-has-entry='true'\]\s*\{[^}]*grid-row:\s*span 3[^}]*grid-template-rows:\s*subgrid`))
+  assert.match(sharedCss, /\.quick-side-card\[data-has-entry='false'\]\s*\{[^}]*align-self:\s*start/)
+  assert.doesNotMatch(sharedCss, /\.quick-side-card\[data-has-entry='false'\][^{]*\{[^}]*grid-template-rows:\s*subgrid/)
 })
 
 test('both modes retain independent state owners and condition controls after layout change', () => {

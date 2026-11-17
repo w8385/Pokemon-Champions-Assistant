@@ -1,7 +1,7 @@
 import type { QuickDamageInput } from './prepareQuickDamageInput'
 import { isCalculableHeldItem, classifyHeldItem } from '../../domain/champions/itemIdentity'
 import { quickMoveSupported, quickStagePair } from '../../domain/battle/quickDamageState'
-import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, applyConditionalMovePower, applyTerrainPulseType, electroBallPower, gyroBallPower, multiHitOptions, resolveMultiHitMeta, applyTargetWeightMovePower, userWeightMovePower } from '../../domain/battle/movePower'
+import { CONDITIONAL_MOVE_POWER_RULES, abilityAdjustedWeight, applyConditionalMovePower, applyTerrainPulseType, electroBallPower, gyroBallPower, resolveMultiHitMeta, applyTargetWeightMovePower, userWeightMovePower } from '../../domain/battle/movePower'
 import { resolveAbilityAdjustedMoveMeta, resolveAbilityAdjustedTypes, resolveStabMultiplier } from '../../domain/battle/moveEffects'
 import { abilityAdjustedTypeEffectiveness } from '../../domain/battle/typeEffectiveness'
 import { isDamageGrounded, knockOffPowerMultiplier, resolveDamageModifiers } from '../../domain/battle/modifierRules'
@@ -46,10 +46,8 @@ export function calculateQuickDamage({ source, target, name, conditions, sourceR
     const conditionalValue = automaticConditionalValue ?? configuredConditionalValue ?? rule?.defaultValue
     const supportedBase = rule ? { ...base, power: rule.basePower ?? base.power ?? 1, variablePower: false } : base
     if (!quickMoveSupported(name, supportedBase)) return null
-    const choices = multiHitOptions(name)
     const conditionalBase = rule ? applyConditionalMovePower(name, base, conditionalValue) : base
-    const requestedHits = choices?.includes(hitCount ?? conditions.hits) ? (hitCount ?? conditions.hits) : choices?.[0] ?? null
-    const abilityMeta = resolveAbilityAdjustedMoveMeta(name, resolveMultiHitMeta(name, conditionalBase, requestedHits, sourceAbility), sourceAbility, conditions.weather)
+    const abilityMeta = resolveAbilityAdjustedMoveMeta(name, resolveMultiHitMeta(name, conditionalBase, hitCount, sourceAbility), sourceAbility, conditions.weather)
     const meta = applyTargetWeightMovePower(name, applyTerrainPulseType(name, abilityMeta, conditions.terrain, sourceGrounded), targetWeight || null)
     if (!meta) return null
     const type = meta.type, mode = meta.category === 'physical' || meta.category === 'special' ? meta.category : null
